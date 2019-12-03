@@ -1,6 +1,18 @@
 import React, { Component } from "react";
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+
+    this.onClickLogout = this.onClickLogout.bind(this);
+  }
+
+  onClickLogout(e) {
+    e.preventDefault();
+    localStorage.clear();
+    window.location.href = window.location.origin;
+  }
+
   render() {
     return (
       <div className="pcoded-main-container">
@@ -12,7 +24,9 @@ class Home extends Component {
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
                       <div className="page-header-title mb-2">
-                        <h3 className="f-w-900 ">Selamat datang, Rakaal!</h3>
+                        <h3 onClick={this.onClickLogout} className="f-w-900 ">
+                          Selamat datang, Rakaal!
+                        </h3>
                         <h6 className="top mt-5 f-w-900 text-cc-grey">
                           Yuk, kita belajar untuk hari ini...
                         </h6>

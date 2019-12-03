@@ -142,7 +142,7 @@ class Header extends Component {
                   <i className="feather icon-search input-group-text mr-1 text-c-grey" />
                   <input
                     type="text"
-                    id="m-search"
+                    id=""
                     className="form-control"
                     placeholder="Pencarian..."
                     style={{ width: 150 }}

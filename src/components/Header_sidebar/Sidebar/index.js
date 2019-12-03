@@ -103,6 +103,14 @@ class Sidebar extends Component {
               <li data-username="Sample Page" className="nav-item mt-4">
                 <Link to="#" className="nav-link">
                   <span className="pcoded-micon">
+                    <i class="feather icon-lock"></i>
+                  </span>
+                  <span className="pcoded-mtext">Login</span>
+                </Link>
+              </li>
+              <li data-username="Sample Page" className="nav-item mt-4">
+                <Link to="#" className="nav-link">
+                  <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Logout.png"
                       style={{
