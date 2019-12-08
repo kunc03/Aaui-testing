@@ -15,7 +15,10 @@ class Home extends Component {
 
   render() {
     return (
-      <div className="pcoded-main-container">
+      <div
+        className="pcoded-main-container"
+        style={{ backgroundColor: "#F6F6FD" }}
+      >
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -37,7 +40,10 @@ class Home extends Component {
                         <div className="card-block card-profile">
                           <div className="row align-items-center justify-content-center">
                             <div className="col-auto">
-                              <i className="fa fa-calendar f-30 circle-icon-green" />
+                              <img
+                                src="assets/images/component/Icon Date Enrolled.png"
+                                alt=""
+                              ></img>
                             </div>
                             <div className="col">
                               <small className="f-w-900">
@@ -54,7 +60,10 @@ class Home extends Component {
                         <div className="card-block card-profile">
                           <div className="row align-items-center justify-content-center">
                             <div className="col-auto">
-                              <i className="fa fa-image f-30 circle-icon-orange" />
+                              <img
+                                src="assets/images/component/Icon Kursus-1.png"
+                                alt=""
+                              ></img>
                             </div>
                             <div className="col">
                               <small className="f-w-900">Tanggal Kursus</small>
@@ -69,7 +78,10 @@ class Home extends Component {
                         <div className="card-block card-profile">
                           <div className="row align-items-center justify-content-center">
                             <div className="col-auto">
-                              <i className="fa fa-clock f-30 circle-icon-pink" />
+                              <img
+                                src="assets/images/component/Icon Waktu.png"
+                                alt=""
+                              ></img>
                             </div>
                             <div className="col">
                               <small className="f-w-900">Jumlah Waktu</small>

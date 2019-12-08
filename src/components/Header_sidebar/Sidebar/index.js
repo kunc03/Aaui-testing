@@ -8,7 +8,7 @@ class Sidebar extends Component {
         <div className="navbar-wrapper">
           <div className="navbar-brand header-logo">
             <Link to="/" className="b-brand">
-              <div className="b-bg">
+              <div className="b-bg">  
                 <span className="pcoded-micon">
                   <img
                     src="assets/images/component/Logo Ideku.png"
@@ -23,6 +23,7 @@ class Sidebar extends Component {
               <span />
             </a>
           </div>
+          {/* <small class="sub-logo-text">Online Learning Platform</small> */}
           <div className="navbar-content scroll-div">
             <ul className="nav pcoded-inner-navbar">
               <li className="nav-item pcoded-menu-caption">
@@ -36,7 +37,9 @@ class Sidebar extends Component {
                       alt=""
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Kursus &amp; Materi</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">
+                    Kursus &amp; Materi
+                  </span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
@@ -47,7 +50,9 @@ class Sidebar extends Component {
                       alt=""
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Forum diskusi</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">
+                    Forum diskusi
+                  </span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
@@ -58,7 +63,7 @@ class Sidebar extends Component {
                       alt=""
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Kelas</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Kelas</span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
@@ -72,11 +77,11 @@ class Sidebar extends Component {
                       }}
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Aktivitas</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Aktivitas</span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/Pengaturan" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Pengaturan.png"
@@ -86,7 +91,7 @@ class Sidebar extends Component {
                       }}
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Pengaturan</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Pengaturan</span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
@@ -97,19 +102,36 @@ class Sidebar extends Component {
                       alt=""
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Users</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Users</span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/cabang" className="nav-link">
                   <span className="pcoded-micon">
-                    <i class="feather icon-lock"></i>
+                    <img
+                      src="assets/images/component/Icon Forum.png"
+                      alt=""
+                    ></img>
                   </span>
-                  <span className="pcoded-mtext">Login</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Cabang</span>
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/grup" className="nav-link">
+                  <span className="pcoded-micon">
+                    <img
+                      src="assets/images/component/Icon Forum.png"
+                      alt=""
+                    ></img>
+                  </span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Grup</span>
+                </Link>
+              </li>
+              <li
+                data-username="Sample Page"
+                className="nav-item mt-4  bg-c-purple-dark"
+              >
+                <Link to="/logout" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Logout.png"
@@ -119,7 +141,7 @@ class Sidebar extends Component {
                       alt=""
                     ></img>
                   </span>
-                  <span className="pcoded-mtext">Logout</span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Logout</span>
                 </Link>
               </li>
             </ul>

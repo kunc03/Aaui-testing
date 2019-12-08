@@ -71,7 +71,7 @@ class Profile extends Component {
                                 type="text"
                                 className="form-control"
                                 id
-                                placeholder={081247959214}
+                                placeholder="081247959214"
                               />
                             </div>
                             <button

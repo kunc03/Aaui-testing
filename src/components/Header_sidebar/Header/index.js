@@ -1,6 +1,36 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      me: {}
+    };
+  }
+
+  componentDidMount() {
+    let user = JSON.parse(localStorage.getItem("user"));
+    let link = `http://10.1.70.137:4000/v1/auth/me/${user.result.email}`;
+    let header = {
+      headers: {
+        Authorization: user.result.token,
+        "Content-Type": "application/json"
+      }
+    };
+
+    axios
+      .get(link, header)
+      .then(response => {
+        this.setState({ me: response.data.result });
+        console.log(this.state);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
   render() {
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
@@ -25,7 +55,7 @@ class Header extends Component {
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item dropdown">
-              <a href="javascript:">
+              <Link to="/Profile">
                 <div className="media">
                   <img
                     alt=""
@@ -35,14 +65,14 @@ class Header extends Component {
                   />
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
-                      Rajaka Kauthar Allam
+                      {this.state.me.name}
                       <small className="d-block  mt-2 text-c-grey">
                         Member
                       </small>
                     </h6>
                   </div>
                 </div>
-              </a>
+              </Link>
             </li>
           </ul>
           <ul className="navbar-nav ml-auto">

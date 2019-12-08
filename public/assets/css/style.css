@@ -1340,6 +1340,13 @@ p.text-muted {
   background: #ffffff;
 }
 
+.bg-c-purple-dark {
+  background: #24031C;
+}
+
+
+
+
 .bg-c-purple-ideku {
   background: #BF337B;
   -webkit-box-shadow: inset 20 10px 20px rgba(0, 0, 0, 0.2);
@@ -1394,7 +1401,7 @@ p.text-muted {
 }
 
 .f-18 {
-  font-size: 18px;
+  font-size: 18px !important;
 }
 
 .f-20 {
@@ -2295,6 +2302,14 @@ hr {
   border-top: 1px solid #ccc;
 }
 
+.sub-logo-text {
+  position: absolute;
+  top: 78px !important; 
+  left:25px; 
+  font-size: 10px !important; 
+  color: white;
+}
+
 /* end update */
 
 
@@ -2478,7 +2493,7 @@ hr {
   margin-bottom: 0;
 }
 .pcoded-navbar .scroll-div.navbar-content {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 120px) !important;
 }
 .pcoded-navbar .header-logo {
   position: relative;

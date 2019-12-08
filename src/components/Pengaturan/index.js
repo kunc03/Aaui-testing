@@ -1,6 +1,21 @@
 import React, { Component } from "react";
+import ModalEmail from "./modalemail";
+import ModalPassword from "./modalpassword";
 
 class Pengaturan extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isOpen: false
+    };
+  }
+
+  toggleModal = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  };
   render() {
     return (
       <div className="pcoded-main-container">
@@ -251,6 +266,18 @@ class Pengaturan extends Component {
                             Simpan
                           </button>
                         </div>
+                        <ModalEmail
+                          show={this.state.isOpen}
+                          onClose={this.toggleModal}
+                        >
+                          `Here's some content for the modal`
+                        </ModalEmail>
+                        <ModalPassword
+                          show={this.state.isOpen}
+                          onClose={this.toggleModal}
+                        >
+                          `Here's some content for the modal`
+                        </ModalPassword>
                       </div>
                     </div>
                   </div>

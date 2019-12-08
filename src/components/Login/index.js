@@ -1,51 +1,61 @@
 import React, { Component } from "react";
-// import FormField from '../utils/Form/formfield'
-
-import { Connect } from "react-redux";
+import axios from "axios";
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
+  }
+
   state = {
-    formError: false,
-    formSuccess: "",
-    formData: {
-      email: {
-        element: "input",
-        value: "",
-        config: {
-          name: "email",
-          type: "email",
-          placeholder: "Enter your email"
-        },
-        validation: {
-          requred: true,
-          email: true
-        },
-        valid: false,
-        touched: false,
-        validationMessage: ""
-      },
-      password: {
-        element: "input",
-        value: "",
-        config: {
-          name: "password",
-          type: "password",
-          placeholder: "Enter your password"
-        },
-        validation: {
-          requred: true
-        },
-        valid: false,
-        touched: false,
-        validationMessage: ""
-      }
-    }
+    email: "",
+    password: ""
+  };
+
+  onChangeEmail = e => {
+    this.setState({ email: e.target.value });
+  };
+  onChangePassword = e => {
+    this.setState({ password: e.target.value });
   };
 
   submitForm = e => {
     e.preventDefault();
-    localStorage.setItem("user", JSON.stringify({ email: "email@email.com" }));
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        result: {
+          email: "jek@jek.com",
+          password: "123456"
+        }
+      })
+    );
     window.location.href = window.location.origin;
+
+    // let link = "http://10.1.70.137:4000/v1/auth";
+    // let data = { email: this.state.email, password: this.state.password };
+    // let header = {
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   }
+    // };
+
+    // axios
+    //   .post(link, data, header)
+    //   .then(function(response) {
+    //     if (response.data.error) {
+    //       this.setState({ email: e.target.value });
+    //       this.setState({ password: e.target.value });
+    //     } else {
+    //       localStorage.setItem("user", JSON.stringify(response.data));
+    //       window.location.href = window.location.origin;
+    //     }
+    //   })
+    //   .catch(function(error) {
+    //     console.log(error);
+    //   });
   };
 
   render() {
@@ -58,7 +68,7 @@ class Login extends Component {
               "linear-gradient(rgba(61, 12, 49, 0.90), rgba(61, 12, 49, 0.90) ),url(assets/images/component/login.jpg)"
           }}
         >
-          <h1 className="text-c-white f-40 f-w-600">Selamat Datang!</h1>
+          <h1 className="text-c-white f-28 f-w-600">Selamat Datang!</h1>
           <div className="auth-content mb-4">
             <div className="card b-r-15">
               <div
@@ -73,34 +83,30 @@ class Login extends Component {
                   />
                 </div>
                 <form onSubmit={event => this.submitForm(event)}>
-                  {/* <FormField
-                    id={"email"}
-                    formData={this.state.formData.email}
-                    change={element => this.updateForm()}
-                  /> */}
-
                   <div className="input-group mb-4">
                     <input
                       type="text"
                       className="form-control"
                       placeholder="Email"
+                      onChange={this.onChangeEmail}
                     />
                   </div>
                   <div className="input-group mb-3">
                     <input
-                      type="text"
+                      type="password"
                       className="form-control"
                       placeholder="Password"
+                      onChange={this.onChangePassword}
                     />
                   </div>
-                  <button className="btn btn-ideku col-12 shadow-2 mb-4 mt-4 b-r-3 f-20">
+                  <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
                     Masuk
                   </button>
                 </form>
-                <p className="mb-0 mt-2">
+                <p className="mb-0 mt-1">
                   <a
                     href="auth-signin.html"
-                    className="text-cc-purple f-21 f-w-600"
+                    className="text-cc-purple f-16 f-w-600"
                   >
                     Masuk dengan Voucher
                   </a>
