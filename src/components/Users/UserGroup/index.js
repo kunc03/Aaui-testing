@@ -21,7 +21,7 @@ class UserCabang extends Component {
 
   componentDidMount() {
     let token = JSON.parse(localStorage.getItem("user"));
-    let link = "http://10.1.70.137:4000/v1/grup";
+    let link = "https://8023.development.carsworld.co.id/v1/grup";
     let header = {
       headers: {
         Authorization: token.result.token,
@@ -70,7 +70,7 @@ class UserCabang extends Component {
                       Hak Akses
                     </small>
                     <h5 className="f-w-bold f-20 text-c-black">
-                      User, Branch, Category, Activities, Course...
+                      {grup.grup_name}
                     </h5>
                   </div>
                 </div>

@@ -8,11 +8,18 @@ class UserGroup extends Component {
   constructor(props) {
     super(props);
 
+    this.onChangeBranch = this.onChangeBranch.bind(this);
+
     this.state = {
       branch: [],
+      branchName: "",
       isOpen: false
     };
   }
+
+  onChangeBranch = e => {
+    this.setState({ branchName: e.target.value });
+  };
 
   toggleModal = () => {
     this.setState({
@@ -20,9 +27,36 @@ class UserGroup extends Component {
     });
   };
 
+  submitForm = e => {
+    e.preventDefault();
+
+    let link = "https://8023.development.carsworld.co.id/v1/auth";
+    let data = { email: this.state.email, password: this.state.password };
+    let header = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    axios
+      .post(link, data, header)
+      .then(function(response) {
+        if (response.data.error) {
+          this.setState({ email: e.target.value });
+          this.setState({ password: e.target.value });
+        } else {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          window.location.href = window.location.origin;
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
+
   componentDidMount() {
     let token = JSON.parse(localStorage.getItem("user"));
-    let link = "http://10.1.70.137:4000/v1/branch";
+    let link = "https://8023.development.carsworld.co.id/v1/branch";
     let header = {
       headers: {
         Authorization: token.result.token,
@@ -135,9 +169,10 @@ class UserGroup extends Component {
                     <div className="col-xl-12">
                       <Lists lists={branch} />
                     </div>
-                    <Modal show={this.state.isOpen} onClose={this.toggleModal}>
-                      `Here's some content for the modal`
-                    </Modal>
+                    <Modal
+                      show={this.state.isOpen}
+                      onClose={this.toggleModal}
+                    />
                   </div>
                 </div>
               </div>

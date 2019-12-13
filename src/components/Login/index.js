@@ -23,39 +23,29 @@ class Login extends Component {
 
   submitForm = e => {
     e.preventDefault();
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        result: {
-          email: "jek@jek.com",
-          password: "123456"
+
+    let link = "https://8023.development.carsworld.co.id/v1/auth";
+    let data = { email: this.state.email, password: this.state.password };
+    let header = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    axios
+      .post(link, data, header)
+      .then(function(response) {
+        if (response.data.error) {
+          this.setState({ email: e.target.value });
+          this.setState({ password: e.target.value });
+        } else {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          window.location.href = window.location.origin;
         }
       })
-    );
-    window.location.href = window.location.origin;
-
-    // let link = "http://10.1.70.137:4000/v1/auth";
-    // let data = { email: this.state.email, password: this.state.password };
-    // let header = {
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   }
-    // };
-
-    // axios
-    //   .post(link, data, header)
-    //   .then(function(response) {
-    //     if (response.data.error) {
-    //       this.setState({ email: e.target.value });
-    //       this.setState({ password: e.target.value });
-    //     } else {
-    //       localStorage.setItem("user", JSON.stringify(response.data));
-    //       window.location.href = window.location.origin;
-    //     }
-    //   })
-    //   .catch(function(error) {
-    //     console.log(error);
-    //   });
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   render() {

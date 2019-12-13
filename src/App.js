@@ -12,6 +12,7 @@ import UserAdd from "./components/Users/User/add";
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
 import Login from "./components/Login/index";
+import Voucher from "./components/Login/index-v";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ export class Main extends React.Component {
         <Header />
         <Switch>
           <Route path="/" exact component={Home} />
+          <Route path="/voucher" exact component={Voucher} />
           <Route path="/Pengaturan" exact component={Pengaturan} />
           <Route path="/Profile" exact component={Profile} />
           <Route path="/user" exact component={User} />
