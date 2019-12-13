@@ -13,14 +13,13 @@ class Header extends Component {
 
   componentDidMount() {
     let user = JSON.parse(localStorage.getItem("user"));
-    let link = `http://10.1.70.137:4000/v1/auth/me/${user.result.email}`;
+    let link = `https://8023.development.carsworld.co.id/v1/auth/me/${user.result.email}`;
     let header = {
       headers: {
         Authorization: user.result.token,
         "Content-Type": "application/json"
       }
     };
-
     axios
       .get(link, header)
       .then(response => {

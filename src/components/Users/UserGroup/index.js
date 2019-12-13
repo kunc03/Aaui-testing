@@ -41,6 +41,7 @@ class UserCabang extends Component {
   }
   render() {
     let { grup } = this.state;
+    console.log(grup);
 
     const Item = ({ item }) => (
       <li>
