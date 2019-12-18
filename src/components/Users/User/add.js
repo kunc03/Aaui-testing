@@ -51,7 +51,7 @@ class UserAdd extends Component {
   submitForm = e => {
     e.preventDefault();
     let token = JSON.parse(localStorage.getItem("user"));
-    let link = "https://8023.development.carsworld.co.id/v1/auth";
+    let link = "http://10.1.70.137:4000/v1/auth";
     let data = {
       name: this.state.name,
       branch_id: this.state.branch_id,

@@ -1,54 +1,58 @@
 import React, { Component } from "react";
-import axios from "axios";
+import {Alert} from 'react-bootstrap';
+import API, {USER_LOGIN} from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class Login extends Component {
   constructor(props) {
     super(props);
-
-    this.onChangeEmail = this.onChangeEmail.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
   }
 
   state = {
     email: "",
-    password: ""
+    password: "",
+    toggle_alert: false,
   };
 
   onChangeEmail = e => {
-    this.setState({ email: e.target.value });
+    this.setState({ email: e.target.value, toggle_alert: false });
   };
   onChangePassword = e => {
-    this.setState({ password: e.target.value });
+    this.setState({ password: e.target.value, toggle_alert: false, });
   };
 
   submitForm = e => {
     e.preventDefault();
 
-    let link = "https://8023.development.carsworld.co.id/v1/auth";
-    let data = { email: this.state.email, password: this.state.password };
-    let header = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
+    const { email, password } = this.state;
+    let body = { email, password }
 
-    axios
-      .post(link, data, header)
-      .then(function(response) {
-        if (response.data.error) {
-          this.setState({ email: e.target.value });
-          this.setState({ password: e.target.value });
-        } else {
-          localStorage.setItem("user", JSON.stringify(response.data));
-          window.location.href = window.location.origin;
+    API.post(USER_LOGIN, body)
+      .then(res => {
+        console.log('succes fetch', res);
+        if(res.status == 200){
+          if(!res.data.error){
+            Storage.set('user', {data:body});
+            Storage.set('token', {data:res.data.result.token});
+            window.location.href = window.location.origin;
+          }else{
+            this.setState({
+              toggle_alert: true
+            })
+          }
+        }else{
+          this.setState({
+            toggle_alert: true
+          })
         }
       })
-      .catch(function(error) {
-        console.log(error);
-      });
+      .catch(err => {
+        console.log('failed fetch', err);
+      })
   };
 
   render() {
+    const { toggle_alert } = this.state;
     return (
       <div>
         <div
@@ -79,6 +83,7 @@ class Login extends Component {
                       className="form-control"
                       placeholder="Email"
                       onChange={this.onChangeEmail}
+                      required
                     />
                   </div>
                   <div className="input-group mb-3">
@@ -87,11 +92,18 @@ class Login extends Component {
                       className="form-control"
                       placeholder="Password"
                       onChange={this.onChangePassword}
+                      required
                     />
                   </div>
                   <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
                     Masuk
                   </button>
+                  {
+                    toggle_alert &&
+                    <Alert variant={'danger'}>
+                      Login failed. Please verify the data correct!
+                    </Alert>
+                  }
                 </form>
                 <p className="mb-0 mt-1">
                   <a

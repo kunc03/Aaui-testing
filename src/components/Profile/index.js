@@ -1,7 +1,74 @@
 import React, { Component } from "react";
+import {Alert} from 'react-bootstrap';
+import API, {USER_ME, USER} from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class Profile extends Component {
+  state = {
+    user_data: {
+      name: '',
+      identity: '',
+      address: '',
+      phone: '',
+    },
+    toggle_alert: false
+  }
+
+  constructor(props){
+    super(props);
+  }
+
+  componentDidMount(){
+    this.fetchProfile();
+  }
+
+  fetchProfile = () => {
+    const user = Storage.get('user');
+    API.get(`${USER_ME}${user.data.email}`)
+      .then(res => {
+        console.log('res', res);
+        if(res.status === 200){
+          if(!res.data.error){
+            this.setState({
+              user_data: res.data.result
+            });
+          }
+        }
+      })
+  }
+
+  updateProfile = (e) => {
+    e.preventDefault();
+    const {user_data} = this.state;
+    console.log('user_data', user_data)
+    API.put(`${USER}/${user_data.user_id}`, user_data)
+      .then(res=> {
+        if(res.status === 200){
+          if(!res.data.error){
+            this.setState({
+              toggle_alert: true
+            })
+          }
+        }
+      })
+      .catch(err=> {
+        console.log(err);
+      })
+  }
+
+  handleChange = (e) => {
+    console.log(this.state)
+    console.log(e.target.value)
+    this.setState({
+      user_data: {
+        ...this.state.user_data,
+        [e.target.name]: e.target.value
+      }
+    })
+  }
+
   render() {
+    const {user_data, toggle_alert} = this.state;
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -35,10 +102,14 @@ class Profile extends Component {
                                 Nama
                               </label>
                               <input
+                                name="name"
                                 type="text"
                                 className="form-control"
                                 id
-                                placeholder="Rajaka Kauthar Allam"
+                                required
+                                placeholder="Nama lengkap"
+                                value={user_data.name}
+                                onChange={this.handleChange}
                               />
                             </div>
                             <div className="form-group">
@@ -46,10 +117,15 @@ class Profile extends Component {
                                 Nomor Identitas
                               </label>
                               <input
-                                type="text"
+                                name="identity"
+                                type="numeric"
                                 className="form-control"
                                 id
-                                placeholder={3329980118901291}
+                                required
+                                placeholder="No. ktp"
+                                inputMode="numeric"
+                                value={user_data.identity == null ? "" : user_data.identity}
+                                onChange={this.handleChange}
                               />
                             </div>
                             <div className="form-group">
@@ -57,10 +133,14 @@ class Profile extends Component {
                                 Alamat
                               </label>
                               <input
+                                name="address"
                                 type="text"
                                 className="form-control"
                                 id
-                                placeholder="Sunburst CBD Lot II No. 3, BSD City (021) 22356800, Lengkong Gudang, Serpong Sub-District, South Tangerang City, Banten 15321"
+                                required
+                                placeholder="Alamat lengkap"
+                                value={user_data.address}
+                                onChange={this.handleChange}
                               />
                             </div>
                             <div className="form-group">
@@ -68,18 +148,29 @@ class Profile extends Component {
                                 Nomor Handphone
                               </label>
                               <input
-                                type="text"
+                                name="phone"
+                                type="phone"
                                 className="form-control"
                                 id
+                                required
                                 placeholder="081247959214"
+                                inputMode="tel"
+                                value={user_data.phone}
+                                onChange={this.handleChange}
                               />
                             </div>
                             <button
-                              type="submit"
                               className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
+                              onClick={event => this.updateProfile(event)}
                             >
                               Simpan
                             </button>
+                            {
+                              toggle_alert &&
+                              <Alert variant={'success'}>
+                                Update successfully!
+                              </Alert>
+                            }
                           </form>
                         </div>
                       </div>

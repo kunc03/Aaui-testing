@@ -6,7 +6,7 @@ const formfield = ({formData, change, id}) => {
     let formTemplate = null;
 
     switch(formData.element){
-      case('input');
+      case('input'):
         formTemplate
       break;
       default:

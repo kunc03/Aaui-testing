@@ -21,7 +21,7 @@ class UserCabang extends Component {
 
   componentDidMount() {
     let token = JSON.parse(localStorage.getItem("user"));
-    let link = "https://8023.development.carsworld.co.id/v1/grup";
+    let link = "http://10.1.70.137:4000/v1/grup";
     let header = {
       headers: {
         Authorization: token.result.token,
@@ -41,7 +41,6 @@ class UserCabang extends Component {
   }
   render() {
     let { grup } = this.state;
-    console.log(grup);
 
     const Item = ({ item }) => (
       <li>
@@ -71,7 +70,7 @@ class UserCabang extends Component {
                       Hak Akses
                     </small>
                     <h5 className="f-w-bold f-20 text-c-black">
-                      {grup.grup_name}
+                      User, Branch, Category, Activities, Course...
                     </h5>
                   </div>
                 </div>

@@ -45,7 +45,7 @@ class Modal extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  onChange={this.onChangeBranch}
+                  id
                   placeholder="Branch Name"
                 />
               </div>
