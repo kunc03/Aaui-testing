@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 class Header extends Component {
   constructor(props) {
@@ -12,23 +11,6 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    let user = JSON.parse(localStorage.getItem("user"));
-    let link = `https://8023.development.carsworld.co.id/v1/auth/me/${user.result.email}`;
-    let header = {
-      headers: {
-        Authorization: user.result.token,
-        "Content-Type": "application/json"
-      }
-    };
-    axios
-      .get(link, header)
-      .then(response => {
-        this.setState({ me: response.data.result });
-        console.log(this.state);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
   render() {
     return (

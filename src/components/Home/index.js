@@ -1,33 +1,10 @@
 import React, { Component } from "react";
-import axios from "axios";
 
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      me: {}
-    };
-    this.onClickLogout = this.onClickLogout.bind(this);
-  }
 
-  componentDidMount() {
-    let user = JSON.parse(localStorage.getItem("user"));
-    let link = `https://8023.development.carsworld.co.id/v1/auth/me/${user.result.email}`;
-    let header = {
-      headers: {
-        Authorization: user.result.token,
-        "Content-Type": "application/json"
-      }
-    };
-    axios
-      .get(link, header)
-      .then(response => {
-        this.setState({ me: response.data.result });
-        console.log(this.state);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    this.onClickLogout = this.onClickLogout.bind(this);
   }
 
   onClickLogout(e) {
@@ -51,7 +28,7 @@ class Home extends Component {
                     <div className="col-md-12 col-xl-12">
                       <div className="page-header-title mb-2">
                         <h3 onClick={this.onClickLogout} className="f-w-900 ">
-                          Selamat datang, {this.state.me.name}
+                          Selamat datang, Rakaal!
                         </h3>
                         <h6 className="top mt-5 f-w-900 text-cc-grey">
                           Yuk, kita belajar untuk hari ini...

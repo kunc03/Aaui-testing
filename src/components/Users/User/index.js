@@ -12,11 +12,11 @@ export default class User extends Component {
   }
 
   componentDidMount() {
-    let token = JSON.parse(localStorage.getItem("user"));
-    let link = "http://10.1.70.137:4000/v1/user";
+    let token = JSON.parse(localStorage.getItem("token"));
+    let link = "https://8023.development.carsworld.co.id/v1/user";
     let header = {
       headers: {
-        Authorization: token.result.token,
+        Authorization: token.data,
         "Content-Type": "application/json"
       }
     };
