@@ -30,7 +30,7 @@ class Sidebar extends Component {
                 <label />
               </li>
               <li data-username="Sample Page" className="nav-item active mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/home" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Kursus.png"
@@ -43,7 +43,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/berak" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Forum.png"
@@ -56,7 +56,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/berak" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Kelas.png"
@@ -67,7 +67,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="#" className="nav-link">
+                <Link to="/berak" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Aktivitas.png"
@@ -81,7 +81,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="/Pengaturan" className="nav-link">
+                <Link to="/setting" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Pengaturan.png"
@@ -95,7 +95,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="/user" className="nav-link">
+                <Link to="/users" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Forum.png"
@@ -106,7 +106,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="/cabang" className="nav-link">
+                <Link to="/user-cabang" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Forum.png"
@@ -117,7 +117,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
-                <Link to="/grup" className="nav-link">
+                <Link to="/user-group" className="nav-link">
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Forum.png"

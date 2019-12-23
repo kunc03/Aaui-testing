@@ -3,6 +3,8 @@ import {Alert} from 'react-bootstrap';
 import API, {USER_LOGIN} from '../../repository/api';
 import Storage from '../../repository/storage';
 
+import { Link } from "react-router-dom";
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -106,12 +108,14 @@ class Login extends Component {
                   }
                 </form>
                 <p className="mb-0 mt-1">
-                  <a
+                  <Link className="text-cc-purple f-16 f-w-600" to='/login-voucher'> Masuk dengan Voucher </Link>
+                  {/* old */}
+                  {/* <a
                     href="auth-signin.html"
                     className="text-cc-purple f-16 f-w-600"
                   >
                     Masuk dengan Voucher
-                  </a>
+                  </a> */}
                 </p>
               </div>
             </div>

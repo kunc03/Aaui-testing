@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ModalAdd from "./modaladd";
 import axios from "axios";
 
-class UserCabang extends Component {
+class UserGroup extends Component {
   constructor(props) {
     super(props);
 
@@ -167,4 +167,4 @@ class UserCabang extends Component {
   }
 }
 
-export default UserCabang;
+export default UserGroup;
