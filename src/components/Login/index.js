@@ -6,20 +6,64 @@ import Storage from '../../repository/storage';
 class Login extends Component {
   constructor(props) {
     super(props);
+
+    this.onClickVoucher = this.onClickVoucher.bind(this);
+    this.onClickEmail = this.onClickEmail.bind(this);
   }
 
   state = {
     email: "",
     password: "",
     toggle_alert: false,
+    isVoucher: false,
+    voucher: ''
   };
 
   onChangeEmail = e => {
     this.setState({ email: e.target.value, toggle_alert: false });
   };
+
   onChangePassword = e => {
     this.setState({ password: e.target.value, toggle_alert: false, });
   };
+
+  onChangeVoucher = e => {
+    this.setState({ voucher: e.target.value, toggle_alert: false });
+  };
+
+  onClickVoucher = e => {
+    e.preventDefault();
+    this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
+  };
+
+  onClickEmail = e => {
+    e.preventDefault();
+    this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
+  };
+
+  submitFormVoucher = e => {
+    e.preventDefault();
+
+    const { voucher } = this.state;
+    let body = { voucher };
+
+    API.post(`${USER_LOGIN}/voucher`, body).then(res => {
+      if(res.status === 200) {
+        console.log(res.data);
+        if(!res.data.error) {
+          Storage.set('user', {data: { user_id: res.data.result.user_id, email: res.data.result.email }});
+          Storage.set('token', {data: res.data.result.token});
+          window.location.href = window.location.origin;
+        } else {
+          this.setState({ toggle_alert: true });
+        }
+      } else {
+        this.setState({ toggle_alert: true });
+      }
+    }).catch(err => {
+      console.log('failed fetch', err);
+    });
+  }
 
   submitForm = e => {
     e.preventDefault();
@@ -27,32 +71,88 @@ class Login extends Component {
     const { email, password } = this.state;
     let body = { email, password }
 
-    API.post(USER_LOGIN, body)
-      .then(res => {
-        console.log('succes fetch', res);
-        if(res.status == 200){
-          if(!res.data.error){
-            Storage.set('user', {data:body});
-            Storage.set('token', {data:res.data.result.token});
-            window.location.href = window.location.origin;
-          }else{
-            this.setState({
-              toggle_alert: true
-            })
-          }
+    API.post(USER_LOGIN, body).then(res => {
+      if(res.status === 200){
+        console.log(res.data);
+        if(!res.data.error){
+          Storage.set('user', {data: { user_id: res.data.result.user_id, email: res.data.result.email }});
+          Storage.set('token', {data:res.data.result.token});
+          window.location.href = window.location.origin;
         }else{
           this.setState({
             toggle_alert: true
           })
         }
-      })
-      .catch(err => {
-        console.log('failed fetch', err);
-      })
+      }else{
+        this.setState({
+          toggle_alert: true
+        })
+      }
+    }).catch(err => {
+      console.log('failed fetch', err);
+    })
   };
 
   render() {
-    const { toggle_alert } = this.state;
+    const { toggle_alert, isVoucher } = this.state;
+    let formKu = null;
+    if(isVoucher) {
+      formKu = (
+        <form onSubmit={event => this.submitFormVoucher(event)}>
+          <div className="input-group mb-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Voucher"
+              onChange={this.onChangeVoucher}
+              required
+            />
+          </div>
+          <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+            Masuk
+          </button>
+          {
+            toggle_alert &&
+            <Alert variant={'danger'}>
+              Login failed. Please verify the data correct!
+            </Alert>
+          }
+        </form>
+      );
+    } else {
+      formKu = (
+        <form onSubmit={event => this.submitForm(event)}>
+          <div className="input-group mb-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Email"
+              onChange={this.onChangeEmail}
+              required
+            />
+          </div>
+          <div className="input-group mb-3">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              onChange={this.onChangePassword}
+              required
+            />
+          </div>
+          <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+            Masuk
+          </button>
+          {
+            toggle_alert &&
+            <Alert variant={'danger'}>
+              Login failed. Please verify the data correct!
+            </Alert>
+          }
+        </form>
+      );
+    }
+
     return (
       <div>
         <div
@@ -76,41 +176,14 @@ class Login extends Component {
                     alt=""
                   />
                 </div>
-                <form onSubmit={event => this.submitForm(event)}>
-                  <div className="input-group mb-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Email"
-                      onChange={this.onChangeEmail}
-                      required
-                    />
-                  </div>
-                  <div className="input-group mb-3">
-                    <input
-                      type="password"
-                      className="form-control"
-                      placeholder="Password"
-                      onChange={this.onChangePassword}
-                      required
-                    />
-                  </div>
-                  <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
-                    Masuk
-                  </button>
-                  {
-                    toggle_alert &&
-                    <Alert variant={'danger'}>
-                      Login failed. Please verify the data correct!
-                    </Alert>
-                  }
-                </form>
+                <div>{formKu}</div>
                 <p className="mb-0 mt-1">
                   <a
-                    href="auth-signin.html"
+                    href="#"
                     className="text-cc-purple f-16 f-w-600"
+                    onClick={ (!isVoucher) ? this.onClickVoucher : this.onClickEmail }
                   >
-                    Masuk dengan Voucher
+                    Masuk dengan {(!isVoucher) ? 'Voucher' : 'Email'}
                   </a>
                 </p>
               </div>

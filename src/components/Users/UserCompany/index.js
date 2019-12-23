@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import Modal from "./modal";
-
+import ModalAdd from "./modaladd";
 import axios from "axios";
 
-class UserGroup extends Component {
+class UserCompany extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      branch: [],
+      grup: [],
       isOpen: false
     };
   }
@@ -21,7 +20,7 @@ class UserGroup extends Component {
 
   componentDidMount() {
     let token = JSON.parse(localStorage.getItem("token"));
-    let link = "https://8023.development.carsworld.co.id/v1/branch";
+    let link = "https://8023.development.carsworld.co.id/v1/company";
     let header = {
       headers: {
         Authorization: token.data,
@@ -33,14 +32,14 @@ class UserGroup extends Component {
       .get(link, header)
       .then(response => {
         console.log(response.data);
-        this.setState({ branch: response.data.result });
+        this.setState({ grup: response.data.result });
       })
       .catch(function(error) {
         console.log(error);
       });
   }
   render() {
-    let { branch } = this.state;
+    let { grup } = this.state;
 
     const Item = ({ item }) => (
       <li>
@@ -50,23 +49,57 @@ class UserGroup extends Component {
             style={{ padding: "25px 30px !important" }}
           >
             <div className="row d-flex align-items-center">
-              <div className="col-6">
+              <div className="col-xl-4 col-md-12">
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
                       Company
                     </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">{item.company_name}</h5>
-                  </div>
-                  <div className="col">
-                    <small className="f-w-600 f-16 text-c-grey-t ">
-                      Cabang
-                    </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">{item.branch_name}</h5>
+                    <h5 className="f-w-bold f-20 text-c-purple3">
+                      {item.company_name}
+                    </h5>
                   </div>
                 </div>
               </div>
-              <div className="col-6 text-right">
+              <div className="col-xl-2 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-16 text-c-grey-t ">
+                      Logo
+                    </small>
+                    <img
+                      src={item.logo}
+                      className="img-icon-delete"
+                      alt="Logo"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-2 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-16 text-c-grey-t ">
+                      Validity
+                    </small>
+                    <h5 className="f-w-bold f-20 text-c-purple3">
+                      {item.validity.toString().substring(0, 10)}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-2 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-16 text-c-grey-t ">
+                      Status
+                    </small>
+                    <h5 className="f-w-bold f-20 text-c-purple3">
+                      {item.status}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
                   <a
                     href="#"
@@ -103,7 +136,7 @@ class UserGroup extends Component {
     const Lists = ({ lists }) => (
       <ul className="list-cabang">
         {lists.map(list => (
-          <Item key={list.branch_name} item={list} />
+          <Item key={list.company_id} item={list} />
         ))}
       </ul>
     );
@@ -115,15 +148,16 @@ class UserGroup extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+                  {/* [ Main Content ] start */}
                   <div className="row">
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        User Management (Cabang)
+                        User Management (Company)
                       </h3>
-                      <button
+                      <a
+                        href="#"
                         className="btn btn-ideku f-14 float-right mb-3"
                         style={{ padding: "7px 25px !important" }}
-                        type="button"
                         data-toggle="modal"
                         data-target="#modalAdd"
                       >
@@ -133,14 +167,19 @@ class UserGroup extends Component {
                           alt=""
                         />
                         Add New
-                      </button>
+                      </a>
                     </div>
                     <div className="col-xl-12">
-                      <Lists lists={branch} />
+                      <div style={{ overflowX: "auto" }}>
+                        <Lists lists={grup} />
+                      </div>
                     </div>
-                    <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+                    <ModalAdd
+                      show={this.state.isOpen}
+                      onClose={this.toggleModal}
+                    >
                       `Here's some content for the modal`
-                    </Modal>
+                    </ModalAdd>
                   </div>
                 </div>
               </div>
@@ -152,4 +191,4 @@ class UserGroup extends Component {
   }
 }
 
-export default UserGroup;
+export default UserCompany;

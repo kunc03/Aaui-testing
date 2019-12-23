@@ -419,6 +419,7 @@ class Home extends Component {
                         <div className="row">
                           <div className="col-xl-2 text-center">
                             <img
+                              alt="Gambar"
                               className="img-radius p-1"
                               style={{ width: 136, height: 136 }}
                               src="assets/images/component/Ilustrasi.png"

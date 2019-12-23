@@ -106,6 +106,17 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
+                <Link to="/company" className="nav-link">
+                  <span className="pcoded-micon">
+                    <img
+                      src="assets/images/component/Icon Forum.png"
+                      alt=""
+                    ></img>
+                  </span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Company</span>
+                </Link>
+              </li>
+              <li data-username="Sample Page" className="nav-item mt-4">
                 <Link to="/cabang" className="nav-link">
                   <span className="pcoded-micon">
                     <img
