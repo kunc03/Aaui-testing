@@ -12,6 +12,7 @@ import UserAdd from "./components/Users/User/add";
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
 import Company from "./components/Users/UserCompany/index";
+import CompanyDetail from "./components/Users/UserCompany/detail";
 import Login from "./components/Login/index";
 
 export default class App extends React.Component {
@@ -59,6 +60,7 @@ export class Main extends React.Component {
           <Route path="/user-create" component={UserAdd} />
           <Route path="/cabang" component={Cabang} />
           <Route path="/company" component={Company} />
+          <Route path="/company-detail/:company_id" component={CompanyDetail} />
           <Route path="/grup" component={Grup} />
           <Route path="/logout" component={Logout} />
         </Switch>

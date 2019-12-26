@@ -1,8 +1,61 @@
 import React, { Component } from "react";
 import { Form } from 'react-bootstrap';
+import API, { API_SERVER } from '../../../repository/api';
 
 class ModalAdd extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.onChangeNama = this.onChangeNama.bind(this);
+    this.onChangeStatus = this.onChangeStatus.bind(this);
+    this.onChangeLogo = this.onChangeLogo.bind(this);
+    this.onClickSimpan = this.onClickSimpan.bind(this);
+
+    this.state = {
+      nama: '',
+      status: '',
+      logo: ''
+    }
+  }
+
+  onClickSimpan = e => {
+    e.preventDefault();
+    const { triggerUpdate } = this.props;
+    let dateNow = new Date();
+
+    let formData = new FormData();
+    formData.append('company_name', this.state.nama);
+    formData.append('status', this.state.status);
+    formData.append('logo', this.state.logo);
+    formData.append('validity', dateNow.toISOString().split('T')[0]);
+
+    let linkURL = `${API_SERVER}v1/company`;
+    API.post(linkURL, formData).then(res => {
+      console.log(res)
+      API.get(`${linkURL}/${res.data.result.insertId}`).then(res => {
+        triggerUpdate(res.data.result);
+        this.setState({ nama: '', status: '', logo: ''});
+      });
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  onChangeNama = e => {
+    this.setState({ nama: e.target.value });
+  }
+
+  onChangeStatus = e => {
+    this.setState({ status: e.target.value });
+  }
+
+  onChangeLogo = e => {
+    this.setState({ logo: e.target.files[0] });
+  }
+
   render() {
+    const statusCompany = ['active','nonactive'];
     return (
       <div
         id="modalAdd"
@@ -30,13 +83,6 @@ class ModalAdd extends Component {
               >
                 Tambah Company
               </h5>
-              <a href="#" title="Delete" className="openDelete">
-                <img
-                  src="assets/images/component/Delete-1.png"
-                  className="img-icon-delete"
-                  alt="Delete"
-                />
-              </a>
             </div>
             <div className="modal-body">
               <Form>
@@ -47,8 +93,9 @@ class ModalAdd extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    id
                     placeholder="nama company"
+                    onChange={this.onChangeNama}
+                    value={this.state.nama}
                   />
                 </div>
                 <div className="form-group">
@@ -56,8 +103,15 @@ class ModalAdd extends Component {
                     Status Company
                   </label>
                   <br/>
-                  <Form.Check inline label="Active" type='radio' id={`inline-radio-1`} />
-                  <Form.Check inline label="Nonactive" type='radio' id={`inline-radio-2`} />
+                  <div onChange={this.onChangeStatus}>
+                    {
+                      statusCompany.map(item => {
+                        return (
+                          <Form.Check name='status' inline label={item} type='radio' value={item} />
+                        );
+                      })
+                    }
+                  </div>
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
@@ -65,6 +119,7 @@ class ModalAdd extends Component {
                   </label>
                   <input
                     type="file"
+                    onChange={this.onChangeLogo}
                     className="form-control"
                     accept="image/*"
                   />
@@ -77,15 +132,12 @@ class ModalAdd extends Component {
             >
               <button
                 type="button"
+                onClick={this.onClickSimpan}
                 className="btn btn-primary btn-block f-18 f-w-bold openalertedit"
               >
                 Simpan
               </button>
-            </div>
-            <div
-              className="modal-footer p-t-1"
-              style={{ borderTop: "0 !important" }}
-            >
+            
               <button
                 type="button"
                 className="btn btn-block bg-c-white text-c-grey3 f-18 f-w-bold"

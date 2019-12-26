@@ -71,6 +71,14 @@ body {
   outline: none;
 }
 
+.cardku {
+  margin-bottom: 10px !important;
+}
+
+.buttonku {
+  margin: 0px 2.5px !important;
+}
+
 a:hover {
   outline: none;
   text-decoration: none;
