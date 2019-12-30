@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 
 class UserEdit extends Component {
+
+  state = {
+    user: null,
+    user_id: this.props.match.params.user_id
+  }
+
   render() {
+    console.log(this.state.user_id)
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">

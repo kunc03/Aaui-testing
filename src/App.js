@@ -7,8 +7,12 @@ import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
+
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
+import UserEdit from "./components/Users/User/edit";
+import UserCompany from "./components/Users/User/company";
+
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
 import Company from "./components/Users/UserCompany/index";
@@ -54,10 +58,15 @@ export class Main extends React.Component {
         <Header />
         <Switch>
           <Route path="/" exact component={Home} />
-          <Route path="/Pengaturan" component={Pengaturan} />
-          <Route path="/Profile" component={Profile} />
+          <Route path="/pengaturan" component={Pengaturan} />
+          <Route path="/profile" component={Profile} />
+          
           <Route path="/user" component={User} />
           <Route path="/user-create" component={UserAdd} />
+          <Route path="/user-edit/:user_id" component={UserEdit} />
+          
+          <Route path="/user-company/:company_id" component={UserCompany} />
+          
           <Route path="/cabang" component={Cabang} />
           <Route path="/company" component={Company} />
           <Route path="/company-detail/:company_id" component={CompanyDetail} />

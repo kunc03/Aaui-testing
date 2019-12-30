@@ -1,19 +1,17 @@
 import React, { Component } from "react";
 import {Alert} from 'react-bootstrap';
 import API, {USER_LOGIN} from '../../repository/api';
+import axios from 'axios';
 import Storage from '../../repository/storage';
 
 class Login extends Component {
   constructor(props) {
     super(props);
-
-    this.onClickVoucher = this.onClickVoucher.bind(this);
-    this.onClickEmail = this.onClickEmail.bind(this);
   }
 
   state = {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     toggle_alert: false,
     isVoucher: false,
     voucher: ''
@@ -43,15 +41,18 @@ class Login extends Component {
 
   submitFormVoucher = e => {
     e.preventDefault();
-
     const { voucher } = this.state;
     let body = { voucher };
 
-    API.post(`${USER_LOGIN}/voucher`, body).then(res => {
+    axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
       if(res.status === 200) {
-        console.log(res.data);
+        console.log(res.data)
         if(!res.data.error) {
-          Storage.set('user', {data: { user_id: res.data.result.user_id, email: res.data.result.email }});
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
+            email: res.data.result.email, 
+            level: res.data.result.level 
+          }});
           Storage.set('token', {data: res.data.result.token});
           window.location.href = window.location.origin;
         } else {
@@ -67,15 +68,17 @@ class Login extends Component {
 
   submitForm = e => {
     e.preventDefault();
-
     const { email, password } = this.state;
     let body = { email, password }
 
-    API.post(USER_LOGIN, body).then(res => {
+    axios.post(USER_LOGIN, body).then(res => {
       if(res.status === 200){
-        console.log(res.data);
         if(!res.data.error){
-          Storage.set('user', {data: { user_id: res.data.result.user_id, email: res.data.result.email }});
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
+            email: res.data.result.email,
+            level: res.data.result.level
+          }});
           Storage.set('token', {data:res.data.result.token});
           window.location.href = window.location.origin;
         }else{
@@ -98,17 +101,18 @@ class Login extends Component {
     let formKu = null;
     if(isVoucher) {
       formKu = (
-        <form onSubmit={event => this.submitFormVoucher(event)}>
+        <form onSubmit={this.submitFormVoucher}>
           <div className="input-group mb-4">
             <input
               type="text"
+              value={this.state.voucher}
               className="form-control"
               placeholder="Voucher"
               onChange={this.onChangeVoucher}
               required
             />
           </div>
-          <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
             Masuk
           </button>
           {
@@ -121,10 +125,11 @@ class Login extends Component {
       );
     } else {
       formKu = (
-        <form onSubmit={event => this.submitForm(event)}>
+        <form onSubmit={this.submitForm}>
           <div className="input-group mb-4">
             <input
               type="text"
+              value={this.state.email}
               className="form-control"
               placeholder="Email"
               onChange={this.onChangeEmail}
@@ -134,13 +139,14 @@ class Login extends Component {
           <div className="input-group mb-3">
             <input
               type="password"
+              value={this.state.password}
               className="form-control"
               placeholder="Password"
               onChange={this.onChangePassword}
               required
             />
           </div>
-          <button className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
             Masuk
           </button>
           {
@@ -176,7 +182,7 @@ class Login extends Component {
                     alt=""
                   />
                 </div>
-                <div>{formKu}</div>
+                {formKu}
                 <p className="mb-0 mt-1">
                   <a
                     href="#"

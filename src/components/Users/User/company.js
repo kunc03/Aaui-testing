@@ -11,6 +11,7 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: '',
+      myCompanyId: this.props.match.params.company_id
     };
   }
 
@@ -36,7 +37,7 @@ export default class User extends Component {
   }
 
   componentDidMount() {
-    API.get(`${API_SERVER}v1/user`).then(response => {
+    API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
       response.data.result.map(item => {
         let temp = item;
         if(item.validity != null) {
