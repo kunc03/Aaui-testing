@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import ModalEmail from "./modalemail";
 import ModalPassword from "./modalpassword";
+import Storage from '../../repository/storage';
 
 class Pengaturan extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isOpen: false
+      isOpen: false,
+      email: Storage.get('user').data.email,
     };
   }
 
@@ -48,6 +50,8 @@ class Pengaturan extends Component {
                                   <div className="input-group">
                                     <input
                                       type="email"
+                                      disabled
+                                      value={this.state.email}
                                       className="form-control"
                                       placeholder="Masukan Email Lama Anda"
                                       aria-label="emailModel"
@@ -270,6 +274,7 @@ class Pengaturan extends Component {
                         <ModalEmail
                           show={this.state.isOpen}
                           onClose={this.toggleModal}
+                          handleClose={this.toggleModal}
                         >
                           `Here's some content for the modal`
                         </ModalEmail>

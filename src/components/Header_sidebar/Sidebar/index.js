@@ -172,7 +172,6 @@ export class MenuAdmin extends React.Component {
 
   componentDidMount() {
     API.get(`${USER_ME}${this.state.myEmail}`).then(res => {
-      console.log(res.data)
       if(res.status === 200) {
         this.setState({ myCompanyId: res.data.result.company_id });
       }
