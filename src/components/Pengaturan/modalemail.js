@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import API, { API_SERVER } from '../../repository/api';
 
 class ModalEmail extends Component {
   render() {
@@ -9,21 +10,17 @@ class ModalEmail extends Component {
         tabIndex={-1}
         role="dialog"
         aria-labelledby="emailModal"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div
             className="modal-content b-r-15"
-            style={{ padding: "30px 30px" }}
-          >
+            style={{ padding: "30px 30px" }}>
             <div
               className="modal-header p-b-0"
-              style={{ borderBottom: "0 !important" }}
-            >
+              style={{ borderBottom: "0 !important" }}>
               <h5
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
-                id="exampleModalCenterTitle"
-              >
+                id="exampleModalCenterTitle">
                 Ganti Email
               </h5>
             </div>

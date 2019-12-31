@@ -27,7 +27,7 @@ class Profile extends Component {
   }
 
   handleModalAvatarClose = e => {
-    this.setState({ isModalAvatar: false, user_data: { avatar: '' }});
+    this.setState({ isModalAvatar: false, user_data: { ...this.state.user_data, tempAvatar: '' }});
   }
 
   onClickModalAvatar = e => {

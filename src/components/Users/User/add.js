@@ -24,7 +24,9 @@ class UserAdd extends Component {
     listCompany: [],
     listBranch: [],
 
-    responseMessage: '', 
+    responseMessage: '',
+    responseEmail: '',
+    responsePhone: '' 
   };
 
   onChangeInput = (event) => {
@@ -62,8 +64,7 @@ class UserAdd extends Component {
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
       if(res.status === 200) {
-        console.log(res);
-        // return <Redirect to="/user" />;
+        this.props.history.push('/user')
       }
     })
   };

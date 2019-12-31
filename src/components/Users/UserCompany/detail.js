@@ -230,6 +230,7 @@ export default class CompanyDetail extends Component {
 
 				let linkURLUser = `${API_SERVER}v1/user/company/${this.props.match.params.company_id}`;
 				API.get(linkURLUser).then(res => {
+					console.log('companyUser: ', res.data.result)
 					if(res.status === 200) {
 						res.data.result.map(item => {
 							let temp = item;

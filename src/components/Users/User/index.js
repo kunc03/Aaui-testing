@@ -11,7 +11,14 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: '',
+      isModalPassword: false,
+      userIdPassword: '',
+      userPassword: ''
     };
+  }
+
+  handleChangeInput = e => {
+    this.setState({ userPassword: e.target.value });
   }
 
   onClickHapus = e => {
@@ -33,6 +40,25 @@ export default class User extends Component {
 
   handleModalHapus = e => {
     this.setState({ isModalHapus: false, userIdHapus: '' });
+  }
+
+  onClickModalPassword = e => {
+    e.preventDefault();
+    this.setState({ isModalPassword: true, userIdPassword: e.target.getAttribute('data-id')});
+  }
+
+  onClickSubmitPassword = e => {
+    e.preventDefault();
+    let formData = { password: this.state.userPassword };
+    API.put(`${API_SERVER}v1/user/password/${this.state.userIdPassword}`, formData).then(res => {
+      if(res.status === 200) {
+        this.setState({ isModalPassword: false, userIdPassword: '' });
+      }
+    })
+  }
+
+  handleModalPassword = e => {
+    this.setState({ isModalPassword: false, userIdPassword: '' });
   }
 
   componentDidMount() {
@@ -66,6 +92,9 @@ export default class User extends Component {
           <td>{item.phone}</td>
           <td>{item.validity}</td>
           <td class="text-center">
+            <Link to="#" className="buttonku">
+              <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
+            </Link>
             <Link to={`/user-edit/${item.user_id}`} className="buttonku">
               <i className="fa fa-edit"></i>
             </Link>
@@ -144,6 +173,26 @@ export default class User extends Component {
                               onClick={this.handleModalHapus}>
                               Tidak
                             </button>
+                          </Modal.Body>
+                        </Modal>
+                        <Modal show={this.state.isModalPassword} onHide={this.handleModalPassword}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Ubah Password</Modal.Title>
+                            <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitPassword}>
+                              <div className="form-group">
+                                <label>Password Baru</label>
+                                <input type="password" placeholder="password baru" className="form-control" name="password" onChange={this.handleChangeInput} />
+                              </div>
+                              <button style={{ marginTop: '50px'}} type="submit"
+                                className="btn btn-block btn-ideku f-w-bold">
+                                Ubah Password
+                              </button>
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleModalPassword}>
+                                Tidak
+                              </button>
+                            </form>
                           </Modal.Body>
                         </Modal>
                       </div>

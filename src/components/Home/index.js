@@ -5,18 +5,13 @@ import Storage from '../../repository/storage';
 class Home extends Component {
   constructor(props) {
     super(props);
-
-    this.onClickLogout = this.onClickLogout.bind(this);
   }
 
   state = {
-    user: ''
-  }
-
-  onClickLogout(e) {
-    e.preventDefault();
-    localStorage.clear();
-    window.location.href = window.location.origin;
+    user: {
+      name: 'Anonymous',
+      registered: '2019-12-09'
+    }
   }
 
   componentDidMount() {
@@ -47,7 +42,7 @@ class Home extends Component {
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
                       <div className="page-header-title mb-2">
-                        <h3 onClick={this.onClickLogout} className="f-w-900 ">
+                        <h3 className="f-w-900 ">
                           Selamat datang, {user.name}
                         </h3>
                         <h6 className="top mt-5 f-w-900 text-cc-grey">

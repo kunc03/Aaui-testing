@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {Alert} from 'react-bootstrap';
-import API, {USER_LOGIN} from '../../repository/api';
 import axios from 'axios';
+import API, {USER_LOGIN} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Login extends Component {
@@ -46,7 +46,6 @@ class Login extends Component {
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
       if(res.status === 200) {
-        console.log(res.data)
         if(!res.data.error) {
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
