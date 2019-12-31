@@ -20,7 +20,7 @@ class UserAdd extends Component {
     name: "",
     branch_name: "",
     nik: "",
-    grup_id: "",
+    group: "",
     email: "",
     phone: "",
     validity: ""
@@ -36,7 +36,7 @@ class UserAdd extends Component {
     this.setState({ nik: e.target.value });
   };
   onChangeGrup = e => {
-    this.setState({ grup_id: e.target.value });
+    this.setState({ group: e.target.value });
   };
   onChangeEmail = e => {
     this.setState({ email: e.target.value });
@@ -48,45 +48,83 @@ class UserAdd extends Component {
     this.setState({ validity: e.target.value });
   };
 
-  submitForm = e => {
-    e.preventDefault();
-    let token = JSON.parse(localStorage.getItem("user"));
-    let link = "http://10.1.70.137:4000/v1/auth";
+  // submitForm = e => {
+  //   e.preventDefault();
+  //   let token = JSON.parse(localStorage.getItem("user"));
+  //   let link = "http://10.1.70.137:4000/v1/auth";
+  //   let data = {
+  //     name: this.state.name,
+  //     branch_id: this.state.branch_id,
+  //     nik: this.state.nik,
+  //     group: this.state.group,
+  //     email: this.state.email,
+  //     phone: this.state.phone,
+  //     validity: this.state.validity
+  //   };
+  //   console.log(data)
+  //   let header = {
+  //     headers: {
+  //       Authorization: token.result.token,
+  //       "Content-Type": "application/json"
+  //     }
+  //   };
+
+  //   axios
+  //     .post(link, data, header)
+  //     .then(function(response) {
+  //       if (response.data.error) {
+  //         this.setState({ name: e.target.value });
+  //         this.setState({ branch_id: e.target.value });
+  //         this.setState({ nik: e.target.value });
+  //         this.setState({ group: e.target.value });
+  //         this.setState({ email: e.target.value });
+  //         this.setState({ phone: e.target.value });
+  //         this.setState({ validity: e.target.value });
+  //       } else {
+  //         return <Redirect to="/user" />;
+  //       }
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //     });
+  // };
+
+  _createUser(){
+    let token = JSON.parse(localStorage.getItem("token"));
+    let link = "https://8023.development.carsworld.co.id/v1/user";
     let data = {
+      company_id : 1,
+      branch_id : 1,
       name: this.state.name,
-      branch_id: this.state.branch_id,
-      nik: this.state.nik,
-      grup_id: this.state.grup_id,
+      identity: this.state.nik,
+      // group: this.state.group,
       email: this.state.email,
       phone: this.state.phone,
-      validity: this.state.validity
+      address : 'jakarta',
+      password : 'admin123',
+      level :'admin',
+      status : 'active'
+      //validity: this.state.validity
     };
-    let header = {
+    //console.log(data);
+
+    axios.post(link, data , {
       headers: {
-        Authorization: token.result.token,
+        Authorization: token.data,
         "Content-Type": "application/json"
       }
-    };
-
-    axios
-      .post(link, data, header)
-      .then(function(response) {
-        if (response.data.error) {
-          this.setState({ name: e.target.value });
-          this.setState({ branch_id: e.target.value });
-          this.setState({ nik: e.target.value });
-          this.setState({ grup_id: e.target.value });
-          this.setState({ email: e.target.value });
-          this.setState({ phone: e.target.value });
-          this.setState({ validity: e.target.value });
-        } else {
-          return <Redirect to="/user" />;
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  };
+    })
+    .then(res => {
+      console.log(res)
+      if(res.status === 200){
+        window.location = '/users'
+      }
+      // this.props.history.push(`/news`);	
+    }).catch(err => {
+      console.log(err)
+      //alert(err.response.data.msg)
+    })
+  }
 
   render() {
     return (
@@ -168,6 +206,7 @@ class UserAdd extends Component {
                             <button
                               type="button"
                               className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
+                              onClick={this._createUser.bind(this)}
                             >
                               Simpan
                             </button>

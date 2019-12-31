@@ -16,6 +16,7 @@ module.exports = {
     // Import Users
 	Users	        : require('./Users/User').default,
     UserAdd	        : require('./Users/User/add').default,
+    UserEdit        : require('./Users/User/Edit').default,
     UserCabang      : require('./Users/UserCabang').default,
     UserGroup       : require('./Users/UserGroup').default,
 }
