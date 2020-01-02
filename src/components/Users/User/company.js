@@ -25,7 +25,7 @@ export default class User extends Component {
     API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
       if(res.status === 200) {
         this.setState({
-          users: this.state.users.filter(item => { return item.user_id != this.state.userIdHapus }),
+          users: this.state.users.filter(item => { return item.user_id !== this.state.userIdHapus }),
           isModalHapus: false, userIdHapus: ''
         })
       }
@@ -40,7 +40,7 @@ export default class User extends Component {
     API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
       response.data.result.map(item => {
         let temp = item;
-        if(item.validity != null) {
+        if(item.validity !== null) {
           temp.validity = item.validity.toString().substring(0,10);
         }
         return temp;

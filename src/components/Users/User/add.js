@@ -1,13 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import API, { API_SERVER } from '../../../repository/api';
-import { Redirect } from 'react-router';
-import axios from "axios";
 
 class UserAdd extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     company_id: "",

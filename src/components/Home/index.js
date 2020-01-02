@@ -1,12 +1,8 @@
 import React, { Component } from "react";
-import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
+import API, {USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     user: {
       name: 'Anonymous',
@@ -18,7 +14,7 @@ class Home extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
         Object.keys(res.data.result).map((key, index) => {
-          if(key == 'registered') {
+          if(key === 'registered') {
             return res.data.result[key] = res.data.result[key].toString().substring(0,10);
           }
         });

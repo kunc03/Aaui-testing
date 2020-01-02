@@ -124,7 +124,7 @@ export class MenuSuperAdmin extends React.Component {
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/Pengaturan" className="nav-link">
+        <Link to="/pengaturan" className="nav-link">
           <span className="pcoded-micon">
             <img
               src="assets/images/component/Icon Pengaturan.png"
@@ -135,6 +135,17 @@ export class MenuSuperAdmin extends React.Component {
             ></img>
           </span>
           <span className="pcoded-mtext f-16 f-w-bold">Pengaturan</span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to="/profile" className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Forum.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">Profile</span>
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
@@ -207,7 +218,7 @@ export class MenuAdmin extends React.Component {
         <Link to="/pengaturan" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/Icon Pengaturan.png"
               alt=""
             ></img>
           </span>
@@ -238,7 +249,7 @@ export class MenuClient extends React.Component {
         <Link to="/pengaturan" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/Icon Pengaturan.png"
               alt=""
             ></img>
           </span>

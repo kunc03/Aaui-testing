@@ -18,10 +18,6 @@ class Profile extends Component {
     toggle_alert: false
   }
 
-  constructor(props){
-    super(props);
-  }
-
   componentDidMount(){
     this.fetchProfile();
   }
@@ -90,7 +86,7 @@ class Profile extends Component {
   }
 
   handleChange = (e) => {
-    if(e.target.name == 'avatar') {
+    if(e.target.name === 'avatar') {
       this.setState({ user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] } });
     } else {
       this.setState({
@@ -119,19 +115,18 @@ class Profile extends Component {
                         <div className="card-block">
                           <div className="text-center mt-5 mb-5">
                             <img
+                              alt=""
                               src={this.state.user_data.avatar}
-                              alt
                               className="rounded-circle img-profile mb-4"
                             />
                             <br />
-                            <a
-                              href="#"
+                            <button
                               onClick={this.onClickModalAvatar}
                               className="btn btn-ideku f-16 f-w-bold"
                               style={{ width: 180, padding: "15px 0" }}
                             >
                               Ganti
-                            </a>
+                            </button>
                           </div>
                           <Modal show={this.state.isModalAvatar} onHide={this.handleModalAvatarClose}>
                             <Modal.Body>

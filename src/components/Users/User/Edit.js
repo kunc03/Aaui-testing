@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router-dom';
 import API, { API_SERVER } from '../../../repository/api';
 
 class UserEdit extends Component {
@@ -115,7 +114,7 @@ class UserEdit extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   this.state.listCompany.map(item => (
-                                    <option value={item.company_id} selected={(item.company_id == this.state.user.company_id) ? 'selected': ''}>{item.company_name}</option>
+                                    <option value={item.company_id} selected={(item.company_id === this.state.user.company_id) ? 'selected': ''}>{item.company_name}</option>
                                   ))
                                 }
                               </select>
@@ -126,7 +125,7 @@ class UserEdit extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   this.state.listBranch.map(item => (
-                                    <option value={item.branch_id} selected={(item.branch_id == this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
+                                    <option value={item.branch_id} selected={(item.branch_id === this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
                                   ))
                                 }
                               </select>
@@ -191,7 +190,7 @@ class UserEdit extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
-                                    <option value={item.level} selected={(item.level == this.state.user.level) ? 'selected': ''}>{item.level}</option>
+                                    <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected': ''}>{item.level}</option>
                                   ))
                                 }
                               </select>

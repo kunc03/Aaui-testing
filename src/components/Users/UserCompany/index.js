@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { Form } from 'react-bootstrap';
 import ModalAdd from "./modaladd";
 import { Link } from "react-router-dom";
 

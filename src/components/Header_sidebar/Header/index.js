@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, {USER_LOGIN,USER_ME} from '../../../repository/api';
+import API, {USER_ME} from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
 class Header extends Component {

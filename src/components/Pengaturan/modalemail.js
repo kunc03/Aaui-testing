@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class ModalEmail extends Component {

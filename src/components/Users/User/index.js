@@ -31,7 +31,7 @@ export default class User extends Component {
     API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
       if(res.status === 200) {
         this.setState({
-          users: this.state.users.filter(item => { return item.user_id != this.state.userIdHapus }),
+          users: this.state.users.filter(item => { return item.user_id !== this.state.userIdHapus }),
           isModalHapus: false, userIdHapus: ''
         })
       }
