@@ -13,6 +13,8 @@ import UserAdd from "./components/Users/User/add";
 import UserEdit from "./components/Users/User/edit";
 import UserCompany from "./components/Users/User/company";
 
+import UserAccess from "./components/Users/Access/index";
+
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
 import Company from "./components/Users/UserCompany/index";
@@ -65,6 +67,7 @@ export class Main extends React.Component {
           <Route path="/user-create" component={UserAdd} />
           <Route path="/user-edit/:user_id" component={UserEdit} />
           
+          <Route path="/user-access" component={UserAccess} />
           <Route path="/user-company/:company_id" component={UserCompany} />
           
           <Route path="/cabang" component={Cabang} />

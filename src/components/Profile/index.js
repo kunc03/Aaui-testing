@@ -7,6 +7,12 @@ class Profile extends Component {
   state = {
     user_data: {
       user_id: Storage.get('user').data.user_id,
+      company_id: '',
+      branch_id: '',
+      level: '',
+      status: '',
+      email: '',
+      
       name: '',
       identity: '',
       address: '',
@@ -56,6 +62,11 @@ class Profile extends Component {
             user_data: {
               ...this.state.user_data,
               avatar: res.data.result.avatar,
+              company_id: res.data.result.company_id,
+              branch_id: res.data.result.branch_id,
+              level: res.data.result.level,
+              status: res.data.result.status,
+              email: res.data.result.email,
               name: res.data.result.name,
               identity: res.data.result.identity,
               address: res.data.result.address,
@@ -70,8 +81,8 @@ class Profile extends Component {
   updateProfile = (e) => {
     e.preventDefault();
     const {user_data} = this.state;
-    API.put(`${USER}/${user_data.user_id}`, user_data)
-      .then(res=> {
+    API.put(`${USER}/${user_data.user_id}`, user_data).then(res=> {
+      console.log(res.data)
         if(res.status === 200){
           if(!res.data.error){
             this.setState({

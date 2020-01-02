@@ -337,7 +337,7 @@ export default class CompanyDetail extends Component {
 		}
 
 		const ListUser = ({items}) => {
-			if(items.length == 0) {
+			if(items.length === 0) {
 				return (
 					<tbody>
 						<tr>
@@ -360,8 +360,7 @@ export default class CompanyDetail extends Component {
 		            <td>{item.phone}</td>
 		            <td>{item.validity}</td>
 		            <td className="text-center">
-		              <Link className="buttonku" to="/"><i className="fa fa-edit"></i></Link>
-		      				<Link className="buttonku" to="/"><i className="fa fa-trash"></i></Link>
+		              
 		            </td>
 		          </tr>
 						))
@@ -495,7 +494,7 @@ export default class CompanyDetail extends Component {
                             <th>Nama</th>
                             <th>Identitas</th>
                             <th>Cabang</th>
-                            <th>Group</th>
+                            <th>Level</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Validity</th>
