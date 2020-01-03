@@ -1,6 +1,9 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 
+import API, { API_SERVER } from './repository/api';
+import Storage from './repository/storage';
+
 import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
 import Loader from "./components/Header_sidebar/Loader";
@@ -52,30 +55,26 @@ export default class App extends React.Component {
 }
 
 export class Main extends React.Component {
+  state = {
+    level: Storage.get('user').data.level
+  }
+
   render() {
+    let workSpaceSwitch = null;
+    if(this.state.level === 'superadmin') {
+      workSpaceSwitch = <SuperAdminSwitch />;
+    } else if(this.state.level === 'admin') {
+      workSpaceSwitch = <AdminSwitch />;
+    } else {
+      workSpaceSwitch = <ClientSwitch />;
+    }
+
     return (
       <div>
         <Loader />
         <Sidebar />
         <Header />
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/pengaturan" component={Pengaturan} />
-          <Route path="/profile" component={Profile} />
-          
-          <Route path="/user" component={User} />
-          <Route path="/user-create" component={UserAdd} />
-          <Route path="/user-edit/:user_id" component={UserEdit} />
-          
-          <Route path="/user-access" component={UserAccess} />
-          <Route path="/user-company/:company_id" component={UserCompany} />
-          
-          <Route path="/cabang" component={Cabang} />
-          <Route path="/company" component={Company} />
-          <Route path="/company-detail/:company_id" component={CompanyDetail} />
-          <Route path="/grup" component={Grup} />
-          <Route path="/logout" component={Logout} />
-        </Switch>
+        {workSpaceSwitch}
       </div>
     );
   }
@@ -99,5 +98,72 @@ export class Logout extends React.Component {
 
   render() {
     return <div></div>;
+  }
+}
+
+export class SuperAdminSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/profile" component={Profile} />
+
+        <Route path="/user" component={User} />
+        <Route path="/user-create" component={UserAdd} />
+        <Route path="/user-edit/:user_id" component={UserEdit} />
+        
+        <Route path="/user-access" component={UserAccess} />
+        <Route path="/user-company/:company_id" component={UserCompany} />
+        
+        <Route path="/cabang" component={Cabang} />
+        <Route path="/company" component={Company} />
+        <Route path="/company-detail/:company_id" component={CompanyDetail} />
+        <Route path="/grup" component={Grup} />
+
+        <Route path="/logout" component={Logout} />
+      </Switch>
+    );
+  }
+}
+
+export class AdminSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/profile" component={Profile} />
+
+        <Route path="/user" component={User} />
+        <Route path="/user-create" component={UserAdd} />
+        <Route path="/user-edit/:user_id" component={UserEdit} />
+
+        <Route path="/user-access" component={UserAccess} />
+        <Route path="/user-company/:company_id" component={UserCompany} />
+        
+        <Route path="/cabang" component={Cabang} />
+        <Route path="/company" component={Company} />
+        <Route path="/company-detail/:company_id" component={CompanyDetail} />
+        <Route path="/grup" component={Grup} />
+
+        <Route path="/logout" component={Logout} />
+      </Switch>
+    );
+  }
+}
+
+export class ClientSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+
+        <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/profile" component={Profile} />
+        
+        <Route path="/logout" component={Logout} />
+      </Switch>
+    );
   }
 }

@@ -9,8 +9,22 @@ export default class UserAccess extends Component {
 		access: [],
 		users: [],
 
-		user_id: '',
 		userAccess: ['user','branch','category','activities','course','enroll_course','quiz','exam','forum','class'],
+
+		userId: '',
+		userNama: '',
+		
+		user_id: '',
+		access_user: '',
+		access_branch: '',
+		access_category: '',
+		access_activities: '',
+		access_course: '',
+		access_enroll_course: '',
+		access_quiz: '',
+		access_exam: '',
+		access_forum: '',
+		access_class: '',
 
 		isModalTambah: false,
 
@@ -22,18 +36,16 @@ export default class UserAccess extends Component {
 	}
 
 	componentDidMount() {
+		this.fetchData();
+	}
+
+	fetchData() {
 		API.get(`${API_SERVER}v1/access`).then(res => {
-			console.log(res.data.result)
 			if(res.status === 200) {
 				this.setState({ access: res.data.result})
 			}
 		})
-	}
 
-	onClickTambah = e => {
-		e.preventDefault();
-		console.log('tambah')
-		this.setState({ isModalTambah: true })
 		API.get(`${API_SERVER}v1/access/user`).then(res => {
 			if(res.status === 200) {
 				this.setState({ users: res.data.result })
@@ -41,24 +53,138 @@ export default class UserAccess extends Component {
 		})
 	}
 
+	handleChangeInput = e => {
+		const name = e.target.name;
+		const value = e.target.value;
+		const checked = e.target.checked;
+
+		if(name === 'user_id') {
+			this.setState({ [name]: value });
+		} else {
+			this.setState({ [name]: (checked) ? 'Y' : '' })
+		}
+	}
+
+	onClickTambah = e => {
+		e.preventDefault();
+		this.setState({ isModalTambah: true })
+		this.fetchData();
+	}
+
+	onClickTambahAkses = e => {
+		e.preventDefault();
+		let formData = {
+			user_id: this.state.user_id,
+			access_user: this.state.access_user,
+			access_branch: this.state.access_branch,
+			access_category: this.state.access_category,
+			access_activities: this.state.access_activities,
+			access_course: this.state.access_course,
+			access_enroll_course: this.state.access_enroll_course,
+			access_quiz: this.state.access_quiz,
+			access_exam: this.state.access_exam,
+			access_forum: this.state.access_forum,
+			access_class: this.state.access_class
+		};
+
+		API.post(`${API_SERVER}v1/access`, formData).then(res => {
+			if(res.status === 200) {
+				this.fetchData();
+				this.handleModalTambah();
+			}
+		})
+	}
+
 	onClickUbah = e => {
 		e.preventDefault();
-		console.log('ubah')
-		this.setState({ isModalUbah: true })
+		const userId = e.target.getAttribute('data-id');
+		const userNama = e.target.getAttribute('data-nama');
+		API.get(`${API_SERVER}v1/access/id/${userId}`).then(res => {
+			if(res.status === 200) {
+				this.setState({ isModalUbah: true, userId: userId, userNama: userNama,
+					access_user: res.data.result.access_user,
+					access_branch: res.data.result.access_branch,
+					access_category: res.data.result.access_category,
+					access_activities: res.data.result.access_activities,
+					access_course: res.data.result.access_course,
+					access_enroll_course: res.data.result.access_enroll_course,
+					access_quiz: res.data.result.access_quiz,
+					access_exam: res.data.result.access_exam,
+					access_forum: res.data.result.access_forum,
+					access_class: res.data.result.access_class,
+				});
+			}
+		})
+	}
+
+	onClickUbahAkses = e => {
+		e.preventDefault();
+		let formData = {
+			user_id: this.state.userId,
+			access_user: this.state.access_user,
+			access_branch: this.state.access_branch,
+			access_category: this.state.access_category,
+			access_activities: this.state.access_activities,
+			access_course: this.state.access_course,
+			access_enroll_course: this.state.access_enroll_course,
+			access_quiz: this.state.access_quiz,
+			access_exam: this.state.access_exam,
+			access_forum: this.state.access_forum,
+			access_class: this.state.access_class
+		};
+
+		API.put(`${API_SERVER}v1/access/id/${this.state.userId}`, formData).then(res => {
+			if(res.status === 200) {
+				this.fetchData();
+				this.handleModalUbah();
+			}
+		})
 	}
 
 	onClickHapus = e => {
 		e.preventDefault();
-		console.log('hapus')
-		this.setState({ isModalHapus: true })
+		const userId = e.target.getAttribute('data-id');
+		this.setState({ isModalHapus: true, userId: userId })
+	}
+
+	onClickHapusAkses = e => {
+		e.preventDefault();
+		API.delete(`${API_SERVER}v1/access/id/${this.state.userId}`).then(res => {
+			if(res.status === 200) {
+				this.fetchData();
+				this.handleModalHapus();
+			}
+		})
 	}
 
 	handleModalTambah = e => {
-		this.setState({ isModalTambah: false });
+		this.setState({ isModalTambah: false,
+			access_user: '',
+			access_branch: '',
+			access_category: '',
+			access_activities: '',
+			access_course: '',
+			access_enroll_course: '',
+			access_quiz: '',
+			access_exam: '',
+			access_forum: '',
+			access_class: ''
+		});
 	}
 
 	handleModalUbah = e => {
-		this.setState({ isModalUbah: false });
+		this.setState({ isModalUbah: false,
+			access_user: '',
+			access_branch: '',
+			access_category: '',
+			access_activities: '',
+			access_course: '',
+			access_enroll_course: '',
+			access_quiz: '',
+			access_exam: '',
+			access_forum: '',
+			access_class: ''
+		});
 	}
 
 	handleModalHapus = e => {
@@ -67,8 +193,6 @@ export default class UserAccess extends Component {
 
 	render() {
 		const { access, users, userAccess } = this.state;
-
-		console.log('state: ',this.state)
 
 		const ListAccess = ({items}) => {
 			if(items.length === 0) {
@@ -90,16 +214,16 @@ export default class UserAccess extends Component {
 									<td><i className={(item.access_user === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_branch === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_category === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
-									<td><i className={(item.access_activities === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
+									<td><i className={(item.access_activities === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_course === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
-									<td><i className={(item.access_enroll_course === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
+									<td><i className={(item.access_enroll_course === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_quiz === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_exam === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td><i className={(item.access_forum === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
-									<td><i className={(item.access_class === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
+									<td><i className={(item.access_class === 'Y') ? 'fa fa-check':'fa fa-ban'}></i></td>
 									<td>
 										<Link to="#" className="buttonku">
-	          					<i onClick={this.onClickUbah} data-action="update" data-id={item.access_id} className="fa fa-edit"></i>
+	          					<i onClick={this.onClickUbah} data-id={item.access_id} data-nama={item.name} className="fa fa-edit"></i>
           					</Link>
 	          				<Link to="#" className="buttonku">
 	          					<i onClick={this.onClickHapus} data-id={item.access_id} className="fa fa-trash"></i>
@@ -167,7 +291,7 @@ export default class UserAccess extends Component {
 	                        <Modal.Title className="text-c-purple3 f-w-bold">Tambah Akses User</Modal.Title>
 	                        <div style={{marginTop: '20px'}} className="form-group">
 	                        	<label>Nama User</label>
-	                        	<select name="user_id" className="form-control">
+	                        	<select name="user_id" className="form-control" onChange={this.handleChangeInput}>
 	                        		<option value="">-- pilih --</option>
 	                        		{
 	                        			users.map(item => (
@@ -182,7 +306,7 @@ export default class UserAccess extends Component {
 	                        	{
 	                        		userAccess.map(item => (
 	                        			<div className="pretty p-default p-round p-thick m-b-35">
-			                            <input type="checkbox" />
+			                            <input onChange={this.handleChangeInput} value="Y" name={`access_${item}`} type="checkbox" />
 			                            <div className="state p-success-o">
 			                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
 			                                <small className="f-w-bold f-18 text-c-black small-text">
@@ -195,6 +319,7 @@ export default class UserAccess extends Component {
 	                        	}
                           </div>
 	                        <button style={{ marginTop: '50px'}} type="button"
+	                        	onClick={this.onClickTambahAkses}
 	                          className="btn btn-block btn-ideku f-w-bold">
 	                          Simpan
 	                        </button>
@@ -211,14 +336,7 @@ export default class UserAccess extends Component {
 	                        <Modal.Title className="text-c-purple3 f-w-bold">Ubah Akses User</Modal.Title>
 	                        <div style={{marginTop: '20px'}} className="form-group">
 	                        	<label>Nama User</label>
-	                        	<select name="user_id" className="form-control">
-	                        		<option value="">-- pilih --</option>
-	                        		{
-	                        			users.map(item => (
-	                        				<option key={item.user_id} value={item.user_id}>{item.name}</option>
-	                        			))
-	                        		}
-	                        	</select>
+	                        	<input type="text" disabled className="form-control" value={this.state.userNama} />
 	                        </div>
 	                        <div className="form-group">
 	                        	<label>Akses User</label>
@@ -226,7 +344,7 @@ export default class UserAccess extends Component {
 	                        	{
 	                        		userAccess.map(item => (
 	                        			<div className="pretty p-default p-round p-thick m-b-35">
-			                            <input type="checkbox" />
+			                            <input checked={(this.state[`access_${item}`] === 'Y')} onChange={this.handleChangeInput} type="checkbox" name={`access_${item}`} />
 			                            <div className="state p-success-o">
 			                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
 			                                <small className="f-w-bold f-18 text-c-black small-text">
@@ -239,6 +357,7 @@ export default class UserAccess extends Component {
 	                        	}
                           </div>
 	                        <button style={{ marginTop: '50px'}} type="button"
+	                        	onClick={this.onClickUbahAkses}
 	                          className="btn btn-block btn-ideku f-w-bold">
 	                          Simpan
 	                        </button>
@@ -257,6 +376,7 @@ export default class UserAccess extends Component {
 	                        	<p className="f-w-bold">Apakah Anda yakin untuk menghapus akses user ini ?</p>
 	                        </div>
 	                        <button style={{ marginTop: '50px'}} type="button"
+	                        	onClick={this.onClickHapusAkses}
 	                          className="btn btn-block btn-ideku f-w-bold">
 	                          Ya, Hapus
 	                        </button>
