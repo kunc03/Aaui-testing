@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 export default class User extends Component {
   constructor(props) {
@@ -11,7 +12,10 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: '',
-      myCompanyId: this.props.match.params.company_id
+      myCompanyId: this.props.match.params.company_id,
+
+      isModalPassword: '',
+      userIdPassword: ''
     };
   }
 
@@ -24,10 +28,8 @@ export default class User extends Component {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
       if(res.status === 200) {
-        this.setState({
-          users: this.state.users.filter(item => { return item.user_id !== this.state.userIdHapus }),
-          isModalHapus: false, userIdHapus: ''
-        })
+        this.fetchData();
+        this.handleModalHapus();
       }
     })
   }
@@ -36,29 +38,59 @@ export default class User extends Component {
     this.setState({ isModalHapus: false, userIdHapus: '' });
   }
 
-  componentDidMount() {
-    API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
-      response.data.result.map(item => {
-        let temp = item;
-        if(item.validity !== null) {
-          temp.validity = item.validity.toString().substring(0,10);
-        }
-        return temp;
-      });
-      this.setState({ users: response.data.result });
+
+  onClickModalPassword = e => {
+    e.preventDefault();
+    this.setState({ isModalPassword: true, userIdPassword: e.target.getAttribute('data-id')});
+  }
+
+  onClickSubmitPassword = e => {
+    e.preventDefault();
+    let formData = { password: this.state.userPassword };
+    API.put(`${API_SERVER}v1/user/password/${this.state.userIdPassword}`, formData).then(res => {
+      if(res.status === 200) {
+        this.setState({ isModalPassword: false, userIdPassword: '' });
+      }
     })
-    .catch(function(error) {
-      console.log(error);
+  }
+
+  handleModalPassword = e => {
+    this.setState({ isModalPassword: false, userIdPassword: '' });
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ myCompanyId: res.data.result.company_id});
+
+        API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
+          response.data.result.map(item => {
+            let temp = item;
+            if(item.validity !== null) {
+              temp.validity = item.validity.toString().substring(0,10);
+            }
+            return temp;
+          });
+          this.setState({ users: response.data.result });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      }
     });
   }
 
   render() {
     let { users } = this.state;
 
-    const Item = ({ item }) => {
+    const Item = ({ item, nomor }) => {
       return (
         <tr>
-          <td>{item.user_id}</td>
+          <td>{nomor}</td>
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
@@ -67,7 +99,10 @@ export default class User extends Component {
           <td>{item.phone}</td>
           <td>{item.validity}</td>
           <td class="text-center">
-            <Link to={`/user-edit/${item.user_id}`} className="buttonku">
+            <Link to="#" className="buttonku">
+              <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
+            </Link>
+            <Link to={`/user-company-edit/${item.user_id}`} className="buttonku">
               <i className="fa fa-edit"></i>
             </Link>
             <Link to="#" className="buttonku">
@@ -80,8 +115,8 @@ export default class User extends Component {
 
     const Lists = ({ lists }) => (
       <tbody>
-        {lists.map(list => (
-          <Item key={list.user_id} item={list} />
+        {lists.map((list, i) => (
+          <Item key={list.user_id} item={list} nomor={i+1} />
         ))}
       </tbody>
     );
@@ -114,7 +149,7 @@ export default class User extends Component {
                               <th>Validity</th>
                               <th className="text-center">
                                 <Link
-                                  to={"/user-create"}
+                                  to={"/user-company-create"}
                                   className="btn btn-ideku col-12 f-14"
                                   style={{ padding: "7px 8px !important" }}
                                 >
@@ -130,6 +165,7 @@ export default class User extends Component {
                           </thead>
                           <Lists lists={users} />
                         </table>
+
                         <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
                           <Modal.Body>
                             <Modal.Title className="text-c-purple3 f-w-bold">Hapus User</Modal.Title>
@@ -147,6 +183,28 @@ export default class User extends Component {
                             </button>
                           </Modal.Body>
                         </Modal>
+
+                        <Modal show={this.state.isModalPassword} onHide={this.handleModalPassword}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Ubah Password</Modal.Title>
+                            <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitPassword}>
+                              <div className="form-group">
+                                <label>Password Baru</label>
+                                <input type="password" placeholder="password baru" className="form-control" name="password" onChange={this.handleChangeInput} />
+                              </div>
+                              <button style={{ marginTop: '50px'}} type="submit"
+                                className="btn btn-block btn-ideku f-w-bold">
+                                Ubah Password
+                              </button>
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleModalPassword}>
+                                Tidak
+                              </button>
+                            </form>
+                          </Modal.Body>
+                        </Modal>
+
                       </div>
                     </div>
                   </div>

@@ -187,24 +187,35 @@ export class MenuSuperAdmin extends React.Component {
 }
 
 export class MenuAdmin extends React.Component {
-  state = {
-    myEmail: Storage.get('user').data.email,
-    myCompanyId: ''
-  }
-
-  componentDidMount() {
-    API.get(`${USER_ME}${this.state.myEmail}`).then(res => {
-      if(res.status === 200) {
-        this.setState({ myCompanyId: res.data.result.company_id });
-      }
-    })
-  }
-
   render() {
     return (
       <>
+      <li data-username="Sample Page" className="nav-item active mt-4">
+        <Link to="/" className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Kursus.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">
+            Dashboard
+          </span>
+        </Link>
+      </li>
       <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to={`/user-company/${this.state.myCompanyId}`} className="nav-link">
+        <Link to={`/my-company`} className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Forum.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">My Company</span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to={`/user-company`} className="nav-link">
           <span className="pcoded-micon">
             <img
               src="assets/images/component/Icon Forum.png"
@@ -212,6 +223,17 @@ export class MenuAdmin extends React.Component {
             ></img>
           </span>
           <span className="pcoded-mtext f-16 f-w-bold">Users</span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to={`/user-access`} className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Forum.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">Access</span>
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
@@ -245,6 +267,19 @@ export class MenuClient extends React.Component {
   render() {
     return (
       <>
+      <li data-username="Sample Page" className="nav-item active mt-4">
+        <Link to="/" className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Kursus.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">
+            Dashboard
+          </span>
+        </Link>
+      </li>
       <li data-username="Sample Page" className="nav-item mt-4">
         <Link to="/profile" className="nav-link">
           <span className="pcoded-micon">

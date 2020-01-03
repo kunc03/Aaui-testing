@@ -12,6 +12,7 @@ class Home extends Component {
 
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      console.log('response: ',res.data)
       if(res.status === 200) {
         Object.keys(res.data.result).map((key, index) => {
           if(key === 'registered') {

@@ -14,8 +14,10 @@ import Profile from "./components/Profile/index";
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
 import UserEdit from "./components/Users/User/edit";
-import UserCompany from "./components/Users/User/company";
 
+import UserCompany from "./components/Users/User/company";
+import UserCompanyAdd from "./components/Users/User/companyadd";
+import UserCompanyEdit from "./components/Users/User/companyedit";
 import UserAccess from "./components/Users/Access/index";
 
 import Cabang from "./components/Users/UserCabang/index";
@@ -139,12 +141,14 @@ export class AdminSwitch extends React.Component {
         <Route path="/user-create" component={UserAdd} />
         <Route path="/user-edit/:user_id" component={UserEdit} />
 
+        <Route path="/user-company" component={UserCompany} />
+        <Route path="/user-company-create" component={UserCompanyAdd} />
+        <Route path="/user-company-edit/:user_id" component={UserCompanyEdit} />
         <Route path="/user-access" component={UserAccess} />
-        <Route path="/user-company/:company_id" component={UserCompany} />
+        <Route path="/my-company" component={CompanyDetail} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
-        <Route path="/company-detail/:company_id" component={CompanyDetail} />
         <Route path="/grup" component={Grup} />
 
         <Route path="/logout" component={Logout} />

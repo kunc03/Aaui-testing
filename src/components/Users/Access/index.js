@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 export default class UserAccess extends Component {
 
 	state = {
+		companyId: '',
 		access: [],
 		users: [],
 
@@ -40,17 +42,23 @@ export default class UserAccess extends Component {
 	}
 
 	fetchData() {
-		API.get(`${API_SERVER}v1/access`).then(res => {
-			if(res.status === 200) {
-				this.setState({ access: res.data.result})
-			}
-		})
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+				this.setState({ companyId: res.data.result.company_id });
 
-		API.get(`${API_SERVER}v1/access/user`).then(res => {
-			if(res.status === 200) {
-				this.setState({ users: res.data.result })
-			}
-		})
+        API.get(`${API_SERVER}v1/access/company/${this.state.companyId}`).then(res => {
+					if(res.status === 200) {
+						this.setState({ access: res.data.result });
+					}
+				})
+
+				API.get(`${API_SERVER}v1/access/user/${this.state.companyId}`).then(res => {
+					if(res.status === 200) {
+						this.setState({ users: res.data.result })
+					}
+				})
+      }
+    })
 	}
 
 	handleChangeInput = e => {

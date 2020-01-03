@@ -78,12 +78,6 @@ class UserEdit extends Component {
           address: res.data.result.address,
           level: res.data.result.level
         });
-        
-        API.get(`${API_SERVER}v1/company`).then(res => {
-          if(res.status === 200) {
-            this.setState({ listCompany: res.data.result })
-          }
-        })
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
           if(res.status === 200) {
@@ -113,17 +107,6 @@ class UserEdit extends Component {
                       <div className="card">
                         <div className="card-block">
                           <form onSubmit={this.onSubmitEditUser}>
-                            <div className="form-group">
-                              <label className="label-input">Company</label>
-                              <select required className="form-control" name="company_id" onChange={this.onChangeInput}>
-                                <option value="">-- pilih --</option>
-                                {
-                                  this.state.listCompany.map(item => (
-                                    <option value={item.company_id} selected={(item.company_id === this.state.user.company_id) ? 'selected': ''}>{item.company_name}</option>
-                                  ))
-                                }
-                              </select>
-                            </div>
                             <div className="form-group">
                               <label className="label-input">Cabang</label>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>

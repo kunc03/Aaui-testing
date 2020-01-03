@@ -4,7 +4,8 @@ import {
 	Form, Card, Col, Row, ButtonGroup, Button, Image, 
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 export default class CompanyDetail extends Component {
 
@@ -12,6 +13,7 @@ export default class CompanyDetail extends Component {
 		super(props);
 
 		this.state = {
+			companyId: '',
 			nama: '',
 			status: '',
 			validity: '',
@@ -45,13 +47,13 @@ export default class CompanyDetail extends Component {
 
   onClickUpdate = e => {
   	const formData = {
-  		company_id: this.props.match.params.company_id,
+  		company_id: this.state.companyId,
   		name: this.state.nama,
   		status: this.state.status,
   		validity: this.state.validity,
   	};
 
-  	const linkURL = `${API_SERVER}v1/company/${this.props.match.params.company_id}`;
+  	const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
   	API.put(linkURL, formData).then(res => {
   		if(res.status === 200) {
   			this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
@@ -62,7 +64,7 @@ export default class CompanyDetail extends Component {
   		const formLogo = new FormData();
   		formLogo.append('logo', this.state.tempLogo);
 
-  		const linkURLLogo = `${API_SERVER}v1/company/logo/${this.props.match.params.company_id}`;
+  		const linkURLLogo = `${API_SERVER}v1/company/logo/${this.state.companyId}`;
   		API.put(linkURLLogo, formLogo).then(res => {
   			if(res.status === 200) {
   				this.setState({ logo: res.data.result });
@@ -83,7 +85,7 @@ export default class CompanyDetail extends Component {
   onClickTambahCabang = e => {
   	e.preventDefault();
   	const formData = {
-  		company_id: this.props.match.params.company_id,
+  		company_id: this.state.companyId,
   		branch_name: this.state.namacabang
   	}
 
@@ -102,7 +104,7 @@ export default class CompanyDetail extends Component {
 	  	const idNya = this.state.actioncabang.split('_')[1];
 	  	API.put(`${API_SERVER}v1/branch/${idNya}`, formData).then(res => {
 	  		if(res.status === 200) {
-	  			let linkURLCabang = `${API_SERVER}v1/branch/company/${this.props.match.params.company_id}`;
+	  			let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 					API.get(linkURLCabang).then(res => {
 						if(res.status === 200) {
 							this.setState({ cabang: res.data.result, isModalCabang: false })
@@ -122,7 +124,7 @@ export default class CompanyDetail extends Component {
   onClickTambahGrup = e => {
   	e.preventDefault();
   	const formData = {
-  		company_id: this.props.match.params.company_id,
+  		company_id: this.state.companyId,
   		grup_name: this.state.namagrup
   	}
 
@@ -143,7 +145,7 @@ export default class CompanyDetail extends Component {
   		const idNya = this.state.actiongrup.split('_')[1];
 	  	API.put(`${API_SERVER}v1/grup/${idNya}`, formData).then(res => {
 	  		if(res.status === 200) {
-	  			let linkURLGrup = `${API_SERVER}v1/grup/company/${this.props.match.params.company_id}`;
+	  			let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
 					API.get(linkURLGrup).then(res => {
 						if(res.status === 200) {
 							this.setState({ grup: res.data.result, isModalGrup: false })
@@ -200,53 +202,59 @@ export default class CompanyDetail extends Component {
   }
 
 	componentDidMount() {
-		let linkURL = `${API_SERVER}v1/company/${this.props.match.params.company_id}`;
-		API.get(linkURL).then(res => {
-			if(res.status === 200) {
-				this.setState({ 
-					nama: res.data.result.company_name, 
-					status: res.data.result.status, 
-					validity: res.data.result.validity.substring(0,10),
-					logo: res.data.result.logo 
-				});
+		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+				this.setState({ companyId: res.data.result.company_id });
 
-				let linkURLCabang = `${API_SERVER}v1/branch/company/${this.props.match.params.company_id}`;
-				API.get(linkURLCabang).then(res => {
+				let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
+				API.get(linkURL).then(res => {
 					if(res.status === 200) {
-						this.setState({ cabang: res.data.result })
-					}
-				}).catch(err => {
-					console.log(err);
-				});
+						this.setState({ 
+							nama: res.data.result.company_name, 
+							status: res.data.result.status, 
+							validity: res.data.result.validity.substring(0,10),
+							logo: res.data.result.logo 
+						});
 
-				let linkURLGrup = `${API_SERVER}v1/grup/company/${this.props.match.params.company_id}`;
-				API.get(linkURLGrup).then(res => {
-					if(res.status === 200) {
-						this.setState({ grup: res.data.result })
-					}
-				}).catch(err => {
-					console.log(err);
-				});
-
-				let linkURLUser = `${API_SERVER}v1/user/company/${this.props.match.params.company_id}`;
-				API.get(linkURLUser).then(res => {
-					console.log('companyUser: ', res.data.result)
-					if(res.status === 200) {
-						res.data.result.map(item => {
-							let temp = item;
-							if(temp.validity != null ) {
-								temp.validity = item.validity.toString().substring(0,10);
-								return temp;
+						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
+						API.get(linkURLCabang).then(res => {
+							if(res.status === 200) {
+								this.setState({ cabang: res.data.result })
 							}
-						})
-						this.setState({ user: res.data.result })
+						}).catch(err => {
+							console.log(err);
+						});
+
+						let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
+						API.get(linkURLGrup).then(res => {
+							if(res.status === 200) {
+								this.setState({ grup: res.data.result })
+							}
+						}).catch(err => {
+							console.log(err);
+						});
+
+						let linkURLUser = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+						API.get(linkURLUser).then(res => {
+							console.log('companyUser: ', res.data.result)
+							if(res.status === 200) {
+								res.data.result.map(item => {
+									let temp = item;
+									if(temp.validity != null ) {
+										temp.validity = item.validity.toString().substring(0,10);
+										return temp;
+									}
+								})
+								this.setState({ user: res.data.result })
+							}
+						}).catch(err => {
+							console.log(err);
+						});
 					}
 				}).catch(err => {
 					console.log(err);
-				});
+				})
 			}
-		}).catch(err => {
-			console.log(err);
 		})
 	}
 
@@ -360,7 +368,9 @@ export default class CompanyDetail extends Component {
 		            <td>{item.phone}</td>
 		            <td>{item.validity}</td>
 		            <td className="text-center">
-		              
+		              <Link to={`/user-company-edit/${item.user_id}`} className="buttonku">
+			              <i className="fa fa-edit"></i>
+			            </Link>
 		            </td>
 		          </tr>
 						))
@@ -432,7 +442,7 @@ export default class CompanyDetail extends Component {
 		                      <ListCabang items={cabang} />
 		                      <Modal show={this.state.isModalCabang} onHide={this.handleCloseCabang}>
 			                      <Modal.Body>
-			                        <Modal.Title className="text-c-purple3 f-w-bold">Tambah Cabang Baru</Modal.Title>
+			                        <Modal.Title className="text-c-purple3 f-w-bold">Form Cabang</Modal.Title>
 			                        <div style={{marginTop: '20px'}} className="form-group">
 			                        	<label>Cabang Baru</label>
 			                        	<input value={this.state.namacabang} className="form-control" type="text" name="namacabang" onChange={this.onChangeInput} placeholder="Nama Cabang" />
@@ -463,7 +473,7 @@ export default class CompanyDetail extends Component {
 		                      <ListGrup items={grup} />
 		                      <Modal show={this.state.isModalGrup} onHide={this.handleCloseGrup}>
 			                      <Modal.Body>
-			                        <Modal.Title className="text-c-purple3 f-w-bold">Tambah Grup Baru</Modal.Title>
+			                        <Modal.Title className="text-c-purple3 f-w-bold">Form Grup</Modal.Title>
 			                        <div style={{marginTop: '20px'}} className="form-group">
 			                        	<label>Grup Baru</label>
 			                        	<input value={this.state.namagrup} className="form-control" type="text" name="namagrup" onChange={this.onChangeInput} placeholder="Nama Grup" />
@@ -500,7 +510,7 @@ export default class CompanyDetail extends Component {
                             <th>Validity</th>
                             <th className="text-center">
                               <Link
-                                to={"/user-create"}
+                                to={"/user-company-create"}
                                 className="btn btn-ideku col-12 f-14"
                                 style={{ padding: "7px 8px !important" }}
                               >
