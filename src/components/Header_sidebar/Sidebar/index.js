@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, {USER_ME, USER, API_SERVER} from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
 class Sidebar extends Component {
