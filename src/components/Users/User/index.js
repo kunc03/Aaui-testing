@@ -30,10 +30,8 @@ export default class User extends Component {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
       if(res.status === 200) {
-        this.setState({
-          users: this.state.users.filter(item => { return item.user_id !== this.state.userIdHapus }),
-          isModalHapus: false, userIdHapus: ''
-        })
+        this.fetchData();
+        this.setState({isModalHapus: false, userIdHapus: ''})
       }
     })
   }
@@ -62,6 +60,10 @@ export default class User extends Component {
   }
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
     API.get(`${API_SERVER}v1/user`).then(response => {
       response.data.result.map(item => {
         let temp = item;
