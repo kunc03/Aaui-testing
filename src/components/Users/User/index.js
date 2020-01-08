@@ -126,7 +126,7 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800">User Management</h3>
-                      <p>{this.state.list}</p>
+                      
                       <div style={{ overflowX: "auto" }}>
                         <table
                           className="table-curved"

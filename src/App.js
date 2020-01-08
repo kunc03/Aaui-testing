@@ -20,10 +20,15 @@ import UserCompanyAdd from "./components/Users/User/companyadd";
 import UserCompanyEdit from "./components/Users/User/companyedit";
 import UserAccess from "./components/Users/Access/index";
 
+import KursusMateri from "./components/admin/kursusmateri";
+import KursusMateriAdd from "./components/admin/kursusmateriadd";
+import KursusMateriEdit from "./components/admin/kursusmateriedit";
+
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
 import Company from "./components/Users/UserCompany/index";
 import CompanyDetail from "./components/Users/UserCompany/detail";
+import CompanyDetailSuper from "./components/Users/UserCompany/detailsuper";
 import Login from "./components/Login/index";
 
 export default class App extends React.Component {
@@ -121,6 +126,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
         <Route path="/company-detail/:company_id" component={CompanyDetail} />
+        <Route path="/company-detail-super/:company_id" component={CompanyDetailSuper} />
         <Route path="/grup" component={Grup} />
 
         <Route path="/logout" component={Logout} />
@@ -146,6 +152,10 @@ export class AdminSwitch extends React.Component {
         <Route path="/user-company-edit/:user_id" component={UserCompanyEdit} />
         <Route path="/user-access" component={UserAccess} />
         <Route path="/my-company" component={CompanyDetail} />
+        
+        <Route path="/kursus-materi" component={KursusMateri} />
+        <Route path="/kursus-materi-create" component={KursusMateriAdd} />
+        <Route path="/kursus-materi-edit/:course_id" component={KursusMateriEdit} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />

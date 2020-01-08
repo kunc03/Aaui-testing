@@ -214,6 +214,17 @@ export class MenuAdmin extends React.Component {
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to={`/kursus-materi`} className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Forum.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">Kursus & Materi</span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
         <Link to={`/user-company`} className="nav-link">
           <span className="pcoded-micon">
             <img

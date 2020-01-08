@@ -13,7 +13,7 @@ export default class CompanyDetail extends Component {
 		super(props);
 
 		this.state = {
-			companyId: '',
+			companyId: this.props.match.params.company_id,
 			nama: '',
 			status: '',
 			validity: '',
@@ -206,65 +206,62 @@ export default class CompanyDetail extends Component {
 	}
 
 	fetchData() {
-		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+		let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
+		API.get(linkURL).then(res => {
+			console.log('response1: ',res.data.result)
+			if(res.status === 200) {
+				this.setState({ 
+					nama: res.data.result.company_name, 
+					status: res.data.result.status, 
+					validity: res.data.result.validity.substring(0,10),
+					logo: res.data.result.logo 
+				});
 
-				let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
-				API.get(linkURL).then(res => {
+				let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
+				API.get(linkURLCabang).then(res => {
 					if(res.status === 200) {
-						this.setState({ 
-							nama: res.data.result.company_name, 
-							status: res.data.result.status, 
-							validity: res.data.result.validity.substring(0,10),
-							logo: res.data.result.logo 
-						});
-
-						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
-						API.get(linkURLCabang).then(res => {
-							if(res.status === 200) {
-								this.setState({ cabang: res.data.result })
-							}
-						}).catch(err => {
-							console.log(err);
-						});
-
-						let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
-						API.get(linkURLGrup).then(res => {
-							if(res.status === 200) {
-								this.setState({ grup: res.data.result })
-							}
-						}).catch(err => {
-							console.log(err);
-						});
-
-						let linkURLUser = `${API_SERVER}v1/user/company/${this.state.companyId}`;
-						API.get(linkURLUser).then(res => {
-							console.log('companyUser: ', res.data.result)
-							if(res.status === 200) {
-								res.data.result.map(item => {
-									let temp = item;
-									if(temp.validity != null ) {
-										temp.validity = item.validity.toString().substring(0,10);
-										return temp;
-									}
-								})
-								this.setState({ user: res.data.result })
-							}
-						}).catch(err => {
-							console.log(err);
-						});
+						this.setState({ cabang: res.data.result })
 					}
 				}).catch(err => {
 					console.log(err);
-				})
+				});
+
+				let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
+				API.get(linkURLGrup).then(res => {
+					if(res.status === 200) {
+						this.setState({ grup: res.data.result })
+					}
+				}).catch(err => {
+					console.log(err);
+				});
+
+				let linkURLUser = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+				API.get(linkURLUser).then(res => {
+					console.log('companyUser: ', res.data.result)
+					if(res.status === 200) {
+						res.data.result.map(item => {
+							let temp = item;
+							if(temp.validity != null ) {
+								temp.validity = item.validity.toString().substring(0,10);
+								return temp;
+							}
+						})
+						this.setState({ user: res.data.result })
+					}
+				}).catch(err => {
+					console.log(err);
+				});
 			}
+		}).catch(err => {
+			console.log(err);
 		});
 	}
 
 	render() {
 		const { cabang, grup, user } = this.state;
 		const statusCompany = ['active', 'nonactive'];
+
+		console.log('response: ', this.state);	
 
 		const ListCabang = ({items}) => {
 			if(items.length == 0) {

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ModalAdd from "./modaladd";
 import { Link } from "react-router-dom";
+import Storage from '../../../repository/storage';
 
 import API, { API_SERVER } from '../../../repository/api';
 
@@ -66,6 +67,13 @@ class UserCompany extends Component {
     let { grup } = this.state;
     let statusCompany = ['active', 'nonactive'];
 
+    let linkCompany = '';
+    if(Storage.get('user').data.level === 'superadmin') {
+      linkCompany = '/company-detail-super';
+    } else {
+      linkCompany = '/company-detail';
+    }
+
     const Item = ({ item }) => (
       <li>
         <div className="card">
@@ -91,7 +99,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-16 text-c-grey-t ">
                       Company
                     </small>
-                    <Link to={`/company-detail/${item.company_id}`}>
+                    <Link to={`${linkCompany}/${item.company_id}`}>
                       <h5 className="f-w-bold f-20 text-c-purple3">
                         {item.company_name}
                       </h5>
