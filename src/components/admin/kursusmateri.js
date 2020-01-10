@@ -57,7 +57,7 @@ export default class KursusMateri extends Component {
 				return (
 					<tbody>
 						<tr>
-							<td colSpan={7}>tidak ada data</td>
+							<td colSpan={8}>tidak ada data</td>
 						</tr>
 					</tbody>
 				);
@@ -68,12 +68,18 @@ export default class KursusMateri extends Component {
 						lists.map((item, i) => (
 							<tr key={item.course_id}>
 								<td>{i+1}</td>
+								<td>
+									<img className="img-thumbnail" src={item.image} width="200px" alth="Cover" />
+								</td>
 								<td>{item.category_name}</td>
 								<td>{item.title}</td>
 								<td>{item.caption}</td>
 								<td>{item.created_at.toString().substring(0,10)}</td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>
+									<Link to={`/kursus-materi-preview/${item.course_id}`} className="buttonku">
+          					<i data-id={item.course_id} className="fa fa-search"></i>
+        					</Link>
 									<Link to={`/kursus-materi-edit/${item.course_id}`} className="buttonku">
           					<i data-id={item.course_id} className="fa fa-edit"></i>
         					</Link>
@@ -105,6 +111,7 @@ export default class KursusMateri extends Component {
                           <thead>
                             <tr>
                               <th className="text-center">ID</th>
+                              <th>Cover</th>
                               <th>Kategori</th>
                               <th>Judul</th>
                               <th>Caption</th>

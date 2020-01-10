@@ -141,7 +141,6 @@ export default class KursusMateriAdd extends Component {
   }
 
 	render() {
-		console.log('response: ', this.state);
     const { kategori } = this.state;
 
 		return (
