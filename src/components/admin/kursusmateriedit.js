@@ -10,7 +10,7 @@ export default class KursusMateriEdit extends Component {
 		companyId: '',
 
 		kategori: [],
-		courseId: this.props.match.params.course_id,
+		courseId: this.props.location.search.split('?')[1],
 
 		kategori_image: '', kategori_name: '', catId: '',
 
@@ -37,7 +37,7 @@ export default class KursusMateriEdit extends Component {
   }
 
 	componentDidMount() {
-		this.fetchData();
+    this.fetchData();
 	}
 
 	handleModalKategori = e => {
@@ -90,6 +90,7 @@ export default class KursusMateriEdit extends Component {
 				})
 
 				API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
+          //console.log(res)
 					if(res.status === 200) {
 						this.setState({
 							category_id: res.data.result.category_id,

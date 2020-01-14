@@ -7,7 +7,7 @@ export default class User extends Component {
   constructor(props) {
     super(props);
 
-    this._deleteUser = this._deleteUser.bind(this);
+    // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
       users: [],
@@ -81,31 +81,31 @@ export default class User extends Component {
     });
   }
 
-  _deleteUser(idUser){
+  // _deleteUser(idUser){
     
-    let token = JSON.parse(localStorage.getItem("token"));
-    let link = "https://8023.development.carsworld.co.id/v1/user" + idUser;
+  //   let token = JSON.parse(localStorage.getItem("token"));
+  //   let link = "https://8023.development.carsworld.co.id/v1/user" + idUser;
 
-    var r = alert("Delete User ?");
-    if (r === true) {
-      axios.delete(link, {
-        headers: {
-          Authorization: token.data,
-          "Content-Type": "application/json"
-        }
-      })
-      .then(res => {
-        console.log(res)
-        if(res.status === 200){
-          window.location = '/users'
-        }
-        // this.props.history.push(`/news`);	
-      }).catch(err => {
-        console.log(err)
-        //alert(err.response.data.msg)
-      })
-    }
-  }
+  //   var r = alert("Delete User ?");
+  //   if (r === true) {
+  //     axios.delete(link, {
+  //       headers: {
+  //         Authorization: token.data,
+  //         "Content-Type": "application/json"
+  //       }
+  //     })
+  //     .then(res => {
+  //       console.log(res)
+  //       if(res.status === 200){
+  //         window.location = '/users'
+  //       }
+        
+  //     }).catch(err => {
+  //       console.log(err)
+        
+  //     })
+  //   }
+  // }
 
   render() {
     let { users } = this.state;

@@ -19,7 +19,7 @@ export default class KursusMateri extends Component {
 
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-			console.log(res)
+			//console.log(res)
 			if(res.status === 200) {
 				this.setState({ companyId: res.data.result.company_id });
 				API.get(`${API_SERVER}v1/course/company/${this.state.companyId}`).then(res => {
@@ -80,7 +80,7 @@ export default class KursusMateri extends Component {
 									<Link to={`/kursus-materi-preview/${item.course_id}`} className="buttonku">
           					<i data-id={item.course_id} className="fa fa-search"></i>
         					</Link>
-									<Link to={`/kursus-materi-edit/${item.course_id}`} className="buttonku">
+									<Link to={`/kursus-materi-edit?${item.course_id}`} className="buttonku">
           					<i data-id={item.course_id} className="fa fa-edit"></i>
         					</Link>
           				<Link to="#" className="buttonku">
