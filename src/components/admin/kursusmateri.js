@@ -9,7 +9,6 @@ export default class KursusMateri extends Component {
 	state = {
 		companyId: '',
 		kursus: [],
-
 		isModalHapus: false,
 		courseIdHapus: '',
 	}
