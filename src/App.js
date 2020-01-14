@@ -18,7 +18,10 @@ import {
   UserGroup,
   LoginVoucher,
   Login,
-  Logout
+  Logout,
+  KursusMateri,
+  KursusMateriAdd,
+  KursusMateriEdit, 
 } from './components'
 
 /**
@@ -46,6 +49,9 @@ export var router = [
   {	path: '/user-cabang', 				  component: UserCabang},
   {	path: '/user-group', 						component: UserGroup},
   {	path: '/logout', 						    component: Logout},
+  {	path: '/kursus-materi', 				  component: KursusMateri},
+  {	path: '/kursus-materi-create', 				  component: KursusMateriAdd},
+  {	path: '/kursus-materi-edit', 				  component: KursusMateriEdit},
 ];
 
 
