@@ -1,18 +1,28 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import API, {USER_ME} from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 class Header extends Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
-      me: {}
-    };
+      user: 'Anonymous',
+      level: 'member'
+    }
   }
 
   componentDidMount() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200){
+        this.setState({ user: res.data.result.name, level: res.data.result.level });
+      }
+    })
   }
+
   render() {
+    const { user, level } = this.state;
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
         <div className="m-header">
@@ -46,10 +56,8 @@ class Header extends Component {
                   />
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
-                      {this.state.me.name}
-                      <small className="d-block  mt-2 text-c-grey">
-                        Member
-                      </small>
+                      {user}
+                      <small className="d-block  mt-2 text-c-grey">{level}</small>
                     </h6>
                   </div>
                 </div>
