@@ -1,19 +1,31 @@
 import React, { Component } from "react";
+import API, {USER_ME} from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-
-    this.onClickLogout = this.onClickLogout.bind(this);
+  state = {
+    user: {
+      name: 'Anonymous',
+      registered: '2019-12-09'
+    }
   }
 
-  onClickLogout(e) {
-    e.preventDefault();
-    localStorage.clear();
-    window.location.href = window.location.origin;
+  componentDidMount() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      console.log('response: ',res.data)
+      if(res.status === 200) {
+        Object.keys(res.data.result).map((key, index) => {
+          if(key === 'registered') {
+            return res.data.result[key] = res.data.result[key].toString().substring(0,10);
+          }
+        });
+        this.setState({ user: res.data.result });
+      }
+    })
   }
 
   render() {
+    const { user } = this.state;
     return (
       <div
         className="pcoded-main-container"
@@ -27,8 +39,8 @@ class Home extends Component {
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
                       <div className="page-header-title mb-2">
-                        <h3 onClick={this.onClickLogout} className="f-w-900 ">
-                          Selamat datang, Rakaal!
+                        <h3 className="f-w-900 ">
+                          Selamat datang, {user.name}
                         </h3>
                         <h6 className="top mt-5 f-w-900 text-cc-grey">
                           Yuk, kita belajar untuk hari ini...
@@ -49,7 +61,7 @@ class Home extends Component {
                               <small className="f-w-900">
                                 Tanggal Bergabung
                               </small>
-                              <h5 className="f-w-900">23/08/2019</h5>
+                              <h5 className="f-w-900">{user.registered}</h5>
                             </div>
                           </div>
                         </div>
@@ -419,6 +431,7 @@ class Home extends Component {
                         <div className="row">
                           <div className="col-xl-2 text-center">
                             <img
+                              alt="Gambar"
                               className="img-radius p-1"
                               style={{ width: 136, height: 136 }}
                               src="assets/images/component/Ilustrasi.png"

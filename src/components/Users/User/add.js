@@ -1,132 +1,78 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router";
-import axios from "axios";
+import API, { API_SERVER } from '../../../repository/api';
 
 class UserAdd extends Component {
-  constructor(props) {
-    super(props);
-
-    this.onChangeName = this.onChangeName.bind(this);
-    this.onChangeBranch = this.onChangeBranch.bind(this);
-    this.onChangeNik = this.onChangeNik.bind(this);
-    this.onChangeGrup = this.onChangeGrup.bind(this);
-    this.onChangeEmail = this.onChangeEmail.bind(this);
-    this.onChangePhone = this.onChangePhone.bind(this);
-    this.onChangeValidity = this.onChangeValidity.bind(this);
-  }
 
   state = {
+    company_id: "",
+    branch_id: "",
+    
+    identity: "",
     name: "",
-    branch_name: "",
-    nik: "",
-    group: "",
     email: "",
     phone: "",
-    validity: ""
+    address: "",
+    password: "",
+    level: "",
+
+    listCompany: [],
+    listBranch: [],
+
+    responseMessage: '',
+    responseEmail: '',
+    responsePhone: '' 
   };
 
-  onChangeName = e => {
-    this.setState({ name: e.target.value });
-  };
-  onChangeBranch = e => {
-    this.setState({ branch_name: e.target.value });
-  };
-  onChangeNik = e => {
-    this.setState({ nik: e.target.value });
-  };
-  onChangeGrup = e => {
-    this.setState({ group: e.target.value });
-  };
-  onChangeEmail = e => {
-    this.setState({ email: e.target.value });
-  };
-  onChangePhone = e => {
-    this.setState({ phone: e.target.value });
-  };
-  onChangeValidity = e => {
-    this.setState({ validity: e.target.value });
-  };
+  onChangeInput = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
 
-  // submitForm = e => {
-  //   e.preventDefault();
-  //   let token = JSON.parse(localStorage.getItem("user"));
-  //   let link = "http://10.1.70.137:4000/v1/auth";
-  //   let data = {
-  //     name: this.state.name,
-  //     branch_id: this.state.branch_id,
-  //     nik: this.state.nik,
-  //     group: this.state.group,
-  //     email: this.state.email,
-  //     phone: this.state.phone,
-  //     validity: this.state.validity
-  //   };
-  //   console.log(data)
-  //   let header = {
-  //     headers: {
-  //       Authorization: token.result.token,
-  //       "Content-Type": "application/json"
-  //     }
-  //   };
+    if(name === 'company_id') {
+      API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
+        if(res.status === 200) {
+          this.setState({ listBranch: res.data.result, company_id: value })
+        }
+      })
+    } else {
+      this.setState({
+        [name]: value
+      });
+    }
+  }
 
-  //   axios
-  //     .post(link, data, header)
-  //     .then(function(response) {
-  //       if (response.data.error) {
-  //         this.setState({ name: e.target.value });
-  //         this.setState({ branch_id: e.target.value });
-  //         this.setState({ nik: e.target.value });
-  //         this.setState({ group: e.target.value });
-  //         this.setState({ email: e.target.value });
-  //         this.setState({ phone: e.target.value });
-  //         this.setState({ validity: e.target.value });
-  //       } else {
-  //         return <Redirect to="/user" />;
-  //       }
-  //     })
-  //     .catch(function(error) {
-  //       console.log(error);
-  //     });
-  // };
-
-  _createUser(){
-    let token = JSON.parse(localStorage.getItem("token"));
-    let link = "https://8023.development.carsworld.co.id/v1/user";
-    let data = {
-      company_id : 1,
-      branch_id : 1,
+  submitForm = e => {
+    e.preventDefault();
+    const formData = {
+      company_id: this.state.company_id,
+      branch_id: this.state.branch_id,
+      identity: this.state.identity,
       name: this.state.name,
-      identity: this.state.nik,
-      // group: this.state.group,
       email: this.state.email,
       phone: this.state.phone,
-      address : 'jakarta',
-      password : 'admin123',
-      level :'admin',
-      status : 'active'
-      //validity: this.state.validity
+      address: this.state.address,
+      password: this.state.password,
+      level: this.state.level,
+      status: 'active'
     };
-    //console.log(data);
 
-    axios.post(link, data , {
-      headers: {
-        Authorization: token.data,
-        "Content-Type": "application/json"
+    API.post(`${API_SERVER}v1/user`, formData).then(res => {
+      if(res.status === 200) {
+        this.props.history.push('/user')
       }
     })
-    .then(res => {
-      console.log(res)
-      if(res.status === 200){
-        window.location = '/users'
+  };
+
+  componentDidMount() {
+    API.get(`${API_SERVER}v1/company`).then(res => {
+      if(res.status === 200) {
+        this.setState({ listCompany: res.data.result })
       }
-      // this.props.history.push(`/news`);	
-    }).catch(err => {
-      console.log(err)
-      //alert(err.response.data.msg)
     })
   }
 
   render() {
+    const levelUser = [{level: 'superadmin'}, {level: 'admin'}, {level: 'client'}];
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -139,75 +85,103 @@ class UserAdd extends Component {
                       <h3 className="f-24 f-w-800">Tambah User Management</h3>
                       <div className="card">
                         <div className="card-block">
+
                           <form onSubmit={event => this.submitForm(event)}>
+                            <div className="form-group">
+                              <label className="label-input">Company</label>
+                              <select required className="form-control" name="company_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listCompany.map(item => (
+                                    <option value={item.company_id}>{item.company_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Cabang</label>
+                              <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listBranch.map(item => (
+                                    <option value={item.branch_id}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
                             <div className="form-group">
                               <label className="label-input">Nama</label>
                               <input
+                                required
                                 type="text"
+                                name="name"
                                 className="form-control"
-                                placeholder="Rajaka Kauthar Allam"
-                                onChange={this.onChangeName}
+                                placeholder="nama"
+                                onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Nomor Induk</label>
                               <input
                                 type="text"
+                                required
+                                name="identity"
                                 className="form-control"
                                 placeholder="210-1971-74"
-                                onChange={this.onChangeNik}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input">Cabang</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Cyprus"
-                                onChange={this.onChangeBranch}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input">Grup</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Limit"
-                                onChange={this.onChangeGrup}
+                                onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Email</label>
                               <input
                                 type="email"
+                                required
+                                name="email"
                                 className="form-control"
                                 placeholder="rakaal@gmail.com"
-                                onChange={this.onChangeEmail}
+                                onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Phone</label>
                               <input
                                 type="text"
+                                required
+                                name="phone"
                                 className="form-control"
                                 placeholder="081-247-9592"
-                                onChange={this.onChangePhone}
+                                onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Validity</label>
+                              <label className="label-input">Alamat</label>
+                              <textarea required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Level</label>
+                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                                <option value="">-- pilih --</option>
+                                {
+                                  levelUser.map(item => (
+                                    <option value={item.level}>{item.level}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Password</label>
                               <input
-                                type="date"
+                                type="password"
+                                name="password"
+                                required
                                 className="form-control"
-                                placeholder="01/06/2019"
-                                onChange={this.onChangeValidity}
+                                placeholder="password"
+                                onChange={this.onChangeInput}
                               />
                             </div>
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
-                              onClick={this._createUser.bind(this)}
-                            >
+                            <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                               Simpan
                             </button>
                           </form>

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import Modal from "./modal";
 
 import axios from "axios";
@@ -53,14 +52,17 @@ class UserGroup extends Component {
             <div className="row d-flex align-items-center">
               <div className="col-6">
                 <div className="row align-items-center justify-content-center">
-                  <div className="col-auto f-21 f-w-bold text-c-black">1</div>
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
-                      Nama Cabang
+                      Company
                     </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">
-                      {item.branch_name}
-                    </h5>
+                    <h5 className="f-w-bold f-20 text-c-purple3">{item.company_name}</h5>
+                  </div>
+                  <div className="col">
+                    <small className="f-w-600 f-16 text-c-grey-t ">
+                      Cabang
+                    </small>
+                    <h5 className="f-w-bold f-20 text-c-purple3">{item.branch_name}</h5>
                   </div>
                 </div>
               </div>
@@ -105,6 +107,7 @@ class UserGroup extends Component {
         ))}
       </ul>
     );
+
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
