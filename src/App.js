@@ -13,7 +13,7 @@ import Profile from "./components/Profile/index";
 
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
-import UserEdit from "./components/Users/User/edit";
+import UserEdit from "./components/Users/User/Edit";
 
 import UserCompany from "./components/Users/User/company";
 import UserCompanyAdd from "./components/Users/User/companyadd";
