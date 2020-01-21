@@ -20,9 +20,12 @@ import UserCompanyAdd from "./components/Users/User/companyadd";
 import UserCompanyEdit from "./components/Users/User/companyedit";
 import UserAccess from "./components/Users/Access/index";
 
-import KursusMateri from "./components/admin/kursusmateri";
-import KursusMateriAdd from "./components/admin/kursusmateriadd";
-import KursusMateriEdit from "./components/admin/kursusmateriedit";
+import KursusMateri from "./components/admin/course/kursusmateri";
+import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
+import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
+
+import QuizList from "./components/admin/exam/quiz";
+import ExamList from "./components/admin/exam/exam";
 
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
@@ -156,6 +159,9 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi" component={KursusMateri} />
         <Route path="/kursus-materi-create" component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" component={KursusMateriEdit} />
+
+        <Route path="/quiz/:course_id" component={QuizList}  />
+        <Route path="/exam/:course_id" component={ExamList}  />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />

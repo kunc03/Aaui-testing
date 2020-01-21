@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
-import API, { API_SERVER, USER_ME } from '../../repository/api';
-import Storage from '../../repository/storage';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
-export default class KursusMateriEdit extends Component {
+export default class KursusMateriAdd extends Component {
 
 	state = {
 		companyId: '',
 
 		kategori: [],
-		courseId: this.props.match.params.course_id,
+    kategori_name: '',
+    kategori_image: '',
 
-		kategori_image: '', kategori_name: '', catId: '',
+    catId: '',
 
 		category_id: '',
 		type: '',
@@ -24,31 +25,66 @@ export default class KursusMateriEdit extends Component {
 		isModalKategori: false
 	}
 
-	onChangeInput = (event) => {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
+  onClickUbahKategori = e => {
+    e.preventDefault();
+    const catId = e.target.getAttribute('data-id');
+    const catName = e.target.getAttribute('data-name');
 
-  	if(name === 'image' || name === 'kategori_image') {
-    	this.setState({ [name]: target.files[0] });
-    } else {
-    	this.setState({ [name]: value });
-    }
+    this.setState({ kategori_name: catName, catId: catId });
+  }
+
+  onClickHapusKategori = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v1/category/${e.target.getAttribute('data-id')}`).then(res => {
+      if(res.status === 200) {
+        this.fetchData();
+        this.setState({ kategori_image: '', kategori_name: '', catId: '' });
+      }
+    })
   }
 
 	componentDidMount() {
 		this.fetchData();
 	}
 
-	handleModalKategori = e => {
-  	this.setState({ isModalKategori: true });
+	fetchData() {
+		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+			if(res.status === 200) {
+				this.setState({ companyId: res.data.result.company_id });
+
+				API.get(`${API_SERVER}v1/category/company/${res.data.result.company_id}`).then(res => {
+					if(res.status === 200) {
+						this.setState({ kategori: res.data.result });
+					}
+				})
+			}
+		})
+	}
+
+	onChangeInput = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    if(name === 'image' || name === 'kategori_image') {
+    	this.setState({ [name]: target.files[0] });
+    } else {
+    	this.setState({ [name]: value });
+    }
   }
 
-  handleCloseModal = e => {
-  	this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '' });
+  handleClearForm() {
+  	this.setState({
+  		category_id: '',
+			type: '',
+			title: '',
+			caption: '',
+			body: '',
+			image: ''
+  	})
   }
 
-	handleSimpanKategori = e => {
+  handleSimpanKategori = e => {
     e.preventDefault();
     if(this.state.catId === '') {
       let form = new FormData();
@@ -78,76 +114,34 @@ export default class KursusMateriEdit extends Component {
     }
   }
 
-	fetchData() {
-		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-			if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+  submitForm = e => {
+  	e.preventDefault();
+  	let form = new FormData();
+  	form.append('category_id', this.state.category_id);
+  	form.append('type', this.state.type);
+  	form.append('title', this.state.title);
+  	form.append('caption', this.state.caption);
+  	form.append('body', this.state.body);
+  	form.append('image', this.state.image);
+  	form.append('user_id', Storage.get('user').data.user_id);
 
-				API.get(`${API_SERVER}v1/category/company/${res.data.result.company_id}`).then(res => {
-					if(res.status === 200) {
-						this.setState({ kategori: res.data.result });
-					}
-				})
-
-				API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
-					if(res.status === 200) {
-						this.setState({
-							category_id: res.data.result.category_id,
-							type: res.data.result.type,
-							title: res.data.result.title,
-							caption: res.data.result.caption,
-							body: res.data.result.body,	
-						})
-					}
-				})
-			}
-		})
-	}
-
-	submitForm = e => {
-		e.preventDefault();
-		let form = {
-			category_id: this.state.category_id,
-	    type: this.state.type,
-	    title: this.state.title,
-	    caption: this.state.caption,
-	    body: this.state.body,
-	    publish: '1'
-		};
-
-		API.put(`${API_SERVER}v1/course/${this.state.courseId}`, form).then(res => {
-			if(res.status === 200) {
-				this.props.history.push('/kursus-materi');
-			}
-		})
-
-		if(this.state.image !== '') {
-			let formData = new FormData();
-			formData.append('image', this.state.image);
-			API.put(`${API_SERVER}v1/course/image/${this.state.courseId}`, formData);
-		}
-	}
-
-	onClickUbahKategori = e => {
-    e.preventDefault();
-    const catId = e.target.getAttribute('data-id');
-    const catName = e.target.getAttribute('data-name');
-
-    this.setState({ kategori_name: catName, catId: catId });
+  	API.post(`${API_SERVER}v1/course`, form).then(res => {
+  		if(res.status === 200) {
+  			this.props.history.push('/kursus-materi');
+  		}
+  	})
   }
 
-  onClickHapusKategori = e => {
-    e.preventDefault();
-    API.delete(`${API_SERVER}v1/category/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.status === 200) {
-        this.fetchData();
-        this.setState({ kategori_image: '', kategori_name: '', catId: '' });
-      }
-    })
+  handleModalKategori = e => {
+  	this.setState({ isModalKategori: true });
+  }
+
+  handleCloseModal = e => {
+  	this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '' });
   }
 
 	render() {
-		const { courseId, kategori } = this.state;
+    const { kategori } = this.state;
 
 		return (
 			<div className="pcoded-main-container">
@@ -158,7 +152,7 @@ export default class KursusMateriEdit extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Edit Kursus & Materi</h3>
+                      <h3 className="f-24 f-w-800">Tambah Kursus & Materi</h3>
 
                       <div className="card">
                         <div className="card-block">
@@ -171,7 +165,7 @@ export default class KursusMateriEdit extends Component {
 	                                <option value="">-- pilih --</option>
 	                                {
 	                                  this.state.kategori.map(item => (
-	                                    <option value={item.category_id} selected={(item.category_id === this.state.category_id) ? 'selected' : ''}>{item.category_name}</option>
+	                                    <option value={item.category_id}>{item.category_name}</option>
 	                                  ))
 	                                }
 	                              </select>
@@ -188,7 +182,6 @@ export default class KursusMateriEdit extends Component {
                               <input
                                 required
                                 type="text"
-                                value={this.state.type}
                                 name="type"
                                 className="form-control"
                                 placeholder="tipe"
@@ -200,7 +193,6 @@ export default class KursusMateriEdit extends Component {
                               <input
                                 required
                                 type="text"
-                                value={this.state.title}
                                 name="title"
                                 className="form-control"
                                 placeholder="judul"
@@ -212,7 +204,6 @@ export default class KursusMateriEdit extends Component {
                               <input
                                 required
                                 type="text"
-                                value={this.state.caption}
                                 name="caption"
                                 className="form-control"
                                 placeholder="caption"
@@ -224,7 +215,6 @@ export default class KursusMateriEdit extends Component {
                               <textarea
                                 required
                                 name="body"
-                                value={this.state.body}
                                 className="form-control"
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
@@ -234,6 +224,7 @@ export default class KursusMateriEdit extends Component {
                               <label className="label-input">Cover</label>
                               <input
                               	type="file"
+                                required
                                 name="image"
                                 className="form-control"
                                 placeholder="konten"
