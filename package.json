@@ -1,6 +1,6 @@
 {
   "name": "my-app",
-  "homepage": "http://localhost:5000",
+  "homepage": "https://8025.development.carsworld.co.id",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
