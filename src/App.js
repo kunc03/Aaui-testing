@@ -23,9 +23,16 @@ import UserAccess from "./components/Users/Access/index";
 import KursusMateri from "./components/admin/course/kursusmateri";
 import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
 import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
+import KursusMateriPreview from "./components/admin/course/kursusmateripreview";
 
 import QuizList from "./components/admin/exam/quiz";
+import QuestionQuiz from "./components/admin/question/quiz";
+import QuestionQuizCreate from "./components/admin/question/quizcreate";
+import QuestionQuizEdit from "./components/admin/question/quizedit";
+
 import ExamList from "./components/admin/exam/exam";
+import QuestionExam from "./components/admin/question/exam";
+import QuestionExamCreate from "./components/admin/question/examcreate";
 
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
@@ -159,9 +166,16 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi" component={KursusMateri} />
         <Route path="/kursus-materi-create" component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" component={KursusMateriEdit} />
+        <Route path="/kursus-materi-preview/:course_id" component={KursusMateriPreview} />
 
         <Route path="/quiz/:course_id" component={QuizList}  />
+        <Route path="/question-quiz/:exam_id" component={QuestionQuiz} />
+        <Route path="/question-quiz-create/:exam_id" component={QuestionQuizCreate} />
+        <Route path="/question-quiz-edit/:question_id" component={QuestionQuizEdit} />
+        
         <Route path="/exam/:course_id" component={ExamList}  />
+        <Route path="/question-exam/:exam_id" component={QuestionExam} />
+        <Route path="/question-exam-create/:exam_id" component={QuestionExamCreate} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />

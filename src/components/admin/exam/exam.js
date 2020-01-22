@@ -186,7 +186,7 @@ export default class QuizList extends Component {
 					                  </div>
 					                </div>
 					              </div>
-					              <div className="col-xl-4 col-md-12">
+					              <div className="col-xl-3 col-md-12">
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
 					                    <small className="f-w-600 f-16 text-c-grey-t ">
@@ -199,6 +199,18 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12">
+					                <div className="row align-items-center justify-content-center">
+					                  <div className="col">
+					                    <small className="f-w-600 f-16 text-c-grey-t ">
+					                      Waktu
+					                    </small>
+					                    <h5 className="f-w-bold f-20 text-c-purple3">
+					                      {item.time_minute} menit
+					                    </h5>
+					                  </div>
+					                </div>
+					              </div>
+					              <div className="col-xl-1 col-md-12">
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
 					                    <small className="f-w-600 f-16 text-c-grey-t ">
@@ -235,10 +247,13 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
-													<Link to="#" className="buttonku">
+					              	<Link to={`/question-exam/${item.exam_id}`} className="buttonku" title="Buat Pertanyaan">
+				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
+				        					</Link>
+													<Link to="#" className="buttonku" title="Edit">
 				          					<i onClick={this.handleOpenEdit} data-id={item.exam_id} className="fa fa-edit"></i>
 				        					</Link>
-				          				<Link to="#" className="buttonku">
+				          				<Link to="#" className="buttonku" title="Hapus">
 				          					<i onClick={this.handleOpenDelete} data-id={item.exam_id} className="fa fa-trash"></i>
 				        					</Link>
 					              </div>

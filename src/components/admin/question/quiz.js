@@ -1,0 +1,186 @@
+import React, { Component } from "react";
+import { Link } from 'react-router-dom';
+import { Modal, Form, Accordion, Card, Button } from "react-bootstrap";
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
+
+export default class QuestionQuiz extends Component {
+
+	state = {
+		companyId: '',
+		examId: this.props.match.params.exam_id,
+
+		question: [],
+
+		isModalDelete: false,
+		questionId: '',
+	}
+
+	handleOpenDelete = e => {
+		e.preventDefault();
+		let quizId = e.target.getAttribute('data-id');
+		this.setState({ isModalDelete: true, questionId: quizId });
+	}
+
+	onClickDelete = e => {
+		e.preventDefault();
+		API.delete(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
+			if(res.status === 200) {
+				this.handleClose();
+				this.fetchData();
+			}
+		})
+	}
+
+	handleClose = e => {
+		this.setState({ isModalDelete: false, questionId: '' });
+	}
+
+	fetchData() {
+		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+				this.setState({ companyId: res.data.result.company_id });
+
+				API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
+					if(res.status === 200) {
+						console.log(res.data.result)
+						this.setState({ question: res.data.result })
+					}
+				})
+			}
+		})
+	}
+
+	componentDidMount() {
+		this.fetchData()
+	}
+
+	render() {
+		const {question} = this.state;
+
+		const QuestionList = ({lists}) => {
+			if(lists.length !== 0) {
+				return (
+					<Accordion>
+						{
+							lists.map((item, i) => (
+								<Card style={{marginBottom: '10px'}} key={item.question_id}>
+							    <Card.Header>
+							      <Accordion.Toggle as={Button} variant="link" eventKey={item.question_id}>
+							      	<div className="row d-flex align-items-center">
+                    	  <div className="col-xl-10 col-md-12 text-right">
+									      	<h5 className="f-w-bold f-20 text-c-purple3">{item.number}. {item.question}</h5>
+			                  </div>
+	                      <div className="col-xl-2 col-md-12 text-right">
+													<Link to={`/question-quiz-edit/${item.question_id}`} className="buttonku" title="Edit">
+				          					<i data-id={item.question_id} className="fa fa-edit"></i>
+				        					</Link>
+				          				<Link to="#" className="buttonku" title="Hapus">
+				          					<i onClick={this.handleOpenDelete} data-id={item.question_id} className="fa fa-trash"></i>
+				        					</Link>
+					              </div>
+				              </div>
+							      </Accordion.Toggle>
+							    </Card.Header>
+							    <Accordion.Collapse eventKey={item.question_id}>
+							      <Card.Body>
+							      	{
+							      		item.options.map((item, i) => (
+							      			<h5 className="f-20 text-c-purple3" key={item.option_id}>
+							      				{item.exam_option}. {item.description}
+		                      </h5>
+							      		))
+							      	}
+							      </Card.Body>
+							    </Accordion.Collapse>
+							  </Card>
+							))
+						}
+					</Accordion>
+				);
+			} else {
+				return (
+					<ul className="list-cabang">
+						<li>
+							<div className="card">
+								<div className="card-block" style={{ padding: "25px 30px !important" }}>
+									<div className="row d-flex align-items-center">
+										<div className="col-xl-12 col-md-12">
+			                <div className="row align-items-center justify-content-center">
+			                  <div className="col">
+			                    <small className="f-w-600 f-16 text-c-grey-t ">
+			                      Tidak ada pertanyaan
+			                    </small>
+			                    <h5 className="f-w-bold f-20 text-c-purple3">
+			                      Silahkan buat pertanyaan Anda
+			                    </h5>
+			                  </div>
+			                </div>
+			              </div>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				);
+			}
+		};
+
+		return(
+			<div className="pcoded-main-container">
+        <div className="pcoded-wrapper">
+          <div className="pcoded-content">
+            <div className="pcoded-inner-content">
+              <div className="main-body">
+                <div className="page-wrapper">
+                  <div className="row">
+
+                    <div className="col-xl-12">
+                      <h3 className="f-24 f-w-800 mb-3">
+                        Pertanyaan Quiz
+                      </h3>
+
+                      <a href={`/question-quiz-create/${this.state.examId}`} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
+                      	<img
+                          src="assets/images/component/person_add.png"
+                          className="button-img"
+                          alt=""
+                        />
+                        Tambah Baru
+                      </a>
+                    </div>
+
+                    <div className="col-xl-12">
+	                    <QuestionList lists={question} />
+										</div>
+
+										<Modal show={this.state.isModalDelete} onHide={this.handleClose}>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <p className="f-w-bold">Apakah anda yakin untuk menghapus pertanyaan ini ?</p>
+                        
+                        <button style={{marginTop: '30px'}} type="button"
+                          onClick={this.onClickDelete}
+                          className="btn btn-block btn-ideku f-w-bold">
+                          Hapus
+                        </button>
+                        <button type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.handleClose}>
+                          Tidak
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+                  </div>	
+                </div>	
+              </div>	
+            </div>	
+          </div>	
+        </div>	
+      </div>	
+		)
+	}
+}

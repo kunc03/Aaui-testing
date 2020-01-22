@@ -126,7 +126,6 @@ export default class QuizList extends Component {
 
 				API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
-						console.log(res.data.result)
 						this.setState({ quiz: res.data.result })
 					}
 				})
@@ -160,7 +159,7 @@ export default class QuizList extends Component {
 					              <div className="col-xl-1 col-md-12">
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
-					                    <small className="f-w-600 f-16 text-c-grey-t ">
+					                    <small className="f-w-600 f-16 text-c-grey-t">
 					                      No
 					                    </small>
 					                    <Link to="#">
@@ -220,10 +219,13 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
-													<Link to="#" className="buttonku">
+					              	<Link to={`/question-quiz/${item.exam_id}`} className="buttonku" title="Buat Pertanyaan">
+				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
+				        					</Link>
+													<Link to="#" className="buttonku" title="Edit">
 				          					<i onClick={this.handleOpenEdit} data-id={item.exam_id} className="fa fa-edit"></i>
 				        					</Link>
-				          				<Link to="#" className="buttonku">
+				          				<Link to="#" className="buttonku" title="Hapus">
 				          					<i onClick={this.handleOpenDelete} data-id={item.exam_id} className="fa fa-trash"></i>
 				        					</Link>
 					              </div>
