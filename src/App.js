@@ -150,38 +150,38 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
-        <Route path="/pengaturan" component={Pengaturan} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/pengaturan" exact component={Pengaturan} />
+        <Route path="/profile" exact component={Profile} />
 
-        <Route path="/user" component={User} />
-        <Route path="/user-create" component={UserAdd} />
-        <Route path="/user-edit/:user_id" component={UserEdit} />
+        <Route path="/user" exact component={User} />
+        <Route path="/user-create" exact component={UserAdd} />
+        <Route path="/user-edit/:user_id"  exactcomponent={UserEdit} />
 
-        <Route path="/user-company" component={UserCompany} />
+        <Route path="/user-company" exact component={UserCompany} />
         <Route path="/user-company-create" component={UserCompanyAdd} />
-        <Route path="/user-company-edit/:user_id" component={UserCompanyEdit} />
-        <Route path="/user-access" component={UserAccess} />
-        <Route path="/my-company" component={CompanyDetail} />
+        <Route path="/user-company-edit/:user_id" exact component={UserCompanyEdit} />
+        <Route path="/user-access" exactcomponent={UserAccess} />
+        <Route path="/my-company" exact component={CompanyDetail} />
         
-        <Route path="/kursus-materi" component={KursusMateri} />
-        <Route path="/kursus-materi-create" component={KursusMateriAdd} />
-        <Route path="/kursus-materi-edit/:course_id" component={KursusMateriEdit} />
-        <Route path="/kursus-materi-preview/:course_id" component={KursusMateriPreview} />
+        <Route path="/kursus-materi" exact component={KursusMateri} />
+        <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
+        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
+        <Route path="/kursus-materi-preview/:course_id" exact component={KursusMateriPreview} />
 
-        <Route path="/quiz/:course_id" component={QuizList}  />
-        <Route path="/question-quiz/:exam_id" component={QuestionQuiz} />
-        <Route path="/question-quiz-create/:exam_id" component={QuestionQuizCreate} />
-        <Route path="/question-quiz-edit/:question_id" component={QuestionQuizEdit} />
+        <Route path="/quiz/:course_id" exact component={QuizList}  />
+        <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
+        <Route path="/question-quiz-create/:exam_id" exact component={QuestionQuizCreate} />
+        <Route path="/question-quiz-edit/:question_id" exact component={QuestionQuizEdit} />
         
-        <Route path="/exam/:course_id" component={ExamList}  />
-        <Route path="/question-exam/:exam_id" component={QuestionExam} />
-        <Route path="/question-exam-create/:exam_id" component={QuestionExamCreate} />
+        <Route path="/exam/:course_id" exact component={ExamList}  />
+        <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
+        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
         
-        <Route path="/cabang" component={Cabang} />
-        <Route path="/company" component={Company} />
-        <Route path="/grup" component={Grup} />
+        <Route path="/cabang" exact component={Cabang} />
+        <Route path="/company" exact component={Company} />
+        <Route path="/grup" exact component={Grup} />
 
-        <Route path="/logout" component={Logout} />
+        <Route path="/logout" exact component={Logout} />
       </Switch>
     );
   }
