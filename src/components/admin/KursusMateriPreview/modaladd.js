@@ -7,51 +7,51 @@ class ModalAdd extends Component {
   constructor(props) {
     super(props);
 
-    this.onChangeNama = this.onChangeNama.bind(this);
-    this.onChangeStatus = this.onChangeStatus.bind(this);
+    this.onChangeTitle = this.onChangeTitle.bind(this);
+    this.onChangeBody = this.onChangeBody.bind(this);
+    this.onChangeNumber = this.onChangeNumber.bind(this);
     this.onChangeLogo = this.onChangeLogo.bind(this);
     this.onClickSimpan = this.onClickSimpan.bind(this);
 
     this.state = {
-      nama: '',
-      status: '',
-      logo: ''
+      chapter_title: '',
+      chapter_body: '',
+      chapter_number: '',
+      chapter_video: ''
     }
   }
 
   onClickSimpan = e => {
     e.preventDefault();
-    const { triggerUpdate } = this.props;
-    let dateNow = new Date();
+    let formData = {
+      chapter_title: this.state.chapter_title,
+      chapter_body: this.state.chapter_body,
+      chapter_number: this.state.chapter_number,
+      chapter_video:this.state.chapter_video
+    }
 
-    let formData = new FormData();
-    formData.append('company_name', this.state.nama);
-    formData.append('status', this.state.status);
-    formData.append('logo', this.state.logo);
-    formData.append('validity', dateNow.toISOString().split('T')[0]);
-
-    let linkURL = `${API_SERVER}v1/company`;
+    let linkURL = `${API_SERVER}v1/chapter`;
     API.post(linkURL, formData).then(res => {
       console.log(res)
-      API.get(`${linkURL}/${res.data.result.insertId}`).then(res => {
-        triggerUpdate(res.data.result);
-        this.setState({ nama: '', status: '', logo: ''});
-      });
     }).catch((err) => {
       console.log(err);
     })
   }
 
-  onChangeNama = e => {
-    this.setState({ nama: e.target.value });
+  onChangeTitle = e => {
+    this.setState({ chapter_title: e.target.value });
+  }
+  
+  onChangeBody = e => {
+    this.setState({ chapter_body: e.target.value });
   }
 
-  onChangeStatus = e => {
-    this.setState({ status: e.target.value });
+  onChangeNumber = e => {
+    this.setState({ chapter_number: e.target.value });
   }
 
   onChangeLogo = e => {
-    this.setState({ logo: e.target.files[0] });
+    this.setState({ chapter_video: e.target.files[0] });
   }
 
   render() {
@@ -81,37 +81,46 @@ class ModalAdd extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Tambah Company
+                Tambah Kursus Materi
               </h5>
             </div>
             <div className="modal-body">
               <Form>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Nama Company
+                    Chapter Title
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="nama company"
-                    onChange={this.onChangeNama}
-                    value={this.state.nama}
+                    placeholder="Chapter Title"
+                    onChange={this.onChangeTitle}
+                    value={this.state.chapter_title}
                   />
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Status Company
+                  Chapter Body
                   </label>
-                  <br/>
-                  <div onChange={this.onChangeStatus}>
-                    {
-                      statusCompany.map(item => {
-                        return (
-                          <Form.Check name='status' inline label={item} type='radio' value={item} />
-                        );
-                      })
-                    }
-                  </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Chapter Body"
+                    onChange={this.onChangeBody}
+                    value={this.state.chapter_body}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="label-input" htmlFor>
+                   Chapter Number
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Chapter Number"
+                    onChange={this.onChangeNumber}
+                    value={this.state.chapter_number}
+                  />
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>

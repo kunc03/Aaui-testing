@@ -55,7 +55,7 @@ class KursusMateriPreview extends Component {
   }
 
   componentDidMount() {
-    let link = `${API_SERVER}v1/company`;
+    let link = `${API_SERVER}v1/chapter`;
     API.get(link).then(response => {
       this.setState({ grup: response.data.result });
     }).catch(function(error) {
@@ -65,14 +65,6 @@ class KursusMateriPreview extends Component {
 
   render() {
     let { grup } = this.state;
-    let statusCompany = ['active', 'nonactive'];
-
-    let linkCompany = '';
-    if(Storage.get('user').data.level === 'superadmin') {
-      linkCompany = '/company-detail-super';
-    } else {
-      linkCompany = '/company-detail';
-    }
 
     const Item = ({ item }) => (
       <li>
@@ -87,7 +79,7 @@ class KursusMateriPreview extends Component {
                   <div className="col">
                     <img
                       width="80px"
-                      src={item.logo}
+                      src={item.chapter_video}
                       alt="Logo"
                     />
                   </div>
@@ -97,13 +89,13 @@ class KursusMateriPreview extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
-                      Company
+                      Chapter Title
                     </small>
-                    <Link to={`${linkCompany}/${item.company_id}`}>
+         
                       <h5 className="f-w-bold f-20 text-c-purple3">
-                        {item.company_name}
+                        {item.chapter_title}
                       </h5>
-                    </Link>
+
                   </div>
                 </div>
               </div>
@@ -111,10 +103,10 @@ class KursusMateriPreview extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
-                      Validity
+                      Chapter Body
                     </small>
                     <h5 className="f-w-bold f-20 text-c-purple3">
-                      {item.validity.toString().substring(0, 10)}
+                      {item.chapter_body}
                     </h5>
                   </div>
                 </div>
@@ -123,17 +115,17 @@ class KursusMateriPreview extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
-                      Status
+                      Chapter Number
                     </small>
                     <h5 className="f-w-bold f-20 text-c-purple3">
-                      {item.status}
+                      {item.chapter_number}
                     </h5>
                   </div>
                 </div>
               </div>
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
-                  <Link to={`/company-detail/${item.company_id}`}>
+                  <Link to={`/company-detail?${item.company_id}`}>
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"
