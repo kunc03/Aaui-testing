@@ -281,7 +281,7 @@ export class MenuClient extends React.Component {
         <Link to="/" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/dashboard.png"
+              src="assets/images/component/dashboardoff.png"
               alt=""
             ></img>
           </span>
