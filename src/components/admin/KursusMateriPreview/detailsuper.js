@@ -7,7 +7,7 @@ import {
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
-export default class CompanyDetail extends Component {
+export default class KursusMateriPreviewDetail extends Component {
 
 	constructor(props) {
 		super(props);

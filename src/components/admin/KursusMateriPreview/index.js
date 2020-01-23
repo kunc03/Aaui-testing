@@ -42,11 +42,11 @@ class KursusMateriPreview extends Component {
 
   onClickDelete = e => {
     e.preventDefault();
-    let linkURL = `${API_SERVER}v1/company/${this.state.delete.id}`;
+    let linkURL = `${API_SERVER}v1/chapter/${this.state.delete.id}`;
     API.delete(linkURL).then(res => {
       console.log(res.data);
       this.setState({ 
-        grup: this.state.grup.filter(item => { return item.company_id != this.state.delete.id}),
+        grup: this.state.grup.filter(item => { return item.chapter_id != this.state.delete.id}),
         delete: { modal: false, id: ''}
       });
     }).catch(err => {
@@ -57,6 +57,7 @@ class KursusMateriPreview extends Component {
   componentDidMount() {
     let link = `${API_SERVER}v1/chapter`;
     API.get(link).then(response => {
+      console.log(response)
       this.setState({ grup: response.data.result });
     }).catch(function(error) {
       console.log(error);
@@ -125,7 +126,7 @@ class KursusMateriPreview extends Component {
               </div>
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
-                  <Link to={`/company-detail?${item.company_id}`}>
+                  <Link to={`/kursus-materi-preview-detail?${item.chapter_id}`}>
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"
@@ -141,7 +142,7 @@ class KursusMateriPreview extends Component {
                     <img
                       src='assets/images/component/Delete-1.png'
                       className="img-icon-delete"
-                      data-id={item.company_id}
+                      data-id={item.chapter_id}
                       onClick={this.isToggleDelete}
                       alt="Delete"
                     />
@@ -157,7 +158,7 @@ class KursusMateriPreview extends Component {
     const Lists = ({ lists }) => (
       <ul className="list-cabang">
         {lists.map(list => (
-          <Item key={list.company_id} item={list} />
+          <Item key={list.chapter_id} item={list} />
         ))}
       </ul>
     );
