@@ -72,7 +72,6 @@ export default class KursusMateri extends Component {
 								</td>
 								<td>{item.category_name}</td>
 								<td>{item.title}</td>
-								<td>{item.caption}</td>
 								<td>{item.created_at.toString().substring(0,10)}</td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>
@@ -119,7 +118,6 @@ export default class KursusMateri extends Component {
                               <th>Cover</th>
                               <th>Kategori</th>
                               <th>Judul</th>
-                              <th>Caption</th>
                               <th>Created At</th>
                               <th>Publish</th>
                               <th className="text-center">

@@ -410,13 +410,22 @@ export default class CompanyDetail extends Component {
 				                      	<label>Validity</label>
 				                      	<Form.Control type="text" name="validity" onChange={this.onChangeInput} placeholder="Nama Company" value={this.state.validity} />
 				                      </div>
-				                      <div className="form-group" onChange={this.onChangeInput}>
+				                      <div className="form-group">
 				                      	<label>Status Company</label>
 				                      	<br/>
 				                      	{
 						                      statusCompany.map(item => {
 						                        return (
-						                          <Form.Check name='status' inline label={item} checked={this.state.status === item} type='radio' value={item} />
+							                      	<div className="pretty p-default p-round p-thick m-b-35" style={{marginBottom: '5px'}}>
+						                            <input onChange={this.onChangeInput} name="status" checked={this.state.status === item} value={item} type="radio" />
+						                            <div className="state p-success-o">
+						                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
+						                                <small className="f-w-bold f-18 text-c-black small-text">
+						                                  {item}
+						                                </small>
+						                              </label>
+						                            </div>
+						                          </div>
 						                        );
 						                      })
 						                    }

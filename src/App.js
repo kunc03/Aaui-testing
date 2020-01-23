@@ -152,6 +152,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/profile" exact component={Profile} />
+        <Route path="/user-access" component={UserAccess} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
