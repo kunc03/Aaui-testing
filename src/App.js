@@ -26,7 +26,7 @@ import {
   KursusMateriPreview,
 } from './components';
 
-import KursusMateriPreviewDetail from './components/admin/KursusMateriPreview/detailsuper'
+
 
 /**
  * Old Code
@@ -54,7 +54,7 @@ export var router = [
   {	path: '/user-group', 						component: UserGroup},
   {	path: '/my-company', 						component: UserCompany},
   {	path: '/kursus-materi-preview', component: KursusMateriPreview},
-  {	path: '/kursus-materi-preview-detail ', 				  component: KursusMateriPreviewDetail},
+  
 
   
   

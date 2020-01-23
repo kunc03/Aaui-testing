@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
-class ModalAdd extends Component {
+class ModalEdit extends Component {
 
   constructor(props) {
     super(props);
@@ -69,9 +69,24 @@ class ModalAdd extends Component {
 
   render() {
     const statusCompany = ['active','nonactive'];
+    const idCourse = this.props.idCourse;
+    //console.log(idCourse);
+
+    let link = `${API_SERVER}v1/chapter/course/${idCourse}`;
+    API.get(link).then(response => {
+      console.log(response)
+      // this.setState({ 
+      //   chapter_title: response.data.result[0].chapter_title,
+      //   chapter_body: response.data.result[0].chapter_body,
+      //   chapter_number: response.data.result[0].chapter_number,
+      //   chapter_video:response.data.result[0].chapter_video
+      //  });
+    }).catch(function(error) {
+      console.log(error);
+    });
     return (
       <div
-        id="modalAdd"
+        id="modalEdit"
         className="modal fade"
         tabIndex={-1}
         role="dialog"
@@ -94,7 +109,7 @@ class ModalAdd extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Tambah Kursus Materi
+                Edit Kursus Materi
               </h5>
             </div>
             <div className="modal-body">
@@ -175,4 +190,4 @@ class ModalAdd extends Component {
   }
 }
 
-export default ModalAdd;
+export default ModalEdit;

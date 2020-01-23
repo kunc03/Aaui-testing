@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from 'react-bootstrap/Modal';
 import ModalAdd from "./modaladd";
+import ModalEdit from "./modaledit";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
 
@@ -16,7 +17,8 @@ class KursusMateriPreview extends Component {
       delete: {
         modal: false,
         id: ''
-      }
+      },
+      idCourse : ''
     };
   }
 
@@ -34,6 +36,10 @@ class KursusMateriPreview extends Component {
 
   isToggleDelete = e => {
     this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') }});
+  }
+  isToggleEdit(id) {
+    console.log(id);
+    this.setState({idCourse: id });
   }
 
   handleClose = e => {
@@ -126,13 +132,21 @@ class KursusMateriPreview extends Component {
               </div>
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
-                  <Link to={`/kursus-materi-preview-detail?${item.chapter_id}`}>
+                  <a
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#modalEdit"
+                        onClick={this.isToggleEdit.bind(this, item.chapter_id)}
+                      >
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"
                       alt="Edit"
+                      data-id={item.chapter_id}
+                      
                     />
-                  </Link>
+                  </a>
+                  &nbsp; &nbsp;
                   <a
                     href="#"
                     title="Delete"
@@ -201,6 +215,13 @@ class KursusMateriPreview extends Component {
                       onClose={this.toggleModal} 
                       closeModalAdd={this.closeModalAdd} 
                       triggerUpdate={this.triggerUpdate}></ModalAdd>
+
+                    <ModalEdit
+                       show={this.state.isOpen} 
+                       onClose={this.toggleModal} 
+                       closeModalAdd={this.closeModalAdd} 
+                       triggerUpdate={this.triggerUpdate}
+                       idCourse={this.state.idCourse}></ModalEdit>
 
                     <Modal show={this.state.delete.modal} onHide={this.handleClose}>
                       <Modal.Header closeButton>

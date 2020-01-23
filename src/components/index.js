@@ -27,7 +27,7 @@ module.exports = {
     KursusMateriEdit        : require('./admin/kursusmateriedit').default,
 
     KursusMateriPreview             : require('./admin/KursusMateriPreview').default,
-    KursusMateriPreviewDetail       : require('./admin/KursusMateriPreview/detailsuper').default,
+    
 }
 
 
