@@ -10,10 +10,10 @@ export default class KursusMateriAdd extends Component {
 		companyId: '',
 
 		kategori: [],
+    
+    catId: '',
     kategori_name: '',
     kategori_image: '',
-
-    catId: '',
 
 		category_id: '',
 		type: '',
@@ -242,22 +242,25 @@ export default class KursusMateriAdd extends Component {
                       <Modal show={this.state.isModalKategori} onHide={this.handleCloseModal}>
 	                      <Modal.Body>
 	                        <Modal.Title className="text-c-purple3 f-w-bold">Semua Kategori</Modal.Title>
-                          <div style={{ marginTop: '20px'}} className="form-group">
-                            <label>Cover Kategori</label>
-                            <input className="form-control" type="file" name="kategori_image" onChange={this.onChangeInput} />
-                          </div>
-                          <div className="form-group">
-                            <label>Nama Kategori</label>
-                            <div className="input-group mb-3">
-                              <input value={this.state.kategori_name} onChange={this.onChangeInput} className="form-control" type="text" name="kategori_name" placeholder="kategori baru" />
-                              <div class="input-group-append">
-                                <span onClick={this.handleSimpanKategori} class="input-group-text btn btn-ideku" 
-                                  style={{ cursor: 'pointer', backgroundColor: 'rgb(146, 31, 91)'}} id="basic-addon2">
-                                  Simpan
-                                </span>
+                          <form onSubmit={this.handleSimpanKategori}>
+                            <div style={{ marginTop: '20px'}} className="form-group">
+                              <label>Cover Kategori</label>
+                              <input required className="form-control" type="file" name="kategori_image" onChange={this.onChangeInput} />
+                            </div>
+                            <div className="form-group">
+                              <label>Nama Kategori</label>
+                              <div className="input-group mb-3">
+                                <input required value={this.state.kategori_name} onChange={this.onChangeInput} className="form-control" type="text" name="kategori_name" placeholder="kategori baru" />
+                                <div class="input-group-append">
+                                  <span onClick={this.handleSimpanKategori} class="input-group-text btn btn-ideku" 
+                                    style={{ cursor: 'pointer', backgroundColor: 'rgb(146, 31, 91)'}} id="basic-addon2">
+                                    Simpan
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          </form>
+
                           <div style={{ overflowX: "auto" }}>
                             <table className="table-curved" style={{ width: "100%" }}>
                               <thead>
@@ -266,7 +269,7 @@ export default class KursusMateriAdd extends Component {
                               <tbody>
                               {
                                 kategori.map((item, i) => (
-                                  <tr>
+                                  <tr key={item.category_id}>
                                     <th>{i+1}</th>
                                     <th>{item.category_name}</th>
                                     <th>

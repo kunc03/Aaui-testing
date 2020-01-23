@@ -23,7 +23,8 @@ import UserAccess from "./components/Users/Access/index";
 import KursusMateri from "./components/admin/course/kursusmateri";
 import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
 import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
-import KursusMateriPreview from "./components/admin/course/kursusmateripreview";
+
+import ChapterPreview from "./components/admin/chapter/chapter";
 
 import QuizList from "./components/admin/exam/quiz";
 import QuestionQuiz from "./components/admin/question/quiz";
@@ -167,7 +168,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
-        <Route path="/kursus-materi-preview/:course_id" exact component={KursusMateriPreview} />
+        
+        <Route path="/chapter/:course_id" exact component={ChapterPreview} />
 
         <Route path="/quiz/:course_id" exact component={QuizList}  />
         <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
