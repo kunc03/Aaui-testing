@@ -42,6 +42,10 @@ import CompanyDetail from "./components/Users/UserCompany/detail";
 import CompanyDetailSuper from "./components/Users/UserCompany/detailsuper";
 import Login from "./components/Login/index";
 
+import KategoriKursus from "./components/client/kategorikursus";
+import DetailKursus from "./components/client/detailkursus";
+import UjianKursus from "./components/client/ujiankursus";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -196,6 +200,12 @@ export class ClientSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
+        <Route path="/aktivitas" component={Home} />
+        
+        <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
+        <Route path="/detail-kursus/:course_id" component={DetailKursus} />
+        <Route path="/ujian-kursus" component={UjianKursus} />
+        
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
         

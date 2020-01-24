@@ -1,237 +1,218 @@
 import React, { Component } from "react";
-import API, {USER_ME} from '../../repository/api';
+import { Link } from "react-router-dom";
+import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import Flickity from 'react-flickity-component'
 
 class Home extends Component {
   state = {
     user: {
       name: 'Anonymous',
-      registered: '2019-12-09'
-    }
+      registered: '2019-12-09',
+      companyId: '',
+    },
+    kategoriKursus: [],
+    kursusTerbaru: []
   }
 
   componentDidMount() {
+    this.fetchDataUser();
+  }
+
+  fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      console.log('response: ',res.data)
       if(res.status === 200) {
+        this.fetchDataKategoriKursus(res.data.result.company_id);
+        this.fetchDataKursusTerbaru(res.data.result.company_id);
+        
         Object.keys(res.data.result).map((key, index) => {
           if(key === 'registered') {
             return res.data.result[key] = res.data.result[key].toString().substring(0,10);
           }
         });
-        this.setState({ user: res.data.result });
+        this.setState({ user: res.data.result});
       }
     })
   }
 
+  fetchDataKategoriKursus(companyId) {
+    API.get(`${API_SERVER}v1/category/company/${companyId}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ kategoriKursus: res.data.result.filter(item => { return item.count_course > 0 }) })
+      }
+    })
+  }
+
+  fetchDataKursusTerbaru(companyId) {
+    API.get(`${API_SERVER}v1/course/company/${companyId}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }) })
+      }
+    }) 
+  }
+
   render() {
-    const { user } = this.state;
+    const { user, kategoriKursus, kursusTerbaru } = this.state;
+
+    const ListKategori = ({lists}) => {
+      if(lists.length !== 0) {
+        return (
+          <div className="row">
+            {
+              lists.map((item, i) => (
+                <div className="col-sm-4">
+                  <Link to={`/kategori-kursus/${item.category_id}`}>
+                    <div className="card">
+                      <img
+                        className="img-fluid img-kursus radius-top-l-r-5"
+                        src={item.category_image}
+                        alt="dashboard-user"
+                      />
+                      <div className="card-carousel ">
+                        <div className="title-head f-w-900 f-16">
+                          {item.category_name}
+                        </div>
+                        <small className="mr-3">{item.count_course} Kursus</small>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))
+            }
+          </div>
+        );
+      } else {
+        return (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-24">Memuat halaman...</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        );
+      }
+    };
+
+    const ListKursusBaru = ({lists}) => {
+      if(lists.length !== 0) {
+        return (
+          <div className="row">
+            {
+              lists.map((item, i) => (
+                <div className="col-sm-12">
+                  <Link to={`/detail-kursus/${item.course_id}`}>
+                    <div className="card">
+                      <img
+                        className="img-fluid img-kursus radius-top-l-r-5"
+                        src={item.image}
+                        alt="dashboard-user"
+                      />
+                      <div className="card-carousel ">
+                        <div className="title-head f-w-900 f-16">
+                          {item.title}
+                        </div>
+                        <small className="mr-3">{item.count_chapter} Chapter</small>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))
+            }
+          </div>
+        );
+      } else {
+        return (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-24">Memuat halaman...</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        );
+      }
+    };
+
     return (
-      <div
-        className="pcoded-main-container"
-        style={{ backgroundColor: "#F6F6FD" }}
-      >
+      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+
                   <div className="row">
-                    <div className="col-md-12 col-xl-12">
-                      <div className="page-header-title mb-2">
-                        <h3 className="f-w-900 ">
-                          Selamat datang, {user.name}
-                        </h3>
-                        <h6 className="top mt-5 f-w-900 text-cc-grey">
-                          Yuk, kita belajar untuk hari ini...
-                        </h6>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-xl-4">
-                      <div className="card">
-                        <div className="card-block card-profile">
-                          <div className="row align-items-center justify-content-center">
-                            <div className="col-auto">
-                              <img
-                                src="assets/images/component/Icon Date Enrolled.png"
-                                alt=""
-                              ></img>
-                            </div>
-                            <div className="col">
-                              <small className="f-w-900">
-                                Tanggal Bergabung
-                              </small>
-                              <h5 className="f-w-900">{user.registered}</h5>
-                            </div>
+                    <div className="col-sm-8">
+
+                      <div className="row">
+                        <div className="col-md-12 col-xl-12">
+                          <div className="page-header-title mb-2">
+                            <h3 className="f-w-900 ">
+                              Selamat datang, {user.name}
+                            </h3>
+                            <h6 className="top mt-5 f-w-900 text-cc-grey">
+                              Yuk, kita belajar untuk hari ini...
+                            </h6>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-xl-4">
-                      <div className="card">
-                        <div className="card-block card-profile">
-                          <div className="row align-items-center justify-content-center">
-                            <div className="col-auto">
-                              <img
-                                src="assets/images/component/Icon Kursus-1.png"
-                                alt=""
-                              ></img>
-                            </div>
-                            <div className="col">
-                              <small className="f-w-900">Tanggal Kursus</small>
-                              <h5 className="f-w-900">200</h5>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-xl-4">
-                      <div className="card">
-                        <div className="card-block card-profile">
-                          <div className="row align-items-center justify-content-center">
-                            <div className="col-auto">
-                              <img
-                                src="assets/images/component/Icon Waktu.png"
-                                alt=""
-                              ></img>
-                            </div>
-                            <div className="col">
-                              <small className="f-w-900">Jumlah Waktu</small>
-                              <h5 className="f-w-900">24</h5>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-12 col-xl-12 mb-3">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-6">
-                          <h3 className="f-w-900 f-24">Pilihan Kursus</h3>
-                        </div>
-                        <div className="col-5 text-right">
-                          <p className="m-b-0">
-                            <i className="fa fa-filter" />
-                            <select className="mr-4" name id>
-                              <option value>Filter</option>
-                            </select>
-                            <span className="f-w-600 f-16">See All</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-xl-12 mb-3">
-                      <div
-                        className="carousel"
-                        data-flickity='{ "freeScroll": true, "contain": true,"cellAlign": "left", "prevNextButtons": false, "pageDots": false }'
-                      >
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <img
-                              className="img-fluid img-kursus radius-top-l-r-5"
-                              src="assets/images/component/p5.jpg"
-                              alt="dashboard-user"
+                        <div className="col-md-12 col-xl-12" style={{marginBottom: '42px'}}>
+                          <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              placeholder="Username"
+                              aria-label="Username"
+                              aria-describedby="basic-addon1"
                             />
-                            <div className="card-carousel ">
-                              <div className="title-head f-w-900 f-16">
-                                TEKNOLOGI
-                              </div>
-                              <small className="mr-3">12 Videos</small>
-                              <small>24 Hours</small>
-                            </div>
-                          </div>
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+
                         </div>
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <img
-                              className="img-fluid img-kursus radius-top-l-r-5"
-                              src="assets/images/component/p5.jpg"
-                              alt="dashboard-user"
-                            />
-                            <div className="card-carousel ">
-                              <div className="title-head f-w-900 f-16">
-                                TEKNOLOGI
-                              </div>
-                              <small className="mr-3">12 Videos</small>
-                              <small>24 Hours</small>
+                      </div>
+
+                      <div className="row">
+                        <div className="col-md-12 col-xl-12 mb-3">
+                          <div className="row d-flex align-items-center">
+                            <div className="col-6">
+                              <h3 className="f-w-900 f-24">Kategori Kursus</h3>
                             </div>
-                          </div>
-                        </div>
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <img
-                              className="img-fluid img-kursus radius-top-l-r-5"
-                              src="assets/images/component/p5.jpg"
-                              alt="dashboard-user"
-                            />
-                            <div className="card-carousel ">
-                              <div className="title-head f-w-900 f-16">
-                                TEKNOLOGI
-                              </div>
-                              <small className="mr-3">12 Videos</small>
-                              <small>24 Hours</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <img
-                              className="img-fluid img-kursus radius-top-l-r-5"
-                              src="assets/images/component/p5.jpg"
-                              alt="dashboard-user"
-                            />
-                            <div className="card-carousel ">
-                              <div className="title-head f-w-900 f-16">
-                                TEKNOLOGI
-                              </div>
-                              <small className="mr-3">12 Videos</small>
-                              <small>24 Hours</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <img
-                              className="img-fluid img-kursus radius-top-l-r-5"
-                              src="assets/images/component/p5.jpg"
-                              alt="dashboard-user"
-                            />
-                            <div className="card-carousel ">
-                              <div className="title-head">Teknologi</div>
-                              <small className="mr-3">12 Videos</small>
-                              <small>24 Hours</small>
+                            <div className="col-6 text-right">
+                              <p className="m-b-0">
+                                <span className="f-w-600 f-16">Lihat Semua</span>
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-12 col-xl-12 mb-3">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-6">
-                          <h3 className="f-w-900 f-24">
-                            Kursus yang harus diikuti
-                          </h3>
-                        </div>
-                        <div className="col-5 text-right">
-                          <p className="m-b-0">
-                            <span className="f-w-600 f-16">See All</span>
-                          </p>
+
+                      <ListKategori lists={kategoriKursus} />
+
+                      <div className="row">
+                        <div className="col-md-12 col-xl-12 mb-3">
+                          <div className="row d-flex align-items-center">
+                            <div className="col-6">
+                              <h3 className="f-w-900 f-24">
+                                Kursus yang harus diikuti
+                              </h3>
+                            </div>
+                            <div className="col-6 text-right">
+                              <p className="m-b-0">
+                                <span className="f-w-600 f-16">Lihat Semua</span>
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-xl-12 mb-3">
-                      <div
-                        className="carousel"
-                        data-flickity='{ "freeScroll": true, "contain": true,"cellAlign": "left", "prevNextButtons": false, "pageDots": false }'
-                      >
-                        <div className="carousel-cell">
+
+                      <div className="row">
+                        <div className="col-sm-4">
                           <div className="card">
                             <div className="box-image">
                               <img
@@ -275,7 +256,7 @@ class Home extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="carousel-cell">
+                        <div className="col-sm-4">
                           <div className="card">
                             <div className="box-image">
                               <img
@@ -319,7 +300,7 @@ class Home extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="carousel-cell">
+                        <div className="col-sm-4">
                           <div className="card">
                             <div className="box-image">
                               <img
@@ -363,53 +344,35 @@ class Home extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="carousel-cell">
-                          <div className="card">
-                            <div className="box-image">
-                              <img
-                                className="img-kursus-diikuti"
-                                src="assets/images/component/Pattern Geometric-01.png"
-                                alt="dashboard-user"
-                              />
-                              <div className="card-text-title">BISNIS</div>
+                      </div>
+
+                    </div>
+                    
+                    <div className="col-sm-4">
+                      <Card>
+                        <Card.Body>
+                          <div className="row">
+                            <div className="col-sm-6">
+                              <h3 className="f-w-900 f-16">
+                                Kursus Terbaru
+                              </h3>
                             </div>
-                            <div className="card-carousel">
-                              <div className="title-head f-16">
-                                Cara Membuat Design Dengan Menggunakan Adobe
-                              </div>
-                              <div className="row m-t-50">
-                                <div className="col-6">
-                                  <small className="f-w-600 m-b-10">
-                                    Mentor
-                                  </small>
-                                  <h6>
-                                    <small className="f-w-600">
-                                      Muhammad Abail
-                                    </small>
-                                  </h6>
-                                </div>
-                                <div className="col-6">
-                                  <div className="progress m-b-10">
-                                    <div
-                                      className="progress-bar progress-c-yellow"
-                                      role="progressbar"
-                                      style={{ width: "40%", height: 6 }}
-                                      aria-valuenow={60}
-                                      aria-valuemin={0}
-                                      aria-valuemax={100}
-                                    />
-                                  </div>
-                                  <small className="f-w-600">
-                                    Proses (20%)
-                                  </small>
-                                </div>
-                              </div>
+                            <div className="col-sm-6 text-right">
+                              <p className="m-b-0">
+                                <span className="f-w-600 f-16">Lihat Semua</span>
+                              </p>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                          <div style={{marginTop: '10px'}}>
+                            <ListKursusBaru lists={kursusTerbaru} />
+                          </div>
+                        </Card.Body>
+                      </Card>
                     </div>
                   </div>
+
+
+                  {/* BANNER YUK IKUTI */}
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
                       <div
@@ -466,20 +429,22 @@ class Home extends Component {
                       </div>
                     </div>
                   </div>
+
                   <div className="row">
                     <div className="col-md-12 col-xl-12 mb-3">
                       <div className="row d-flex align-items-center">
                         <div className="col-6">
                           <h3 className="f-w-900 f-24">Aktivitas Terakhir</h3>
                         </div>
-                        <div className="col-5 text-right">
+                        <div className="col-6 text-right">
                           <p className="m-b-0">
-                            <span className="f-w-600 f-16">See All</span>
+                            <span className="f-w-600 f-16">Lihat Semua</span>
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
+
                   <div className="row">
                     <div className="col-md-12 col-xl-5">
                       <div className="card">
@@ -551,8 +516,7 @@ class Home extends Component {
                           style={{ position: "relative" }}
                         >
                           <select
-                            name
-                            id
+                            className="form-control"
                             style={{ position: "absolute", right: 0 }}
                           >
                             <option value="november">November 2019</option>

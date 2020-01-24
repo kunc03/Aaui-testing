@@ -76,6 +76,17 @@ export default class KursusMateriEdit extends Component {
           this.setState({ kategori_image: '', kategori_name: '', catId: '' });
         }
       })
+
+      if(this.state.kategori_image !== "") {
+        let form = new FormData();
+        form.append('category_image', this.state.kategori_image);
+        API.put(`${API_SERVER}v1/category/image/${this.state.catId}`, form).then(res => {
+          if(res.status === 200) {
+            this.fetchData();
+            this.setState({ kategori_image: '', kategori_name: '', catId: '' });
+          }
+        })
+      }
     }
   }
 

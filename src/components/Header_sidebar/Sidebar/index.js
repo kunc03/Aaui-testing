@@ -291,6 +291,19 @@ export class MenuClient extends React.Component {
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to="/aktivitas" className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Aktivitas.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">
+            Aktivitas
+          </span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
         <Link to="/profile" className="nav-link">
           <span className="pcoded-micon">
             <img
