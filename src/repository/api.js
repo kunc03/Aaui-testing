@@ -4,7 +4,7 @@ const axios = require('axios');
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export const DEV_MODE = true;
-const API_SERVER_DEV = 'http://10.1.70.137:4000/';
+const API_SERVER_DEV = 'http://localhost:4000/';
 const API_SERVER_PROD = 'https://8023.development.carsworld.co.id/';
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 

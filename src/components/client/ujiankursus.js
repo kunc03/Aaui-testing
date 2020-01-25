@@ -4,16 +4,54 @@ import { Modal, Form, Card, Button } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+import Countdown from 'react-countdown-now';
+
 export default class UjianKursus extends Component {
 
 	state = {
+    durasiWaktu: 10 * (60 * 1000),
+    jumlahSoal: 15,
+
+    stateAkhir: Date.now() + 10 * (60 * 1000),
 	}
 
 	componentDidMount() {
+    if(Date.now() < this.state.stateAkhir) {
+      if(localStorage.getItem('waktuUjian') === null) {
+        localStorage.setItem('waktuUjian', this.state.durasiWaktu);
+        console.log('awal: ', parseInt(localStorage.getItem('waktuUjian')) );
+      } else {
+        this.setState({ durasiWaktu: parseInt(localStorage.getItem('waktuUjian')) })
+        console.log('exist: ', parseInt(localStorage.getItem('waktuUjian')) );
+      }
+    } else {
+      this.resetCountDown()      
+    }
+  }
 
-	}
+  checkLocalStorage = e => {
+    console.log('cek: ', localStorage.getItem('key: DOMString'))
+  }
 
-	render() {
+  resetCountDown = e => {
+    localStorage.removeItem('waktuUjian')
+    console.log('reset: ', localStorage.getItem('waktuUjian'))
+  }
+
+  onTickCountDown = e => {
+    localStorage.setItem('waktuUjian', e.total);
+  }
+
+  onFinisCountDown = e => {
+    this.resetCountDown();
+  }
+
+  render() {
+    const { durasiWaktu, jumlahSoal } = this.state;
+    const Completionist = () => <span>You are good to go!</span>;
+
+    console.log('state: ', this.state);
+    console.log('local: ', parseInt(localStorage.getItem('waktuUjian')));
 
 		return (
 			<div className="pcoded-main-container">
@@ -39,8 +77,21 @@ export default class UjianKursus extends Component {
                                   </td>
                                 </tr>
                                 <tr>
-                                  <td><img src="/assets/images/component/clockkecil.png" /> 12:12:43</td>
-                                  <td><img src="/assets/images/component/questionkecil.png" /> 5/15</td>
+                                  <td>
+                                    <img src="/assets/images/component/clockkecil.png" style={{marginRight: '8px'}} /> 
+                                    <Countdown 
+                                      date={Date.now() + durasiWaktu}
+                                      autoStart="false"
+                                      onTick={this.onTickCountDown}
+                                      onComplete={this.onFinisCountDown}
+                                      >
+                                      <Completionist />
+                                    </Countdown>
+                                  </td>
+                                  <td>
+                                    <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} /> 
+                                    0/{jumlahSoal}
+                                  </td>
                                 </tr>
                               </table>
                             </div>

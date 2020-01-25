@@ -8,6 +8,7 @@
     "bootstrap": "^4.4.1",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
+    "react-countdown-now": "^2.1.2",
     "react-dom": "^16.12.0",
     "react-flickity-component": "^3.4.0",
     "react-redux": "^7.1.3",
