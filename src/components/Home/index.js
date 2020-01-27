@@ -13,16 +13,19 @@ class Home extends Component {
       companyId: '',
     },
     kategoriKursus: [],
-    kursusTerbaru: []
+    kursusTerbaru: [],
+    kursusDiikuti: []
   }
 
   componentDidMount() {
     this.fetchDataUser();
+    this.fetchDataKursusDiikuti();
   }
 
   fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
+        console.log('res:', res.data.result.company_id)
         this.fetchDataKategoriKursus(res.data.result.company_id);
         this.fetchDataKursusTerbaru(res.data.result.company_id);
         
@@ -47,13 +50,21 @@ class Home extends Component {
   fetchDataKursusTerbaru(companyId) {
     API.get(`${API_SERVER}v1/course/company/${companyId}`).then(res => {
       if(res.status === 200) {
-        this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }) })
+        this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }).slice(0,3) })
       }
     }) 
   }
 
+  fetchDataKursusDiikuti() {
+    API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ kursusDiikuti: res.data.result })
+      }
+    })
+  }
+
   render() {
-    const { user, kategoriKursus, kursusTerbaru } = this.state;
+    const { user, kategoriKursus, kursusTerbaru, kursusDiikuti } = this.state;
 
     const ListKategori = ({lists}) => {
       if(lists.length !== 0) {
@@ -61,7 +72,7 @@ class Home extends Component {
           <div className="row">
             {
               lists.map((item, i) => (
-                <div className="col-sm-4">
+                <div className="col-sm-4" key={item.category_id}>
                   <Link to={`/kategori-kursus/${item.category_id}`}>
                     <div className="card">
                       <img
@@ -87,7 +98,7 @@ class Home extends Component {
           <div className="col-sm-12">
             <Card>
               <Card.Body>
-                <h3 className="f-w-900 f-24">Memuat halaman...</h3>
+                <h3 className="f-w-900 f-20">Memuat halaman...</h3>
               </Card.Body>
             </Card>
           </div>
@@ -101,7 +112,7 @@ class Home extends Component {
           <div className="row">
             {
               lists.map((item, i) => (
-                <div className="col-sm-12">
+                <div className="col-sm-12" key={item.course_id}>
                   <Link to={`/detail-kursus/${item.course_id}`}>
                     <div className="card">
                       <img
@@ -127,13 +138,80 @@ class Home extends Component {
           <div className="col-sm-12">
             <Card>
               <Card.Body>
-                <h3 className="f-w-900 f-24">Memuat halaman...</h3>
+                <h3 className="f-w-900 f-20">Memuat halaman...</h3>
               </Card.Body>
             </Card>
           </div>
         );
       }
     };
+
+    const ListKursusDiikuti = ({lists}) => {
+      if(lists.length !== 0) {
+        return (
+          <div className="row">
+            {
+              lists.map((item, i) => (
+                <div className="col-sm-4" key={item.id_user_course}>
+                  <div className="card">
+                    <div className="box-image">
+                      <img
+                        className="img-kursus-diikuti"
+                        src="assets/images/component/Pattern Geometric-01.png"
+                        alt="dashboard-user"
+                      />
+                      <div className="card-text-title">{item.course.category_name}</div>
+                    </div>
+                    <div className="card-carousel">
+                      <div className="title-head f-16">
+                        {item.course.title}
+                      </div>
+                      <div className="row m-t-50">
+                        <div className="col-6">
+                          <small className="f-w-600 m-b-10">
+                            Tipe
+                          </small>
+                          <h6>
+                            <small className="f-w-600">
+                              {item.course.type}
+                            </small>
+                          </h6>
+                        </div>
+                        <div className="col-6">
+                          <div className="progress m-b-10">
+                            <div
+                              className="progress-bar progress-c-yellow"
+                              role="progressbar"
+                              style={{ width: "40%", height: 6 }}
+                              aria-valuenow={60}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
+                          <small className="f-w-600">
+                            Proses (20%)
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        );
+      } else {
+        return (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        );
+      }
+    }
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
@@ -199,7 +277,7 @@ class Home extends Component {
                           <div className="row d-flex align-items-center">
                             <div className="col-6">
                               <h3 className="f-w-900 f-24">
-                                Kursus yang harus diikuti
+                                Kursus yang sedang Diikuti
                               </h3>
                             </div>
                             <div className="col-6 text-right">
@@ -211,140 +289,7 @@ class Home extends Component {
                         </div>
                       </div>
 
-                      <div className="row">
-                        <div className="col-sm-4">
-                          <div className="card">
-                            <div className="box-image">
-                              <img
-                                className="img-kursus-diikuti"
-                                src="assets/images/component/Pattern Geometric-01.png"
-                                alt="dashboard-user"
-                              />
-                              <div className="card-text-title">DESAIN</div>
-                            </div>
-                            <div className="card-carousel">
-                              <div className="title-head f-16">
-                                Cara Membuat Design Dengan Menggunakan Adobe
-                              </div>
-                              <div className="row m-t-50">
-                                <div className="col-6">
-                                  <small className="f-w-600 m-b-10">
-                                    Mentor
-                                  </small>
-                                  <h6>
-                                    <small className="f-w-600">
-                                      Muhammad Abail
-                                    </small>
-                                  </h6>
-                                </div>
-                                <div className="col-6">
-                                  <div className="progress m-b-10">
-                                    <div
-                                      className="progress-bar progress-c-yellow"
-                                      role="progressbar"
-                                      style={{ width: "40%", height: 6 }}
-                                      aria-valuenow={60}
-                                      aria-valuemin={0}
-                                      aria-valuemax={100}
-                                    />
-                                  </div>
-                                  <small className="f-w-600">
-                                    Proses (20%)
-                                  </small>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-sm-4">
-                          <div className="card">
-                            <div className="box-image">
-                              <img
-                                className="img-kursus-diikuti"
-                                src="assets/images/component/Pattern Geometric-02.png"
-                                alt="dashboard-user"
-                              />
-                              <div className="card-text-title">MARKETING</div>
-                            </div>
-                            <div className="card-carousel">
-                              <div className="title-head f-16">
-                                Cara Membuat Design Dengan Menggunakan Adobe
-                              </div>
-                              <div className="row m-t-50">
-                                <div className="col-6">
-                                  <small className="f-w-600 m-b-10">
-                                    Mentor
-                                  </small>
-                                  <h6>
-                                    <small className="f-w-600">
-                                      Muhammad Abail
-                                    </small>
-                                  </h6>
-                                </div>
-                                <div className="col-6">
-                                  <div className="progress m-b-10">
-                                    <div
-                                      className="progress-bar progress-c-purple"
-                                      role="progressbar"
-                                      style={{ width: "40%", height: 6 }}
-                                      aria-valuenow={60}
-                                      aria-valuemin={0}
-                                      aria-valuemax={100}
-                                    />
-                                  </div>
-                                  <small className="f-w-600">
-                                    Proses (20%)
-                                  </small>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-sm-4">
-                          <div className="card">
-                            <div className="box-image">
-                              <img
-                                className="img-kursus-diikuti"
-                                src="assets/images/component/Pattern Geometric-01.png"
-                                alt="dashboard-user"
-                              />
-                              <div className="card-text-title">TEKNOLOGI</div>
-                            </div>
-                            <div className="card-carousel">
-                              <div className="title-head f-16">
-                                Cara Membuat Design Dengan Menggunakan Adobe
-                              </div>
-                              <div className="row m-t-50">
-                                <div className="col-6">
-                                  <small className="f-w-600 m-b-10">
-                                    Mentor
-                                  </small>
-                                  <h6>
-                                    <small className="f-w-600">
-                                      Muhammad Abail
-                                    </small>
-                                  </h6>
-                                </div>
-                                <div className="col-6">
-                                  <div className="progress m-b-10">
-                                    <div
-                                      className="progress-bar progress-c-yellow"
-                                      role="progressbar"
-                                      style={{ width: "40%", height: 6 }}
-                                      aria-valuenow={60}
-                                      aria-valuemin={0}
-                                      aria-valuemax={100}
-                                    />
-                                  </div>
-                                  <small className="f-w-600">
-                                    Proses (20%)
-                                  </small>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <ListKursusDiikuti lists={kursusDiikuti} />
 
                     </div>
                     

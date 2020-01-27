@@ -49,7 +49,16 @@ export default class DetailKursus extends Component {
 
   onClickIkutiKursus = e => {
     e.preventDefault();
-    this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false })
+    let form = {
+      user_id: Storage.get('user').data.user_id,
+      course_id: this.state.courseId
+    }
+    API.post(`${API_SERVER}v1/user-course`, form).then(res => {
+      if(res.status === 200) {
+        console.log('res: ', res.data.result)
+        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false })
+      }
+    })
   }
 
   onClickIkutiQuiz = e => {

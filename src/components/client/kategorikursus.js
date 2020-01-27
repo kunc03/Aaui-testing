@@ -21,6 +21,7 @@ export default class KategoriKursus extends Component {
 				this.setState({ companyId: res.data.result.company_id });
 
 				API.get(`${API_SERVER}v1/course/category/${this.state.categoryId}/${this.state.companyId}`).then(res => {
+          console.log('res:', res.data.result)
 					if(res.status === 200) {
 						this.setState({ kursus: res.data.result });
 					}

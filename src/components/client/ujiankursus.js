@@ -50,9 +50,6 @@ export default class UjianKursus extends Component {
     const { durasiWaktu, jumlahSoal } = this.state;
     const Completionist = () => <span>You are good to go!</span>;
 
-    console.log('state: ', this.state);
-    console.log('local: ', parseInt(localStorage.getItem('waktuUjian')));
-
 		return (
 			<div className="pcoded-main-container">
         <div className="pcoded-wrapper">
