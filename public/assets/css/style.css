@@ -11085,14 +11085,27 @@ div.code-toolbar > .toolbar span:hover {
   border-radius: 10px;
   background-color: #f1f1f1;
   border: 1px solid #BF337B;
-  width: 80px;
-  margin: 10px;
+  width: 76px;
+  margin: 12px;
   text-align: center;
   line-height: 75px;
-  font-size: 30px;
+  font-size: 20px;
   list-style-type: none;
   font-size: 14;
   cursor: pointer;
+  color: #BF337B;
+}
+
+.flex-item:hover {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-active {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
 }
 
 .card-options {

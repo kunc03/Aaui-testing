@@ -39,6 +39,12 @@ export default class DetailKursus extends Component {
           }
         })
 
+        API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ isIkutiKursus: res.data.result, isButtonIkuti: !res.data.result })
+          }
+        })
+
       }
     })
   }
@@ -126,7 +132,7 @@ export default class DetailKursus extends Component {
                       <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
                       <p>{dateFormat.toString()}</p>
 
-                      <p class="lead">{course.caption}...</p>
+                      <p class="lead">{course.caption}</p>
 
                       { isIkutiKursus && <div dangerouslySetInnerHTML={{ __html: course.body }} /> }
 
@@ -183,7 +189,7 @@ export default class DetailKursus extends Component {
                       </table>
 
                       <Link style={{marginTop: '20px'}} to={`/ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
-                        Ya, Mulai Quiz
+                        Ya, Mulai Ujian
                       </Link>
                       <button type="button"
                         className="btn btn-block f-w-bold"

@@ -9,10 +9,16 @@ import Countdown from 'react-countdown-now';
 export default class UjianKursus extends Component {
 
 	state = {
+    examId: '',
     durasiWaktu: 10 * (60 * 1000),
+    stateAkhir: Date.now() + 10 * (60 * 1000),
     jumlahSoal: 15,
 
-    stateAkhir: Date.now() + 10 * (60 * 1000),
+    soalUjian: [],
+
+    nomorUjian: '',
+    pertanyaanUjian: '',
+    pilihanUjian: [],
 	}
 
 	componentDidMount() {
@@ -27,10 +33,194 @@ export default class UjianKursus extends Component {
     } else {
       this.resetCountDown()      
     }
+
+    let soalUjian = [
+      {
+            "question_id": 36,
+            "exam_id": 26,
+            "tag": "MTK",
+            "number": 1,
+            "question": "Hasil dari 20+20?",
+            "image": null,
+            "correct_option": "A",
+            "options": [
+                {
+                    "option_id": 126,
+                    "question_id": 36,
+                    "exam_option": "A",
+                    "description": "40"
+                },
+                {
+                    "option_id": 127,
+                    "question_id": 36,
+                    "exam_option": "B",
+                    "description": "30"
+                },
+                {
+                    "option_id": 128,
+                    "question_id": 36,
+                    "exam_option": "C",
+                    "description": "20"
+                },
+                {
+                    "option_id": 129,
+                    "question_id": 36,
+                    "exam_option": "D",
+                    "description": "10"
+                }
+            ]
+      },
+      {
+          "question_id": 37,
+          "exam_id": 26,
+          "tag": "MTK",
+          "number": 2,
+          "question": "Hasil dari 100-80",
+          "image": null,
+          "correct_option": "C",
+          "options": [
+              {
+                  "option_id": 131,
+                  "question_id": 37,
+                  "exam_option": "A",
+                  "description": "30"
+              },
+              {
+                  "option_id": 132,
+                  "question_id": 37,
+                  "exam_option": "B",
+                  "description": "10"
+              },
+              {
+                  "option_id": 130,
+                  "question_id": 37,
+                  "exam_option": "C",
+                  "description": "20"
+              },
+              {
+                  "option_id": 133,
+                  "question_id": 37,
+                  "exam_option": "D",
+                  "description": "50"
+              }
+          ]
+      },
+      {
+          "question_id": 38,
+          "exam_id": 26,
+          "tag": "MTK",
+          "number": 3,
+          "question": "Hasil dari 100/50?",
+          "image": null,
+          "correct_option": "D",
+          "options": [
+              {
+                  "option_id": 135,
+                  "question_id": 38,
+                  "exam_option": "A",
+                  "description": "10"
+              },
+              {
+                  "option_id": 136,
+                  "question_id": 38,
+                  "exam_option": "B",
+                  "description": "30"
+              },
+              {
+                  "option_id": 137,
+                  "question_id": 38,
+                  "exam_option": "C",
+                  "description": "40"
+              },
+              {
+                  "option_id": 134,
+                  "question_id": 38,
+                  "exam_option": "D",
+                  "description": "20"
+              }
+          ]
+      },
+      {
+          "question_id": 39,
+          "exam_id": 26,
+          "tag": "MTK",
+          "number": 4,
+          "question": "Hasil dari 60-40",
+          "image": null,
+          "correct_option": "C",
+          "options": [
+              {
+                  "option_id": 139,
+                  "question_id": 39,
+                  "exam_option": "A",
+                  "description": "10"
+              },
+              {
+                  "option_id": 140,
+                  "question_id": 39,
+                  "exam_option": "B",
+                  "description": "15"
+              },
+              {
+                  "option_id": 138,
+                  "question_id": 39,
+                  "exam_option": "C",
+                  "description": "20"
+              },
+              {
+                  "option_id": 141,
+                  "question_id": 39,
+                  "exam_option": "D",
+                  "description": "25"
+              }
+          ]
+      },
+      {
+          "question_id": 40,
+          "exam_id": 26,
+          "tag": "MTK",
+          "number": 5,
+          "question": "Hasil dari 50+10?",
+          "image": null,
+          "correct_option": "D",
+          "options": [
+              {
+                  "option_id": 143,
+                  "question_id": 40,
+                  "exam_option": "A",
+                  "description": "40"
+              },
+              {
+                  "option_id": 144,
+                  "question_id": 40,
+                  "exam_option": "B",
+                  "description": "45"
+              },
+              {
+                  "option_id": 145,
+                  "question_id": 40,
+                  "exam_option": "C",
+                  "description": "50"
+              },
+              {
+                  "option_id": 142,
+                  "question_id": 40,
+                  "exam_option": "D",
+                  "description": "60"
+              }
+          ]
+      }
+    ]
+    this.setState({ 
+      soalUjian: soalUjian, 
+      nomorUjian: soalUjian[0].number,
+      pertanyaanUjian: soalUjian[0].question,
+      pilihanUjian: soalUjian[0].options
+    })
   }
 
   checkLocalStorage = e => {
-    console.log('cek: ', localStorage.getItem('key: DOMString'))
+    console.log('cek: ', localStorage.getItem('waktuUjian'))
   }
 
   resetCountDown = e => {
@@ -40,15 +230,41 @@ export default class UjianKursus extends Component {
 
   onTickCountDown = e => {
     localStorage.setItem('waktuUjian', e.total);
+    console.log(localStorage.getItem('waktuUjian'))
   }
 
   onFinisCountDown = e => {
     this.resetCountDown();
   }
 
+  pilihPertanyaan = e => {
+    e.preventDefault();
+    const indexarray = e.target.getAttribute('data-index');
+    this.setState({
+      nomorUjian: this.state.soalUjian[indexarray].number,
+      pertanyaanUjian: this.state.soalUjian[indexarray].question,
+      pilihanUjian: this.state.soalUjian[indexarray].options,
+      durasiWaktu: parseInt(localStorage.getItem('waktuUjian'))
+    })
+  }
+
   render() {
-    const { durasiWaktu, jumlahSoal } = this.state;
+    const { durasiWaktu, jumlahSoal, soalUjian } = this.state;
     const Completionist = () => <span>You are good to go!</span>;
+
+    const ListNomor = ({lists}) => (
+      <ul class="flex-container" style={{marginTop: '16px'}}>
+        {
+          lists.map((item, i) => (
+            <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} class="flex-item">{item.number}</li>
+          ))
+        }
+      </ul>
+    );
+
+    console.log('state: ', this.state.nomorUjian);
+    console.log('state: ', this.state.pertanyaanUjian);
+    console.log('state: ', this.state.pilihanUjian);
 
 		return (
 			<div className="pcoded-main-container">
@@ -68,51 +284,37 @@ export default class UjianKursus extends Component {
                             </div>
                             <div className="col-sm-9">
                               <table>
-                                <tr>
-                                  <td colSpan="2">
-                                    <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>Bagaimana menjadi seorang Developer?</h3>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <img src="/assets/images/component/clockkecil.png" style={{marginRight: '8px'}} /> 
-                                    <Countdown 
-                                      date={Date.now() + durasiWaktu}
-                                      autoStart="false"
-                                      onTick={this.onTickCountDown}
-                                      onComplete={this.onFinisCountDown}
-                                      >
-                                      <Completionist />
-                                    </Countdown>
-                                  </td>
-                                  <td>
-                                    <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} /> 
-                                    0/{jumlahSoal}
-                                  </td>
-                                </tr>
+                                <tbody>
+                                  <tr>
+                                    <td colSpan="2">
+                                      <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>Bagaimana menjadi seorang Developer?</h3>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <img src="/assets/images/component/clockkecil.png" style={{marginRight: '8px'}} /> 
+                                      <Countdown 
+                                        date={Date.now() + durasiWaktu}
+                                        autoStart="false"
+                                        onTick={this.onTickCountDown}
+                                        onComplete={this.onFinisCountDown}
+                                        >
+                                        <Completionist />
+                                      </Countdown>
+                                    </td>
+                                    <td>
+                                      <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} /> 
+                                      0/{jumlahSoal}
+                                    </td>
+                                  </tr>
+                                </tbody>
                               </table>
                             </div>
                           </div>
 
                           <div className="row">
                             <div className="col-sm-12 text-center">
-                              <ul class="flex-container" style={{marginTop: '16px'}}>
-                                <li class="flex-item">1</li>
-                                <li class="flex-item">2</li>
-                                <li class="flex-item">3</li>
-                                <li class="flex-item">4</li>
-                                <li class="flex-item">5</li>
-                                <li class="flex-item">6</li>
-                                <li class="flex-item">7</li>
-                                <li class="flex-item">8</li>
-                                <li class="flex-item">9</li>
-                                <li class="flex-item">10</li>
-                                <li class="flex-item">11</li>
-                                <li class="flex-item">12</li>
-                                <li class="flex-item">13</li>
-                                <li class="flex-item">14</li>
-                                <li class="flex-item">15</li>
-                              </ul>
+                              <ListNomor lists={soalUjian} />
                             </div>
                           </div>
 
@@ -129,32 +331,18 @@ export default class UjianKursus extends Component {
                       <Card>
                         <Card.Body>
                           <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>
-                            1. Bagaimana menjadi seorang Developer, Bagaimana menjadi seorang Developer, Bagaimana menjadi seorang Developer?
+                            {this.state.nomorUjian}. {this.state.pertanyaanUjian}
                           </h3>
 
-                          <Card className="card-options">
-                            <Card.Body style={{padding: '16px'}}>
-                              A. Jawaban A
-                            </Card.Body>
-                          </Card>
-
-                          <Card className="card-options">
-                            <Card.Body style={{padding: '16px'}}>
-                              A. Jawaban A
-                            </Card.Body>
-                          </Card>
-
-                          <Card className="card-options">
-                            <Card.Body style={{padding: '16px'}}>
-                              A. Jawaban A
-                            </Card.Body>
-                          </Card>
-
-                          <Card className="card-options">
-                            <Card.Body style={{padding: '16px'}}>
-                              A. Jawaban A
-                            </Card.Body>
-                          </Card>
+                          {
+                            this.state.pilihanUjian.map((item, i) => (
+                              <Card className="card-options" key={item.answer_id}>
+                                <Card.Body style={{padding: '16px'}}>
+                                  {item.exam_option}. {item.description}
+                                </Card.Body>
+                              </Card>
+                            ))
+                          }
 
                         </Card.Body>
                       </Card>
