@@ -171,11 +171,11 @@ export default class QuestionExamCreate extends Component {
 												    Tambah Pilihan
 												  </Button>
 
-												  <ol type="A" style={{marginTop: '10px', marginLeft: '-25px'}}>
+												  <ol style={{marginTop: '10px', marginLeft: '-25px'}}>
 												  	{
 												  		this.state.pilihans.map((item) => (
 														  	<li key={item.option_id}>
-														  		{item.description} &nbsp;
+														  		{item.exam_option}. {item.description} &nbsp;
 								          				<Link to="#" className="buttonku" title="Hapus">
 								          					<i onClick={this.handleDeleteOption} data-id={item.option_id} className="fa fa-trash"></i>
 								        					</Link>

@@ -25,7 +25,6 @@ class Home extends Component {
   fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        console.log('res:', res.data.result.company_id)
         this.fetchDataKategoriKursus(res.data.result.company_id);
         this.fetchDataKursusTerbaru(res.data.result.company_id);
         
@@ -153,48 +152,50 @@ class Home extends Component {
             {
               lists.map((item, i) => (
                 <div className="col-sm-4" key={item.id_user_course}>
-                  <div className="card">
-                    <div className="box-image">
-                      <img
-                        className="img-kursus-diikuti"
-                        src="assets/images/component/Pattern Geometric-01.png"
-                        alt="dashboard-user"
-                      />
-                      <div className="card-text-title">{item.course.category_name}</div>
-                    </div>
-                    <div className="card-carousel">
-                      <div className="title-head f-16">
-                        {item.course.title}
+                  <Link to={`/detail-kursus/${item.course_id}`}>
+                    <div className="card">
+                      <div className="box-image">
+                        <img
+                          className="img-kursus-diikuti"
+                          src="assets/images/component/Pattern Geometric-01.png"
+                          alt="dashboard-user"
+                        />
+                        <div className="card-text-title">{item.course.category_name}</div>
                       </div>
-                      <div className="row m-t-50">
-                        <div className="col-6">
-                          <small className="f-w-600 m-b-10">
-                            Tipe
-                          </small>
-                          <h6>
-                            <small className="f-w-600">
-                              {item.course.type}
+                      <div className="card-carousel">
+                        <div className="title-head f-16">
+                          {item.course.title}
+                        </div>
+                        <div className="row m-t-50">
+                          <div className="col-6">
+                            <small className="f-w-600 m-b-10">
+                              Tipe
                             </small>
-                          </h6>
-                        </div>
-                        <div className="col-6">
-                          <div className="progress m-b-10">
-                            <div
-                              className="progress-bar progress-c-yellow"
-                              role="progressbar"
-                              style={{ width: "40%", height: 6 }}
-                              aria-valuenow={60}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                            />
+                            <h6>
+                              <small className="f-w-600">
+                                {item.course.type}
+                              </small>
+                            </h6>
                           </div>
-                          <small className="f-w-600">
-                            Proses (20%)
-                          </small>
+                          <div className="col-6">
+                            <div className="progress m-b-10">
+                              <div
+                                className="progress-bar progress-c-yellow"
+                                role="progressbar"
+                                style={{ width: "40%", height: 6 }}
+                                aria-valuenow={60}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                              />
+                            </div>
+                            <small className="f-w-600">
+                              Proses (20%)
+                            </small>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ))
             }

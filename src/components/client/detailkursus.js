@@ -13,8 +13,8 @@ export default class DetailKursus extends Component {
     isButtonIkuti: true,
     isModalQuiz: false,
 
-    countSoal: '40',
-    durasiWaktu: '120',
+    countSoal: '0',
+    durasiWaktu: '0',
 
     course: { category_name: 'Memuat...' },
 		chapters: []
@@ -25,7 +25,7 @@ export default class DetailKursus extends Component {
       if(res.status === 200) {
         this.setState({ chapters: res.data.result });
       }
-    })        
+    })
   }
 
   fetctDataCourse() {
@@ -38,6 +38,7 @@ export default class DetailKursus extends Component {
             this.setState({ course: res.data.result })
           }
         })
+
       }
     })
   }
@@ -55,7 +56,6 @@ export default class DetailKursus extends Component {
     }
     API.post(`${API_SERVER}v1/user-course`, form).then(res => {
       if(res.status === 200) {
-        console.log('res: ', res.data.result)
         this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false })
       }
     })
@@ -63,7 +63,11 @@ export default class DetailKursus extends Component {
 
   onClickIkutiQuiz = e => {
     e.preventDefault();
-    this.setState({ isModalQuiz: true })
+    API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ isModalQuiz: true, countSoal: res.data.result[0].soal, durasiWaktu: res.data.result[0].time_minute })
+      }
+    })
   }
 
   handleModalQuizClose = e => {
@@ -156,24 +160,26 @@ export default class DetailKursus extends Component {
                       <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
 
                       <table>
-                        <tr>
-                          <td>
-                            <img src="/assets/images/component/question.png" />
-                          </td>
-                          <td>
-                            <span style={{marginLeft: '14px'}}>Total Soal</span>
-                            <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{countSoal} Soal</h3>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <img src="/assets/images/component/clock.png" />
-                          </td>
-                          <td>
-                            <span style={{marginLeft: '14px'}}>Waktu Pengerjaan</span>
-                            <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{durasiWaktu} Menit</h3>
-                          </td>
-                        </tr>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <img src="/assets/images/component/question.png" />
+                            </td>
+                            <td>
+                              <span style={{marginLeft: '14px'}}>Total Soal</span>
+                              <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{countSoal} Soal</h3>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <img src="/assets/images/component/clock.png" />
+                            </td>
+                            <td>
+                              <span style={{marginLeft: '14px'}}>Waktu Pengerjaan</span>
+                              <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{durasiWaktu} Menit</h3>
+                            </td>
+                          </tr>
+                        </tbody>
                       </table>
 
                       <Link style={{marginTop: '20px'}} to={`/ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
