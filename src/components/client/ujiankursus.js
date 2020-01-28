@@ -12,6 +12,7 @@ export default class UjianKursus extends Component {
     userId: Storage.get('user').data.user_id,
     examId: this.props.match.params.exam_id,
     courseId: '',
+    courseTitle: '',
     companyId: '',
 
     jumlahSoal: this.props.match.params.count_soal,
@@ -27,12 +28,16 @@ export default class UjianKursus extends Component {
     jawabanKu: '',
     soalTerjawab: 0,
 
-    isModalUjian: false,
-    nilaiAkhir: 0
+    isModalSubmit: false,
+
   }
 
-  handleModalUjian = e => {
-    this.setState({ isModalUjian: false, nilaiAkhir: 0 })
+  konfirmasiSubmitUjian = e => {
+    this.setState({ isModalSubmit: true })
+  }
+
+  handleModalSubmit = e => {
+    this.setState({ isModalSubmit: false })
   }
 
   fetchPertanyaanUjian() {
@@ -50,8 +55,14 @@ export default class UjianKursus extends Component {
         API.get(`${API_SERVER}v1/exam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
             this.setState({ courseId: res.data.result.course_id });
+            API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
+              if(res.status === 200) {
+                this.setState({ courseTitle: res.data.result.title })
+              }
+            })
           }
         })
+
 
       }
     })
@@ -159,15 +170,6 @@ export default class UjianKursus extends Component {
     })
   }
 
-  submitUjianSekarang = e => {
-    API.get(`${API_SERVER}v1/exam-answer/submit/${this.state.examId}/${this.state.userId}`).then(res => {
-      if(res.status === 200) {
-        console.log('result: ', res.data.result);
-        this.setState({ isModalUjian: true, nilaiAkhir: res.data.result.score })
-      }
-    })
-  }
-
   render() {
     const { durasiWaktu, jumlahSoal, soalUjian, jawabanKu, soalTerjawab } = this.state;
     const Completionist = () => <span>Waktu Habis !</span>;
@@ -205,7 +207,7 @@ export default class UjianKursus extends Component {
                                 <tbody>
                                   <tr>
                                     <td colSpan="2">
-                                      <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>Bagaimana menjadi seorang Developer?</h3>
+                                      <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>{this.state.courseTitle}</h3>
                                     </td>
                                   </tr>
                                   <tr>
@@ -238,7 +240,7 @@ export default class UjianKursus extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Button onClick={this.submitUjianSekarang} className="btn btn-block submit-ujian">Submit</Button>
+                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian">Submit</Button>
                             </div>
                           </div>
                         </Card.Body>
@@ -267,18 +269,22 @@ export default class UjianKursus extends Component {
                     </div>
                   </div>
 
-                  <Modal show={this.state.isModalUjian} onHide={this.handleModalUjian}>
+                  <Modal show={this.state.isModalSubmit} onHide={this.handleModalSubmit}>
                     <Modal.Body style={{padding: '30px'}}>
                       <div className="text-center" style={{marginTop: '20px'}}>
-                        <img className="img-fluid" src="/assets/images/component/hasil.png" />
+                        <img className="img-fluid" src="/assets/images/component/exam.png" />
                       </div>
-                      <h3 style={{ position:'absolute', left: '144px', bottom: '200px', color: 'white'}} className="f-30 f-w-800 mb-3">Nilai Ujian</h3>
-                      <h3 style={{ position:'absolute', left: '164px', bottom: '130px', color: 'white'}} className="f-52 f-w-800 mb-3">{this.state.nilaiAkhir}</h3>
+                      <h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3>
 
-                      <button style={{marginTop: '30px'}} type="button"
+                      <Link to={`/ujian-hasil/${this.state.examId}`} style={{marginTop: '30px'}}
+                        className="btn btn-block f-w-bold btn-ideku">
+                        Ya, Saya Yakin
+                      </Link>
+
+                      <button type="button"
                         className="btn btn-block f-w-bold"
-                        onClick={this.handleModalUjian}>
-                        Selesai
+                        onClick={this.handleModalSubmit}>
+                        Batal
                       </button>
                     </Modal.Body>
                   </Modal>

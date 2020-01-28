@@ -45,6 +45,7 @@ import Login from "./components/Login/index";
 import KategoriKursus from "./components/client/kategorikursus";
 import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
+import UjianHasil from "./components/client/ujianhasil";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -205,6 +206,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />

@@ -13,6 +13,7 @@ export default class DetailKursus extends Component {
     isIkutiKursus: false,
     isButtonIkuti: true,
     isModalQuiz: false,
+    isUjian: false,
 
     countSoal: '0',
     durasiWaktu: '0',
@@ -43,6 +44,22 @@ export default class DetailKursus extends Component {
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
             this.setState({ isIkutiKursus: res.data.result, isButtonIkuti: !res.data.result })
+          }
+        })
+
+        API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
+          if(res.status === 200) {
+            if(res.data.response[0].is_exam) {
+              this.setState({ isUjian: true })
+            } else {
+              this.setState({ isUjian: false })
+            }
+          }
+        })
+
+        API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ examId: res.data.result[0].exam_id })
           }
         })
 
@@ -116,6 +133,24 @@ export default class DetailKursus extends Component {
       }
     };
 
+    const LinkUjian = ({isUjian}) => {
+      if(isUjian) {
+        return (
+          <Link to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
+        );
+      } else {
+        return (
+          <div>
+          { 
+            isIkutiKursus && <Link onClick={this.onClickIkutiQuiz} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
+              Ikuti Ujian
+            </Link> 
+          }
+          </div>
+        );
+      }
+    }
+
 		return (
 			<div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -138,9 +173,7 @@ export default class DetailKursus extends Component {
 
                       { isIkutiKursus && <div dangerouslySetInnerHTML={{ __html: course.body }} /> }
 
-                      { isIkutiKursus && <Link onClick={this.onClickIkutiQuiz} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-                        Ikuti Quiz
-                      </Link> }
+                      <LinkUjian isUjian={this.state.isUjian} />
 
                       { isButtonIkuti && <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
                         Ikuti Kursus
