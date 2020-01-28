@@ -11,6 +11,7 @@ export default class UjianKursus extends Component {
 	state = {
     durasiWaktu: 10 * (60 * 1000),
     jumlahSoal: 15,
+    isOpenModal: false,
 
     stateAkhir: Date.now() + 10 * (60 * 1000),
 	}
@@ -44,6 +45,16 @@ export default class UjianKursus extends Component {
 
   onFinisCountDown = e => {
     this.resetCountDown();
+  }
+
+  submitModalConfirm(){
+    this.setState({
+      isOpenModal : true
+    })
+  }
+
+  closeModalConfirm = e => {
+    this.setState({ isOpenModal: false })
   }
 
   render() {
@@ -118,12 +129,32 @@ export default class UjianKursus extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Button className="btn btn-block btn-primary">Submit</Button>
+                              <Button className="btn btn-block btn-primary" onClick={this.submitModalConfirm.bind(this)}>Submit</Button>
                             </div>
                           </div>
                         </Card.Body>
                       </Card>
                     </div>
+
+                    {/* MODAL CONFIRM */}
+                    <Modal show={this.state.isOpenModal} onHide={this.closeModalConfirm}>
+                    <Modal.Body style={{padding: '30px'}}>
+                      
+                      <h4 style={{marginTop: '30px', fontWeight: 'bold', color:'pink'}}>
+                        SUBMIT UJIAN
+                      </h4>
+                      <h5 className=" f-w-800 mb-3">Apakah Anda Yakin Untuk Submit Ujian Ini ?</h5>
+
+                      <Link style={{marginTop: '20px'}} to={`/hasil-ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
+                        Iya
+                      </Link>
+                      <button type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.closeModalConfirm}>
+                        Tidak
+                      </button>
+                    </Modal.Body>
+                  </Modal>
 
                     <div className="col-sm-6">
                       <Card>
