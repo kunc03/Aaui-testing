@@ -11102,8 +11102,20 @@ div.code-toolbar > .toolbar span:hover {
   color: white;
 }
 
-.flex-item-active {
+.flex-item-ideku {
   background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-green {
+  background-color: #259457;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-red {
+  background-color: #8F0101;
   border: 1px solid #f1f1f1;
   color: white;
 }
@@ -11111,4 +11123,25 @@ div.code-toolbar > .toolbar span:hover {
 .card-options {
   cursor: pointer;
   margin: 8px;
+}
+
+.card-blue {
+  background-color: #527AFF;
+  color: white;
+}
+
+.card-green {
+  background-color: #259457;
+  color: white;
+}
+
+.card-red {
+  background-color: #8F0101;
+  color: white;
+}
+
+.submit-ujian {
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
 }

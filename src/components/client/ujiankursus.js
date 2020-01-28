@@ -8,215 +8,83 @@ import Countdown from 'react-countdown-now';
 
 export default class UjianKursus extends Component {
 
-	state = {
-    examId: '',
-    durasiWaktu: 10 * (60 * 1000),
-    stateAkhir: Date.now() + 10 * (60 * 1000),
-    jumlahSoal: 15,
+  state = {
+    userId: Storage.get('user').data.user_id,
+    examId: this.props.match.params.exam_id,
+    courseId: '',
+    companyId: '',
+
+    jumlahSoal: this.props.match.params.count_soal,
+    durasiWaktu: this.props.match.params.durasi_waktu * (60 * 1000),
+    stateAkhir: Date.now() + this.props.match.params.durasi_waktu * (60 * 1000),
 
     soalUjian: [],
 
+    questionId: '',
     nomorUjian: '',
     pertanyaanUjian: '',
     pilihanUjian: [],
-	}
+    jawabanKu: '',
+    soalTerjawab: 0,
 
-	componentDidMount() {
+    isModalUjian: false,
+    nilaiAkhir: 0
+  }
+
+  handleModalUjian = e => {
+    this.setState({ isModalUjian: false, nilaiAkhir: 0 })
+  }
+
+  fetchPertanyaanUjian() {
+    //start ujian
+    API.get(`${API_SERVER}v1/exam-answer/start/${this.state.examId}/${this.state.userId}`).then(res => {
+      if(res.status === 200){
+        console.log('start: ', res.data.result)
+      }
+    })
+
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ companyId: res.data.result.company_id });
+
+        API.get(`${API_SERVER}v1/exam/${this.state.examId}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ courseId: res.data.result.course_id });
+          }
+        })
+
+      }
+    })
+
+    API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
+      if(res.status === 200) {
+        let soalUjian = res.data.result;
+        this.setState({ 
+          soalUjian: soalUjian, 
+          questionId: soalUjian[0].question_id,
+          nomorUjian: soalUjian[0].number,
+          pertanyaanUjian: soalUjian[0].question,
+          pilihanUjian: soalUjian[0].options
+        })
+      }
+    })
+  }
+
+  componentDidMount() {
     if(Date.now() < this.state.stateAkhir) {
       if(localStorage.getItem('waktuUjian') === null) {
         localStorage.setItem('waktuUjian', this.state.durasiWaktu);
+
         console.log('awal: ', parseInt(localStorage.getItem('waktuUjian')) );
       } else {
         this.setState({ durasiWaktu: parseInt(localStorage.getItem('waktuUjian')) })
+
         console.log('exist: ', parseInt(localStorage.getItem('waktuUjian')) );
       }
     } else {
       this.resetCountDown()      
     }
-
-    let soalUjian = [
-      {
-            "question_id": 36,
-            "exam_id": 26,
-            "tag": "MTK",
-            "number": 1,
-            "question": "Hasil dari 20+20?",
-            "image": null,
-            "correct_option": "A",
-            "options": [
-                {
-                    "option_id": 126,
-                    "question_id": 36,
-                    "exam_option": "A",
-                    "description": "40"
-                },
-                {
-                    "option_id": 127,
-                    "question_id": 36,
-                    "exam_option": "B",
-                    "description": "30"
-                },
-                {
-                    "option_id": 128,
-                    "question_id": 36,
-                    "exam_option": "C",
-                    "description": "20"
-                },
-                {
-                    "option_id": 129,
-                    "question_id": 36,
-                    "exam_option": "D",
-                    "description": "10"
-                }
-            ]
-      },
-      {
-          "question_id": 37,
-          "exam_id": 26,
-          "tag": "MTK",
-          "number": 2,
-          "question": "Hasil dari 100-80",
-          "image": null,
-          "correct_option": "C",
-          "options": [
-              {
-                  "option_id": 131,
-                  "question_id": 37,
-                  "exam_option": "A",
-                  "description": "30"
-              },
-              {
-                  "option_id": 132,
-                  "question_id": 37,
-                  "exam_option": "B",
-                  "description": "10"
-              },
-              {
-                  "option_id": 130,
-                  "question_id": 37,
-                  "exam_option": "C",
-                  "description": "20"
-              },
-              {
-                  "option_id": 133,
-                  "question_id": 37,
-                  "exam_option": "D",
-                  "description": "50"
-              }
-          ]
-      },
-      {
-          "question_id": 38,
-          "exam_id": 26,
-          "tag": "MTK",
-          "number": 3,
-          "question": "Hasil dari 100/50?",
-          "image": null,
-          "correct_option": "D",
-          "options": [
-              {
-                  "option_id": 135,
-                  "question_id": 38,
-                  "exam_option": "A",
-                  "description": "10"
-              },
-              {
-                  "option_id": 136,
-                  "question_id": 38,
-                  "exam_option": "B",
-                  "description": "30"
-              },
-              {
-                  "option_id": 137,
-                  "question_id": 38,
-                  "exam_option": "C",
-                  "description": "40"
-              },
-              {
-                  "option_id": 134,
-                  "question_id": 38,
-                  "exam_option": "D",
-                  "description": "20"
-              }
-          ]
-      },
-      {
-          "question_id": 39,
-          "exam_id": 26,
-          "tag": "MTK",
-          "number": 4,
-          "question": "Hasil dari 60-40",
-          "image": null,
-          "correct_option": "C",
-          "options": [
-              {
-                  "option_id": 139,
-                  "question_id": 39,
-                  "exam_option": "A",
-                  "description": "10"
-              },
-              {
-                  "option_id": 140,
-                  "question_id": 39,
-                  "exam_option": "B",
-                  "description": "15"
-              },
-              {
-                  "option_id": 138,
-                  "question_id": 39,
-                  "exam_option": "C",
-                  "description": "20"
-              },
-              {
-                  "option_id": 141,
-                  "question_id": 39,
-                  "exam_option": "D",
-                  "description": "25"
-              }
-          ]
-      },
-      {
-          "question_id": 40,
-          "exam_id": 26,
-          "tag": "MTK",
-          "number": 5,
-          "question": "Hasil dari 50+10?",
-          "image": null,
-          "correct_option": "D",
-          "options": [
-              {
-                  "option_id": 143,
-                  "question_id": 40,
-                  "exam_option": "A",
-                  "description": "40"
-              },
-              {
-                  "option_id": 144,
-                  "question_id": 40,
-                  "exam_option": "B",
-                  "description": "45"
-              },
-              {
-                  "option_id": 145,
-                  "question_id": 40,
-                  "exam_option": "C",
-                  "description": "50"
-              },
-              {
-                  "option_id": 142,
-                  "question_id": 40,
-                  "exam_option": "D",
-                  "description": "60"
-              }
-          ]
-      }
-    ]
-    this.setState({ 
-      soalUjian: soalUjian, 
-      nomorUjian: soalUjian[0].number,
-      pertanyaanUjian: soalUjian[0].question,
-      pilihanUjian: soalUjian[0].options
-    })
+    this.fetchPertanyaanUjian()
   }
 
   checkLocalStorage = e => {
@@ -241,33 +109,83 @@ export default class UjianKursus extends Component {
     e.preventDefault();
     const indexarray = e.target.getAttribute('data-index');
     this.setState({
+      questionId: this.state.soalUjian[indexarray].question_id,
       nomorUjian: this.state.soalUjian[indexarray].number,
       pertanyaanUjian: this.state.soalUjian[indexarray].question,
       pilihanUjian: this.state.soalUjian[indexarray].options,
-      durasiWaktu: parseInt(localStorage.getItem('waktuUjian'))
+      durasiWaktu: parseInt(localStorage.getItem('waktuUjian')),
+    })
+
+    API.get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
+      }
+    })
+  }
+
+  jawabPertanyaan = e => {
+    e.preventDefault();
+    const answerOption = e.target.getAttribute('data-option');
+    let form = {
+      user_id: this.state.userId,
+      question_id: this.state.questionId,
+      answer_number: this.state.nomorUjian,
+      answer_option: answerOption
+    }
+
+    API.get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.result.length === 0) {
+          // insert
+          API.post(`${API_SERVER}v1/exam-answer`, form)
+        } else {
+          //update
+          API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form)
+        }
+
+        let refactoring = this.state.soalUjian.map((item) => {
+          if(item.question_id === form.question_id) {
+            item.isJawab = true;
+          }
+          return item;
+        })
+
+        this.setState({ 
+          jawabanKu: form.answer_option, 
+          soalTerjawab: (parseInt(this.state.soalTerjawab) === parseInt(this.state.jumlahSoal)) ? this.state.jumlahSoal : this.state.soalTerjawab+1,
+          soalUjian: refactoring
+        })
+      }
+    })
+  }
+
+  submitUjianSekarang = e => {
+    API.get(`${API_SERVER}v1/exam-answer/submit/${this.state.examId}/${this.state.userId}`).then(res => {
+      if(res.status === 200) {
+        console.log('result: ', res.data.result);
+        this.setState({ isModalUjian: true, nilaiAkhir: res.data.result.score })
+      }
     })
   }
 
   render() {
-    const { durasiWaktu, jumlahSoal, soalUjian } = this.state;
-    const Completionist = () => <span>You are good to go!</span>;
+    const { durasiWaktu, jumlahSoal, soalUjian, jawabanKu, soalTerjawab } = this.state;
+    const Completionist = () => <span>Waktu Habis !</span>;
+
+    console.log('state: ', this.state)
 
     const ListNomor = ({lists}) => (
       <ul class="flex-container" style={{marginTop: '16px'}}>
         {
           lists.map((item, i) => (
-            <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} class="flex-item">{item.number}</li>
+            <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} class={`flex-item ${item.hasOwnProperty('isJawab') ? 'flex-item-ideku' : ''}`}>{item.number}</li>
           ))
         }
       </ul>
     );
 
-    console.log('state: ', this.state.nomorUjian);
-    console.log('state: ', this.state.pertanyaanUjian);
-    console.log('state: ', this.state.pilihanUjian);
-
-		return (
-			<div className="pcoded-main-container">
+    return (
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -295,7 +213,7 @@ export default class UjianKursus extends Component {
                                       <img src="/assets/images/component/clockkecil.png" style={{marginRight: '8px'}} /> 
                                       <Countdown 
                                         date={Date.now() + durasiWaktu}
-                                        autoStart="false"
+                                        // autoStart={false}
                                         onTick={this.onTickCountDown}
                                         onComplete={this.onFinisCountDown}
                                         >
@@ -304,7 +222,7 @@ export default class UjianKursus extends Component {
                                     </td>
                                     <td>
                                       <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} /> 
-                                      0/{jumlahSoal}
+                                      {soalTerjawab}/{jumlahSoal}
                                     </td>
                                   </tr>
                                 </tbody>
@@ -320,7 +238,7 @@ export default class UjianKursus extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Button className="btn btn-block btn-primary">Submit</Button>
+                              <Button onClick={this.submitUjianSekarang} className="btn btn-block submit-ujian">Submit</Button>
                             </div>
                           </div>
                         </Card.Body>
@@ -336,8 +254,8 @@ export default class UjianKursus extends Component {
 
                           {
                             this.state.pilihanUjian.map((item, i) => (
-                              <Card className="card-options" key={item.answer_id}>
-                                <Card.Body style={{padding: '16px'}}>
+                              <Card className={`card-options ${jawabanKu === item.exam_option ? 'card-blue':''}`} key={item.answer_id} onClick={this.jawabPertanyaan}>
+                                <Card.Body style={{padding: '16px'}} data-option={item.exam_option}>
                                   {item.exam_option}. {item.description}
                                 </Card.Body>
                               </Card>
@@ -349,13 +267,29 @@ export default class UjianKursus extends Component {
                     </div>
                   </div>
 
+                  <Modal show={this.state.isModalUjian} onHide={this.handleModalUjian}>
+                    <Modal.Body style={{padding: '30px'}}>
+                      <div className="text-center" style={{marginTop: '20px'}}>
+                        <img className="img-fluid" src="/assets/images/component/hasil.png" />
+                      </div>
+                      <h3 style={{ position:'absolute', left: '144px', bottom: '200px', color: 'white'}} className="f-30 f-w-800 mb-3">Nilai Ujian</h3>
+                      <h3 style={{ position:'absolute', left: '164px', bottom: '130px', color: 'white'}} className="f-52 f-w-800 mb-3">{this.state.nilaiAkhir}</h3>
+
+                      <button style={{marginTop: '30px'}} type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.handleModalUjian}>
+                        Selesai
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 
 }

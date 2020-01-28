@@ -204,7 +204,7 @@ export class ClientSwitch extends React.Component {
         
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
-        <Route path="/ujian-kursus" component={UjianKursus} />
+        <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />

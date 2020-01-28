@@ -7,6 +7,7 @@ import Storage from '../../repository/storage';
 export default class DetailKursus extends Component {
 
 	state = {
+    examId: '',
 		courseId: this.props.match.params.course_id,
 		companyId: '',
     isIkutiKursus: false,
@@ -71,7 +72,8 @@ export default class DetailKursus extends Component {
     e.preventDefault();
     API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
       if(res.status === 200) {
-        this.setState({ isModalQuiz: true, countSoal: res.data.result[0].soal, durasiWaktu: res.data.result[0].time_minute })
+        this.setState({ isModalQuiz: true, countSoal: res.data.result[0].soal, 
+          durasiWaktu: res.data.result[0].time_minute, examId: res.data.result[0].exam_id })
       }
     })
   }
@@ -188,7 +190,7 @@ export default class DetailKursus extends Component {
                         </tbody>
                       </table>
 
-                      <Link style={{marginTop: '20px'}} to={`/ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
+                      <Link style={{marginTop: '20px'}} to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu}`} className="btn btn-block btn-ideku f-w-bold">
                         Ya, Mulai Ujian
                       </Link>
                       <button type="button"
