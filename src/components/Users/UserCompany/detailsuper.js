@@ -413,7 +413,16 @@ export default class CompanyDetail extends Component {
 				                      	{
 						                      statusCompany.map(item => {
 						                        return (
-						                          <Form.Check name='status' inline label={item} checked={this.state.status === item} type='radio' value={item} />
+						                        	<div className="pretty p-default p-round p-thick m-b-35" style={{marginBottom: '5px'}}>
+						                            <input onChange={this.onChangeInput} name="status" checked={this.state.status === item} value={item} type="radio" />
+						                            <div className="state p-success-o">
+						                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
+						                                <small className="f-w-bold f-18 text-c-black small-text">
+						                                  {item}
+						                                </small>
+						                              </label>
+						                            </div>
+						                          </div>
 						                        );
 						                      })
 						                    }

@@ -15,8 +15,19 @@ export default class User extends Component {
       myCompanyId: this.props.match.params.company_id,
 
       isModalPassword: '',
-      userIdPassword: ''
+      userIdPassword: '',
+      userPassword: '',
+
+      isModalVoucher: false,
+      userIdVoucher: '',
+      voucher: ''
     };
+  }
+
+  handleChangeInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value });
   }
 
   onClickHapus = e => {
@@ -56,6 +67,26 @@ export default class User extends Component {
 
   handleModalPassword = e => {
     this.setState({ isModalPassword: false, userIdPassword: '' });
+  }
+
+
+  onClickModalVoucher = e => {
+    e.preventDefault();
+    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id')});
+  }
+
+  onClickSubmitVoucer = e => {
+    e.preventDefault();
+    let form = { voucher: this.state.voucher };
+    API.put(`${API_SERVER}v1/user/voucher/${this.state.userIdVoucher}`, form).then(res => {
+      if(res.status === 200) {
+        this.setState({ isModalVoucher: false, userIdVoucher: '' });
+      }
+    }) 
+  }
+
+  handleModalVoucher = e => {
+    this.setState({ isModalVoucher: false, userIdVoucher: '' });
   }
 
   componentDidMount() {
@@ -99,13 +130,16 @@ export default class User extends Component {
           <td>{item.phone}</td>
           <td>{item.validity}</td>
           <td class="text-center">
-            <Link to="#" className="buttonku">
+            <Link to="#" className="buttonku" title="Setting Voucher">
+              <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
+            </Link>
+            <Link to="#" className="buttonku" title="Ubah Password">
               <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
             </Link>
-            <Link to={`/user-company-edit/${item.user_id}`} className="buttonku">
+            <Link to={`/user-company-edit/${item.user_id}`} className="buttonku" title="Edit">
               <i className="fa fa-edit"></i>
             </Link>
-            <Link to="#" className="buttonku">
+            <Link to="#" className="buttonku" title="Hapus">
               <i data-id={item.user_id} onClick={this.onClickHapus} className="fa fa-trash"></i>
             </Link>
           </td>
@@ -190,7 +224,7 @@ export default class User extends Component {
                             <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitPassword}>
                               <div className="form-group">
                                 <label>Password Baru</label>
-                                <input type="password" placeholder="password baru" className="form-control" name="password" onChange={this.handleChangeInput} />
+                                <input type="password" required placeholder="password baru" className="form-control" name="userPassword" onChange={this.handleChangeInput} />
                               </div>
                               <button style={{ marginTop: '50px'}} type="submit"
                                 className="btn btn-block btn-ideku f-w-bold">
@@ -199,6 +233,28 @@ export default class User extends Component {
                               <button type="button"
                                 className="btn btn-block f-w-bold"
                                 onClick={this.handleModalPassword}>
+                                Tidak
+                              </button>
+                            </form>
+                          </Modal.Body>
+                        </Modal>
+
+                        <Modal show={this.state.isModalVoucher} onHide={this.handleModalVoucher}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Set Voucher</Modal.Title>
+                            <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitVoucer}>
+                              <div className="form-group">
+                                <label>Voucher</label>
+                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" onChange={this.handleChangeInput} />
+                              </div>
+
+                              <button style={{ marginTop: '50px'}} type="submit"
+                                className="btn btn-block btn-ideku f-w-bold">
+                                Set Voucher
+                              </button>
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleModalVoucher}>
                                 Tidak
                               </button>
                             </form>

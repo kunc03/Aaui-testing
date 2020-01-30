@@ -197,6 +197,7 @@ class UserCompany extends Component {
                         Tambah Baru
                       </a>
                     </div>
+                    
                     <div className="col-xl-12">
                       <div style={{ overflowX: "auto" }}>
                         <Lists lists={grup} />

@@ -75,7 +75,7 @@ export class MenuSuperAdmin extends React.Component {
         <Link to="#" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Kursus.png"
+              src="assets/images/component/dashboardoff.png"
               alt=""
             ></img>
           </span>
@@ -140,7 +140,7 @@ export class MenuSuperAdmin extends React.Component {
         <Link to="/profile" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/profileoff.png"
               alt=""
             ></img>
           </span>
@@ -151,7 +151,7 @@ export class MenuSuperAdmin extends React.Component {
         <Link to="/user" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/usersoff.png"
               alt=""
             ></img>
           </span>
@@ -162,7 +162,7 @@ export class MenuSuperAdmin extends React.Component {
         <Link to="/company" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/mycompanyoff.png"
               alt=""
             ></img>
           </span>
@@ -173,7 +173,7 @@ export class MenuSuperAdmin extends React.Component {
         <Link to="/user-access" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/accessoff.png"
               alt=""
             ></img>
           </span>
@@ -193,7 +193,7 @@ export class MenuAdmin extends React.Component {
         <Link to="/" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Kursus.png"
+              src="assets/images/component/dashboardoff.png"
               alt=""
             ></img>
           </span>
@@ -202,22 +202,21 @@ export class MenuAdmin extends React.Component {
           </span>
         </Link>
       </li>
+
       <li data-username="Sample Page" className="nav-item mt-4">
         <Link to={`/my-company`} className="nav-link">
           <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
+            <img src="assets/images/component/mycompanyoff.png" alt="" ></img>
           </span>
           <span className="pcoded-mtext f-16 f-w-bold">My Company</span>
         </Link>
       </li>
+
       <li data-username="Sample Page" className="nav-item mt-4">
         <Link to={`/kursus-materi`} className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/kursusoff.png"
               alt=""
             ></img>
           </span>
@@ -228,7 +227,7 @@ export class MenuAdmin extends React.Component {
         <Link to={`/user-company`} className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/usersoff.png"
               alt=""
             ></img>
           </span>
@@ -239,7 +238,7 @@ export class MenuAdmin extends React.Component {
         <Link to={`/user-access`} className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/accessoff.png"
               alt=""
             ></img>
           </span>
@@ -250,7 +249,7 @@ export class MenuAdmin extends React.Component {
         <Link to="/profile" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/profileoff.png"
               alt=""
             ></img>
           </span>
@@ -281,7 +280,7 @@ export class MenuClient extends React.Component {
         <Link to="/" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Kursus.png"
+              src="assets/images/component/dashboardoff.png"
               alt=""
             ></img>
           </span>
@@ -291,10 +290,23 @@ export class MenuClient extends React.Component {
         </Link>
       </li>
       <li data-username="Sample Page" className="nav-item mt-4">
+        <Link to="/aktivitas" className="nav-link">
+          <span className="pcoded-micon">
+            <img
+              src="assets/images/component/Icon Aktivitas.png"
+              alt=""
+            ></img>
+          </span>
+          <span className="pcoded-mtext f-16 f-w-bold">
+            Aktivitas
+          </span>
+        </Link>
+      </li>
+      <li data-username="Sample Page" className="nav-item mt-4">
         <Link to="/profile" className="nav-link">
           <span className="pcoded-micon">
             <img
-              src="assets/images/component/Icon Forum.png"
+              src="assets/images/component/profileoff.png"
               alt=""
             ></img>
           </span>

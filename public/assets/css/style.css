@@ -11073,3 +11073,75 @@ div.code-toolbar > .toolbar span:hover {
 		box-shadow: 0 0 0 0 rgba(4, 169, 245, 0)
 	}
 }
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+}
+
+.flex-item {
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #BF337B;
+  width: 76px;
+  margin: 12px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 20px;
+  list-style-type: none;
+  font-size: 14;
+  cursor: pointer;
+  color: #BF337B;
+}
+
+.flex-item:hover {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-ideku {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-green {
+  background-color: #259457;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-red {
+  background-color: #8F0101;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.card-options {
+  cursor: pointer;
+  margin: 8px;
+}
+
+.card-blue {
+  background-color: #527AFF;
+  color: white;
+}
+
+.card-green {
+  background-color: #259457;
+  color: white;
+}
+
+.card-red {
+  background-color: #8F0101;
+  color: white;
+}
+
+.submit-ujian {
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
