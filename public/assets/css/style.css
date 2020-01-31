@@ -11145,3 +11145,16 @@ div.code-toolbar > .toolbar span:hover {
   font-size: 20px;
   font-weight: bold;
 }
+
+.card-active {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.card-nonactive {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #DFDFDF;
+  cursor: no-drop;
+}

@@ -15,12 +15,18 @@ export default class DetailKursus extends Component {
     isModalQuiz: false,
     isUjian: false,
 
+    isUjianBelumAda: false,
+
     countSoal: '0',
     durasiWaktu: '0',
 
     course: { category_name: 'Memuat...' },
 		chapters: []
 	}
+
+  handleUjianBelumAda = e => {
+    this.setState({ isUjianBelumAda: false })
+  }
 
   fetchDataChapter() {
     API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
@@ -49,8 +55,12 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
-            if(res.data.response[0].is_exam) {
-              this.setState({ isUjian: true })
+            if(res.data.response.length !== 0) {
+              if(res.data.response[0].is_exam) {
+                this.setState({ isUjian: true })
+              } else {
+                this.setState({ isUjian: false })
+              }
             } else {
               this.setState({ isUjian: false })
             }
@@ -59,7 +69,11 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
           if(res.status === 200) {
-            this.setState({ examId: res.data.result[0].exam_id })
+            if(res.data.result.length !== 0) {
+              this.setState({ examId: res.data.result[0].exam_id })
+            } else {
+              this.setState({ isUjianBelumAda: true })
+            }
           }
         })
 
@@ -106,23 +120,20 @@ export default class DetailKursus extends Component {
     const ListChapter = ({lists}) => {
       if(lists.length !== 0) {
         return (
-          <Accordion>
+          <div>
           {
             lists.map((item, i) => (
-              <Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
-                <Accordion.Toggle as={Card.Header} className="f-24 f-w-800" eventKey={item.chapter_id}>
-                  <h3 className="f-24 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
-                </Accordion.Toggle>
-                <Accordion.Collapse eventKey={item.chapter_id}>
-                  <Card.Body style={{padding: '16px'}}>
-                    <img class="img-fluid rounded" src={item.chapter_video} alt="Media" />
-                    <h3 className="f-24 f-w-800" style={{marginTop: '10px'}}>{item.chapter_body}</h3>
-                  </Card.Body>
-                </Accordion.Collapse>
+              <Card className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
+                <Card.Body>
+                  <h3 className="f-24 f-w-800" style={{marginBottom: '0px'}}>
+                    {item.chapter_title} 
+                    <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                  </h3>
+                </Card.Body>
               </Card>
             ))  
           }
-          </Accordion>
+          </div>
         )
       } else {
         return (
@@ -230,6 +241,18 @@ export default class DetailKursus extends Component {
                         className="btn btn-block f-w-bold"
                         onClick={this.handleModalQuizClose}>
                         Kembali
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal show={this.state.isUjianBelumAda} onHide={this.handleUjianBelumAda}>
+                    <Modal.Body>
+                      <h3 className="f-24 f-w-800 mb-3">Ujian belum ada pada kursus ini.</h3>
+                      
+                      <button style={{marginTop: '30px'}} type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.handleUjianBelumAda}>
+                        Mengerti
                       </button>
                     </Modal.Body>
                   </Modal>
