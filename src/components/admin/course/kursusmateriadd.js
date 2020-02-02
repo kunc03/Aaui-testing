@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default class KursusMateriAdd extends Component {
 
@@ -22,7 +23,7 @@ export default class KursusMateriAdd extends Component {
 		body: '',
 		image: '',
 
-		isModalKategori: false
+		isModalKategori: false,
 	}
 
   onClickUbahKategori = e => {
@@ -71,6 +72,10 @@ export default class KursusMateriAdd extends Component {
     } else {
     	this.setState({ [name]: value });
     }
+  }
+
+  onChangeTinyMce = e => {
+    this.setState({ body: e.target.getContent() })
   }
 
   handleClearForm() {
@@ -222,13 +227,23 @@ export default class KursusMateriAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Konten</label>
-                              <textarea
-                                required
-                                name="body"
-                                className="form-control"
-                                placeholder="konten"
-                                onChange={this.onChangeInput}
+                              <Editor
+                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                initialValue={this.state.body}
+                                init={{
+                                  height: 400,
+                                  menubar: false,
+                                  plugins: [
+                                    'advlist autolink lists link image charmap print preview anchor',
+                                    'searchreplace visualblocks code fullscreen',
+                                    'insertdatetime media table paste code help wordcount'
+                                  ],
+                                  toolbar:
+                                   'undo redo | formatselect | bold italic backcolor | \
+                                   alignleft aligncenter alignright alignjustify | \
+                                    bullist numlist outdent indent | removeformat | help'
+                                }}
+                                onChange={this.onChangeTinyMce}
                               />
                             </div>
                             <div className="form-group">

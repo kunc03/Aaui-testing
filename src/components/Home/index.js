@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
-import Flickity from 'react-flickity-component'
+import Flickity from 'react-flickity-component';
 
 class Home extends Component {
   state = {
@@ -14,7 +14,7 @@ class Home extends Component {
     },
     kategoriKursus: [],
     kursusTerbaru: [],
-    kursusDiikuti: []
+    kursusDiikuti: [],
   }
 
   componentDidMount() {
@@ -57,7 +57,7 @@ class Home extends Component {
   fetchDataKursusDiikuti() {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
       if(res.status === 200) {
-        this.setState({ kursusDiikuti: res.data.result })
+        this.setState({ kursusDiikuti: res.data.result.reverse() })
       }
     })
   }
@@ -212,7 +212,42 @@ class Home extends Component {
           </div>
         );
       }
-    }
+    };
+
+    const ListAktivitas = ({lists}) => {
+      if(lists.length !== 0) {
+        return (
+          <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
+            {
+              lists.map((item, i) => (
+                <div key={item.course_id}>
+                  <li className="f-16 f-w-800 text-c-black">{item.course.title}</li>
+                  <table style={{ width: "100%" }}>
+                    <ListChapters lists={item.chapters} />
+                  </table>
+                </div>
+              ))
+            }
+          </ol>
+        );
+      } else {
+        return (
+          <h3 className="f-w-900 f-20">Belum ada aktivitas.</h3>
+        );
+      }
+    };
+
+    const ListChapters = ({lists}) => (
+      <tbody>
+        {
+          lists.map((item, i) => (
+            <tr key={item.chapter_id}>
+              <th className>{item.chapter_title}</th>
+            </tr>
+          ))
+        }
+      </tbody>
+    );
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
@@ -227,8 +262,9 @@ class Home extends Component {
 
                       <div className="row">
                         <div className="col-md-12 col-xl-12">
+                          <img style={{marginRight: '20px', marginBottom: '20px', float: 'left' }} src='./assets/images/component/Ilustrasi.png' className="img-fluid" width="130px" height="128px" />
                           <div className="page-header-title mb-2">
-                            <h3 className="f-w-900 ">
+                            <h3 className="f-w-900" style={{marginTop: '32px'}}>
                               Selamat datang, {user.name}
                             </h3>
                             <h6 className="top mt-5 f-w-900 text-cc-grey">
@@ -260,7 +296,7 @@ class Home extends Component {
                         <div className="col-md-12 col-xl-12 mb-3">
                           <div className="row d-flex align-items-center">
                             <div className="col-6">
-                              <h3 className="f-w-900 f-24">Kategori Kursus</h3>
+                              <h3 className="f-w-900 f-20">Kategori Kursus</h3>
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
@@ -277,9 +313,7 @@ class Home extends Component {
                         <div className="col-md-12 col-xl-12 mb-3">
                           <div className="row d-flex align-items-center">
                             <div className="col-6">
-                              <h3 className="f-w-900 f-24">
-                                Kursus yang sedang Diikuti
-                              </h3>
+                              <h3 className="f-w-900 f-20">Kursus yang Diikuti</h3>
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
@@ -299,7 +333,7 @@ class Home extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-6">
-                              <h3 className="f-w-900 f-16">
+                              <h3 className="f-w-900 f-18">
                                 Kursus Terbaru
                               </h3>
                             </div>
@@ -377,10 +411,30 @@ class Home extends Component {
                   </div>
 
                   <div className="row">
+                    <div className="col-md-4 col-xl-4 mb-3">
+                      <div className="kategori-aktif">
+                        Kursus & Materi
+                      </div>
+                    </div>
+
+                    <div className="col-md-4 col-xl-4 mb-3">
+                      <div className="kategori">
+                        Forum
+                      </div>
+                    </div>
+
+                    <div className="col-md-4 col-xl-4 mb-3">
+                      <div className="kategori">
+                        Live Class
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
                     <div className="col-md-12 col-xl-12 mb-3">
                       <div className="row d-flex align-items-center">
                         <div className="col-6">
-                          <h3 className="f-w-900 f-24">Aktivitas Terakhir</h3>
+                          <h3 className="f-w-900 f-20">Aktivitas Terakhir</h3>
                         </div>
                         <div className="col-6 text-right">
                           <p className="m-b-0">
@@ -394,67 +448,10 @@ class Home extends Component {
                   <div className="row">
                     <div className="col-md-12 col-xl-5">
                       <div className="card">
-                        <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
-                          <li className="f-16 f-w-800 text-c-black">Design</li>
-                          <table style={{ width: "100%" }}>
-                            <tbody>
-                              <tr className>
-                                <th className> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <li className="f-16 f-w-800 text-c-black m-t-5">
-                            Teknologi
-                          </li>
-                          <table
-                            style={{
-                              padding: "50px !important",
-                              width: "100%"
-                            }}
-                          >
-                            <tbody>
-                              <tr className>
-                                <th className> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                              <tr>
-                                <th> Chapter 1 - Judul Materi 1</th>
-                                <th className="text-right"> 00:30:00</th>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </ol>
+                        <ListAktivitas lists={kursusDiikuti} />
                       </div>
                     </div>
+
                     <div className="col-md-12 col-xl-7">
                       <div className="card p-35">
                         <div
