@@ -280,7 +280,7 @@ class Home extends Component {
                               </InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
-                              placeholder="Username"
+                              placeholder="Kursus & Materi"
                               aria-label="Username"
                               aria-describedby="basic-addon1"
                             />
@@ -288,8 +288,8 @@ class Home extends Component {
                               <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
                             </InputGroup.Append>
                           </InputGroup>
-
                         </div>
+
                       </div>
 
                       <div className="row">
@@ -412,21 +412,27 @@ class Home extends Component {
 
                   <div className="row">
                     <div className="col-md-4 col-xl-4 mb-3">
-                      <div className="kategori-aktif">
-                        Kursus & Materi
-                      </div>
+                      <Link to={`/`}>
+                        <div className="kategori-aktif">
+                          Kursus & Materi
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="col-md-4 col-xl-4 mb-3">
-                      <div className="kategori">
-                        Forum
-                      </div>
+                      <Link to={`/forum`}>
+                        <div className="kategori">
+                          Forum
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="col-md-4 col-xl-4 mb-3">
-                      <div className="kategori">
-                        Live Class
-                      </div>
+                      <Link to={`/liveclass`}>
+                        <div className="kategori">
+                          Live Class
+                        </div>
+                      </Link>
                     </div>
                   </div>
 

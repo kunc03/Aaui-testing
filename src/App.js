@@ -47,6 +47,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
+import Forum, { ForumDetail } from "./components/forum/forum";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -201,6 +203,9 @@ export class ClientSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/aktivitas" component={Home} />
         
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />

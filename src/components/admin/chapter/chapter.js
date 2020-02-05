@@ -259,23 +259,23 @@ export default class ChapterPreview extends Component {
                 	</div>
 
                 	<Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
-                    <Modal.Body>
-                      <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
-                      <div style={{marginTop: '20px'}} className="form-group">
-                      	<p className="f-w-bold">Apakah Anda yakin untuk menghapus chapter ini ?</p>
-                      </div>
-                      <button style={{ marginTop: '50px'}} type="button"
-                      	onClick={this.onClickHapusChapterYes}
-                        className="btn btn-block btn-ideku f-w-bold">
-                        Ya, Hapus
-                      </button>
-                      <button type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleModalHapus}>
-                        Tidak
-                      </button>
-                    </Modal.Body>
-                  </Modal>
+	                    <Modal.Body>
+	                      <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+	                      <div style={{marginTop: '20px'}} className="form-group">
+	                      	<p className="f-w-bold">Apakah Anda yakin untuk menghapus chapter ini ?</p>
+	                      </div>
+	                      <button style={{ marginTop: '50px'}} type="button"
+	                      	onClick={this.onClickHapusChapterYes}
+	                        className="btn btn-block btn-ideku f-w-bold">
+	                        Ya, Hapus
+	                      </button>
+	                      <button type="button"
+	                        className="btn btn-block f-w-bold"
+	                        onClick={this.handleModalHapus}>
+	                        Tidak
+	                      </button>
+	                    </Modal.Body>
+	                </Modal>
 
                   <Modal show={this.state.isModalAdd} onHide={this.handleModalClose} dialogClassName="modal-lg">
                     <Modal.Body>
