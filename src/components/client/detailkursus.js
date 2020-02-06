@@ -16,6 +16,7 @@ export default class DetailKursus extends Component {
     isUjian: false,
 
     isUjianBelumAda: false,
+    isMatiJikaTidakAdaUjian: false,
 
     countSoal: '0',
     durasiWaktu: '0',
@@ -90,7 +91,7 @@ export default class DetailKursus extends Component {
             if(res.data.result.length !== 0) {
               this.setState({ examId: res.data.result[0].exam_id })
             } else {
-              this.setState({ isUjianBelumAda: true })
+              this.setState({ isUjianBelumAda: true, isMatiJikaTidakAdaUjian: true })
             }
           }
         })
@@ -132,7 +133,7 @@ export default class DetailKursus extends Component {
   }
 
 	render() {
-    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isUjian } = this.state;
+    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
     const ListChapter = ({lists}) => {
@@ -205,7 +206,7 @@ export default class DetailKursus extends Component {
                       <LinkUjian isUjian={this.state.isUjian} />
 
                       {
-                        isUjian && (<div>
+                        !isMatiJikaTidakAdaUjian && (<div>
                           { isButtonIkuti && 
                             <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
                               Ikuti Kursus
