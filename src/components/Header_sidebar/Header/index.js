@@ -155,20 +155,7 @@ class Header extends Component {
                 </div>
               </div>
             </li>
-            <li className="nav-item">
-              <div className="main-search open">
-                <div className="input-group">
-                  <i className="feather icon-search input-group-text mr-1 text-c-grey" />
-                  <input
-                    type="text"
-                    id=""
-                    className="form-control"
-                    placeholder="Pencarian..."
-                    style={{ width: 150 }}
-                  />
-                </div>
-              </div>
-            </li>
+            
           </ul>
         </div>
       </header>

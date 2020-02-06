@@ -11158,3 +11158,49 @@ div.code-toolbar > .toolbar span:hover {
   background-color: #DFDFDF;
   cursor: no-drop;
 }
+
+.kategori {
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px; 
+  font-size: 15.9px;
+  font-weight: bold;
+}
+
+.kategori-aktif {
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px; 
+  border-bottom: 5px solid #945A86; 
+  font-size: 15.9px;
+  font-weight: bold;
+}
+
+.forum-filter {
+  margin: 20px 0px;
+}
+
+.forum-kategori {
+  margin: 5px;
+}
+
+.forum-kategori-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 2px;
+}
+
+.forum-item {
+  margin: 8px;
+}
+
+.forum-action {
+  margin-top: 5px;
+  /*float: right;*/
+}
+
+.forum-gambar {
+  width: 114px;
+  height: 114px;
+  float: left;
+}

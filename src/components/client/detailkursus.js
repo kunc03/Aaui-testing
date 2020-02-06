@@ -24,6 +24,23 @@ export default class DetailKursus extends Component {
 		chapters: []
 	}
 
+  pilihChapterTampil = e => {
+    e.preventDefault();
+    if(this.state.isIkutiKursus) {
+      const chapterId = e.target.getAttribute('data-id');
+      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+        if(res.status === 200) {
+          let courseChapter = {
+            image: res.data.result.chapter_video,
+            title: res.data.result.chapter_title,
+            body: res.data.result.chapter_body
+          }
+          this.setState({ course: courseChapter })
+        }
+      })
+    }
+  }
+
   handleUjianBelumAda = e => {
     this.setState({ isUjianBelumAda: false })
   }
@@ -31,6 +48,7 @@ export default class DetailKursus extends Component {
   fetchDataChapter() {
     API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
       if(res.status === 200) {
+        console.log('pilih: ',res.data.result)
         this.setState({ chapters: res.data.result });
       }
     })
@@ -114,7 +132,7 @@ export default class DetailKursus extends Component {
   }
 
 	render() {
-    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu } = this.state;
+    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
     const ListChapter = ({lists}) => {
@@ -123,9 +141,9 @@ export default class DetailKursus extends Component {
           <div>
           {
             lists.map((item, i) => (
-              <Card className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
+              <Card onClick={this.pilihChapterTampil} className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
                 <Card.Body>
-                  <h3 className="f-24 f-w-800" style={{marginBottom: '0px'}}>
+                  <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id}>
                     {item.chapter_title} 
                     <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
                   </h3>
@@ -147,7 +165,7 @@ export default class DetailKursus extends Component {
     const LinkUjian = ({isUjian}) => {
       if(isUjian) {
         return (
-          <Link to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
+          <Link style={{marginTop: '20px'}} to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
         );
       } else {
         return (
@@ -172,23 +190,28 @@ export default class DetailKursus extends Component {
 
                   <div className="row">
                     <div className="col-xl-8">
-                      <img class="img-fluid rounded" src={course.image} alt="" />
+                      <img class="img-fluid rounded" src={course.image} alt="" style={{marginBottom: '20px'}} />
                       
-                      <a className="btn btn-ideku" href="#" style={{marginTop: '20px', fontWeight: 'bold'}}>
-                        {course.category_name}
-                      </a>
+                      { course.category_name && <a className="btn btn-ideku" href="#" style={{fontWeight: 'bold'}}>{course.category_name}</a> }
+                      
                       <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
-                      <p>{dateFormat.toString()}</p>
+                      
+                      { course.created_at && <p>{dateFormat.toString()}</p> }
 
-                      <p class="lead">{course.caption}</p>
+                      { course.caption && <p class="lead">{course.caption}</p> }
 
                       { isIkutiKursus && <div dangerouslySetInnerHTML={{ __html: course.body }} /> }
 
                       <LinkUjian isUjian={this.state.isUjian} />
 
-                      { isButtonIkuti && <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-                        Ikuti Kursus
-                      </Link>
+                      {
+                        isUjian && (<div>
+                          { isButtonIkuti && 
+                            <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
+                              Ikuti Kursus
+                            </Link>
+                          }
+                        </div>)
                       }
 
                     </div>
@@ -247,7 +270,7 @@ export default class DetailKursus extends Component {
 
                   <Modal show={this.state.isUjianBelumAda} onHide={this.handleUjianBelumAda}>
                     <Modal.Body>
-                      <h3 className="f-24 f-w-800 mb-3">Ujian belum ada pada kursus ini.</h3>
+                      <h3 className="f-24 f-w-800 mb-3">Belum ada ujian pada kursus ini.</h3>
                       
                       <button style={{marginTop: '30px'}} type="button"
                         className="btn btn-block f-w-bold"
