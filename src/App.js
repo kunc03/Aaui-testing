@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Switch, Route } from "react-router-dom";
 
 import API, { API_SERVER } from './repository/api';
@@ -45,7 +46,9 @@ import Login from "./components/Login/index";
 import KategoriKursus from "./components/client/kategorikursus";
 import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
-import HasilUjianKursus from "./components/client/hasilujiankursus";
+import UjianHasil from "./components/client/ujianhasil";
+
+import Forum, { ForumDetail } from "./components/forum/forum";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -201,12 +204,15 @@ export class ClientSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/aktivitas" component={Home} />
         
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
-        <Route path="/ujian-kursus" component={UjianKursus} />
-        <Route path="/hasil-ujian-kursus" component={HasilUjianKursus} />
+        <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />

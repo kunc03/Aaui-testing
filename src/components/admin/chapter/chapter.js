@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal, Button, Card, Badge, Accordion } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default class ChapterPreview extends Component {
 
@@ -21,6 +22,10 @@ export default class ChapterPreview extends Component {
 		isModalAdd: false,
 		isModalHapus: false,
 	}
+
+	onChangeTinyMce = e => {
+    this.setState({ chapterBody: e.target.getContent() })
+  }
 
 	onChangeInput = e => {
 		const name = e.target.name;
@@ -179,12 +184,13 @@ export default class ChapterPreview extends Component {
 						lists.map((item, i) => (
 							<Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
 								<Accordion.Toggle as={Card.Header} className="f-24 f-w-800" eventKey={item.chapter_id}>
-					  			<h3 className="f-24 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
+					  			<h3 className="f-18 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
 							  </Accordion.Toggle>
 							  <Accordion.Collapse eventKey={item.chapter_id}>
 								  <Card.Body style={{padding: '16px'}}>
 										<img class="img-fluid rounded" src={item.chapter_video} alt="Media" />
-								  	<h3 className="f-24 f-w-800" style={{marginTop: '10px'}}>{item.chapter_body}</h3>
+
+										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 								    
 								    <Link to="#" className="buttonku" title="Edit">
 			                <i onClick={this.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>
@@ -254,23 +260,23 @@ export default class ChapterPreview extends Component {
                 	</div>
 
                 	<Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
-                    <Modal.Body>
-                      <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
-                      <div style={{marginTop: '20px'}} className="form-group">
-                      	<p className="f-w-bold">Apakah Anda yakin untuk menghapus chapter ini ?</p>
-                      </div>
-                      <button style={{ marginTop: '50px'}} type="button"
-                      	onClick={this.onClickHapusChapterYes}
-                        className="btn btn-block btn-ideku f-w-bold">
-                        Ya, Hapus
-                      </button>
-                      <button type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleModalHapus}>
-                        Tidak
-                      </button>
-                    </Modal.Body>
-                  </Modal>
+	                    <Modal.Body>
+	                      <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+	                      <div style={{marginTop: '20px'}} className="form-group">
+	                      	<p className="f-w-bold">Apakah Anda yakin untuk menghapus chapter ini ?</p>
+	                      </div>
+	                      <button style={{ marginTop: '50px'}} type="button"
+	                      	onClick={this.onClickHapusChapterYes}
+	                        className="btn btn-block btn-ideku f-w-bold">
+	                        Ya, Hapus
+	                      </button>
+	                      <button type="button"
+	                        className="btn btn-block f-w-bold"
+	                        onClick={this.handleModalHapus}>
+	                        Tidak
+	                      </button>
+	                    </Modal.Body>
+	                </Modal>
 
                   <Modal show={this.state.isModalAdd} onHide={this.handleModalClose} dialogClassName="modal-lg">
                     <Modal.Body>
@@ -286,8 +292,24 @@ export default class ChapterPreview extends Component {
                       			<input value={this.state.chapterTitle} name="chapterTitle" onChange={this.onChangeInput} type="text" required placeholder="judul chapter" className="form-control" />
                       		</div>
                       		<div className="form-group">
-                      			<label>Konten Chapter</label>
-                      			<textarea value={this.state.chapterBody} name="chapterBody" onChange={this.onChangeInput} type="text" required placeholder="konten chapter" className="form-control" rows="5" />
+                      			<Editor
+                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                              initialValue={this.state.chapterBody}
+                              init={{
+                                height: 400,
+                                menubar: false,
+                                plugins: [
+                                  'advlist autolink lists link image charmap print preview anchor',
+                                  'searchreplace visualblocks code fullscreen',
+                                  'insertdatetime media table paste code help wordcount'
+                                ],
+                                toolbar:
+                                 'undo redo | formatselect | bold italic backcolor | \
+                                 alignleft aligncenter alignright alignjustify | \
+                                  bullist numlist outdent indent | removeformat | help'
+                              }}
+                              onChange={this.onChangeTinyMce}
+                            />
                       		</div>
                       		<div className="form-group">
                       			<label>Media Chapter</label>
