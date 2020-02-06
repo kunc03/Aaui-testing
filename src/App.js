@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
