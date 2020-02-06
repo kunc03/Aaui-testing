@@ -90,7 +90,7 @@ class Sidebar extends Component {
                           alt=""
                         ></img>
                       </span>
-                      <span className="pcoded-mtext f-16 f-w-bold">
+                      <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
                         {item.label}
                       </span>
                     </Link>

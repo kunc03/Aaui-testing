@@ -85,7 +85,7 @@ class UserEdit extends Component {
           }
         })
 
-        const levelUser = [{level: 'superadmin'}, {level: 'admin'}, {level: 'client'}];
+        const levelUser = [{level: 'admin'}, {level: 'client'}];
         this.setState({ listLevel: levelUser });
       }
     })

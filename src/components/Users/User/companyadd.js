@@ -74,7 +74,7 @@ class UserAdd extends Component {
 
   render() {
     console.log('state: ', this.state)
-    const levelUser = [{level: 'superadmin'}, {level: 'admin'}, {level: 'client'}];
+    const levelUser = [{level: 'admin'}, {level: 'client'}];
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">

@@ -189,7 +189,8 @@ export default class ChapterPreview extends Component {
 							  <Accordion.Collapse eventKey={item.chapter_id}>
 								  <Card.Body style={{padding: '16px'}}>
 										<img class="img-fluid rounded" src={item.chapter_video} alt="Media" />
-								  	<h3 className="f-16 f-w-800" style={{marginTop: '10px'}}>{item.chapter_body}</h3>
+
+										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 								    
 								    <Link to="#" className="buttonku" title="Edit">
 			                <i onClick={this.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>

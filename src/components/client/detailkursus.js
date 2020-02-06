@@ -26,18 +26,19 @@ export default class DetailKursus extends Component {
 
   pilihChapterTampil = e => {
     e.preventDefault();
-    const chapterId = e.target.getAttribute('data-id');
-    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
-      if(res.status === 200) {
-        console.log('pilih: ', res.data.result)
-        let courseChapter = {
-          image: res.data.result.chapter_video,
-          title: res.data.result.chapter_title,
-          body: res.data.result.chapter_body
+    if(this.state.isIkutiKursus) {
+      const chapterId = e.target.getAttribute('data-id');
+      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+        if(res.status === 200) {
+          let courseChapter = {
+            image: res.data.result.chapter_video,
+            title: res.data.result.chapter_title,
+            body: res.data.result.chapter_body
+          }
+          this.setState({ course: courseChapter })
         }
-        this.setState({ course: courseChapter })
-      }
-    })
+      })
+    }
   }
 
   handleUjianBelumAda = e => {
@@ -131,7 +132,7 @@ export default class DetailKursus extends Component {
   }
 
 	render() {
-    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu } = this.state;
+    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
     const ListChapter = ({lists}) => {
@@ -164,7 +165,7 @@ export default class DetailKursus extends Component {
     const LinkUjian = ({isUjian}) => {
       if(isUjian) {
         return (
-          <Link to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
+          <Link style={{marginTop: '20px'}} to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
         );
       } else {
         return (
@@ -203,9 +204,14 @@ export default class DetailKursus extends Component {
 
                       <LinkUjian isUjian={this.state.isUjian} />
 
-                      { isButtonIkuti && <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-                        Ikuti Kursus
-                      </Link>
+                      {
+                        isUjian && (<div>
+                          { isButtonIkuti && 
+                            <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
+                              Ikuti Kursus
+                            </Link>
+                          }
+                        </div>)
                       }
 
                     </div>
@@ -264,7 +270,7 @@ export default class DetailKursus extends Component {
 
                   <Modal show={this.state.isUjianBelumAda} onHide={this.handleUjianBelumAda}>
                     <Modal.Body>
-                      <h3 className="f-24 f-w-800 mb-3">Ujian belum ada pada kursus ini.</h3>
+                      <h3 className="f-24 f-w-800 mb-3">Belum ada ujian pada kursus ini.</h3>
                       
                       <button style={{marginTop: '30px'}} type="button"
                         className="btn btn-block f-w-bold"

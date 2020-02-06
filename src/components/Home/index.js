@@ -203,13 +203,11 @@ class Home extends Component {
         );
       } else {
         return (
-          <div className="col-sm-12">
-            <Card>
-              <Card.Body>
-                <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun</h3>
-              </Card.Body>
-            </Card>
-          </div>
+          <Card>
+            <Card.Body>
+              <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun.</h3>
+            </Card.Body>
+          </Card>
         );
       }
     };
@@ -232,7 +230,7 @@ class Home extends Component {
         );
       } else {
         return (
-          <h3 className="f-w-900 f-20">Belum ada aktivitas.</h3>
+          <h3 className="f-w-900 f-20" style={{margin: '30px'}}>Belum ada aktivitas.</h3>
         );
       }
     };
@@ -272,7 +270,8 @@ class Home extends Component {
                             </h6>
                           </div>
                         </div>
-                        <div className="col-md-12 col-xl-12" style={{marginBottom: '42px'}}>
+
+                        <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
                           <InputGroup className="mb-3">
                             <InputGroup.Prepend>
                               <InputGroup.Text id="basic-addon1">
@@ -290,9 +289,39 @@ class Home extends Component {
                           </InputGroup>
                         </div>
 
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/kursuson.png" className="img-fluid" />
+                              &nbsp;
+                              Kursus & Materi
+                            </div>
+                          </Link>
+                        </div>
+
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/forum`}>
+                            <div className="kategori">
+                              <img src="/assets/images/component/forumoff.png" className="img-fluid" />
+                              &nbsp;
+                              Forum
+                            </div>
+                          </Link>
+                        </div>
+
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/liveclass`}>
+                            <div className="kategori">
+                              <img src="/assets/images/component/liveoff.png" className="img-fluid" />
+                              &nbsp;
+                              Live Class
+                            </div>
+                          </Link>
+                        </div>
+
                       </div>
 
-                      <div className="row">
+                      <div className="row" style={{marginTop: '15px'}}>
                         <div className="col-md-12 col-xl-12 mb-3">
                           <div className="row d-flex align-items-center">
                             <div className="col-6">
@@ -410,33 +439,7 @@ class Home extends Component {
                     </div>
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-4 col-xl-4 mb-3">
-                      <Link to={`/`}>
-                        <div className="kategori-aktif">
-                          Kursus & Materi
-                        </div>
-                      </Link>
-                    </div>
-
-                    <div className="col-md-4 col-xl-4 mb-3">
-                      <Link to={`/forum`}>
-                        <div className="kategori">
-                          Forum
-                        </div>
-                      </Link>
-                    </div>
-
-                    <div className="col-md-4 col-xl-4 mb-3">
-                      <Link to={`/liveclass`}>
-                        <div className="kategori">
-                          Live Class
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-
-                  <div className="row">
+                  <div className="row" style={{marginTop: '15px'}}>
                     <div className="col-md-12 col-xl-12 mb-3">
                       <div className="row d-flex align-items-center">
                         <div className="col-6">

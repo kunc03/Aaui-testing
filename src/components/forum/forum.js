@@ -39,7 +39,7 @@ export default class Forum extends Component {
 						{
 							lists.map((item, i) => (
 								<Card style={{marginBottom: '10px'}} key={i}>
-									<Link to={`/forum-detail/${i}`}>
+									<Link to={`/forum-detail/${i}`} style={{color: 'rgba(109,114,120,0.8)'}}>
 				      			<Card.Body style={{padding: '16px'}}>
 				      				<div className="forum-media">
 				      					<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
@@ -127,6 +127,38 @@ export default class Forum extends Component {
                             <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
                           </InputGroup.Append>
                         </InputGroup>
+
+                        <Row>
+                          <div className="col-md-4 col-xl-4 mb-3">
+                            <Link to={`/`}>
+                              <div className="kategori">
+                                <img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+                                &nbsp;
+                                Kursus & Materi
+                              </div>
+                            </Link>
+                          </div>
+
+                          <div className="col-md-4 col-xl-4 mb-3">
+                            <Link to={`/forum`}>
+                              <div className="kategori-aktif">
+                                <img src="/assets/images/component/forumon.png" className="img-fluid" />
+                                &nbsp;
+                                Forum
+                              </div>
+                            </Link>
+                          </div>
+
+                          <div className="col-md-4 col-xl-4 mb-3">
+                            <Link to={`/liveclass`}>
+                              <div className="kategori">
+                                <img src="/assets/images/component/liveoff.png" className="img-fluid" />
+                                &nbsp;
+                                Live Class
+                              </div>
+                            </Link>
+                          </div>
+                        </Row>
 
                         <Row>
                         	<div className="col-md-12 col-xl-12 mb-3 mt-2">
@@ -325,22 +357,34 @@ export class ForumDetail extends Component {
 
 													<div className="list-komentar">
 														
-														<div className="komentar-item">
-							  							<h3 className="f-18 f-w-bold f-w-800">
-							  								Ahmad Ardiansyah
-							  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
-						  								</h3>
-							  							<p>Successful businesses know the importance of building and maintaining good working relationships, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+														<div className="komentar-item" style={{marginBottom: '15px'}}>
+															<Row>
+																<Col xl={2} md={1}>
+																	<img src="http://placehold.it/80" class="img-circle img-responsive" alt="" />
+																</Col>
+																<Col xl={10} md={11}>
+																	<h3 className="f-18 f-w-bold f-w-800">
+									  								Ahmad Ardiansyah
+									  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
+								  								</h3>
+									  							<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+																</Col>
+															</Row>
 						  							</div>
 
-						  							<hr/>
-
 						  							<div className="komentar-item">
-							  							<h3 className="f-18 f-w-bold f-w-800">
-							  								Ahmad Ardiansyah
-							  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
-						  								</h3>
-							  							<p>Successful businesses know the importance of building and maintaining good working relationships, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+															<Row>
+																<Col xl={2} md={1}>
+																	<img src="http://placehold.it/80" class="img-circle img-responsive" alt="" />
+																</Col>
+																<Col xl={10} md={11}>
+																	<h3 className="f-18 f-w-bold f-w-800">
+									  								Ahmad Ardiansyah
+									  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
+								  								</h3>
+									  							<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+																</Col>
+															</Row>
 						  							</div>
 
 													</div>
