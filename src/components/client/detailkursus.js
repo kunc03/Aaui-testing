@@ -98,12 +98,13 @@ export default class DetailKursus extends Component {
         })
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
+          console.log(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`)
           if(res.status === 200) {
             console.log('res:', res.data.response)
             this.setState({ 
               isIkutiKursus: res.data.result, 
               isButtonIkuti: !res.data.result, 
-              statChapter: parseInt(res.data.response[0].stat_chapter) 
+              statChapter: res.data.response.length !== 0 ? parseInt(res.data.response[0].stat_chapter) : 0 
             })
           }
         })
