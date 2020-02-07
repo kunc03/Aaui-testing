@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { Editor } from '@tinymce/tinymce-react';
 
 export default class KursusMateriEdit extends Component {
 
@@ -30,10 +31,14 @@ export default class KursusMateriEdit extends Component {
     const name = target.name;
 
   	if(name === 'image' || name === 'kategori_image') {
-    	this.setState({ [name]: target.files[0] });
+      this.setState({ [name]: target.files[0] });
     } else {
     	this.setState({ [name]: value });
     }
+  }
+
+  onChangeTinyMce = e => {
+    this.setState({ body: e.target.getContent() })
   }
 
 	componentDidMount() {
@@ -232,14 +237,23 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Konten</label>
-                              <textarea
-                                required
-                                name="body"
-                                value={this.state.body}
-                                className="form-control"
-                                placeholder="konten"
-                                onChange={this.onChangeInput}
+                              <Editor
+                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                initialValue={this.state.body}
+                                init={{
+                                  height: 400,
+                                  menubar: false,
+                                  plugins: [
+                                    'advlist autolink lists link image charmap print preview anchor',
+                                    'searchreplace visualblocks code fullscreen',
+                                    'insertdatetime media table paste code help wordcount'
+                                  ],
+                                  toolbar:
+                                   'undo redo | formatselect | bold italic backcolor | \
+                                   alignleft aligncenter alignright alignjustify | \
+                                    bullist numlist outdent indent | removeformat | help'
+                                }}
+                                onChange={this.onChangeTinyMce}
                               />
                             </div>
                             <div className="form-group">

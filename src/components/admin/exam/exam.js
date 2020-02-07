@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Form, Row, Col } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default class QuizList extends Component {
 	
@@ -20,12 +23,24 @@ export default class QuizList extends Component {
 		examRandom: '',
 		examPublish: '',
 		timeMinute: '',
-		timeStart: '',
-		timeFinish: '',
+		timeStart: new Date(),
+		timeFinish: new Date(),
 
 		isModalDelete: false,
-		examId: ''
+		examId: '',
 	}
+
+	handleStartDatePicker = date => {
+    this.setState({
+      timeStart: date
+    });
+  };
+
+  handleFinishDatePicker = date => {
+    this.setState({
+      timeFinish: date
+    });
+  };
 
 	handleOpen = e => {
 		e.preventDefault();
@@ -37,7 +52,6 @@ export default class QuizList extends Component {
 		let examId = e.target.getAttribute('data-id');
 		API.get(`${API_SERVER}v1/exam/${examId}`).then(res => {
 			if(res.status === 200) {
-				console.log(res.data.result)
 				this.setState({ isModalAdd: true, 
 					examId: res.data.result.exam_id,
 					examTitle: res.data.result.exam_title,
@@ -45,8 +59,8 @@ export default class QuizList extends Component {
 					examRandom: res.data.result.random,
 					examPublish: res.data.result.exam_publish,
 					timeMinute: res.data.result.time_minute,
-					timeStart: res.data.result.time_start.toString().substring(0,19).replace('T', ' '),
-					timeFinish: res.data.result.time_finish.toString().substring(0,19).replace('T', ' '),
+					timeStart: new Date(res.data.result.time_start),
+					timeFinish: new Date(res.data.result.time_finish),
 				});
 			}
 		})
@@ -149,15 +163,19 @@ export default class QuizList extends Component {
 		});
 	}
 
+	onChangeDateTime = e => {
+		console.log(e);
+	}
+
 	render() {
 		const { courseId, exam } = this.state;
 		const statusCompany = ["0", "1"];
 
 		const YesNo = ({value}) => {
 			if(value === 1) {
-				return (<>Ya</>);
+				return (<div>Ya</div>);
 			} else {
-				return (<>Tidak</>);
+				return (<div>Tidak</div>);
 			}
 		};
 
@@ -294,6 +312,8 @@ export default class QuizList extends Component {
 			}
 		};
 
+		const startDate = new Date();
+
 		return (
 			<div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -324,7 +344,7 @@ export default class QuizList extends Component {
                       </div>
                     </div>
 
-                    <Modal show={this.state.isModalAdd} onHide={this.handleClose}>
+                    <Modal show={this.state.isModalAdd} onHide={this.handleClose} dialogClassName="modal-lg">
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold">Form Exam</Modal.Title>
                       </Modal.Header>
@@ -362,15 +382,31 @@ export default class QuizList extends Component {
                         	</div>
                         	<div className="form-group">
                         		<label>Berapa Menit</label>
-                        		<input onChange={this.onChangeInput} value={this.state.timeMinute} name="timeMinute" required type="text" placeholder="berapa menit" className="form-control" />
+                        		<input pattern="^-?[0-9]\d*\.?\d*$" onChange={this.onChangeInput} value={this.state.timeMinute} name="timeMinute" required type="number" placeholder="berapa menit" className="form-control" />
                         	</div>
                         	<div className="form-group">
-                        		<label>Start Jam</label>
-                        		<input onChange={this.onChangeInput} value={this.state.timeStart} name="timeStart" required type="text" placeholder="start pada jam" className="form-control" />
-                        	</div>
-                        	<div className="form-group">
-                        		<label>Finish Jam</label>
-                        		<input onChange={this.onChangeInput} value={this.state.timeFinish} name="timeFinish" required type="text" placeholder="finish pada jam" className="form-control" />
+                        		<Row>
+	                        		<Col sm={6}>
+	                        			<label>Start &nbsp;</label>
+		                        		<DatePicker
+													        selected={this.state.timeStart}
+													        onChange={this.handleStartDatePicker}
+													        showTimeSelect
+													        className="form-control"
+													        dateFormat="yyyy-MM-dd HH:mm:ss"
+													      />
+	                        		</Col>
+	                        		<Col sm={6}>
+	                        			<label>Finish &nbsp;</label>
+		                        		<DatePicker
+													        selected={this.state.timeFinish}
+													        onChange={this.handleFinishDatePicker}
+													        showTimeSelect
+													        className="form-control"
+													        dateFormat="yyyy-MM-dd HH:mm:ss"
+													      />
+	                        		</Col>
+                        		</Row>
                         	</div>
 
 	                        <button style={{ marginTop: '30px'}} type="submit"

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Accordion, Card, Button } from "react-bootstrap";
+import { Modal, Form, Accordion, Card, Button, Row } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -65,23 +65,24 @@ export default class QuestionExam extends Component {
             {
               lists.map((item, i) => (
                 <Card style={{marginBottom: '10px'}} key={item.question_id}>
-                  <Card.Header>
-                    <Accordion.Toggle as={Button} variant="link" eventKey={item.question_id}>
-                      <div className="row d-flex align-items-center">
-                        <div className="col-xl-10 col-md-12 text-right">
-                          <h5 className="f-w-bold f-20 text-c-purple3">{item.number}. {item.question.toString().substring(0, 60)}...</h5>
-                        </div>
-                        <div className="col-xl-2 col-md-12 text-right">
-                          <Link to={`/question-quiz-edit/${item.question_id}`} className="buttonku" title="Edit">
-                            <i data-id={item.question_id} className="fa fa-edit"></i>
-                          </Link>
-                          <Link to="#" className="buttonku" title="Hapus">
-                            <i onClick={this.handleOpenDelete} data-id={item.question_id} className="fa fa-trash"></i>
-                          </Link>
-                        </div>
+                  <Accordion.Toggle as={Card.Header} variant="link" eventKey={item.question_id}>
+                    <div className="row">
+                      <div className="col-xl-1 col-md-12">
+                        <h3 className="f-w-bold f-20 text-c-purple3">{item.number}</h3>
                       </div>
-                    </Accordion.Toggle>
-                  </Card.Header>
+                      <div className="col-xl-9">
+                        <p className="f-w-bold f-18 text-c-purple3">{item.question.toString().substring(0, 60)}</p>
+                      </div>
+                      <div className="col-xl-2">
+                        <Link to={`/question-quiz-edit/${item.question_id}`} className="buttonku" title="Edit">
+                          <i data-id={item.question_id} className="fa fa-edit"></i>
+                        </Link>
+                        <Link to="#" className="buttonku" title="Hapus">
+                          <i onClick={this.handleOpenDelete} data-id={item.question_id} className="fa fa-trash"></i>
+                        </Link>
+                      </div>
+                    </div>
+                  </Accordion.Toggle>
                   <Accordion.Collapse eventKey={item.question_id}>
                     <Card.Body>
                       {

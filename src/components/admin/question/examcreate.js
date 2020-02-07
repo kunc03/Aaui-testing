@@ -24,6 +24,12 @@ export default class QuestionExamCreate extends Component {
 		jawaban: '',
 
 		pilihans: [],
+
+		isSimpanPertanyaan: false,
+	}
+
+	handleSimpanPertanyaan = e => {
+		this.setState({ isSimpanPertanyaan: false })
 	}
 
 	onSubmitFormPilihan = e => {
@@ -81,7 +87,7 @@ export default class QuestionExamCreate extends Component {
 		} else {
 			API.post(`${API_SERVER}v1/question`, form).then(res => {
 				if(res.status === 200) {
-					this.setState({ isQuestionReady: true, questionId: res.data.result.question_id })
+					this.setState({ isQuestionReady: true, questionId: res.data.result.question_id, isSimpanPertanyaan: true })
 				}
 			})
 		}
@@ -171,18 +177,18 @@ export default class QuestionExamCreate extends Component {
 												    Tambah Pilihan
 												  </Button>
 
-												  <ol type="A" style={{marginTop: '10px', marginLeft: '-25px'}}>
+												  <ul style={{marginTop: '10px', marginLeft: '-25px', listStyle: 'none'}}>
 												  	{
 												  		this.state.pilihans.map((item) => (
 														  	<li key={item.option_id}>
-														  		{item.description} &nbsp;
+														  		{item.exam_option}. {item.description} &nbsp;
 								          				<Link to="#" className="buttonku" title="Hapus">
 								          					<i onClick={this.handleDeleteOption} data-id={item.option_id} className="fa fa-trash"></i>
 								        					</Link>
 														  	</li>
 											  			))
 												  	}
-												  </ol>
+												  </ul>
 
                     		</Card.Body>
                     	</Card>
@@ -214,6 +220,18 @@ export default class QuestionExamCreate extends Component {
                           className="btn btn-block f-w-bold"
                           onClick={this.handleClose}>
                           Tidak
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+                    <Modal show={this.state.isSimpanPertanyaan} onHide={this.handleSimpanPertanyaan}>
+                      <Modal.Body>
+                      	<h3 className="f-24 f-w-800 mb-3">Pertanyaan berhasil disimpan. Selanjutnya silahkan tambahkan pilihan jawaban.</h3>
+                        
+                        <button style={{marginTop: '30px'}} type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.handleSimpanPertanyaan}>
+                          Mengerti
                         </button>
                       </Modal.Body>
                     </Modal>
