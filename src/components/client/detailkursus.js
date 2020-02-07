@@ -150,7 +150,7 @@ export default class DetailKursus extends Component {
     }
     API.post(`${API_SERVER}v1/user-course`, form).then(res => {
       if(res.status === 200) {
-        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false })
+        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false, statChapter: 1 })
       }
     })
   }
