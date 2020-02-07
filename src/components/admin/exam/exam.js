@@ -25,6 +25,8 @@ export default class QuizList extends Component {
 		timeMinute: '',
 		timeStart: new Date(),
 		timeFinish: new Date(),
+    waktuStart: '',
+    waktuFinish: '',
 
 		isModalDelete: false,
 		examId: '',
@@ -32,15 +34,20 @@ export default class QuizList extends Component {
 
 	handleStartDatePicker = date => {
     this.setState({
-      timeStart: date
-    });
-  };
+      waktuStart: this.changeFormatDate(date), timeStart: date,
+    })
+  }
 
   handleFinishDatePicker = date => {
     this.setState({
-      timeFinish: date
-    });
-  };
+      waktuFinish: this.changeFormatDate(date), timeFinish: date
+    })
+  }
+
+  changeFormatDate = (value) => {
+    let dt = new Date(value)
+    return `${dt.getFullYear().toString().padStart(4, '0')}-${(dt.getMonth()+1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')} ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
+  }
 
 	handleOpen = e => {
 		e.preventDefault();
@@ -106,8 +113,8 @@ export default class QuizList extends Component {
 				course_id: this.state.courseId,
 				user_id: this.state.userId,
 				time_minute: this.state.timeMinute,
-				time_start: this.state.timeStart,
-				time_finish: this.state.timeFinish,
+				time_start: this.state.waktuStart,
+				time_finish: this.state.waktuFinish,
 			};
 
 			API.post(`${API_SERVER}v1/exam`, form).then(res => {
@@ -123,8 +130,8 @@ export default class QuizList extends Component {
 				exam_description: this.state.exampDesc,
 				exam_publish: this.state.examPublish,
 				time_minute: this.state.timeMinute,
-				time_start: this.state.timeStart,
-				time_finish: this.state.timeFinish,
+				time_start: this.state.waktuStart,
+				time_finish: this.state.waktuFinish,
 			};
 			API.put(`${API_SERVER}v1/exam/${this.state.examId}`, form).then(res => {
 				if(res.status === 200) {
@@ -155,7 +162,6 @@ export default class QuizList extends Component {
 
 				API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
-						console.log(res.data.result)
 						this.setState({ exam: res.data.result })
 					}
 				})

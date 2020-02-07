@@ -31,42 +31,41 @@ export default class DetailKursus extends Component {
 
   pilihChapterTampil = e => {
     e.preventDefault();
-    const iterasi = e.target.getAttribute('data-iterasi');
-    
-    // cek stat chapter
-    if(iterasi < this.state.statChapter) {
-
-      // cek statChapter == jumlah chapters
-      if(this.state.statChapter <= this.state.chapters.length) {
-
-        const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
-        
-        if(!chapterVisited) {
-          localStorage.setItem(`chapter${iterasi}Visited`, true)
-          this.setState({ statChapter: this.state.statChapter+1 })
-        
-          // update statChapter
-          API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
-        }
-      }
       
-      // cek apakah sudah mengikuti kursus
-      if(this.state.isIkutiKursus) {
-        const chapterId = e.target.getAttribute('data-id');
-        API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
-          if(res.status === 200) {
-            let courseChapter = {
-              image: res.data.result.chapter_video,
-              title: res.data.result.chapter_title,
-              body: res.data.result.chapter_body
-            }
-            this.setState({ course: courseChapter })
+    // cek apakah sudah mengikuti kursus
+    if(this.state.isIkutiKursus) {
+      
+      const chapterId = e.target.getAttribute('data-id');
+      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+        if(res.status === 200) {
+          let courseChapter = {
+            image: res.data.result.chapter_video,
+            title: res.data.result.chapter_title,
+            body: res.data.result.chapter_body
           }
-        })
-      }
+          this.setState({ course: courseChapter })
+        }
+      })
 
-    } else {
-      this.setState({ isNotifUrut: true })
+      const iterasi = e.target.getAttribute('data-iterasi');
+      // cek stat chapter
+      if(iterasi < this.state.statChapter) {
+        // cek statChapter == jumlah chapters
+        if(this.state.statChapter <= this.state.chapters.length) {
+
+          const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
+          
+          if(!chapterVisited) {
+            localStorage.setItem(`chapter${iterasi}Visited`, true)
+            this.setState({ statChapter: this.state.statChapter+1 })
+          
+            // update statChapter
+            API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
+          }
+        }
+      } else {
+        this.setState({ isNotifUrut: true })
+      }
     }
   }
 
