@@ -17,29 +17,64 @@ export default class DetailKursus extends Component {
 
     isUjianBelumAda: false,
     isMatiJikaTidakAdaUjian: false,
+    isNotifUrut: false,
 
+    kategoriCourse: '',
+    judulCourse: '',
     countSoal: '0',
     durasiWaktu: '0',
 
     course: { category_name: 'Memuat...' },
-		chapters: []
+		chapters: [],
+    statChapter: 0,
 	}
 
   pilihChapterTampil = e => {
     e.preventDefault();
-    if(this.state.isIkutiKursus) {
-      const chapterId = e.target.getAttribute('data-id');
-      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
-        if(res.status === 200) {
-          let courseChapter = {
-            image: res.data.result.chapter_video,
-            title: res.data.result.chapter_title,
-            body: res.data.result.chapter_body
-          }
-          this.setState({ course: courseChapter })
+    const iterasi = e.target.getAttribute('data-iterasi');
+    
+    // cek stat chapter
+    if(iterasi < this.state.statChapter) {
+
+      // cek statChapter == jumlah chapters
+      if(this.state.statChapter <= this.state.chapters.length) {
+
+        const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`);
+        
+        console.log('chapter: ', chapterVisited)
+        console.log('chapter: ', localStorage)
+
+        if(chapterVisited === null) {
+          localStorage.setItem(`chapter${iterasi}Visited`, true);
+          this.setState({ statChapter: this.state.statChapter+1 })
+        
+          // update statChapter
+          API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
         }
-      })
+      }
+      
+      // cek apakah sudah mengikuti kursus
+      if(this.state.isIkutiKursus) {
+        const chapterId = e.target.getAttribute('data-id');
+        API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+          if(res.status === 200) {
+            let courseChapter = {
+              image: res.data.result.chapter_video,
+              title: res.data.result.chapter_title,
+              body: res.data.result.chapter_body
+            }
+            this.setState({ course: courseChapter })
+          }
+        })
+      }
+
+    } else {
+      this.setState({ isNotifUrut: true })
     }
+  }
+
+  closeNotifUrut = e => {
+    this.setState({ isNotifUrut: false })
   }
 
   handleUjianBelumAda = e => {
@@ -49,7 +84,6 @@ export default class DetailKursus extends Component {
   fetchDataChapter() {
     API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
       if(res.status === 200) {
-        console.log('pilih: ',res.data.result)
         this.setState({ chapters: res.data.result });
       }
     })
@@ -62,13 +96,18 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
-            this.setState({ course: res.data.result })
+            this.setState({ course: res.data.result, judulCourse: res.data.result.title, kategoriCourse: res.data.result.category_name })
           }
         })
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
-            this.setState({ isIkutiKursus: res.data.result, isButtonIkuti: !res.data.result })
+            console.log('res:', res.data.response)
+            this.setState({ 
+              isIkutiKursus: res.data.result, 
+              isButtonIkuti: !res.data.result, 
+              statChapter: parseInt(res.data.response[0].stat_chapter) 
+            })
           }
         })
 
@@ -141,16 +180,31 @@ export default class DetailKursus extends Component {
         return (
           <div>
           {
-            lists.map((item, i) => (
-              <Card onClick={this.pilihChapterTampil} className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
-                <Card.Body>
-                  <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id}>
-                    {item.chapter_title} 
-                    <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
-                  </h3>
-                </Card.Body>
-              </Card>
-            ))  
+            lists.map((item, i) => {
+              if(i < this.state.statChapter) {
+                return (
+                  <Card onClick={this.pilihChapterTampil} className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
+                    <Card.Body>
+                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
+                        {item.chapter_title} 
+                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                      </h3>
+                    </Card.Body>
+                  </Card>
+                )
+              } else {
+                return (
+                  <Card onClick={this.pilihChapterTampil} className={`card-nonactive`} key={item.chapter_id}>
+                    <Card.Body>
+                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
+                        {item.chapter_title} 
+                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                      </h3>
+                    </Card.Body>
+                  </Card>
+                )
+              }
+            })  
           }
           </div>
         )
@@ -231,9 +285,9 @@ export default class DetailKursus extends Component {
                         <img src="/assets/images/component/exam.png" />
                       </div>
                       <a className="btn btn-ideku" href="#" style={{marginTop: '30px', fontWeight: 'bold'}}>
-                        {course.category_name}
+                        {this.state.kategoriCourse}
                       </a>
-                      <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
+                      <h3 className="f-24 f-w-800 mb-3">{this.state.judulCourse}</h3>
 
                       <table>
                         <tbody>
@@ -274,8 +328,20 @@ export default class DetailKursus extends Component {
                       <h3 className="f-24 f-w-800 mb-3">Belum ada ujian pada kursus ini.</h3>
                       
                       <button style={{marginTop: '30px'}} type="button"
-                        className="btn btn-block f-w-bold"
+                        className="btn f-w-bold"
                         onClick={this.handleUjianBelumAda}>
+                        Mengerti
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal show={this.state.isNotifUrut} onHide={this.closeNotifUrut}>
+                    <Modal.Body>
+                      <h3 className="f-24 f-w-800 mb-3">Selesaikan chapter sesuai urutannya.</h3>
+                      
+                      <button style={{marginTop: '30px'}} type="button"
+                        className="btn f-w-bold"
+                        onClick={this.closeNotifUrut}>
                         Mengerti
                       </button>
                     </Modal.Body>
