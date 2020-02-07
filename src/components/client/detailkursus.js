@@ -39,13 +39,10 @@ export default class DetailKursus extends Component {
       // cek statChapter == jumlah chapters
       if(this.state.statChapter <= this.state.chapters.length) {
 
-        const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`);
+        const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
         
-        console.log('chapter: ', chapterVisited)
-        console.log('chapter: ', localStorage)
-
-        if(chapterVisited === null) {
-          localStorage.setItem(`chapter${iterasi}Visited`, true);
+        if(!chapterVisited) {
+          localStorage.setItem(`chapter${iterasi}Visited`, true)
           this.setState({ statChapter: this.state.statChapter+1 })
         
           // update statChapter
