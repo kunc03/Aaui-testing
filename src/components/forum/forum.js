@@ -30,7 +30,7 @@ export default class Forum extends Component {
 	}
 
 	render() {
-		const { forums } = this.state
+		const { forums } = this.state;
 
 		const ForumList = ({lists}) => {
 			if(lists.length !== 0) {
@@ -40,31 +40,41 @@ export default class Forum extends Component {
 							lists.map((item, i) => (
 								<Card style={{marginBottom: '10px'}} key={i}>
 									<Link to={`/forum-detail/${i}`} style={{color: 'rgba(109,114,120,0.8)'}}>
-				      			<Card.Body style={{padding: '16px'}}>
-				      				<div className="forum-media">
-				      					<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
-				      				</div>
+										<Card.Body style={{padding: '16px'}}>
+											<div className="forum-media">
+												<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
+											</div>
 
-				      				<div className="forum-body">
-				  							<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.judul}</h3>
-				  							<span className="f-12" style={{marginBottom: '3px'}}>{item.update}</span>
+											<div className="forum-body">
+												<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.judul}</h3>
 
-				  							<p style={{margin: '5px 0'}} className="f-13">
-				  								{item.isi}
+												<span className="f-12" style={{marginBottom: '3px'}}>{item.update}</span>
+
+												<p style={{margin: '5px 0'}} className="f-13">
+													{item.isi}
 												</p>
+
 											</div>
 
 											<div className="forum-action">
 												<Link to='#'>
 													<i className="fa fa-star"></i>
+
 												</Link>
+											
 												<Link to='#' style={{marginLeft: '10px'}}>
 													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
+											
 												</Link>
+
 											</div>
-				      			</Card.Body>
-			      			</Link>
-			      		</Card>
+
+										</Card.Body>
+
+									</Link>
+
+								</Card>
+
 							))
 						}
 					</div>
@@ -72,236 +82,245 @@ export default class Forum extends Component {
 			} else {
 				return(
 					<Card style={{marginBottom: '10px'}}>
-      			<Card.Body style={{padding: '16px'}}>
-      				<div className="forum-media">
-      					<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
-      				</div>
+						<Card.Body style={{padding: '16px'}}>
+							<div className="forum-media">
+								<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
 
-      				<div className="forum-body">
-  							<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>Tidak Ada Forum</h3>
-  							<span className="f-12" style={{marginBottom: '3px'}}>Undefined</span>
+							</div>
 
-  							<p style={{margin: '5px 0'}} className="f-13">
-  								Undefined
+							<div className="forum-body">
+								<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>Tidak Ada Forum</h3>
+							
+								<span className="f-12" style={{marginBottom: '3px'}}>Undefined</span>
+
+								<p style={{margin: '5px 0'}} className="f-13">
+									Undefined
 								</p>
+							
 							</div>
 
 							<div className="forum-action">
 								<Link to='#'>
 									<i className="fa fa-star"></i>
+
 								</Link>
+
 								<Link to='#' style={{marginLeft: '10px'}}>
 									<i className="fa fa-comments"></i> &nbsp; 0 Komentar
 								</Link>
+
 							</div>
-      			</Card.Body>
-      		</Card>
+
+						</Card.Body>
+						
+					</Card>
 				)
 			}
 		}
+
 		return(
 			<div className="pcoded-main-container">
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content">
-            <div className="pcoded-inner-content">
-              <div className="main-body">
-                <div className="page-wrapper">
+				<div className="pcoded-wrapper">
+				<div className="pcoded-content">
+				<div className="pcoded-inner-content">
+				<div className="main-body">
+				<div className="page-wrapper">
+					<Row>
+						<Col sm={8}>
+							<h3 className="f-20 f-w-800 mb-3">Forum</h3>
 
-                	<Row>
-                		<Col sm={8}>
-                  		<h3 className="f-20 f-w-800 mb-3">Forum</h3>
+							<div className="col-md-12 col-xl-12" style={{marginBottom: '42px', marginLeft: '-16px'}}>
+						
+							<InputGroup className="mb-3">
+							<InputGroup.Prepend>
+							<InputGroup.Text id="basic-addon1">
+								<i className="fa fa-search"></i>
+							</InputGroup.Text>
+							</InputGroup.Prepend>
+							<FormControl
+							placeholder="Cari Forum Lain"
+							aria-label="Username"
+							aria-describedby="basic-addon1"
+							/>
+							<InputGroup.Append style={{cursor: 'pointer'}}>
+							<InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+							</InputGroup.Append>
+						</InputGroup>
 
-                  		<div className="col-md-12 col-xl-12" style={{marginBottom: '42px', marginLeft: '-16px'}}>
-                        <InputGroup className="mb-3">
-                          <InputGroup.Prepend>
-                            <InputGroup.Text id="basic-addon1">
-                              <i className="fa fa-search"></i>
-                            </InputGroup.Text>
-                          </InputGroup.Prepend>
-                          <FormControl
-                            placeholder="Cari Forum Lain"
-                            aria-label="Username"
-                            aria-describedby="basic-addon1"
-                          />
-                          <InputGroup.Append style={{cursor: 'pointer'}}>
-                            <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
-                          </InputGroup.Append>
-                        </InputGroup>
+						<Row>
+							<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/`}>
+								<div className="kategori">
+								<img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+								&nbsp;
+								Kursus & Materi
+								</div>
+							</Link>
+							</div>
 
-                        <Row>
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/`}>
-                              <div className="kategori">
-                                <img src="/assets/images/component/kursusoff.png" className="img-fluid" />
-                                &nbsp;
-                                Kursus & Materi
-                              </div>
-                            </Link>
-                          </div>
+							<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/forum`}>
+								<div className="kategori-aktif">
+								<img src="/assets/images/component/forumon.png" className="img-fluid" />
+								&nbsp;
+								Forum
+								</div>
+							</Link>
+							</div>
 
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/forum`}>
-                              <div className="kategori-aktif">
-                                <img src="/assets/images/component/forumon.png" className="img-fluid" />
-                                &nbsp;
-                                Forum
-                              </div>
-                            </Link>
-                          </div>
+							<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/liveclass`}>
+								<div className="kategori">
+								<img src="/assets/images/component/liveoff.png" className="img-fluid" />
+								&nbsp;
+								Live Class
+								</div>
+							</Link>
+							</div>
+						</Row>
 
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/liveclass`}>
-                              <div className="kategori">
-                                <img src="/assets/images/component/liveoff.png" className="img-fluid" />
-                                &nbsp;
-                                Live Class
-                              </div>
-                            </Link>
-                          </div>
-                        </Row>
+						<Row>
+							<div className="col-md-12 col-xl-12 mb-3 mt-2">
+									<div className="row d-flex align-items-center">
+									<div className="col-4">
+										<Form.Control as="select">
+																<option>Terbaru</option>
+																<option>Trending</option>
+															</Form.Control>
+									</div>
+									<div className="col-8 text-right">
+										<p className="m-b-0">
+										<span className="f-w-600 f-16">Lihat Semua</span>
+										</p>
+									</div>
+									</div>
+								</div>
+						</Row>
 
-                        <Row>
-                        	<div className="col-md-12 col-xl-12 mb-3 mt-2">
-			                      <div className="row d-flex align-items-center">
-			                        <div className="col-4">
-			                          <Form.Control as="select">
-														      <option>Terbaru</option>
-														      <option>Trending</option>
-														    </Form.Control>
-			                        </div>
-			                        <div className="col-8 text-right">
-			                          <p className="m-b-0">
-			                            <span className="f-w-600 f-16">Lihat Semua</span>
-			                          </p>
-			                        </div>
-			                      </div>
-			                    </div>
-                        </Row>
+						<Row>
+							<Col sm={12} md={12} xl={12}>
+								
+								<ForumList lists={forums} />
 
-                        <Row>
-                        	<Col sm={12} md={12} xl={12}>
-                        		
-                        		<ForumList lists={forums} />
+							</Col>
+						</Row>
 
-                        	</Col>
-                        </Row>
+						</div>
+						</Col>
+						
+						<Col sm={4}>
+							<Card>
+								<Card.Body>
+									<Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
 
-                      </div>
-                		</Col>
-                		
-                		<Col sm={4}>
-                			<Card>
-	                			<Card.Body>
-	                				<Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
-
-	                				<div className="forum-filter">
-	                					<ListGroup>
-														  <ListGroup.Item>
-														  	<i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
-													  	</ListGroup.Item>
-														  <ListGroup.Item>
-														  	<i className="fa fa-star"></i> &nbsp; Mengikuti
-														  </ListGroup.Item>
+									<div className="forum-filter">
+										<ListGroup>
+															<ListGroup.Item>
+																<i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
+															</ListGroup.Item>
+															<ListGroup.Item>
+																<i className="fa fa-star"></i> &nbsp; Mengikuti
+															</ListGroup.Item>
 														</ListGroup>	
-	                				</div>
+									</div>
 
-	                				<hr/>
+									<hr/>
 
-	                				<div className="forum-kategori">
-	                  				<h3 className="f-16 f-w-800 mb-3">
-	                  					Kategori Forum
-	                					</h3>
-	                					<Row>
-	                						<Col sm={6}>
-	                							<ul className="forum-kategori-list">
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Design</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Marketing</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Teknologi</li>
-	                							</ul>
-	                						</Col>
-	                						<Col sm={6}>
-	                							<ul className="forum-kategori-list">
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Sales</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Otomotif</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Arsitektur</li>
-                								</ul>
-	                						</Col>
-	                					</Row>
-                					</div>
+									<div className="forum-kategori">
+										<h3 className="f-16 f-w-800 mb-3">
+											Kategori Forum
+										</h3>
+										<Row>
+											<Col sm={6}>
+												<ul className="forum-kategori-list">
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Design</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Marketing</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Teknologi</li>
+												</ul>
+											</Col>
+											<Col sm={6}>
+												<ul className="forum-kategori-list">
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Sales</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Otomotif</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Arsitektur</li>
+												</ul>
+											</Col>
+										</Row>
+									</div>
 
-                					<hr/>
+									<hr/>
 
-	                			</Card.Body>
-                			</Card>
-                		</Col>
-                	</Row>
+								</Card.Body>
+							</Card>
+						</Col>
+					</Row>
 
-                	<Modal show={this.state.isForumAdd} onHide={this.closeModalForumAdd} dialogClassName="modal-lg">
-                    <Modal.Body>
-                      <Modal.Title className="text-c-purple3 f-w-bold f-21" style={{marginBottom: '30px'}}>Membuat Forum</Modal.Title>
-                      
-                      <Form>
-                      	<Form.Group controlId="formJudul">
-                      		<img src="/assets/images/component/placeholder-image.png" className="img-fluid" style={{width: '200px', height: '160px'}} />
-											    
-											    <Form.Label className="f-w-bold ml-4">
-											    	<Button className="btn-default">Masukkan Gambar</Button>
+					<Modal show={this.state.isForumAdd} onHide={this.closeModalForumAdd} dialogClassName="modal-lg">
+					<Modal.Body>
+						<Modal.Title className="text-c-purple3 f-w-bold f-21" style={{marginBottom: '30px'}}>Membuat Forum</Modal.Title>
+						
+						<Form>
+							<Form.Group controlId="formJudul">
+								<img src="/assets/images/component/placeholder-image.png" className="img-fluid" style={{width: '200px', height: '160px'}} />
+												
+												<Form.Label className="f-w-bold ml-4">
+													<Button className="btn-default">Masukkan Gambar</Button>
 
-											    	<Form.Text className="text-muted">
-												      Ukuran gambar 200x200 piksel.
-												    </Form.Text>
-										    	</Form.Label>
-											    
-											  </Form.Group>
+													<Form.Text className="text-muted">
+														Ukuran gambar 200x200 piksel.
+													</Form.Text>
+												</Form.Label>
+												
+												</Form.Group>
 
-											  <Form.Group controlId="formJudul">
-											    <Form.Label className="f-w-bold">Judul Forum</Form.Label>
-											    <Form.Control type="text" placeholder="Judul Forum" />
-											    <Form.Text className="text-muted">
-											      Buat judul yang menarik.
-											    </Form.Text>
-											  </Form.Group>
+												<Form.Group controlId="formJudul">
+												<Form.Label className="f-w-bold">Judul Forum</Form.Label>
+												<Form.Control type="text" placeholder="Judul Forum" />
+												<Form.Text className="text-muted">
+													Buat judul yang menarik.
+												</Form.Text>
+												</Form.Group>
 
-											  <Form.Group controlId="formIsi">
-											    <Form.Label className="f-w-bold">Isi Forum</Form.Label>
-											    <Form.Control as="textarea" rows="5" placeholder="Isi Forum" />
-											    <Form.Text className="text-muted">
-											      Jelaskan isi dari forum, peraturan, atau yang lain.
-											    </Form.Text>
-											  </Form.Group>
+												<Form.Group controlId="formIsi">
+												<Form.Label className="f-w-bold">Isi Forum</Form.Label>
+												<Form.Control as="textarea" rows="5" placeholder="Isi Forum" />
+												<Form.Text className="text-muted">
+													Jelaskan isi dari forum, peraturan, atau yang lain.
+												</Form.Text>
+												</Form.Group>
 
-											  <Form.Group controlId="formTag">
-											    <Form.Label className="f-w-bold">Tag Forum</Form.Label>
-											    <Form.Control type="text" placeholder="Teknologi, Arsitektur, dll" />
-											    <Form.Text className="text-muted">
-											      Jika lebih dari 1 hubungkan dengan koma (,)
-											    </Form.Text>
-											  </Form.Group>
+												<Form.Group controlId="formTag">
+												<Form.Label className="f-w-bold">Tag Forum</Form.Label>
+												<Form.Control type="text" placeholder="Teknologi, Arsitektur, dll" />
+												<Form.Text className="text-muted">
+													Jika lebih dari 1 hubungkan dengan koma (,)
+												</Form.Text>
+												</Form.Group>
 
-											  <div style={{marginTop: '20px'}}>
-		                      <button type="button" 
-		                      	onClick={this.onClickHapusChapterYes}
-		                        className="btn btn-primary f-w-bold">
-		                        Simpan
-		                      </button>
-		                      &nbsp;
-		                      <button type="button"
-		                        className="btn f-w-bold"
-		                        onClick={this.closeModalForumAdd}>
-		                        Tutup
-		                      </button>
-	                      </div>
+												<div style={{marginTop: '20px'}}>
+								<button type="button" 
+									onClick={this.onClickHapusChapterYes}
+								className="btn btn-primary f-w-bold">
+								Simpan
+								</button>
+								&nbsp;
+								<button type="button"
+								className="btn f-w-bold"
+								onClick={this.closeModalForumAdd}>
+								Tutup
+								</button>
+							</div>
 											</Form>
 
-                    </Modal.Body>
-	                </Modal>
+					</Modal.Body>
+					</Modal>
 
-                </div>
-              </div>
-            </div>
-	        </div>
-        </div>
-      </div>
+				</div>
+				</div>
+			</div>
+			</div>
+		</div>
+		</div>
 		);
 	}
 
@@ -323,23 +342,23 @@ export class ForumDetail extends Component {
 
 		return (
 			<div className="pcoded-main-container">
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content">
-            <div className="pcoded-inner-content">
-              <div className="main-body">
-                <div className="page-wrapper">
+		<div className="pcoded-wrapper">
+			<div className="pcoded-content">
+			<div className="pcoded-inner-content">
+				<div className="main-body">
+				<div className="page-wrapper">
 
-                	<Row>
-                		<Col sm={8}>
-                			<Card>
-	                			<Card.Body>
-		              				<div className="forum-media">
-						      					<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
-						      				</div>
+					<Row>
+						<Col sm={8}>
+							<Card>
+								<Card.Body>
+										<div className="forum-media">
+													<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" />
+												</div>
 
-						      				<div className="forum-body">
-						  							<h3 className="f-24 f-w-800">{item.judul}</h3>
-						  							<span className="f-14" style={{marginBottom: '3px'}}>{item.update}</span>
+												<div className="forum-body">
+														<h3 className="f-24 f-w-800">{item.judul}</h3>
+														<span className="f-14" style={{marginBottom: '3px'}}>{item.update}</span>
 													</div>
 
 													<div className="forum-action" style={{marginTop: '30px'}}>
@@ -364,108 +383,108 @@ export class ForumDetail extends Component {
 																</Col>
 																<Col xl={10} md={11}>
 																	<h3 className="f-18 f-w-bold f-w-800">
-									  								Ahmad Ardiansyah
-									  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
-								  								</h3>
-									  							<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+																		Ahmad Ardiansyah
+																		<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
+																	</h3>
+																	<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
 																</Col>
 															</Row>
-						  							</div>
+														</div>
 
-						  							<div className="komentar-item">
+														<div className="komentar-item">
 															<Row>
 																<Col xl={2} md={1}>
 																	<img src="http://placehold.it/80" class="img-circle img-responsive" alt="" />
 																</Col>
 																<Col xl={10} md={11}>
 																	<h3 className="f-18 f-w-bold f-w-800">
-									  								Ahmad Ardiansyah
-									  								<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
-								  								</h3>
-									  							<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
+																		Ahmad Ardiansyah
+																		<span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>02/02/2020 08:30 WIB</span>
+																	</h3>
+																	<p>Successful businesses know the importance of building and maintaining, whether it is with partners, employees, business or trade organizations, the government, media representatives, vendors, consumers, or the community at large.</p>
 																</Col>
 															</Row>
-						  							</div>
+														</div>
 
 													</div>
 
 													<hr/>
 
 													<Form>
-													  <Form.Group controlId="formIsi">
-													    <Form.Label className="f-w-bold">Berikan Komentar</Form.Label>
-													    <Form.Control as="textarea" rows="5" placeholder="Berikan Komentar" />
-													    <Form.Text className="text-muted">
-													      Jelaskan isi dari forum, peraturan, atau yang lain.
-													    </Form.Text>
-													  </Form.Group>
+														<Form.Group controlId="formIsi">
+														<Form.Label className="f-w-bold">Berikan Komentar</Form.Label>
+														<Form.Control as="textarea" rows="5" placeholder="Berikan Komentar" />
+														<Form.Text className="text-muted">
+															Jelaskan isi dari forum, peraturan, atau yang lain.
+														</Form.Text>
+														</Form.Group>
 
-													  <div style={{marginTop: '20px'}}>
-				                      <button type="button" 
-				                      	onClick={this.onClickHapusChapterYes}
-				                        className="btn btn-primary f-w-bold">
-				                        Simpan
-				                      </button>
-			                      </div>
+														<div style={{marginTop: '20px'}}>
+										<button type="button" 
+											onClick={this.onClickHapusChapterYes}
+										className="btn btn-primary f-w-bold">
+										Simpan
+										</button>
+									</div>
 													</Form>
 
-	                			</Card.Body>
-                			</Card>
-                		</Col>
+								</Card.Body>
+							</Card>
+						</Col>
 
-                		<Col sm={4}>
-                			<Card>
-	                			<Card.Body>
-	                				<Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
+						<Col sm={4}>
+							<Card>
+								<Card.Body>
+									<Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
 
-	                				<div className="forum-filter">
-	                					<ListGroup>
-														  <ListGroup.Item>
-														  	<i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
-													  	</ListGroup.Item>
-														  <ListGroup.Item>
-														  	<i className="fa fa-star"></i> &nbsp; Mengikuti
-														  </ListGroup.Item>
+									<div className="forum-filter">
+										<ListGroup>
+															<ListGroup.Item>
+																<i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
+															</ListGroup.Item>
+															<ListGroup.Item>
+																<i className="fa fa-star"></i> &nbsp; Mengikuti
+															</ListGroup.Item>
 														</ListGroup>	
-	                				</div>
+									</div>
 
-	                				<hr/>
+									<hr/>
 
-	                				<div className="forum-kategori">
-	                  				<h3 className="f-16 f-w-800 mb-3">
-	                  					Kategori Forum
-	                					</h3>
-	                					<Row>
-	                						<Col sm={6}>
-	                							<ul className="forum-kategori-list">
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Design</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Marketing</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Teknologi</li>
-	                							</ul>
-	                						</Col>
-	                						<Col sm={6}>
-	                							<ul className="forum-kategori-list">
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Sales</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Otomotif</li>
-	                								<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Arsitektur</li>
-                								</ul>
-	                						</Col>
-	                					</Row>
-                					</div>
+									<div className="forum-kategori">
+										<h3 className="f-16 f-w-800 mb-3">
+											Kategori Forum
+										</h3>
+										<Row>
+											<Col sm={6}>
+												<ul className="forum-kategori-list">
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Design</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Marketing</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Teknologi</li>
+												</ul>
+											</Col>
+											<Col sm={6}>
+												<ul className="forum-kategori-list">
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Sales</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Otomotif</li>
+													<li className="forum-item"><i className="fa fa-comments"></i> &nbsp; Arsitektur</li>
+												</ul>
+											</Col>
+										</Row>
+									</div>
 
-                					<hr/>
+									<hr/>
 
-	                			</Card.Body>
-                			</Card>
-                		</Col>
-                	</Row>
+								</Card.Body>
+							</Card>
+						</Col>
+					</Row>
 
-            		</div>
-          		</div>
-        		</div>
-      		</div>
-    		</div>
-  		</div>
+					</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			</div>
 		)
 	}
 
