@@ -14,7 +14,7 @@ class ModalAdd extends Component {
 
     this.state = {
       nama: '',
-      status: '',
+      status: 'active',
       logo: ''
     }
   }
@@ -32,11 +32,8 @@ class ModalAdd extends Component {
 
     let linkURL = `${API_SERVER}v1/company`;
     API.post(linkURL, formData).then(res => {
-      console.log(res)
-      API.get(`${linkURL}/${res.data.result.insertId}`).then(res => {
-        triggerUpdate(res.data.result);
-        this.setState({ nama: '', status: '', logo: ''});
-      });
+      triggerUpdate(res.data.result);
+      this.setState({ nama: '', status: '', logo: ''});
     }).catch((err) => {
       console.log(err);
     })
@@ -100,6 +97,17 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
+                    Logo Company
+                  </label>
+                  <input
+                    type="file"
+                    onChange={this.onChangeLogo}
+                    className="form-control"
+                    accept="image/*"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="label-input" htmlFor>
                     Status Company
                   </label>
                   <br/>
@@ -112,17 +120,6 @@ class ModalAdd extends Component {
                       })
                     }
                   </div>
-                </div>
-                <div className="form-group">
-                  <label className="label-input" htmlFor>
-                    Logo Company
-                  </label>
-                  <input
-                    type="file"
-                    onChange={this.onChangeLogo}
-                    className="form-control"
-                    accept="image/*"
-                  />
                 </div>
               </Form>
             </div>

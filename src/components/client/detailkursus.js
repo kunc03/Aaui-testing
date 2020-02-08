@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal, Form, Card, Accordion, Badge } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
+import ReactPlayer from 'react-player';
 
 export default class DetailKursus extends Component {
 
@@ -232,6 +233,34 @@ export default class DetailKursus extends Component {
       }
     }
 
+    const CheckMedia = ({media}) => {
+      if(media) {
+        let ekSplit = media.split('.');
+        let ektension = ekSplit[ekSplit.length-1];
+        console.log('ektension: ', ektension)
+        if(ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
+          return (
+            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px'}} />
+          )
+        } else {
+          return (
+            <div style={{position: 'relative', paddingTop: '56.25%'}}>
+              <ReactPlayer 
+                style={{position: 'absolute', top: '0', left: '0'}} 
+                url={media} playing 
+                volume='1'
+                controls
+                height='100%'
+                width='100%'
+              />
+            </div>
+          )
+        }
+      }
+
+      return null
+    }
+
 		return (
 			<div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -242,9 +271,10 @@ export default class DetailKursus extends Component {
 
                   <div className="row">
                     <div className="col-xl-8">
-                      <img class="img-fluid rounded" src={course.image} alt="" style={{marginBottom: '20px'}} />
-                      
-                      { course.category_name && <a className="btn btn-ideku" href="#" style={{fontWeight: 'bold'}}>{course.category_name}</a> }
+
+                      <CheckMedia media={course.image} />
+
+                      { course.category_name && <a className="btn btn-ideku" href="#" style={{fontWeight: 'bold', marginTop: '5px'}}>{course.category_name}</a> }
                       
                       <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
                       
