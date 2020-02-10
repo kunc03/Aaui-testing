@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
@@ -15,6 +15,7 @@ export default class KursusMateriAdd extends Component {
     catId: '',
     kategori_name: '',
     kategori_image: '',
+    resMsg: '',
 
 		category_id: '',
 		type: '',
@@ -23,8 +24,15 @@ export default class KursusMateriAdd extends Component {
 		body: '',
 		image: '',
 
-		isModalKategori: false,
-	}
+    isModalKategori: false,
+    
+    isNotifikasi: false,
+    isiNotifikasi: '',
+  }
+  
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
 
   onClickUbahKategori = e => {
     e.preventDefault();
@@ -68,7 +76,13 @@ export default class KursusMateriAdd extends Component {
     const name = target.name;
 
     if(name === 'image' || name === 'kategori_image') {
-    	this.setState({ [name]: target.files[0] });
+      if (target.files[0].size <= 10000000) {
+        this.setState({ [name]: target.files[0] });
+      } else {
+        target.value = null;
+        this.handleCloseModal()
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      }
     } else {
     	this.setState({ [name]: value });
     }
@@ -92,18 +106,22 @@ export default class KursusMateriAdd extends Component {
   handleSimpanKategori = e => {
     e.preventDefault();
     if(this.state.catId === '') {
-      let form = new FormData();
-      form.append('company_id', this.state.companyId);
-      form.append('category_name', this.state.kategori_name);
-      form.append('category_image', this.state.kategori_image);
-      form.append('category_publish', '1');
-
-      API.post(`${API_SERVER}v1/category`, form).then(res => {
-        if(res.status === 200) {
-          this.fetchData();
-          this.handleCloseModal();
-        }
-      })
+      if(this.state.kategori_image === '') {
+        this.setState({ resMsg: 'Cover kategori harus terisi' })
+      } else {
+        let form = new FormData();
+        form.append('company_id', this.state.companyId);
+        form.append('category_name', this.state.kategori_name);
+        form.append('category_image', this.state.kategori_image);
+        form.append('category_publish', '1');
+  
+        API.post(`${API_SERVER}v1/category`, form).then(res => {
+          if(res.status === 200) {
+            this.fetchData();
+            this.handleCloseModal();
+          }
+        })
+      }
     } else {
       let form = {
         company_id: this.state.companyId,
@@ -153,7 +171,7 @@ export default class KursusMateriAdd extends Component {
   }
 
   handleCloseModal = e => {
-  	this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '' });
+  	this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '', resMsg: '' });
   }
 
 	render() {
@@ -247,8 +265,9 @@ export default class KursusMateriAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cover</label>
+                              <label className="label-input">Media</label>
                               <input
+                                accept="image/*,video/*"
                               	type="file"
                                 required
                                 name="image"
@@ -256,7 +275,12 @@ export default class KursusMateriAdd extends Component {
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text>
+                                Pastikan file berformat mp4, png, jpg, jpeg, atau gif.
+                              </Form.Text>
+                              {this.state.resMsg && <Form.Text className="text-danger">{this.state.resMsg}</Form.Text>}
                             </div>
+
                             <button style={{ marginTop: '50px'}} type="submit"
 		                          className="btn btn-block btn-ideku f-w-bold">
 		                          Simpan Materi & Kursus
@@ -265,13 +289,17 @@ export default class KursusMateriAdd extends Component {
                         </div>
                       </div>
 
-                      <Modal show={this.state.isModalKategori} onHide={this.handleCloseModal}>
+                      <Modal show={this.state.isModalKategori} onHide={this.handleCloseModal} dialogClassName="modal-lg">
 	                      <Modal.Body>
 	                        <Modal.Title className="text-c-purple3 f-w-bold">Semua Kategori</Modal.Title>
                           <form onSubmit={this.handleSimpanKategori}>
                             <div style={{ marginTop: '20px'}} className="form-group">
                               <label>Cover Kategori</label>
                               <input required className="form-control" type="file" name="kategori_image" onChange={this.onChangeInput} />
+                              <Form.Text>
+                                Pastikan file berformat png, jpg, jpeg, atau gif dan ukuran tidak melebihi 500KB
+                              </Form.Text>
+                              { this.state.resMsg && <Form.Text className="text-danger">{this.state.resMsg}</Form.Text> }
                             </div>
                             <div className="form-group">
                               <label>Nama Kategori</label>
@@ -319,6 +347,20 @@ export default class KursusMateriAdd extends Component {
 	                        </button>
 	                      </Modal.Body>
 	                    </Modal>
+
+                      <Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+
+                          <p style={{ color: 'black', margin: '20px 0px' }}>{this.state.isiNotifikasi}</p>
+
+                          <button type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}>
+                            Mengerti
+                              </button>
+                        </Modal.Body>
+                      </Modal>
 
                     </div>
                   </div>

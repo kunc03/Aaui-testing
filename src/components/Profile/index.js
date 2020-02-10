@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Alert, Modal} from 'react-bootstrap';
+import {Alert, Modal, Form} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -21,7 +21,10 @@ class Profile extends Component {
       tempAvatar: '',
     },
     isModalAvatar: false,
-    toggle_alert: false
+    toggle_alert: false,
+
+    isNotifikasi: false,
+    isiNotifikasi: '',
   }
 
   componentDidMount(){
@@ -61,7 +64,7 @@ class Profile extends Component {
           this.setState({
             user_data: {
               ...this.state.user_data,
-              avatar: res.data.result.avatar,
+              avatar: res.data.result.avatar ? res.data.result.avatar : 'https://iacts.org/sites/all/themes/themag/assets/images/default-user.png',
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               level: res.data.result.level,
@@ -96,9 +99,19 @@ class Profile extends Component {
       })
   }
 
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
+
   handleChange = (e) => {
     if(e.target.name === 'avatar') {
-      this.setState({ user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] } });
+      if (e.target.files[0].size <= 50000) {
+        this.setState({ user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] } });
+      } else {
+        e.target.value = null;
+        this.handleModalAvatarClose()
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      }
     } else {
       this.setState({
         user_data: {
@@ -144,7 +157,10 @@ class Profile extends Component {
                               <Modal.Title className="text-c-purple3 f-w-bold">Ganti Foto</Modal.Title>
                               <div style={{ marginTop: '20px'}} className="form-group">
                                 <label>Upload Foto</label>
-                                <input className="form-control" name="avatar" type="file" onChange={this.handleChange} required />
+                                <input accept="image/*" className="form-control" name="avatar" type="file" onChange={this.handleChange} required />
+                                <Form.Text className="text-muted">
+                                  Pastikan format file png, jpg, jpeg, atau gif dan ukuran file tidak lebih dari 500KB
+                                </Form.Text>
                               </div>
                               <button style={{ marginTop: '50px'}} type="button"
                                 onClick={this.onClickSubmitModal}
@@ -232,6 +248,20 @@ class Profile extends Component {
                               Simpan
                             </button>
                           </form>
+
+                          <Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
+                            <Modal.Body>
+                              <Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+
+                              <p style={{ color: 'black', margin: '20px 0px' }}>{this.state.isiNotifikasi}</p>
+
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.closeNotifikasi}>
+                                Mengerti
+                              </button>
+                                </Modal.Body>
+                          </Modal>
                         </div>
                       </div>
                     </div>

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Form } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -29,7 +30,24 @@ class UserAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-    this.setState({ [name]: value });
+    if(name === 'email') {
+      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+        if(res.data.error) {
+          target.value = ''
+        } else {
+          this.setState({ [name]: value })
+        }
+      })
+    } else if(name === 'address') {
+      if (value.length <= 100) {
+        this.setState({ [name]: value })
+      } else {
+        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+      }
+    } else {
+      this.setState({ [name]: value })
+    }
+
   }
 
   submitForm = e => {
@@ -52,7 +70,7 @@ class UserAdd extends Component {
         if(res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
-          this.props.history.push('/user-company')
+          this.props.history.push('/my-company')
         }
       }
     })
@@ -73,8 +91,8 @@ class UserAdd extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
     const levelUser = [{level: 'admin'}, {level: 'client'}];
+
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -133,6 +151,9 @@ class UserAdd extends Component {
                                 placeholder="rakaal@gmail.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-muted">
+                                Pastikan isi sesuai dengan format email ex. user@email.com
+                              </Form.Text>
                             </div>
 
                             <div className="form-group">
@@ -148,12 +169,15 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Alamat</label>
-                              <textarea required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <textarea maxLength="100" required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <Form.Text className="text-muted">
+                                Maksimal 100 karakter untuk alamat
+                              </Form.Text>
                             </div>
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select name="level" className="form-control" onChange={this.onChangeInput} required style={{textTransform: 'capitalize'}}>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (

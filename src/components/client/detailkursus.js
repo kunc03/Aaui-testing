@@ -247,7 +247,7 @@ export default class DetailKursus extends Component {
             <div style={{position: 'relative', paddingTop: '56.25%'}}>
               <ReactPlayer 
                 style={{position: 'absolute', top: '0', left: '0'}} 
-                url={media} playing 
+                url={media}
                 volume='1'
                 controls
                 height='100%'
@@ -276,7 +276,7 @@ export default class DetailKursus extends Component {
 
                       { course.category_name && <a className="btn btn-ideku" href="#" style={{fontWeight: 'bold', marginTop: '5px'}}>{course.category_name}</a> }
                       
-                      <h3 className="f-24 f-w-800 mb-3">{course.title}</h3>
+                      <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '20px'}}>{course.title}</h3>
                       
                       { course.created_at && <p>{dateFormat.toString()}</p> }
 

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Button, Card, Badge, Accordion } from "react-bootstrap";
+import { Modal, Form, Card, Badge, Accordion } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
+import ReactPlayer from 'react-player';
 
 export default class ChapterPreview extends Component {
 
@@ -176,6 +177,34 @@ export default class ChapterPreview extends Component {
 		console.log(this.state)
 		const {chapters, course} = this.state;
 
+		const CheckMedia = ({ media }) => {
+			if (media) {
+				let ekSplit = media.split('.');
+				let ektension = ekSplit[ekSplit.length - 1];
+				console.log('ektension: ', ektension)
+				if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
+					return (
+						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px' }} />
+					)
+				} else {
+					return (
+						<div style={{ position: 'relative', paddingTop: '56.25%' }}>
+							<ReactPlayer
+								style={{ position: 'absolute', top: '0', left: '0' }}
+								url={media}
+								volume='1'
+								controls
+								height='100%'
+								width='100%'
+							/>
+						</div>
+					)
+				}
+			}
+
+			return null
+		}
+
 		const ListChapter = ({lists}) => {
 			if(lists.length !== 0) {
 				return (
@@ -188,7 +217,7 @@ export default class ChapterPreview extends Component {
 							  </Accordion.Toggle>
 							  <Accordion.Collapse eventKey={item.chapter_id}>
 								  <Card.Body style={{padding: '16px'}}>
-										<img class="img-fluid rounded" src={item.chapter_video} alt="Media" />
+										<CheckMedia media={item.chapter_video} />
 
 										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 								    
@@ -237,14 +266,16 @@ export default class ChapterPreview extends Component {
 		        					</Link>
 
                       <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '20px'}}>{course.title}</h3>
-                      <Badge variant="success">{course.type}</Badge>
+											<Badge variant="success" style={{ padding: '6px' }}>{course.type}</Badge>
 
 							        <p class="lead">
-							          Kategori:&nbsp;
-							          <a href="#">{course.category_name}</a>
+							          Kategori&nbsp;
+							          <Badge variant="info" style={{padding: '10px'}}>{course.category_name}</Badge>
 							        </p>
-							        <p>Posted on {dateFormat.toString()}</p>
-      								<img class="img-fluid rounded" src={course.image} alt="" />
+							        <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+
+											<CheckMedia media={course.image} />
+
       								<br/>
       								<br/>
 
@@ -286,6 +317,7 @@ export default class ChapterPreview extends Component {
                       		<div className="form-group">
                       			<label>Nomor Chapter</label>
                       			<input value={this.state.chapterNumber} name="chapterNumber" onChange={this.onChangeInput} type="text" required placeholder="nomor chapter" className="form-control" />
+														<Form.Text>Isi dengan nomor angka</Form.Text>
                       		</div>
                       		<div className="form-group">
                       			<label>Judul Chapter</label>
@@ -313,7 +345,8 @@ export default class ChapterPreview extends Component {
                       		</div>
                       		<div className="form-group">
                       			<label>Media Chapter</label>
-                      			<input name="chapterVideo" onChange={this.onChangeInput} type="file" required placeholder="media chapter" className="form-control" />
+                      			<input accept="image/*,video/*" name="chapterVideo" onChange={this.onChangeInput} type="file" placeholder="media chapter" className="form-control" />
+														<Form.Text>Pastikan file berformat mp4, png, jpg, jpeg, atau gif.</Form.Text>
                       		</div>
 
 		                      <button style={{ marginTop: '50px'}} type="submit"
