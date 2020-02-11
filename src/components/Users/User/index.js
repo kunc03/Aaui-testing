@@ -21,6 +21,10 @@ export default class User extends Component {
     };
   }
 
+  handleModalVoucher = e => {
+    this.setState({ isModalVoucher: false, userIdVoucher: '' });
+  }
+
   handleChangeInput = e => {
     this.setState({ userPassword: e.target.value });
   }

@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@opuscapita/react-filemanager": "^1.1.0-beta.7",
+    "@opuscapita/react-filemanager-connector-node-v1": "^1.1.0-beta.7",
     "@tinymce/tinymce-react": "^3.4.0",
     "axios": "^0.19.0",
     "bootstrap": "^4.4.1",

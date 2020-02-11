@@ -125,7 +125,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-16 text-c-grey-t ">
                       Status
                     </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-20 text-c-purple3">
                       {item.status}
                     </h5>
                   </div>

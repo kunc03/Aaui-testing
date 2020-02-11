@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { 
-	Form, Card, Col, Row, ButtonGroup, Button, Image, 
-	InputGroup, FormControl, Modal
-} from 'react-bootstrap';
+import { Form, Card, Col, Row, Modal, Image, Button } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 

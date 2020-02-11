@@ -35,6 +35,7 @@ import QuestionQuizEdit from "./components/admin/question/quizedit";
 import ExamList from "./components/admin/exam/exam";
 import QuestionExam from "./components/admin/question/exam";
 import QuestionExamCreate from "./components/admin/question/examcreate";
+import FilePicker from "./components/admin/filemanager/file";
 
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
@@ -191,6 +192,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
         <Route path="/grup" exact component={Grup} />
+
+        <Route path="/filemanager" exact component={FilePicker} />
 
         <Route path="/logout" exact component={Logout} />
       </Switch>
