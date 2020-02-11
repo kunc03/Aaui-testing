@@ -50,6 +50,9 @@ import UjianHasil from "./components/client/ujianhasil";
 
 import Forum, { ForumDetail } from "./components/forum/forum";
 
+import LiveClass from "./components/liveclass";
+
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -145,6 +148,8 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/user-access" component={UserAccess} />
         <Route path="/user-company/:company_id" component={UserCompany} />
+
+        <Route path="/liveclass" component={LiveClass} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />

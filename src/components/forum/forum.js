@@ -137,45 +137,48 @@ export default class Forum extends Component {
 								<i className="fa fa-search"></i>
 							</InputGroup.Text>
 							</InputGroup.Prepend>
+							
 							<FormControl
-							placeholder="Cari Forum Lain"
-							aria-label="Username"
-							aria-describedby="basic-addon1"
+								placeholder="Cari Forum Lain"
+								aria-label="Username"
+								aria-describedby="basic-addon1"
 							/>
+
 							<InputGroup.Append style={{cursor: 'pointer'}}>
 							<InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
 							</InputGroup.Append>
+						
 						</InputGroup>
 
 						<Row>
 							<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/`}>
-								<div className="kategori">
-								<img src="/assets/images/component/kursusoff.png" className="img-fluid" />
-								&nbsp;
-								Kursus & Materi
-								</div>
-							</Link>
+								<Link to={`/`}>
+									<div className="kategori">
+									<img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+									&nbsp;
+									Kursus & Materi
+									</div>
+								</Link>
 							</div>
 
 							<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/forum`}>
-								<div className="kategori-aktif">
-								<img src="/assets/images/component/forumon.png" className="img-fluid" />
-								&nbsp;
-								Forum
-								</div>
-							</Link>
+								<Link to={`/forum`}>
+									<div className="kategori-aktif">
+									<img src="/assets/images/component/forumon.png" className="img-fluid" />
+									&nbsp;
+									Forum
+									</div>
+								</Link>
 							</div>
 
 							<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/liveclass`}>
-								<div className="kategori">
-								<img src="/assets/images/component/liveoff.png" className="img-fluid" />
-								&nbsp;
-								Live Class
-								</div>
-							</Link>
+								<Link to={`/liveclass`}>
+									<div className="kategori">
+									<img src="/assets/images/component/liveoff.png" className="img-fluid" />
+									&nbsp;
+									Live Class
+									</div>
+								</Link>
 							</div>
 						</Row>
 
