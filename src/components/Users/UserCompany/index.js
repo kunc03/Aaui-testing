@@ -133,7 +133,7 @@ class UserCompany extends Component {
               </div>
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
-                  <Link to={`/company-detail/${item.company_id}`}>
+                  <Link to={`${linkCompany}/${item.company_id}`}>
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"

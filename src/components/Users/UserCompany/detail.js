@@ -7,28 +7,60 @@ import {
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
+import Users from './users';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 export default class CompanyDetail extends Component {
 
-	constructor(props) {
-		super(props);
+	state = {
+		companyId: '',
 
-		this.state = {
-			companyId: '',
-			nama: '',
-			status: '',
-			validity: '',
-			logo: '',
-			tempLogo: '',
-			cabang: [],
-			grup: [],
-			user: [],
-			isModalCabang: false,
-			namacabang: '',
-			actioncabang: 'add',
-			isModalGrup: false,
-			namagrup: '',
-			actiongrup: 'add'
-		}
+		nama: '',
+		status: '',
+		validity: '',
+		dateValidity: new Date(),
+		logo: '',
+		tempLogo: '',
+		
+		cabang: [],
+		grup: [],
+		user: [],
+		
+		isModalCabang: false,
+		namacabang: '',
+		actioncabang: 'add',
+		
+		isModalGrup: false,
+		namagrup: '',
+		actiongrup: 'add',
+
+		isNotifikasi: false,
+		isiNotifikasi: '',
+		
+		isKonfirmasi: false,
+		jenisKonfirmasi: '',
+		idKonfirmasi: '',
+	}
+
+	closeNotifikasi = e => {
+		this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+	}
+
+	closeKonfirmasi = e => {
+		this.setState({ isKonfirmasi: false, jenisKonfirmasi: '', idKonfirmasi: '' })
+	}
+
+	handleValidityDatePicker = date => {
+    this.setState({
+      validity: this.changeFormatDate(date), dateValidity: date,
+    })
+	}
+	
+	changeFormatDate = (value) => {
+		let dt = new Date(value)
+		return `${dt.getFullYear().toString().padStart(4, '0')}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')} ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
 	}
 
 	onChangeInput = (event) => {
@@ -37,7 +69,12 @@ export default class CompanyDetail extends Component {
     const name = target.name;
 
     if(name === 'logo') {
-    	this.setState({ tempLogo: target.files[0] });
+			if(target.files[0].size <= 50000) {
+				this.setState({ tempLogo: target.files[0] });
+			} else {
+				target.value = null;
+				this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+			}
     } else {
 	    this.setState({
 	      [name]: value
@@ -70,7 +107,9 @@ export default class CompanyDetail extends Component {
   				this.setState({ logo: res.data.result });
   			}
   		})
-  	}
+		}
+		
+		this.setState({ isNotifikasi: true, isiNotifikasi: 'Informasi company berhasil di ubah.' })
   }
 
   onClickModal = e => {
@@ -97,7 +136,8 @@ export default class CompanyDetail extends Component {
 	  			this.setState({
 	  				cabang: [...this.state.cabang, formData ],
 	  				isModalCabang: false
-	  			})
+					})
+					this.handleCloseCabang()
 	  		}
 	  	})
 	  } else {
@@ -108,6 +148,7 @@ export default class CompanyDetail extends Component {
 					API.get(linkURLCabang).then(res => {
 						if(res.status === 200) {
 							this.setState({ cabang: res.data.result, isModalCabang: false })
+							this.handleCloseCabang()
 						}
 					}).catch(err => {
 						console.log(err);
@@ -115,11 +156,13 @@ export default class CompanyDetail extends Component {
 	  		}
 	  	})
 	  }
-  }
-
+	}
+	
   handleCloseCabang = e => {
-  	this.setState({ isModalCabang: false, namacabang: '', actioncabang: 'add' });
+		this.setState({ isModalCabang: false, namacabang: '', actioncabang: 'add' });
   }
+	
+	/* crud grup */
 
   onClickTambahGrup = e => {
   	e.preventDefault();
@@ -137,7 +180,8 @@ export default class CompanyDetail extends Component {
 	  			this.setState({
 	  				grup: [...this.state.grup, formData ],
 	  				isModalGrup: false
-	  			})
+					})
+					this.handleCloseGrup()
 	  		}
 	  	})
   	} else {
@@ -149,6 +193,7 @@ export default class CompanyDetail extends Component {
 					API.get(linkURLGrup).then(res => {
 						if(res.status === 200) {
 							this.setState({ grup: res.data.result, isModalGrup: false })
+							this.handleCloseGrup()
 						}
 					}).catch(err => {
 						console.log(err);
@@ -160,12 +205,18 @@ export default class CompanyDetail extends Component {
 
   handleCloseGrup = e => {
   	this.setState({ isModalGrup: false, namagrup: '', actiongrup: 'add' });
-  }
+	}
+
+	/* end crud grup */
+	
+	openKonfirmasi = e => {
+		this.setState({ isKonfirmasi: true, jenisKonfirmasi: e.target.getAttribute('data-type'), idKonfirmasi: e.target.getAttribute('data-id') })
+	}
 
   onClickHapus = e => {
   	e.preventDefault();
-  	const tipe = e.target.getAttribute('data-type');
-  	const idNya = e.target.getAttribute('data-id');
+  	const tipe = this.state.jenisKonfirmasi;
+  	const idNya = this.state.idKonfirmasi;
 
   	let linkURL = `${API_SERVER}v1`;
 
@@ -179,12 +230,14 @@ export default class CompanyDetail extends Component {
   		if(res.status === 200) {
   			if(tipe === 'cabang') {
 	  			this.setState({
-	  				cabang: this.state.cabang.filter(item => { return item.branch_id != idNya })
-	  			})
+						cabang: this.state.cabang.filter(item => { return item.branch_id != idNya }),
+					})
+					this.closeKonfirmasi()
   			} else {
   				this.setState({
-	  				grup: this.state.grup.filter(item => { return item.grup_id != idNya })
-	  			})
+						grup: this.state.grup.filter(item => { return item.grup_id != idNya }),
+					})
+					this.closeKonfirmasi()
   			}
   		}
   	})
@@ -249,7 +302,7 @@ export default class CompanyDetail extends Component {
 										return temp;
 									}
 								})
-								this.setState({ user: res.data.result })
+								this.setState({ user: res.data.result.reverse() })
 							}
 						}).catch(err => {
 							console.log(err);
@@ -265,9 +318,11 @@ export default class CompanyDetail extends Component {
 	render() {
 		const { cabang, grup, user } = this.state;
 		const statusCompany = ['active', 'nonactive'];
+		let validityCompany = '';
+		if(this.state.validity !== '') { validityCompany = new Date(this.state.validity); }
 
 		const ListCabang = ({items}) => {
-			if(items.length == 0) {
+			if(items.length === 0) {
 				return (
 					<div>
 						<Card className="cardku" >
@@ -294,7 +349,7 @@ export default class CompanyDetail extends Component {
 		          					<i data-type="cabang" data-action="update" data-id={item.branch_id} data-nama={item.branch_name} onClick={this.onClickUbah} className="fa fa-edit"></i>
 	          					</Link>
 		          				<Link to="#" className="buttonku">
-		          					<i data-type="cabang" data-id={item.branch_id} onClick={this.onClickHapus} className="fa fa-trash"></i>
+		          					<i data-type="cabang" data-id={item.branch_id} onClick={this.openKonfirmasi} className="fa fa-trash"></i>
 	          					</Link>
 		          			</Col>
 		          		</Row>
@@ -305,10 +360,10 @@ export default class CompanyDetail extends Component {
 					</div>
 				)
 			}
-		};
+		}
 
 		const ListGrup = ({items}) => {
-			if(items.length == 0) {
+			if(items.length === 0) {
 				return (
 					<div>
 						<Card className="cardku" >
@@ -335,7 +390,7 @@ export default class CompanyDetail extends Component {
 		          					<i data-type="grup" data-action="update" data-id={item.grup_id} data-nama={item.grup_name} onClick={this.onClickUbah} className="fa fa-edit"></i>
 		          					</Link>
 		          				<Link to="#" className="buttonku">
-		          					<i data-type="grup" data-id={item.grup_id} onClick={this.onClickHapus} className="fa fa-trash"></i>
+		          					<i data-type="grup" data-id={item.grup_id} onClick={this.openKonfirmasi} className="fa fa-trash"></i>
 	          					</Link>
 		          			</Col>
 		          		</Row>
@@ -344,42 +399,6 @@ export default class CompanyDetail extends Component {
 						))
 					}
 					</div>
-				)
-			}
-		}
-
-		const ListUser = ({items}) => {
-			if(items.length === 0) {
-				return (
-					<tbody>
-						<tr>
-							<td colSpan='9'>Tidak ada user yang terdaftar</td>
-						</tr>
-					</tbody>
-				)
-			} else {
-				return (
-					<tbody>
-					{	
-						items.map((item,i) => (
-							<tr key={item.user_id}>
-		            <td className="text-center">{i+1}</td>
-		            <td>{item.name}</td>
-		            <td>{item.identity}</td>
-		            <td>{item.branch_name}</td>
-		            <td>{item.level}</td>
-		            <td>{item.email}</td>
-		            <td>{item.phone}</td>
-		            <td>{item.validity}</td>
-		            <td className="text-center">
-		              <Link to={`/user-company-edit/${item.user_id}`} className="buttonku">
-			              <i className="fa fa-edit"></i>
-			            </Link>
-		            </td>
-		          </tr>
-						))
-					}
-					</tbody>
 				)
 			}
 		}
@@ -408,7 +427,14 @@ export default class CompanyDetail extends Component {
 				                      </div>
 				                      <div className="form-group">
 				                      	<label>Validity</label>
-				                      	<Form.Control type="text" name="validity" onChange={this.onChangeInput} placeholder="Nama Company" value={this.state.validity} />
+																<br/>
+																<DatePicker
+																	selected={validityCompany}
+																	onChange={this.handleValidityDatePicker}
+																	showTimeSelect
+																	className="form-control"
+																	dateFormat="yyyy-MM-dd"
+																/>
 				                      </div>
 				                      <div className="form-group">
 				                      	<label>Status Company</label>
@@ -420,7 +446,7 @@ export default class CompanyDetail extends Component {
 						                            <input onChange={this.onChangeInput} name="status" checked={this.state.status === item} value={item} type="radio" />
 						                            <div className="state p-success-o">
 						                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
-						                                <small className="f-w-bold f-18 text-c-black small-text">
+						                                <small style={{textTransform: 'capitalize'}} className="f-w-bold f-18 text-c-black small-text">
 						                                  {item}
 						                                </small>
 						                              </label>
@@ -432,7 +458,10 @@ export default class CompanyDetail extends Component {
 				                      </div>
 				                      <div className="form-group">
 				                      	<label>Logo Company</label>
-				                      	<Form.Control className="form-control" type="file" onChange={this.onChangeInput} name="logo" placeholder="Nama Company" />
+																<Form.Control accept="image/x-png,image/gif,image/jpeg,image/jpg" className="form-control" type="file" onChange={this.onChangeInput} name="logo" placeholder="Nama Company" />
+																<Form.Text className="text-muted">
+																	Pastikan file berformat png, jpg, jpeg, atau gif dan ukuran tidak melebihi 500KB
+											    			</Form.Text>
 															</div>
 				                      <button className="btn btn-sm btn-ideku" onClick={this.onClickUpdate}>
 				                      	<i className="fa fa-edit"></i>
@@ -486,9 +515,9 @@ export default class CompanyDetail extends Component {
 		                      <ListGrup items={grup} />
 		                      <Modal show={this.state.isModalGrup} onHide={this.handleCloseGrup}>
 			                      <Modal.Body>
-			                        <Modal.Title className="text-c-purple3 f-w-bold">Form Grup</Modal.Title>
+			                        <Modal.Title className="text-c-purple3 f-w-bold">Grup Company</Modal.Title>
 			                        <div style={{marginTop: '20px'}} className="form-group">
-			                        	<label>Grup Baru</label>
+			                        	<label>Nama Grup</label>
 			                        	<input value={this.state.namagrup} className="form-control" type="text" name="namagrup" onChange={this.onChangeInput} placeholder="Nama Grup" />
 			                        </div>
 			                        <button style={{marginTop: '50px'}} type="button"
@@ -506,39 +535,41 @@ export default class CompanyDetail extends Component {
 			                    </Modal>
                   			</Col>
                   		</Row>
-                  		
-                      <h3 className="f-24 f-w-800 mb-3">User Company</h3>
-                      <table
-                        className="table-curved"
-                        style={{ width: "100%" }}>
-                        <thead>
-                          <tr>
-                            <th className="text-center">No.</th>
-                            <th>Nama</th>
-                            <th>Identitas</th>
-                            <th>Cabang</th>
-                            <th>Level</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Validity</th>
-                            <th className="text-center">
-                              <Link
-                                to={"/user-company-create"}
-                                className="btn btn-ideku col-12 f-14"
-                                style={{ padding: "7px 8px !important" }}
-                              >
-                                <img
-                                  src="assets/images/component/person_add.png"
-                                  className="button-img"
-                                  alt=""
-                                />
-                                Tambah Baru
-                              </Link>
-                            </th>
-                          </tr>
-                        </thead>
-                      	<ListUser items={user} />
-                      </table>
+
+											<Users match={{params: {company_id: this.state.companyId}}} />
+
+											<Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
+												<Modal.Body>
+													<Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+													
+													<p style={{color: 'black', margin: '20px 0px'}}>{this.state.isiNotifikasi}</p>
+
+													<button type="button"
+														className="btn btn-block f-w-bold"
+														onClick={this.closeNotifikasi}>
+														Mengerti
+													</button>
+												</Modal.Body>
+											</Modal>
+
+											<Modal show={this.state.isKonfirmasi} onHide={this.closeKonfirmasi}>
+												<Modal.Body>
+													<Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+
+													<p style={{ color: 'black', margin: '20px 0px' }}>Apakah Anda yakin akan menghapus data ini ?</p>
+													
+													<button type="button"
+														className="btn btn-block btn-ideku f-w-bold"
+														onClick={this.onClickHapus}>
+														Ya, Hapus
+													</button>
+													<button type="button"
+														className="btn btn-block f-w-bold"
+														onClick={this.closeKonfirmasi}>
+														Tidak
+													</button>
+												</Modal.Body>
+											</Modal>
 
                     </div>
                   </div>

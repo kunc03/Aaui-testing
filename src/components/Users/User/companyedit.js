@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Form } from 'react-bootstrap'
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -17,6 +18,7 @@ class UserEdit extends Component {
     phone: "",
     address: "",
     level: "",
+    password: "",
 
     listCompany: [],
     listBranch: [],
@@ -37,10 +39,18 @@ class UserEdit extends Component {
 
     API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(res => {
       if(res.status === 200) {
+        
+        if (this.state.password !== '') {
+          let formData = { password: this.state.password };
+          API.put(`${API_SERVER}v1/user/password/${this.state.user_id}`, formData).then(res => {
+            console.log('pass: ', res.data)
+          })
+        }
+
         if(Storage.get('user').data.level === 'superadmin') {
           this.props.history.push('/user')
         } else {
-          this.props.history.push(`/user-company/${this.state.company_id}`)
+          this.props.history.push(`/my-company`)
         }
       }
     })
@@ -57,7 +67,21 @@ class UserEdit extends Component {
           this.setState({ listBranch: res.data.result, company_id: value })
         }
       })
-    } else {
+    } else if (name === 'email') {
+      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+        if (res.data.error) {
+          target.value = ''
+        } else {
+          this.setState({ [name]: value })
+        }
+      })
+    } else if (name === 'address') {
+      if (value.length <= 100) {
+        this.setState({ [name]: value })
+      } else {
+        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+      }
+    }else {
       this.setState({
         [name]: value
       });
@@ -154,6 +178,9 @@ class UserEdit extends Component {
                                 placeholder="rakaal@gmail.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-muted">
+                                Pastikan isi sesuai dengan format email ex. user@email.com
+                              </Form.Text>
                             </div>
                             <div className="form-group">
                               <label className="label-input">Phone</label>
@@ -174,7 +201,7 @@ class UserEdit extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
@@ -182,6 +209,16 @@ class UserEdit extends Component {
                                   ))
                                 }
                               </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Password</label>
+                              <input
+                                type="password"
+                                name="password"
+                                className="form-control"
+                                placeholder="password"
+                                onChange={this.onChangeInput}
+                              />
                             </div>
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                               Simpan

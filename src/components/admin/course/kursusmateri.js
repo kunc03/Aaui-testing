@@ -68,7 +68,7 @@ export default class KursusMateri extends Component {
 							<tr key={item.course_id}>
 								<td>{i+1}</td>
 								<td>
-									<img className="img-thumbnail" src={item.image} width="200px" alth="Cover" />
+									<img className="img-thumbnail" src={item.image} width="200px" style={{height: "100px"}} alth="Cover" />
 								</td>
 								<td>{item.category_name}</td>
 								<td>{item.title}</td>

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
@@ -22,7 +22,10 @@ export default class KursusMateriEdit extends Component {
 		body: '',
 		image: '',
 
-		isModalKategori: false
+    isModalKategori: false,
+    
+    isNotifikasi: false, 
+    isiNotifikasi: ''
 	}
 
 	onChangeInput = (event) => {
@@ -31,7 +34,13 @@ export default class KursusMateriEdit extends Component {
     const name = target.name;
 
   	if(name === 'image' || name === 'kategori_image') {
-      this.setState({ [name]: target.files[0] });
+      if (target.files[0].size <= 10000000) {
+        this.setState({ [name]: target.files[0] });
+      } else {
+        target.value = null;
+        this.handleCloseModal()
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      }
     } else {
     	this.setState({ [name]: value });
     }
@@ -164,7 +173,8 @@ export default class KursusMateriEdit extends Component {
   }
 
 	render() {
-		const { courseId, kategori } = this.state;
+    const { courseId, kategori, course } = this.state;
+    console.log('course: ', course)
 
 		return (
 			<div className="pcoded-main-container">
@@ -257,14 +267,18 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cover</label>
+                              <label className="label-input">Media</label>
                               <input
+                                accept="imaga/*,video/*"
                               	type="file"
                                 name="image"
                                 className="form-control"
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text>
+                                Pastikan file berformat mp4, png, jpg, jpeg, atau gif.
+                              </Form.Text>
                             </div>
                             <button style={{ marginTop: '50px'}} type="submit"
 		                          className="btn btn-block btn-ideku f-w-bold">
@@ -327,6 +341,20 @@ export default class KursusMateriEdit extends Component {
 	                        </button>
 	                      </Modal.Body>
 	                    </Modal>
+
+                      <Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+
+                          <p style={{ color: 'black', margin: '20px 0px' }}>{this.state.isiNotifikasi}</p>
+
+                          <button type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}>
+                            Mengerti
+                              </button>
+                        </Modal.Body>
+                      </Modal>
 
                     </div>
                   </div>

@@ -23,7 +23,7 @@ class Sidebar extends Component {
     let menuAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
       { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-      { iconOn: 'kursuson.png', iconOff: 'kursusoff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
       { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
       { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
       { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
@@ -32,7 +32,7 @@ class Sidebar extends Component {
 
     let menuSuperAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      { iconOn: 'forumon.png', iconOff: 'forumoff.png', label: 'Forum', link: '/forum' },
+      { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
       { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Kelas', link: '/kelas' },
       { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
       { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },

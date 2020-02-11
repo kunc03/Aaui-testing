@@ -106,7 +106,7 @@ export default class User extends Component {
             }
             return temp;
           });
-          this.setState({ users: response.data.result });
+          this.setState({ users: response.data.result.reverse() });
         })
         .catch(function(error) {
           console.log(error);
@@ -125,7 +125,7 @@ export default class User extends Component {
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
-          <td>{item.level}</td>
+          <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
           <td>{item.validity}</td>
@@ -165,7 +165,6 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800">User Management</h3>
-                      <p>{this.state.list}</p>
                       <div style={{ overflowX: "auto" }}>
                         <table
                           className="table-curved"
