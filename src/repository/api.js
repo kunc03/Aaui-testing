@@ -11,6 +11,7 @@ export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const USER_ME = `${API_SERVER}v1/auth/me/`;
 export const USER = `${API_SERVER}v1/user`;
+export const FORUM = `${API_SERVER}v1/forum`;
 
 export default class API {
     static getConfig = (bearer = true) => {
