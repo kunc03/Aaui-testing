@@ -19,6 +19,7 @@ export default class KursusMateri extends Component {
 
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+			console.log(res)
 			if(res.status === 200) {
 				this.setState({ companyId: res.data.result.company_id });
 				API.get(`${API_SERVER}v1/course/company/${this.state.companyId}`).then(res => {
@@ -68,7 +69,11 @@ export default class KursusMateri extends Component {
 							<tr key={item.course_id}>
 								<td>{i+1}</td>
 								<td>
+<<<<<<< HEAD
 									<img className="img-thumbnail" src={item.image} width="200px" style={{height: "100px"}} alth="Cover" />
+=======
+									<img className="img-thumbnail" src={item.image} style={{height: '100px'}} width="200px" alth="Cover" />
+>>>>>>> dc4a0310a9a9389655c49198f35aa397a3794e02
 								</td>
 								<td>{item.category_name}</td>
 								<td>{item.title}</td>
