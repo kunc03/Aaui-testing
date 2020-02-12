@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Alert, Modal, Form} from 'react-bootstrap';
+import {Alert, Modal, Form, Card} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -134,7 +134,6 @@ class Profile extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-36 f-w-bold mb-3">Profile Anda !</h3>
                       <div className="card">
                         <div className="card-block">
                           <div className="text-center mt-5 mb-5">
@@ -152,37 +151,59 @@ class Profile extends Component {
                               Ganti
                             </button>
                           </div>
-                          <Modal show={this.state.isModalAvatar} onHide={this.handleModalAvatarClose}>
+                          <Modal
+                            show={this.state.isModalAvatar}
+                            onHide={this.handleModalAvatarClose}
+                          >
                             <Modal.Body>
-                              <Modal.Title className="text-c-purple3 f-w-bold">Ganti Foto</Modal.Title>
-                              <div style={{ marginTop: '20px'}} className="form-group">
+                              <Modal.Title className="text-c-purple3 f-w-bold">
+                                Ganti Foto
+                              </Modal.Title>
+                              <div
+                                style={{ marginTop: "20px" }}
+                                className="form-group"
+                              >
                                 <label>Upload Foto</label>
-                                <input accept="image/*" className="form-control" name="avatar" type="file" onChange={this.handleChange} required />
+                                <input
+                                  accept="image/*"
+                                  className="form-control"
+                                  name="avatar"
+                                  type="file"
+                                  onChange={this.handleChange}
+                                  required
+                                />
                                 <Form.Text className="text-muted">
-                                  Pastikan format file png, jpg, jpeg, atau gif dan ukuran file tidak lebih dari 500KB
+                                  Pastikan format file png, jpg, jpeg, atau gif
+                                  dan ukuran file tidak lebih dari 500KB
                                 </Form.Text>
                               </div>
-                              <button style={{ marginTop: '50px'}} type="button"
+                              <button
+                                style={{ marginTop: "50px" }}
+                                type="button"
                                 onClick={this.onClickSubmitModal}
-                                className="btn btn-block btn-ideku f-w-bold">
+                                className="btn btn-block btn-ideku f-w-bold"
+                              >
                                 Simpan
                               </button>
-                              <button type="button"
+                              <button
+                                type="button"
                                 className="btn btn-block f-w-bold"
-                                onClick={this.handleModalAvatarClose}>
+                                onClick={this.handleModalAvatarClose}
+                              >
                                 Tidak
                               </button>
                             </Modal.Body>
                           </Modal>
 
-
-                          {
-                            toggle_alert &&
-                            <Alert variant={'success'}>
-                              Update successfully!
-                            </Alert>
-                          }
-                          <form>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Profile
+                            </h3>
+                            {toggle_alert && (
+                              <Alert variant={"success"}>
+                                Update successfully!
+                              </Alert>
+                            )}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
                                 Nama
@@ -208,7 +229,11 @@ class Profile extends Component {
                                 required
                                 placeholder="No. ktp"
                                 inputMode="numeric"
-                                value={user_data.identity == null ? "" : user_data.identity}
+                                value={
+                                  user_data.identity == null
+                                    ? ""
+                                    : user_data.identity
+                                }
                                 onChange={this.handleChange}
                               />
                             </div>
@@ -242,28 +267,105 @@ class Profile extends Component {
                               />
                             </div>
                             <button
-                              className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
+                              className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
                               onClick={event => this.updateProfile(event)}
                             >
                               Simpan
                             </button>
                           </form>
-
-                          <Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
-                            <Modal.Body>
-                              <Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
-
-                              <p style={{ color: 'black', margin: '20px 0px' }}>{this.state.isiNotifikasi}</p>
-
-                              <button type="button"
-                                className="btn btn-block f-w-bold"
-                                onClick={this.closeNotifikasi}>
-                                Mengerti
-                              </button>
-                                </Modal.Body>
-                          </Modal>
                         </div>
                       </div>
+
+                      <Card>
+                        <Card.Body>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Kontak
+                            </h3>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Nomor Handphone
+                              </label>
+                              <input
+                                name="phone"
+                                type="phone"
+                                className="form-control"
+                                required
+                                placeholder="081247959214"
+                                inputMode="tel"
+                                value={user_data.phone}
+                                onChange={this.handleChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Email
+                              </label>
+                              <input
+                                name="email"
+                                type="email"
+                                className="form-control"
+                                required
+                                placeholder="aaaa@bbb.com"
+                                value={user_data.phone}
+                                onChange={this.handleChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Password
+                              </label>
+                              <input
+                                name="password"
+                                type="password"
+                                className="form-control"
+                                required
+                                placeholder="password"
+                                onChange={this.handleChange}
+                              />
+                            </div>
+                            <button
+                              className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
+                              onClick={event => this.updateKontak(event)}
+                            >
+                              Simpan
+                            </button>
+                          </form>
+                        </Card.Body>
+                      </Card>
+
+                      <Card>
+                        <Card.Body>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Kursus
+                            </h3>
+                          </form>
+                        </Card.Body>
+                      </Card>
+
+                      <Modal
+                        show={this.state.isNotifikasi}
+                        onHide={this.closeNotifikasi}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Notifikasi
+                          </Modal.Title>
+
+                          <p style={{ color: "black", margin: "20px 0px" }}>
+                            {this.state.isiNotifikasi}
+                          </p>
+
+                          <button
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}
+                          >
+                            Mengerti
+                          </button>
+                        </Modal.Body>
+                      </Modal>
                     </div>
                   </div>
                 </div>

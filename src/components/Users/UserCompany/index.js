@@ -24,7 +24,7 @@ class UserCompany extends Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
-  closeModalAdd = e => this.setState({ isOpen: e });
+  closeModalAdd = e => { console.log(e); this.setState({ isOpen: e }) };
 
   triggerUpdate = e => this.setState({
     grup: [...this.state.grup, e]

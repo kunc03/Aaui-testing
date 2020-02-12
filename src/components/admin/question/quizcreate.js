@@ -124,7 +124,21 @@ export default class QuestionQuizCreate extends Component {
 
                     <div className="col-xl-8">
                     	<h3 className="f-24 f-w-800 mb-3">
-                        Buat Pertanyaan
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/question-quiz/${this.state.examId}.${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+												&nbsp;Buat Pertanyaan
                       </h3>
                     	<Card>
                     		<Card.Body>
@@ -171,18 +185,18 @@ export default class QuestionQuizCreate extends Component {
 												    Tambah Pilihan
 												  </Button>
 
-												  <ol type="A" style={{marginTop: '10px', marginLeft: '-25px'}}>
+												  <ul style={{marginTop: '10px', marginLeft: '-25px', listStyle: 'none'}}>
 												  	{
 												  		this.state.pilihans.map((item) => (
 														  	<li key={item.option_id}>
-														  		{item.description} &nbsp;
+														  		{item.exam_option}. {item.description} &nbsp;
 								          				<Link to="#" className="buttonku" title="Hapus">
 								          					<i onClick={this.handleDeleteOption} data-id={item.option_id} className="fa fa-trash"></i>
 								        					</Link>
 														  	</li>
 											  			))
 												  	}
-												  </ol>
+												  </ul>
 
                     		</Card.Body>
                     	</Card>

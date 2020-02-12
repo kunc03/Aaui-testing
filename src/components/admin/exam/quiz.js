@@ -17,8 +17,8 @@ export default class QuizList extends Component {
 		examId: '',
 		examTitle: '',
 		exampDesc: '',
-		examRandom: '',
-		examPublish: '',
+		examRandom: '0',
+		examPublish: '1',
 
 		isModalDelete: false,
 		quizId: ''
@@ -219,7 +219,7 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
-					              	<Link to={`/question-quiz/${item.exam_id}`} className="buttonku" title="Buat Pertanyaan">
+					              	<Link to={`/question-quiz/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
 													<Link to="#" className="buttonku" title="Edit">
@@ -277,7 +277,8 @@ export default class QuizList extends Component {
 
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        Quiz Course
+                        <Link onClick={e => { e.preventDefault(); this.props.history.push(`/chapter/${this.state.courseId}`) }} className="btn btn-ideku btn-circle"><i className="fa fa-chevron-left" style={{paddingLeft: '8px'}}></i></Link>
+												&nbsp;Quiz Course
                       </h3>
 
                       <a onClick={this.handleOpen} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
@@ -310,28 +311,7 @@ export default class QuizList extends Component {
                         		<label>Deskripsi</label>
                         		<textarea onChange={this.onChangeInput} value={this.state.exampDesc} name="exampDesc" required type="text" placeholder="deskripsi quiz" className="form-control" />
                         	</div>
-                        	<div className="form-group" onChange={this.onChangeInput}>
-                        		<label>Random Soal</label>
-                        		<br/>
-                        		{
-				                      statusCompany.map(item => {
-				                        return (
-				                          <Form.Check name='examRandom' inline label={(item === "0") ? "Tidak":"Ya"} checked={String(this.state.examRandom) === item} type='radio' value={item} />
-				                        );
-				                      })
-				                    }
-                        	</div>
-                        	<div className="form-group" onChange={this.onChangeInput}>
-                        		<label>Publish</label>
-                        		<br/>
-		                      	{
-				                      statusCompany.map(item => {
-				                        return (
-				                          <Form.Check name='examPublish' inline label={(item === "0") ? "Tidak":"Ya"} checked={String(this.state.examPublish) === item} type='radio' value={item} />
-				                        );
-				                      })
-				                    }
-                        	</div>
+                        	
 
 	                        <button style={{ marginTop: '30px'}} type="submit"
 	                          className="btn btn-block btn-ideku f-w-bold">

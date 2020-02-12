@@ -132,36 +132,39 @@ export default class CompanyDetail extends Component {
   	const formData = {
   		company_id: this.state.companyId,
   		branch_name: this.state.namacabang
-  	}
+		}
+		
+		if(formData.branch_name) {
+			if(this.state.actioncabang === 'add') {
+				// action for insert
+				API.post(`${API_SERVER}v1/branch`, formData).then(res => {
+					if(res.status === 200) {
+						formData.branch_id = res.data.result.insertId;
+						this.setState({
+							cabang: [...this.state.cabang, formData ],
+							isModalCabang: false
+						})
+						this.handleCloseCabang();
+					}
+				})
+			} else {
+				const idNya = this.state.actioncabang.split('_')[1];
+				API.put(`${API_SERVER}v1/branch/${idNya}`, formData).then(res => {
+					if(res.status === 200) {
+						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
+						API.get(linkURLCabang).then(res => {
+							if(res.status === 200) {
+								this.setState({ cabang: res.data.result, isModalCabang: false })
+								this.handleCloseCabang();
+							}
+						}).catch(err => {
+							console.log(err);
+						});
+					}
+				})
+			}
+		}
 
-  	if(this.state.actioncabang === 'add') {
-  		// action for insert
-	  	API.post(`${API_SERVER}v1/branch`, formData).then(res => {
-	  		if(res.status === 200) {
-	  			formData.branch_id = res.data.result.insertId;
-	  			this.setState({
-	  				cabang: [...this.state.cabang, formData ],
-	  				isModalCabang: false
-					})
-					this.handleCloseCabang();
-	  		}
-	  	})
-	  } else {
-	  	const idNya = this.state.actioncabang.split('_')[1];
-	  	API.put(`${API_SERVER}v1/branch/${idNya}`, formData).then(res => {
-	  		if(res.status === 200) {
-	  			let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
-					API.get(linkURLCabang).then(res => {
-						if(res.status === 200) {
-							this.setState({ cabang: res.data.result, isModalCabang: false })
-							this.handleCloseCabang();
-						}
-					}).catch(err => {
-						console.log(err);
-					});
-	  		}
-	  	})
-	  }
   }
 
   handleCloseCabang = e => {
@@ -173,38 +176,41 @@ export default class CompanyDetail extends Component {
   	const formData = {
   		company_id: this.state.companyId,
   		grup_name: this.state.namagrup
-  	}
+		}
+		
+		if(formData.grup_name) {
+			if(this.state.actiongrup === 'add') {
+				// action for insert
+				API.post(`${API_SERVER}v1/grup`, formData).then(res => {
+					console.log(res);
+					if(res.status === 200) {
+						formData.grup_id = res.data.result.insertId;
+						this.setState({
+							grup: [...this.state.grup, formData ],
+							isModalGrup: false
+						})
+						this.handleCloseGrup();					
+					}
+				})
+			} else {
+				// action for update
+				const idNya = this.state.actiongrup.split('_')[1];
+				API.put(`${API_SERVER}v1/grup/${idNya}`, formData).then(res => {
+					if(res.status === 200) {
+						let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
+						API.get(linkURLGrup).then(res => {
+							if(res.status === 200) {
+								this.setState({ grup: res.data.result, isModalGrup: false })
+								this.handleCloseGrup();
+							}
+						}).catch(err => {
+							console.log(err);
+						});
+					}
+				})
+			}
+		}
 
-  	if(this.state.actiongrup === 'add') {
-  		// action for insert
-	  	API.post(`${API_SERVER}v1/grup`, formData).then(res => {
-	  		console.log(res);
-	  		if(res.status === 200) {
-	  			formData.grup_id = res.data.result.insertId;
-	  			this.setState({
-	  				grup: [...this.state.grup, formData ],
-	  				isModalGrup: false
-					})
-					this.handleCloseGrup();					
-	  		}
-	  	})
-  	} else {
-  		// action for update
-  		const idNya = this.state.actiongrup.split('_')[1];
-	  	API.put(`${API_SERVER}v1/grup/${idNya}`, formData).then(res => {
-	  		if(res.status === 200) {
-	  			let linkURLGrup = `${API_SERVER}v1/grup/company/${this.state.companyId}`;
-					API.get(linkURLGrup).then(res => {
-						if(res.status === 200) {
-							this.setState({ grup: res.data.result, isModalGrup: false })
-							this.handleCloseGrup();
-						}
-					}).catch(err => {
-						console.log(err);
-					});
-	  		}
-	  	})
-  	}
   }
 
   handleCloseGrup = e => {
@@ -392,42 +398,6 @@ export default class CompanyDetail extends Component {
 						))
 					}
 					</div>
-				)
-			}
-		}
-
-		const ListUser = ({items}) => {
-			if(items.length === 0) {
-				return (
-					<tbody>
-						<tr>
-							<td colSpan='9'>Tidak ada user yang terdaftar</td>
-						</tr>
-					</tbody>
-				)
-			} else {
-				return (
-					<tbody>
-					{	
-						items.map((item,i) => (
-							<tr key={item.user_id}>
-		            <td className="text-center">{i+1}</td>
-		            <td>{item.name}</td>
-		            <td>{item.identity}</td>
-		            <td>{item.branch_name}</td>
-		            <td>{item.level}</td>
-		            <td>{item.email}</td>
-		            <td>{item.phone}</td>
-		            <td>{item.validity}</td>
-		            <td className="text-center">
-		              <Link to={`/user-company-edit/${item.user_id}`} className="buttonku">
-			              <i className="fa fa-edit"></i>
-			            </Link>
-		            </td>
-		          </tr>
-						))
-					}
-					</tbody>
 				)
 			}
 		}

@@ -20,8 +20,8 @@ export default class QuizList extends Component {
 		examId: '',
 		examTitle: '',
 		exampDesc: '',
-		examRandom: '',
-		examPublish: '',
+		examRandom: '0',
+		examPublish: '1',
 		timeMinute: '',
 		timeStart: new Date(),
 		timeFinish: new Date(),
@@ -271,7 +271,7 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
-					              	<Link to={`/question-exam/${item.exam_id}`} className="buttonku" title="Buat Pertanyaan">
+					              	<Link to={`/question-exam/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
 													<Link to="#" className="buttonku" title="Edit">
@@ -321,21 +321,41 @@ export default class QuizList extends Component {
 		const startDate = new Date();
 
 		return (
-			<div className="pcoded-main-container">
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        Exam Course
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/chapter/${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+                        &nbsp;Exam Course
                       </h3>
 
-                      <a onClick={this.handleOpen} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
-                      	<img
+                      <a
+                        onClick={this.handleOpen}
+                        className="btn btn-ideku f-14 float-right mb-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        <img
                           src="assets/images/component/person_add.png"
                           className="button-img"
                           alt=""
@@ -350,113 +370,138 @@ export default class QuizList extends Component {
                       </div>
                     </div>
 
-                    <Modal show={this.state.isModalAdd} onHide={this.handleClose} dialogClassName="modal-lg">
+                    <Modal
+                      show={this.state.isModalAdd}
+                      onHide={this.handleClose}
+                      dialogClassName="modal-lg"
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Form Exam</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Form Exam
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <form onSubmit={this.onSubmitFormAdd}>
-                        	<div className="form-group">
-                        		<label>Judul</label>
-                        		<input onChange={this.onChangeInput} value={this.state.examTitle} name="examTitle" required type="text" placeholder="judul exam" className="form-control" />
-                        	</div>
-                        	<div className="form-group">
-                        		<label>Deskripsi</label>
-                        		<textarea onChange={this.onChangeInput} value={this.state.exampDesc} name="exampDesc" required type="text" placeholder="deskripsi exam" className="form-control" />
-                        	</div>
-                        	<div className="form-group" onChange={this.onChangeInput}>
-                        		<label>Random Soal</label>
-                        		<br/>
-                        		{
-				                      statusCompany.map(item => {
-				                        return (
-				                          <Form.Check name='examRandom' inline label={(item === "0") ? "Tidak":"Ya"} checked={String(this.state.examRandom) === item} type='radio' value={item} />
-				                        );
-				                      })
-				                    }
-                        	</div>
-                        	<div className="form-group" onChange={this.onChangeInput}>
-                        		<label>Publish</label>
-                        		<br/>
-		                      	{
-				                      statusCompany.map(item => {
-				                        return (
-				                          <Form.Check name='examPublish' inline label={(item === "0") ? "Tidak":"Ya"} checked={String(this.state.examPublish) === item} type='radio' value={item} />
-				                        );
-				                      })
-				                    }
-                        	</div>
-                        	<div className="form-group">
-                        		<label>Berapa Menit</label>
-                        		<input pattern="^-?[0-9]\d*\.?\d*$" onChange={this.onChangeInput} value={this.state.timeMinute} name="timeMinute" required type="number" placeholder="berapa menit" className="form-control" />
-                        	</div>
-                        	<div className="form-group">
-                        		<Row>
-	                        		<Col sm={6}>
-	                        			<label>Start &nbsp;</label>
-		                        		<DatePicker
-													        selected={this.state.timeStart}
-													        onChange={this.handleStartDatePicker}
-													        showTimeSelect
-													        className="form-control"
-													        dateFormat="yyyy-MM-dd HH:mm:ss"
-													      />
-	                        		</Col>
-	                        		<Col sm={6}>
-	                        			<label>Finish &nbsp;</label>
-		                        		<DatePicker
-													        selected={this.state.timeFinish}
-													        onChange={this.handleFinishDatePicker}
-													        showTimeSelect
-													        className="form-control"
-													        dateFormat="yyyy-MM-dd HH:mm:ss"
-													      />
-	                        		</Col>
-                        		</Row>
-                        	</div>
+                          <div className="form-group">
+                            <label>Judul</label>
+                            <input
+                              onChange={this.onChangeInput}
+                              value={this.state.examTitle}
+                              name="examTitle"
+                              required
+                              type="text"
+                              placeholder="judul exam"
+                              className="form-control"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Deskripsi</label>
+                            <textarea
+                              onChange={this.onChangeInput}
+                              value={this.state.exampDesc}
+                              name="exampDesc"
+                              required
+                              type="text"
+                              placeholder="deskripsi exam"
+                              className="form-control"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Berapa Menit</label>
+                            <input
+                              pattern="^-?[0-9]\d*\.?\d*$"
+                              onChange={this.onChangeInput}
+                              value={this.state.timeMinute}
+                              name="timeMinute"
+                              required
+                              type="number"
+                              placeholder="berapa menit"
+                              className="form-control"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <Row>
+                              <Col sm={6}>
+                                <label>Start &nbsp;</label>
+                                <DatePicker
+                                  selected={this.state.timeStart}
+                                  onChange={this.handleStartDatePicker}
+                                  showTimeSelect
+                                  className="form-control"
+                                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                                />
+                              </Col>
+                              <Col sm={6}>
+                                <label>Finish &nbsp;</label>
+                                <DatePicker
+                                  selected={this.state.timeFinish}
+                                  onChange={this.handleFinishDatePicker}
+                                  showTimeSelect
+                                  className="form-control"
+                                  dateFormat="yyyy-MM-dd HH:mm:ss"
+                                />
+                              </Col>
+                            </Row>
+                          </div>
 
-	                        <button style={{ marginTop: '30px'}} type="submit"
-	                          className="btn btn-block btn-ideku f-w-bold">
-	                          Simpan
-	                        </button>
+                          <button
+                            style={{ marginTop: "30px" }}
+                            type="submit"
+                            className="btn btn-block btn-ideku f-w-bold"
+                          >
+                            Simpan
+                          </button>
                         </form>
-                        
-                        <button type="button"
+
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
 
-                    <Modal show={this.state.isModalDelete} onHide={this.handleClose}>
+                    <Modal
+                      show={this.state.isModalDelete}
+                      onHide={this.handleClose}
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Konfirmasi
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <p className="f-w-bold">Apakah anda yakin untuk menghapus exam ini ?</p>
-                        
-                        <button style={{marginTop: '30px'}} type="button"
+                        <p className="f-w-bold">
+                          Apakah anda yakin untuk menghapus exam ini ?
+                        </p>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
                           onClick={this.onClickDelete}
-                          className="btn btn-block btn-ideku f-w-bold">
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
                           Hapus
                         </button>
-                        <button type="button"
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
-
-                 	</div>
-               	</div>
-             	</div>
-           	</div>
-         	</div>
-       	</div>
-     	</div>
-		);
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 	}
 }
 

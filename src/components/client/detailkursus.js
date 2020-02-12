@@ -27,7 +27,7 @@ export default class DetailKursus extends Component {
 
     course: { category_name: 'Memuat...' },
 		chapters: [],
-    statChapter: 0,
+    // statChapter: 0,
 	}
 
   pilihChapterTampil = e => {
@@ -48,25 +48,25 @@ export default class DetailKursus extends Component {
         }
       })
 
-      const iterasi = e.target.getAttribute('data-iterasi');
-      // cek stat chapter
-      if(iterasi < this.state.statChapter) {
-        // cek statChapter == jumlah chapters
-        if(this.state.statChapter <= this.state.chapters.length) {
+      // const iterasi = e.target.getAttribute('data-iterasi');
+      // // cek stat chapter
+      // if(iterasi < this.state.statChapter) {
+      //   // cek statChapter == jumlah chapters
+      //   if(this.state.statChapter <= this.state.chapters.length) {
 
-          const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
+      //     const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
           
-          if(!chapterVisited) {
-            localStorage.setItem(`chapter${iterasi}Visited`, true)
-            this.setState({ statChapter: this.state.statChapter+1 })
+      //     if(!chapterVisited) {
+      //       localStorage.setItem(`chapter${iterasi}Visited`, true)
+            // this.setState({ statChapter: this.state.statChapter+1 })
           
-            // update statChapter
-            API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
-          }
-        }
-      } else {
-        this.setState({ isNotifUrut: true })
-      }
+      //       // update statChapter
+      //       API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
+      //     }
+      //   }
+      // } else {
+      //   this.setState({ isNotifUrut: true })
+      // }
     }
   }
 
@@ -104,7 +104,7 @@ export default class DetailKursus extends Component {
             this.setState({ 
               isIkutiKursus: res.data.result, 
               isButtonIkuti: !res.data.result, 
-              statChapter: res.data.response.length !== 0 ? parseInt(res.data.response[0].stat_chapter) : 0 
+              // statChapter: res.data.response.length !== 0 ? parseInt(res.data.response[0].stat_chapter) : 0 
             })
           }
         })
@@ -150,7 +150,9 @@ export default class DetailKursus extends Component {
     }
     API.post(`${API_SERVER}v1/user-course`, form).then(res => {
       if(res.status === 200) {
-        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false, statChapter: 1 })
+        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false, 
+          // statChapter: 1 
+        })
       }
     })
   }
@@ -177,35 +179,55 @@ export default class DetailKursus extends Component {
       if(lists.length !== 0) {
         return (
           <div>
-          {
-            lists.map((item, i) => {
-              if(i < this.state.statChapter) {
+            {lists.map((item, i) => {
                 return (
-                  <Card onClick={this.pilihChapterTampil} className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
+                  <Card
+                    onClick={this.pilihChapterTampil}
+                    className={`card-${
+                      this.state.isIkutiKursus ? "active" : "nonactive"
+                    }`}
+                    key={item.chapter_id}
+                  >
                     <Card.Body>
-                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
-                        {item.chapter_title} 
-                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-id={item.chapter_id}
+                        data-iterasi={i}
+                      >
+                        <Form.Text>Chapter {i + 1}</Form.Text>
+                        {item.chapter_title}
+                        <span style={{ position: "absolute", right: "30px", bottom: '36px' }}>
+                          <i
+                            className={`fa fa-${
+                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            }`}
+                          ></i>
+                        </span>
                       </h3>
                     </Card.Body>
                   </Card>
-                )
-              } else {
-                return (
-                  <Card onClick={this.pilihChapterTampil} className={`card-nonactive`} key={item.chapter_id}>
-                    <Card.Body>
-                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
-                        {item.chapter_title} 
-                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
-                      </h3>
-                    </Card.Body>
-                  </Card>
-                )
-              }
-            })  
-          }
+                );
+            })}
+
+            <LinkUjian isUjian={this.state.isUjian} />
+
+            {!isMatiJikaTidakAdaUjian && (
+              <div>
+                {isButtonIkuti && (
+                  <Link
+                    onClick={this.onClickIkutiKursus}
+                    to="#"
+                    className="btn btn-primary btn-block f-24"
+                    style={{ fontWeight: "bold", margin: "10px 0px", padding: '20px' }}
+                  >
+                    Ikuti Kursus
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
-        )
+        );
       } else {
         return (
           <Card style={{marginTop: '10px'}}>
@@ -218,13 +240,13 @@ export default class DetailKursus extends Component {
     const LinkUjian = ({isUjian}) => {
       if(isUjian) {
         return (
-          <Link style={{marginTop: '20px'}} to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
+          <Link style={{marginTop: '20px', padding: '20px'}} to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
         );
       } else {
         return (
           <div>
           { 
-            isIkutiKursus && <Link onClick={this.onClickIkutiQuiz} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
+            isIkutiKursus && <Link onClick={this.onClickIkutiQuiz} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '20px 0px', padding: '20px'}}>
               Ikuti Ujian
             </Link> 
           }
@@ -278,23 +300,11 @@ export default class DetailKursus extends Component {
                       
                       <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '20px'}}>{course.title}</h3>
                       
-                      { course.created_at && <p>{dateFormat.toString()}</p> }
+                      { course.created_at && <p>Posted on {dateFormat.toString().slice(0,21)}</p> }
 
                       { course.caption && <p class="lead">{course.caption}</p> }
 
                       { isIkutiKursus && <div dangerouslySetInnerHTML={{ __html: course.body }} /> }
-
-                      <LinkUjian isUjian={this.state.isUjian} />
-
-                      {
-                        !isMatiJikaTidakAdaUjian && (<div>
-                          { isButtonIkuti && 
-                            <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-                              Ikuti Kursus
-                            </Link>
-                          }
-                        </div>)
-                      }
 
                     </div>
                   

@@ -8,7 +8,8 @@ export default class QuestionExam extends Component {
 
   state = {
     companyId: '',
-    examId: this.props.match.params.exam_id,
+    courseId: this.props.match.params.exam_id.split('.')[1],
+    examId: this.props.match.params.exam_id.split('.')[0],
 
     question: [],
 
@@ -127,7 +128,7 @@ export default class QuestionExam extends Component {
       }
     };
 
-    return(
+    return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -135,13 +136,33 @@ export default class QuestionExam extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        Pertanyaan Exam
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/exam/${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+                        &nbsp;Pertanyaan Exam
                       </h3>
 
-                      <a href={`/question-exam-create/${this.state.examId}`} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
+                      <a
+                        href={`/question-exam-create/${this.state.examId}.${this.state.courseId}`}
+                        className="btn btn-ideku f-14 float-right mb-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
                         <img
                           src="assets/images/component/person_add.png"
                           className="button-img"
@@ -155,33 +176,44 @@ export default class QuestionExam extends Component {
                       <QuestionList lists={question} />
                     </div>
 
-                    <Modal show={this.state.isModalDelete} onHide={this.handleClose}>
+                    <Modal
+                      show={this.state.isModalDelete}
+                      onHide={this.handleClose}
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Konfirmasi
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <p className="f-w-bold">Apakah anda yakin untuk menghapus pertanyaan ini ?</p>
-                        
-                        <button style={{marginTop: '30px'}} type="button"
+                        <p className="f-w-bold">
+                          Apakah anda yakin untuk menghapus pertanyaan ini ?
+                        </p>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
                           onClick={this.onClickDelete}
-                          className="btn btn-block btn-ideku f-w-bold">
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
                           Hapus
                         </button>
-                        <button type="button"
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
-
-                  </div>  
-                </div>  
-              </div>  
-            </div>  
-          </div>  
-        </div>  
-      </div>  
-    )
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 }

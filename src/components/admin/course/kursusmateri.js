@@ -56,7 +56,7 @@ export default class KursusMateri extends Component {
 				return (
 					<tbody>
 						<tr>
-							<td colSpan={8}>tidak ada data</td>
+							<td colSpan={8}>Tidak ada data</td>
 						</tr>
 					</tbody>
 				);
@@ -71,7 +71,7 @@ export default class KursusMateri extends Component {
 									<img className="img-thumbnail" src={item.image} width="200px" style={{height: "100px"}} alth="Cover" />
 								</td>
 								<td>{item.category_name}</td>
-								<td>{item.title}</td>
+								<td><Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">{item.title}</Link></td>
 								<td>{item.created_at.toString().substring(0,10)}</td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER } from "../../../repository/api";
 
 export default class User extends Component {
@@ -18,18 +18,31 @@ export default class User extends Component {
 
       isModalVoucher: false,
       userIdVoucher: "",
-      voucher: ""
+      voucher: "",
+      notif: ""
     };
   }
 
   handleChangeInput = e => {
+    const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({ [name]: value });
+    if(name === 'voucher') {
+      API.get(`${API_SERVER}v1/user/cek/voucher/${value}`).then(res => {
+        if (res.data.error) {
+          target.value = "";
+          this.setState({ notif: "Voucher sudah digunakan." })
+        } else {
+          this.setState({ [name]: value });
+        }
+      });
+    } else {
+      this.setState({ [name]: value });
+    }
   }
 
   handleModalVoucher = e => {
-    this.setState({ isModalVoucher: false, userIdVoucher: "" });
+    this.setState({ isModalVoucher: false, userIdVoucher: "", notif: '' });
   };
 
   onClickHapus = e => {
@@ -189,23 +202,32 @@ export default class User extends Component {
       );
     };
 
-    const Lists = ({ lists }) => (
-      <tbody>
-        {lists.map(list => (
-          <Item key={list.user_id} item={list} />
-        ))}
-      </tbody>
-    );
+    const Lists = ({ lists }) => {
+      if(lists.length == 0) {
+        return (
+          <tbody>
+            <tr>
+              <td colSpan='9'>Tidak ada user</td>
+            </tr>
+          </tbody>
+        )
+      } else {
+        return (
+          <tbody>
+            {lists.map(list => (
+              <Item key={list.user_id} item={list} />
+            ))}
+          </tbody>
+        )
+      }
+    }
 
     return (
       <div>
         <h3 className="f-24 f-w-800">User Management</h3>
 
         <div style={{ overflowX: "auto" }}>
-          <table
-            className="table-curved"
-            style={{ width: "100%" }}
-          >
+          <table className="table-curved" style={{ width: "100%" }}>
             <thead>
               <tr>
                 <th className="text-center">ID</th>
@@ -235,10 +257,7 @@ export default class User extends Component {
             <Lists lists={users} />
           </table>
 
-          <Modal
-            show={this.state.isModalHapus}
-            onHide={this.handleModalHapus}
-          >
+          <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
             <Modal.Body>
               <Modal.Title className="text-c-purple3 f-w-bold">
                 Hapus User
@@ -327,6 +346,9 @@ export default class User extends Component {
                     name="voucher"
                     onChange={this.handleChangeInput}
                   />
+                  {this.state.notif && (
+                    <Form.Text className="text-danger">{this.state.notif}</Form.Text>
+                  )}
                 </div>
 
                 <button
