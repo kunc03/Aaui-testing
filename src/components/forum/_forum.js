@@ -5,7 +5,7 @@ import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
-    console.log('get')
+   // console.log('get')
     API.get(`${FORUM}`).then(res=> {
         console.log(res.data)
           if(res.status === 200){
@@ -17,6 +17,21 @@ export function _postLIstAllForum(){
         .catch(err=> {
           console.log(err);
         })
+}
+
+export function _getDetailForumList(idForum){
+  //console.log(idForum, 'ID >>>>>>>>>>>>>>>>>>>>>>>');
+  API.get(`${FORUM}/id/${idForum}`).then(res=> {
+     //console.log(res)
+      if(res.status === 200){
+        if(!res.data.error){
+            this.setState({ listDetail: res.data.result, listKomentar: res.data.result[0].komentar })
+        }
+      }
+    })
+    .catch(err=> {
+      console.log(err);
+    })
 }
 
 export function _addforum(e) {

@@ -48,7 +48,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
-import Forum, { ForumDetail } from "./components/forum/forum";
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
 
 export default class App extends React.Component {
   constructor(props) {
