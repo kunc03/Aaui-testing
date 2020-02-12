@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import {Alert, Modal, Form, Card} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
@@ -6,65 +7,85 @@ import Storage from '../../repository/storage';
 class Profile extends Component {
   state = {
     user_data: {
-      user_id: Storage.get('user').data.user_id,
-      company_id: '',
-      branch_id: '',
-      level: '',
-      status: '',
-      email: '',
-      
-      name: '',
-      identity: '',
-      address: '',
-      phone: '',
-      avatar: '',
-      tempAvatar: '',
+      user_id: Storage.get("user").data.user_id,
+      company_id: "",
+      branch_id: "",
+      level: "",
+      status: "",
+      email: "",
+
+      name: "",
+      identity: "",
+      address: "",
+      phone: "",
+      avatar: "",
+      tempAvatar: ""
     },
+    kursusDiikuti: [],
     isModalAvatar: false,
     toggle_alert: false,
 
     isNotifikasi: false,
-    isiNotifikasi: '',
+    isiNotifikasi: ""
+  };
+
+  fetchDataKursusDiikuti() {
+    API.get(
+      `${API_SERVER}v1/user-course/${Storage.get("user").data.user_id}`
+    ).then(res => {
+      if (res.status === 200) {
+        this.setState({ kursusDiikuti: res.data.result.reverse() });
+      }
+    });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.fetchProfile();
+    this.fetchDataKursusDiikuti();
   }
 
   handleModalAvatarClose = e => {
-    this.setState({ isModalAvatar: false, user_data: { ...this.state.user_data, tempAvatar: '' }});
-  }
+    this.setState({
+      isModalAvatar: false,
+      user_data: { ...this.state.user_data, tempAvatar: "" }
+    });
+  };
 
   onClickModalAvatar = e => {
     e.preventDefault();
     this.setState({ isModalAvatar: true });
-  }
+  };
 
   onClickSubmitModal = e => {
     e.preventDefault();
     let formData = new FormData();
-    formData.append('avatar', this.state.user_data.tempAvatar);
+    formData.append("avatar", this.state.user_data.tempAvatar);
 
-    API.put(`${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`, formData).then(res => {
-      if(res.status === 200) {
-        this.setState({ 
-          user_data: { ...this.state.user_data, avatar: res.data.result}, 
+    API.put(
+      `${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`,
+      formData
+    ).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          user_data: { ...this.state.user_data, avatar: res.data.result },
           isModalAvatar: false
         });
       }
-    })
-  }
+    });
+  };
 
   fetchProfile = () => {
-    const user = Storage.get('user');
+    const user = Storage.get("user");
     API.get(`${USER_ME}${user.data.email}`).then(res => {
-      console.log(res.data.result)
-      if(res.status === 200){
-        if(!res.data.error){
+      console.log(res.data.result);
+      if (res.status === 200) {
+        if (!res.data.error) {
           this.setState({
             user_data: {
               ...this.state.user_data,
-              avatar: res.data.result.avatar ? res.data.result.avatar : 'https://iacts.org/sites/all/themes/themag/assets/images/default-user.png',
+              avatar: res.data.result.avatar
+                ? res.data.result.avatar
+                : "https://iacts.org/sites/all/themes/themag/assets/images/default-user.png",
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               level: res.data.result.level,
@@ -73,44 +94,51 @@ class Profile extends Component {
               name: res.data.result.name,
               identity: res.data.result.identity,
               address: res.data.result.address,
-              phone: res.data.result.phone,
+              phone: res.data.result.phone
             }
           });
         }
       }
-    })
-  }
+    });
+  };
 
-  updateProfile = (e) => {
+  updateProfile = e => {
     e.preventDefault();
-    const {user_data} = this.state;
-    API.put(`${USER}/${user_data.user_id}`, user_data).then(res=> {
-      console.log(res.data)
-        if(res.status === 200){
-          if(!res.data.error){
+    const { user_data } = this.state;
+    API.put(`${USER}/${user_data.user_id}`, user_data)
+      .then(res => {
+        if (res.status === 200) {
+          if (!res.data.error) {
+            this.fetchProfile();
             this.setState({
               toggle_alert: true
-            })
+            });
           }
         }
       })
-      .catch(err=> {
+      .catch(err => {
         console.log(err);
-      })
-  }
+      });
+  };
 
   closeNotifikasi = e => {
-    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
-  }
+    this.setState({ isNotifikasi: false, isiNotifikasi: "" });
+  };
 
-  handleChange = (e) => {
-    if(e.target.name === 'avatar') {
+  handleChange = e => {
+    if (e.target.name === "avatar") {
       if (e.target.files[0].size <= 50000) {
-        this.setState({ user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] } });
+        this.setState({
+          user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] }
+        });
       } else {
         e.target.value = null;
-        this.handleModalAvatarClose()
-        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+        this.handleModalAvatarClose();
+        this.setState({
+          isNotifikasi: true,
+          isiNotifikasi:
+            "File tidak sesuai dengan format, silahkan cek kembali."
+        });
       }
     } else {
       this.setState({
@@ -118,12 +146,48 @@ class Profile extends Component {
           ...this.state.user_data,
           [e.target.name]: e.target.value
         }
-      })
+      });
     }
-  }
+  };
 
   render() {
-    const {user_data, toggle_alert} = this.state;
+    const { user_data, toggle_alert, kursusDiikuti } = this.state;
+
+    const ListAktivitas = ({ lists }) => {
+      if (lists.length !== 0) {
+        return (
+          <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
+            {lists.map((item, i) => (
+              <div key={item.course_id}>
+                <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
+                  {item.course.title}
+                  <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
+                </li>
+                <table style={{ width: "100%" }}>
+                  <ListChapters lists={item.chapters} />
+                </table>
+              </div>
+            ))}
+          </ol>
+        );
+      } else {
+        return (
+          <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
+            Belum ada aktivitas.
+          </h3>
+        );
+      }
+    };
+
+    const ListChapters = ({ lists }) => (
+      <tbody>
+        {lists.map((item, i) => (
+          <tr key={item.chapter_id}>
+            <th className>{item.chapter_title}</th>
+          </tr>
+        ))}
+      </tbody>
+    );
 
     return (
       <div className="pcoded-main-container">
@@ -201,12 +265,12 @@ class Profile extends Component {
                             </h3>
                             {toggle_alert && (
                               <Alert variant={"success"}>
-                                Update successfully!
+                                Data profil kamu berhasil di simpan.
                               </Alert>
                             )}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nama
+                                Nama Lengkap
                               </label>
                               <input
                                 name="name"
@@ -220,7 +284,7 @@ class Profile extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nomor Identitas
+                                Nomor Induk
                               </label>
                               <input
                                 name="identity"
@@ -266,6 +330,22 @@ class Profile extends Component {
                                 onChange={this.handleChange}
                               />
                             </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Status
+                              </label>
+                              <input
+                                style={{ textTransform: "capitalize" }}
+                                name="levelStatus"
+                                type="text"
+                                className="form-control"
+                                placeholder="Status"
+                                value={
+                                  user_data.level == null ? "" : user_data.level
+                                }
+                                onChange={this.handleChange}
+                              />
+                            </div>
                             <button
                               className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
                               onClick={event => this.updateProfile(event)}
@@ -284,30 +364,14 @@ class Profile extends Component {
                             </h3>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nomor Handphone
-                              </label>
-                              <input
-                                name="phone"
-                                type="phone"
-                                className="form-control"
-                                required
-                                placeholder="081247959214"
-                                inputMode="tel"
-                                value={user_data.phone}
-                                onChange={this.handleChange}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input" htmlFor>
                                 Email
                               </label>
                               <input
                                 name="email"
                                 type="email"
                                 className="form-control"
-                                required
                                 placeholder="aaaa@bbb.com"
-                                value={user_data.phone}
+                                value={user_data.email}
                                 onChange={this.handleChange}
                               />
                             </div>
@@ -319,17 +383,16 @@ class Profile extends Component {
                                 name="password"
                                 type="password"
                                 className="form-control"
-                                required
                                 placeholder="password"
                                 onChange={this.handleChange}
                               />
                             </div>
-                            <button
+                            <Link
+                              to="/pengaturan"
                               className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
-                              onClick={event => this.updateKontak(event)}
                             >
-                              Simpan
-                            </button>
+                              Ubah di Pengaturan
+                            </Link>
                           </form>
                         </Card.Body>
                       </Card>
@@ -340,6 +403,8 @@ class Profile extends Component {
                             <h3 className="f-24 f-w-bold mb-3">
                               Informasi Kursus
                             </h3>
+
+                            <ListAktivitas lists={kursusDiikuti} />
                           </form>
                         </Card.Body>
                       </Card>

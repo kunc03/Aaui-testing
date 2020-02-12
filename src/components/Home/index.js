@@ -216,16 +216,18 @@ class Home extends Component {
       if(lists.length !== 0) {
         return (
           <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
-            {
-              lists.map((item, i) => (
-                <div key={item.course_id}>
-                  <li className="f-16 f-w-800 text-c-black">{item.course.title}</li>
-                  <table style={{ width: "100%" }}>
-                    <ListChapters lists={item.chapters} />
-                  </table>
-                </div>
-              ))
-            }
+            {lists.map((item, i) => (
+              <div key={item.course_id}>
+                <li className="f-16 f-w-800 text-c-black">
+                  <Link to={`/detail-kursus/${item.course_id}`}>
+                    {item.course.title}
+                  </Link>
+                </li>
+                <table style={{ width: "100%" }}>
+                  <ListChapters lists={item.chapters} />
+                </table>
+              </div>
+            ))}
           </ol>
         );
       } else {
