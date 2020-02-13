@@ -3,11 +3,13 @@ import { Form } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
+
 class UserAdd extends Component {
 
   state = {
     company_id: "",
     branch_id: "",
+    grup_id: "",
     
     identity: "",
     name: "",
@@ -19,10 +21,11 @@ class UserAdd extends Component {
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
 
     responseMessage: '',
     responseEmail: '',
-    responsePhone: '' 
+    responsePhone: '',
   };
 
   onChangeInput = (event) => {
@@ -55,6 +58,7 @@ class UserAdd extends Component {
     const formData = {
       company_id: this.state.company_id,
       branch_id: this.state.branch_id,
+      grup_id: this.state.grup_id,
       identity: this.state.identity,
       name: this.state.name,
       email: this.state.email,
@@ -86,6 +90,12 @@ class UserAdd extends Component {
             this.setState({ listBranch: res.data.result })
           }
         })
+
+        API.get(`${API_SERVER}v1/grup/company/${this.state.company_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ listGrup: res.data.result })
+          }
+        })
       }
     })
   }
@@ -114,6 +124,18 @@ class UserAdd extends Component {
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Grup</label>
+                              <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listGrup.map(item => (
+                                    <option value={item.grup_id}>{item.grup_name}</option>
                                   ))
                                 }
                               </select>

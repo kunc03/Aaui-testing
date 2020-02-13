@@ -80,18 +80,22 @@ export default class QuizList extends Component {
 	}
 
 	handleClose = e => {
-		this.setState({ 
-			isModalAdd: false, isModalDelete: false, 
-			examId: '',
-			examId: '',
-			examTitle: '',
-			exampDesc: '',
-			examRandom: '',
-			examPublish: '',
-			timeMinute: '',
-			timeStart: '',
-			timeFinish: '',
-		});
+		let waktu = this.changeFormatDate(new Date());
+		this.setState({
+      isModalAdd: false,
+      isModalDelete: false,
+      examId: "",
+      examId: "",
+      examTitle: "",
+      exampDesc: "",
+      examRandom: "",
+      examPublish: "",
+      timeMinute: "",
+      timeStart: new Date(),
+      timeFinish: new Date(),
+      waktuStart: waktu,
+      waktuFinish: waktu
+    });
 	}
 
 	onChangeInput = e => {
@@ -156,13 +160,14 @@ export default class QuizList extends Component {
 	}
 
 	fetchData() {
+		let waktu = this.changeFormatDate(new Date());
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
 				this.setState({ companyId: res.data.result.company_id });
 
 				API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
-						this.setState({ exam: res.data.result })
+						this.setState({ exam: res.data.result, waktuStart: waktu, waktuFinish: waktu })
 					}
 				})
 			}

@@ -139,6 +139,7 @@ export default class Users extends Component {
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
+          <td>{item.grup_name}</td>
           <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
@@ -183,6 +184,7 @@ export default class Users extends Component {
                 <th>Nama</th>
                 <th>Nomor Induk</th>
                 <th>Cabang</th>
+                <th>Grup</th>
                 <th>Level</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -190,7 +192,7 @@ export default class Users extends Component {
                 <th className="text-center">
                   <Link
                     to={"/user-company-create"}
-                    className="btn btn-ideku col-12 f-14"
+                    className="btn btn-ideku col-12 f-14 tambah-user"
                     style={{ padding: "7px 8px !important" }}
                   >
                     <img
