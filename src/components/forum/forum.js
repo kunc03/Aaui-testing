@@ -367,5 +367,4 @@ export default class Forum extends Component {
 			</div>
 		);
 	}
-
 }

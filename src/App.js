@@ -54,7 +54,6 @@ import ForumDetail from "./components/forum/forum-detail";
 
 import LiveClass from "./components/liveclass";
 
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
