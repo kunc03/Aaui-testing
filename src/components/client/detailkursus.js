@@ -14,7 +14,7 @@ export default class DetailKursus extends Component {
     isIkutiKursus: false,
     isButtonIkuti: true,
     isModalQuiz: false,
-    isUjian: false,
+    // isUjian: false,
 
     isUjianBelumAda: false,
     isMatiJikaTidakAdaUjian: false,
@@ -100,7 +100,6 @@ export default class DetailKursus extends Component {
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
           console.log(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`)
           if(res.status === 200) {
-            console.log('res:', res.data.response)
             this.setState({ 
               isIkutiKursus: res.data.result, 
               isButtonIkuti: !res.data.result, 
@@ -109,26 +108,30 @@ export default class DetailKursus extends Component {
           }
         })
 
-        API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
-          if(res.status === 200) {
-            if(res.data.response.length !== 0) {
-              if(res.data.response[0].is_exam) {
-                this.setState({ isUjian: true })
-              } else {
-                this.setState({ isUjian: false })
-              }
-            } else {
-              this.setState({ isUjian: false })
-            }
-          }
-        })
+        // API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
+        //   if(res.status === 200) {
+        //     if(res.data.response.length !== 0) {
+        //       if(res.data.response[0].is_exam) {
+        //         this.setState({ isUjian: true })
+        //       } else {
+        //         this.setState({ isUjian: false })
+        //       }
+        //     } else {
+        //       this.setState({ isUjian: false })
+        //     }
+        //   }
+        // })
 
         API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length !== 0) {
               this.setState({ examId: res.data.result[0].exam_id })
-            } else {
-              this.setState({ isUjianBelumAda: true, isMatiJikaTidakAdaUjian: true })
+            } 
+            else {
+              this.setState({ 
+                // isUjianBelumAda: true, 
+                isMatiJikaTidakAdaUjian: true 
+              })
             }
           }
         })
@@ -157,7 +160,7 @@ export default class DetailKursus extends Component {
     })
   }
 
-  onClickIkutiQuiz = e => {
+  onClickIkutiExam = e => {
     e.preventDefault();
     API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
       if(res.status === 200) {
@@ -237,9 +240,9 @@ export default class DetailKursus extends Component {
       } else {
         return (
           <div>
-            {isIkutiKursus && (
+            {isIkutiKursus && !isMatiJikaTidakAdaUjian && (
               <Link
-                onClick={this.onClickIkutiQuiz}
+                onClick={this.onClickIkutiExam}
                 to="#"
                 className="btn f-18 f-w-bold btn-primary btn-block"
                 style={{
@@ -296,13 +299,13 @@ export default class DetailKursus extends Component {
                       <CheckMedia media={course.image} />
 
                       {course.category_name && (
-                        <a
+                        <Link
                           className="btn btn-ideku"
-                          href="#"
+                          to="#"
                           style={{ fontWeight: "bold", marginTop: "5px" }}
                         >
                           {course.category_name}
-                        </a>
+                        </Link>
                       )}
 
                       <h3
@@ -324,24 +327,21 @@ export default class DetailKursus extends Component {
                         />
                       )}
 
-                      {!isMatiJikaTidakAdaUjian && (
-                        <div>
-                          {isButtonIkuti && (
-                            <Link
-                              onClick={this.onClickIkutiKursus}
-                              to="#"
-                              className="btn f-18 f-w-bold btn-primary btn-block f-24"
-                              style={{
-                                fontWeight: "bold",
-                                margin: "10px 0px",
-                                padding: "20px"
-                              }}
-                            >
-                              Ikuti Kursus
-                            </Link>
-                          )}
-                        </div>
+                      {isButtonIkuti && (
+                        <Link
+                          onClick={this.onClickIkutiKursus}
+                          to="#"
+                          className="btn f-18 f-w-bold btn-primary btn-block f-24"
+                          style={{
+                            fontWeight: "bold",
+                            margin: "10px 0px",
+                            padding: "20px"
+                          }}
+                        >
+                          Ikuti Kursus
+                        </Link>
                       )}
+
                     </div>
 
                     <div className="col-xl-4">
