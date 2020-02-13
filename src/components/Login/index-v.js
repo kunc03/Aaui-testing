@@ -1,3 +1,63 @@
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
+class Voucher extends Component {
+  render() {
+    return (
+      <div>
+        <div
+          className="auth-wrapper"
+          style={{
+            background:
+              "linear-gradient(rgba(61, 12, 49, 0.90), rgba(61, 12, 49, 0.90)),(assets/images/component/login.jpg)"
+          }}
+        >
+          <h1 className="text-c-white f-40 f-w-600">Selamat Datang!</h1>
+          <div className="auth-content mb-4">
+            <div className="card b-r-15">
+              <div
+                className="card-body text-center"
+                style={{ padding: "50px !important" }}
+              >
+                <div className="mb-4">
+                  <img
+                    src="assets/images/component/LOGO IDEKU-01.png"
+                    style={{ width: 200 }}
+                  />
+                </div>
+                <h5 className="mb-4 f-20 f-w-800">Masuk dengan Voucher</h5>
+                <div className="input-group mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="No. Voucher"
+                  />
+                </div>
+                <button className="btn btn-ideku col-12 shadow-2 mb-4 mt-5 b-r-3 f-20">
+                  Masuk
+                </button>
+                <p className="mb-0 mt-2">
+                    <Link className="text-cc-purple f-16 f-w-600" to='/login'> Masuk dengan Email </Link>
+                  {/* <a
+                    href="auth-signin.html"
+                    className="text-cc-purple f-21 f-w-600"
+                  >
+                    Masuk dengan Email
+                  </a> */}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+export default Voucher;
+
+
+
+
 // import React, { Component } from "react";
 // import axios from "axios";
 

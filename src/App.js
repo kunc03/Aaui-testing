@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
@@ -49,7 +49,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
-import Forum, { ForumDetail } from "./components/forum/forum";
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
 
 export default class App extends React.Component {
   constructor(props) {
