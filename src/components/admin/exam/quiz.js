@@ -19,9 +19,11 @@ export default class QuizList extends Component {
 		exampDesc: '',
 		examRandom: '0',
 		examPublish: '1',
+		quizAt: '0',
 
 		isModalDelete: false,
-		quizId: ''
+		quizId: '',
+		chapters: [],
 	}
 
 	handleOpen = e => {
@@ -40,7 +42,8 @@ export default class QuizList extends Component {
 					examTitle: res.data.result.exam_title,
 					exampDesc: res.data.result.exam_description,
 					examRandom: res.data.result.random,
-					examPublish: res.data.result.exam_publish 
+					examPublish: res.data.result.exam_publish,
+					quizAt: res.data.result.quiz_at,
 				});
 			}
 		})
@@ -53,15 +56,17 @@ export default class QuizList extends Component {
 	}
 
 	handleClose = e => {
-		this.setState({ 
-			isModalAdd: false, isModalDelete: false, 
-			quizId: '',
-			examId: '',
-			examTitle: '',
-			exampDesc: '',
-			examRandom: '',
-			examPublish: '',
-		});
+		this.setState({
+      isModalAdd: false,
+      isModalDelete: false,
+      quizId: "",
+      examId: "",
+      examTitle: "",
+      exampDesc: "",
+      examRandom: "",
+      examPublish: "",
+      quizAt: ""
+    });
 	}
 
 	onChangeInput = e => {
@@ -86,6 +91,7 @@ export default class QuizList extends Component {
 
 			API.post(`${API_SERVER}v1/quiz`, form).then(res => {
 				if(res.status === 200) {
+					API.put(`${API_SERVER}v1/quiz/penempatan/${res.data.result.exam_id}`, {quiz_at: this.state.quizAt});
 					this.handleClose();
 					this.fetchData();
 				}
@@ -99,6 +105,7 @@ export default class QuizList extends Component {
 			};
 			API.put(`${API_SERVER}v1/quiz/${this.state.examId}`, form).then(res => {
 				if(res.status === 200) {
+					API.put(`${API_SERVER}v1/quiz/penempatan/${this.state.examId}`, {quiz_at: this.state.quizAt})
 					this.handleClose();
 					this.fetchData();
 				}
@@ -127,6 +134,12 @@ export default class QuizList extends Component {
 				API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
 						this.setState({ quiz: res.data.result })
+					}
+				})
+
+				API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
+					if(res.status === 200) {
+						this.setState({ chapters: res.data.result })
 					}
 				})
 			}
@@ -267,22 +280,41 @@ export default class QuizList extends Component {
 		};
 
 		return (
-			<div className="pcoded-main-container">
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        <Link onClick={e => { e.preventDefault(); this.props.history.push(`/chapter/${this.state.courseId}`) }} className="btn btn-ideku btn-circle"><i className="fa fa-chevron-left" style={{paddingLeft: '8px'}}></i></Link>
-												&nbsp;Quiz Course
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/chapter/${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+                        &nbsp;Quiz Course
                       </h3>
 
-                      <a onClick={this.handleOpen} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
-                      	<img
+                      <a
+                        onClick={this.handleOpen}
+                        className="btn btn-ideku f-14 float-right mb-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        <img
                           src="assets/images/component/person_add.png"
                           className="button-img"
                           alt=""
@@ -297,64 +329,111 @@ export default class QuizList extends Component {
                       </div>
                     </div>
 
-                    <Modal show={this.state.isModalAdd} onHide={this.handleClose}>
+                    <Modal
+                      show={this.state.isModalAdd}
+                      onHide={this.handleClose}
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Form Quiz</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Form Quiz
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <form onSubmit={this.onSubmitFormAdd}>
-                        	<div className="form-group">
-                        		<label>Judul</label>
-                        		<input onChange={this.onChangeInput} value={this.state.examTitle} name="examTitle" required type="text" placeholder="judul quiz" className="form-control" />
-                        	</div>
-                        	<div className="form-group">
-                        		<label>Deskripsi</label>
-                        		<textarea onChange={this.onChangeInput} value={this.state.exampDesc} name="exampDesc" required type="text" placeholder="deskripsi quiz" className="form-control" />
-                        	</div>
-                        	
+                          <div className="form-group">
+                            <label>Judul</label>
+                            <input
+                              onChange={this.onChangeInput}
+                              value={this.state.examTitle}
+                              name="examTitle"
+                              required
+                              type="text"
+                              placeholder="judul quiz"
+                              className="form-control"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Deskripsi</label>
+                            <textarea
+                              onChange={this.onChangeInput}
+                              value={this.state.exampDesc}
+                              name="exampDesc"
+                              required
+                              type="text"
+                              placeholder="deskripsi quiz"
+                              className="form-control"
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Quiz Dilakukan Sebelum Chapter</label>
+                            <select className="form-control" required name="quizAt" onChange={this.onChangeInput}>
+															<option value="">-- pilih --</option>
+															{
+																this.state.chapters.map((item, i) => (
+																	<option selected={(this.state.quizAt == (i+1)) ? 'selected': ''} value={i+1}>{item.chapter_title}</option>
+																))
+															}
+														</select>
+                          </div>
 
-	                        <button style={{ marginTop: '30px'}} type="submit"
-	                          className="btn btn-block btn-ideku f-w-bold">
-	                          Simpan
-	                        </button>
+                          <button
+                            style={{ marginTop: "30px" }}
+                            type="submit"
+                            className="btn btn-block btn-ideku f-w-bold"
+                          >
+                            Simpan
+                          </button>
                         </form>
-                        
-                        <button type="button"
+
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
 
-                    <Modal show={this.state.isModalDelete} onHide={this.handleClose}>
+                    <Modal
+                      show={this.state.isModalDelete}
+                      onHide={this.handleClose}
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Konfirmasi
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <p className="f-w-bold">Apakah anda yakin untuk menghapus quiz ini ?</p>
-                        
-                        <button style={{marginTop: '30px'}} type="button"
+                        <p className="f-w-bold">
+                          Apakah anda yakin untuk menghapus quiz ini ?
+                        </p>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
                           onClick={this.onClickDelete}
-                          className="btn btn-block btn-ideku f-w-bold">
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
                           Hapus
                         </button>
-                        <button type="button"
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
-
-                 	</div>
-               	</div>
-             	</div>
-           	</div>
-         	</div>
-       	</div>
-     	</div>
-		);
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 	}
 }
 
