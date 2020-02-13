@@ -44,19 +44,21 @@ export default class Forum extends Component {
 
 		// this.setState({ forums: forums })
 	}
+	
 
 	closeNotifikasi = e => {
 		this.setState({ isNotifikasi: false, isiNotifikasi: '' })
 	}
 
 	handleChange = (e) => {
-		console.log(e.target)// 
-		if (e.target.files[0].size <= 50000) {
-		this.setState({ imgFile: e.target.files[0]  });
-		} else {
-		e.target.value = null;
-		this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
-		}
+		//console.log(e.target.files[0])// 
+		this.setState({imgFile : e.target.files[0] })
+		// if (e.target.files[0].size <= 50000) {
+		// this.setState({ imgFile: e.target.files[0]  });
+		// } else {
+		// e.target.value = null;
+		// this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+		// }
 	
 	}
 
@@ -91,7 +93,7 @@ export default class Forum extends Component {
 													<i className="fa fa-star"></i>
 												</Link>
 												<Link to='#' style={{marginLeft: '10px'}}>
-													<i className="fa fa-comments"></i> &nbsp; 99999 Komentar
+													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
 												</Link>
 											</div>
 										</Card.Body>

@@ -1,12 +1,22 @@
-import React, { Component } from "react";
-import {Alert, Modal, Form} from 'react-bootstrap';
-import API, {FORUM, API_SERVER} from '../../repository/api';
+
+import API, {FORUM, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
-   // console.log('get')
-    API.get(`${FORUM}`).then(res=> {
+   // console.log('get') localStorage.setItem('role', data.role) 
+   let getEmailLocal = JSON.parse(localStorage.getItem('user')).data.email;
+   //console.log(getEmailLocal)
+    API.get(`${USER_ME}${getEmailLocal}`).then(res=>{
+      if(res.status === 200){
+        if(!res.data.error){
+            this.setState({company_id: res.data.result.company_id})
+        }
+      }
+    })
+    .then(() => {
+      console.log(`${FORUM}/company/${this.state.company_id}`);
+      API.get(`${FORUM}/company/${this.state.company_id}`).then(res=> {
         console.log(res.data)
           if(res.status === 200){
             if(!res.data.error){
@@ -14,9 +24,10 @@ export function _postLIstAllForum(){
             }
           }
         })
-        .catch(err=> {
-          console.log(err);
-        })
+    })
+    .catch(err=> {
+      console.log(err);
+    })
 }
 
 export function _getDetailForumList(idForum){
@@ -39,7 +50,7 @@ export function _addforum(e) {
     console.log(e);
     let stateCopy = this.state,
     user_data = {
-        company_id : 9,
+        company_id : stateCopy.company_id,
         user_id : stateCopy.user_id,
         title : stateCopy.title,
         body : stateCopy.body,
@@ -59,8 +70,33 @@ export function _addforum(e) {
       .catch(err=> {
         console.log(err);
       })
-    console.log(stateCopy);
+    //console.log(stateCopy);
 };
+
+export function _komentarPost(){
+  //console.log(this.state, "koment coiisgg")
+  let user_data = {
+    forum_id: this.state.forumId,
+    user_id: this.state.user_id,
+    konten: this.state.kontent,
+  }
+  API.post(`${FORUM}-post`, user_data).then(res=> {
+    console.log(res.data)
+      if(res.status === 200){
+        if(!res.data.error){
+          // listKomentar: res.data.result 
+          // response komentar harusnya array tapi disini yg saya terima object
+          _getDetailForumList.bind(this)
+          this.setState({
+            kontent : '',
+          })
+        }
+      }
+    })
+    .catch(err=> {
+      console.log(err);
+    })
+}
 
 export function _handleKeyPress(key, target) {
 	if(key.charCode === 13){
