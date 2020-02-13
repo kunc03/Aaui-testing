@@ -25,7 +25,7 @@ export default class ChapterPreview extends Component {
 	}
 
 	onChangeTinyMce = e => {
-    this.setState({ chapterBody: e.target.getContent() })
+    this.setState({ chapterBody: e.target.getContent().replace(/'/g, "\\'") });
   }
 
 	onChangeInput = e => {

@@ -89,7 +89,7 @@ export default class KursusMateriAdd extends Component {
   }
 
   onChangeTinyMce = e => {
-    this.setState({ body: e.target.getContent() })
+    this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
   }
 
   handleClearForm() {
@@ -161,6 +161,7 @@ export default class KursusMateriAdd extends Component {
 
   	API.post(`${API_SERVER}v1/course`, form).then(res => {
   		if(res.status === 200) {
+        // console.log(res.data)
   			this.props.history.push('/kursus-materi');
   		}
   	})

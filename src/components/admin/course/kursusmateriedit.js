@@ -47,7 +47,7 @@ export default class KursusMateriEdit extends Component {
   }
 
   onChangeTinyMce = e => {
-    this.setState({ body: e.target.getContent() })
+    this.setState({ body: e.target.getContent().replace(/'/g, "\\'") });
   }
 
 	componentDidMount() {
