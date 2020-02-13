@@ -8,13 +8,14 @@ import ReactPlayer from 'react-player';
 export default class DetailKursus extends Component {
 
 	state = {
+    quiz: [],
     examId: '',
 		courseId: this.props.match.params.course_id,
 		companyId: '',
     isIkutiKursus: false,
     isButtonIkuti: true,
     isModalQuiz: false,
-    // isUjian: false,
+    isUjian: false,
 
     isUjianBelumAda: false,
     isMatiJikaTidakAdaUjian: false,
@@ -98,7 +99,6 @@ export default class DetailKursus extends Component {
         })
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
-          console.log(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`)
           if(res.status === 200) {
             this.setState({ 
               isIkutiKursus: res.data.result, 
@@ -108,20 +108,21 @@ export default class DetailKursus extends Component {
           }
         })
 
-        // API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
-        //   if(res.status === 200) {
-        //     if(res.data.response.length !== 0) {
-        //       if(res.data.response[0].is_exam) {
-        //         this.setState({ isUjian: true })
-        //       } else {
-        //         this.setState({ isUjian: false })
-        //       }
-        //     } else {
-        //       this.setState({ isUjian: false })
-        //     }
-        //   }
-        // })
+        API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
+          if(res.status === 200) {
+            if(res.data.response.length !== 0) {
+              if(res.data.response[0].is_exam) {
+                this.setState({ isUjian: true })
+              } else {
+                this.setState({ isUjian: false })
+              }
+            } else {
+              this.setState({ isUjian: false })
+            }
+          }
+        })
 
+        // cek apakah ada ujian
         API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length !== 0) {
@@ -136,13 +137,22 @@ export default class DetailKursus extends Component {
           }
         })
 
+        // cek apakah ada quiz
+        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+          if(res.status === 200) {
+            if(res.data.result.length !== 0) {
+              this.setState({ quiz: res.data.result })
+            } 
+          }
+        })
+
       }
     })
   }
 
-	componentDidMount() {
-    this.fetchDataChapter()
-    this.fetctDataCourse()
+	async componentDidMount() {
+    await this.fetchDataChapter()
+    await this.fetctDataCourse()
 	}
 
   onClickIkutiKursus = e => {
@@ -178,11 +188,51 @@ export default class DetailKursus extends Component {
     const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
+    let refactoryChapters = [...this.state.chapters];
+    for(let i=0; i<this.state.quiz.length; i++) {
+      refactoryChapters.splice(this.state.quiz[i].quiz_at-1,0, this.state.quiz[i]);
+    }
+
+    console.log('refac: ', refactoryChapters)
+
     const ListChapter = ({lists}) => {
       if(lists.length !== 0) {
         return (
           <div>
             {lists.map((item, i) => {
+              if(item.quiz) {
+                return (
+                  <Card
+                    className={`card-${
+                      this.state.isIkutiKursus ? "active" : "nonactive"
+                    }`}
+                  >
+                    <Card.Body>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-iterasi={i}
+                      >
+                        <Form.Text>Quiz</Form.Text>
+                        {item.exam_title}
+                        <span
+                          style={{
+                            position: "absolute",
+                            right: "30px",
+                            bottom: "36px"
+                          }}
+                        >
+                          <i
+                            className={`fa fa-${
+                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            }`}
+                          ></i>
+                        </span>
+                      </h3>
+                    </Card.Body>
+                  </Card>
+                );
+              } else {
                 return (
                   <Card
                     onClick={this.pilihChapterTampil}
@@ -198,9 +248,17 @@ export default class DetailKursus extends Component {
                         data-id={item.chapter_id}
                         data-iterasi={i}
                       >
-                        <Form.Text>Chapter {i + 1}</Form.Text>
+                        <Form.Text data-id={item.chapter_id}>
+                          Chapter {i + 1}
+                        </Form.Text>
                         {item.chapter_title}
-                        <span style={{ position: "absolute", right: "30px", bottom: '36px' }}>
+                        <span
+                          style={{
+                            position: "absolute",
+                            right: "30px",
+                            bottom: "36px"
+                          }}
+                        >
                           <i
                             className={`fa fa-${
                               this.state.isIkutiKursus ? "unlock" : "lock"
@@ -211,6 +269,7 @@ export default class DetailKursus extends Component {
                     </Card.Body>
                   </Card>
                 );
+              }
             })}
 
             <LinkUjian isUjian={this.state.isUjian} />
@@ -346,7 +405,8 @@ export default class DetailKursus extends Component {
 
                     <div className="col-xl-4">
                       <h3 className="f-24 f-w-800 mb-3">List Chapter</h3>
-                      <ListChapter lists={chapters} />
+                      <ListChapter lists={refactoryChapters} />
+                      {/* <ListChapter lists={chapters} /> */}
                     </div>
                   </div>
 
