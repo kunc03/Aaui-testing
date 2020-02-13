@@ -148,9 +148,6 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/user-access" component={UserAccess} />
         <Route path="/user-company/:company_id" component={UserCompany} />
-
-        <Route path="/liveclass" component={LiveClass} />
-        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
@@ -223,6 +220,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
