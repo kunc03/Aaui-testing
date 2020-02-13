@@ -62,7 +62,7 @@ export default class Forum extends Component {
 
 	// LIST FORUM SEMUA 
 	render() {
-		const { forums } = this.state
+		const { forums } = this.state;
 
 		const ForumList = ({lists}) => {
 			if(lists.length !== 0) {
@@ -89,10 +89,13 @@ export default class Forum extends Component {
 											<div className="forum-action">
 												<Link to='#'>
 													<i className="fa fa-star"></i>
+
 												</Link>
+											
 												<Link to='#' style={{marginLeft: '10px'}}>
 													<i className="fa fa-comments"></i> &nbsp; 99999 Komentar
 												</Link>
+
 											</div>
 										</Card.Body>
 									</Link>
@@ -131,6 +134,7 @@ export default class Forum extends Component {
 				)
 			}
 		}
+
 		return(
 			<div className="pcoded-main-container">
 				<div className="pcoded-wrapper">
