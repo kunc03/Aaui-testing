@@ -24,7 +24,7 @@ class UserCompany extends Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
-  closeModalAdd = e => this.setState({ isOpen: e });
+  closeModalAdd = e => { console.log(e); this.setState({ isOpen: e }) };
 
   triggerUpdate = e => this.setState({
     grup: [...this.state.grup, e]
@@ -125,7 +125,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-16 text-c-grey-t ">
                       Status
                     </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-20 text-c-purple3">
                       {item.status}
                     </h5>
                   </div>
@@ -133,7 +133,7 @@ class UserCompany extends Component {
               </div>
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
-                  <Link to={`/company-detail/${item.company_id}`}>
+                  <Link to={`${linkCompany}/${item.company_id}`}>
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"

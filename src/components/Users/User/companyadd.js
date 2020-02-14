@@ -1,12 +1,15 @@
 import React, { Component } from "react";
+import { Form } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+
 
 class UserAdd extends Component {
 
   state = {
     company_id: "",
     branch_id: "",
+    grup_id: "",
     
     identity: "",
     name: "",
@@ -18,10 +21,11 @@ class UserAdd extends Component {
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
 
     responseMessage: '',
     responseEmail: '',
-    responsePhone: '' 
+    responsePhone: '',
   };
 
   onChangeInput = (event) => {
@@ -29,7 +33,24 @@ class UserAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-    this.setState({ [name]: value });
+    if(name === 'email') {
+      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+        if(res.data.error) {
+          target.value = ''
+        } else {
+          this.setState({ [name]: value })
+        }
+      })
+    } else if(name === 'address') {
+      if (value.length <= 100) {
+        this.setState({ [name]: value })
+      } else {
+        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+      }
+    } else {
+      this.setState({ [name]: value })
+    }
+
   }
 
   submitForm = e => {
@@ -37,6 +58,7 @@ class UserAdd extends Component {
     const formData = {
       company_id: this.state.company_id,
       branch_id: this.state.branch_id,
+      grup_id: this.state.grup_id,
       identity: this.state.identity,
       name: this.state.name,
       email: this.state.email,
@@ -52,7 +74,7 @@ class UserAdd extends Component {
         if(res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
-          this.props.history.push('/user-company')
+          this.props.history.push('/my-company')
         }
       }
     })
@@ -68,13 +90,19 @@ class UserAdd extends Component {
             this.setState({ listBranch: res.data.result })
           }
         })
+
+        API.get(`${API_SERVER}v1/grup/company/${this.state.company_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ listGrup: res.data.result })
+          }
+        })
       }
     })
   }
 
   render() {
-    console.log('state: ', this.state)
     const levelUser = [{level: 'admin'}, {level: 'client'}];
+
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -96,6 +124,18 @@ class UserAdd extends Component {
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Grup</label>
+                              <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listGrup.map(item => (
+                                    <option value={item.grup_id}>{item.grup_name}</option>
                                   ))
                                 }
                               </select>
@@ -133,6 +173,9 @@ class UserAdd extends Component {
                                 placeholder="rakaal@gmail.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-muted">
+                                Pastikan isi sesuai dengan format email ex. user@email.com
+                              </Form.Text>
                             </div>
 
                             <div className="form-group">
@@ -148,12 +191,15 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Alamat</label>
-                              <textarea required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <textarea maxLength="100" required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <Form.Text className="text-muted">
+                                Maksimal 100 karakter untuk alamat
+                              </Form.Text>
                             </div>
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select name="level" className="form-control" onChange={this.onChangeInput} required style={{textTransform: 'capitalize'}}>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (

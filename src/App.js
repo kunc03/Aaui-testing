@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
@@ -35,6 +35,7 @@ import QuestionQuizEdit from "./components/admin/question/quizedit";
 import ExamList from "./components/admin/exam/exam";
 import QuestionExam from "./components/admin/question/exam";
 import QuestionExamCreate from "./components/admin/question/examcreate";
+import FilePicker from "./components/admin/filemanager/file";
 
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
@@ -48,10 +49,10 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
-import Forum, { ForumDetail } from "./components/forum/forum";
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
 
 import LiveClass, { LiveClassRoom } from "./components/liveclass";
-
 
 export default class App extends React.Component {
   constructor(props) {
@@ -198,6 +199,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
         <Route path="/grup" exact component={Grup} />
+
+        <Route path="/filemanager" exact component={FilePicker} />
 
         <Route path="/logout" exact component={Logout} />
       </Switch>

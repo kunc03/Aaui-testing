@@ -8,7 +8,8 @@ export default class QuestionQuiz extends Component {
 
 	state = {
 		companyId: '',
-		examId: this.props.match.params.exam_id,
+		courseId: this.props.match.params.exam_id.split('.')[1],
+		examId: this.props.match.params.exam_id.split('.')[0],
 
 		question: [],
 
@@ -43,7 +44,6 @@ export default class QuestionQuiz extends Component {
 
 				API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
 					if(res.status === 200) {
-						console.log(res.data.result)
 						this.setState({ question: res.data.result })
 					}
 				})
@@ -61,43 +61,59 @@ export default class QuestionQuiz extends Component {
 		const QuestionList = ({lists}) => {
 			if(lists.length !== 0) {
 				return (
-					<Accordion>
-						{
-							lists.map((item, i) => (
-								<Card style={{marginBottom: '10px'}} key={item.question_id}>
-							    <Card.Header>
-							      <Accordion.Toggle as={Button} variant="link" eventKey={item.question_id}>
-							      	<div className="row d-flex align-items-center">
-                    	  <div className="col-xl-10 col-md-12 text-right">
-									      	<h5 className="f-w-bold f-20 text-c-purple3">{item.number}. {item.question}</h5>
-			                  </div>
-	                      <div className="col-xl-2 col-md-12 text-right">
-													<Link to={`/question-quiz-edit/${item.question_id}`} className="buttonku" title="Edit">
-				          					<i data-id={item.question_id} className="fa fa-edit"></i>
-				        					</Link>
-				          				<Link to="#" className="buttonku" title="Hapus">
-				          					<i onClick={this.handleOpenDelete} data-id={item.question_id} className="fa fa-trash"></i>
-				        					</Link>
-					              </div>
-				              </div>
-							      </Accordion.Toggle>
-							    </Card.Header>
-							    <Accordion.Collapse eventKey={item.question_id}>
-							      <Card.Body>
-							      	{
-							      		item.options.map((item, i) => (
-							      			<h5 className="f-20 text-c-purple3" key={item.option_id}>
-							      				{item.exam_option}. {item.description}
-		                      </h5>
-							      		))
-							      	}
-							      </Card.Body>
-							    </Accordion.Collapse>
-							  </Card>
-							))
-						}
-					</Accordion>
-				);
+          <Accordion>
+            {lists.map((item, i) => (
+              <Card style={{ marginBottom: "10px" }} key={item.question_id}>
+                <Accordion.Toggle
+                  as={Card.Header}
+                  variant="link"
+                  eventKey={item.question_id}
+                >
+                  <div className="row">
+                    <div className="col-xl-1 col-md-12">
+                      <h3 className="f-w-bold f-20 text-c-purple3">
+                        {item.number}
+                      </h3>
+                    </div>
+                    <div className="col-xl-9">
+                      <p className="f-w-bold f-18 text-c-purple3">
+                        {item.question.toString().substring(0, 60)}
+                      </p>
+                    </div>
+                    <div className="col-xl-2">
+                      <Link
+                        to={`/question-quiz-edit/${item.question_id}`}
+                        className="buttonku"
+                        title="Edit"
+                      >
+                        <i
+                          data-id={item.question_id}
+                          className="fa fa-edit"
+                        ></i>
+                      </Link>
+                      <Link to="#" className="buttonku" title="Hapus">
+                        <i
+                          onClick={this.handleOpenDelete}
+                          data-id={item.question_id}
+                          className="fa fa-trash"
+                        ></i>
+                      </Link>
+                    </div>
+                  </div>
+                </Accordion.Toggle>
+                <Accordion.Collapse eventKey={item.question_id}>
+                  <Card.Body>
+                    {item.options.map((item, i) => (
+                      <h5 className="f-20 text-c-purple3" key={item.option_id}>
+                        {item.exam_option}. {item.description}
+                      </h5>
+                    ))}
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            ))}
+          </Accordion>
+        );
 			} else {
 				return (
 					<ul className="list-cabang">
@@ -126,22 +142,42 @@ export default class QuestionQuiz extends Component {
 			}
 		};
 
-		return(
-			<div className="pcoded-main-container">
+		return (
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        Pertanyaan Quiz
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/quiz/${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+                        &nbsp;Pertanyaan Quiz
                       </h3>
 
-                      <a href={`/question-quiz-create/${this.state.examId}`} className="btn btn-ideku f-14 float-right mb-3" style={{ padding: "7px 25px !important", color: 'white' }}>
-                      	<img
+                      <a
+                        href={`/question-quiz-create/${this.state.examId}.${this.state.courseId}`}
+                        className="btn btn-ideku f-14 float-right mb-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        <img
                           src="assets/images/component/person_add.png"
                           className="button-img"
                           alt=""
@@ -151,36 +187,47 @@ export default class QuestionQuiz extends Component {
                     </div>
 
                     <div className="col-xl-12">
-	                    <QuestionList lists={question} />
-										</div>
+                      <QuestionList lists={question} />
+                    </div>
 
-										<Modal show={this.state.isModalDelete} onHide={this.handleClose}>
+                    <Modal
+                      show={this.state.isModalDelete}
+                      onHide={this.handleClose}
+                    >
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Konfirmasi
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <p className="f-w-bold">Apakah anda yakin untuk menghapus pertanyaan ini ?</p>
-                        
-                        <button style={{marginTop: '30px'}} type="button"
+                        <p className="f-w-bold">
+                          Apakah anda yakin untuk menghapus pertanyaan ini ?
+                        </p>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
                           onClick={this.onClickDelete}
-                          className="btn btn-block btn-ideku f-w-bold">
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
                           Hapus
                         </button>
-                        <button type="button"
+                        <button
+                          type="button"
                           className="btn btn-block f-w-bold"
-                          onClick={this.handleClose}>
+                          onClick={this.handleClose}
+                        >
                           Tidak
                         </button>
                       </Modal.Body>
                     </Modal>
-
-                  </div>	
-                </div>	
-              </div>	
-            </div>	
-          </div>	
-        </div>	
-      </div>	
-		)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 	}
 }

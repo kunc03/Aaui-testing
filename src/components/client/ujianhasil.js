@@ -187,7 +187,7 @@ export default class UjianHasil extends Component {
                                 );
                               } else if(item.exam_option === jawabanKu) {
                                 return (
-                                  <Card className={`card-options card-blue`} 
+                                  <Card className={`card-options card-red`} 
                                     key={item.option_id} onClick={this.jawabPertanyaan}>
                                     <Card.Body style={{padding: '16px'}} data-option={item.exam_option}>
                                       {item.exam_option}. {item.description}

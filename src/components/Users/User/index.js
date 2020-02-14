@@ -13,8 +13,16 @@ export default class User extends Component {
       userIdHapus: '',
       isModalPassword: false,
       userIdPassword: '',
-      userPassword: ''
+      userPassword: '',
+
+      isModalVoucher: false,
+      userIdVoucher: '',
+      voucher: ''
     };
+  }
+
+  handleModalVoucher = e => {
+    this.setState({ isModalVoucher: false, userIdVoucher: '' });
   }
 
   handleChangeInput = e => {
@@ -63,6 +71,11 @@ export default class User extends Component {
     this.fetchData();
   }
 
+  onClickModalVoucher = e => {
+    e.preventDefault();
+    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id')});
+  }
+
   fetchData() {
     API.get(`${API_SERVER}v1/user`).then(response => {
       response.data.result.map(item => {
@@ -94,6 +107,9 @@ export default class User extends Component {
           <td>{item.phone}</td>
           <td>{item.validity}</td>
           <td class="text-center">
+            <Link to="#" className="buttonku" title="Setting Voucher">
+              <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
+            </Link>
             <Link to="#" className="buttonku">
               <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
             </Link>
@@ -144,7 +160,7 @@ export default class User extends Component {
                               <th>Validity</th>
                               <th className="text-center">
                                 <Link
-                                  to={"/user-create"}
+                                  to='/user-create'
                                   className="btn btn-ideku col-12 f-14"
                                   style={{ padding: "7px 8px !important" }}
                                 >
@@ -160,6 +176,7 @@ export default class User extends Component {
                           </thead>
                           <Lists lists={users} />
                         </table>
+
                         <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
                           <Modal.Body>
                             <Modal.Title className="text-c-purple3 f-w-bold">Hapus User</Modal.Title>
@@ -177,6 +194,7 @@ export default class User extends Component {
                             </button>
                           </Modal.Body>
                         </Modal>
+
                         <Modal show={this.state.isModalPassword} onHide={this.handleModalPassword}>
                           <Modal.Body>
                             <Modal.Title className="text-c-purple3 f-w-bold">Ubah Password</Modal.Title>
@@ -197,6 +215,29 @@ export default class User extends Component {
                             </form>
                           </Modal.Body>
                         </Modal>
+
+                        <Modal show={this.state.isModalVoucher} onHide={this.handleModalVoucher}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Set Voucher</Modal.Title>
+                            <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitVoucer}>
+                              <div className="form-group">
+                                <label>Voucher</label>
+                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" onChange={this.handleChangeInput} />
+                              </div>
+
+                              <button style={{ marginTop: '50px'}} type="submit"
+                                className="btn btn-block btn-ideku f-w-bold">
+                                Set Voucher
+                              </button>
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleModalVoucher}>
+                                Tidak
+                              </button>
+                            </form>
+                          </Modal.Body>
+                        </Modal>
+
                       </div>
                     </div>
                   </div>

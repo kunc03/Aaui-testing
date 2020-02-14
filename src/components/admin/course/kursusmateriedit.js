@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
@@ -22,7 +22,10 @@ export default class KursusMateriEdit extends Component {
 		body: '',
 		image: '',
 
-		isModalKategori: false
+    isModalKategori: false,
+    
+    isNotifikasi: false, 
+    isiNotifikasi: ''
 	}
 
 	onChangeInput = (event) => {
@@ -31,14 +34,20 @@ export default class KursusMateriEdit extends Component {
     const name = target.name;
 
   	if(name === 'image' || name === 'kategori_image') {
-      this.setState({ [name]: target.files[0] });
+      if (target.files[0].size <= 10000000) {
+        this.setState({ [name]: target.files[0] });
+      } else {
+        target.value = null;
+        this.handleCloseModal()
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      }
     } else {
     	this.setState({ [name]: value });
     }
   }
 
   onChangeTinyMce = e => {
-    this.setState({ body: e.target.getContent() })
+    this.setState({ body: e.target.getContent().replace(/'/g, "\\'") });
   }
 
 	componentDidMount() {
@@ -164,10 +173,11 @@ export default class KursusMateriEdit extends Component {
   }
 
 	render() {
-		const { courseId, kategori } = this.state;
+    const { courseId, kategori, course } = this.state;
+    console.log('course: ', course)
 
 		return (
-			<div className="pcoded-main-container">
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -175,30 +185,66 @@ export default class KursusMateriEdit extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Edit Kursus & Materi</h3>
+                      <h3 className="f-24 f-w-800">
+                        <Link
+                          onClick={e => {
+                            e.preventDefault();
+                            this.props.history.push(
+                              `/chapter/${this.state.courseId}`
+                            );
+                          }}
+                          className="btn btn-ideku btn-circle"
+                        >
+                          <i
+                            className="fa fa-chevron-left"
+                            style={{ paddingLeft: "8px" }}
+                          ></i>
+                        </Link>
+                        
+                        &nbsp;Edit Kursus & Materi
+                      </h3>
 
                       <div className="card">
                         <div className="card-block">
-
                           <form onSubmit={event => this.submitForm(event)}>
                             <div className="form-group">
                               <label className="label-input">Kategori</label>
                               <div className="input-group mb-3">
-	                              <select required className="form-control" name="category_id" onChange={this.onChangeInput}>
-	                                <option value="">-- pilih --</option>
-	                                {
-	                                  this.state.kategori.map(item => (
-	                                    <option value={item.category_id} selected={(item.category_id === this.state.category_id) ? 'selected' : ''}>{item.category_name}</option>
-	                                  ))
-	                                }
-	                              </select>
-	                              <div class="input-group-append">
-															    <span onClick={this.handleModalKategori} class="input-group-text btn btn-ideku" 
-															    	style={{ cursor: 'pointer', backgroundColor: 'rgb(146, 31, 91)'}} id="basic-addon2">
-															    	Tambah Kategori
-														    	</span>
-															  </div>
-														  </div>
+                                <select
+                                  required
+                                  className="form-control"
+                                  name="category_id"
+                                  onChange={this.onChangeInput}
+                                >
+                                  <option value="">-- pilih --</option>
+                                  {this.state.kategori.map(item => (
+                                    <option
+                                      value={item.category_id}
+                                      selected={
+                                        item.category_id ===
+                                        this.state.category_id
+                                          ? "selected"
+                                          : ""
+                                      }
+                                    >
+                                      {item.category_name}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div class="input-group-append">
+                                  <span
+                                    onClick={this.handleModalKategori}
+                                    class="input-group-text btn btn-ideku"
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "rgb(146, 31, 91)"
+                                    }}
+                                    id="basic-addon2"
+                                  >
+                                    Tambah Kategori
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                             <div className="form-group">
                               <label className="label-input">Tipe</label>
@@ -237,6 +283,7 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
+                              <label className="label-input">Deskripsi</label>
                               <Editor
                                 apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                                 initialValue={this.state.body}
@@ -244,51 +291,88 @@ export default class KursusMateriEdit extends Component {
                                   height: 400,
                                   menubar: false,
                                   plugins: [
-                                    'advlist autolink lists link image charmap print preview anchor',
-                                    'searchreplace visualblocks code fullscreen',
-                                    'insertdatetime media table paste code help wordcount'
+                                    "advlist autolink lists link image charmap print preview anchor",
+                                    "searchreplace visualblocks code fullscreen",
+                                    "insertdatetime media table paste code help wordcount"
                                   ],
                                   toolbar:
-                                   'undo redo | formatselect | bold italic backcolor | \
+                                    "undo redo | formatselect | bold italic backcolor | \
                                    alignleft aligncenter alignright alignjustify | \
-                                    bullist numlist outdent indent | removeformat | help'
+                                    bullist numlist outdent indent | removeformat | help"
                                 }}
                                 onChange={this.onChangeTinyMce}
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cover</label>
+                              <label className="label-input">Media</label>
                               <input
-                              	type="file"
+                                accept="imaga/*,video/*"
+                                type="file"
                                 name="image"
                                 className="form-control"
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text>
+                                Pastikan file berformat mp4, png, jpg, jpeg,
+                                atau gif.
+                              </Form.Text>
                             </div>
-                            <button style={{ marginTop: '50px'}} type="submit"
-		                          className="btn btn-block btn-ideku f-w-bold">
-		                          Simpan Materi & Kursus
-		                        </button>
+                            <button
+                              style={{ marginTop: "50px" }}
+                              type="submit"
+                              className="btn btn-block btn-ideku f-w-bold"
+                            >
+                              Simpan Materi & Kursus
+                            </button>
                           </form>
                         </div>
                       </div>
 
-                      <Modal show={this.state.isModalKategori} onHide={this.handleCloseModal}>
-	                      <Modal.Body>
-	                        <Modal.Title className="text-c-purple3 f-w-bold">Semua Kategori</Modal.Title>
+                      <Modal
+                        show={this.state.isModalKategori}
+                        onHide={this.handleCloseModal}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Semua Kategori
+                          </Modal.Title>
                           <form onSubmit={this.handleSimpanKategori}>
-                            <div style={{ marginTop: '20px'}} className="form-group">
+                            <div
+                              style={{ marginTop: "20px" }}
+                              className="form-group"
+                            >
                               <label>Cover Kategori</label>
-                              <input className="form-control" required type="file" name="kategori_image" onChange={this.onChangeInput} />
+                              <input
+                                className="form-control"
+                                required
+                                type="file"
+                                name="kategori_image"
+                                onChange={this.onChangeInput}
+                              />
                             </div>
                             <div className="form-group">
                               <label>Nama Kategori</label>
                               <div className="input-group mb-3">
-                                <input value={this.state.kategori_name} required onChange={this.onChangeInput} className="form-control" type="text" name="kategori_name" placeholder="kategori baru" />
+                                <input
+                                  value={this.state.kategori_name}
+                                  required
+                                  onChange={this.onChangeInput}
+                                  className="form-control"
+                                  type="text"
+                                  name="kategori_name"
+                                  placeholder="kategori baru"
+                                />
                                 <div class="input-group-append">
-                                  <span onClick={this.handleSimpanKategori} class="input-group-text btn btn-ideku" 
-                                    style={{ cursor: 'pointer', backgroundColor: 'rgb(146, 31, 91)'}} id="basic-addon2">
+                                  <span
+                                    onClick={this.handleSimpanKategori}
+                                    class="input-group-text btn btn-ideku"
+                                    style={{
+                                      cursor: "pointer",
+                                      backgroundColor: "rgb(146, 31, 91)"
+                                    }}
+                                    id="basic-addon2"
+                                  >
                                     Simpan
                                   </span>
                                 </div>
@@ -296,38 +380,77 @@ export default class KursusMateriEdit extends Component {
                             </div>
                           </form>
                           <div style={{ overflowX: "auto" }}>
-                            <table className="table-curved" style={{ width: "100%" }}>
+                            <table
+                              className="table-curved"
+                              style={{ width: "100%" }}
+                            >
                               <thead>
-                                <tr><th>No</th><th>Kategori</th><th></th></tr>
+                                <tr>
+                                  <th>No</th>
+                                  <th>Kategori</th>
+                                  <th></th>
+                                </tr>
                               </thead>
                               <tbody>
-                              {
-                                kategori.map((item, i) => (
+                                {kategori.map((item, i) => (
                                   <tr key={item.category_id}>
-                                    <th>{i+1}</th>
+                                    <th>{i + 1}</th>
                                     <th>{item.category_name}</th>
                                     <th>
                                       <Link to="#" className="buttonku">
-                                        <i onClick={this.onClickUbahKategori} data-id={item.category_id} data-name={item.category_name} className="fa fa-edit"></i>
+                                        <i
+                                          onClick={this.onClickUbahKategori}
+                                          data-id={item.category_id}
+                                          data-name={item.category_name}
+                                          className="fa fa-edit"
+                                        ></i>
                                       </Link>
                                       <Link to="#" className="buttonku">
-                                        <i onClick={this.onClickHapusKategori} data-id={item.category_id} className="fa fa-trash"></i>
+                                        <i
+                                          onClick={this.onClickHapusKategori}
+                                          data-id={item.category_id}
+                                          className="fa fa-trash"
+                                        ></i>
                                       </Link>
                                     </th>
                                   </tr>
-                                ))
-                              }
+                                ))}
                               </tbody>
                             </table>
                           </div>
-	                        <button style={{ marginTop: '50px'}} type="button"
-	                          className="btn btn-block f-w-bold"
-	                          onClick={this.handleCloseModal}>
-	                          Tutup
-	                        </button>
-	                      </Modal.Body>
-	                    </Modal>
+                          <button
+                            style={{ marginTop: "50px" }}
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.handleCloseModal}
+                          >
+                            Tutup
+                          </button>
+                        </Modal.Body>
+                      </Modal>
 
+                      <Modal
+                        show={this.state.isNotifikasi}
+                        onHide={this.closeNotifikasi}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Notifikasi
+                          </Modal.Title>
+
+                          <p style={{ color: "black", margin: "20px 0px" }}>
+                            {this.state.isiNotifikasi}
+                          </p>
+
+                          <button
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}
+                          >
+                            Mengerti
+                          </button>
+                        </Modal.Body>
+                      </Modal>
                     </div>
                   </div>
                 </div>
@@ -336,6 +459,6 @@ export default class KursusMateriEdit extends Component {
           </div>
         </div>
       </div>
-		);
+    );
 	}
 }
