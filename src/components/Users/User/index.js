@@ -160,7 +160,7 @@ export default class User extends Component {
                               <th>Validity</th>
                               <th className="text-center">
                                 <Link
-                                  to={"/user-create"}
+                                  to='/user-create'
                                   className="btn btn-ideku col-12 f-14"
                                   style={{ padding: "7px 8px !important" }}
                                 >

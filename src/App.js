@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
@@ -49,7 +49,10 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
-import Forum, { ForumDetail } from "./components/forum/forum";
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
+
+import LiveClass from "./components/liveclass";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -133,6 +136,10 @@ export class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
 
@@ -142,6 +149,8 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/user-access" component={UserAccess} />
         <Route path="/user-company/:company_id" component={UserCompany} />
+
+        <Route path="/liveclass" component={LiveClass} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
