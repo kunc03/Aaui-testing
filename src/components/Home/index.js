@@ -65,31 +65,66 @@ class Home extends Component {
   render() {
     const { user, kategoriKursus, kursusTerbaru, kursusDiikuti } = this.state;
 
+    const CheckMedia = ({ media }) => {
+      if (media) {
+        let ekSplit = media.split(".");
+        let ektension = ekSplit[ekSplit.length - 1];
+        if (
+          ektension === "jpg" ||
+          ektension === "png" ||
+          ektension === "jpeg"
+        ) {
+          return (
+            <img
+              className="img-fluid img-kursus radius-top-l-r-5"
+              src={media}
+              alt="dashboard-user"
+            />
+          );
+        } else {
+          return (
+            <img
+              className="img-fluid img-kursus radius-top-l-r-5"
+              src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+              alth="Cover"
+            />
+          );
+        }
+      }
+      return null;
+    };
+
     const ListKategori = ({lists}) => {
       if(lists.length !== 0) {
         return (
           <div className="row">
-            {
-              lists.map((item, i) => (
-                <div className="col-sm-4" key={item.category_id}>
-                  <Link to={`/kategori-kursus/${item.category_id}`}>
-                    <div className="card">
-                      <img
-                        className="img-fluid img-kursus radius-top-l-r-5"
-                        src={item.category_image}
-                        alt="dashboard-user"
-                      />
-                      <div className="card-carousel ">
-                        <div className="title-head f-w-900 f-16">
-                          {item.category_name}
-                        </div>
-                        <small className="mr-3">{item.count_course} Kursus</small>
+            {lists.map((item, i) => (
+              <div className="col-sm-4" key={item.category_id}>
+                <Link
+                  to={
+                    ["admin", "superadmin"].includes(
+                      Storage.get("user").data.level
+                    )
+                      ? `/kursus-materi`
+                      : `/kategori-kursus/${item.category_id}`
+                  }
+                >
+                  <div className="card">
+                    <img
+                      className="img-fluid img-kursus radius-top-l-r-5"
+                      src={item.category_image}
+                      alt="dashboard-user"
+                    />
+                    <div className="card-carousel ">
+                      <div className="title-head f-w-900 f-16">
+                        {item.category_name}
                       </div>
+                      <small className="mr-3">{item.count_course} Kursus</small>
                     </div>
-                  </Link>
-                </div>
-              ))
-            }
+                  </div>
+                </Link>
+              </div>
+            ))}
           </div>
         );
       } else {
@@ -112,13 +147,10 @@ class Home extends Component {
             {
               lists.map((item, i) => (
                 <div className="col-sm-12" key={item.course_id}>
-                  <Link to={`/detail-kursus/${item.course_id}`}>
+                  <Link to={(['admin','superadmin'].includes(Storage.get('user').data.level)) ? `/chapter/${item.course_id}`:`/detail-kursus/${item.course_id}`}>
                     <div className="card">
-                      <img
-                        className="img-fluid img-kursus radius-top-l-r-5"
-                        src={item.image}
-                        alt="dashboard-user"
-                      />
+                      <CheckMedia media={item.image} />
+                      
                       <div className="card-carousel ">
                         <div className="title-head f-w-900 f-16">
                           {item.title}

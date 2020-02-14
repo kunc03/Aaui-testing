@@ -169,35 +169,59 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/profile" exact component={Profile} />
         <Route path="/user-access" component={UserAccess} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
-        <Route path="/user-edit/:user_id"  exactcomponent={UserEdit} />
+        <Route path="/user-edit/:user_id" exactcomponent={UserEdit} />
 
         <Route path="/user-company" exact component={UserCompany} />
         <Route path="/user-company-create" component={UserCompanyAdd} />
-        <Route path="/user-company-edit/:user_id" exact component={UserCompanyEdit} />
+        <Route
+          path="/user-company-edit/:user_id"
+          exact
+          component={UserCompanyEdit}
+        />
         <Route path="/user-access" exactcomponent={UserAccess} />
         <Route path="/my-company" exact component={CompanyDetail} />
-        
+
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
-        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
-        
+        <Route
+          path="/kursus-materi-edit/:course_id"
+          exact
+          component={KursusMateriEdit}
+        />
+
         <Route path="/chapter/:course_id" exact component={ChapterPreview} />
 
-        <Route path="/quiz/:course_id" exact component={QuizList}  />
+        <Route path="/quiz/:course_id" exact component={QuizList} />
         <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
-        <Route path="/question-quiz-create/:exam_id" exact component={QuestionQuizCreate} />
-        <Route path="/question-quiz-edit/:question_id" exact component={QuestionQuizEdit} />
-        
-        <Route path="/exam/:course_id" exact component={ExamList}  />
+        <Route
+          path="/question-quiz-create/:exam_id"
+          exact
+          component={QuestionQuizCreate}
+        />
+        <Route
+          path="/question-quiz-edit/:question_id"
+          exact
+          component={QuestionQuizEdit}
+        />
+
+        <Route path="/exam/:course_id" exact component={ExamList} />
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
-        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
-        
+        <Route
+          path="/question-exam-create/:exam_id"
+          exact
+          component={QuestionExamCreate}
+        />
+
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
         <Route path="/grup" exact component={Grup} />
