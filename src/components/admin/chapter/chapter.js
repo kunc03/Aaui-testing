@@ -227,17 +227,18 @@ export default class ChapterPreview extends Component {
 					)
 				} else {
 					return (
-						<div style={{ position: 'relative', paddingTop: '56.25%' }}>
-							<ReactPlayer
-								style={{ position: 'absolute', top: '0', left: '0' }}
-								url={media}
-								volume='1'
-								controls
-								height='100%'
-								width='100%'
-							/>
-						</div>
-					)
+            <div style={{ position: "relative", paddingTop: "56.25%" }}>
+              <ReactPlayer
+                style={{ position: "absolute", top: "0", left: "0" }}
+                url={media}
+                light={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+                volume="1"
+                controls
+                height="100%"
+                width="100%"
+              />
+            </div>
+          );
 				}
 			}
 
@@ -461,7 +462,7 @@ export default class ChapterPreview extends Component {
                             />
                             <Form.Text>
                               Pastikan file berformat mp4, png, jpg, jpeg, atau
-                              gif.
+                              gif dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>
 
