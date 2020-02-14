@@ -52,7 +52,7 @@ import UjianHasil from "./components/client/ujianhasil";
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
-import LiveClass from "./components/liveclass";
+import LiveClass, { LiveClassRoom } from "./components/liveclass";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -149,8 +149,6 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/user-access" component={UserAccess} />
         <Route path="/user-company/:company_id" component={UserCompany} />
-
-        <Route path="/liveclass" component={LiveClass} />
         
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
@@ -249,6 +247,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />

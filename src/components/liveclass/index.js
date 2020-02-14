@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Switch, Route } from "react-router-dom";
 
 import { 
 	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
@@ -9,6 +9,58 @@ import {
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+export const ClassRooms = ({list}) => <Row>
+{list.map( props => 
+		<div className="col-sm-12 col-md-6 col-lg-3">
+			<Card className="card-post card-post--1 card card-small">
+				<div style={{
+					backgroundImage: `url("${props.img}")`,
+
+					backgroundSize: "cover",
+					backgroundPosition: "50%",
+
+					position: "relative",
+					minHeight: "10.3125rem",
+					borderTopLeftRadius: ".625rem",
+					borderTopRightRadius: ".625rem",
+					backgroundRepeat: "no-repeat",
+				}}>
+					<span className={`card-post__category bg-${props.badgeColor} badge badge-primary badge-pill`} style={{
+							top: ".9375rem",
+							right: ".9375rem",
+							position:"absolute",
+							textTransform:"uppercase"
+					}}>
+						{props.type}
+					</span>
+
+					<div className="card-post__author d-flex"></div>
+				
+				</div>
+				
+				<Card.Body style={{padding : ".25em"}}>
+					<Link to={props.link + props.id}>
+						<Card.Title className="card-title">{props.title}</Card.Title>
+
+						<Card.Text className="card-text d-inline-block mb-3">{props.teacher}</Card.Text>
+						
+						<br/>
+
+						<span style={{
+							bottom: ".25em",
+							position: "absolute",
+							right: ".25em"
+						}} className="text-muted">{props.status}</span>
+				
+					</Link>
+			
+				</Card.Body>
+		
+			</Card>
+	
+		</div>
+
+)}	</Row>;
 
 export default class LiveClass extends Component {
 	constructor (props){
@@ -18,112 +70,112 @@ export default class LiveClass extends Component {
 			classRooms : [
 				{
 					id : "1",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "Python",
 					badgeColor : "dark",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "2",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java",
 					badgeColor : "blue",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "Last updated 1 mins ago"
 				},
 				{
 					id : "3",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java script",
 					badgeColor : "warning",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "4",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java script",
 					badgeColor : "warning",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "Last updated 3 years ago"
 				},
 				{
 					id : "5",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "Python",
 					badgeColor : "dark",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "6",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java script",
 					badgeColor : "warning",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "Last updated 2 decades ago"
 				},
 				{
 					id : "7",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java",
 					badgeColor : "blue",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "7",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java",
 					badgeColor : "blue",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "7",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java",
 					badgeColor : "blue",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "7",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java",
 					badgeColor : "blue",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "live"
 				},
 				{
 					id : "8",
-					link : "/liveclass/room/",
+					link : "/liveclass-room/",
 					img : "/assets/images/component/classsample.jpeg",
 					type : "java script",
 					badgeColor : "warning",
 					title : "Lorem ipsum",
-					text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+					teacher : "Lorem",
 					status : "Last updated 5 millenias ago"
 				}
 			]
@@ -135,66 +187,7 @@ export default class LiveClass extends Component {
 	render() {
 
 		const {classRooms} = this.state;
-		const ClassRooms = ({list}) => <Row> {list.map(
-			props => 
-					<div className="mb-4 col-sm-12 col-md-6 col-lg-3">
-						<div className="card-post card-post--1 card card-small">
-							<div style={{
-								backgroundImage: `url("${props.img}")`,
-
-								backgroundSize: "cover",
-								backgroundPosition: "50%",
-
-
-								position: "relative",
-								minHeight: "10.3125rem",
-								borderTopLeftRadius: ".625rem",
-								borderTopRightRadius: ".625rem",
-								backgroundRepeat: "no-repeat",
-							}}>
-								<span className={`card-post__category bg-${props.badgeColor} badge badge-primary badge-pill`} style={{
-										top: ".9375rem",
-										right: ".9375rem",
-										position:"absolute",
-										textTransform:"uppercase"
-								}}>
-									{props.type}
-								</span>
-								<div className="card-post__author d-flex"></div>
-							</div>
-							<div className="card-body">
-								<Link to={props.link + props.id}>
-									<h5 className="card-title">{props.text}</h5>
-
-									<p className="card-text d-inline-block mb-3">{props.text}</p>
-									<span className="text-muted">{props.status}</span>
-								</Link>
-							</div>
-						</div>
-					</div>
-/*
-			<Card>
-				<Link to={props.link + props.id}>
-					<Card.Img variant="top" src={props.img} />
-					
-					<Card.Body>
-						<Card.Title>{props.title}</Card.Title>
-						
-						<Card.Text>
-							{props.text}
-						</Card.Text>
-					
-					</Card.Body>
-					
-					<Card.Footer>
-						<small className="text-muted">{props.status}</small>
-					
-					</Card.Footer>
-				
-				</Link>
-			
-			</Card>
-*/		)}</Row>;
+		
 
 		return(
 			<div className="pcoded-main-container">
@@ -289,4 +282,21 @@ export default class LiveClass extends Component {
 	}
 
 
+}
+
+export class LiveClassRoom extends Component {
+	constructor(props){
+		super(props);
+
+		this.state = {
+
+
+		}
+
+
+	}
+	
+	render(){
+		return <div></div>
+	}
 }
