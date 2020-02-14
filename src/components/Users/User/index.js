@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import API, { API_SERVER } from '../../../repository/api';
 
+import Storage from './../../../repository/storage';
+
 export default class User extends Component {
   constructor(props) {
     super(props);
@@ -95,7 +97,15 @@ export default class User extends Component {
   render() {
     let { users } = this.state;
 
+
+    const isSuper = 
+      Storage.get('user')
+      .data.level === 'superadmin'? 1 : 0;
+
     const Item = ({ item }) => {
+
+        console.log(isSuper,"asdadfgdfglsdj")
+
       return (
         <tr>
           <td>{item.user_id}</td>
@@ -105,6 +115,7 @@ export default class User extends Component {
           <td>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
+          {isSuper ? (<td>{item.company_name}</td>) : ""}
           <td>{item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
@@ -157,6 +168,7 @@ export default class User extends Component {
                               <th>Level</th>
                               <th>Email</th>
                               <th>Phone</th>
+                              {isSuper ? <th>Company</th> : ""}
                               <th>Validity</th>
                               <th className="text-center">
                                 <Link
