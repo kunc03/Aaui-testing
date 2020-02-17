@@ -60,6 +60,12 @@ export default class Forum extends Component {
 	
 	}
 
+	showDiscussion(follow){
+		return console.log("show", follow);
+
+	}
+
+
 	// LIST FORUM SEMUA 
 	render() {
 		const { forums } = this.state;
@@ -232,10 +238,10 @@ export default class Forum extends Component {
 
 											<div className="forum-filter">
 												<ListGroup>
-																<ListGroup.Item>
-																	<i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
+																<ListGroup.Item onClick={this.showDiscussion.bind(this,"all")}>
+																	<i className="fa fa-comments" style={{color:"blue"}}></i> &nbsp; Semua Diskusi Forum
 																</ListGroup.Item>
-																<ListGroup.Item>
+																<ListGroup.Item onClick={this.showDiscussion.bind(this,"following")}>
 																	<i className="fa fa-star"></i> &nbsp; Mengikuti
 																</ListGroup.Item>
 																</ListGroup>	
