@@ -291,6 +291,7 @@ class Kursus extends Component {
 
                   <div className="row">
                     <div className="col-sm-8">
+                    <h3 className="f-20 f-w-800 mb-3">Kursus</h3>
 
                       <div className="row">
 
