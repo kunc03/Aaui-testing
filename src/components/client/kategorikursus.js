@@ -4,6 +4,31 @@ import { Modal, Form, Card } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+const CheckMedia = ({ media }) => {
+  if (media) {
+    let ekSplit = media.split(".");
+    let ektension = ekSplit[ekSplit.length - 1];
+    if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
+      return (
+        <img
+          className="img-fluid img-kursus radius-top-l-r-5"
+          src={media}
+          alt="dashboard-user"
+        />
+      );
+    } else {
+      return (
+        <img
+          className="img-fluid img-kursus radius-top-l-r-5"
+          src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+          alth="Cover"
+        />
+      );
+    }
+  }
+  return null;
+};
+
 export default class KategoriKursus extends Component {
 
 	state = {
@@ -54,11 +79,7 @@ export default class KategoriKursus extends Component {
                 <div className="col-sm-4">
                   <Link to={`/detail-kursus/${item.course_id}`}>
                     <div className="card">
-                      <img
-                        className="img-fluid img-kursus radius-top-l-r-5"
-                        src={item.image}
-                        alt="dashboard-user"
-                      />
+                      <CheckMedia media={item.image} />
                       <div className="card-carousel ">
                         <div className="title-head f-w-900 f-16">
                           {item.title}

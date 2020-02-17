@@ -21,7 +21,7 @@ export default class QuizList extends Component {
 		examTitle: '',
 		exampDesc: '',
 		examRandom: '0',
-		examPublish: '1',
+		examPublish: '0',
 		timeMinute: '',
 		timeStart: new Date(),
 		timeFinish: new Date(),
@@ -29,7 +29,6 @@ export default class QuizList extends Component {
     waktuFinish: '',
 
 		isModalDelete: false,
-		examId: '',
 	}
 
 	handleStartDatePicker = date => {
@@ -84,7 +83,6 @@ export default class QuizList extends Component {
 		this.setState({
       isModalAdd: false,
       isModalDelete: false,
-      examId: "",
       examId: "",
       examTitle: "",
       exampDesc: "",
@@ -178,6 +176,20 @@ export default class QuizList extends Component {
 		console.log(e);
 	}
 
+	changeToPublish = e => {
+		e.preventDefault();
+		const examId = e.target.getAttribute('data-id');
+		let form = {
+			course_id: this.state.courseId,
+			company_id: this.state.companyId
+		}
+		API.put(`${API_SERVER}v1/exam/publish/${examId}`, form).then(res => {
+			if(res.status === 200) {
+				this.fetchData();
+			}
+		})
+	}
+
 	render() {
 		const { courseId, exam } = this.state;
 		const statusCompany = ["0", "1"];
@@ -219,7 +231,7 @@ export default class QuizList extends Component {
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
 					                    <small className="f-w-600 f-16 text-c-grey-t ">
-					                      Judul
+					                      {item.exam_publish == 0 ? 'Judul':'Aktif'}
 					                    </small>
 					                    <h5 className="f-w-bold f-20 text-c-purple3">
 					                      {item.exam_title}
@@ -279,6 +291,9 @@ export default class QuizList extends Component {
 					              	<Link to={`/question-exam/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
+													<Link to="#" className="buttonku" title="Tetapkan sebagai ujian utama">
+														<i onClick={this.changeToPublish} data-id={item.exam_id} className="fa fa-check"></i>
+													</Link>
 													<Link to="#" className="buttonku" title="Edit">
 				          					<i onClick={this.handleOpenEdit} data-id={item.exam_id} className="fa fa-edit"></i>
 				        					</Link>

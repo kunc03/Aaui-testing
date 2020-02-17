@@ -23,7 +23,6 @@ export default class UjianHasil extends Component {
     jawabanKu: '',
 
     score: 0,
-
   }
 
   fetchPertanyaanUjian() {
@@ -31,17 +30,23 @@ export default class UjianHasil extends Component {
       if(res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
 
-        API.get(`${API_SERVER}v1/exam/${this.state.examId}`).then(res => {
+        API.get(`${API_SERVER}v1/isquizorexam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
-            this.setState({ courseId: res.data.result.course_id });
-            API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
+            
+            API.get(`${API_SERVER}v1/${res.data.result.quiz ? 'quiz':'exam'}/${this.state.examId}`).then(res => {
+              console.log('res0: ', res.data)
               if(res.status === 200) {
-                this.setState({ courseTitle: res.data.result.title })
+                this.setState({ courseId: res.data.result.course_id });
+                API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
+                  if(res.status === 200) {
+                    this.setState({ courseTitle: res.data.result.title })
+                  }
+                })
               }
             })
+
           }
         })
-
       }
     })
 
@@ -93,9 +98,6 @@ export default class UjianHasil extends Component {
 
   render() {
     const { soalUjian, jawabanKu, jawabanBenar } = this.state;
-    const Completionist = () => <span>Waktu Habis !</span>;
-
-    console.log('state: ', this.state)
 
     const ListNomor = ({lists}) => (
       <ul class="flex-container" style={{marginTop: '16px'}}>
@@ -123,9 +125,11 @@ export default class UjianHasil extends Component {
                     <div className="col-sm-12">
                       <Card>
                         <Card.Body className="text-center">
-                          <img className="img-fluid" src="/assets/images/component/hasil.png" />
-                          <h3 style={{position: 'absolute', left: '36%', bottom: '120px', color: 'white'}} className="f-40 f-w-800 mb-3">Nilai Ujian</h3>
-                          <h3 style={{position: 'absolute', left: '36%', bottom: '60px', color: 'white'}} className="f-50 f-w-800 mb-3">{this.state.score}</h3>
+                          <img className="img-fluid" src="/assets/images/component/hasil.png" alt="media" />
+                          <h3 style={{position: 'absolute', left: '36%', bottom: '120px', color: 'white'}} 
+                            className="f-40 f-w-800 mb-3">Nilai Ujian</h3>
+                          <h3 style={{position: 'absolute', left: '36%', bottom: '60px', color: 'white'}} 
+                            className="f-50 f-w-800 mb-3">{this.state.score}</h3>
                         </Card.Body>
                       </Card>
                     </div>

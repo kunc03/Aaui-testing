@@ -16,8 +16,8 @@ export default class UjianKursus extends Component {
     companyId: '',
 
     jumlahSoal: this.props.match.params.count_soal,
-    durasiWaktu: this.props.match.params.durasi_waktu * (60 * 1000),
-    stateAkhir: Date.now() + this.props.match.params.durasi_waktu * (60 * 1000),
+    durasiWaktu: this.props.match.params.durasi_waktu != 0 ? this.props.match.params.durasi_waktu * (60 * 1000) : 0,
+    stateAkhir: this.props.match.params.durasi_waktu != 0 ? Date.now() + this.props.match.params.durasi_waktu * (60 * 1000) : 0,
 
     soalUjian: [],
 
@@ -51,8 +51,7 @@ export default class UjianKursus extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
-
-        API.get(`${API_SERVER}v1/exam/${this.state.examId}`).then(res => {
+        API.get(`${API_SERVER}v1/quiz/${this.state.examId}`).then(res => {
           if(res.status === 200) {
             this.setState({ courseId: res.data.result.course_id });
             API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
@@ -62,7 +61,6 @@ export default class UjianKursus extends Component {
             })
           }
         })
-
 
       }
     })
@@ -82,18 +80,16 @@ export default class UjianKursus extends Component {
   }
 
   componentDidMount() {
-    if(Date.now() < this.state.stateAkhir) {
-      if(localStorage.getItem('waktuUjian') === null) {
-        localStorage.setItem('waktuUjian', this.state.durasiWaktu);
-
-        console.log('awal: ', parseInt(localStorage.getItem('waktuUjian')) );
+    if(this.state.durasiWaktu != 0) {
+      if(Date.now() < this.state.stateAkhir) {
+        if(localStorage.getItem('waktuUjian') === null) {
+          localStorage.setItem('waktuUjian', this.state.durasiWaktu);
+        } else {
+          this.setState({ durasiWaktu: parseInt(localStorage.getItem('waktuUjian')) })
+        }
       } else {
-        this.setState({ durasiWaktu: parseInt(localStorage.getItem('waktuUjian')) })
-
-        console.log('exist: ', parseInt(localStorage.getItem('waktuUjian')) );
+        this.resetCountDown()      
       }
-    } else {
-      this.resetCountDown()      
     }
     this.fetchPertanyaanUjian()
   }
@@ -124,7 +120,7 @@ export default class UjianKursus extends Component {
       nomorUjian: this.state.soalUjian[indexarray].number,
       pertanyaanUjian: this.state.soalUjian[indexarray].question,
       pilihanUjian: this.state.soalUjian[indexarray].options,
-      durasiWaktu: parseInt(localStorage.getItem('waktuUjian')),
+      durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
     })
 
     API.get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
@@ -174,8 +170,6 @@ export default class UjianKursus extends Component {
     const { durasiWaktu, jumlahSoal, soalUjian, jawabanKu, soalTerjawab } = this.state;
     const Completionist = () => <span>Waktu Habis !</span>;
 
-    console.log('state: ', this.state)
-
     const ListNomor = ({lists}) => (
       <ul class="flex-container" style={{marginTop: '16px'}}>
         {
@@ -200,7 +194,7 @@ export default class UjianKursus extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>UJIAN</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>QUIZ</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
@@ -212,18 +206,19 @@ export default class UjianKursus extends Component {
                                   </tr>
                                   <tr>
                                     <td>
-                                      <img src="/assets/images/component/clockkecil.png" style={{marginRight: '8px'}} /> 
-                                      <Countdown 
-                                        date={Date.now() + durasiWaktu}
-                                        // autoStart={false}
-                                        onTick={this.onTickCountDown}
-                                        onComplete={this.onFinisCountDown}
+                                      <img src="/assets/images/component/clockkecil.png" style={{ marginRight: '8px' }} alt="media" /> 
+                                      {
+                                        (durasiWaktu != 0) && <Countdown
+                                          date={Date.now() + durasiWaktu}
+                                          onTick={this.onTickCountDown}
+                                          onComplete={this.onFinisCountDown}
                                         >
-                                        <Completionist />
-                                      </Countdown>
+                                          <Completionist />
+                                        </Countdown>
+                                      }
                                     </td>
                                     <td>
-                                      <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} /> 
+                                      <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} alt="media" /> 
                                       {soalTerjawab}/{jumlahSoal}
                                     </td>
                                   </tr>
@@ -292,7 +287,7 @@ export default class UjianKursus extends Component {
                   <Modal show={this.state.isModalSubmit} onHide={this.handleModalSubmit}>
                     <Modal.Body style={{padding: '30px'}}>
                       <div className="text-center" style={{marginTop: '20px'}}>
-                        <img className="img-fluid" src="/assets/images/component/exam.png" />
+                        <img className="img-fluid" src="/assets/images/component/exam.png" alt="media" />
                       </div>
                       <h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3>
 
