@@ -11214,3 +11214,9 @@ div.code-toolbar > .toolbar span:hover {
     font-size: 12px;
     line-height: 1.42857;
 }
+
+@media (min-width: 992px) {
+  .modal-xlg {
+    max-width: 1200px;
+  }
+}

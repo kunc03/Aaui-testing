@@ -16,6 +16,11 @@ export default class DetailKursus extends Component {
     isButtonIkuti: true,
     isModalQuiz: false,
     isUjian: false,
+    
+    isQuiz: false,
+    score: 0,
+    isShowScore: false,
+    scoreType: '',
 
     isUjianBelumAda: false,
     isMatiJikaTidakAdaUjian: false,
@@ -23,8 +28,8 @@ export default class DetailKursus extends Component {
 
     kategoriCourse: '',
     judulCourse: '',
-    countSoal: '0',
-    durasiWaktu: '0',
+    countSoal: 0,
+    durasiWaktu: '',
 
     course: { category_name: 'Memuat...' },
 		chapters: [],
@@ -110,22 +115,20 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
-            if(res.data.response.length !== 0) {
-              if(res.data.response[0].is_exam) {
-                this.setState({ isUjian: true })
-              } else {
-                this.setState({ isUjian: false })
-              }
+            if(res.data.response.length != 0) {
+              this.setState({ isUjian: res.data.response[0].is_exam ? true : false })
+              this.setState({ isQuiz: res.data.response[0].is_quiz ? true : false })
             } else {
-              this.setState({ isUjian: false })
+              this.setState({ isUjian: false, isQuiz: false })
             }
           }
         })
 
         // cek apakah ada ujian
-        API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+        API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${this.state.companyId}`).then(res => {
           if(res.status === 200) {
-            if(res.data.result.length !== 0) {
+            if(res.data.result.length != 0) {
+              // pilih ujian index ke 0 => yang terpublish
               this.setState({ examId: res.data.result[0].exam_id })
             } 
             else {
@@ -172,7 +175,7 @@ export default class DetailKursus extends Component {
 
   onClickIkutiExam = e => {
     e.preventDefault();
-    API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+    API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${this.state.companyId}`).then(res => {
       if(res.status === 200) {
         this.setState({ isModalQuiz: true, countSoal: res.data.result[0].soal, 
           durasiWaktu: res.data.result[0].time_minute, examId: res.data.result[0].exam_id })
@@ -180,20 +183,43 @@ export default class DetailKursus extends Component {
     })
   }
 
+  onClickQuiz = e => {
+    e.preventDefault();
+    API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+      if (res.status === 200) {
+
+        if (this.state.isQuiz) {
+          API.get(`${API_SERVER}v1/exam-answer/submit/${res.data.result[0].exam_id}/${Storage.get('user').data.user_id}`).then(res => {
+            if (res.status === 200) {
+              this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
+            }
+          })
+        } else {
+          this.setState({
+            isModalQuiz: true, countSoal: res.data.result[0].soal, examId: res.data.result[0].exam_id
+          })
+        }
+
+      }
+    })
+  }
+
+  handleModalScoreClose = e => {
+    this.setState({ isShowScore: false, score: 0, scoreType: '' })
+  }
+
   handleModalQuizClose = e => {
-    this.setState({ isModalQuiz: false })
+    this.setState({ isModalQuiz: false, countSoal: 0, durasiWaktu: '' })
   }
 
 	render() {
     const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
-    let refactoryChapters = [...this.state.chapters];
+    let refactoryChapters = [...chapters];
     for(let i=0; i<this.state.quiz.length; i++) {
       refactoryChapters.splice(this.state.quiz[i].quiz_at-1,0, this.state.quiz[i]);
     }
-
-    console.log('refac: ', refactoryChapters)
 
     const ListChapter = ({lists}) => {
       if(lists.length !== 0) {
@@ -203,6 +229,7 @@ export default class DetailKursus extends Component {
               if(item.quiz) {
                 return (
                   <Card
+                    onClick={this.onClickQuiz}
                     className={`card-${
                       this.state.isIkutiKursus ? "active" : "nonactive"
                     }`}
@@ -239,6 +266,7 @@ export default class DetailKursus extends Component {
                     className={`card-${
                       this.state.isIkutiKursus ? "active" : "nonactive"
                     }`}
+                    data-id={item.chapter_id}
                     key={item.chapter_id}
                   >
                     <Card.Body>
@@ -249,7 +277,7 @@ export default class DetailKursus extends Component {
                         data-iterasi={i}
                       >
                         <Form.Text data-id={item.chapter_id}>
-                          Chapter {i + 1}
+                          Chapter {item.chapter_number}
                         </Form.Text>
                         {item.chapter_title}
                         <span
@@ -316,13 +344,12 @@ export default class DetailKursus extends Component {
           </div>
         );
       }
-    }
+    };
 
     const CheckMedia = ({media}) => {
       if(media) {
         let ekSplit = media.split('.');
         let ektension = ekSplit[ekSplit.length-1];
-        console.log('ektension: ', ektension)
         if(ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
           return (
             <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px'}} />
@@ -344,7 +371,7 @@ export default class DetailKursus extends Component {
       }
 
       return null
-    }
+    };
 
 		return (
       <div className="pcoded-main-container">
@@ -411,6 +438,26 @@ export default class DetailKursus extends Component {
                   </div>
 
                   <Modal
+                    show={this.state.isShowScore}
+                    onHide={this.handleModalScoreClose}
+                  >
+                    <Modal.Body>
+                      <h3 className="f-24 f-w-800 mb-3">
+                        Nilai anda adalah {this.state.score}
+                      </h3>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        className="btn f-w-bold"
+                        onClick={this.handleModalScoreClose}
+                      >
+                        Mengerti
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
                     show={this.state.isModalQuiz}
                     onHide={this.handleModalQuizClose}
                   >
@@ -419,7 +466,7 @@ export default class DetailKursus extends Component {
                         className="text-center"
                         style={{ marginTop: "20px" }}
                       >
-                        <img src="/assets/images/component/exam.png" />
+                        <img src="/assets/images/component/exam.png" alt="media" />
                       </div>
                       <Link
                         className="btn btn-ideku"
@@ -436,7 +483,7 @@ export default class DetailKursus extends Component {
                         <tbody>
                           <tr>
                             <td>
-                              <img src="/assets/images/component/question.png" />
+                              <img src="/assets/images/component/question.png" alt="media" />
                             </td>
                             <td>
                               <span style={{ marginLeft: "14px" }}>
@@ -450,31 +497,33 @@ export default class DetailKursus extends Component {
                               </h3>
                             </td>
                           </tr>
-                          <tr>
-                            <td>
-                              <img src="/assets/images/component/clock.png" />
-                            </td>
-                            <td>
-                              <span style={{ marginLeft: "14px" }}>
-                                Waktu Pengerjaan
+                          {
+                            durasiWaktu && <tr>
+                              <td>
+                                <img src="/assets/images/component/clock.png" alt="media" />
+                              </td>
+                              <td>
+                                <span style={{ marginLeft: "14px" }}>
+                                  Waktu Pengerjaan
                               </span>
-                              <h3
-                                style={{ marginLeft: "14px" }}
-                                className="f-18 f-w-800 mb-3"
-                              >
-                                {durasiWaktu} Menit
+                                <h3
+                                  style={{ marginLeft: "14px" }}
+                                  className="f-18 f-w-800 mb-3"
+                                >
+                                  {durasiWaktu} Menit
                               </h3>
-                            </td>
-                          </tr>
+                              </td>
+                            </tr>
+                          }
                         </tbody>
                       </table>
 
                       <Link
                         style={{ marginTop: "20px" }}
-                        to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu}`}
+                        to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu ? this.state.durasiWaktu : 0}`}
                         className="btn btn-block btn-ideku f-w-bold"
                       >
-                        Ya, Mulai Ujian
+                        Ya, Mulai Sekarang
                       </Link>
                       <button
                         type="button"
