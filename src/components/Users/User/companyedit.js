@@ -11,6 +11,7 @@ class UserEdit extends Component {
 
     company_id: "",
     branch_id: "",
+    grup_id: "",
     
     identity: "",
     name: "",
@@ -22,6 +23,7 @@ class UserEdit extends Component {
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
     listLevel: [],
 
     responseMessage: '', 
@@ -30,7 +32,7 @@ class UserEdit extends Component {
   onSubmitEditUser = e => {
     e.preventDefault();
     let formData = {
-      company_id: this.state.company_id, branch_id: this.state.branch_id,
+      company_id: this.state.company_id, branch_id: this.state.branch_id, grup_id: this.state.grup_id,
       identity: this.state.identity, name: this.state.name, email: this.state.email,
       phone: this.state.phone, address: this.state.address, level: this.state.level,
       status: 'active'
@@ -95,6 +97,7 @@ class UserEdit extends Component {
           user: res.data.result,
           company_id: res.data.result.company_id,
           branch_id: res.data.result.branch_id,
+          grup_id: res.data.result.grup_id,
           name: res.data.result.name, 
           identity: res.data.result.identity,
           email: res.data.result.email,
@@ -106,6 +109,12 @@ class UserEdit extends Component {
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
           if(res.status === 200) {
             this.setState({ listBranch: res.data.result })
+          }
+        })
+
+        API.get(`${API_SERVER}v1/grup/company/${this.state.user.company_id}`).then(res => {
+          if (res.status === 200) {
+            this.setState({ listGrup: res.data.result })
           }
         })
 
@@ -130,6 +139,7 @@ class UserEdit extends Component {
                       <h3 className="f-24 f-w-800">Edit User Management</h3>
                       <div className="card">
                         <div className="card-block">
+                          
                           <form onSubmit={this.onSubmitEditUser}>
                             <div className="form-group">
                               <label className="label-input">Cabang</label>
@@ -138,6 +148,18 @@ class UserEdit extends Component {
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id} selected={(item.branch_id === this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Grup</label>
+                              <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listGrup.map(item => (
+                                    <option value={item.grup_id} selected={(item.grup_id === this.state.user.grup_id) ? 'selected' : ''}>{item.grup_name}</option>
                                   ))
                                 }
                               </select>

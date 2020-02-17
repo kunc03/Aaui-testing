@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import ReactPlayer from 'react-player';
 
 export default class KursusMateri extends Component {
 
@@ -51,13 +52,42 @@ export default class KursusMateri extends Component {
 
 	render() {
 		const { kursus } = this.state;
+
+		const CheckMedia = ({media}) => {
+			if(media) {
+				let ekSplit = media.split(".");
+        let ektension = ekSplit[ekSplit.length - 1];
+				if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
+					return (
+						<img
+							className="img-thumbnail"
+							src={media}
+							width="200px"
+							style={{ height: "100px" }}
+							alth="Cover"
+						/>
+					)
+				} else {
+					return (
+            <img
+              className="img-thumbnail"
+              src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+              width="200px"
+              style={{ height: "100px" }}
+              alth="Cover"
+            />
+          )
+				}
+			}
+			return null
+		}
 		
 		const ListKursus = ({lists}) => {
 			if(lists.length === 0) {
 				return (
 					<tbody>
 						<tr>
-							<td colSpan={8}>tidak ada data</td>
+							<td colSpan={8}>Tidak ada data</td>
 						</tr>
 					</tbody>
 				);
@@ -69,10 +99,10 @@ export default class KursusMateri extends Component {
 							<tr key={item.course_id}>
 								<td>{i+1}</td>
 								<td>
-									<img className="img-thumbnail" src={item.image} style={{height: '100px'}} width="200px" alth="Cover" />
+									<CheckMedia media={item.image} />
 								</td>
 								<td>{item.category_name}</td>
-								<td>{item.title}</td>
+								<td><Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">{item.title}</Link></td>
 								<td>{item.created_at.toString().substring(0,10)}</td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>

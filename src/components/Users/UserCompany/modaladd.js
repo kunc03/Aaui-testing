@@ -13,10 +13,11 @@ class ModalAdd extends Component {
     this.onClickSimpan = this.onClickSimpan.bind(this);
 
     this.state = {
-      nama: '',
-      status: 'active',
-      logo: ''
-    }
+      nama: "",
+      status: "active",
+      logo: "",
+      notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB"
+    };
   }
 
   onClickSimpan = e => {
@@ -24,19 +25,22 @@ class ModalAdd extends Component {
     const { triggerUpdate } = this.props;
     let dateNow = new Date();
 
-    let formData = new FormData();
-    formData.append('company_name', this.state.nama);
-    formData.append('status', this.state.status);
-    formData.append('logo', this.state.logo);
-    formData.append('validity', dateNow.toISOString().split('T')[0]);
-
-    let linkURL = `${API_SERVER}v1/company`;
-    API.post(linkURL, formData).then(res => {
-      triggerUpdate(res.data.result);
-      this.setState({ nama: '', status: '', logo: ''});
-    }).catch((err) => {
-      console.log(err);
-    })
+    if(this.state.nama && this.state.logo) {
+      let formData = new FormData();
+      formData.append('company_name', this.state.nama);
+      formData.append('status', this.state.status);
+      formData.append('logo', this.state.logo);
+      formData.append('validity', dateNow.toISOString().split('T')[0]);
+  
+      let linkURL = `${API_SERVER}v1/company`;
+      API.post(linkURL, formData).then(res => {
+        triggerUpdate(res.data.result);
+        this.setState({ nama: '', status: '', logo: ''});
+        window.$('#modalAdd').modal('hide');
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
   }
 
   onChangeNama = e => {
@@ -48,7 +52,13 @@ class ModalAdd extends Component {
   }
 
   onChangeLogo = e => {
-    this.setState({ logo: e.target.files[0] });
+    const target = e.target;
+    if (target.files[0].size <= 500000) {
+      this.setState({ logo: target.files[0] });
+    } else {
+      target.value = null;
+      this.setState({ notif: "File tidak sesuai dengan format, silahkan cek kembali." });
+    }
   }
 
   render() {
@@ -105,20 +115,28 @@ class ModalAdd extends Component {
                     className="form-control"
                     accept="image/*"
                   />
+                  {this.state.notif && <Form.Text className="text-danger">{this.state.notif}</Form.Text>}
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
                     Status Company
                   </label>
-                  <br/>
-                  <div onChange={this.onChangeStatus}>
-                    {
-                      statusCompany.map(item => {
-                        return (
-                          <Form.Check name='status' inline label={item} type='radio' value={item} />
-                        );
-                      })
-                    }
+                  <br />
+                  <div
+                    onChange={this.onChangeStatus}
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    {statusCompany.map(item => {
+                      return (
+                        <Form.Check
+                          name="status"
+                          inline
+                          label={item}
+                          type="radio"
+                          value={item}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </Form>
@@ -134,7 +152,7 @@ class ModalAdd extends Component {
               >
                 Simpan
               </button>
-            
+
               <button
                 type="button"
                 className="btn btn-block bg-c-white text-c-grey3 f-18 f-w-bold"

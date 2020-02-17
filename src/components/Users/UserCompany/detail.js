@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { 
-	Form, Card, Col, Row, ButtonGroup, Button, Image, 
-	InputGroup, FormControl, Modal
-} from 'react-bootstrap';
+import { Form, Card, Col, Row, Modal, Image, Button } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -11,6 +8,8 @@ import Users from './users';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
 export default class CompanyDetail extends Component {
 
@@ -42,6 +41,22 @@ export default class CompanyDetail extends Component {
 		isKonfirmasi: false,
 		jenisKonfirmasi: '',
 		idKonfirmasi: '',
+
+		isLocalSteps: false,
+		steps: [
+			{
+				target: '.tambah-cabang',
+				content: 'Pertama tambah data cabang terlebih dahulu.',
+			},
+			{
+				target: '.tambah-grup',
+				content: 'Kedua tambahkan data grup.',
+			},
+			{
+				target: '.tambah-user',
+				content: 'Baru yang terakhir Anda bisa membuat usernya.',
+			},
+		]
 	}
 
 	closeNotifikasi = e => {
@@ -256,7 +271,29 @@ export default class CompanyDetail extends Component {
 
 	componentDidMount() {
 		this.fetchData();
+		let isTour = localStorage.getItem('isTour');
+		if(isTour) {
+			this.setState({ isLocalSteps: true })
+		}
 	}
+
+	handleJoyrideCallback = data => {
+    const { action, index, status, type } = data;
+
+    if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
+      // Update state to advance the tour
+      this.setState({ stepIndex: index + (action === ACTIONS.PREV ? -1 : 1) });
+    }
+    else if ([STATUS.FINISHED].includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+			this.setState({ isLocalSteps: true });
+			localStorage.setItem('isTour', true);
+    }
+
+    console.groupCollapsed(type);
+    console.log(data); //eslint-disable-line no-console
+    console.groupEnd();
+  };
 
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
@@ -404,7 +441,7 @@ export default class CompanyDetail extends Component {
 		}
 
 		return (
-			<div className="pcoded-main-container">
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -412,165 +449,279 @@ export default class CompanyDetail extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      
+                      {!this.state.isLocalSteps && (
+                        <Joyride
+                          callback={this.handleJoyrideCallback}
+                          steps={this.state.steps}
+                          continuous="true"
+                        />
+                      )}
+
                       <h3 className="f-24 f-w-800 mb-3">Informasi Company</h3>
                       <Card>
-                      	<Card.Body>
-                      		<Row>
-                      			<Col md={3} className="text-center">
-	                      			<Image src={this.state.logo} width="120px" thumbnail />
-	                      		</Col>
-	                      		<Col md={9}>
-				                      <div className="form-group">
-				                      	<label>Nama Company</label>
-				                      	<Form.Control type="text" name="nama" onChange={this.onChangeInput} placeholder="Nama Company" value={this.state.nama} />
-				                      </div>
-				                      <div className="form-group">
-				                      	<label>Validity</label>
-																<br/>
-																<DatePicker
-																	selected={validityCompany}
-																	onChange={this.handleValidityDatePicker}
-																	showTimeSelect
-																	className="form-control"
-																	dateFormat="yyyy-MM-dd"
-																/>
-				                      </div>
-				                      <div className="form-group">
-				                      	<label>Status Company</label>
-				                      	<br/>
-				                      	{
-						                      statusCompany.map(item => {
-						                        return (
-							                      	<div className="pretty p-default p-round p-thick m-b-35" style={{marginBottom: '5px'}}>
-						                            <input onChange={this.onChangeInput} name="status" checked={this.state.status === item} value={item} type="radio" />
-						                            <div className="state p-success-o">
-						                              <label className="f-18" style={{ whiteSpace: "normal !important" }}>
-						                                <small style={{textTransform: 'capitalize'}} className="f-w-bold f-18 text-c-black small-text">
-						                                  {item}
-						                                </small>
-						                              </label>
-						                            </div>
-						                          </div>
-						                        );
-						                      })
-						                    }
-				                      </div>
-				                      <div className="form-group">
-				                      	<label>Logo Company</label>
-																<Form.Control accept="image/x-png,image/gif,image/jpeg,image/jpg" className="form-control" type="file" onChange={this.onChangeInput} name="logo" placeholder="Nama Company" />
-																<Form.Text className="text-muted">
-																	Pastikan file berformat png, jpg, jpeg, atau gif dan ukuran tidak melebihi 500KB
-											    			</Form.Text>
-															</div>
-				                      <button className="btn btn-sm btn-ideku" onClick={this.onClickUpdate}>
-				                      	<i className="fa fa-edit"></i>
-				                      	Ubah
-			                      	</button>
-	                      		</Col>
-                      		</Row>
-                      	</Card.Body>
+                        <Card.Body>
+                          <Row>
+                            <Col md={3} className="text-center">
+                              <Image
+                                src={this.state.logo}
+                                width="120px"
+                                thumbnail
+                              />
+                            </Col>
+                            <Col md={9}>
+                              <div className="form-group">
+                                <label>Nama Company</label>
+                                <Form.Control
+                                  type="text"
+                                  name="nama"
+                                  onChange={this.onChangeInput}
+                                  placeholder="Nama Company"
+                                  value={this.state.nama}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label>Validity</label>
+                                <br />
+                                <DatePicker
+                                  selected={validityCompany}
+                                  onChange={this.handleValidityDatePicker}
+                                  showTimeSelect
+                                  className="form-control"
+                                  dateFormat="yyyy-MM-dd"
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label>Status Company</label>
+                                <br />
+                                {statusCompany.map(item => {
+                                  return (
+                                    <div
+                                      className="pretty p-default p-round p-thick m-b-35"
+                                      style={{ marginBottom: "5px" }}
+                                    >
+                                      <input
+                                        onChange={this.onChangeInput}
+                                        name="status"
+                                        checked={this.state.status === item}
+                                        value={item}
+                                        type="radio"
+                                      />
+                                      <div className="state p-success-o">
+                                        <label
+                                          className="f-18"
+                                          style={{
+                                            whiteSpace: "normal !important"
+                                          }}
+                                        >
+                                          <small
+                                            style={{
+                                              textTransform: "capitalize"
+                                            }}
+                                            className="f-w-bold f-18 text-c-black small-text"
+                                          >
+                                            {item}
+                                          </small>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div className="form-group">
+                                <label>Logo Company</label>
+                                <Form.Control
+                                  accept="image/x-png,image/gif,image/jpeg,image/jpg"
+                                  className="form-control"
+                                  type="file"
+                                  onChange={this.onChangeInput}
+                                  name="logo"
+                                  placeholder="Nama Company"
+                                />
+                                <Form.Text className="text-muted">
+                                  Pastikan file berformat png, jpg, jpeg, atau
+                                  gif dan ukuran tidak melebihi 500KB
+                                </Form.Text>
+                              </div>
+                              <button
+                                className="btn btn-sm btn-ideku"
+                                onClick={this.onClickUpdate}
+                              >
+                                <i className="fa fa-edit"></i>
+                                Ubah
+                              </button>
+                            </Col>
+                          </Row>
+                        </Card.Body>
                       </Card>
 
-                  		<Row style={{ marginBottom: '32px'}}>
-                  			<Col md={6}>
-              						<h3 className="f-24 f-w-800 mb-3">
-              							Cabang Company
-	            							<Button data-type="cabang" onClick={this.onClickModal} className="btn btn-sm btn-ideku float-right">
-	            								<i className="fa fa-plus"></i> Tambah Baru
-	            							</Button>
-	            							<div className="clearfix"></div>
-            							</h3>
-		                      <ListCabang items={cabang} />
-		                      <Modal show={this.state.isModalCabang} onHide={this.handleCloseCabang}>
-			                      <Modal.Body>
-			                        <Modal.Title className="text-c-purple3 f-w-bold">Form Cabang</Modal.Title>
-			                        <div style={{marginTop: '20px'}} className="form-group">
-			                        	<label>Cabang Baru</label>
-			                        	<input value={this.state.namacabang} className="form-control" type="text" name="namacabang" onChange={this.onChangeInput} placeholder="Nama Cabang" />
-			                        </div>
-			                        <button style={{ marginTop: '50px'}} type="button"
-			                        	data-grup={this.state.namacabang}
-			                        	onClick={this.onClickTambahCabang}
-			                          className="btn btn-block btn-ideku f-w-bold">
-			                          Simpan
-			                        </button>
-			                        <button type="button"
-			                          className="btn btn-block f-w-bold"
-			                          onClick={this.handleCloseCabang}>
-			                          Tidak
-			                        </button>
-			                      </Modal.Body>
-			                    </Modal>
-                  			</Col>
+                      <Row style={{ marginBottom: "32px" }}>
+                        <Col md={6}>
+                          <h3 className="f-24 f-w-800 mb-3">
+                            Cabang Company
+                            <Button
+                              data-type="cabang"
+                              onClick={this.onClickModal}
+                              className="btn btn-sm btn-ideku float-right tambah-cabang"
+                            >
+                              <i className="fa fa-plus"></i> Tambah Baru
+                            </Button>
+                            <div className="clearfix"></div>
+                          </h3>
+                          <ListCabang items={cabang} />
+                          <Modal
+                            show={this.state.isModalCabang}
+                            onHide={this.handleCloseCabang}
+                          >
+                            <Modal.Body>
+                              <Modal.Title className="text-c-purple3 f-w-bold">
+                                Form Cabang
+                              </Modal.Title>
+                              <div
+                                style={{ marginTop: "20px" }}
+                                className="form-group"
+                              >
+                                <label>Cabang Baru</label>
+                                <input
+                                  value={this.state.namacabang}
+                                  className="form-control"
+                                  type="text"
+                                  name="namacabang"
+                                  onChange={this.onChangeInput}
+                                  placeholder="Nama Cabang"
+                                />
+                              </div>
+                              <button
+                                style={{ marginTop: "50px" }}
+                                type="button"
+                                data-grup={this.state.namacabang}
+                                onClick={this.onClickTambahCabang}
+                                className="btn btn-block btn-ideku f-w-bold"
+                              >
+                                Simpan
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleCloseCabang}
+                              >
+                                Tidak
+                              </button>
+                            </Modal.Body>
+                          </Modal>
+                        </Col>
 
-                  			<Col md={6}>
-              						<h3 className="f-24 f-w-800 mb-3">
-              							Grup Company
-              							<Button data-type="grup" onClick={this.onClickModal} className="btn btn-sm btn-ideku float-right">
-	            								<i className="fa fa-plus"></i> Tambah Baru
-	            							</Button>
-		          							<div className="clearfix"></div>
-            							</h3>
-		                      <ListGrup items={grup} />
-		                      <Modal show={this.state.isModalGrup} onHide={this.handleCloseGrup}>
-			                      <Modal.Body>
-			                        <Modal.Title className="text-c-purple3 f-w-bold">Grup Company</Modal.Title>
-			                        <div style={{marginTop: '20px'}} className="form-group">
-			                        	<label>Nama Grup</label>
-			                        	<input value={this.state.namagrup} className="form-control" type="text" name="namagrup" onChange={this.onChangeInput} placeholder="Nama Grup" />
-			                        </div>
-			                        <button style={{marginTop: '50px'}} type="button"
-			                        	data-grup={this.state.namagrup}
-			                        	onClick={this.onClickTambahGrup}
-			                          className="btn btn-block btn-ideku f-w-bold">
-			                          Simpan
-			                        </button>
-			                        <button type="button"
-			                          className="btn btn-block f-w-bold"
-			                          onClick={this.handleCloseGrup}>
-			                          Tidak
-			                        </button>
-			                      </Modal.Body>
-			                    </Modal>
-                  			</Col>
-                  		</Row>
+                        <Col md={6}>
+                          <h3 className="f-24 f-w-800 mb-3">
+                            Grup Company
+                            <Button
+                              data-type="grup"
+                              onClick={this.onClickModal}
+                              className="btn btn-sm btn-ideku float-right tambah-grup"
+                            >
+                              <i className="fa fa-plus"></i> Tambah Baru
+                            </Button>
+                            <div className="clearfix"></div>
+                          </h3>
+                          <ListGrup items={grup} />
+                          <Modal
+                            show={this.state.isModalGrup}
+                            onHide={this.handleCloseGrup}
+                          >
+                            <Modal.Body>
+                              <Modal.Title className="text-c-purple3 f-w-bold">
+                                Grup Company
+                              </Modal.Title>
+                              <div
+                                style={{ marginTop: "20px" }}
+                                className="form-group"
+                              >
+                                <label>Nama Grup</label>
+                                <input
+                                  value={this.state.namagrup}
+                                  className="form-control"
+                                  type="text"
+                                  name="namagrup"
+                                  onChange={this.onChangeInput}
+                                  placeholder="Nama Grup"
+                                />
+                              </div>
+                              <button
+                                style={{ marginTop: "50px" }}
+                                type="button"
+                                data-grup={this.state.namagrup}
+                                onClick={this.onClickTambahGrup}
+                                className="btn btn-block btn-ideku f-w-bold"
+                              >
+                                Simpan
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleCloseGrup}
+                              >
+                                Tidak
+                              </button>
+                            </Modal.Body>
+                          </Modal>
+                        </Col>
+                      </Row>
 
-											<Users match={{params: {company_id: this.state.companyId}}} />
+                      <Users
+                        match={{ params: { company_id: this.state.companyId } }}
+                      />
 
-											<Modal show={this.state.isNotifikasi} onHide={this.closeNotifikasi}>
-												<Modal.Body>
-													<Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
-													
-													<p style={{color: 'black', margin: '20px 0px'}}>{this.state.isiNotifikasi}</p>
+                      <Modal
+                        show={this.state.isNotifikasi}
+                        onHide={this.closeNotifikasi}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Notifikasi
+                          </Modal.Title>
 
-													<button type="button"
-														className="btn btn-block f-w-bold"
-														onClick={this.closeNotifikasi}>
-														Mengerti
-													</button>
-												</Modal.Body>
-											</Modal>
+                          <p style={{ color: "black", margin: "20px 0px" }}>
+                            {this.state.isiNotifikasi}
+                          </p>
 
-											<Modal show={this.state.isKonfirmasi} onHide={this.closeKonfirmasi}>
-												<Modal.Body>
-													<Modal.Title className="text-c-purple3 f-w-bold">Notifikasi</Modal.Title>
+                          <button
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}
+                          >
+                            Mengerti
+                          </button>
+                        </Modal.Body>
+                      </Modal>
 
-													<p style={{ color: 'black', margin: '20px 0px' }}>Apakah Anda yakin akan menghapus data ini ?</p>
-													
-													<button type="button"
-														className="btn btn-block btn-ideku f-w-bold"
-														onClick={this.onClickHapus}>
-														Ya, Hapus
-													</button>
-													<button type="button"
-														className="btn btn-block f-w-bold"
-														onClick={this.closeKonfirmasi}>
-														Tidak
-													</button>
-												</Modal.Body>
-											</Modal>
+                      <Modal
+                        show={this.state.isKonfirmasi}
+                        onHide={this.closeKonfirmasi}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Notifikasi
+                          </Modal.Title>
 
+                          <p style={{ color: "black", margin: "20px 0px" }}>
+                            Apakah Anda yakin akan menghapus data ini ?
+                          </p>
+
+                          <button
+                            type="button"
+                            className="btn btn-block btn-ideku f-w-bold"
+                            onClick={this.onClickHapus}
+                          >
+                            Ya, Hapus
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeKonfirmasi}
+                          >
+                            Tidak
+                          </button>
+                        </Modal.Body>
+                      </Modal>
                     </div>
                   </div>
                 </div>
@@ -579,6 +730,6 @@ export default class CompanyDetail extends Component {
           </div>
         </div>
       </div>
-		);
+    );
 	}
 }

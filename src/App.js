@@ -35,6 +35,7 @@ import QuestionQuizEdit from "./components/admin/question/quizedit";
 import ExamList from "./components/admin/exam/exam";
 import QuestionExam from "./components/admin/question/exam";
 import QuestionExamCreate from "./components/admin/question/examcreate";
+import FilePicker from "./components/admin/filemanager/file";
 
 import Cabang from "./components/Users/UserCabang/index";
 import Grup from "./components/Users/UserGroup/index";
@@ -50,6 +51,8 @@ import UjianHasil from "./components/client/ujianhasil";
 
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
+
+import LiveClass, { LiveClassRoom } from "./components/liveclass";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -133,6 +136,10 @@ export class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
 
@@ -160,38 +167,64 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/profile" exact component={Profile} />
         <Route path="/user-access" component={UserAccess} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
-        <Route path="/user-edit/:user_id"  exactcomponent={UserEdit} />
+        <Route path="/user-edit/:user_id" exactcomponent={UserEdit} />
 
         <Route path="/user-company" exact component={UserCompany} />
         <Route path="/user-company-create" component={UserCompanyAdd} />
-        <Route path="/user-company-edit/:user_id" exact component={UserCompanyEdit} />
+        <Route
+          path="/user-company-edit/:user_id"
+          exact
+          component={UserCompanyEdit}
+        />
         <Route path="/user-access" exactcomponent={UserAccess} />
         <Route path="/my-company" exact component={CompanyDetail} />
-        
+
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
-        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
-        
+        <Route
+          path="/kursus-materi-edit/:course_id"
+          exact
+          component={KursusMateriEdit}
+        />
+
         <Route path="/chapter/:course_id" exact component={ChapterPreview} />
 
-        <Route path="/quiz/:course_id" exact component={QuizList}  />
+        <Route path="/quiz/:course_id" exact component={QuizList} />
         <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
-        <Route path="/question-quiz-create/:exam_id" exact component={QuestionQuizCreate} />
-        <Route path="/question-quiz-edit/:question_id" exact component={QuestionQuizEdit} />
-        
-        <Route path="/exam/:course_id" exact component={ExamList}  />
+        <Route
+          path="/question-quiz-create/:exam_id"
+          exact
+          component={QuestionQuizCreate}
+        />
+        <Route
+          path="/question-quiz-edit/:question_id"
+          exact
+          component={QuestionQuizEdit}
+        />
+
+        <Route path="/exam/:course_id" exact component={ExamList} />
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
-        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
-        
+        <Route
+          path="/question-exam-create/:exam_id"
+          exact
+          component={QuestionExamCreate}
+        />
+
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
         <Route path="/grup" exact component={Grup} />
+
+        <Route path="/filemanager" exact component={FilePicker} />
 
         <Route path="/logout" exact component={Logout} />
       </Switch>
@@ -214,6 +247,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />

@@ -8,6 +8,7 @@ import ReactPlayer from 'react-player';
 export default class DetailKursus extends Component {
 
 	state = {
+    quiz: [],
     examId: '',
 		courseId: this.props.match.params.course_id,
 		companyId: '',
@@ -27,7 +28,7 @@ export default class DetailKursus extends Component {
 
     course: { category_name: 'Memuat...' },
 		chapters: [],
-    statChapter: 0,
+    // statChapter: 0,
 	}
 
   pilihChapterTampil = e => {
@@ -48,25 +49,25 @@ export default class DetailKursus extends Component {
         }
       })
 
-      const iterasi = e.target.getAttribute('data-iterasi');
-      // cek stat chapter
-      if(iterasi < this.state.statChapter) {
-        // cek statChapter == jumlah chapters
-        if(this.state.statChapter <= this.state.chapters.length) {
+      // const iterasi = e.target.getAttribute('data-iterasi');
+      // // cek stat chapter
+      // if(iterasi < this.state.statChapter) {
+      //   // cek statChapter == jumlah chapters
+      //   if(this.state.statChapter <= this.state.chapters.length) {
 
-          const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
+      //     const chapterVisited = localStorage.getItem(`chapter${iterasi}Visited`)
           
-          if(!chapterVisited) {
-            localStorage.setItem(`chapter${iterasi}Visited`, true)
-            this.setState({ statChapter: this.state.statChapter+1 })
+      //     if(!chapterVisited) {
+      //       localStorage.setItem(`chapter${iterasi}Visited`, true)
+            // this.setState({ statChapter: this.state.statChapter+1 })
           
-            // update statChapter
-            API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
-          }
-        }
-      } else {
-        this.setState({ isNotifUrut: true })
-      }
+      //       // update statChapter
+      //       API.put(`${API_SERVER}v1/user-course/chapter/${Storage.get('user').data.user_id}/${this.state.courseId}`, { stat_chapter: this.state.statChapter })
+      //     }
+      //   }
+      // } else {
+      //   this.setState({ isNotifUrut: true })
+      // }
     }
   }
 
@@ -98,13 +99,11 @@ export default class DetailKursus extends Component {
         })
 
         API.get(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`).then(res => {
-          console.log(`${API_SERVER}v1/user-course/cek/${Storage.get('user').data.user_id}/${this.state.courseId}`)
           if(res.status === 200) {
-            console.log('res:', res.data.response)
             this.setState({ 
               isIkutiKursus: res.data.result, 
               isButtonIkuti: !res.data.result, 
-              statChapter: res.data.response.length !== 0 ? parseInt(res.data.response[0].stat_chapter) : 0 
+              // statChapter: res.data.response.length !== 0 ? parseInt(res.data.response[0].stat_chapter) : 0 
             })
           }
         })
@@ -123,13 +122,27 @@ export default class DetailKursus extends Component {
           }
         })
 
+        // cek apakah ada ujian
         API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length !== 0) {
               this.setState({ examId: res.data.result[0].exam_id })
-            } else {
-              this.setState({ isUjianBelumAda: true, isMatiJikaTidakAdaUjian: true })
+            } 
+            else {
+              this.setState({ 
+                // isUjianBelumAda: true, 
+                isMatiJikaTidakAdaUjian: true 
+              })
             }
+          }
+        })
+
+        // cek apakah ada quiz
+        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+          if(res.status === 200) {
+            if(res.data.result.length !== 0) {
+              this.setState({ quiz: res.data.result })
+            } 
           }
         })
 
@@ -137,9 +150,9 @@ export default class DetailKursus extends Component {
     })
   }
 
-	componentDidMount() {
-    this.fetchDataChapter()
-    this.fetctDataCourse()
+	async componentDidMount() {
+    await this.fetchDataChapter()
+    await this.fetctDataCourse()
 	}
 
   onClickIkutiKursus = e => {
@@ -150,12 +163,14 @@ export default class DetailKursus extends Component {
     }
     API.post(`${API_SERVER}v1/user-course`, form).then(res => {
       if(res.status === 200) {
-        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false, statChapter: 1 })
+        this.setState({ isIkutiKursus: !this.state.isIkutiKursus, isButtonIkuti: false, 
+          // statChapter: 1 
+        })
       }
     })
   }
 
-  onClickIkutiQuiz = e => {
+  onClickIkutiExam = e => {
     e.preventDefault();
     API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
       if(res.status === 200) {
@@ -173,39 +188,94 @@ export default class DetailKursus extends Component {
     const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
+    let refactoryChapters = [...this.state.chapters];
+    for(let i=0; i<this.state.quiz.length; i++) {
+      refactoryChapters.splice(this.state.quiz[i].quiz_at-1,0, this.state.quiz[i]);
+    }
+
+    console.log('refac: ', refactoryChapters)
+
     const ListChapter = ({lists}) => {
       if(lists.length !== 0) {
         return (
           <div>
-          {
-            lists.map((item, i) => {
-              if(i < this.state.statChapter) {
+            {lists.map((item, i) => {
+              if(item.quiz) {
                 return (
-                  <Card onClick={this.pilihChapterTampil} className={`card-${this.state.isIkutiKursus ? 'active':'nonactive'}`} key={item.chapter_id}>
+                  <Card
+                    className={`card-${
+                      this.state.isIkutiKursus ? "active" : "nonactive"
+                    }`}
+                  >
                     <Card.Body>
-                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
-                        {item.chapter_title} 
-                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-iterasi={i}
+                      >
+                        <Form.Text>Quiz</Form.Text>
+                        {item.exam_title}
+                        <span
+                          style={{
+                            position: "absolute",
+                            right: "30px",
+                            bottom: "36px"
+                          }}
+                        >
+                          <i
+                            className={`fa fa-${
+                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            }`}
+                          ></i>
+                        </span>
                       </h3>
                     </Card.Body>
                   </Card>
-                )
+                );
               } else {
                 return (
-                  <Card onClick={this.pilihChapterTampil} className={`card-nonactive`} key={item.chapter_id}>
+                  <Card
+                    onClick={this.pilihChapterTampil}
+                    className={`card-${
+                      this.state.isIkutiKursus ? "active" : "nonactive"
+                    }`}
+                    key={item.chapter_id}
+                  >
                     <Card.Body>
-                      <h3 className="f-18 f-w-800" style={{marginBottom: '0px'}} data-id={item.chapter_id} data-iterasi={i}>
-                        {item.chapter_title} 
-                        <span style={{position: 'absolute', right: '30px'}}><i className={`fa fa-${this.state.isIkutiKursus ? 'unlock':'lock'}`}></i></span>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-id={item.chapter_id}
+                        data-iterasi={i}
+                      >
+                        <Form.Text data-id={item.chapter_id}>
+                          Chapter {i + 1}
+                        </Form.Text>
+                        {item.chapter_title}
+                        <span
+                          style={{
+                            position: "absolute",
+                            right: "30px",
+                            bottom: "36px"
+                          }}
+                        >
+                          <i
+                            className={`fa fa-${
+                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            }`}
+                          ></i>
+                        </span>
                       </h3>
                     </Card.Body>
                   </Card>
-                )
+                );
               }
-            })  
-          }
+            })}
+
+            <LinkUjian isUjian={this.state.isUjian} />
+
           </div>
-        )
+        );
       } else {
         return (
           <Card style={{marginTop: '10px'}}>
@@ -218,16 +288,31 @@ export default class DetailKursus extends Component {
     const LinkUjian = ({isUjian}) => {
       if(isUjian) {
         return (
-          <Link style={{marginTop: '20px'}} to={`/ujian-hasil/${this.state.examId}`} className="btn btn-block btn-ideku">Lihat Hasil Ujian</Link>
+          <Link
+            style={{ marginTop: "20px", padding: "20px" }}
+            to={`/ujian-hasil/${this.state.examId}`}
+            className="btn f-18 f-w-bold btn-block btn-ideku"
+          >
+            Lihat Hasil Ujian
+          </Link>
         );
       } else {
         return (
           <div>
-          { 
-            isIkutiKursus && <Link onClick={this.onClickIkutiQuiz} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-              Ikuti Ujian
-            </Link> 
-          }
+            {isIkutiKursus && !isMatiJikaTidakAdaUjian && (
+              <Link
+                onClick={this.onClickIkutiExam}
+                to="#"
+                className="btn f-18 f-w-bold btn-primary btn-block"
+                style={{
+                  fontWeight: "bold",
+                  margin: "20px 0px",
+                  padding: "20px"
+                }}
+              >
+                Ikuti Ujian
+              </Link>
+            )}
           </div>
         );
       }
@@ -262,59 +347,90 @@ export default class DetailKursus extends Component {
     }
 
 		return (
-			<div className="pcoded-main-container">
+      <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-
                   <div className="row">
                     <div className="col-xl-8">
-
                       <CheckMedia media={course.image} />
 
-                      { course.category_name && <a className="btn btn-ideku" href="#" style={{fontWeight: 'bold', marginTop: '5px'}}>{course.category_name}</a> }
-                      
-                      <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '20px'}}>{course.title}</h3>
-                      
-                      { course.created_at && <p>{dateFormat.toString()}</p> }
+                      {course.category_name && (
+                        <Link
+                          className="btn btn-ideku"
+                          to="#"
+                          style={{ fontWeight: "bold", marginTop: "5px" }}
+                        >
+                          {course.category_name}
+                        </Link>
+                      )}
 
-                      { course.caption && <p class="lead">{course.caption}</p> }
+                      <h3
+                        className="f-24 f-w-800 mb-3"
+                        style={{ marginTop: "20px" }}
+                      >
+                        {course.title}
+                      </h3>
 
-                      { isIkutiKursus && <div dangerouslySetInnerHTML={{ __html: course.body }} /> }
+                      {course.created_at && (
+                        <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+                      )}
 
-                      <LinkUjian isUjian={this.state.isUjian} />
+                      {course.caption && <p class="lead">{course.caption}</p>}
 
-                      {
-                        !isMatiJikaTidakAdaUjian && (<div>
-                          { isButtonIkuti && 
-                            <Link onClick={this.onClickIkutiKursus} to="#" className="btn btn-primary btn-block" style={{fontWeight: 'bold', margin: '40px 0px'}}>
-                              Ikuti Kursus
-                            </Link>
-                          }
-                        </div>)
-                      }
+                      {isIkutiKursus && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: course.body }}
+                        />
+                      )}
+
+                      {isButtonIkuti && (
+                        <Link
+                          onClick={this.onClickIkutiKursus}
+                          to="#"
+                          className="btn f-18 f-w-bold btn-primary btn-block f-24"
+                          style={{
+                            fontWeight: "bold",
+                            margin: "10px 0px",
+                            padding: "20px"
+                          }}
+                        >
+                          Ikuti Kursus
+                        </Link>
+                      )}
 
                     </div>
-                  
+
                     <div className="col-xl-4">
-                      <h3 className="f-24 f-w-800 mb-3">
-                        List Chapter
-                      </h3>
-                      <ListChapter lists={chapters} />
+                      <h3 className="f-24 f-w-800 mb-3">List Chapter</h3>
+                      <ListChapter lists={refactoryChapters} />
+                      {/* <ListChapter lists={chapters} /> */}
                     </div>
                   </div>
 
-                  <Modal show={this.state.isModalQuiz} onHide={this.handleModalQuizClose}>
-                    <Modal.Body style={{padding: '30px'}}>
-                      <div className="text-center" style={{marginTop: '20px'}}>
+                  <Modal
+                    show={this.state.isModalQuiz}
+                    onHide={this.handleModalQuizClose}
+                  >
+                    <Modal.Body style={{ padding: "30px" }}>
+                      <div
+                        className="text-center"
+                        style={{ marginTop: "20px" }}
+                      >
                         <img src="/assets/images/component/exam.png" />
                       </div>
-                      <a className="btn btn-ideku" href="#" style={{marginTop: '30px', fontWeight: 'bold'}}>
+                      <Link
+                        className="btn btn-ideku"
+                        to="#"
+                        style={{ marginTop: "30px", fontWeight: "bold" }}
+                      >
                         {this.state.kategoriCourse}
-                      </a>
-                      <h3 className="f-24 f-w-800 mb-3">{this.state.judulCourse}</h3>
+                      </Link>
+                      <h3 className="f-24 f-w-800 mb-3">
+                        {this.state.judulCourse}
+                      </h3>
 
                       <table>
                         <tbody>
@@ -323,8 +439,15 @@ export default class DetailKursus extends Component {
                               <img src="/assets/images/component/question.png" />
                             </td>
                             <td>
-                              <span style={{marginLeft: '14px'}}>Total Soal</span>
-                              <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{countSoal} Soal</h3>
+                              <span style={{ marginLeft: "14px" }}>
+                                Total Soal
+                              </span>
+                              <h3
+                                style={{ marginLeft: "14px" }}
+                                className="f-18 f-w-800 mb-3"
+                              >
+                                {countSoal} Soal
+                              </h3>
                             </td>
                           </tr>
                           <tr>
@@ -332,55 +455,83 @@ export default class DetailKursus extends Component {
                               <img src="/assets/images/component/clock.png" />
                             </td>
                             <td>
-                              <span style={{marginLeft: '14px'}}>Waktu Pengerjaan</span>
-                              <h3 style={{marginLeft: '14px'}} className="f-18 f-w-800 mb-3">{durasiWaktu} Menit</h3>
+                              <span style={{ marginLeft: "14px" }}>
+                                Waktu Pengerjaan
+                              </span>
+                              <h3
+                                style={{ marginLeft: "14px" }}
+                                className="f-18 f-w-800 mb-3"
+                              >
+                                {durasiWaktu} Menit
+                              </h3>
                             </td>
                           </tr>
                         </tbody>
                       </table>
 
-                      <Link style={{marginTop: '20px'}} to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu}`} className="btn btn-block btn-ideku f-w-bold">
+                      <Link
+                        style={{ marginTop: "20px" }}
+                        to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu}`}
+                        className="btn btn-block btn-ideku f-w-bold"
+                      >
                         Ya, Mulai Ujian
                       </Link>
-                      <button type="button"
+                      <button
+                        type="button"
                         className="btn btn-block f-w-bold"
-                        onClick={this.handleModalQuizClose}>
+                        onClick={this.handleModalQuizClose}
+                      >
                         Kembali
                       </button>
                     </Modal.Body>
                   </Modal>
 
-                  <Modal show={this.state.isUjianBelumAda} onHide={this.handleUjianBelumAda}>
+                  <Modal
+                    show={this.state.isUjianBelumAda}
+                    onHide={this.handleUjianBelumAda}
+                  >
                     <Modal.Body>
-                      <h3 className="f-24 f-w-800 mb-3">Belum ada ujian pada kursus ini.</h3>
-                      
-                      <button style={{marginTop: '30px'}} type="button"
+                      <h3 className="f-24 f-w-800 mb-3">
+                        Belum ada ujian pada kursus ini.
+                      </h3>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
                         className="btn f-w-bold"
-                        onClick={this.handleUjianBelumAda}>
+                        onClick={this.handleUjianBelumAda}
+                      >
                         Mengerti
                       </button>
                     </Modal.Body>
                   </Modal>
 
-                  <Modal show={this.state.isNotifUrut} onHide={this.closeNotifUrut}>
+                  <Modal
+                    show={this.state.isNotifUrut}
+                    onHide={this.closeNotifUrut}
+                  >
                     <Modal.Body>
-                      <h3 className="f-24 f-w-800 mb-3">Selesaikan chapter sesuai urutannya.</h3>
-                      
-                      <button style={{marginTop: '30px'}} type="button"
+                      <h3 className="f-24 f-w-800 mb-3">
+                        Selesaikan chapter sesuai urutannya.
+                      </h3>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
                         className="btn f-w-bold"
-                        onClick={this.closeNotifUrut}>
+                        onClick={this.closeNotifUrut}
+                      >
                         Mengerti
                       </button>
                     </Modal.Body>
                   </Modal>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-		);
+    );
 	}
 
 }

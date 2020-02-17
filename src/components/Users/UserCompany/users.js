@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -20,14 +20,28 @@ export default class Users extends Component {
 
       isModalVoucher: false,
       userIdVoucher: '',
-      voucher: ''
+      voucher: '',
+      notif: ""
     };
   }
 
   handleChangeInput = e => {
+    const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
-    this.setState({ [name]: value });
+
+    if (name === "voucher") {
+      API.get(`${API_SERVER}v1/user/cek/voucher/${value}`).then(res => {
+        if (res.data.error) {
+          target.value = "";
+          this.setState({ notif: "Voucher sudah digunakan." });
+        } else {
+          this.setState({ [name]: value });
+        }
+      });
+    } else {
+      this.setState({ [name]: value });
+    }
   }
 
   onClickHapus = e => {
@@ -86,7 +100,7 @@ export default class Users extends Component {
   }
 
   handleModalVoucher = e => {
-    this.setState({ isModalVoucher: false, userIdVoucher: '' });
+    this.setState({ isModalVoucher: false, userIdVoucher: '', notif: '' });
   }
 
   componentDidMount() {
@@ -125,6 +139,7 @@ export default class Users extends Component {
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
+          <td>{item.grup_name}</td>
           <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
@@ -169,6 +184,7 @@ export default class Users extends Component {
                 <th>Nama</th>
                 <th>Nomor Induk</th>
                 <th>Cabang</th>
+                <th>Grup</th>
                 <th>Level</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -176,7 +192,7 @@ export default class Users extends Component {
                 <th className="text-center">
                   <Link
                     to={"/user-company-create"}
-                    className="btn btn-ideku col-12 f-14"
+                    className="btn btn-ideku col-12 f-14 tambah-user"
                     style={{ padding: "7px 8px !important" }}
                   >
                     <img
@@ -238,6 +254,7 @@ export default class Users extends Component {
                 <div className="form-group">
                   <label>Voucher</label>
                   <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" onChange={this.handleChangeInput} />
+                  {this.state.notif && <Form.Text className="text-danger">{this.state.notif}</Form.Text>}
                 </div>
 
                 <button style={{ marginTop: '50px'}} type="submit"
