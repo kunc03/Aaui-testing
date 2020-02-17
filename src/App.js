@@ -54,6 +54,8 @@ import ForumDetail from "./components/forum/forum-detail";
 
 import LiveClass, { LiveClassRoom } from "./components/liveclass";
 
+import Kursus from "./components/Kursus";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -172,6 +174,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         
         <Route path="/pengaturan" exact component={Pengaturan} />
+
         <Route path="/profile" exact component={Profile} />
         <Route path="/user-access" component={UserAccess} />
 
@@ -252,6 +255,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
+
+        <Route path="/kursus" component={Kursus} />
+
         <Route path="/profile" component={Profile} />
         
         <Route path="/logout" component={Logout} />
