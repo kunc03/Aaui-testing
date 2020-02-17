@@ -48,7 +48,8 @@ export default class DetailKursus extends Component {
           let courseChapter = {
             image: res.data.result.chapter_video,
             title: res.data.result.chapter_title,
-            body: res.data.result.chapter_body
+            body: res.data.result.chapter_body,
+            attachments: res.data.result.attachment_id
           }
           this.setState({ course: courseChapter })
         }
@@ -373,6 +374,22 @@ export default class DetailKursus extends Component {
       return null
     };
 
+    const Attachments = ({media}) => {
+      if(media) {
+        let pecah = media.split(',');
+        return (
+          <div>
+          {
+            pecah.map((item, i) => (
+              <a href={item} target="_blank" className="btn btn-ideku" style={{marginRight: '10px'}}>Attachments {i+1}</a>
+            ))
+          }
+          </div>
+        );
+      }
+      return null;
+    };
+
 		return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -413,6 +430,10 @@ export default class DetailKursus extends Component {
                         />
                       )}
 
+                      {
+                        course.attachments && <Attachments media={course.attachments} />
+                      }
+
                       {isButtonIkuti && (
                         <Link
                           onClick={this.onClickIkutiKursus}
@@ -442,14 +463,16 @@ export default class DetailKursus extends Component {
                     onHide={this.handleModalScoreClose}
                   >
                     <Modal.Body>
-                      <h3 className="f-24 f-w-800 mb-3">
-                        Nilai anda adalah {this.state.score}
-                      </h3>
+                      <img className="img-fluid" src="/assets/images/component/hasil.png" alt="media" />
+                      <h3 style={{ position: 'absolute', left: '18%', bottom: '180px', color: 'white' }}
+                        className="f-40 f-w-800 mb-3">Nilai Quiz</h3>
+                      <h3 style={{ position: 'absolute', left: '18%', bottom: '120px', color: 'white' }}
+                        className="f-50 f-w-800 mb-3">{this.state.score}</h3>
 
                       <button
                         style={{ marginTop: "30px" }}
                         type="button"
-                        className="btn f-w-bold"
+                        className="btn f-w-bold btn-block"
                         onClick={this.handleModalScoreClose}
                       >
                         Mengerti

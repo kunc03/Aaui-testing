@@ -26,7 +26,11 @@ export default class KursusMateriEdit extends Component {
     
     isNotifikasi: false, 
     isiNotifikasi: ''
-	}
+  }
+  
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
 
 	onChangeInput = (event) => {
     const target = event.target;
