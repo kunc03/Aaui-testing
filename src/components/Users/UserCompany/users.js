@@ -200,7 +200,7 @@ export default class Users extends Component {
                       className="button-img"
                       alt=""
                     />
-                    Add New
+                    Tambah Baru
                   </Link>
                 </th>
               </tr>

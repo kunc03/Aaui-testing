@@ -152,13 +152,14 @@ export default class User extends Component {
   render() {
     let { users } = this.state;
 
-    const Item = ({ item }) => {
+    const Item = ({ item, iter }) => {
       return (
         <tr>
-          <td>{item.user_id}</td>
+          <td>{iter}</td>
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
+          <td>{item.grup_name}</td>
           <td style={{ textTransform: "capitalize" }}>
             {item.level}
           </td>
@@ -207,15 +208,15 @@ export default class User extends Component {
         return (
           <tbody>
             <tr>
-              <td colSpan='9'>Tidak ada user</td>
+              <td colSpan='10'>Tidak ada user</td>
             </tr>
           </tbody>
         )
       } else {
         return (
           <tbody>
-            {lists.map(list => (
-              <Item key={list.user_id} item={list} />
+            {lists.map((list, i) => (
+              <Item key={list.user_id} item={list} iter={i+1} />
             ))}
           </tbody>
         )
@@ -234,6 +235,7 @@ export default class User extends Component {
                 <th>Nama</th>
                 <th>Nomor Induk</th>
                 <th>Cabang</th>
+                <th>Grup</th>
                 <th>Level</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -249,7 +251,7 @@ export default class User extends Component {
                       className="button-img"
                       alt=""
                     />
-                    Add New
+                    Tambah Baru
                   </Link>
                 </th>
               </tr>

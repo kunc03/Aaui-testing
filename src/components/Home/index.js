@@ -86,7 +86,7 @@ class Home extends Component {
             <img
               className="img-fluid img-kursus radius-top-l-r-5"
               src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
-              alth="Cover"
+              alt="Cover"
             />
           );
         }

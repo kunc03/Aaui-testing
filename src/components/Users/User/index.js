@@ -97,22 +97,16 @@ export default class User extends Component {
   render() {
     let { users } = this.state;
 
-
-    const isSuper = 
-      Storage.get('user')
-      .data.level === 'superadmin'? 1 : 0;
-
-    const Item = ({ item }) => {
-
-        console.log(isSuper,"asdadfgdfglsdj")
-
+    const Item = ({ item, iter }) => {
       return (
         <tr>
-          <td>{item.user_id}</td>
+          <td>{iter}</td>
           <td>{item.name}</td>
           <td>{item.identity}</td>
+          <td>{item.company_name}</td>
           <td>{item.branch_name}</td>
-          <td>{item.level}</td>
+          <td>{item.grup_name}</td>
+          <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
           {isSuper ? (<td>{item.company_name}</td>) : ""}
@@ -137,8 +131,8 @@ export default class User extends Component {
 
     const Lists = ({ lists }) => (
       <tbody>
-        {lists.map(list => (
-          <Item key={list.user_id} item={list} />
+        {lists.map((list, i) => (
+          <Item key={list.user_id} item={list} iter={i+1} />
         ))}
       </tbody>
     );
@@ -161,10 +155,12 @@ export default class User extends Component {
                         >
                           <thead>
                             <tr>
-                              <th className="text-center">ID</th>
+                              <th className="text-center">No</th>
                               <th>Nama</th>
                               <th>Nomor Induk</th>
+                              <th>Company</th>
                               <th>Cabang</th>
+                              <th>Grup</th>
                               <th>Level</th>
                               <th>Email</th>
                               <th>Phone</th>

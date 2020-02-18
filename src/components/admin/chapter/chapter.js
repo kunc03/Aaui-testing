@@ -20,7 +20,8 @@ export default class ChapterPreview extends Component {
 		chapterNumber: '',
 		chapterTitle: '',
 		chapterBody: '',
-		chapterVideo: '',
+    chapterVideo: '',
+    attachmentId: [],
 
 		isModalAdd: false,
 		isModalHapus: false,
@@ -52,10 +53,12 @@ export default class ChapterPreview extends Component {
 
 		if(name === 'chapterVideo') {
 			this.setState({ [name]: e.target.files[0] });
-		} else {
+		} else if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
 			this.setState({ [name]: value });
 		}
-	}
+  }
 
 	/** CLICK ADD */
 	handleModalAdd = e => {
@@ -70,12 +73,14 @@ export default class ChapterPreview extends Component {
 			chapterNumber: '',
 			chapterTitle: '',
 			chapterBody: '',
-			chapterVideo: ''
+			chapterVideo: '',
+			attachmentId: ''
 		});
 	}
 
 	onSubmitChapter = e => {
-		e.preventDefault();
+    e.preventDefault();
+    // action for update
 		if(this.state.chapterId !== "") {
 			let form = {
 				course_id: this.state.courseId,
@@ -83,11 +88,10 @@ export default class ChapterPreview extends Component {
 				chapter_number: this.state.chapterNumber,
 				chapter_title: this.state.chapterTitle,
 				chapter_body: this.state.chapterBody,
-				attachment_id: '1'
 			}
 
 			API.put(`${API_SERVER}v1/chapter/${this.state.chapterId}`, form).then(res => {
-				if(res.status == 200){
+				if(res.status === 200){
 					this.handleModalClose();
 					this.fetchDataChapter();
 				}
@@ -97,12 +101,27 @@ export default class ChapterPreview extends Component {
 				let form = new FormData();
 				form.append('chapter_video', this.state.chapterVideo);
 				API.put(`${API_SERVER}v1/chapter/video/${this.state.chapterId}`, form).then(res => {
-					if(res.status == 200){
+					if(res.status === 200){
 						this.handleModalClose();
 						this.fetchDataChapter();
 					}
 				})				
-			}
+      }
+
+      if (this.state.attachmentId !== "") {
+        let formData = new FormData();
+        for (let i = 0; i < this.state.attachmentId.length; i++) {
+          formData.append('attachment_id', this.state.attachmentId[i]);
+        }
+        API.put(`${API_SERVER}v1/chapter/attachment/${this.state.chapterId}`, formData).then(res => {
+          if (res.status === 200) {
+            this.handleModalClose();
+            this.fetchDataChapter();
+          }
+        })
+      }
+      
+    // action for insert
 		} else {
 			let form = new FormData();
 			form.append('course_id', this.state.courseId);
@@ -111,10 +130,19 @@ export default class ChapterPreview extends Component {
 			form.append('chapter_title', this.state.chapterTitle);
 			form.append('chapter_body', this.state.chapterBody);
 			form.append('chapter_video', this.state.chapterVideo);
-			form.append('attachment_id', '1');
+			form.append('attachment_id', null);
 
 			API.post(`${API_SERVER}v1/chapter`, form).then(res => {
 				if(res.status === 200){
+          
+          if(this.state.attachmentId.length !== "") {
+            let formData = new FormData();
+            for(let i=0; i<this.state.attachmentId.length; i++) {
+              formData.append('attachment_id', this.state.attachmentId[i]);
+            }
+            API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
+          }
+
 					this.handleModalClose()
 					this.fetchDataChapter()
 				}
@@ -207,14 +235,9 @@ export default class ChapterPreview extends Component {
 			this.setState({ isLocalSteps: true });
 			localStorage.setItem('isTourChapter', true);
     }
-
-    console.groupCollapsed(type);
-    console.log(data); //eslint-disable-line no-console
-    console.groupEnd();
   };
 
 	render() {
-		console.log(this.state)
 		const {chapters, course} = this.state;
 
 		const CheckMedia = ({ media }) => {
@@ -397,7 +420,7 @@ export default class ChapterPreview extends Component {
                   <Modal
                     show={this.state.isModalAdd}
                     onHide={this.handleModalClose}
-                    dialogClassName="modal-lg"
+                    dialogClassName="modal-xlg"
                   >
                     <Modal.Body>
                       <Modal.Title className="text-c-purple3 f-w-bold">
@@ -431,6 +454,21 @@ export default class ChapterPreview extends Component {
                             />
                           </div>
                           <div className="form-group">
+                            <label>Media Chapter</label>
+                            <input
+                              accept="image/*,video/*"
+                              name="chapterVideo"
+                              onChange={this.onChangeInput}
+                              type="file"
+                              placeholder="media chapter"
+                              className="form-control"
+                            />
+                            <Form.Text>
+                              Pastikan file berformat mp4, png, jpg, jpeg, atau
+                              gif dan ukuran file tidak melebihi 20MB.
+                            </Form.Text>
+                          </div>
+                          <div className="form-group">
                             <Editor
                               apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                               initialValue={this.state.chapterBody}
@@ -451,18 +489,18 @@ export default class ChapterPreview extends Component {
                             />
                           </div>
                           <div className="form-group">
-                            <label>Media Chapter</label>
+                            <label>Lampiran</label>
                             <input
-                              accept="image/*,video/*"
-                              name="chapterVideo"
+                              accept="application/pdf"
+                              name="attachmentId"
                               onChange={this.onChangeInput}
                               type="file"
+                              multiple
                               placeholder="media chapter"
                               className="form-control"
                             />
                             <Form.Text>
-                              Pastikan file berformat mp4, png, jpg, jpeg, atau
-                              gif dan ukuran file tidak melebihi 20MB.
+                              Bisa banyak file, pastikan file berformat pdf dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>
 
