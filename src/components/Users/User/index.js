@@ -95,10 +95,10 @@ export default class User extends Component {
   render() {
     let { users } = this.state;
 
-    const Item = ({ item }) => {
+    const Item = ({ item, iter }) => {
       return (
         <tr>
-          <td>{item.user_id}</td>
+          <td>{iter}</td>
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.company_name}</td>
@@ -128,8 +128,8 @@ export default class User extends Component {
 
     const Lists = ({ lists }) => (
       <tbody>
-        {lists.map(list => (
-          <Item key={list.user_id} item={list} />
+        {lists.map((list, i) => (
+          <Item key={list.user_id} item={list} iter={i+1} />
         ))}
       </tbody>
     );
