@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
@@ -49,7 +49,10 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
-import Forum, { ForumDetail } from "./components/forum/forum";
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
+
+import LiveClass, { LiveClassRoom } from "./components/liveclass";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -133,6 +136,10 @@ export class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
 
@@ -240,6 +247,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
