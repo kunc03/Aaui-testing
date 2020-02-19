@@ -242,7 +242,7 @@ export default class QuestionQuizEdit extends Component {
                             variant="ideku"
                             type="button"
                           >
-                            Tambah Pilihan
+                               Pilihan
                           </Button>
 
                           <ul
@@ -256,6 +256,23 @@ export default class QuestionQuizEdit extends Component {
                               if(item.exam_option === this.state.correctOption) {
                                 return (
                                   <li key={item.option_id}>
+                                    <Link
+                                      to="#"
+                                      className="buttonku"
+                                      title="Pilih Sebagai Jawaban Benar"
+                                    >
+                                      <input type="radio" name="site_name" 
+                                        value={item.exam_option} 
+                                        checked={item.exam_option === this.state.correctOption} 
+                                        name={item.option_id}
+
+                                        onClick={console.log(0)}
+                                        data-id={item.option_id}
+                                        data-option={item.exam_option}
+                                      />
+                                    </Link>
+
+                                    &nbsp;
                                     {item.exam_option}. {item.description} &nbsp;
                                     <Link to="#" className="buttonku" title="Edit">
                                       <i
@@ -277,20 +294,25 @@ export default class QuestionQuizEdit extends Component {
                               } else {
                                 return (
                                   <li key={item.option_id}>
-                                    {item.exam_option}. {item.description}{" "}
-                                    &nbsp;
                                     <Link
                                       to="#"
                                       className="buttonku"
                                       title="Pilih Sebagai Jawaban Benar"
                                     >
-                                      <i
+                                      <input type="radio" name="site_name" 
+                                        value={item.exam_option} 
+                                        checked={item.exam_option === this.state.correctOption} 
+                                        name={item.option_id}
+
                                         onClick={this.pilihJawabanBenar}
                                         data-id={item.option_id}
                                         data-option={item.exam_option}
-                                        className="fa fa-check"
-                                      ></i>
+                                      />
                                     </Link>
+
+                                    &nbsp;
+                                    {item.exam_option}. {item.description}{" "}
+                                    &nbsp; 
                                     <Link
                                       to="#"
                                       className="buttonku"
