@@ -195,7 +195,7 @@ export default class UjianKursus extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>QUIZ</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>UJIAN</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
