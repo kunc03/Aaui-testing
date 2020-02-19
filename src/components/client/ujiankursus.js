@@ -51,7 +51,8 @@ export default class UjianKursus extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
-        API.get(`${API_SERVER}v1/quiz/${this.state.examId}`).then(res => {
+        
+        API.get(`${API_SERVER}v1/isquizorexam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
             this.setState({ courseId: res.data.result.course_id });
             API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
@@ -194,7 +195,7 @@ export default class UjianKursus extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>QUIZ</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>UJIAN</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
