@@ -109,7 +109,6 @@ export default class User extends Component {
           <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
-          {isSuper ? (<td>{item.company_name}</td>) : ""}
           <td>{item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
@@ -164,7 +163,6 @@ export default class User extends Component {
                               <th>Level</th>
                               <th>Email</th>
                               <th>Phone</th>
-                              {isSuper ? <th>Company</th> : ""}
                               <th>Validity</th>
                               <th className="text-center">
                                 <Link
