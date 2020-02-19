@@ -39,6 +39,7 @@ export default class DetailKursus extends Component {
   pilihChapterTampil = e => {
     e.preventDefault();
       
+
     // cek apakah sudah mengikuti kursus
     if(this.state.isIkutiKursus) {
       
@@ -261,6 +262,7 @@ export default class DetailKursus extends Component {
                   </Card>
                 );
               } else {
+                console.log("TOOO", item.chapter_id);
                 return (
                   <Card
                     onClick={this.pilihChapterTampil}
@@ -270,7 +272,7 @@ export default class DetailKursus extends Component {
                     data-id={item.chapter_id}
                     key={item.chapter_id}
                   >
-                    <Card.Body>
+                    <Card.Body data-id={item.chapter_id}>
                       <h3
                         className="f-18 f-w-800"
                         style={{ marginBottom: "0px" }}
