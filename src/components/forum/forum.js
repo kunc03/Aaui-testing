@@ -13,7 +13,7 @@ export default class Forum extends Component {
 	state = {
 		forums: [],
 		isForumAdd: false,
-
+		user : {},
 		user_id: Storage.get('user').data.user_id,
 		company_id:'',
 		title: '',
@@ -34,7 +34,6 @@ export default class Forum extends Component {
 	}
 
 	componentWillMount() {
-		
 		_postLIstAllForum.bind(this)();
 		// let forums = [
 		// 	{judul: 'Judul 1', update: 'Last update 1 days ago 02/02/2020', isi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', komentar: 30},

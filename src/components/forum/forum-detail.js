@@ -19,6 +19,7 @@ export default class ForumDetail extends Component {
     }
     
     componentWillMount(){
+        //console.log(this.props)
         _getDetailForumList.bind(this, this.props.match.params.forum_id)();
     }
 
@@ -102,7 +103,7 @@ export default class ForumDetail extends Component {
                                                     <Form>
                                                         <Form.Group controlId="formIsi">
                                                         <Form.Label className="f-w-bold">Berikan Komentar</Form.Label>
-                                                        <Form.Control as="textarea" rows="5" placeholder="Berikan Komentar" onChange={e => this.setState({kontent: e.target.value})}/>
+                                                        <Form.Control as="textarea" rows="5" value={this.state.kontent} placeholder="Berikan Komentar" onChange={e => this.setState({kontent: e.target.value})}/>
                                                         <Form.Text className="text-muted">
                                                             Jelaskan isi dari forum, peraturan, atau yang lain.
                                                         </Form.Text>
@@ -124,7 +125,7 @@ export default class ForumDetail extends Component {
                                         <Col sm={4}>
                                             <Card>
                                                 <Card.Body>
-                                                    <Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
+                                                    {/* <Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button> */}
 
                                                     <div className="forum-filter">
                                                         <ListGroup>

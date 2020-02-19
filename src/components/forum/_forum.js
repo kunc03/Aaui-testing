@@ -8,16 +8,18 @@ export function _postLIstAllForum(){
    let getEmailLocal = JSON.parse(localStorage.getItem('user')).data.email;
    //console.log(getEmailLocal)
     API.get(`${USER_ME}${getEmailLocal}`).then(res=>{
+      //console.log(this.props)
       if(res.status === 200){
         if(!res.data.error){
-            this.setState({company_id: res.data.result.company_id})
+            //this.props.user = res.data.result;
+            this.setState({company_id: res.data.result.company_id, user : res.data.result})
         }
       }
     })
     .then(() => {
-      console.log(`${FORUM}/company/${this.state.company_id}`);
+     // console.log(`${FORUM}/company/${this.state.company_id}`);
       API.get(`${FORUM}/company/${this.state.company_id}`).then(res=> {
-        console.log(res.data)
+       // console.log(res.data)
           if(res.status === 200){
             if(!res.data.error){
                 this.setState({ forums: res.data.result })
@@ -47,7 +49,7 @@ export function _getDetailForumList(idForum){
 
 export function _addforum(e) {
     e.preventDefault();
-    console.log(e);
+   // console.log(e);
     let stateCopy = this.state,
     user_data = {
         company_id : stateCopy.company_id,
@@ -58,11 +60,14 @@ export function _addforum(e) {
     };
     
     API.post(`${FORUM}`, user_data).then(res=> {
-      console.log(res.data)
+      //console.log(res.data)
         if(res.status === 200){
           if(!res.data.error){
+            let forum = this.state.forums;
+            let newForums = [...forum, res.data.result]
             this.setState({
-                isForumAdd: false
+                isForumAdd: false,
+                forums: newForums
             })
           }
         }
@@ -74,17 +79,20 @@ export function _addforum(e) {
 };
 
 export function _komentarPost(){
-  console.log(this.state, "koment coiisgg")
+  //console.log(Storage.get('user').data.avatar , "koment coiisgg");
+  
   let user_data = {
     forum_id: this.state.forumId,
     user_id: this.state.user_id,
     konten: this.state.kontent,
   }
   API.post(`${FORUM}-post`, user_data).then(res=> {
-    //console.log(res.data)
+    
       if(res.status === 200){
         if(!res.data.error){
           let komentar = this.state.listKomentar;
+          res.data.result.avatar = Storage.get('user').data.avatar;
+          res.data.result.name = Storage.get('user').data.user;
           let newKomentar = [...komentar, res.data.result]
            console.log(newKomentar)
           _getDetailForumList.bind(this)
