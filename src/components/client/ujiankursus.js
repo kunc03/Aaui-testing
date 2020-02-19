@@ -51,7 +51,8 @@ export default class UjianKursus extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
-        API.get(`${API_SERVER}v1/quiz/${this.state.examId}`).then(res => {
+        
+        API.get(`${API_SERVER}v1/isquizorexam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
             this.setState({ courseId: res.data.result.course_id });
             API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
