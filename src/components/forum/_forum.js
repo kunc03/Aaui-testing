@@ -74,21 +74,23 @@ export function _addforum(e) {
 };
 
 export function _komentarPost(){
-  //console.log(this.state, "koment coiisgg")
+  console.log(this.state, "koment coiisgg")
   let user_data = {
     forum_id: this.state.forumId,
     user_id: this.state.user_id,
     konten: this.state.kontent,
   }
   API.post(`${FORUM}-post`, user_data).then(res=> {
-    console.log(res.data)
+    //console.log(res.data)
       if(res.status === 200){
         if(!res.data.error){
-          // listKomentar: res.data.result 
-          // response komentar harusnya array tapi disini yg saya terima object
+          let komentar = this.state.listKomentar;
+          let newKomentar = [...komentar, res.data.result]
+           console.log(newKomentar)
           _getDetailForumList.bind(this)
           this.setState({
             kontent : '',
+            listKomentar : newKomentar
           })
         }
       }
