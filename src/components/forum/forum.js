@@ -62,6 +62,7 @@ export default class Forum extends Component {
 
 	showDiscussion(follow){
 		return console.log("show", follow);
+
 	}
 
 
