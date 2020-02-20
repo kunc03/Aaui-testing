@@ -125,7 +125,9 @@ export default class User extends Component {
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
+          <td>{item.grup_name}</td>
           <td style={{textTransform: 'capitalize'}}>{item.level}</td>
+          <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
           <td>{item.validity}</td>
@@ -176,7 +178,9 @@ export default class User extends Component {
                               <th>Nama</th>
                               <th>Nomor Induk</th>
                               <th>Cabang</th>
+                              <th>Grup</th>
                               <th>Level</th>
+                              <th>Voucher</th>
                               <th>Email</th>
                               <th>Phone</th>
                               <th>Validity</th>
