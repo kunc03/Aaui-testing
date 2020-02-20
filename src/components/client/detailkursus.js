@@ -186,21 +186,21 @@ export default class DetailKursus extends Component {
 
   onClickQuiz = e => {
     e.preventDefault();
-    API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+    const quizId = e.target.getAttribute('data-id');    
+    API.get(`${API_SERVER}v1/exam-answer/submit/${quizId}/${Storage.get('user').data.user_id}`).then(res => {
       if (res.status === 200) {
-
-        if (this.state.isQuiz) {
-          API.get(`${API_SERVER}v1/exam-answer/submit/${res.data.result[0].exam_id}/${Storage.get('user').data.user_id}`).then(res => {
+        if(res.data.result.score == null) {
+          API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+            res.data.result.filter(item => item.exam_id == quizId);
             if (res.status === 200) {
-              this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
+              this.setState({
+                isModalQuiz: true, countSoal: res.data.result[0].soal, examId: quizId
+              })
             }
           })
         } else {
-          this.setState({
-            isModalQuiz: true, countSoal: res.data.result[0].soal, examId: res.data.result[0].exam_id
-          })
+          this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
         }
-
       }
     })
   }
@@ -214,12 +214,20 @@ export default class DetailKursus extends Component {
   }
 
 	render() {
-    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
+    const { quiz, chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
     let refactoryChapters = [...chapters];
-    for(let i=0; i<this.state.quiz.length; i++) {
-      refactoryChapters.splice(this.state.quiz[i].quiz_at-1,0, this.state.quiz[i]);
+    for(let i=0; i < quiz.length; i++) {
+      for (let j = 0; j < chapters.length; j++) {
+        if (quiz[i].quiz_at === chapters[j].chapter_id) {
+          if (j === 0) {
+            refactoryChapters.splice(chapters.indexOf(chapters[j]) + 1, 0, quiz[i]);
+          } else {
+            refactoryChapters.splice(chapters.indexOf(chapters[j]) + 1 + i, 0, quiz[i]);
+          }
+        }
+      }
     }
 
     const ListChapter = ({lists}) => {
@@ -235,11 +243,12 @@ export default class DetailKursus extends Component {
                       this.state.isIkutiKursus ? "active" : "nonactive"
                     }`}
                   >
-                    <Card.Body>
+                    <Card.Body data-id={item.exam_id}>
                       <h3
                         className="f-18 f-w-800"
                         style={{ marginBottom: "0px" }}
                         data-iterasi={i}
+                        data-id={item.exam_id}
                       >
                         <Form.Text>Quiz</Form.Text>
                         {item.exam_title}
@@ -353,7 +362,7 @@ export default class DetailKursus extends Component {
         let ektension = ekSplit[ekSplit.length-1];
         if(ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
           return (
-            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px'}} />
+            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px', width: '100%'}} />
           )
         } else {
           return (
