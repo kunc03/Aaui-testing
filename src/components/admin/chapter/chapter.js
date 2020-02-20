@@ -246,7 +246,7 @@ export default class ChapterPreview extends Component {
 				let ektension = ekSplit[ekSplit.length - 1];
 				if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
 					return (
-						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px' }} />
+						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px', width: '100%' }} />
 					)
 				} else {
 					return (
