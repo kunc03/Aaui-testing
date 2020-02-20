@@ -16,6 +16,7 @@ export default class ChapterPreview extends Component {
 		course: {},
 		chapters: [],
 
+    currentChapt:'',
 		chapterId: '',
 		chapterNumber: '',
 		chapterTitle: '',
@@ -237,8 +238,51 @@ export default class ChapterPreview extends Component {
     }
   };
 
+  showChapter(i){
+    this.setState({currentChapt : this.state.chapters[i]})
+  }
+
 	render() {
-		const {chapters, course} = this.state;
+		const {chapters, course, currentChapt} = this.state;
+
+    const IsiChapter = function ({item,self}){
+     var A =    <Accordion.Collapse eventKey={item.chapter_id}>
+                </Accordion.Collapse>
+      if (typeof item !== 'object') return "";
+      else 
+      return (
+        <div className="pcoded-wrapper">
+          <div className="pcoded-content">
+            <div className="pcoded-inner-content">
+              <div className="main-body">
+                <div className="page-wrapper">
+                  <div className="row">
+                    <div className="col-xl-8">
+              <Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
+                  <h3 className="f-20 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
+                        <Card.Body style={{padding: '16px'}}>
+                          <CheckMedia media={item.chapter_video} />
+
+                          <div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
+                          
+                          <Link to="#" className="buttonku" title="Edit">
+                            <i onClick={self.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>
+                          </Link>
+                          <Link to="#" className="buttonku" title="Hapus">
+                            <i onClick={self.onClickHapusChapter} data-id={item.chapter_id} className="fa fa-trash"></i>
+                          </Link>
+                        </Card.Body>
+              </Card>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    }
 
 		const CheckMedia = ({ media }) => {
 			if (media) {
@@ -271,32 +315,13 @@ export default class ChapterPreview extends Component {
 		const ListChapter = ({lists}) => {
 			if(lists.length !== 0) {
 				return (
-					<Accordion>
-					{
 						lists.map((item, i) => (
-							<Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
-								<Accordion.Toggle as={Card.Header} className="f-24 f-w-800" eventKey={item.chapter_id}>
+							<Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id} onClick={this.showChapter.bind(this,i)}>
 									<Form.Text className="f-14">Chapter {i+1}</Form.Text>
 					  			<h3 className="f-20 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
-							  </Accordion.Toggle>
-							  <Accordion.Collapse eventKey={item.chapter_id}>
-								  <Card.Body style={{padding: '16px'}}>
-										<CheckMedia media={item.chapter_video} />
-
-										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
-								    
-								    <Link to="#" className="buttonku" title="Edit">
-			                <i onClick={this.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>
-			              </Link>
-			              <Link to="#" className="buttonku" title="Hapus">
-			                <i onClick={this.onClickHapusChapter} data-id={item.chapter_id} className="fa fa-trash"></i>
-			              </Link>
-								  </Card.Body>
-							  </Accordion.Collapse>
 							</Card>
 						))	
-					}
-					</Accordion>
+					
 				)
 			} else {
 				return (
@@ -316,7 +341,9 @@ export default class ChapterPreview extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+
                   <div className="row">
+                
                     {!this.state.isLocalSteps && (
                       <Joyride
                         callback={this.handleJoyrideCallback}
@@ -325,6 +352,8 @@ export default class ChapterPreview extends Component {
                       />
                     )}
                     <div className="col-xl-8">
+                    
+                      <IsiChapter item={currentChapt} self={this}/>
                       <Link
                         to={`/kursus-materi-edit/${this.state.courseId}`}
                         className="btn btn-ideku buttonku"

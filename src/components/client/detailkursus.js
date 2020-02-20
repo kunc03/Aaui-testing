@@ -262,7 +262,6 @@ export default class DetailKursus extends Component {
                   </Card>
                 );
               } else {
-                console.log("TOOO", item.chapter_id);
                 return (
                   <Card
                     onClick={this.pilihChapterTampil}
