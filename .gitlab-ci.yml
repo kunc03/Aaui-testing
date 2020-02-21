@@ -20,4 +20,5 @@ deploy_staging:
     - autobuild
   script:
     - echo $HOME
-    - cd $HOME/ideku-react && forever restart 0
+    - cd $HOME/ideku-react && forever restart 1
+
