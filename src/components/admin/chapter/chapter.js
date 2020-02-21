@@ -27,7 +27,10 @@ export default class ChapterPreview extends Component {
     attachmentId: [],
 
 		isModalAdd: false,
-		isModalHapus: false,
+    isModalHapus: false,
+    
+    isNotifikasi: false,
+    isiNotifikasi: '',
 
 		isLocalSteps: false,
 		steps: [
@@ -44,7 +47,11 @@ export default class ChapterPreview extends Component {
 				content: 'Tahap terakhir adalah membuat ujian akhir dari kursus ini.',
 			},
 		]
-	}
+  }
+  
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
 
 	onChangeTinyMce = e => {
     this.setState({ chapterBody: e.target.getContent().replace(/'/g, "\\'") });
@@ -126,30 +133,34 @@ export default class ChapterPreview extends Component {
       
     // action for insert
 		} else {
-			let form = new FormData();
-			form.append('course_id', this.state.courseId);
-			form.append('company_id', this.state.companyId);
-			form.append('chapter_number', this.state.chapterNumber);
-			form.append('chapter_title', this.state.chapterTitle);
-			form.append('chapter_body', this.state.chapterBody);
-			form.append('chapter_video', this.state.chapterVideo);
-			form.append('attachment_id', null);
-
-			API.post(`${API_SERVER}v1/chapter`, form).then(res => {
-				if(res.status === 200){
-          
-          if(this.state.attachmentId.length !== "") {
-            let formData = new FormData();
-            for(let i=0; i<this.state.attachmentId.length; i++) {
-              formData.append('attachment_id', this.state.attachmentId[i]);
+      if(this.state.chapterVideo !== "") {
+        let form = new FormData();
+        form.append('course_id', this.state.courseId);
+        form.append('company_id', this.state.companyId);
+        form.append('chapter_number', this.state.chapterNumber);
+        form.append('chapter_title', this.state.chapterTitle);
+        form.append('chapter_body', this.state.chapterBody);
+        form.append('chapter_video', this.state.chapterVideo);
+        form.append('attachment_id', null);
+  
+        API.post(`${API_SERVER}v1/chapter`, form).then(res => {
+          if(res.status === 200){
+            
+            if(this.state.attachmentId.length !== "") {
+              let formData = new FormData();
+              for(let i=0; i<this.state.attachmentId.length; i++) {
+                formData.append('attachment_id', this.state.attachmentId[i]);
+              }
+              API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
             }
-            API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
+  
+            this.handleModalClose()
+            this.fetchDataChapter()
           }
-
-					this.handleModalClose()
-					this.fetchDataChapter()
-				}
-			})
+        })
+      } else {
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'Media chapter tidak boleh kosong, harus diisi.' })
+      }
 		}
 	}
 	/** END CLICK ADD */
@@ -357,7 +368,7 @@ export default class ChapterPreview extends Component {
                     data-id={item.chapter_id}
                     key={item.chapter_id}
                   >
-                    <Card.Body>
+                    <Card.Body data-id={item.chapter_id}>
                       <h3
                         className="f-18 f-w-800"
                         style={{ marginBottom: "0px" }}
@@ -637,11 +648,13 @@ export default class ChapterPreview extends Component {
                               className="form-control"
                             />
                             <Form.Text>
+                              {!this.state.chapterId &&
                               <span
                                 style={{ color: "red", fontWeight: "bold" }}
                               >
                                 Required &nbsp;
                               </span>
+                              }
                               Pastikan file berformat mp4, png, jpg, jpeg, atau
                               gif dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
@@ -698,6 +711,29 @@ export default class ChapterPreview extends Component {
                         onClick={this.handleModalClose}
                       >
                         Tidak
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
+                    show={this.state.isNotifikasi}
+                    onHide={this.closeNotifikasi}
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Notifikasi
+                      </Modal.Title>
+
+                      <p style={{ color: "black", margin: "20px 0px" }}>
+                        {this.state.isiNotifikasi}
+                      </p>
+
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.closeNotifikasi}
+                      >
+                        Mengerti
                       </button>
                     </Modal.Body>
                   </Modal>

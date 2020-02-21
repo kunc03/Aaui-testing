@@ -298,7 +298,7 @@ export default class DetailKursus extends Component {
                     data-id={item.chapter_id}
                     key={item.chapter_id}
                   >
-                    <Card.Body>
+                    <Card.Body data-id={item.chapter_id}>
                       <h3
                         className="f-18 f-w-800"
                         style={{ marginBottom: "0px" }}
