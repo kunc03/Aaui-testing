@@ -12,8 +12,11 @@ export default class ChapterPreview extends Component {
 
 	state = {
 		companyId: '',
-		courseId: this.props.match.params.course_id,
-		course: {},
+    courseId: this.props.match.params.course_id,
+    quiz: [],
+    course: {},
+    courseID: '',
+    courseTitle: '',
 		chapters: [],
 
 		chapterId: '',
@@ -197,7 +200,7 @@ export default class ChapterPreview extends Component {
 
 				API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
 					if(res.status === 200) {
-						this.setState({ course: res.data.result })
+						this.setState({ course: res.data.result, courseID: res.data.result.course_id, courseTitle: res.data.result.title })
 					}
 				})
 
@@ -205,15 +208,24 @@ export default class ChapterPreview extends Component {
 
 			}
 		})
-	}
+  }
 
 	fetchDataChapter() {
 		API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
 			if(res.status === 200) {
 				this.setState({ chapters: res.data.result });
 			}
-		})				
-	}
+    })
+    
+    // cek apakah ada quiz
+    API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.result.length !== 0) {
+          this.setState({ quiz: res.data.result })
+        } 
+      }
+    })
+  }
 
 	componentDidMount() {
 		this.fetchData()
@@ -221,7 +233,23 @@ export default class ChapterPreview extends Component {
     if (isTourChapter) {
       this.setState({ isLocalSteps: true });
     }
-	}
+  }
+  
+  pilihChapterTampil = e => {
+    e.preventDefault();
+    const chapterId = e.target.getAttribute('data-id');
+    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+      if(res.status === 200) {
+        let courseChapter = {
+          image: res.data.result.chapter_video,
+          title: res.data.result.chapter_title,
+          body: res.data.result.chapter_body,
+          attachments: res.data.result.attachment_id
+        }
+        this.setState({ course: courseChapter })
+      }
+    })
+  }
 
 	handleJoyrideCallback = data => {
     const { action, index, status, type } = data;
@@ -237,8 +265,19 @@ export default class ChapterPreview extends Component {
     }
   };
 
+  pilihOverviewChapter = e => {
+    e.preventDefault();
+    API.get(`${API_SERVER}v1/course/${this.state.courseID}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          course: res.data.result,
+        });
+      }
+    });
+  }
+
 	render() {
-		const {chapters, course} = this.state;
+		const {chapters, course, quiz} = this.state;
 
 		const CheckMedia = ({ media }) => {
 			if (media) {
@@ -268,44 +307,118 @@ export default class ChapterPreview extends Component {
 			return null
 		}
 
-		const ListChapter = ({lists}) => {
-			if(lists.length !== 0) {
-				return (
-					<Accordion>
-					{
-						lists.map((item, i) => (
-							<Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
-								<Accordion.Toggle as={Card.Header} className="f-24 f-w-800" eventKey={item.chapter_id}>
-									<Form.Text className="f-14">Chapter {i+1}</Form.Text>
-					  			<h3 className="f-20 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
-							  </Accordion.Toggle>
-							  <Accordion.Collapse eventKey={item.chapter_id}>
-								  <Card.Body style={{padding: '16px'}}>
-										<CheckMedia media={item.chapter_video} />
+		let refactoryChapters = [...chapters];
+    for (let i = 0; i < quiz.length; i++) {
+      for (let j = 0; j < chapters.length; j++) {
+        if (quiz[i].quiz_at === chapters[j].chapter_id) {
+          if (j === 0) {
+            refactoryChapters.splice(
+              chapters.indexOf(chapters[j]) + 1,
+              0,
+              quiz[i]
+            );
+          } else {
+            refactoryChapters.splice(
+              chapters.indexOf(chapters[j]) + 1 + i,
+              0,
+              quiz[i]
+            );
+          }
+        }
+      }
+    }
+    
+    const ListChapter = ({ lists }) => {
+      if (lists.length !== 0) {
+        return (
+          <div>
+            {lists.map((item, i) => {
+              if (item.quiz) {
+                return (
+                  <Card className={`card-active`}>
+                    <Card.Body data-id={item.exam_id}>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-iterasi={i}
+                        data-id={item.exam_id}
+                      >
+                        <Form.Text>Quiz</Form.Text>
+                        {item.exam_title}
+                      </h3>
+                    </Card.Body>
+                  </Card>
+                );
+              } else {
+                return (
+                  <Card
+                    onClick={this.pilihChapterTampil}
+                    className={`card-active`}
+                    data-id={item.chapter_id}
+                    key={item.chapter_id}
+                  >
+                    <Card.Body>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-id={item.chapter_id}
+                        data-iterasi={i}
+                      >
+                        <Form.Text data-id={item.chapter_id}>
+                          Chapter {item.chapter_number}
+                        </Form.Text>
+                        {item.chapter_title}
+                      </h3>
+                      <Link to="#" className="buttonku" title="Edit">
+                        <i
+                          onClick={this.onClickEditChapter}
+                          data-id={item.chapter_id}
+                          className="fa fa-edit"
+                        ></i>
+                      </Link>
+                      <Link to="#" className="buttonku" title="Hapus">
+                        <i
+                          onClick={this.onClickHapusChapter}
+                          data-id={item.chapter_id}
+                          className="fa fa-trash"
+                        ></i>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                );
+              }
+            })}
+          </div>
+        );
+      } else {
+        return (
+          <Card style={{ marginTop: "10px" }}>
+            <Card.Body>Memuat halaman...</Card.Body>
+          </Card>
+        );
+      }
+    };
 
-										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
-								    
-								    <Link to="#" className="buttonku" title="Edit">
-			                <i onClick={this.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>
-			              </Link>
-			              <Link to="#" className="buttonku" title="Hapus">
-			                <i onClick={this.onClickHapusChapter} data-id={item.chapter_id} className="fa fa-trash"></i>
-			              </Link>
-								  </Card.Body>
-							  </Accordion.Collapse>
-							</Card>
-						))	
-					}
-					</Accordion>
-				)
-			} else {
-				return (
-					<Card style={{marginTop: '10px'}}>
-					  <Card.Body>Tidak ada chapter tersedia.</Card.Body>
-					</Card>
-				)
-			}
-		};
+    const Attachments = ({ media }) => {
+      if (media) {
+        let pecah = media.split(",");
+        return (
+          <div>
+            {pecah.map((item, i) => (
+              <a
+                href={item}
+                target="_blank"
+                className="btn btn-ideku"
+                style={{ marginRight: "10px" }}
+              >
+                Attachments {i + 1}
+              </a>
+            ))}
+          </div>
+        );
+      }
+      return null;
+    };
 
 		const dateFormat = new Date(course.created_at);
 
@@ -317,6 +430,42 @@ export default class ChapterPreview extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
+                    <div className="col-xl-12">
+                      <Link
+                        to={`/kursus-materi-edit/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku"
+                        title="Quiz"
+                      >
+                        <i className="fa fa-edit"></i>
+                        Edit Course
+                      </Link>
+                      <Link
+                        onClick={this.handleModalAdd}
+                        className="btn btn-ideku buttonku buat-chapter"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Chapter
+                      </Link>
+                      <Link
+                        to={`/quiz/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku buat-quiz"
+                        title="Quiz"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Quiz
+                      </Link>
+                      <Link
+                        to={`/exam/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku buat-ujian"
+                        title="Exam"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Exam
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="row">
                     {!this.state.isLocalSteps && (
                       <Joyride
                         callback={this.handleJoyrideCallback}
@@ -325,64 +474,73 @@ export default class ChapterPreview extends Component {
                       />
                     )}
                     <div className="col-xl-8">
-                      <Link
-                        to={`/kursus-materi-edit/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku"
-                        title="Quiz"
-                      >
-                        Edit Course
-                      </Link>
-                      <Link
-                        onClick={this.handleModalAdd}
-                        className="btn btn-ideku buttonku buat-chapter"
-                      >
-                        Buat Chapter
-                      </Link>
-                      <Link
-                        to={`/quiz/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku buat-quiz"
-                        title="Quiz"
-                      >
-                        Buat Quiz
-                      </Link>
-                      <Link
-                        to={`/exam/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku buat-ujian"
-                        title="Exam"
-                      >
-                        Buat Exam
-                      </Link>
-
                       <h3
                         className="f-24 f-w-800 mb-3"
                         style={{ marginTop: "20px" }}
                       >
                         {course.title}
                       </h3>
-                      <Badge variant="success" style={{ padding: "6px" }}>
-                        {course.type}
-                      </Badge>
 
-                      <p class="lead">
-                        Kategori&nbsp;
-                        <Badge variant="info" style={{ padding: "10px" }}>
-                          {course.category_name}
+                      {course.type && (
+                        <Badge variant="success" style={{ padding: "6px" }}>
+                          {course.type}
                         </Badge>
-                      </p>
-                      <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+                      )}
+
+                      {course.category_name && (
+                        <p class="lead">
+                          Kategori&nbsp;
+                          <Badge variant="info" style={{ padding: "10px" }}>
+                            {course.category_name}
+                          </Badge>
+                        </p>
+                      )}
+
+                      {course.created_at && (
+                        <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+                      )}
 
                       <CheckMedia media={course.image} />
 
                       <br />
                       <br />
 
-                      <p class="lead">{course.caption}</p>
+                      {course.caption && <p class="lead">{course.caption}</p>}
 
-                      <div dangerouslySetInnerHTML={{ __html: course.body }} />
+                      {course.body && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: course.body }}
+                        />
+                      )}
+
+                      {course.attachments && (
+                        <div style={{ marginBottom: "30px" }}>
+                          <Attachments media={course.attachments} />
+                        </div>
+                      )}
                     </div>
 
                     <div className="col-xl-4">
-                      <ListChapter lists={chapters} />
+                      <Card
+                        onClick={this.pilihOverviewChapter}
+                        className={`card-active`}
+                        data-id={this.state.courseID}
+                        key={this.state.courseID}
+                      >
+                        <Card.Body>
+                          <h3
+                            className="f-18 f-w-800"
+                            style={{ marginBottom: "0px" }}
+                            data-id={this.state.courseID}
+                          >
+                            <Form.Text data-id={this.state.courseID}>
+                              Overview
+                            </Form.Text>
+                            {this.state.courseTitle}
+                          </h3>
+                        </Card.Body>
+                      </Card>
+                      <ListChapter lists={refactoryChapters} />
                     </div>
                   </div>
 
@@ -439,7 +597,14 @@ export default class ChapterPreview extends Component {
                               placeholder="nomor chapter"
                               className="form-control"
                             />
-                            <Form.Text>Isi dengan nomor angka</Form.Text>
+                            <Form.Text>
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                              Isi dengan nomor angka.
+                            </Form.Text>
                           </div>
                           <div className="form-group">
                             <label>Judul Chapter</label>
@@ -452,6 +617,14 @@ export default class ChapterPreview extends Component {
                               placeholder="judul chapter"
                               className="form-control"
                             />
+                            <Form.Text>
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                              Isi dengan judul
+                            </Form.Text>
                           </div>
                           <div className="form-group">
                             <label>Media Chapter</label>
@@ -464,6 +637,11 @@ export default class ChapterPreview extends Component {
                               className="form-control"
                             />
                             <Form.Text>
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
                               Pastikan file berformat mp4, png, jpg, jpeg, atau
                               gif dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
@@ -500,7 +678,8 @@ export default class ChapterPreview extends Component {
                               className="form-control"
                             />
                             <Form.Text>
-                              Bisa banyak file, pastikan file berformat pdf dan ukuran file tidak melebihi 20MB.
+                              Bisa banyak file, pastikan file berformat pdf dan
+                              ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>
 
