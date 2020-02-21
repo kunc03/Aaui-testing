@@ -1,127 +1,147 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Modal, Form, Accordion, Card, Button } from "react-bootstrap";
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
-import Storage from '../../../repository/storage';
+import API, { API_SERVER, USER_ME } from "../../../repository/api";
+import Storage from "../../../repository/storage";
 
 export default class QuestionQuizEdit extends Component {
+  state = {
+    companyId: "",
+    questionId: this.props.match.params.question_id,
 
-	state = {
-		companyId: '',
-		questionId: this.props.match.params.question_id,
+    number: "",
+    tag: "",
+    pertanyaan: "",
+    correctOption: "",
 
-		number: '',
-		tag: '',
-		pertanyaan: '',
-		correctOption: '',
+    isModalPilihan: false,
+    optionId: "",
+    pilihan: "",
+    jawaban: "",
 
-		isModalPilihan: false,
-		optionId: '',
-		pilihan: '',
-		jawaban: '',
+    pilihans: []
+  };
 
-		pilihans: []
-	}
+  onSubmitFormPilihan = e => {
+    e.preventDefault();
+    let form = {
+      question_id: this.state.questionId,
+      exam_option: this.state.pilihan,
+      description: this.state.jawaban
+    };
 
-	onSubmitFormPilihan = e => {
-		e.preventDefault();
-		let form = {
-			question_id: this.state.questionId,
-			exam_option: this.state.pilihan,
-			description: this.state.jawaban
-		}
+    if (this.state.optionId !== "") {
+      API.put(`${API_SERVER}v1/option/${this.state.optionId}`, form).then(
+        res => {
+          if (res.status === 200) {
+            this.setState({
+              isModalPilihan: false,
+              pilihan: "",
+              jawaban: "",
+              optionId: ""
+            });
+            this.fetchDataPilihan();
+          }
+        }
+      );
+    } else {
+      API.post(`${API_SERVER}v1/option`, form).then(res => {
+        if (res.status === 200) {
+          this.setState({
+            isModalPilihan: false,
+            pilihan: "",
+            jawaban: "",
+            optionId: ""
+          });
+          this.fetchDataPilihan();
+        }
+      });
+    }
+  };
 
-		if(this.state.optionId !== "") {
-			API.put(`${API_SERVER}v1/option/${this.state.optionId}`, form).then(res => {
-				if(res.status === 200){
-					this.setState({ isModalPilihan: false, pilihan: '', jawaban: '', optionId: '' })
-					this.fetchDataPilihan();
-				}
-			})
-		} else {
-			API.post(`${API_SERVER}v1/option`, form).then(res => {
-				if(res.status === 200){
-					this.setState({ isModalPilihan: false, pilihan: '', jawaban: '', optionId: '' })
-					this.fetchDataPilihan();
-				}
-			})
-		}
-	}
+  onClickAddQuestion = e => {
+    e.preventDefault();
+    this.setState({ isModalPilihan: true });
+  };
 
-	onClickAddQuestion = e => {
-		e.preventDefault();
-		this.setState({ isModalPilihan: true })
-	}
+  handleClose = e => {
+    this.setState({ isModalPilihan: false });
+  };
 
-	handleClose = e => {
-		this.setState({ isModalPilihan: false })
-	}
+  onSubmitFormAdd = e => {
+    e.preventDefault();
+    let form = {
+      exam_id: this.state.examId,
+      tag: this.state.tag,
+      number: this.state.number,
+      question: this.state.pertanyaan,
+      correct_option: this.state.correctOption
+    };
+    API.put(`${API_SERVER}v1/question/${this.state.questionId}`, form).then(
+      res => {
+        if (res.status === 200) {
+          this.setState({
+            number: res.data.result.number,
+            tag: res.data.result.tag,
+            pertanyaan: res.data.result.question,
+            correctOption: res.data.result.correct_option
+          });
+        }
+      }
+    );
+  };
 
-	onSubmitFormAdd = e => {
-		e.preventDefault();
-		let form = {
-			exam_id: this.state.examId,
-			tag: this.state.tag,
-			number: this.state.number,
-			question: this.state.pertanyaan,
-			correct_option: this.state.correctOption
-		}
-		API.put(`${API_SERVER}v1/question/${this.state.questionId}`, form).then(res => {
-			if(res.status === 200) {
-				this.setState({ 
-					number: res.data.result.number,
-					tag: res.data.result.tag,
-					pertanyaan: res.data.result.question,
-					correctOption: res.data.result.correct_option,
-				})
-			}
-		})
-	}
+  onChangeInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value });
+  };
 
-	onChangeInput = e => {
-		const name = e.target.name;
-		const value = e.target.value;
-		this.setState({ [name]: value });
-	}
-
-	componentDidMount() {
-		this.fetchDataPilihan();
-		this.fetchDataQuestion();
-	}
-
-	fetchDataQuestion() {
-		API.get(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
-			if(res.status == 200) {
-				this.setState({ 
-					tag: res.data.result.tag,
-					number: res.data.result.number,
-					pertanyaan: res.data.result.question,
-					correctOption: res.data.result.correct_option,
-				})
-			}
-		})
-	}
-
-	fetchDataPilihan() {
-		API.get(`${API_SERVER}v1/option/question/${this.state.questionId}`).then(res => {
-			if(res.status === 200) {
-				this.setState({ pilihans: res.data.result });
-			}
-		})
-	}
-
-	handleEditOption = e => {
-		e.preventDefault();
-		const optionId = e.target.getAttribute('data-id');
-		API.get(`${API_SERVER}v1/option/${optionId}`).then(res => {
-			if(res.status === 200){
-				this.setState({ isModalPilihan: true, pilihan: res.data.result.exam_option, jawaban: res.data.result.description, optionId: optionId })
-			}
-		})
+  componentDidMount() {
+    this.fetchDataPilihan();
+    this.fetchDataQuestion();
   }
-  
+
+  fetchDataQuestion() {
+    API.get(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
+      if (res.status == 200) {
+        this.setState({
+          tag: res.data.result.tag,
+          number: res.data.result.number,
+          pertanyaan: res.data.result.question,
+          correctOption: res.data.result.correct_option
+        });
+      }
+    });
+  }
+
+  fetchDataPilihan() {
+    API.get(`${API_SERVER}v1/option/question/${this.state.questionId}`).then(
+      res => {
+        if (res.status === 200) {
+          this.setState({ pilihans: res.data.result });
+        }
+      }
+    );
+  }
+
+  handleEditOption = e => {
+    e.preventDefault();
+    const optionId = e.target.getAttribute("data-id");
+    API.get(`${API_SERVER}v1/option/${optionId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          isModalPilihan: true,
+          pilihan: res.data.result.exam_option,
+          jawaban: res.data.result.description,
+          optionId: optionId
+        });
+      }
+    });
+  };
+
   pilihJawabanBenar = e => {
-    const pilihan = e.target.getAttribute('data-option');
+    const pilihan = e.target.getAttribute("data-option");
     let form = {
       exam_id: this.state.examId,
       tag: this.state.tag,
@@ -141,20 +161,20 @@ export default class QuestionQuizEdit extends Component {
         }
       }
     );
-  }
+  };
 
-	handleDeleteOption = e => {
-		e.preventDefault();
-		const optionId = e.target.getAttribute('data-id');
-		API.delete(`${API_SERVER}v1/option/${optionId}`).then(res => {
-			if(res.status === 200){
-				this.fetchDataPilihan();
-			}
-		})
-	}
+  handleDeleteOption = e => {
+    e.preventDefault();
+    const optionId = e.target.getAttribute("data-id");
+    API.delete(`${API_SERVER}v1/option/${optionId}`).then(res => {
+      if (res.status === 200) {
+        this.fetchDataPilihan();
+      }
+    });
+  };
 
-	render() {
-		return (
+  render() {
+    return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -242,7 +262,7 @@ export default class QuestionQuizEdit extends Component {
                             variant="ideku"
                             type="button"
                           >
-                            Tambah Pilihan
+                            Pilihan
                           </Button>
 
                           <ul
@@ -252,45 +272,86 @@ export default class QuestionQuizEdit extends Component {
                               listStyle: "none"
                             }}
                           >
-                            {this.state.pilihans.map((item,i) => {
-                              if(item.exam_option === this.state.correctOption) {
+                            {this.state.pilihans.map((item, i) => {
+                              if (
+                                item.exam_option === this.state.correctOption
+                              ) {
                                 return (
                                   <li key={item.option_id}>
-                                    {item.exam_option}. {item.description} &nbsp;
-                                    <Link to="#" className="buttonku" title="Edit">
+                                    <Link
+                                      to="#"
+                                      className="buttonku"
+                                      title="Pilih Sebagai Jawaban Benar"
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="site_name"
+                                        value={item.exam_option}
+                                        checked={
+                                          item.exam_option ===
+                                          this.state.correctOption
+                                        }
+                                        name={item.option_id}
+                                        onClick={console.log(0)}
+                                        data-id={item.option_id}
+                                        data-option={item.exam_option}
+                                      />
+                                    </Link>
+                                    &nbsp;
+                                    {item.exam_option}. {item.description}{" "}
+                                    &nbsp;
+                                    <Link
+                                      to="#"
+                                      className="buttonku"
+                                      title="Edit"
+                                    >
                                       <i
                                         onClick={this.handleEditOption}
                                         data-id={item.option_id}
                                         className="fa fa-edit"
                                       ></i>
                                     </Link>
-                                    <Link to="#" className="buttonku" title="Hapus">
+                                    <Link
+                                      to="#"
+                                      className="buttonku"
+                                      title="Hapus"
+                                    >
                                       <i
                                         onClick={this.handleDeleteOption}
                                         data-id={item.option_id}
                                         className="fa fa-trash"
                                       ></i>
                                     </Link>
-                                    <Form.Text style={{ float: "right" }}>Jawaban Benar</Form.Text>
+                                    <Form.Text style={{ float: "right" }}>
+                                      Jawaban Benar
+                                    </Form.Text>
                                   </li>
                                 );
                               } else {
                                 return (
                                   <li key={item.option_id}>
-                                    {item.exam_option}. {item.description}{" "}
-                                    &nbsp;
                                     <Link
                                       to="#"
                                       className="buttonku"
                                       title="Pilih Sebagai Jawaban Benar"
                                     >
-                                      <i
+                                      <input
+                                        type="radio"
+                                        name="site_name"
+                                        value={item.exam_option}
+                                        checked={
+                                          item.exam_option ===
+                                          this.state.correctOption
+                                        }
+                                        name={item.option_id}
                                         onClick={this.pilihJawabanBenar}
                                         data-id={item.option_id}
                                         data-option={item.exam_option}
-                                        className="fa fa-check"
-                                      ></i>
+                                      />
                                     </Link>
+                                    &nbsp;
+                                    {item.exam_option}. {item.description}{" "}
+                                    &nbsp;
                                     <Link
                                       to="#"
                                       className="buttonku"
@@ -316,8 +377,7 @@ export default class QuestionQuizEdit extends Component {
                                   </li>
                                 );
                               }
-                              })
-                            }
+                            })}
                           </ul>
                         </Card.Body>
                       </Card>
@@ -384,6 +444,5 @@ export default class QuestionQuizEdit extends Component {
         </div>
       </div>
     );
-	}
-
+  }
 }

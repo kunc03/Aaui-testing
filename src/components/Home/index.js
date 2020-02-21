@@ -57,7 +57,7 @@ class Home extends Component {
   fetchDataKursusDiikuti() {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
       if(res.status === 200) {
-        this.setState({ kursusDiikuti: res.data.result.reverse() })
+        this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
       }
     })
   }
