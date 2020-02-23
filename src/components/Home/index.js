@@ -57,7 +57,7 @@ class Home extends Component {
   fetchDataKursusDiikuti() {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
       if(res.status === 200) {
-        this.setState({ kursusDiikuti: res.data.result.reverse() })
+        this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
       }
     })
   }
@@ -86,7 +86,7 @@ class Home extends Component {
             <img
               className="img-fluid img-kursus radius-top-l-r-5"
               src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
-              alth="Cover"
+              alt="Cover"
             />
           );
         }

@@ -12,6 +12,7 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: "",
+      userStatusHapus: '',
       isModalPassword: false,
       userIdPassword: "",
       userPassword: "",
@@ -49,24 +50,35 @@ export default class User extends Component {
     e.preventDefault();
     this.setState({
       isModalHapus: true,
-      userIdHapus: e.target.getAttribute("data-id")
+      userIdHapus: e.target.getAttribute("data-id"),
+      userStatusHapus: e.target.getAttribute("data-status")
     });
   };
 
   onClickSubmitHapus = e => {
     e.preventDefault();
-    API.delete(
-      `${API_SERVER}v1/user/${this.state.userIdHapus}`
-    ).then(res => {
-      if (res.status === 200) {
+    let form = {
+      active: this.state.userStatusHapus == 'active' ? 'pasive' : 'active'
+    }
+    API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
+      if(res.status === 200) {
         this.fetchData();
-        this.setState({ isModalHapus: false, userIdHapus: "" });
+        this.handleModalHapus();
       }
-    });
+    })
+
+    // API.delete(
+    //   `${API_SERVER}v1/user/${this.state.userIdHapus}`
+    // ).then(res => {
+    //   if (res.status === 200) {
+    //     this.fetchData();
+    //     this.setState({ isModalHapus: false, userIdHapus: "" });
+    //   }
+    // });
   };
 
   handleModalHapus = e => {
-    this.setState({ isModalHapus: false, userIdHapus: "" });
+    this.setState({ isModalHapus: false, userIdHapus: "", userStatusHapus: '' });
   };
 
   onClickModalPassword = e => {
@@ -152,16 +164,18 @@ export default class User extends Component {
   render() {
     let { users } = this.state;
 
-    const Item = ({ item }) => {
+    const Item = ({ item, iter }) => {
       return (
         <tr>
-          <td>{item.user_id}</td>
+          <td>{iter}</td>
           <td>{item.name}</td>
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
+          <td>{item.grup_name}</td>
           <td style={{ textTransform: "capitalize" }}>
             {item.level}
           </td>
+          <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
           <td>{item.validity}</td>
@@ -193,6 +207,7 @@ export default class User extends Component {
             <Link to="#" className="buttonku">
               <i
                 data-id={item.user_id}
+                data-status={item.status}
                 onClick={this.onClickHapus}
                 className="fa fa-trash"
               ></i>
@@ -207,15 +222,15 @@ export default class User extends Component {
         return (
           <tbody>
             <tr>
-              <td colSpan='9'>Tidak ada user</td>
+              <td colSpan='10'>Tidak ada user</td>
             </tr>
           </tbody>
         )
       } else {
         return (
           <tbody>
-            {lists.map(list => (
-              <Item key={list.user_id} item={list} />
+            {lists.map((list, i) => (
+              <Item key={list.user_id} item={list} iter={i+1} />
             ))}
           </tbody>
         )
@@ -234,7 +249,9 @@ export default class User extends Component {
                 <th>Nama</th>
                 <th>Nomor Induk</th>
                 <th>Cabang</th>
+                <th>Grup</th>
                 <th>Level</th>
+                <th>Voucher</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Validity</th>
@@ -249,7 +266,7 @@ export default class User extends Component {
                       className="button-img"
                       alt=""
                     />
-                    Add New
+                    Tambah Baru
                   </Link>
                 </th>
               </tr>

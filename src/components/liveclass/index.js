@@ -226,7 +226,7 @@ export default class LiveClass extends Component {
 							<div className="col-md-4 col-xl-4 mb-3">
 								<Link to={`/`}>
 									<div className="kategori">
-									<img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+									<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
 									&nbsp;
 									Kursus & Materi
 									</div>
@@ -236,7 +236,7 @@ export default class LiveClass extends Component {
 							<div className="col-md-4 col-xl-4 mb-3">
 								<Link to={`/forum`}>
 									<div className="kategori">
-									<img src="/assets/images/component/forumon.png" className="img-fluid" />
+										<img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
 									&nbsp;
 									Forum
 									</div>
@@ -246,7 +246,7 @@ export default class LiveClass extends Component {
 							<div className="col-md-4 col-xl-4 mb-3">
 								<Link to={`/liveclass`}>
 									<div className="kategori-aktif">
-									<img src="/assets/images/component/liveoff.png" className="img-fluid" />
+										<img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
 									&nbsp;
 									Live Class
 									</div>

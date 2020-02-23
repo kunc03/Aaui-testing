@@ -365,12 +365,12 @@ export default class QuizList extends Component {
                             />
                           </div>
                           <div className="form-group">
-                            <label>Quiz Dilakukan Sebelum Chapter</label>
+                            <label>Quiz Dilakukan Setelah Chapter</label>
                             <select className="form-control" required name="quizAt" onChange={this.onChangeInput}>
 															<option value="">-- pilih --</option>
 															{
 																this.state.chapters.map((item, i) => (
-																	<option selected={(this.state.quizAt == (i+1)) ? 'selected': ''} value={i+1}>{item.chapter_title}</option>
+																	<option selected={(this.state.quizAt == item.chapter_id) ? 'selected': ''} value={item.chapter_id}>{item.chapter_title}</option>
 																))
 															}
 														</select>

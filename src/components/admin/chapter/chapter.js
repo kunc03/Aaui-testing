@@ -12,18 +12,25 @@ export default class ChapterPreview extends Component {
 
 	state = {
 		companyId: '',
-		courseId: this.props.match.params.course_id,
-		course: {},
+    courseId: this.props.match.params.course_id,
+    quiz: [],
+    course: {},
+    courseID: '',
+    courseTitle: '',
 		chapters: [],
 
 		chapterId: '',
 		chapterNumber: '',
 		chapterTitle: '',
 		chapterBody: '',
-		chapterVideo: '',
+    chapterVideo: '',
+    attachmentId: [],
 
 		isModalAdd: false,
-		isModalHapus: false,
+    isModalHapus: false,
+    
+    isNotifikasi: false,
+    isiNotifikasi: '',
 
 		isLocalSteps: false,
 		steps: [
@@ -40,7 +47,11 @@ export default class ChapterPreview extends Component {
 				content: 'Tahap terakhir adalah membuat ujian akhir dari kursus ini.',
 			},
 		]
-	}
+  }
+  
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
 
 	onChangeTinyMce = e => {
     this.setState({ chapterBody: e.target.getContent().replace(/'/g, "\\'") });
@@ -52,10 +63,12 @@ export default class ChapterPreview extends Component {
 
 		if(name === 'chapterVideo') {
 			this.setState({ [name]: e.target.files[0] });
-		} else {
+		} else if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
 			this.setState({ [name]: value });
 		}
-	}
+  }
 
 	/** CLICK ADD */
 	handleModalAdd = e => {
@@ -70,12 +83,14 @@ export default class ChapterPreview extends Component {
 			chapterNumber: '',
 			chapterTitle: '',
 			chapterBody: '',
-			chapterVideo: ''
+			chapterVideo: '',
+			attachmentId: ''
 		});
 	}
 
 	onSubmitChapter = e => {
-		e.preventDefault();
+    e.preventDefault();
+    // action for update
 		if(this.state.chapterId !== "") {
 			let form = {
 				course_id: this.state.courseId,
@@ -83,11 +98,10 @@ export default class ChapterPreview extends Component {
 				chapter_number: this.state.chapterNumber,
 				chapter_title: this.state.chapterTitle,
 				chapter_body: this.state.chapterBody,
-				attachment_id: '1'
 			}
 
 			API.put(`${API_SERVER}v1/chapter/${this.state.chapterId}`, form).then(res => {
-				if(res.status == 200){
+				if(res.status === 200){
 					this.handleModalClose();
 					this.fetchDataChapter();
 				}
@@ -97,28 +111,56 @@ export default class ChapterPreview extends Component {
 				let form = new FormData();
 				form.append('chapter_video', this.state.chapterVideo);
 				API.put(`${API_SERVER}v1/chapter/video/${this.state.chapterId}`, form).then(res => {
-					if(res.status == 200){
+					if(res.status === 200){
 						this.handleModalClose();
 						this.fetchDataChapter();
 					}
 				})				
-			}
-		} else {
-			let form = new FormData();
-			form.append('course_id', this.state.courseId);
-			form.append('company_id', this.state.companyId);
-			form.append('chapter_number', this.state.chapterNumber);
-			form.append('chapter_title', this.state.chapterTitle);
-			form.append('chapter_body', this.state.chapterBody);
-			form.append('chapter_video', this.state.chapterVideo);
-			form.append('attachment_id', '1');
+      }
 
-			API.post(`${API_SERVER}v1/chapter`, form).then(res => {
-				if(res.status === 200){
-					this.handleModalClose()
-					this.fetchDataChapter()
-				}
-			})
+      if (this.state.attachmentId !== "") {
+        let formData = new FormData();
+        for (let i = 0; i < this.state.attachmentId.length; i++) {
+          formData.append('attachment_id', this.state.attachmentId[i]);
+        }
+        API.put(`${API_SERVER}v1/chapter/attachment/${this.state.chapterId}`, formData).then(res => {
+          if (res.status === 200) {
+            this.handleModalClose();
+            this.fetchDataChapter();
+          }
+        })
+      }
+      
+    // action for insert
+		} else {
+      if(this.state.chapterVideo !== "") {
+        let form = new FormData();
+        form.append('course_id', this.state.courseId);
+        form.append('company_id', this.state.companyId);
+        form.append('chapter_number', this.state.chapterNumber);
+        form.append('chapter_title', this.state.chapterTitle);
+        form.append('chapter_body', this.state.chapterBody);
+        form.append('chapter_video', this.state.chapterVideo);
+        form.append('attachment_id', null);
+  
+        API.post(`${API_SERVER}v1/chapter`, form).then(res => {
+          if(res.status === 200){
+            
+            if(this.state.attachmentId.length !== "") {
+              let formData = new FormData();
+              for(let i=0; i<this.state.attachmentId.length; i++) {
+                formData.append('attachment_id', this.state.attachmentId[i]);
+              }
+              API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
+            }
+  
+            this.handleModalClose()
+            this.fetchDataChapter()
+          }
+        })
+      } else {
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'Media chapter tidak boleh kosong, harus diisi.' })
+      }
 		}
 	}
 	/** END CLICK ADD */
@@ -169,7 +211,7 @@ export default class ChapterPreview extends Component {
 
 				API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
 					if(res.status === 200) {
-						this.setState({ course: res.data.result })
+						this.setState({ course: res.data.result, courseID: res.data.result.course_id, courseTitle: res.data.result.title })
 					}
 				})
 
@@ -177,15 +219,24 @@ export default class ChapterPreview extends Component {
 
 			}
 		})
-	}
+  }
 
 	fetchDataChapter() {
 		API.get(`${API_SERVER}v1/chapter/course/${this.state.courseId}`).then(res => {
 			if(res.status === 200) {
 				this.setState({ chapters: res.data.result });
 			}
-		})				
-	}
+    })
+    
+    // cek apakah ada quiz
+    API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.result.length !== 0) {
+          this.setState({ quiz: res.data.result })
+        } 
+      }
+    })
+  }
 
 	componentDidMount() {
 		this.fetchData()
@@ -193,7 +244,23 @@ export default class ChapterPreview extends Component {
     if (isTourChapter) {
       this.setState({ isLocalSteps: true });
     }
-	}
+  }
+  
+  pilihChapterTampil = e => {
+    e.preventDefault();
+    const chapterId = e.target.getAttribute('data-id');
+    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+      if(res.status === 200) {
+        let courseChapter = {
+          image: res.data.result.chapter_video,
+          title: res.data.result.chapter_title,
+          body: res.data.result.chapter_body,
+          attachments: res.data.result.attachment_id
+        }
+        this.setState({ course: courseChapter })
+      }
+    })
+  }
 
 	handleJoyrideCallback = data => {
     const { action, index, status, type } = data;
@@ -207,15 +274,21 @@ export default class ChapterPreview extends Component {
 			this.setState({ isLocalSteps: true });
 			localStorage.setItem('isTourChapter', true);
     }
-
-    console.groupCollapsed(type);
-    console.log(data); //eslint-disable-line no-console
-    console.groupEnd();
   };
 
+  pilihOverviewChapter = e => {
+    e.preventDefault();
+    API.get(`${API_SERVER}v1/course/${this.state.courseID}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          course: res.data.result,
+        });
+      }
+    });
+  }
+
 	render() {
-		console.log(this.state)
-		const {chapters, course} = this.state;
+		const {chapters, course, quiz} = this.state;
 
 		const CheckMedia = ({ media }) => {
 			if (media) {
@@ -223,7 +296,7 @@ export default class ChapterPreview extends Component {
 				let ektension = ekSplit[ekSplit.length - 1];
 				if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
 					return (
-						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px' }} />
+						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px', width: '100%' }} />
 					)
 				} else {
 					return (
@@ -245,44 +318,118 @@ export default class ChapterPreview extends Component {
 			return null
 		}
 
-		const ListChapter = ({lists}) => {
-			if(lists.length !== 0) {
-				return (
-					<Accordion>
-					{
-						lists.map((item, i) => (
-							<Card style={{marginTop: '10px', marginBottom: '10px'}} key={item.chapter_id}>
-								<Accordion.Toggle as={Card.Header} className="f-24 f-w-800" eventKey={item.chapter_id}>
-									<Form.Text className="f-14">Chapter {i+1}</Form.Text>
-					  			<h3 className="f-20 f-w-800" style={{marginBottom: '0px', cursor: 'pointer'}}>{item.chapter_title}</h3>
-							  </Accordion.Toggle>
-							  <Accordion.Collapse eventKey={item.chapter_id}>
-								  <Card.Body style={{padding: '16px'}}>
-										<CheckMedia media={item.chapter_video} />
+		let refactoryChapters = [...chapters];
+    for (let i = 0; i < quiz.length; i++) {
+      for (let j = 0; j < chapters.length; j++) {
+        if (quiz[i].quiz_at === chapters[j].chapter_id) {
+          if (j === 0) {
+            refactoryChapters.splice(
+              chapters.indexOf(chapters[j]) + 1,
+              0,
+              quiz[i]
+            );
+          } else {
+            refactoryChapters.splice(
+              chapters.indexOf(chapters[j]) + 1 + i,
+              0,
+              quiz[i]
+            );
+          }
+        }
+      }
+    }
+    
+    const ListChapter = ({ lists }) => {
+      if (lists.length !== 0) {
+        return (
+          <div>
+            {lists.map((item, i) => {
+              if (item.quiz) {
+                return (
+                  <Card className={`card-active`}>
+                    <Card.Body data-id={item.exam_id}>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-iterasi={i}
+                        data-id={item.exam_id}
+                      >
+                        <Form.Text>Quiz</Form.Text>
+                        {item.exam_title}
+                      </h3>
+                    </Card.Body>
+                  </Card>
+                );
+              } else {
+                return (
+                  <Card
+                    onClick={this.pilihChapterTampil}
+                    className={`card-active`}
+                    data-id={item.chapter_id}
+                    key={item.chapter_id}
+                  >
+                    <Card.Body data-id={item.chapter_id}>
+                      <h3
+                        className="f-18 f-w-800"
+                        style={{ marginBottom: "0px" }}
+                        data-id={item.chapter_id}
+                        data-iterasi={i}
+                      >
+                        <Form.Text data-id={item.chapter_id}>
+                          Chapter {item.chapter_number}
+                        </Form.Text>
+                        {item.chapter_title}
+                      </h3>
+                      <Link to="#" className="buttonku" title="Edit">
+                        <i
+                          onClick={this.onClickEditChapter}
+                          data-id={item.chapter_id}
+                          className="fa fa-edit"
+                        ></i>
+                      </Link>
+                      <Link to="#" className="buttonku" title="Hapus">
+                        <i
+                          onClick={this.onClickHapusChapter}
+                          data-id={item.chapter_id}
+                          className="fa fa-trash"
+                        ></i>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                );
+              }
+            })}
+          </div>
+        );
+      } else {
+        return (
+          <Card style={{ marginTop: "10px" }}>
+            <Card.Body>Memuat halaman...</Card.Body>
+          </Card>
+        );
+      }
+    };
 
-										<div style={{marginTop: '10px'}} dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
-								    
-								    <Link to="#" className="buttonku" title="Edit">
-			                <i onClick={this.onClickEditChapter} data-id={item.chapter_id} className="fa fa-edit"></i>
-			              </Link>
-			              <Link to="#" className="buttonku" title="Hapus">
-			                <i onClick={this.onClickHapusChapter} data-id={item.chapter_id} className="fa fa-trash"></i>
-			              </Link>
-								  </Card.Body>
-							  </Accordion.Collapse>
-							</Card>
-						))	
-					}
-					</Accordion>
-				)
-			} else {
-				return (
-					<Card style={{marginTop: '10px'}}>
-					  <Card.Body>Tidak ada chapter tersedia.</Card.Body>
-					</Card>
-				)
-			}
-		};
+    const Attachments = ({ media }) => {
+      if (media) {
+        let pecah = media.split(",");
+        return (
+          <div>
+            {pecah.map((item, i) => (
+              <a
+                href={item}
+                target="_blank"
+                className="btn btn-ideku"
+                style={{ marginRight: "10px" }}
+              >
+                Attachments {i + 1}
+              </a>
+            ))}
+          </div>
+        );
+      }
+      return null;
+    };
 
 		const dateFormat = new Date(course.created_at);
 
@@ -294,6 +441,42 @@ export default class ChapterPreview extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
+                    <div className="col-xl-12">
+                      <Link
+                        to={`/kursus-materi-edit/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku"
+                        title="Quiz"
+                      >
+                        <i className="fa fa-edit"></i>
+                        Edit Course
+                      </Link>
+                      <Link
+                        onClick={this.handleModalAdd}
+                        className="btn btn-ideku buttonku buat-chapter"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Chapter
+                      </Link>
+                      <Link
+                        to={`/quiz/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku buat-quiz"
+                        title="Quiz"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Quiz
+                      </Link>
+                      <Link
+                        to={`/exam/${this.state.courseId}`}
+                        className="btn btn-ideku buttonku buat-ujian"
+                        title="Exam"
+                      >
+                        <i className="fa fa-plus"></i>
+                        Buat Exam
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="row">
                     {!this.state.isLocalSteps && (
                       <Joyride
                         callback={this.handleJoyrideCallback}
@@ -302,64 +485,73 @@ export default class ChapterPreview extends Component {
                       />
                     )}
                     <div className="col-xl-8">
-                      <Link
-                        to={`/kursus-materi-edit/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku"
-                        title="Quiz"
-                      >
-                        Edit Course
-                      </Link>
-                      <Link
-                        onClick={this.handleModalAdd}
-                        className="btn btn-ideku buttonku buat-chapter"
-                      >
-                        Buat Chapter
-                      </Link>
-                      <Link
-                        to={`/quiz/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku buat-quiz"
-                        title="Quiz"
-                      >
-                        Buat Quiz
-                      </Link>
-                      <Link
-                        to={`/exam/${this.state.courseId}`}
-                        className="btn btn-ideku buttonku buat-ujian"
-                        title="Exam"
-                      >
-                        Buat Exam
-                      </Link>
-
                       <h3
                         className="f-24 f-w-800 mb-3"
                         style={{ marginTop: "20px" }}
                       >
                         {course.title}
                       </h3>
-                      <Badge variant="success" style={{ padding: "6px" }}>
-                        {course.type}
-                      </Badge>
 
-                      <p class="lead">
-                        Kategori&nbsp;
-                        <Badge variant="info" style={{ padding: "10px" }}>
-                          {course.category_name}
+                      {course.type && (
+                        <Badge variant="success" style={{ padding: "6px" }}>
+                          {course.type}
                         </Badge>
-                      </p>
-                      <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+                      )}
+
+                      {course.category_name && (
+                        <p class="lead">
+                          Kategori&nbsp;
+                          <Badge variant="info" style={{ padding: "10px" }}>
+                            {course.category_name}
+                          </Badge>
+                        </p>
+                      )}
+
+                      {course.created_at && (
+                        <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
+                      )}
 
                       <CheckMedia media={course.image} />
 
                       <br />
                       <br />
 
-                      <p class="lead">{course.caption}</p>
+                      {course.caption && <p class="lead">{course.caption}</p>}
 
-                      <div dangerouslySetInnerHTML={{ __html: course.body }} />
+                      {course.body && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: course.body }}
+                        />
+                      )}
+
+                      {course.attachments && (
+                        <div style={{ marginBottom: "30px" }}>
+                          <Attachments media={course.attachments} />
+                        </div>
+                      )}
                     </div>
 
                     <div className="col-xl-4">
-                      <ListChapter lists={chapters} />
+                      <Card
+                        onClick={this.pilihOverviewChapter}
+                        className={`card-active`}
+                        data-id={this.state.courseID}
+                        key={this.state.courseID}
+                      >
+                        <Card.Body>
+                          <h3
+                            className="f-18 f-w-800"
+                            style={{ marginBottom: "0px" }}
+                            data-id={this.state.courseID}
+                          >
+                            <Form.Text data-id={this.state.courseID}>
+                              Overview
+                            </Form.Text>
+                            {this.state.courseTitle}
+                          </h3>
+                        </Card.Body>
+                      </Card>
+                      <ListChapter lists={refactoryChapters} />
                     </div>
                   </div>
 
@@ -397,7 +589,7 @@ export default class ChapterPreview extends Component {
                   <Modal
                     show={this.state.isModalAdd}
                     onHide={this.handleModalClose}
-                    dialogClassName="modal-lg"
+                    dialogClassName="modal-xlg"
                   >
                     <Modal.Body>
                       <Modal.Title className="text-c-purple3 f-w-bold">
@@ -416,7 +608,14 @@ export default class ChapterPreview extends Component {
                               placeholder="nomor chapter"
                               className="form-control"
                             />
-                            <Form.Text>Isi dengan nomor angka</Form.Text>
+                            <Form.Text>
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                              Isi dengan nomor angka.
+                            </Form.Text>
                           </div>
                           <div className="form-group">
                             <label>Judul Chapter</label>
@@ -429,6 +628,36 @@ export default class ChapterPreview extends Component {
                               placeholder="judul chapter"
                               className="form-control"
                             />
+                            <Form.Text>
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                              Isi dengan judul
+                            </Form.Text>
+                          </div>
+                          <div className="form-group">
+                            <label>Media Chapter</label>
+                            <input
+                              accept="image/*,video/*"
+                              name="chapterVideo"
+                              onChange={this.onChangeInput}
+                              type="file"
+                              placeholder="media chapter"
+                              className="form-control"
+                            />
+                            <Form.Text>
+                              {!this.state.chapterId &&
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                              }
+                              Pastikan file berformat mp4, png, jpg, jpeg, atau
+                              gif dan ukuran file tidak melebihi 20MB.
+                            </Form.Text>
                           </div>
                           <div className="form-group">
                             <Editor
@@ -451,18 +680,19 @@ export default class ChapterPreview extends Component {
                             />
                           </div>
                           <div className="form-group">
-                            <label>Media Chapter</label>
+                            <label>Lampiran</label>
                             <input
-                              accept="image/*,video/*"
-                              name="chapterVideo"
+                              accept="application/pdf"
+                              name="attachmentId"
                               onChange={this.onChangeInput}
                               type="file"
+                              multiple
                               placeholder="media chapter"
                               className="form-control"
                             />
                             <Form.Text>
-                              Pastikan file berformat mp4, png, jpg, jpeg, atau
-                              gif dan ukuran file tidak melebihi 20MB.
+                              Bisa banyak file, pastikan file berformat pdf dan
+                              ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>
 
@@ -481,6 +711,29 @@ export default class ChapterPreview extends Component {
                         onClick={this.handleModalClose}
                       >
                         Tidak
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
+                    show={this.state.isNotifikasi}
+                    onHide={this.closeNotifikasi}
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Notifikasi
+                      </Modal.Title>
+
+                      <p style={{ color: "black", margin: "20px 0px" }}>
+                        {this.state.isiNotifikasi}
+                      </p>
+
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.closeNotifikasi}
+                      >
+                        Mengerti
                       </button>
                     </Modal.Body>
                   </Modal>
