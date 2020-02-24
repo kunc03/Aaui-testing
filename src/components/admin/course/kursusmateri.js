@@ -103,18 +103,25 @@ export default class KursusMateri extends Component {
 								</td>
 								<td>{item.category_name}</td>
 								<td><Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">{item.title}</Link></td>
-								<td>{item.created_at.toString().substring(0,10)}</td>
+								<td>{
+									item
+										.created_at.toString()
+										.substring(0,10).split('-')
+										.map(x=>x.slice(-2)).join("/")
+								}</td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>
 									<Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">
-          					<i data-id={item.course_id} className="fa fa-search"></i>
-        					</Link>
+		          						<i data-id={item.course_id} className="fa fa-search"></i>
+		        					</Link>
+									
 									<Link to={`/kursus-materi-edit/${item.course_id}`} className="buttonku" title="Edit">
-          					<i data-id={item.course_id} className="fa fa-edit"></i>
-        					</Link>
-          				<Link to="#" className="buttonku" title="Hapus">
-          					<i onClick={this.onClickHapus} data-id={item.course_id} className="fa fa-trash"></i>
-        					</Link>
+		          						<i data-id={item.course_id} className="fa fa-edit"></i>
+		        					</Link>
+
+          							<Link to="#" className="buttonku" title="Hapus">
+          								<i onClick={this.onClickHapus} data-id={item.course_id} className="fa fa-trash"></i>
+        							</Link>
 								</td>
 							</tr>
 						))
@@ -143,7 +150,7 @@ export default class KursusMateri extends Component {
                               <th>Cover</th>
                               <th>Kategori</th>
                               <th>Judul</th>
-                              <th>Created At</th>
+                              <th>Tanggal</th>
                               <th>Publish</th>
                               <th className="text-center">
                                 <Link
