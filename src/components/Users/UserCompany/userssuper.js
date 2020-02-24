@@ -12,6 +12,7 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: "",
+      userStatusHapus: '',
       isModalPassword: false,
       userIdPassword: "",
       userPassword: "",
@@ -49,24 +50,35 @@ export default class User extends Component {
     e.preventDefault();
     this.setState({
       isModalHapus: true,
-      userIdHapus: e.target.getAttribute("data-id")
+      userIdHapus: e.target.getAttribute("data-id"),
+      userStatusHapus: e.target.getAttribute("data-status")
     });
   };
 
   onClickSubmitHapus = e => {
     e.preventDefault();
-    API.delete(
-      `${API_SERVER}v1/user/${this.state.userIdHapus}`
-    ).then(res => {
-      if (res.status === 200) {
+    let form = {
+      active: this.state.userStatusHapus == 'active' ? 'pasive' : 'active'
+    }
+    API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
+      if(res.status === 200) {
         this.fetchData();
-        this.setState({ isModalHapus: false, userIdHapus: "" });
+        this.handleModalHapus();
       }
-    });
+    })
+
+    // API.delete(
+    //   `${API_SERVER}v1/user/${this.state.userIdHapus}`
+    // ).then(res => {
+    //   if (res.status === 200) {
+    //     this.fetchData();
+    //     this.setState({ isModalHapus: false, userIdHapus: "" });
+    //   }
+    // });
   };
 
   handleModalHapus = e => {
-    this.setState({ isModalHapus: false, userIdHapus: "" });
+    this.setState({ isModalHapus: false, userIdHapus: "", userStatusHapus: '' });
   };
 
   onClickModalPassword = e => {
@@ -163,6 +175,7 @@ export default class User extends Component {
           <td style={{ textTransform: "capitalize" }}>
             {item.level}
           </td>
+          <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
           <td>{item.validity}</td>
@@ -194,6 +207,7 @@ export default class User extends Component {
             <Link to="#" className="buttonku">
               <i
                 data-id={item.user_id}
+                data-status={item.status}
                 onClick={this.onClickHapus}
                 className="fa fa-trash"
               ></i>
@@ -237,6 +251,7 @@ export default class User extends Component {
                 <th>Cabang</th>
                 <th>Grup</th>
                 <th>Level</th>
+                <th>Voucher</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Validity</th>

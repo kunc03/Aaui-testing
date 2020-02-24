@@ -32,6 +32,8 @@ export default class DetailKursus extends Component {
     durasiWaktu: '',
 
     course: { category_name: 'Memuat...' },
+    courseID: '',
+    courseTitle: '',
 		chapters: [],
     // statChapter: 0,
 	}
@@ -101,7 +103,13 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
-            this.setState({ course: res.data.result, judulCourse: res.data.result.title, kategoriCourse: res.data.result.category_name })
+            this.setState({
+              course: res.data.result,
+              judulCourse: res.data.result.title,
+              kategoriCourse: res.data.result.category_name,
+              courseID: res.data.result.course_id,
+              courseTitle: res.data.result.title
+            });
           }
         })
 
@@ -187,21 +195,21 @@ export default class DetailKursus extends Component {
 
   onClickQuiz = e => {
     e.preventDefault();
-    API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+    const quizId = e.target.getAttribute('data-id');    
+    API.get(`${API_SERVER}v1/exam-answer/submit/${quizId}/${Storage.get('user').data.user_id}`).then(res => {
       if (res.status === 200) {
-
-        if (this.state.isQuiz) {
-          API.get(`${API_SERVER}v1/exam-answer/submit/${res.data.result[0].exam_id}/${Storage.get('user').data.user_id}`).then(res => {
+        if(res.data.result.score == null) {
+          API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+            res.data.result.filter(item => item.exam_id == quizId);
             if (res.status === 200) {
-              this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
+              this.setState({
+                isModalQuiz: true, countSoal: res.data.result[0].soal, examId: quizId
+              })
             }
           })
         } else {
-          this.setState({
-            isModalQuiz: true, countSoal: res.data.result[0].soal, examId: res.data.result[0].exam_id
-          })
+          this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
         }
-
       }
     })
   }
@@ -214,13 +222,32 @@ export default class DetailKursus extends Component {
     this.setState({ isModalQuiz: false, countSoal: 0, durasiWaktu: '' })
   }
 
+  pilihOverviewChapter = e => {
+    e.preventDefault();
+    API.get(`${API_SERVER}v1/course/${this.state.courseID}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          course: res.data.result,
+        });
+      }
+    });
+  }
+
 	render() {
-    const { chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
+    const { quiz, chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
     let refactoryChapters = [...chapters];
-    for(let i=0; i<this.state.quiz.length; i++) {
-      refactoryChapters.splice(this.state.quiz[i].quiz_at-1,0, this.state.quiz[i]);
+    for(let i=0; i < quiz.length; i++) {
+      for (let j = 0; j < chapters.length; j++) {
+        if (quiz[i].quiz_at === chapters[j].chapter_id) {
+          if (j === 0) {
+            refactoryChapters.splice(chapters.indexOf(chapters[j]) + 1, 0, quiz[i]);
+          } else {
+            refactoryChapters.splice(chapters.indexOf(chapters[j]) + 1 + i, 0, quiz[i]);
+          }
+        }
+      }
     }
 
     const ListChapter = ({lists}) => {
@@ -236,11 +263,12 @@ export default class DetailKursus extends Component {
                       this.state.isIkutiKursus ? "active" : "nonactive"
                     }`}
                   >
-                    <Card.Body>
+                    <Card.Body data-id={item.exam_id}>
                       <h3
                         className="f-18 f-w-800"
                         style={{ marginBottom: "0px" }}
                         data-iterasi={i}
+                        data-id={item.exam_id}
                       >
                         <Form.Text>Quiz</Form.Text>
                         {item.exam_title}
@@ -354,7 +382,7 @@ export default class DetailKursus extends Component {
         let ektension = ekSplit[ekSplit.length-1];
         if(ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
           return (
-            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px'}} />
+            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px', width: '100%'}} />
           )
         } else {
           return (
@@ -431,9 +459,9 @@ export default class DetailKursus extends Component {
                         />
                       )}
 
-                      {
-                        course.attachments && <Attachments media={course.attachments} />
-                      }
+                      {course.attachments && (
+                        <Attachments media={course.attachments} />
+                      )}
 
                       {isButtonIkuti && (
                         <Link
@@ -449,13 +477,30 @@ export default class DetailKursus extends Component {
                           Ikuti Kursus
                         </Link>
                       )}
-
                     </div>
 
                     <div className="col-xl-4">
                       <h3 className="f-24 f-w-800 mb-3">List Chapter</h3>
+                      <Card
+                        onClick={this.pilihOverviewChapter}
+                        className={`card-active`}
+                        data-id={this.state.courseID}
+                        key={this.state.courseID}
+                      >
+                        <Card.Body>
+                          <h3
+                            className="f-18 f-w-800"
+                            style={{ marginBottom: "0px" }}
+                            data-id={this.state.courseID}
+                          >
+                            <Form.Text data-id={this.state.courseID}>
+                              Overview
+                            </Form.Text>
+                            {this.state.courseTitle}
+                          </h3>
+                        </Card.Body>
+                      </Card>
                       <ListChapter lists={refactoryChapters} />
-                      {/* <ListChapter lists={chapters} /> */}
                     </div>
                   </div>
 
@@ -464,11 +509,33 @@ export default class DetailKursus extends Component {
                     onHide={this.handleModalScoreClose}
                   >
                     <Modal.Body>
-                      <img className="img-fluid" src="/assets/images/component/hasil.png" alt="media" />
-                      <h3 style={{ position: 'absolute', left: '18%', bottom: '180px', color: 'white' }}
-                        className="f-40 f-w-800 mb-3">Nilai Quiz</h3>
-                      <h3 style={{ position: 'absolute', left: '18%', bottom: '120px', color: 'white' }}
-                        className="f-50 f-w-800 mb-3">{this.state.score}</h3>
+                      <img
+                        className="img-fluid"
+                        src="/assets/images/component/hasil.png"
+                        alt="media"
+                      />
+                      <h3
+                        style={{
+                          position: "absolute",
+                          left: "18%",
+                          bottom: "180px",
+                          color: "white"
+                        }}
+                        className="f-40 f-w-800 mb-3"
+                      >
+                        Nilai Quiz
+                      </h3>
+                      <h3
+                        style={{
+                          position: "absolute",
+                          left: "18%",
+                          bottom: "120px",
+                          color: "white"
+                        }}
+                        className="f-50 f-w-800 mb-3"
+                      >
+                        {this.state.score}
+                      </h3>
 
                       <button
                         style={{ marginTop: "30px" }}
@@ -490,7 +557,10 @@ export default class DetailKursus extends Component {
                         className="text-center"
                         style={{ marginTop: "20px" }}
                       >
-                        <img src="/assets/images/component/exam.png" alt="media" />
+                        <img
+                          src="/assets/images/component/exam.png"
+                          alt="media"
+                        />
                       </div>
                       <Link
                         className="btn btn-ideku"
@@ -507,7 +577,10 @@ export default class DetailKursus extends Component {
                         <tbody>
                           <tr>
                             <td>
-                              <img src="/assets/images/component/question.png" alt="media" />
+                              <img
+                                src="/assets/images/component/question.png"
+                                alt="media"
+                              />
                             </td>
                             <td>
                               <span style={{ marginLeft: "14px" }}>
@@ -521,30 +594,37 @@ export default class DetailKursus extends Component {
                               </h3>
                             </td>
                           </tr>
-                          {
-                            durasiWaktu && <tr>
+                          {durasiWaktu && (
+                            <tr>
                               <td>
-                                <img src="/assets/images/component/clock.png" alt="media" />
+                                <img
+                                  src="/assets/images/component/clock.png"
+                                  alt="media"
+                                />
                               </td>
                               <td>
                                 <span style={{ marginLeft: "14px" }}>
                                   Waktu Pengerjaan
-                              </span>
+                                </span>
                                 <h3
                                   style={{ marginLeft: "14px" }}
                                   className="f-18 f-w-800 mb-3"
                                 >
                                   {durasiWaktu} Menit
-                              </h3>
+                                </h3>
                               </td>
                             </tr>
-                          }
+                          )}
                         </tbody>
                       </table>
 
                       <Link
                         style={{ marginTop: "20px" }}
-                        to={`/ujian-kursus/${this.state.examId}/${this.state.countSoal}/${this.state.durasiWaktu ? this.state.durasiWaktu : 0}`}
+                        to={`/ujian-kursus/${this.state.examId}/${
+                          this.state.countSoal
+                        }/${
+                          this.state.durasiWaktu ? this.state.durasiWaktu : 0
+                        }`}
                         className="btn btn-block btn-ideku f-w-bold"
                       >
                         Ya, Mulai Sekarang
