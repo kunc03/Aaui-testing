@@ -12,7 +12,7 @@ export default class DetailNilaiQuiz extends Component {
 		kursus: [],
 		isModalHapus: false,
         courseIdHapus: '',
-        detail : ''
+        detail : []
 	}
 
 	componentDidMount() {
@@ -26,7 +26,7 @@ export default class DetailNilaiQuiz extends Component {
 			if(res.status === 200) {
                 this.setState({ companyId: res.data.result.company_id });
 				API.get(`${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${courseID}`).then(res => {
-                    console.log(res.data.result.users, 'RESSSS=>>>>>>>>>>>>');
+                    console.log(res, 'RESSSS=>>>>>>>>>>>>');
 					if(res.status === 200) {
 						this.setState({ kursus: res.data.result.users, detail: res.data.result });
 					}
@@ -87,13 +87,19 @@ export default class DetailNilaiQuiz extends Component {
                                         <th className="text-center">No. </th>
                                         <th>Nama</th>
                                         <th>Nomor Induk</th>
-                                        {
-                                            kursus.map((item, i) => (
-                                                
-                                                    
-                                                        <th>Quiz {i+1}</th>    
-                                                    
-                                            ))
+                                        {this.state.detail.length === 0 ? null 
+                                            :
+                                            <span>
+                                                {
+                                                    kursus.map((item, i) => (
+                                                        
+                                                            
+                                                                <th>Quiz {i+1}</th>    
+                                                            
+                                                    ))
+                                                }
+                                            </span> 
+
                                         }
                                         {/* <th>Quiz 1</th>
                                         <th>Quiz 2</th>
@@ -102,7 +108,7 @@ export default class DetailNilaiQuiz extends Component {
                                         <th>Quiz 5</th> */}
                                     </tr>
                                 </thead>
-                                {kursus.length === 0 ?
+                                {this.state.detail.length === 0 ?
                                         <tbody>
                                             <tr>
                                                 <td colSpan={8}>Tidak ada data</td>

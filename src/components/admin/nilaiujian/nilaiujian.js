@@ -87,17 +87,23 @@ export default class DetailNilaiUjian extends Component {
                                         <th className="text-center">No. </th>
                                         <th>Nama</th>
                                         <th>Nomor Induk</th>
-                                        {
-                                            kursus.map((item, i) => (
-                                                
-                                                    
-                                                        <th>Ujian {i+1}</th>    
-                                                    
-                                            ))
+                                        {this.state.detail.length === 0 ? null 
+                                            :
+                                            <span>
+                                                {
+                                                    kursus.map((item, i) => (
+                                                        
+                                                            
+                                                                <th>Ujian {i+1}</th>    
+                                                            
+                                                    ))
+                                                }
+                                            </span> 
+
                                         }
                                     </tr>
                                 </thead>
-                                {kursus.length === 0 ?
+                                {this.state.detail.length === 0 ?
                                         <tbody>
                                             <tr>
                                                 <td colSpan={8}>Tidak ada data</td>
