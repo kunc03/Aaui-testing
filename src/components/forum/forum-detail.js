@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl } from "react-bootstrap";
 import {
-	_getDetailForumList
+    _getDetailForumList,
+    _komentarPost
 } from './_forum';
 import Storage from '../../repository/storage';
 
@@ -10,13 +11,21 @@ import Storage from '../../repository/storage';
 export default class ForumDetail extends Component {
     
     state = {
-        forumId: this.props.match.params.forum_id,
+        user_id: Storage.get('user').data.user_id,
+        forumId: Number(this.props.match.params.forum_id),
         listDetail : '',
         listKomentar : [],
+        kontent : ''
     }
     
     componentWillMount(){
+        //console.log(this.props)
         _getDetailForumList.bind(this, this.props.match.params.forum_id)();
+    }
+
+    komentarPost(){
+        //console.log('fuxk')
+        _komentarPost.bind(this)();
     }
 
 	render() {
@@ -94,7 +103,7 @@ export default class ForumDetail extends Component {
                                                     <Form>
                                                         <Form.Group controlId="formIsi">
                                                         <Form.Label className="f-w-bold">Berikan Komentar</Form.Label>
-                                                        <Form.Control as="textarea" rows="5" placeholder="Berikan Komentar" />
+                                                        <Form.Control as="textarea" rows="5" value={this.state.kontent} placeholder="Berikan Komentar" onChange={e => this.setState({kontent: e.target.value})}/>
                                                         <Form.Text className="text-muted">
                                                             Jelaskan isi dari forum, peraturan, atau yang lain.
                                                         </Form.Text>
@@ -102,7 +111,7 @@ export default class ForumDetail extends Component {
 
                                                         <div style={{marginTop: '20px'}}>
                                                             <button type="button" 
-                                                                onClick={this.onClickHapusChapterYes}
+                                                                onClick={this.komentarPost.bind(this)}
                                                                 className="btn btn-primary f-w-bold">
                                                                 Simpan
                                                             </button>
@@ -116,7 +125,7 @@ export default class ForumDetail extends Component {
                                         <Col sm={4}>
                                             <Card>
                                                 <Card.Body>
-                                                    <Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button>
+                                                    {/* <Button onClick={this.openModalForumAdd} className="btn-block btn-primary"><i className="fa fa-plus"></i> &nbsp; Membuat Forum</Button> */}
 
                                                     <div className="forum-filter">
                                                         <ListGroup>

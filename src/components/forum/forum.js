@@ -13,7 +13,7 @@ export default class Forum extends Component {
 	state = {
 		forums: [],
 		isForumAdd: false,
-
+		user : {},
 		user_id: Storage.get('user').data.user_id,
 		company_id:'',
 		title: '',
@@ -34,7 +34,6 @@ export default class Forum extends Component {
 	}
 
 	componentWillMount() {
-		
 		_postLIstAllForum.bind(this)();
 		// let forums = [
 		// 	{judul: 'Judul 1', update: 'Last update 1 days ago 02/02/2020', isi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', komentar: 30},
@@ -44,19 +43,21 @@ export default class Forum extends Component {
 
 		// this.setState({ forums: forums })
 	}
+	
 
 	closeNotifikasi = e => {
 		this.setState({ isNotifikasi: false, isiNotifikasi: '' })
 	}
 
 	handleChange = (e) => {
-		console.log(e.target)// 
-		if (e.target.files[0].size <= 50000) {
-		this.setState({ imgFile: e.target.files[0]  });
-		} else {
-		e.target.value = null;
-		this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
-		}
+		//console.log(e.target.files[0])// 
+		this.setState({imgFile : e.target.files[0] })
+		// if (e.target.files[0].size <= 50000) {
+		// this.setState({ imgFile: e.target.files[0]  });
+		// } else {
+		// e.target.value = null;
+		// this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+		// }
 	
 	}
 
@@ -93,7 +94,7 @@ export default class Forum extends Component {
 												</Link>
 											
 												<Link to='#' style={{marginLeft: '10px'}}>
-													<i className="fa fa-comments"></i> &nbsp; 99999 Komentar
+													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
 												</Link>
 
 											</div>
