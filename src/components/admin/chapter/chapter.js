@@ -318,7 +318,7 @@ export default class ChapterPreview extends Component {
 	render() {
 		const {chapters, course, quiz} = this.state;
 
-		const CheckMedia = ({ media }) => {
+		const CheckMedia = ({ media, thumbnail }) => {
 			if (media) {
 				let ekSplit = media.split('.');
 				let ektension = ekSplit[ekSplit.length - 1];
@@ -332,7 +332,7 @@ export default class ChapterPreview extends Component {
               <ReactPlayer
                 style={{ position: "absolute", top: "0", left: "0" }}
                 url={media}
-                light={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+                light={thumbnail ? thumbnail : `https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
                 volume="1"
                 controls
                 height="100%"
@@ -539,7 +539,7 @@ export default class ChapterPreview extends Component {
                         <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
                       )}
 
-                      <CheckMedia media={course.image} />
+                      <CheckMedia media={course.image} thumbnail={course.thumbnail} />
 
                       <br />
                       <br />

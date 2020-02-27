@@ -149,7 +149,7 @@ class Home extends Component {
                 <div className="col-sm-12" key={item.course_id}>
                   <Link to={(['admin','superadmin'].includes(Storage.get('user').data.level)) ? `/chapter/${item.course_id}`:`/detail-kursus/${item.course_id}`}>
                     <div className="card">
-                      <CheckMedia media={item.image} />
+                      <CheckMedia media={item.thumbnail ? item.thumbnail : item.image} />
                       
                       <div className="card-carousel ">
                         <div className="title-head f-w-900 f-16">
