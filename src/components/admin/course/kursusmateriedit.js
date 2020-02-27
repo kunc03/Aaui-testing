@@ -21,6 +21,7 @@ export default class KursusMateriEdit extends Component {
 		caption: '',
 		body: '',
 		image: '',
+		thumbnail: '',
 
     isModalKategori: false,
     
@@ -37,7 +38,7 @@ export default class KursusMateriEdit extends Component {
     const value = target.value;
     const name = target.name;
 
-  	if(name === 'image' || name === 'kategori_image') {
+  	if(name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
       if (target.files[0].size <= 20000000) {
         this.setState({ [name]: target.files[0] });
       } else {
@@ -145,17 +146,24 @@ export default class KursusMateriEdit extends Component {
 	    publish: '1'
 		};
 
+    if(this.state.image !== '') {
+      let formData = new FormData();
+      formData.append('image', this.state.image);
+      API.put(`${API_SERVER}v1/course/image/${this.state.courseId}`, formData);
+    }
+    
+    if (this.state.thumbnail !== "") {
+      let formData = new FormData();
+      formData.append("thumbnail", this.state.thumbnail);
+      API.put(`${API_SERVER}v1/course/thumbnail/${this.state.courseId}`, formData);
+    }
+
 		API.put(`${API_SERVER}v1/course/${this.state.courseId}`, form).then(res => {
 			if(res.status === 200) {
 				this.props.history.push('/kursus-materi');
 			}
 		})
 
-		if(this.state.image !== '') {
-			let formData = new FormData();
-			formData.append('image', this.state.image);
-			API.put(`${API_SERVER}v1/course/image/${this.state.courseId}`, formData);
-		}
 	}
 
 	onClickUbahKategori = e => {
@@ -204,7 +212,6 @@ export default class KursusMateriEdit extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        
                         &nbsp;Edit Kursus & Materi
                       </h3>
 
@@ -287,6 +294,36 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
+                              <label className="label-input">Media</label>
+                              <input
+                                accept="imaga/*,video/*"
+                                type="file"
+                                name="image"
+                                className="form-control"
+                                placeholder="konten"
+                                onChange={this.onChangeInput}
+                              />
+                              <Form.Text>
+                                Pastikan file berformat mp4, png, jpg, jpeg,
+                                atau gif dan ukuran file tidak melebihi 20MB.
+                              </Form.Text>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Thumbnail</label>
+                              <input
+                                accept="imaga/*"
+                                type="file"
+                                name="thumbnail"
+                                className="form-control"
+                                placeholder="konten"
+                                onChange={this.onChangeInput}
+                              />
+                              <Form.Text>
+                                Pastikan file berformat png, jpg, jpeg,
+                                atau gif dan ukuran file tidak melebihi 20MB.
+                              </Form.Text>
+                            </div>
+                            <div className="form-group">
                               <label className="label-input">Deskripsi</label>
                               <Editor
                                 apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
@@ -306,21 +343,6 @@ export default class KursusMateriEdit extends Component {
                                 }}
                                 onChange={this.onChangeTinyMce}
                               />
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input">Media</label>
-                              <input
-                                accept="imaga/*,video/*"
-                                type="file"
-                                name="image"
-                                className="form-control"
-                                placeholder="konten"
-                                onChange={this.onChangeInput}
-                              />
-                              <Form.Text>
-                                Pastikan file berformat mp4, png, jpg, jpeg,
-                                atau gif dan ukuran file tidak melebihi 20MB.
-                              </Form.Text>
                             </div>
                             <button
                               style={{ marginTop: "50px" }}
