@@ -128,7 +128,7 @@ export class Logout extends React.Component {
   }
 
   render() {
-    return <div></div>;
+    return <div>Loading</div>;
   }
 }
 
