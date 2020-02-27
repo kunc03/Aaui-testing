@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import {Alert, Modal, Form} from 'react-bootstrap';
-import API, {FORUM, API_SERVER} from '../../repository/api';
+import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
    // console.log('get')
-    API.get(`${FORUM}`).then(res=> {
-        console.log(res.data)
+  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+    this.setState({ companyId: res.data.result.company_id })
+    API.get(`${FORUM}/company/${res.data.result.company_id}`).then(res=> {
+        console.log('res: ', res.data.result)
           if(res.status === 200){
             if(!res.data.error){
                 this.setState({ forums: res.data.result })
@@ -17,6 +19,7 @@ export function _postLIstAllForum(){
         .catch(err=> {
           console.log(err);
         })
+  })
 }
 
 export function _getDetailForumList(idForum){
@@ -39,7 +42,7 @@ export function _addforum(e) {
     console.log(e);
     let stateCopy = this.state,
     user_data = {
-        company_id : 9,
+        company_id : stateCopy.companyId,
         user_id : stateCopy.user_id,
         title : stateCopy.title,
         body : stateCopy.body,
@@ -50,9 +53,33 @@ export function _addforum(e) {
       console.log(res.data)
         if(res.status === 200){
           if(!res.data.error){
-            this.setState({
-                isForumAdd: false
-            })
+            if(stateCopy.imgFile !== "") {
+              let formData = new FormData();
+              formData.append('cover', stateCopy.imgFile);
+              API.put(`${FORUM}/cover/${res.data.result.forum_id}`, formData)
+            }
+
+            API.get(`${USER_ME}${Storage.get("user").data.email}`).then(res => {
+              this.setState({ companyId: res.data.result.company_id });
+              API.get(`${FORUM}/company/${res.data.result.company_id}`)
+                .then(res => {
+                  console.log("res: ", res.data.result);
+                  if (res.status === 200) {
+                    if (!res.data.error) {
+                      this.setState({
+                        forums: res.data.result,
+                        isForumAdd: false,
+                        imgFile: "",
+                        imgPreview: ""
+                      });
+                    }
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            });
+
           }
         }
       })

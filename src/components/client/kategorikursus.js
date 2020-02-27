@@ -21,7 +21,7 @@ const CheckMedia = ({ media }) => {
         <img
           className="img-fluid img-kursus radius-top-l-r-5"
           src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
-          alth="Cover"
+          alt="Cover"
         />
       );
     }
@@ -79,7 +79,7 @@ export default class KategoriKursus extends Component {
                 <div className="col-sm-4">
                   <Link to={`/detail-kursus/${item.course_id}`}>
                     <div className="card">
-                      <CheckMedia media={item.image} />
+                      <CheckMedia media={item.thumbnail ? item.thumbnail : item.image} />
                       <div className="card-carousel ">
                         <div className="title-head f-w-900 f-16">
                           {item.title}
