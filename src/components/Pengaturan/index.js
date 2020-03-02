@@ -106,7 +106,7 @@ class Pengaturan extends Component {
                           <div className="row m-b-100">
                             <div className="col-xl-2">
                               <h3 className="pengaturan-title f-24 f-w-bold">
-                                Keamanan
+                                Akun
                               </h3>
                             </div>
                             <div
@@ -177,7 +177,7 @@ class Pengaturan extends Component {
                           <div className="row">
                             <div className="col-xl-2 col-md-12">
                               <h3 className="pengaturan-title f-24 f-w-bold">
-                                Keamanan
+                                Notifikasi
                               </h3>
                             </div>
                             <div
