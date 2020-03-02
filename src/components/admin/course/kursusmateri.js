@@ -21,16 +21,18 @@ export default class KursusMateri extends Component {
 
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-		//	console.log(res)
 			if(res.status === 200) {
 				this.setState({ companyId: res.data.result.company_id });
-				API.get(`${API_SERVER}v1/course/company/${this.state.companyId}`).then(res => {
-					if(res.status === 200) {
-						this.setState({ kursus: res.data.result });
+
+				API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${res.data.result.company_id}`).then(res => {
+					console.log('count: ', res.data.result.length)
+					if (res.status === 200) {
+						this.setState({ kursus: res.data.result.reverse() });
 					}
 				})
 			}
 		});
+
 	}
 
 	onClickHapus = e => {
