@@ -17,6 +17,21 @@ class Header extends Component {
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
+        
+        if(res.data.error) {
+          localStorage.clear();
+          window.location.reload();
+        }
+
+        Storage.set('user', {data: { 
+          user_id: res.data.result.user_id, 
+          email: res.data.result.email,
+          user: res.data.result.name,
+          level: res.data.result.level,
+          avatar: res.data.result.avatar
+            ? res.data.result.avatar
+            : "/assets/images/user/avatar-1.jpg"
+        }});
         this.setState({
           user: res.data.result.name,
           level: res.data.result.level,

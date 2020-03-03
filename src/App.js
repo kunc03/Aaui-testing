@@ -26,6 +26,7 @@ import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
 import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
 
 import ChapterPreview from "./components/admin/chapter/chapter";
+import NilaiUjianPreview from "./components/admin/nilaiujian";
 
 import QuizList from "./components/admin/exam/quiz";
 import QuestionQuiz from "./components/admin/question/quiz";
@@ -129,7 +130,7 @@ export class Logout extends React.Component {
   }
 
   render() {
-    return <div></div>;
+    return <div>Loading</div>;
   }
 }
 
@@ -204,6 +205,7 @@ export class AdminSwitch extends React.Component {
         />
 
         <Route path="/chapter/:course_id" exact component={ChapterPreview} />
+        <Route path="/nilaiujian/:course_id" exact component={NilaiUjianPreview} />
 
         <Route path="/quiz/:course_id" exact component={QuizList} />
         <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />

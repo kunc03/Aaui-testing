@@ -26,11 +26,12 @@ export default class QuestionExamCreate extends Component {
 
 		pilihans: [],
 
-		isSimpanPertanyaan: false,
+    isSimpanPertanyaan: false,
+    isiSimpanPertanyan: ''
 	}
 
 	handleSimpanPertanyaan = e => {
-		this.setState({ isSimpanPertanyaan: false })
+    this.setState({ isSimpanPertanyaan: false, isiSimpanPertanyan: '' })
 	}
 
 	onSubmitFormPilihan = e => {
@@ -81,14 +82,19 @@ export default class QuestionExamCreate extends Component {
 						number: res.data.result.number,
 						tag: res.data.result.tag,
 						pertanyaan: res.data.result.question,
-						correctOption: res.data.result.correct_option,
+            correctOption: res.data.result.correct_option,
+            isSimpanPertanyaan: true,
+            isiSimpanPertanyan: 'Pertanyaan berhasil diedit.'
 					})
 				}
 			})
 		} else {
 			API.post(`${API_SERVER}v1/question`, form).then(res => {
 				if(res.status === 200) {
-					this.setState({ isQuestionReady: true, questionId: res.data.result.question_id, isSimpanPertanyaan: true })
+          this.setState({
+            isQuestionReady: true, questionId: res.data.result.question_id, 
+            isSimpanPertanyaan: true,
+            isiSimpanPertanyan: 'Pertanyaan berhasil disimpan.' })
 				}
 			})
 		}
@@ -252,6 +258,26 @@ export default class QuestionExamCreate extends Component {
                               ) {
                                 return (
                                   <li key={item.option_id}>
+                                    <Link
+                                      to="#"
+                                      className="buttonku"
+                                      title="Pilih Sebagai Jawaban Benar"
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="site_name"
+                                        value={item.exam_option}
+                                        checked={
+                                          item.exam_option ===
+                                          this.state.correctOption
+                                        }
+                                        name={item.option_id}
+                                        onClick={this.pilihJawabanBenar}
+                                        data-id={item.option_id}
+                                        data-option={item.exam_option}
+                                      />
+                                    </Link>
+                                    &nbsp;
                                     {item.exam_option}. {item.description}{" "}
                                     &nbsp;
                                     <Link
@@ -273,20 +299,28 @@ export default class QuestionExamCreate extends Component {
                               } else {
                                 return (
                                   <li key={item.option_id}>
-                                    {item.exam_option}. {item.description}{" "}
-                                    &nbsp;
                                     <Link
                                       to="#"
                                       className="buttonku"
                                       title="Pilih Sebagai Jawaban Benar"
                                     >
-                                      <i
+                                      <input
+                                        type="radio"
+                                        name="site_name"
+                                        value={item.exam_option}
+                                        checked={
+                                          item.exam_option ===
+                                          this.state.correctOption
+                                        }
+                                        name={item.option_id}
                                         onClick={this.pilihJawabanBenar}
                                         data-id={item.option_id}
                                         data-option={item.exam_option}
-                                        className="fa fa-check"
-                                      ></i>
+                                      />
                                     </Link>
+                                    &nbsp;
+                                    {item.exam_option}. {item.description}{" "}
+                                    &nbsp;
                                     <Link
                                       to="#"
                                       className="buttonku"
@@ -365,8 +399,7 @@ export default class QuestionExamCreate extends Component {
                     >
                       <Modal.Body>
                         <h3 className="f-24 f-w-800 mb-3">
-                          Pertanyaan berhasil disimpan. Selanjutnya silahkan
-                          tambahkan pilihan jawaban.
+                          {this.state.isiSimpanPertanyan}
                         </h3>
 
                         <button

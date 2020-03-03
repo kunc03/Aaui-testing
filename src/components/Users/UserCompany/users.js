@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import Moment from "react-moment";
 
 export default class Users extends Component {
   constructor(props) {
@@ -155,7 +156,7 @@ export default class Users extends Component {
           <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
-          <td>{item.validity}</td>
+          <td><Moment format="DD/MM/YYYY">{item.validity}</Moment></td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
               <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>

@@ -127,9 +127,16 @@ export default class UjianHasil extends Component {
                         <Card.Body className="text-center">
                           <img className="img-fluid" src="/assets/images/component/hasil.png" alt="media" />
                           <h3 style={{position: 'absolute', left: '36%', bottom: '120px', color: 'white'}} 
-                            className="f-40 f-w-800 mb-3">Nilai Ujian</h3>
+                            className="f-40 f-w-800 mb-3">Nilai Quiz</h3>
                           <h3 style={{position: 'absolute', left: '36%', bottom: '60px', color: 'white'}} 
-                            className="f-50 f-w-800 mb-3">{this.state.score.toFixed(2)}</h3>
+                            className="f-50 f-w-800 mb-3">
+                              { (x=>{ 
+                               let y = (x && x.toFixed(2)) || 0 + ''
+                               return y.match(/\d+$/)[0] == 0 
+                                  ? y.split(/\./)[0].toString() 
+                                  : y 
+                              }) (this.state.score) }
+                          </h3>
                         </Card.Body>
                       </Card>
                     </div>
