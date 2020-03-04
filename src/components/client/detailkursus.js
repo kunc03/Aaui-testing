@@ -557,14 +557,17 @@ export default class DetailKursus extends Component {
                         style={{ marginTop: "20px" }}
                       >
                         <img
-                          src="/assets/images/component/exam.png"
+                          src="/assets/images/component/tes.png"
                           alt="media"
                         />
                       </div>
+                      <h3 className="f-24 f-w-800 mb-3 text-center" style={{marginTop: '20px'}}>
+                        {durasiWaktu ? 'Ujian': 'Quiz'}
+                      </h3>
                       <Link
                         className="btn btn-ideku"
                         to="#"
-                        style={{ marginTop: "30px", fontWeight: "bold" }}
+                        style={{ fontWeight: "bold" }}
                       >
                         {this.state.kategoriCourse}
                       </Link>

@@ -195,7 +195,7 @@ export default class UjianKursus extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>UJIAN</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>SOAL</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
@@ -288,7 +288,7 @@ export default class UjianKursus extends Component {
                   <Modal show={this.state.isModalSubmit} onHide={this.handleModalSubmit}>
                     <Modal.Body style={{padding: '30px'}}>
                       <div className="text-center" style={{marginTop: '20px'}}>
-                        <img className="img-fluid" src="/assets/images/component/exam.png" alt="media" />
+                        <img className="img-fluid" src="/assets/images/component/tes.png" alt="media" />
                       </div>
                       <h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3>
 
