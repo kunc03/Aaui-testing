@@ -9,6 +9,7 @@ import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
 import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home/index";
+import Activity from "./components/Activity/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 
@@ -246,7 +247,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         
-        <Route path="/aktivitas" component={Home} />
+        <Route path="/aktivitas" component={Activity} />
         
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
