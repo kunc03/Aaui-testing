@@ -5,6 +5,7 @@ import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import Countdown from 'react-countdown-now';
+import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
 export default class UjianKursus extends Component {
 
@@ -30,6 +31,21 @@ export default class UjianKursus extends Component {
 
     isModalSubmit: false,
 
+    isLocalSteps: false,
+    steps: [
+      {
+        target: '.pilih-soal',
+        content: 'Hal pertama yang harus dilakukan adalah pilih soalnya.',
+      },
+      {
+        target: '.pilih-jawaban',
+        content: 'Setelah pilih soalnya silahkan pilih jawaban yang menurut Anda benar.',
+      },
+      {
+        target: '.pilih-selesai',
+        content: 'Jika sudah merasa soal sudah terjawab silahkan submit jawaban Anda.',
+      },
+    ]
   }
 
   konfirmasiSubmitUjian = e => {
@@ -93,7 +109,25 @@ export default class UjianKursus extends Component {
       }
     }
     this.fetchPertanyaanUjian()
+    let isTourChapter = localStorage.getItem("isTourUjian");
+    if (isTourChapter) {
+      this.setState({ isLocalSteps: true });
+    }
   }
+
+  handleJoyrideCallback = data => {
+    const { action, index, status, type } = data;
+
+    if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
+      // Update state to advance the tour
+      this.setState({ stepIndex: index + (action === ACTIONS.PREV ? -1 : 1) });
+    }
+    else if ([STATUS.FINISHED].includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+      this.setState({ isLocalSteps: true });
+      localStorage.setItem('isTourUjian', true);
+    }
+  };
 
   checkLocalStorage = e => {
     console.log('cek: ', localStorage.getItem('waktuUjian'))
@@ -175,7 +209,7 @@ export default class UjianKursus extends Component {
       <ul class="flex-container" style={{marginTop: '16px'}}>
         {
           lists.map((item, i) => (
-            <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} class={`flex-item ${item.hasOwnProperty('isJawab') ? 'flex-item-ideku' : ''}`}>{item.number}</li>
+            <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} className={`flex-item ${item.hasOwnProperty('isJawab') ? 'flex-item-ideku' : ''}`}>{item.number}</li>
           ))
         }
       </ul>
@@ -188,6 +222,14 @@ export default class UjianKursus extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+
+                  {!this.state.isLocalSteps && (
+                    <Joyride
+                      callback={this.handleJoyrideCallback}
+                      steps={this.state.steps}
+                      continuous="true"
+                    />
+                  )}
                   
                   <div className="row">
                     <div className="col-sm-6">
@@ -229,14 +271,14 @@ export default class UjianKursus extends Component {
                           </div>
 
                           <div className="row">
-                            <div className="col-sm-12 text-center">
+                            <div className="col-sm-12 text-center pilih-soal">
                               <ListNomor lists={soalUjian} />
                             </div>
                           </div>
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian">Submit</Button>
+                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian pilih-selesai">Submit</Button>
                             </div>
                           </div>
                         </Card.Body>
@@ -264,7 +306,7 @@ export default class UjianKursus extends Component {
                   </Modal>
 
                     <div className="col-sm-6">
-                      <Card>
+                      <Card className="pilih-jawaban">
                         <Card.Body>
                           <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>
                             {this.state.nomorUjian}. {this.state.pertanyaanUjian}
