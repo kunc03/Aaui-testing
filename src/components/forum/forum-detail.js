@@ -21,7 +21,10 @@ export default class ForumDetail extends Component {
         attachment: '',
 
         isNotifikasi: false, 
-		isiNotifikasi:'',
+    		isiNotifikasi:'',
+
+        isLockedStatus : 0,
+        isLockedText : ""
     }
     
     componentWillMount(){
@@ -35,6 +38,7 @@ export default class ForumDetail extends Component {
               if (!res.data.error) {
                 console.log('res: ', res.data)
                 this.setState({
+                  isLockedStatus : res.data.result[0].kunci,
                   listKomentar: res.data.result[0].komentar
                 });
               }
@@ -94,6 +98,15 @@ export default class ForumDetail extends Component {
             this.setState({ [name]: e.target.value })
         }
 	}
+
+    lockForum = (val) => {
+      API.put(`${API_SERVER}v1/forum/kunci/${this.state.forumId}`, {kunci : val})
+        .then(res => {
+          
+          this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+        })
+        .catch(err => console.log("ioOOIAOIs",err))
+      }
 
 	render() {
         const item = {
@@ -210,6 +223,11 @@ export default class ForumDetail extends Component {
                             })}
                           </div>
 
+                          {this.state.isLockedStatus ?
+                            <div className="f-w-bold">
+                              Komentar Non-aktif karena forum terkunci
+                            </div>
+                            :
                           <Form style={{ marginTop: "30px" }}>
                             <Form.Group controlId="formIsi">
                               <Form.Label className="f-w-bold">
@@ -250,6 +268,8 @@ export default class ForumDetail extends Component {
                               </button>
                             </div>
                           </Form>
+                          }
+
                         </Card.Body>
                       </Card>
                     </Col>
@@ -257,6 +277,18 @@ export default class ForumDetail extends Component {
                     <Col sm={4}>
                       <Card>
                         <Card.Body>
+                          <Button
+                            onClick={this.lockForum.bind({},this.state.isLockedStatus ? 0 : 1)}
+                            className="btn-block btn-primary"
+                          >
+                            <i 
+                              className={
+                                this.state.isLockedStatus 
+                                ? "fa fa-lock"
+                                : "fa fa-unlock"
+                              }></i> &nbsp; {this.state.isLockedStatus ? "Terkunci" : "Tidak Terkunci"}
+                          </Button>
+
                           <Button
                             onClick={this.openModalForumAdd}
                             className="btn-block btn-primary"
