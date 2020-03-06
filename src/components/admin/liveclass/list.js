@@ -18,6 +18,9 @@ export default class LiveClassAdmin extends Component {
     speaker: '',
     roomName: '',
     cover: '',
+    
+    isNotifikasi: false,
+    isiNotifikasi: '',
 
     imgPreview: '',
 
@@ -28,9 +31,13 @@ export default class LiveClassAdmin extends Component {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '' });
   }
 
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+  }
+
   handleChange = e => {
     const name = e.target.name;
-    if (e.target.files[0].size <= 50000) {
+    if (e.target.files[0].size <= 500000) {
       this.setState({
         cover: e.target.files[0],
         imgPreview: URL.createObjectURL(e.target.files[0])
@@ -205,25 +212,29 @@ export default class LiveClassAdmin extends Component {
 								        </div>
                       </Link>
                     </div>
+                  </Row>
 
+                  <Row>
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
                         Semua Live Class &nbsp;&nbsp;
                         <button className="btn btn-ideku" onClick={e => { this.setState({ isClassModal: true}) }}><i className="fa fa-plus"></i> Buat Live Class</button>
                       </h3>
-                      {
-                        classRooms.length ?
-                          <CardGroup>
-                            <ClassRooms list={classRooms} />
-                          </CardGroup>
-                          :
-                          <div className="col-md-3 col-xl-3 mb-3">
-                            No Classroom
-									        </div>
-                      }
                     </div>
-
                   </Row>
+
+                  <div>
+                    {
+                      classRooms.length ?
+                        
+                        <ClassRooms list={classRooms} />
+                        
+                        :
+                        <div className="col-md-3 col-xl-3 mb-3">
+                          No Classroom
+                        </div>
+                    }
+                  </div>
 
                   <Modal
                     show={this.state.isNotifikasi}

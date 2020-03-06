@@ -107,21 +107,18 @@ export default class LiveClass extends Component {
 								</div>
 							</Link>
 						</div>
-
-						<div className="col-md-12">
-							{
-								classRooms.length ?
-									<CardGroup>
-										<ClassRooms list={classRooms} />
-									</CardGroup>
-									:
-									<div className="col-md-3 col-xl-3 mb-3">
-										No Classroom
-									</div>
-							}
-						</div>
-
 					</Row>
+
+					<div>
+						{
+							classRooms.length ?
+								<ClassRooms list={classRooms} />
+								:
+								<div className="col-md-3 col-xl-3 mb-3">
+									No Classroom
+								</div>
+						}
+					</div>
 
 			</div>
 			</div>
