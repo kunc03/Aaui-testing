@@ -53,7 +53,11 @@ import UjianHasil from "./components/client/ujianhasil";
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
-import LiveClass, { LiveClassRoom } from "./components/liveclass";
+import LiveClass from "./components/liveclass";
+import LiveStream from "./components/liveclass/livestream";
+
+import LiveClassAdmin from "./components/admin/liveclass/list";
+import LiveClassAdminJoin from "./components/admin/liveclass/join";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -142,7 +146,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
 
         <Route path="/liveclass" component={LiveClass} />
-        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
+        <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
@@ -185,45 +189,28 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/user-company" exact component={UserCompany} />
         <Route path="/user-company-create" component={UserCompanyAdd} />
-        <Route
-          path="/user-company-edit/:user_id"
-          exact
-          component={UserCompanyEdit}
-        />
+        <Route path="/user-company-edit/:user_id" exact component={UserCompanyEdit} />
         <Route path="/user-access" exactcomponent={UserAccess} />
         <Route path="/my-company" exact component={CompanyDetail} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
-        <Route
-          path="/kursus-materi-edit/:course_id"
-          exact
-          component={KursusMateriEdit}
-        />
+        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
 
         <Route path="/chapter/:course_id" exact component={ChapterPreview} />
         <Route path="/nilaiujian/:course_id" exact component={NilaiUjianPreview} />
 
         <Route path="/quiz/:course_id" exact component={QuizList} />
         <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
-        <Route
-          path="/question-quiz-create/:exam_id"
-          exact
-          component={QuestionQuizCreate}
-        />
-        <Route
-          path="/question-quiz-edit/:question_id"
-          exact
-          component={QuestionQuizEdit}
-        />
+        <Route path="/question-quiz-create/:exam_id" exact component={QuestionQuizCreate} />
+        <Route path="/question-quiz-edit/:question_id" exact component={QuestionQuizEdit} />
 
         <Route path="/exam/:course_id" exact component={ExamList} />
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
-        <Route
-          path="/question-exam-create/:exam_id"
-          exact
-          component={QuestionExamCreate}
-        />
+        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
+
+        <Route path="/liveclass" exact component={LiveClassAdmin} />
+        <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} />
 
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
@@ -254,7 +241,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
         <Route path="/liveclass" component={LiveClass} />
-        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
+        <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
