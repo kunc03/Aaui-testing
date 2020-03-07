@@ -9,6 +9,7 @@ import {
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
 
+
 export default class ForumDetail extends Component {
     
     state = {
@@ -277,17 +278,23 @@ export default class ForumDetail extends Component {
                     <Col sm={4}>
                       <Card>
                         <Card.Body>
-                          <Button
-                            onClick={this.lockForum.bind({},this.state.isLockedStatus ? 0 : 1)}
-                            className="btn-block btn-primary"
-                          >
-                            <i 
-                              className={
-                                this.state.isLockedStatus 
-                                ? "fa fa-lock"
-                                : "fa fa-unlock"
-                              }></i> &nbsp; {this.state.isLockedStatus ? "Terkunci" : "Tidak Terkunci"}
-                          </Button>
+
+                        {
+                          Storage.get('user').data.level == 'admin' ||
+                          Storage.get('user').data.level == 'superadmin'
+                          ?   <Button
+                                onClick={this.lockForum.bind({},this.state.isLockedStatus ? 0 : 1)}
+                                className="btn-block btn-primary"
+                              >
+                                <i 
+                                  className={
+                                    this.state.isLockedStatus 
+                                    ? "fa fa-lock"
+                                    : "fa fa-unlock"
+                                  }></i> &nbsp; {this.state.isLockedStatus ? "Terkunci" : "Tidak Terkunci"}
+                              </Button>
+                          :   ''
+                      }
 
                           <Button
                             onClick={this.openModalForumAdd}
