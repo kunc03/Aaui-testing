@@ -15,6 +15,8 @@ class Kursus extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
+
+    findCourseInput : ""
   }
 
   componentDidMount() {
@@ -62,8 +64,25 @@ class Kursus extends Component {
     })
   }
 
+  findCourse = (e) => {
+    e.preventDefault();
+    this.setState({findCourseInput : e.target.value});
+  }
+
   render() {
-    const { user, kategoriKursus, kursusTerbaru, kursusDiikuti } = this.state;
+    var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
+    if(findCourseInput != ""){      
+      [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
+        .map(y=>
+          y.filter(x=>
+            JSON.stringify(
+              Object.values(x)
+            ).replace(
+              /[^\w ]/g,''
+            ).match(new RegExp(findCourseInput,"gmi"))
+          )
+        );
+    }
 
     const CheckMedia = ({ media }) => {
       if (media) {
@@ -303,6 +322,7 @@ class Kursus extends Component {
                               </InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
+                              onChange={this.findCourse}
                               placeholder="Kursus & Materi"
                               aria-label="Username"
                               aria-describedby="basic-addon1"
