@@ -184,7 +184,7 @@ export default class Forum extends Component {
 
                         <Row>
                           <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/`}>
+                            <Link to={`/kursus`}>
                               <div className="kategori">
                                 <img
                                   src="/assets/images/component/kursusoff.png"

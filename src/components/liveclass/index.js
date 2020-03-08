@@ -199,7 +199,7 @@ export default class LiveClass extends Component {
 			
 					<Row>
 						<Col sm={8}>
-							<h3 className="f-20 f-w-800 mb-3">Forum</h3>
+							<h3 className="f-20 f-w-800 mb-3">Live Class</h3>
 
 							<div className="col-md-12 col-xl-12" style={{marginBottom: '42px', marginLeft: '-16px'}}>
 						
@@ -211,7 +211,7 @@ export default class LiveClass extends Component {
 								</InputGroup.Prepend>
 								
 								<FormControl
-									placeholder="Cari Forum Lain"
+									placeholder="Cari Kelas"
 									aria-label="Username"
 									aria-describedby="basic-addon1"
 								/>
@@ -224,7 +224,7 @@ export default class LiveClass extends Component {
 
 						<Row>
 							<div className="col-md-4 col-xl-4 mb-3">
-								<Link to={`/`}>
+								<Link to={`/kursus`}>
 									<div className="kategori">
 									<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
 									&nbsp;

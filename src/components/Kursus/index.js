@@ -360,9 +360,9 @@ class Kursus extends Component {
                             </InputGroup.Append>
                           </InputGroup>
                         </div>
-{/*
+
                         <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/`}>
+                          <Link to={`/kursus`}>
                             <div className="kategori-aktif">
                               <img src="/assets/images/component/kursuson.png" className="img-fluid" />
                               &nbsp;
@@ -390,7 +390,7 @@ class Kursus extends Component {
                             </div>
                           </Link>
                         </div>
-*/}
+
                       </div>
 
                       <div className="row" style={{marginTop: '15px'}}>
