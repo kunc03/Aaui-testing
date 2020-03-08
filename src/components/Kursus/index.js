@@ -147,7 +147,17 @@ class Kursus extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-20">Tidak ditemukan &quot;{findCourseInput}&quot;</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        ) 
+        : (
           <div className="col-sm-12">
             <Card>
               <Card.Body>
@@ -184,7 +194,17 @@ class Kursus extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-20">Tidak ditemukan &quot;{findCourseInput}&quot;</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        ) 
+        : (
           <div className="col-sm-12">
             <Card>
               <Card.Body>
@@ -253,7 +273,15 @@ class Kursus extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <Card>
+            <Card.Body>
+              <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus &quot;{findCourseInput}&quot;.</h3>
+            </Card.Body>
+          </Card>
+        )
+        : (
           <Card>
             <Card.Body>
               <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun.</h3>
