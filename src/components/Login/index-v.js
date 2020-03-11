@@ -1,8 +1,54 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import {Alert} from 'react-bootstrap';
+import API, {VOUCHER_LOGIN} from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class Voucher extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    voucher: "",
+    toggle_alert: false,
+  };
+
+  onChangevoucher = e => {
+    this.setState({ voucher: e.target.value, toggle_alert: false });
+  };
+
+  submitForm = e => {
+    e.preventDefault();
+
+    const { voucher } = this.state;
+    let body = { voucher }
+
+    API.post(VOUCHER_LOGIN, body)
+      .then(res => {
+        console.log('succes fetch', res);
+        if(res.status == 200){
+          if(!res.data.error){
+            Storage.set('user', {data:body});
+            Storage.set('token', {data:res.data.result.token});
+            window.location.href = window.location.origin;
+          }else{
+            this.setState({
+              toggle_alert: true
+            })
+          }
+        }else{
+          this.setState({
+            toggle_alert: true
+          })
+        }
+      })
+      .catch(err => {
+        console.log('failed fetch', err);
+      })
+  };
   render() {
+    const { toggle_alert } = this.state;
     return (
       <div>
         <div
@@ -26,16 +72,25 @@ class Voucher extends Component {
                   />
                 </div>
                 <h5 className="mb-4 f-20 f-w-800">Masuk dengan Voucher</h5>
-                <div className="input-group mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="No. Voucher"
-                  />
-                </div>
-                <button className="btn btn-ideku col-12 shadow-2 mb-4 mt-5 b-r-3 f-20">
-                  Masuk
-                </button>
+                <form onSubmit={event => this.submitForm(event)}>
+                  <div className="input-group mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="No. Voucher"
+                      onChange={this.onChangevoucher}
+                    />
+                  </div>
+                  <button className="btn btn-ideku col-12 shadow-2 mb-4 mt-5 b-r-3 f-20">
+                    Masuk
+                  </button>
+                  {
+                    toggle_alert &&
+                    <Alert variant={'danger'}>
+                      Login failed. Please verify the data correct!
+                    </Alert>
+                  }
+                </form>
                 <p className="mb-0 mt-2">
                     <Link className="text-cc-purple f-16 f-w-600" to='/login'> Masuk dengan Email </Link>
                   {/* <a

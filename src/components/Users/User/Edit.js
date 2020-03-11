@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
+import axios from "axios";
+
 class UserEdit extends Component {
   state = {
     user: null,
@@ -131,7 +133,7 @@ class UserEdit extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Edit User Management</h3>
+                      <h3 className="f-24 f-w-800">Tambah User Management</h3>
                       <div className="card">
                         <div className="card-block">
                           <form onSubmit={this.onSubmitEditUser}>
