@@ -80,9 +80,12 @@ class Aktivity extends Component {
 
   tabAktivitas(a,b){
     this.setState({tabIndex: b+1});
-}
+  }
 
   render() {
+
+    console.log('user: ', this.state.user)
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -100,29 +103,29 @@ class Aktivity extends Component {
                     // opacity: 0.1
                   }}>
                       <div className="col-xl-2 text-center">
-                          <img
-                              alt=""
-                              src='https://iacts.org/sites/all/themes/themag/assets/images/default-user.png'
-                              className="rounded-circle img-profile"
-                              style={{padding:'20px'}}
-                            />
-                          
+                        <img
+                            alt=""
+                            src={this.state.user.avatar}
+                            className="rounded-circle img-profile"
+                            style={{padding:'20px'}}
+                          />
                       </div>
+
                       <div className="col-xl-4 text-center">
                           <div className="media-body p-20" >
                             <h6 className="title-head f-w-800 f-24 ">
-                              <a href="/aktivitas">Natasa Midori</a>
+                              <a href="/aktivitas">{this.state.user.name}</a>
                             </h6>
                               <small className="d-block text-c-grey f-w-600 f-16">
-                                Group Marketing
-                                <p>Cabang Jakarta Barat</p>
+                                {this.state.user.email}
+                                <p>{this.state.user.phone}</p>
                               </small>
-                              <b>Invovesta Utama</b>
+                              <b>{this.state.user.address}</b>
                           </div>
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
-                            <img src="/assets/images/component/liveon.png" className="img-fluid" />
+                            <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
                               Cabang Jakarta Barat
                             </small>
@@ -131,7 +134,7 @@ class Aktivity extends Component {
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
-                            <img src="/assets/images/component/liveon.png" className="img-fluid" />
+                            <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
                               Cabang Jakarta Barat
                             </small>
@@ -140,7 +143,7 @@ class Aktivity extends Component {
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
-                            <img src="/assets/images/component/liveon.png" className="img-fluid" />
+                            <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
                               Cabang Jakarta Barat
                             </small>
@@ -169,17 +172,17 @@ class Aktivity extends Component {
                     <div className="col-md-12 col-xl-5">
                       <div className="card">
                         <h4 className="p-10">Kalender</h4>
-                            <Calendar
+                          <Calendar
                             onChange={(a)=>{console.log(a)}}
                             value={new Date()}
                             locale='id-ID'
                             // activeStartDate={}
                             // defaultActiveStartDate={this.state.today}
-                            
                           />
-                            <div className="p-l-20"><span className="p-r-5" style={{color:'red'}}><i className="fa fa-square"></i></span>Hari ini</div>
-                            <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
-                            <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Live Class</div>
+                          <div className="p-l-20"><span className="p-r-5" style={{color:'red'}}><i className="fa fa-square"></i></span>Hari ini</div>
+                          <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
+                          <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Live Class</div>
+
                       </div>
                     </div>
                   </div>
