@@ -16,13 +16,18 @@ module.exports = {
     // Import Users
 	Users	        : require('./Users/User').default,
     UserAdd	        : require('./Users/User/add').default,
+    UserEdit        : require('./Users/User/Edit').default,
     UserCabang      : require('./Users/UserCabang').default,
     UserGroup       : require('./Users/UserGroup').default,
+    UserCompany     : require('./Users/UserCompany').default,
 
     // Import Admin
     KursusMateri	        : require('./admin/kursusmateri').default,
     KursusMateriAdd	        : require('./admin/kursusmateriadd').default,
-    KursusMateriEdit      : require('./admin/kursusmateriedit').default,
+    KursusMateriEdit        : require('./admin/kursusmateriedit').default,
+
+    KursusMateriPreview             : require('./admin/KursusMateriPreview').default,
+    
 }
 
 

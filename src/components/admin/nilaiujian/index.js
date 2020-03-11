@@ -68,7 +68,7 @@ export default class NilaiUjian extends Component {
                                                     return (
                                                             <div className="col-xl-4 mb-3">
                                                                 <Link onClick={this.tabNilai.bind(this, tab, index)}>
-                                                                    <div className={this.state.tabIndex === index+1 ? "kategori-aktif" : "kategori"}>
+                                                                    <div className={this.state.tabIndex === index+1 ? "kategori-aktif" : "kategori title-disabled"}>
                                                                         {tab.title}
                                                                     </div>
                                                                 </Link>
