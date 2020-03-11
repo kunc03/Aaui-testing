@@ -8132,6 +8132,17 @@ a.btn-theme.active {
   background-color: rgb(146, 31, 91);
 }
 
+.btn-ideku-gray {
+  color: #BF337B;
+  background-color: rgb(204, 200, 202) !important;
+  border : 1px solid  #BF337B;
+}
+.btn-idekuu-gray:hover {
+  color: rgb(235, 42, 141);
+  background-color: rgb(172, 169, 170);
+  border : 1px solid  #BF337B;
+}
+
 .btn-info {
   color: #fff;
   background-color: #3ebfea;
