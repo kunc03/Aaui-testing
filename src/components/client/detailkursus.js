@@ -199,10 +199,10 @@ export default class DetailKursus extends Component {
       if (res.status === 200) {
         if(res.data.result.score == null) {
           API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
-            res.data.result.filter(item => item.exam_id == quizId);
+            let filtered = res.data.result.filter(item => item.exam_id == quizId);
             if (res.status === 200) {
               this.setState({
-                isModalQuiz: true, countSoal: res.data.result[0].soal, examId: quizId
+                isModalQuiz: true, countSoal: filtered[0].soal, examId: quizId
               })
             }
           })
