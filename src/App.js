@@ -1,91 +1,62 @@
-import React, {Component} from "react";
-import { BrowserRouter as Router, Redirect, Switch, Route } from "react-router-dom";
+import React from "react";
 
-/**
- * New Code For Import Component
- */
-import {
-  Header,
-  SideBar,
-  Loader,
-  Home,
-  Pengaturan,
-  Profile,
-  Users,
-  UserAdd,
-  UserEdit,
-  UserCabang,
-  UserGroup,
-  UserCompany,
-  LoginVoucher,
-  Login,
-  Logout,
-  KursusMateri,
-  KursusMateriAdd,
-  KursusMateriEdit,
-  KursusMateriPreview,
-} from './components';
+import { Switch, Route } from "react-router-dom";
 
+import API, { API_SERVER } from './repository/api'; 
+import Storage from './repository/storage';
 
+import Header from "./components/Header_sidebar/Header";
+import Sidebar from "./components/Header_sidebar/Sidebar";
+import Loader from "./components/Header_sidebar/Loader";
+import Home from "./components/Home/index";
+import Activity from "./components/Activity/index";
+import Pengaturan from "./components/Pengaturan/index";
+import Profile from "./components/Profile/index";
 
-/**
- * Old Code
- */
-// import Header from "./components/Header_sidebar/Header";
-// import Sidebar from "./components/Header_sidebar/Sidebar";
-// import Loader from "./components/Header_sidebar/Loader";
-// import Home from "./components/Home/index";
-// import Pengaturan from "./components/Pengaturan/index";
-// import Profile from "./components/Profile/index";
-// import User from "./components/Users/User/index";
-// import UserAdd from "./components/Users/User/add";
-// import Cabang from "./components/Users/UserCabang/index";
-// import Grup from "./components/Users/UserGroup/index";
-// import Login from "./components/Login/index";
+import User from "./components/Users/User/index";
+import UserAdd from "./components/Users/User/add";
+import UserEdit from "./components/Users/User/Edit";
 
-export var router = [
-  {	path: '/home', 						      component: Home},
-  {	path: '/profile', 						  component: Profile},
-  {	path: '/setting', 						  component: Pengaturan},
-  {	path: '/users', 						    component: Users},
-  {	path: '/user-update', 				  component: UserEdit},
-  {	path: '/user-create', 				  component: UserAdd},
-  {	path: '/user-cabang', 				  component: UserCabang},
-  {	path: '/user-group', 						component: UserGroup},
-  {	path: '/my-company', 						component: UserCompany},
-  {	path: '/kursus-materi-preview', component: KursusMateriPreview},
-  
+import UserCompany from "./components/Users/User/company";
+import UserCompanyAdd from "./components/Users/User/companyadd";
+import UserCompanyEdit from "./components/Users/User/companyedit";
+import UserAccess from "./components/Users/Access/index";
 
-  
-  
-  {	path: '/logout', 						    component: Logout},
-  {	path: '/kursus-materi', 				  component: KursusMateri},
-  {	path: '/kursus-materi-create', 				  component: KursusMateriAdd},
-  {	path: '/kursus-materi-edit', 				  component: KursusMateriEdit},
+import KursusMateri from "./components/admin/course/kursusmateri";
+import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
+import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
 
-  
-];
+import ChapterPreview from "./components/admin/chapter/chapter";
+import NilaiUjianPreview from "./components/admin/nilaiujian";
 
+import QuizList from "./components/admin/exam/quiz";
+import QuestionQuiz from "./components/admin/question/quiz";
+import QuestionQuizCreate from "./components/admin/question/quizcreate";
+import QuestionQuizEdit from "./components/admin/question/quizedit";
 
-let userInfo = localStorage.getItem("user");
-const PrivateRoute = ({component: Component, ...rest}) => {
-	return (
-		<Route
-			{...rest}
-			render={props => 
-				userInfo !== null ?
-					(<Component {...props}/>)
-					:
-					(<Redirect to={{
-						pathname: '/login',
-						state: {from: props.location}
-					}}/>)
-			}
-		/>
-	)
-}
+import ExamList from "./components/admin/exam/exam";
+import QuestionExam from "./components/admin/question/exam";
+import QuestionExamCreate from "./components/admin/question/examcreate";
+import FilePicker from "./components/admin/filemanager/file";
 
-export class App extends Component {
+import Cabang from "./components/Users/UserCabang/index";
+import Grup from "./components/Users/UserGroup/index";
+import Company from "./components/Users/UserCompany/index";
+import CompanyDetail from "./components/Users/UserCompany/detail";
+import CompanyDetailSuper from "./components/Users/UserCompany/detailsuper";
+import Login from "./components/Login/index";
+
+import KategoriKursus from "./components/client/kategorikursus";
+import DetailKursus from "./components/client/detailkursus";
+import UjianKursus from "./components/client/ujiankursus";
+import UjianHasil from "./components/client/ujianhasil";
+
+import Forum from "./components/forum/forum";
+import ForumDetail from "./components/forum/forum-detail";
+
+import LiveClass, { LiveClassRoom } from "./components/liveclass";
+
+export default class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -96,75 +67,201 @@ export class App extends Component {
 
   componentDidMount() {
     let userInfo = localStorage.getItem("user");
-
-
-    // if (userInfo == null) {
-    //   this.setState({ userLogin: false });
-    // } else {
-    //   this.setState({ userLogin: true });
-    // }
-    
-  }
-
-  _privateRoute() {
-    // let workSpace = null;
-    // if (this.state.userLogin) {
-    //   workSpace = <Main />;
-    // } else {
-    //   workSpace = <Login />;
-    // }
-
-    // return <div>{workSpace}</div>;
+    if (userInfo == null) {
+      this.setState({ userLogin: false });
+    } else {
+      this.setState({ userLogin: true });
+    }
   }
 
   render() {
+    let workSpace = null;
+    if (this.state.userLogin) {
+      workSpace = <Main />;
+    } else {
+      workSpace = <Login />;
+    }
+
+    return <div>{workSpace}</div>;
+  }
+}
+
+export class Main extends React.Component {
+  state = {
+    level: Storage.get('user').data.level
+  }
+
+  render() {
+    let workSpaceSwitch = null;
+    if(this.state.level === 'superadmin') {
+      workSpaceSwitch = <SuperAdminSwitch />;
+    } else if(this.state.level === 'admin') {
+      workSpaceSwitch = <AdminSwitch />;
+    } else {
+      workSpaceSwitch = <ClientSwitch />;
+    }
+
     return (
-      <Router>
-        <div>
-          {userInfo ? 
-            <div>
-              <Loader />
-              <SideBar />
-              <Header />
-            </div>
-          : null }
-          
-          <Switch>
-                <Route
-									exact path={'/'}
-									render={() => <Redirect to={userInfo !== null ? '/home' : '/login'} />} />
-								
-								<Route
-									path={userInfo !== null ? '/home' :'/login'}
-									component={userInfo !== null ? Home : Login} />
-                
-                <Route
-									path={'/login-voucher'}
-									component={LoginVoucher} />
-
-                  {router.map((value, index) => {
-                      return (
-                          <PrivateRoute key={index} path={value.path} component={value.component} />
-                        )}
-                      ) 
-                  }
-
-                  
-            {/* <Route path="/" exact component={Home} />
-            <Route path="/Pengaturan" exact component={Pengaturan} />
-            <Route path="/Profile" exact component={Profile} />
-            <Route path="/user" exact component={User} />
-            <Route path="/user-create" exact component={UserAdd} />
-            <Route path="/cabang" exact component={UserCabang} />
-            <Route path="/grup" exact component={UserGrup} />
-            <Route path="/logout" component={Logout} /> */}
-
-            {/* <Route path="/login" exact component={Login} /> */}
-          </Switch>
-        </div>
-      </Router>
+      <div>
+        <Loader />
+        <Sidebar />
+        <Header />
+        {workSpaceSwitch}
+      </div>
     );
   }
 }
 
-export default App;
+export class Logout extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onClickLogout = this.onClickLogout.bind(this);
+  }
+
+  onClickLogout(e) {
+    e.preventDefault();
+  }
+
+  componentDidMount() {
+    localStorage.clear();
+    window.location.href = window.location.origin;
+  }
+
+  render() {
+    return <div></div>;
+  }
+}
+
+export class SuperAdminSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+        
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
+        
+        <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/profile" component={Profile} />
+
+        <Route path="/user" component={User} />
+        <Route path="/user-create" component={UserAdd} />
+        <Route path="/user-edit/:user_id" component={UserEdit} />
+        
+        <Route path="/user-access" component={UserAccess} />
+        <Route path="/user-company/:company_id" component={UserCompany} />
+        
+        <Route path="/cabang" component={Cabang} />
+        <Route path="/company" component={Company} />
+        <Route path="/company-detail/:company_id" component={CompanyDetail} />
+        <Route path="/company-detail-super/:company_id" component={CompanyDetailSuper} />
+        <Route path="/grup" component={Grup} />
+
+        <Route path="/logout" component={Logout} />
+      </Switch>
+    );
+  }
+}
+
+export class AdminSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
+        <Route path="/pengaturan" exact component={Pengaturan} />
+        <Route path="/profile" exact component={Profile} />
+        <Route path="/user-access" component={UserAccess} />
+
+        <Route path="/user" exact component={User} />
+        <Route path="/user-create" exact component={UserAdd} />
+        <Route path="/user-edit/:user_id" exactcomponent={UserEdit} />
+
+        <Route path="/user-company" exact component={UserCompany} />
+        <Route path="/user-company-create" component={UserCompanyAdd} />
+        <Route
+          path="/user-company-edit/:user_id"
+          exact
+          component={UserCompanyEdit}
+        />
+        <Route path="/user-access" exactcomponent={UserAccess} />
+        <Route path="/my-company" exact component={CompanyDetail} />
+
+        <Route path="/kursus-materi" exact component={KursusMateri} />
+        <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
+        <Route
+          path="/kursus-materi-edit/:course_id"
+          exact
+          component={KursusMateriEdit}
+        />
+
+        <Route path="/chapter/:course_id" exact component={ChapterPreview} />
+        <Route path="/nilaiujian/:course_id" exact component={NilaiUjianPreview} />
+
+        <Route path="/quiz/:course_id" exact component={QuizList} />
+        <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
+        <Route
+          path="/question-quiz-create/:exam_id"
+          exact
+          component={QuestionQuizCreate}
+        />
+        <Route
+          path="/question-quiz-edit/:question_id"
+          exact
+          component={QuestionQuizEdit}
+        />
+
+        <Route path="/exam/:course_id" exact component={ExamList} />
+        <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
+        <Route
+          path="/question-exam-create/:exam_id"
+          exact
+          component={QuestionExamCreate}
+        />
+
+        <Route path="/cabang" exact component={Cabang} />
+        <Route path="/company" exact component={Company} />
+        <Route path="/grup" exact component={Grup} />
+
+        <Route path="/filemanager" exact component={FilePicker} />
+
+        <Route path="/logout" exact component={Logout} />
+      </Switch>
+    );
+  }
+}
+
+export class ClientSwitch extends React.Component {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact component={Home} />
+
+        <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        
+        <Route path="/aktivitas" component={Activity} />
+        
+        <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
+        <Route path="/detail-kursus/:course_id" component={DetailKursus} />
+        <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass-room/:roomid" component={LiveClassRoom} />
+        
+        <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/profile" component={Profile} />
+        
+        <Route path="/logout" component={Logout} />
+      </Switch>
+    );
+  }
+}

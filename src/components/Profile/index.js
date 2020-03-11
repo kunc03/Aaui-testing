@@ -1,67 +1,91 @@
 import React, { Component } from "react";
-import {Alert, Modal} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import {Alert, Modal, Form, Card} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Profile extends Component {
   state = {
     user_data: {
-      user_id: Storage.get('user').data.user_id,
-      company_id: '',
-      branch_id: '',
-      level: '',
-      status: '',
-      email: '',
-      
-      name: '',
-      identity: '',
-      address: '',
-      phone: '',
-      avatar: '',
-      tempAvatar: '',
+      user_id: Storage.get("user").data.user_id,
+      company_id: "",
+      branch_id: "",
+      level: "",
+      status: "",
+      email: "",
+
+      name: "",
+      identity: "",
+      address: "",
+      phone: "",
+      avatar: "",
+      tempAvatar: ""
     },
+    kursusDiikuti: [],
     isModalAvatar: false,
-    toggle_alert: false
+    toggle_alert: false,
+
+    isNotifikasi: false,
+    isiNotifikasi: ""
+  };
+
+  fetchDataKursusDiikuti() {
+    API.get(
+      `${API_SERVER}v1/user-course/${Storage.get("user").data.user_id}`
+    ).then(res => {
+      if (res.status === 200) {
+        this.setState({ kursusDiikuti: res.data.result.reverse() });
+      }
+    });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.fetchProfile();
+    this.fetchDataKursusDiikuti();
   }
 
   handleModalAvatarClose = e => {
-    this.setState({ isModalAvatar: false, user_data: { ...this.state.user_data, tempAvatar: '' }});
-  }
+    this.setState({
+      isModalAvatar: false,
+      user_data: { ...this.state.user_data, tempAvatar: "" }
+    });
+  };
 
   onClickModalAvatar = e => {
     e.preventDefault();
     this.setState({ isModalAvatar: true });
-  }
+  };
 
   onClickSubmitModal = e => {
     e.preventDefault();
     let formData = new FormData();
-    formData.append('avatar', this.state.user_data.tempAvatar);
+    formData.append("avatar", this.state.user_data.tempAvatar);
 
-    API.put(`${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`, formData).then(res => {
-      if(res.status === 200) {
-        this.setState({ 
-          user_data: { ...this.state.user_data, avatar: res.data.result}, 
+    API.put(
+      `${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`,
+      formData
+    ).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          user_data: { ...this.state.user_data, avatar: res.data.result },
           isModalAvatar: false
         });
       }
-    })
-  }
+    });
+  };
 
   fetchProfile = () => {
-    const user = Storage.get('user');
+    const user = Storage.get("user");
     API.get(`${USER_ME}${user.data.email}`).then(res => {
-      console.log(res.data.result)
-      if(res.status === 200){
-        if(!res.data.error){
+      console.log(res.data.result);
+      if (res.status === 200) {
+        if (!res.data.error) {
           this.setState({
             user_data: {
               ...this.state.user_data,
-              avatar: res.data.result.avatar,
+              avatar: res.data.result.avatar
+                ? res.data.result.avatar
+                : "https://iacts.org/sites/all/themes/themag/assets/images/default-user.png",
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               level: res.data.result.level,
@@ -70,47 +94,100 @@ class Profile extends Component {
               name: res.data.result.name,
               identity: res.data.result.identity,
               address: res.data.result.address,
-              phone: res.data.result.phone,
+              phone: res.data.result.phone
             }
           });
         }
       }
-    })
-  }
+    });
+  };
 
-  updateProfile = (e) => {
+  updateProfile = e => {
     e.preventDefault();
-    const {user_data} = this.state;
-    API.put(`${USER}/${user_data.user_id}`, user_data).then(res=> {
-      console.log(res.data)
-        if(res.status === 200){
-          if(!res.data.error){
+    const { user_data } = this.state;
+    API.put(`${USER}/${user_data.user_id}`, user_data)
+      .then(res => {
+        if (res.status === 200) {
+          if (!res.data.error) {
+            this.fetchProfile();
             this.setState({
               toggle_alert: true
-            })
+            });
           }
         }
       })
-      .catch(err=> {
+      .catch(err => {
         console.log(err);
-      })
-  }
+      });
+  };
 
-  handleChange = (e) => {
-    if(e.target.name === 'avatar') {
-      this.setState({ user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] } });
+  closeNotifikasi = e => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: "" });
+  };
+
+  handleChange = e => {
+    if (e.target.name === "avatar") {
+      if (e.target.files[0].size <= 50000) {
+        this.setState({
+          user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] }
+        });
+      } else {
+        e.target.value = null;
+        this.handleModalAvatarClose();
+        this.setState({
+          isNotifikasi: true,
+          isiNotifikasi:
+            "File tidak sesuai dengan format, silahkan cek kembali."
+        });
+      }
     } else {
       this.setState({
         user_data: {
           ...this.state.user_data,
           [e.target.name]: e.target.value
         }
-      })
+      });
     }
-  }
+  };
 
   render() {
-    const {user_data, toggle_alert} = this.state;
+    const { user_data, toggle_alert, kursusDiikuti } = this.state;
+
+    const ListAktivitas = ({ lists }) => {
+      if (lists.length !== 0) {
+        return (
+          <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
+            {lists.map((item, i) => (
+              <div key={item.course_id}>
+                <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
+                  {item.course.title}
+                  <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
+                </li>
+                <table style={{ width: "100%" }}>
+                  <ListChapters lists={item.chapters} />
+                </table>
+              </div>
+            ))}
+          </ol>
+        );
+      } else {
+        return (
+          <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
+            Belum ada aktivitas.
+          </h3>
+        );
+      }
+    };
+
+    const ListChapters = ({ lists }) => (
+      <tbody>
+        {lists.map((item, i) => (
+          <tr key={item.chapter_id}>
+            <th className>{item.chapter_title}</th>
+          </tr>
+        ))}
+      </tbody>
+    );
 
     return (
       <div className="pcoded-main-container">
@@ -121,7 +198,6 @@ class Profile extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-36 f-w-bold mb-3">Profile Anda !</h3>
                       <div className="card">
                         <div className="card-block">
                           <div className="text-center mt-5 mb-5">
@@ -139,37 +215,62 @@ class Profile extends Component {
                               Ganti
                             </button>
                           </div>
-                          <Modal show={this.state.isModalAvatar} onHide={this.handleModalAvatarClose}>
+                          <Modal
+                            show={this.state.isModalAvatar}
+                            onHide={this.handleModalAvatarClose}
+                          >
                             <Modal.Body>
-                              <Modal.Title className="text-c-purple3 f-w-bold">Ganti Foto</Modal.Title>
-                              <div style={{ marginTop: '20px'}} className="form-group">
+                              <Modal.Title className="text-c-purple3 f-w-bold">
+                                Ganti Foto
+                              </Modal.Title>
+                              <div
+                                style={{ marginTop: "20px" }}
+                                className="form-group"
+                              >
                                 <label>Upload Foto</label>
-                                <input className="form-control" name="avatar" type="file" onChange={this.handleChange} required />
+                                <input
+                                  accept="image/*"
+                                  className="form-control"
+                                  name="avatar"
+                                  type="file"
+                                  onChange={this.handleChange}
+                                  required
+                                />
+                                <Form.Text className="text-muted">
+                                  Pastikan format file png, jpg, jpeg, atau gif
+                                  dan ukuran file tidak lebih dari 500KB
+                                </Form.Text>
                               </div>
-                              <button style={{ marginTop: '50px'}} type="button"
+                              <button
+                                style={{ marginTop: "50px" }}
+                                type="button"
                                 onClick={this.onClickSubmitModal}
-                                className="btn btn-block btn-ideku f-w-bold">
+                                className="btn btn-block btn-ideku f-w-bold"
+                              >
                                 Simpan
                               </button>
-                              <button type="button"
+                              <button
+                                type="button"
                                 className="btn btn-block f-w-bold"
-                                onClick={this.handleModalAvatarClose}>
+                                onClick={this.handleModalAvatarClose}
+                              >
                                 Tidak
                               </button>
                             </Modal.Body>
                           </Modal>
 
-
-                          {
-                            toggle_alert &&
-                            <Alert variant={'success'}>
-                              Update successfully!
-                            </Alert>
-                          }
-                          <form>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Profile
+                            </h3>
+                            {toggle_alert && (
+                              <Alert variant={"success"}>
+                                Data profil kamu berhasil di simpan.
+                              </Alert>
+                            )}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nama
+                                Nama Lengkap
                               </label>
                               <input
                                 name="name"
@@ -183,7 +284,7 @@ class Profile extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nomor Identitas
+                                Nomor Induk
                               </label>
                               <input
                                 name="identity"
@@ -192,7 +293,11 @@ class Profile extends Component {
                                 required
                                 placeholder="No. ktp"
                                 inputMode="numeric"
-                                value={user_data.identity == null ? "" : user_data.identity}
+                                value={
+                                  user_data.identity == null
+                                    ? ""
+                                    : user_data.identity
+                                }
                                 onChange={this.handleChange}
                               />
                             </div>
@@ -225,8 +330,24 @@ class Profile extends Component {
                                 onChange={this.handleChange}
                               />
                             </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Status
+                              </label>
+                              <input
+                                style={{ textTransform: "capitalize" }}
+                                name="levelStatus"
+                                type="text"
+                                className="form-control"
+                                placeholder="Status"
+                                value={
+                                  user_data.level == null ? "" : user_data.level
+                                }
+                                onChange={this.handleChange}
+                              />
+                            </div>
                             <button
-                              className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
+                              className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
                               onClick={event => this.updateProfile(event)}
                             >
                               Simpan
@@ -234,6 +355,82 @@ class Profile extends Component {
                           </form>
                         </div>
                       </div>
+
+                      <Card>
+                        <Card.Body>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Kontak
+                            </h3>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Email
+                              </label>
+                              <input
+                                name="email"
+                                type="email"
+                                className="form-control"
+                                placeholder="aaaa@bbb.com"
+                                value={user_data.email}
+                                onChange={this.handleChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Password
+                              </label>
+                              <input
+                                name="password"
+                                type="password"
+                                className="form-control"
+                                placeholder="password"
+                                onChange={this.handleChange}
+                              />
+                            </div>
+                            <Link
+                              to="/pengaturan"
+                              className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
+                            >
+                              Ubah di Pengaturan
+                            </Link>
+                          </form>
+                        </Card.Body>
+                      </Card>
+
+                      <Card>
+                        <Card.Body>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Kursus
+                            </h3>
+
+                            <ListAktivitas lists={kursusDiikuti} />
+                          </form>
+                        </Card.Body>
+                      </Card>
+
+                      <Modal
+                        show={this.state.isNotifikasi}
+                        onHide={this.closeNotifikasi}
+                      >
+                        <Modal.Body>
+                          <Modal.Title className="text-c-purple3 f-w-bold">
+                            Notifikasi
+                          </Modal.Title>
+
+                          <p style={{ color: "black", margin: "20px 0px" }}>
+                            {this.state.isiNotifikasi}
+                          </p>
+
+                          <button
+                            type="button"
+                            className="btn btn-block f-w-bold"
+                            onClick={this.closeNotifikasi}
+                          >
+                            Mengerti
+                          </button>
+                        </Modal.Body>
+                      </Modal>
                     </div>
                   </div>
                 </div>

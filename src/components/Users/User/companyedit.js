@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Form } from 'react-bootstrap'
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -10,6 +11,7 @@ class UserEdit extends Component {
 
     company_id: "",
     branch_id: "",
+    grup_id: "",
     
     identity: "",
     name: "",
@@ -17,9 +19,11 @@ class UserEdit extends Component {
     phone: "",
     address: "",
     level: "",
+    password: "",
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
     listLevel: [],
 
     responseMessage: '', 
@@ -28,7 +32,7 @@ class UserEdit extends Component {
   onSubmitEditUser = e => {
     e.preventDefault();
     let formData = {
-      company_id: this.state.company_id, branch_id: this.state.branch_id,
+      company_id: this.state.company_id, branch_id: this.state.branch_id, grup_id: this.state.grup_id,
       identity: this.state.identity, name: this.state.name, email: this.state.email,
       phone: this.state.phone, address: this.state.address, level: this.state.level,
       status: 'active'
@@ -37,10 +41,18 @@ class UserEdit extends Component {
 
     API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(res => {
       if(res.status === 200) {
+        
+        if (this.state.password !== '') {
+          let formData = { password: this.state.password };
+          API.put(`${API_SERVER}v1/user/password/${this.state.user_id}`, formData).then(res => {
+            console.log('pass: ', res.data)
+          })
+        }
+
         if(Storage.get('user').data.level === 'superadmin') {
           this.props.history.push('/user')
         } else {
-          this.props.history.push(`/user-company/${this.state.company_id}`)
+          this.props.history.push(`/my-company`)
         }
       }
     })
@@ -57,7 +69,21 @@ class UserEdit extends Component {
           this.setState({ listBranch: res.data.result, company_id: value })
         }
       })
-    } else {
+    } else if (name === 'email') {
+      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+        if (res.data.error) {
+          target.value = ''
+        } else {
+          this.setState({ [name]: value })
+        }
+      })
+    } else if (name === 'address') {
+      if (value.length <= 100) {
+        this.setState({ [name]: value })
+      } else {
+        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+      }
+    }else {
       this.setState({
         [name]: value
       });
@@ -71,6 +97,7 @@ class UserEdit extends Component {
           user: res.data.result,
           company_id: res.data.result.company_id,
           branch_id: res.data.result.branch_id,
+          grup_id: res.data.result.grup_id,
           name: res.data.result.name, 
           identity: res.data.result.identity,
           email: res.data.result.email,
@@ -85,7 +112,13 @@ class UserEdit extends Component {
           }
         })
 
-        const levelUser = [{level: 'superadmin'}, {level: 'admin'}, {level: 'client'}];
+        API.get(`${API_SERVER}v1/grup/company/${this.state.user.company_id}`).then(res => {
+          if (res.status === 200) {
+            this.setState({ listGrup: res.data.result })
+          }
+        })
+
+        const levelUser = [{level: 'admin'}, {level: 'client'}];
         this.setState({ listLevel: levelUser });
       }
     })
@@ -106,6 +139,7 @@ class UserEdit extends Component {
                       <h3 className="f-24 f-w-800">Edit User Management</h3>
                       <div className="card">
                         <div className="card-block">
+                          
                           <form onSubmit={this.onSubmitEditUser}>
                             <div className="form-group">
                               <label className="label-input">Cabang</label>
@@ -114,6 +148,18 @@ class UserEdit extends Component {
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id} selected={(item.branch_id === this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Grup</label>
+                              <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listGrup.map(item => (
+                                    <option value={item.grup_id} selected={(item.grup_id === this.state.user.grup_id) ? 'selected' : ''}>{item.grup_name}</option>
                                   ))
                                 }
                               </select>
@@ -154,6 +200,9 @@ class UserEdit extends Component {
                                 placeholder="rakaal@gmail.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-muted">
+                                Pastikan isi sesuai dengan format email ex. user@email.com
+                              </Form.Text>
                             </div>
                             <div className="form-group">
                               <label className="label-input">Phone</label>
@@ -174,7 +223,7 @@ class UserEdit extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
@@ -182,6 +231,16 @@ class UserEdit extends Component {
                                   ))
                                 }
                               </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Password</label>
+                              <input
+                                type="password"
+                                name="password"
+                                className="form-control"
+                                placeholder="password"
+                                onChange={this.onChangeInput}
+                              />
                             </div>
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                               Simpan

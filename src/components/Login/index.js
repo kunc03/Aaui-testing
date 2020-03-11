@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router-dom'
 import {Alert} from 'react-bootstrap';
 import axios from 'axios';
 import API, {USER_LOGIN} from '../../repository/api';
@@ -47,12 +48,13 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
+      //console.log(res.data.result)
       if(res.status === 200) {
         if(!res.data.error) {
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
             email: res.data.result.email, 
-            level: res.data.result.level 
+            level: res.data.result.level,
           }});
           Storage.set('token', {data: res.data.result.token});
           window.location.href = window.location.origin;
@@ -78,7 +80,7 @@ class Login extends Component {
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
             email: res.data.result.email,
-            level: res.data.result.level
+            level: res.data.result.level,
           }});
           Storage.set('token', {data:res.data.result.token});
           window.location.href = window.location.origin;

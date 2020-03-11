@@ -11073,3 +11073,154 @@ div.code-toolbar > .toolbar span:hover {
 		box-shadow: 0 0 0 0 rgba(4, 169, 245, 0)
 	}
 }
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+}
+
+.flex-item {
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #BF337B;
+  width: 76px;
+  margin: 12px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 20px;
+  list-style-type: none;
+  font-size: 14;
+  cursor: pointer;
+  color: #BF337B;
+}
+
+.flex-item:hover {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-ideku {
+  background-color: #BF337B;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-green {
+  background-color: #259457;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.flex-item-red {
+  background-color: #8F0101;
+  border: 1px solid #f1f1f1;
+  color: white;
+}
+
+.card-options {
+  cursor: pointer;
+  margin: 8px;
+}
+
+.card-blue {
+  background-color: #527AFF;
+  color: white;
+}
+
+.card-green {
+  background-color: #259457;
+  color: white;
+}
+
+.card-red {
+  background-color: #8F0101;
+  color: white;
+}
+
+.submit-ujian {
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.card-active {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.card-nonactive {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #DFDFDF;
+  cursor: no-drop;
+}
+
+.kategori {
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px; 
+  font-size: 15.9px;
+  font-weight: bold;
+}
+
+.kategori-aktif {
+  border-radius: 10px;
+  background-color: white;
+  padding: 20px; 
+  border-bottom: 5px solid #945A86; 
+  font-size: 15.9px;
+  font-weight: bold;
+}
+
+.title-disabled {
+  color: gray !important
+}
+
+.forum-filter {
+  margin: 20px 0px;
+}
+
+.forum-kategori {
+  margin: 5px;
+}
+
+.forum-kategori-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 2px;
+}
+
+.forum-item {
+  margin: 8px;
+}
+
+.forum-action {
+  margin-top: 5px;
+  /*float: right;*/
+}
+
+.forum-gambar {
+  width: 114px;
+  height: 114px;
+  float: left;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+@media (min-width: 992px) {
+  .modal-xlg {
+    max-width: 1200px;
+  }
+}

@@ -3,15 +3,53 @@ import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
 
 class Sidebar extends Component {
+  state = {
+    menuAktif: '/'
+  }
+
+  componentDidMount() {
+    this.setState({ menuAktif: window.location.pathname })
+  }
+
   render() {
     let levelUser = Storage.get('user').data.level;
-    let menuContent = null;
+    let menuClients = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+
+    let menuAdmins = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
+      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
+      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+
+    let menuSuperAdmins = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Kelas', link: '/liveclass' },
+      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
+      { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
+      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+
+    const { menuAktif } = this.state;
+  
+    let menuContent = [];
     if(levelUser === 'superadmin') {
-      menuContent = <MenuSuperAdmin />;
+      menuContent = menuSuperAdmins;
     } else if(levelUser === 'admin') {
-      menuContent = <MenuAdmin />;
+      menuContent = menuAdmins;
     } else {
-      menuContent = <MenuClient />;
+      menuContent = menuClients;
     }
 
     return (
@@ -41,10 +79,28 @@ class Sidebar extends Component {
                 <label />
               </li>
 
-              {menuContent}
+              <div>
+              {
+                menuContent.map((item, i) => (
+                  <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
+                    <Link to={item.link} className="nav-link">
+                      <span className="pcoded-micon">
+                        <img
+                          src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                          alt=""
+                        ></img>
+                      </span>
+                      <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                ))
+              }
+              </div>
 
               <li data-username="Sample Page" className="nav-item mt-4  bg-c-purple-dark">
-                <Link to="/logout" className="nav-link">
+                <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
                   <span className="pcoded-micon">
                     <img
                       src="assets/images/component/Icon Logout.png"
@@ -57,6 +113,7 @@ class Sidebar extends Component {
                   <span className="pcoded-mtext f-16 f-w-bold">Logout</span>
                 </Link>
               </li>
+
             </ul>
           </div>
         </div>
@@ -66,253 +123,3 @@ class Sidebar extends Component {
 }
 
 export default Sidebar;
-
-export class MenuSuperAdmin extends React.Component {
-  render() {
-    return (
-      <>
-      <li data-username="Sample Page" className="nav-item active mt-4">
-        <Link to="#" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Kursus.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">
-            Kursus &amp; Materi
-          </span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="#" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">
-            Forum diskusi
-          </span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="#" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Kelas.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Kelas</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="#" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Aktivitas.png"
-              alt=""
-              style={{
-                paddingLeft: "3px"
-              }}
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Aktivitas</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/pengaturan" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Pengaturan.png"
-              alt=""
-              style={{
-                paddingLeft: "3px"
-              }}
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Pengaturan</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/profile" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Profile</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/user" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Users</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/company" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Company</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/user-access" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Access</span>
-        </Link>
-      </li>
-      </>
-    );
-  }
-}
-
-export class MenuAdmin extends React.Component {
-  render() {
-    return (
-      <>
-      <li data-username="Sample Page" className="nav-item active mt-4">
-        <Link to="/" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Kursus.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">
-            Dashboard
-          </span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to={`/my-company`} className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">My Company</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to={`/kursus-materi`} className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Kursus & Materi</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to={`/user-company`} className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Users</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to={`/user-access`} className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Access</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/profile" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Profile</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/pengaturan" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Pengaturan.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Pengaturan</span>
-        </Link>
-      </li>
-      </>
-    );
-  }
-}
-
-export class MenuClient extends React.Component {
-  render() {
-    return (
-      <>
-      <li data-username="Sample Page" className="nav-item active mt-4">
-        <Link to="/" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Kursus.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">
-            Dashboard
-          </span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/profile" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Forum.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Profile</span>
-        </Link>
-      </li>
-      <li data-username="Sample Page" className="nav-item mt-4">
-        <Link to="/pengaturan" className="nav-link">
-          <span className="pcoded-micon">
-            <img
-              src="assets/images/component/Icon Pengaturan.png"
-              alt=""
-            ></img>
-          </span>
-          <span className="pcoded-mtext f-16 f-w-bold">Pengaturan</span>
-        </Link>
-      </li>
-      </>
-    );
-  }
-}

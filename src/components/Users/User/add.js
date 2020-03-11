@@ -58,7 +58,7 @@ class UserAdd extends Component {
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
       if(res.status === 200) {
-        this.props.history.push('/user')
+        this.props.history.push(`/company-detail-super/${formData.company_id}`)
       }
     })
   };
@@ -161,7 +161,7 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select style={{textTransform: 'capitalize'}} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (

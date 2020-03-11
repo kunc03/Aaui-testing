@@ -8,15 +8,31 @@ class Header extends Component {
     super(props);
     
     this.state = {
-      user: 'Anonymous',
-      level: 'member'
-    }
+      user: "Anonymous",
+      level: "Member",
+      avatar: "/assets/images/user/avatar-1.jpg"
+    };
   }
 
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
-        this.setState({ user: res.data.result.name, level: res.data.result.level });
+        Storage.set('user', {data: { 
+          user_id: res.data.result.user_id, 
+          email: res.data.result.email,
+          user: res.data.result.name,
+          level: res.data.result.level,
+          avatar: res.data.result.avatar
+            ? res.data.result.avatar
+            : "/assets/images/user/avatar-1.jpg"
+        }});
+        this.setState({
+          user: res.data.result.name,
+          level: res.data.result.level,
+          avatar: res.data.result.avatar
+            ? res.data.result.avatar
+            : "/assets/images/user/avatar-1.jpg"
+        });
       }
     })
   }
@@ -40,24 +56,26 @@ class Header extends Component {
             <span className="b-title">IDEKU</span>
           </a>
         </div>
+        
         <a className="mobile-menu" id="mobile-header" href="javascript:">
           <i className="feather icon-more-horizontal" />
         </a>
+
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item dropdown">
               <Link to="/Profile">
                 <div className="media">
                   <img
-                    alt=""
+                    alt="Media"
                     className="img-radius"
                     style={{ width: 40, height: 40 }}
-                    src="assets/images/user/avatar-1.jpg"
+                    src={this.state.avatar}
                   />
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
                       {user}
-                      <small className="d-block  mt-2 text-c-grey">{level}</small>
+                      <small className="d-block  mt-2 text-c-grey" style={{textTransform: 'capitalize'}}>{level}</small>
                     </h6>
                   </div>
                 </div>
@@ -155,20 +173,7 @@ class Header extends Component {
                 </div>
               </div>
             </li>
-            <li className="nav-item">
-              <div className="main-search open">
-                <div className="input-group">
-                  <i className="feather icon-search input-group-text mr-1 text-c-grey" />
-                  <input
-                    type="text"
-                    id=""
-                    className="form-control"
-                    placeholder="Pencarian..."
-                    style={{ width: 150 }}
-                  />
-                </div>
-              </div>
-            </li>
+            
           </ul>
         </div>
       </header>

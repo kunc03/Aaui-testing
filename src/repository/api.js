@@ -12,6 +12,7 @@ export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
 export const USER_ME = `${API_SERVER}v1/auth/me/`;
 export const USER = `${API_SERVER}v1/user`;
+export const FORUM = `${API_SERVER}v1/forum`;
 
 export default class API {
     static getConfig = (bearer = true) => {
