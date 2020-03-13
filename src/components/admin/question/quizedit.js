@@ -19,7 +19,10 @@ export default class QuestionQuizEdit extends Component {
     pilihan: "",
     jawaban: "",
 
-    pilihans: []
+    pilihans: [],
+
+    isSimpanPertanyaan: false,
+    isiSimpanPertanyan: ''
   };
 
   onSubmitFormPilihan = e => {
@@ -84,11 +87,17 @@ export default class QuestionQuizEdit extends Component {
             number: res.data.result.number,
             tag: res.data.result.tag,
             pertanyaan: res.data.result.question,
-            correctOption: res.data.result.correct_option
+            correctOption: res.data.result.correct_option,
+            isSimpanPertanyaan: true,
+            isiSimpanPertanyan: 'Pertanyaan berhasil diedit.'
           });
         }
       }
     );
+  };
+
+  handleSimpanPertanyaan = e => {
+    this.setState({ isSimpanPertanyaan: false, isiSimpanPertanyan: '' });
   };
 
   onChangeInput = e => {
@@ -433,6 +442,26 @@ export default class QuestionQuizEdit extends Component {
                           onClick={this.handleClose}
                         >
                           Tidak
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+                    <Modal
+                      show={this.state.isSimpanPertanyaan}
+                      onHide={this.handleSimpanPertanyaan}
+                    >
+                      <Modal.Body>
+                        <h3 className="f-24 f-w-800 mb-3">
+                          {this.state.isiSimpanPertanyan}
+                        </h3>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.handleSimpanPertanyaan}
+                        >
+                          Mengerti
                         </button>
                       </Modal.Body>
                     </Modal>

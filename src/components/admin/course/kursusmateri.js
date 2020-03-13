@@ -4,6 +4,7 @@ import { Modal } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import ReactPlayer from 'react-player';
+import Moment from "react-moment";
 
 export default class KursusMateri extends Component {
 
@@ -20,16 +21,18 @@ export default class KursusMateri extends Component {
 
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-		//	console.log(res)
 			if(res.status === 200) {
 				this.setState({ companyId: res.data.result.company_id });
-				API.get(`${API_SERVER}v1/course/company/${this.state.companyId}`).then(res => {
-					if(res.status === 200) {
-						this.setState({ kursus: res.data.result });
+
+				API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${res.data.result.company_id}`).then(res => {
+					console.log('count: ', res.data.result.length)
+					if (res.status === 200) {
+						this.setState({ kursus: res.data.result.reverse() });
 					}
 				})
 			}
 		});
+
 	}
 
 	onClickHapus = e => {
@@ -64,7 +67,7 @@ export default class KursusMateri extends Component {
 							src={media}
 							width="200px"
 							style={{ height: "100px" }}
-							alth="Cover"
+							alt="Cover"
 						/>
 					)
 				} else {
@@ -99,11 +102,11 @@ export default class KursusMateri extends Component {
 							<tr key={item.course_id}>
 								<td>{i+1}</td>
 								<td>
-									<CheckMedia media={item.image} />
+									<CheckMedia media={item.thumbnail ? item.thumbnail : item.image} />
 								</td>
 								<td>{item.category_name}</td>
 								<td><Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">{item.title}</Link></td>
-								<td>{item.created_at.toString().substring(0,10)}</td>
+								<td><Moment format="DD/MM/YYYY">{item.created_at}</Moment></td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>
 									<Link to={`/nilaiujian/${item.course_id}`} className="buttonku" title="Nilai Ujian">
@@ -146,7 +149,7 @@ export default class KursusMateri extends Component {
                               <th>Cover</th>
                               <th>Kategori</th>
                               <th>Judul</th>
-                              <th>Created At</th>
+                              <th>Tanggal</th>
                               <th>Publish</th>
                               <th className="text-center">
                                 <Link

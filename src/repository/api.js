@@ -7,8 +7,10 @@ export const DEV_MODE = false;
 const API_SERVER_DEV = 'http://localhost:3002/';
 const API_SERVER_PROD = 'https://8023.development.carsworld.co.id/';
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
+export const API_JITSI = '8026.development.carsworld.co.id';
 
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
+export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
 export const USER_ME = `${API_SERVER}v1/auth/me/`;
 export const USER = `${API_SERVER}v1/user`;
 export const FORUM = `${API_SERVER}v1/forum`;

@@ -23,6 +23,7 @@ export default class KursusMateriAdd extends Component {
 		caption: '',
 		body: '',
 		image: '',
+		thumbnail: '',
 
     isModalKategori: false,
     
@@ -75,7 +76,7 @@ export default class KursusMateriAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-    if(name === 'image' || name === 'kategori_image') {
+    if(name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
       if (target.files[0].size <= 20000000) {
         this.setState({ [name]: target.files[0] });
       } else {
@@ -99,7 +100,8 @@ export default class KursusMateriAdd extends Component {
 			title: '',
 			caption: '',
 			body: '',
-			image: ''
+			image: '',
+			thumbnail: '',
   	})
   }
 
@@ -161,7 +163,11 @@ export default class KursusMateriAdd extends Component {
 
   	API.post(`${API_SERVER}v1/course`, form).then(res => {
   		if(res.status === 200) {
-        // console.log(res.data)
+        if(this.state.thumbnail) {
+          let formData = new FormData();
+          formData.append('thumbnail', this.state.thumbnail);
+          API.put(`${API_SERVER}v1/course/thumbnail/${res.data.result.course_id}`, formData);
+        }
   			this.props.history.push('/kursus-materi');
   		}
   	})
@@ -257,27 +263,6 @@ export default class KursusMateriAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Deskripsi</label>
-                              <Editor
-                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                                initialValue={this.state.body}
-                                init={{
-                                  height: 400,
-                                  menubar: false,
-                                  plugins: [
-                                    "advlist autolink lists link image charmap print preview anchor",
-                                    "searchreplace visualblocks code fullscreen",
-                                    "insertdatetime media table paste code help wordcount"
-                                  ],
-                                  toolbar:
-                                    "undo redo | formatselect | bold italic backcolor | \
-                                   alignleft aligncenter alignright alignjustify | \
-                                    bullist numlist outdent indent | removeformat | help"
-                                }}
-                                onChange={this.onChangeTinyMce}
-                              />
-                            </div>
-                            <div className="form-group">
                               <label className="label-input">Media</label>
                               <input
                                 accept="image/*,video/*"
@@ -297,6 +282,48 @@ export default class KursusMateriAdd extends Component {
                                   {this.state.resMsg}
                                 </Form.Text>
                               )}
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Thumbnail</label>
+                              <input
+                                accept="image/*"
+                                type="file"
+                                required
+                                name="thumbnail"
+                                className="form-control"
+                                placeholder="konten"
+                                onChange={this.onChangeInput}
+                              />
+                              <Form.Text>
+                                Pastikan file berformat png, jpg, jpeg,
+                                atau gif dan ukuran file tidak melebihi 20MB.
+                              </Form.Text>
+                              {this.state.resMsg && (
+                                <Form.Text className="text-danger">
+                                  {this.state.resMsg}
+                                </Form.Text>
+                              )}
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Deskripsi</label>
+                              <Editor
+                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                initialValue={this.state.body}
+                                init={{
+                                  height: 400,
+                                  menubar: false,
+                                  plugins: [
+                                    "advlist autolink lists link image charmap print preview anchor",
+                                    "searchreplace visualblocks code fullscreen",
+                                    "insertdatetime media table paste code help wordcount"
+                                  ],
+                                  toolbar:
+                                    "undo redo | formatselect | bold italic backcolor | \
+                                   alignleft aligncenter alignright alignjustify | \
+                                    bullist numlist outdent indent | removeformat | help"
+                                }}
+                                onChange={this.onChangeTinyMce}
+                              />
                             </div>
 
                             <button

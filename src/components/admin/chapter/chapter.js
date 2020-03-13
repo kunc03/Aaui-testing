@@ -25,6 +25,7 @@ export default class ChapterPreview extends Component {
 		chapterBody: '',
     chapterVideo: '',
     attachmentId: [],
+    thumbnail: '',
 
 		isModalAdd: false,
     isModalHapus: false,
@@ -61,7 +62,7 @@ export default class ChapterPreview extends Component {
 		const name = e.target.name;
 		const value = e.target.value;
 
-		if(name === 'chapterVideo') {
+		if(name === 'chapterVideo' || name === 'thumbnail') {
 			this.setState({ [name]: e.target.files[0] });
 		} else if (name === 'attachmentId') {
       this.setState({ [name]: e.target.files });
@@ -130,6 +131,20 @@ export default class ChapterPreview extends Component {
           }
         })
       }
+
+      if (this.state.thumbnail !== "") {
+        let form = new FormData();
+        form.append("thumbnail", this.state.thumbnail);
+        API.put(
+          `${API_SERVER}v1/chapter/thumbnail/${this.state.chapterId}`,
+          form
+        ).then(res => {
+          if (res.status === 200) {
+            this.handleModalClose();
+            this.fetchDataChapter();
+          }
+        });
+      }
       
     // action for insert
 		} else {
@@ -152,6 +167,19 @@ export default class ChapterPreview extends Component {
                 formData.append('attachment_id', this.state.attachmentId[i]);
               }
               API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
+            }
+
+            if (this.state.thumbnail !== "") {
+              let form = new FormData();
+              form.append("thumbnail", this.state.thumbnail);
+              API.put(
+                `${API_SERVER}v1/chapter/thumbnail/${res.data.result.chapter_id}`,
+                form
+              ).then(res => {
+                if (res.status === 200) {
+                  console.log("res: ");
+                }
+              });
             }
   
             this.handleModalClose()
@@ -290,7 +318,7 @@ export default class ChapterPreview extends Component {
 	render() {
 		const {chapters, course, quiz} = this.state;
 
-		const CheckMedia = ({ media }) => {
+		const CheckMedia = ({ media, thumbnail }) => {
 			if (media) {
 				let ekSplit = media.split('.');
 				let ektension = ekSplit[ekSplit.length - 1];
@@ -304,7 +332,7 @@ export default class ChapterPreview extends Component {
               <ReactPlayer
                 style={{ position: "absolute", top: "0", left: "0" }}
                 url={media}
-                light={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
+                light={thumbnail ? thumbnail : `https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
                 volume="1"
                 controls
                 height="100%"
@@ -511,7 +539,7 @@ export default class ChapterPreview extends Component {
                         <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
                       )}
 
-                      <CheckMedia media={course.image} />
+                      <CheckMedia media={course.image} thumbnail={course.thumbnail} />
 
                       <br />
                       <br />
@@ -648,14 +676,36 @@ export default class ChapterPreview extends Component {
                               className="form-control"
                             />
                             <Form.Text>
-                              {!this.state.chapterId &&
-                              <span
-                                style={{ color: "red", fontWeight: "bold" }}
-                              >
-                                Required &nbsp;
-                              </span>
-                              }
+                              {!this.state.chapterId && (
+                                <span
+                                  style={{ color: "red", fontWeight: "bold" }}
+                                >
+                                  Required &nbsp;
+                                </span>
+                              )}
                               Pastikan file berformat mp4, png, jpg, jpeg, atau
+                              gif dan ukuran file tidak melebihi 20MB.
+                            </Form.Text>
+                          </div>
+                          <div className="form-group">
+                            <label>Thumbnail Chapter</label>
+                            <input
+                              accept="image/*"
+                              name="thumbnail"
+                              onChange={this.onChangeInput}
+                              type="file"
+                              placeholder="media chapter"
+                              className="form-control"
+                            />
+                            <Form.Text>
+                              {!this.state.chapterId && (
+                                <span
+                                  style={{ color: "red", fontWeight: "bold" }}
+                                >
+                                  Required &nbsp;
+                                </span>
+                              )}
+                              Pastikan file berformat png, jpg, jpeg, atau
                               gif dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>

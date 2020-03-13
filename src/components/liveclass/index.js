@@ -9,185 +9,65 @@ import {
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 
-export const ClassRooms = ({list}) => <Row>
-{list.map( props => 
-		<div className="col-sm-12 col-md-6 col-lg-3">
-			<Card className="card-post card-post--1 card card-small">
-				<div style={{
-					backgroundImage: `url("${props.img}")`,
-
-					backgroundSize: "cover",
-					backgroundPosition: "50%",
-
-					position: "relative",
-					minHeight: "10.3125rem",
-					borderTopLeftRadius: ".625rem",
-					borderTopRightRadius: ".625rem",
-					backgroundRepeat: "no-repeat",
-				}}>
-					<span className={`card-post__category bg-${props.badgeColor} badge badge-primary badge-pill`} style={{
-							top: ".9375rem",
-							right: ".9375rem",
-							position:"absolute",
-							textTransform:"uppercase"
-					}}>
-						{props.type}
-					</span>
-
-					<div className="card-post__author d-flex"></div>
-				
+const ClassRooms = ({list}) => <Row>
+	{list.map( item => 
+		<div className="col-sm-4" key={item.class_id}>
+			<Link to={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
+				<div className="card">
+					<img
+						className="img-fluid img-kursus radius-top-l-r-5"
+						src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
+						alt="dashboard-user"
+					/>
+					<div className="card-carousel ">
+						<div className="title-head f-w-900 f-16">
+							{item.room_name}
+						</div>
+						<h3 className="f-14 f-w-800">
+							{item.speaker}
+						</h3>
+						<small className="mr-3">
+							<i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
+						</small>
+					</div>
 				</div>
-				
-				<Card.Body style={{padding : ".25em"}}>
-					<Link to={props.link + props.id}>
-						<Card.Title className="card-title">{props.title}</Card.Title>
-
-						<Card.Text className="card-text d-inline-block mb-3">{props.teacher}</Card.Text>
-						
-						<br/>
-
-						<span style={{
-							bottom: ".25em",
-							position: "absolute",
-							right: ".25em"
-						}} className="text-muted">{props.status}</span>
-				
-					</Link>
-			
-				</Card.Body>
-		
-			</Card>
-	
+			</Link>
 		</div>
-
-)}	</Row>;
+	)}
+</Row>;
 
 export default class LiveClass extends Component {
-	constructor (props){
-		super (props);
-
-		this.state = {
-			classRooms : [
-				{
-					id : "1",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "Python",
-					badgeColor : "dark",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "2",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java",
-					badgeColor : "blue",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "Last updated 1 mins ago"
-				},
-				{
-					id : "3",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java script",
-					badgeColor : "warning",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "4",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java script",
-					badgeColor : "warning",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "Last updated 3 years ago"
-				},
-				{
-					id : "5",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "Python",
-					badgeColor : "dark",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "6",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java script",
-					badgeColor : "warning",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "Last updated 2 decades ago"
-				},
-				{
-					id : "7",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java",
-					badgeColor : "blue",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "7",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java",
-					badgeColor : "blue",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "7",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java",
-					badgeColor : "blue",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "7",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java",
-					badgeColor : "blue",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "live"
-				},
-				{
-					id : "8",
-					link : "/liveclass-room/",
-					img : "/assets/images/component/classsample.jpeg",
-					type : "java script",
-					badgeColor : "warning",
-					title : "Lorem ipsum",
-					teacher : "Lorem",
-					status : "Last updated 5 millenias ago"
-				}
-			]
-		};
+	state = {
+		companyId: '',
+		classRooms: [],
+		isLive: false,
+		liveURL: ''
 	}
 
+	handleCloseLive = e => {
+		this.setState({ isLive: false, liveURL: '' })
+	}
 
+	componentDidMount() {
+		this.fetchData();
+	}
+
+	fetchData() {
+		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+			if (res.status === 200) {
+				this.setState({ companyId: res.data.result.company_id });
+				API.get(`${API_SERVER}v1/liveclass/company/${res.data.result.company_id}`).then(res => {
+					if(res.status === 200) {
+						this.setState({ classRooms: res.data.result.reverse() })
+					}
+				})
+			}
+		})
+	}
 
 	render() {
 
-		const {classRooms} = this.state;
-		
+		const { classRooms, isLive } = this.state;
 
 		return(
 			<div className="pcoded-main-container">
@@ -198,80 +78,48 @@ export default class LiveClass extends Component {
 			<div className="page-wrapper">
 			
 					<Row>
-						<Col sm={8}>
-							<h3 className="f-20 f-w-800 mb-3">Forum</h3>
-
-							<div className="col-md-12 col-xl-12" style={{marginBottom: '42px', marginLeft: '-16px'}}>
-						
-							<InputGroup className="mb-3">
-								<InputGroup.Prepend>
-									<InputGroup.Text id="basic-addon1">
-										<i className="fa fa-search"></i>
-									</InputGroup.Text>
-								</InputGroup.Prepend>
-								
-								<FormControl
-									placeholder="Cari Forum Lain"
-									aria-label="Username"
-									aria-describedby="basic-addon1"
-								/>
-
-								<InputGroup.Append style={{cursor: 'pointer'}}>
-									<InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
-								</InputGroup.Append>
-						
-							</InputGroup>
-
-						<Row>
-							<div className="col-md-4 col-xl-4 mb-3">
-								<Link to={`/`}>
-									<div className="kategori">
-									<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
-									&nbsp;
-									Kursus & Materi
-									</div>
-								</Link>
-							</div>
-
-							<div className="col-md-4 col-xl-4 mb-3">
-								<Link to={`/forum`}>
-									<div className="kategori">
-										<img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
-									&nbsp;
-									Forum
-									</div>
-								</Link>
-							</div>
-
-							<div className="col-md-4 col-xl-4 mb-3">
-								<Link to={`/liveclass`}>
-									<div className="kategori-aktif">
-										<img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-									&nbsp;
-									Live Class
-									</div>
-								</Link>
-							</div>
-						</Row>
-
-
+						<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/`}>
+								<div className="kategori">
+								<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
+								&nbsp;
+								Kursus & Materi
+								</div>
+							</Link>
 						</div>
-						</Col>
-						
+
+						<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/forum`}>
+								<div className="kategori">
+									<img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
+								&nbsp;
+								Forum
+								</div>
+							</Link>
+						</div>
+
+						<div className="col-md-4 col-xl-4 mb-3">
+							<Link to={`/liveclass`}>
+								<div className="kategori-aktif">
+									<img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
+								&nbsp;
+								Live Class
+								</div>
+							</Link>
+						</div>
 					</Row>
 
-					<Row>
+					<div>
 						{
 							classRooms.length ?
-								<CardGroup>
-									<ClassRooms list={classRooms} />
-								</CardGroup>
+								<ClassRooms list={classRooms} />
 								:
-								<div className="col-md-4 col-xl-4 mb-3">
+								<div className="col-md-3 col-xl-3 mb-3">
 									No Classroom
 								</div>
 						}
-					</Row>
+					</div>
+
 			</div>
 			</div>
 			</div>
@@ -281,22 +129,4 @@ export default class LiveClass extends Component {
 		);
 	}
 
-
-}
-
-export class LiveClassRoom extends Component {
-	constructor(props){
-		super(props);
-
-		this.state = {
-
-
-		}
-
-
-	}
-	
-	render(){
-		return <div></div>
-	}
 }

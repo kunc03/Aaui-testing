@@ -1,35 +1,25 @@
-
-import API, {FORUM, USER_ME} from '../../repository/api';
+import React, { Component } from "react";
+import {Alert, Modal, Form} from 'react-bootstrap';
+import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
-   // console.log('get') localStorage.setItem('role', data.role) 
-   let getEmailLocal = JSON.parse(localStorage.getItem('user')).data.email;
-   //console.log(getEmailLocal)
-    API.get(`${USER_ME}${getEmailLocal}`).then(res=>{
-      //console.log(this.props)
-      if(res.status === 200){
-        if(!res.data.error){
-            //this.props.user = res.data.result;
-            this.setState({company_id: res.data.result.company_id, user : res.data.result})
-        }
-      }
-    })
-    .then(() => {
-     // console.log(`${FORUM}/company/${this.state.company_id}`);
-      API.get(`${FORUM}/company/${this.state.company_id}`).then(res=> {
-       // console.log(res.data)
+   // console.log('get')
+  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+    this.setState({ companyId: res.data.result.company_id })
+    API.get(`${FORUM}/company/${res.data.result.company_id}`).then(res=> {
+        console.log('res: ', res.data.result)
           if(res.status === 200){
             if(!res.data.error){
                 this.setState({ forums: res.data.result })
             }
           }
         })
-    })
-    .catch(err=> {
-      console.log(err);
-    })
+        .catch(err=> {
+          console.log(err);
+        })
+  })
 }
 
 export function _getDetailForumList(idForum){
@@ -52,7 +42,7 @@ export function _addforum(e) {
    // console.log(e);
     let stateCopy = this.state,
     user_data = {
-        company_id : stateCopy.company_id,
+        company_id : stateCopy.companyId,
         user_id : stateCopy.user_id,
         title : stateCopy.title,
         body : stateCopy.body,
@@ -63,12 +53,33 @@ export function _addforum(e) {
       //console.log(res.data)
         if(res.status === 200){
           if(!res.data.error){
-            let forum = this.state.forums;
-            let newForums = [...forum, res.data.result]
-            this.setState({
-                isForumAdd: false,
-                forums: newForums
-            })
+            if(stateCopy.imgFile !== "") {
+              let formData = new FormData();
+              formData.append('cover', stateCopy.imgFile);
+              API.put(`${FORUM}/cover/${res.data.result.forum_id}`, formData)
+            }
+
+            API.get(`${USER_ME}${Storage.get("user").data.email}`).then(res => {
+              this.setState({ companyId: res.data.result.company_id });
+              API.get(`${FORUM}/company/${res.data.result.company_id}`)
+                .then(res => {
+                  console.log("res: ", res.data.result);
+                  if (res.status === 200) {
+                    if (!res.data.error) {
+                      this.setState({
+                        forums: res.data.result,
+                        isForumAdd: false,
+                        imgFile: "",
+                        imgPreview: ""
+                      });
+                    }
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            });
+
           }
         }
       })
