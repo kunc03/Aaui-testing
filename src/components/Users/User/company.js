@@ -129,6 +129,7 @@ export default class User extends Component {
           <td style={{textTransform: 'capitalize'}}>{item.level}</td>
           <td>{item.voucher}</td>
           <td>{item.email}</td>
+          <td>{item.voucher}</td>
           <td>{item.phone}</td>
           <td>{item.validity}</td>
           <td class="text-center">
@@ -182,6 +183,7 @@ export default class User extends Component {
                               <th>Level</th>
                               <th>Voucher</th>
                               <th>Email</th>
+                              <th>Voucher</th>
                               <th>Phone</th>
                               <th>Validity</th>
                               <th className="text-center">
