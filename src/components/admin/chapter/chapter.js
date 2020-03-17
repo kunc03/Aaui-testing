@@ -19,6 +19,7 @@ export default class ChapterPreview extends Component {
     courseTitle: '',
 		chapters: [],
 
+    currentChapt:'',
 		chapterId: '',
 		chapterNumber: '',
 		chapterTitle: '',
@@ -345,7 +346,6 @@ export default class ChapterPreview extends Component {
 
 			return null
 		}
-
 		let refactoryChapters = [...chapters];
     for (let i = 0; i < quiz.length; i++) {
       for (let j = 0; j < chapters.length; j++) {
@@ -468,6 +468,7 @@ export default class ChapterPreview extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+
                   <div className="row">
                     <div className="col-xl-12">
                       <Link

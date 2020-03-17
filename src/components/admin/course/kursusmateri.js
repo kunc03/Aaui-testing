@@ -106,6 +106,7 @@ export default class KursusMateri extends Component {
 								</td>
 								<td>{item.category_name}</td>
 								<td><Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">{item.title}</Link></td>
+
 								<td><Moment format="DD/MM/YYYY">{item.created_at}</Moment></td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>

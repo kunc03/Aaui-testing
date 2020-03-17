@@ -60,6 +60,8 @@ import LiveStream from "./components/liveclass/livestream";
 import LiveClassAdmin from "./components/admin/liveclass/list";
 import LiveClassAdminJoin from "./components/admin/liveclass/join";
 
+import Kursus from "./components/Kursus";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -181,6 +183,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         
         <Route path="/pengaturan" exact component={Pengaturan} />
+
         <Route path="/profile" exact component={Profile} />
         <Route path="/user-access" component={UserAccess} />
 
@@ -245,6 +248,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
+
+        <Route path="/kursus" component={Kursus} />
+
         <Route path="/profile" component={Profile} />
         
         <Route path="/logout" component={Logout} />
