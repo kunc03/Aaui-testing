@@ -24,8 +24,9 @@ export default class Forum extends Component {
     imgPreview: '',
     
 		isNotifikasi: false, 
-		isiNotifikasi:'',
-
+    isiNotifikasi:'',
+    
+    findForumInput: ''
 	}
 
 	openModalForumAdd = e => {
@@ -71,12 +72,29 @@ export default class Forum extends Component {
 	showDiscussion(follow){
 		return console.log("show", follow);
 
-	}
+  }
+  
+  findForum = (e) => {
+    e.preventDefault();
+    this.setState({findForumInput : e.target.value});
+  }
 
 
 	// LIST FORUM SEMUA 
 	render() {
-		const { forums } = this.state;
+    var { forums, findForumInput } = this.state;
+    
+    if(findForumInput != ""){
+
+      forums = forums.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).replace(
+          /[^\w ]/g,''
+        ).match(new RegExp(findForumInput,"gmi"))
+      );
+      console.log(forums)
+    }
 
 		const ForumList = ({lists}) => {
 			if(lists.length !== 0) {
@@ -121,29 +139,33 @@ export default class Forum extends Component {
 			} else {
 				return(
 					<Card style={{marginBottom: '10px'}}>
-						<Card.Body style={{padding: '16px'}}>
-							<div className="forum-media">
-								<img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" alt="media" />
-							</div>
 
-							<div className="forum-body">
-									<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>Tidak Ada Forum</h3>
-									<span className="f-12" style={{marginBottom: '3px'}}>Undefined</span>
+            {findForumInput != '' 
+              ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
+              :  <Card.Body style={{padding: '16px'}}>
+                  <div className="forum-media">
+                    <img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" alt="media" />
+                  </div>
 
-									<p style={{margin: '5px 0'}} className="f-13">
-										Undefined
-										</p>
-									</div>
+                  <div className="forum-body">
+                      <h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>Tidak Ada Forum</h3>
+                      <span className="f-12" style={{marginBottom: '3px'}}>Undefined</span>
 
-									<div className="forum-action">
-										<Link to='#'>
-											<i className="fa fa-star"></i>
-										</Link>
-										<Link to='#' style={{marginLeft: '10px'}}>
-											<i className="fa fa-comments"></i> &nbsp; 0 Komentar
-										</Link>
-									</div>
-						</Card.Body>
+                      <p style={{margin: '5px 0'}} className="f-13">
+                        Undefined
+                        </p>
+                      </div>
+
+                      <div className="forum-action">
+                        <Link to='#'>
+                          <i className="fa fa-star"></i>
+                        </Link>
+                        <Link to='#' style={{marginLeft: '10px'}}>
+                          <i className="fa fa-comments"></i> &nbsp; 0 Komentar
+                        </Link>
+                      </div>
+                </Card.Body>
+            }
 					</Card>
 				)
 			}
@@ -171,6 +193,7 @@ export default class Forum extends Component {
                             </InputGroup.Text>
                           </InputGroup.Prepend>
                           <FormControl
+                            onChange={this.findForum}
                             placeholder="Cari Forum Lain"
                             aria-label="Username"
                             aria-describedby="basic-addon1"

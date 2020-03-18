@@ -130,12 +130,7 @@ export default class UjianHasil extends Component {
                             className="f-40 f-w-800 mb-3">Nilai Quiz</h3>
                           <h3 style={{position: 'absolute', left: '36%', bottom: '60px', color: 'white'}} 
                             className="f-50 f-w-800 mb-3">
-                              { (x=>{ 
-                               let y = (x && x.toFixed(2)) || 0 + ''
-                               return y.match(/\d+$/)[0] == 0 
-                                  ? y.split(/\./)[0].toString() 
-                                  : y 
-                              }) (this.state.score) }
+                              { Math.round(parseInt(this.state.score)) }
                           </h3>
                         </Card.Body>
                       </Card>
@@ -171,7 +166,7 @@ export default class UjianHasil extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Link to='/' className="btn btn-block btn-ideku submit-ujian">Selesai</Link>
+                              <Link to={`/detail-kursus/${this.state.courseId}`} className="btn btn-block btn-ideku submit-ujian">Selesai</Link>
                             </div>
                           </div>
                         </Card.Body>
