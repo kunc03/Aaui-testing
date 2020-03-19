@@ -23,6 +23,9 @@ export default class LiveStream extends Component {
 
   componentDidMount() {
     this.fetchData();
+    window.onbeforeunload = function() {
+      return "Are you sure you want to leave?";
+    };
   }
   
   fetchData() {
@@ -37,7 +40,6 @@ export default class LiveStream extends Component {
 	render() {
 
     const { classRooms, user } = this.state;
-    console.log('state: ', this.state)
 
 		return(
 			<div className="pcoded-main-container">
@@ -73,8 +75,8 @@ export default class LiveStream extends Component {
             <Link to={`/liveclass`}>
               <div className="kategori-aktif">
                 <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Live Class
+                &nbsp;
+                Live Class
               </div>
             </Link>
           </div>

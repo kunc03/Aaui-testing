@@ -36,13 +36,15 @@ function JitsiMeetComponent(props) {
 
     const JitsiMeetExternalAPI = window.JitsiMeetExternalAPI;
     const api = new JitsiMeetExternalAPI(domain, options);
+    
     api.addEventListener('videoConferenceJoined', () => {
-    setLoading(false);
-    api.executeCommand('displayName', konten.userName);
+      setLoading(false);
+      api.executeCommand('displayName', konten.userName);
     });
 
     api.addEventListener('videoConferenceLeft', () => {
-      window.location.href = window.location.origin+'/liveclass';
+      // window.location.href = window.location.origin+'/liveclass';
+      window.close();
     });
 
     api.executeCommand('avatarUrl', konten.userAvatar);
