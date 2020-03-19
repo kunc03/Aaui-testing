@@ -41,6 +41,7 @@ export default class DetailKursus extends Component {
   pilihChapterTampil = e => {
     e.preventDefault();
       
+
     // cek apakah sudah mengikuti kursus
     if(this.state.isIkutiKursus) {
       

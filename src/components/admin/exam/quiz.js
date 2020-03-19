@@ -224,18 +224,6 @@ export default class QuizList extends Component {
 					                  </div>
 					                </div>
 					              </div>
-					              <div className="col-xl-2 col-md-12">
-					                <div className="row align-items-center justify-content-center">
-					                  <div className="col">
-					                    <small className="f-w-600 f-16 text-c-grey-t ">
-					                      Random
-					                    </small>
-					                    <h5 className="f-w-bold f-20 text-c-purple3">
-					                      <YesNo value={item.random} />
-					                    </h5>
-					                  </div>
-					                </div>
-					              </div>
 					              <div className="col-xl-1 col-md-12">
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
