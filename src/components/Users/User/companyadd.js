@@ -219,10 +219,16 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
+
+                            <div style={{marginTop: '50px'}}>
                             {
-                              this.state.responseMessage && <span className="label label-primary">{this.state.responseMessage}</span>
+                              this.state.responseMessage && 
+                              <div class="alert alert-primary" role="alert">
+                                <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
+                              </div>
                             }
-                            <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
+                            </div>
+                            <button type="submit" className="btn btn-primary btn-block m-t-10 f-20 f-w-600">
                               Simpan
                             </button>
                           </form>
