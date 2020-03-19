@@ -14,8 +14,20 @@ export default class LiveStream extends Component {
 	state = {
     classId: this.props.match.params.roomid,
     user: {},
-		classRooms: {},
-	}
+    classRooms: {},
+    
+    isInvite: false,
+    emailInvite: '',
+    emailResponse: 'Masukkan email yang ingin di invite.'
+  }
+  
+  handleCloseInvite = e => {
+    this.setState({
+      isInvite: false,
+      emailInvite: "",
+      emailResponse: "Masukkan email yang ingin di invite."
+    });
+  }
 
 	handleCloseLive = e => {
 		this.setState({ isLive: false, liveURL: '' })
@@ -23,6 +35,9 @@ export default class LiveStream extends Component {
 
   componentDidMount() {
     this.fetchData();
+    window.onbeforeunload = function() {
+      return "Are you sure you want to leave?";
+    };
   }
   
   fetchData() {
@@ -34,10 +49,40 @@ export default class LiveStream extends Component {
     })
   }
 
+  onClickInvite = e => {
+    e.preventDefault();
+    this.setState({ isInvite: true });
+  }
+
+  onClickSubmitInvite = e => {
+    e.preventDefault();
+    let form = {
+      user: Storage.get('user').data.user,
+      email: this.state.emailInvite,
+      message: window.location.href
+    }
+
+    console.log('form: ', form)
+    API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+      if(res.status === 200) {
+        if(!res.data.error) {
+          this.setState({
+            isInvite: false,
+            emailInvite: "",
+            emailResponse: res.data.result
+          });
+        } else {
+          this.setState({
+            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+          });
+        }
+      }
+    })
+  }
+
 	render() {
 
     const { classRooms, user } = this.state;
-    console.log('state: ', this.state)
 
 		return(
 			<div className="pcoded-main-container">
@@ -73,13 +118,16 @@ export default class LiveStream extends Component {
             <Link to={`/liveclass`}>
               <div className="kategori-aktif">
                 <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Live Class
+                &nbsp;
+                Live Class
               </div>
             </Link>
           </div>
 
           <Col sm={12} style={{marginBottom: '20px'}}>
+            <div className="kategori text-center" style={{marginBottom: '16px', cursor: 'pointer', color: '#bf337b'}} onClick={this.onClickInvite}>
+              Invite People
+            </div>
             {
               user.name && classRooms.room_name && 
               <JitsiMeetComponent 
@@ -91,6 +139,53 @@ export default class LiveStream extends Component {
           </Col>
 
         </Row>
+
+        <Modal
+          show={this.state.isInvite}
+          onHide={this.handleCloseInvite}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold">
+              Invite People
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="form-vertical">
+              <div className="form-group">
+                <label style={{ fontWeight: "bold" }}>Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email"
+                  onChange={e => {
+                    this.setState({
+                      emailInvite: e.target.value
+                    });
+                  }}
+                />
+                <Form.Text>
+                  {this.state.emailResponse}
+                </Form.Text>
+              </div>
+            </div>
+
+            <button
+              style={{ marginTop: "30px" }}
+              type="button"
+              onClick={this.onClickSubmitInvite}
+              className="btn btn-block btn-ideku f-w-bold"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className="btn btn-block f-w-bold"
+              onClick={this.handleCloseInvite}
+            >
+              Tidak
+            </button>
+          </Modal.Body>
+        </Modal>
 
 			</div>
 			</div>
