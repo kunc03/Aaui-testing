@@ -240,7 +240,7 @@ export default class Forum extends Component {
                                   className="img-fluid"
                                   alt="media"
                                 />
-                                &nbsp; Live Class
+                                &nbsp; Group Meeting
                               </div>
                             </Link>
                           </div>

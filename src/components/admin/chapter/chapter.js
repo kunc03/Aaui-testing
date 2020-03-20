@@ -477,7 +477,7 @@ export default class ChapterPreview extends Component {
                         title="Quiz"
                       >
                         <i className="fa fa-edit"></i>
-                        Edit Course
+                        Edit Kursus
                       </Link>
                       <Link
                         onClick={this.handleModalAdd}

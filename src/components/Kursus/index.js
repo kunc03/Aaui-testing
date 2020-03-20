@@ -386,7 +386,7 @@ class Kursus extends Component {
                             <div className="kategori">
                               <img src="/assets/images/component/liveoff.png" className="img-fluid" />
                               &nbsp;
-                              Live Class
+                              Group Meeting
                             </div>
                           </Link>
                         </div>
