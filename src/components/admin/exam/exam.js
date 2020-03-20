@@ -29,6 +29,10 @@ export default class QuizList extends Component {
     waktuFinish: '',
 
 		isModalDelete: false,
+
+		isImport: false,
+		importId: '',
+		importFile: ''
 	}
 
 	handleStartDatePicker = date => {
@@ -149,6 +153,31 @@ export default class QuizList extends Component {
 			if(res.status === 200) {
 				this.handleClose();
 				this.fetchData();
+			}
+		})
+	}
+
+	importPertanyaan = e => {
+		e.preventDefault();
+		const examId = e.target.getAttribute('data-id');
+		this.setState({ isImport: true, importId: examId })
+	}
+
+	closeImportPertanyaan = e => {
+		this.setState({ isImport: false, importId: "", importFile: '' });
+	}
+
+	onSubmitPertanyaan = e => {
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append('exam_id', this.state.importId);
+		formData.append('excel', this.state.importFile);
+
+		API.post(`${API_SERVER}v1/question/import`, formData).then(res => {
+			console.log('res: ', res.data)
+			if(res.status === 200 && !res.data.error) {
+				this.fetchData();
+				this.closeImportPertanyaan();
 			}
 		})
 	}
@@ -288,6 +317,9 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
+													<Link to="#" className="buttonku" title="Import Pertanyaan">
+				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-download"></i>
+				        					</Link>
 					              	<Link to={`/question-exam/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
@@ -321,10 +353,10 @@ export default class QuizList extends Component {
 			                <div className="row align-items-center justify-content-center">
 			                  <div className="col">
 			                    <small className="f-w-600 f-16 text-c-grey-t ">
-			                      Tidak ada exam
+			                      Tidak ada Ujian
 			                    </small>
 			                    <h5 className="f-w-bold f-20 text-c-purple3">
-			                      Silahkan buat exam Anda
+			                      Tambahkan Ujian{/*"Silahkan buat exam Anda"*/}
 			                    </h5>
 			                  </div>
 			                </div>
@@ -364,7 +396,7 @@ export default class QuizList extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        &nbsp;Exam Course
+                        &nbsp;Ujian Kursus
                       </h3>
 
                       <a
@@ -375,12 +407,21 @@ export default class QuizList extends Component {
                           color: "white"
                         }}
                       >
-                        <img
-                          src="assets/images/component/person_add.png"
-                          className="button-img"
-                          alt=""
-                        />
+                        <i className="fa fa-plus"></i>
                         Tambah Baru
+                      </a>
+
+                      <a
+                        alt="Link"
+                        href={`${API_SERVER}company/format.xlsx`}
+                        className="btn btn-ideku f-14 float-right mb-3 mr-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        <i className="fa fa-download"></i>
+                        Download Format
                       </a>
                     </div>
 
@@ -397,7 +438,7 @@ export default class QuizList extends Component {
                     >
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold">
-                          Form Exam
+                          Form Ujian
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
@@ -410,7 +451,7 @@ export default class QuizList extends Component {
                               name="examTitle"
                               required
                               type="text"
-                              placeholder="judul exam"
+                              placeholder="judul ujian"
                               className="form-control"
                             />
                           </div>
@@ -422,7 +463,7 @@ export default class QuizList extends Component {
                               name="exampDesc"
                               required
                               type="text"
-                              placeholder="deskripsi exam"
+                              placeholder="deskripsi ujian"
                               className="form-control"
                             />
                           </div>
@@ -494,7 +535,7 @@ export default class QuizList extends Component {
                       </Modal.Header>
                       <Modal.Body>
                         <p className="f-w-bold">
-                          Apakah anda yakin untuk menghapus exam ini ?
+                          Apakah anda yakin untuk menghapus ujian ini ?
                         </p>
 
                         <button
@@ -509,6 +550,53 @@ export default class QuizList extends Component {
                           type="button"
                           className="btn btn-block f-w-bold"
                           onClick={this.handleClose}
+                        >
+                          Tidak
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+                    <Modal
+                      show={this.state.isImport}
+                      onHide={this.closeImportPertanyaan}
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Upload Pertanyaan
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>File</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              name="file"
+                              onChange={e => {
+                                this.setState({
+                                  importFile: e.target.files[0]
+                                });
+                              }}
+                            />
+                            <Form.Text>
+                              Pastikan format file xls, atau xlsx.
+                            </Form.Text>
+                          </div>
+                        </div>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
+                          onClick={this.onSubmitPertanyaan}
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.closeImportPertanyaan}
                         >
                           Tidak
                         </button>

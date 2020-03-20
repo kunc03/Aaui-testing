@@ -200,10 +200,10 @@ export default class DetailKursus extends Component {
       if (res.status === 200) {
         if(res.data.result.score == null) {
           API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
-            res.data.result.filter(item => item.exam_id == quizId);
+            let filtered = res.data.result.filter(item => item.exam_id == quizId);
             if (res.status === 200) {
               this.setState({
-                isModalQuiz: true, countSoal: res.data.result[0].soal, examId: quizId
+                isModalQuiz: true, countSoal: filtered[0].soal, examId: quizId
               })
             }
           })
@@ -558,14 +558,17 @@ export default class DetailKursus extends Component {
                         style={{ marginTop: "20px" }}
                       >
                         <img
-                          src="/assets/images/component/exam.png"
+                          src="/assets/images/component/tes.png"
                           alt="media"
                         />
                       </div>
+                      <h3 className="f-24 f-w-800 mb-3 text-center" style={{marginTop: '20px'}}>
+                        {durasiWaktu ? 'Ujian': 'Quiz'}
+                      </h3>
                       <Link
                         className="btn btn-ideku"
                         to="#"
-                        style={{ marginTop: "30px", fontWeight: "bold" }}
+                        style={{ fontWeight: "bold" }}
                       >
                         {this.state.kategoriCourse}
                       </Link>

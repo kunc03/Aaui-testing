@@ -24,6 +24,10 @@ export default class QuizList extends Component {
 		isModalDelete: false,
 		quizId: '',
 		chapters: [],
+
+		isImport: false,
+		importId: '',
+		importFile: ''
 	}
 
 	handleOpen = e => {
@@ -118,6 +122,31 @@ export default class QuizList extends Component {
 			if(res.status === 200) {
 				this.handleClose();
 				this.fetchData();
+			}
+		})
+	}
+
+	importPertanyaan = e => {
+		e.preventDefault();
+		const examId = e.target.getAttribute('data-id');
+		this.setState({ isImport: true, importId: examId })
+	}
+
+	closeImportPertanyaan = e => {
+		this.setState({ isImport: false, importId: "", importFile: '' });
+	}
+
+	onSubmitPertanyaan = e => {
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append('exam_id', this.state.importId);
+		formData.append('excel', this.state.importFile);
+
+		API.post(`${API_SERVER}v1/question/import`, formData).then(res => {
+			console.log('res: ', res.data)
+			if(res.status === 200 && !res.data.error) {
+				this.fetchData();
+				this.closeImportPertanyaan();
 			}
 		})
 	}
@@ -220,6 +249,9 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
+													<Link to="#" className="buttonku" title="Import Pertanyaan">
+				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-download"></i>
+				        					</Link>
 					              	<Link to={`/question-quiz/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
@@ -295,6 +327,7 @@ export default class QuizList extends Component {
                       </h3>
 
                       <a
+                        alt="Link"
                         onClick={this.handleOpen}
                         className="btn btn-ideku f-14 float-right mb-3"
                         style={{
@@ -302,12 +335,21 @@ export default class QuizList extends Component {
                           color: "white"
                         }}
                       >
-                        <img
-                          src="assets/images/component/person_add.png"
-                          className="button-img"
-                          alt=""
-                        />
+                        <i className="fa fa-plus"></i>
                         Tambah Baru
+                      </a>
+
+                      <a
+                        alt="Link"
+                        href={`${API_SERVER}company/format.xlsx`}
+                        className="btn btn-ideku f-14 float-right mb-3 mr-3"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        <i className="fa fa-download"></i>
+                        Download Format
                       </a>
                     </div>
 
@@ -354,14 +396,26 @@ export default class QuizList extends Component {
                           </div>
                           <div className="form-group">
                             <label>Quiz Dilakukan Setelah Chapter</label>
-                            <select className="form-control" required name="quizAt" onChange={this.onChangeInput}>
-															<option value="">-- pilih --</option>
-															{
-																this.state.chapters.map((item, i) => (
-																	<option selected={(this.state.quizAt == item.chapter_id) ? 'selected': ''} value={item.chapter_id}>{item.chapter_title}</option>
-																))
-															}
-														</select>
+                            <select
+                              className="form-control"
+                              required
+                              name="quizAt"
+                              onChange={this.onChangeInput}
+                            >
+                              <option value="">-- pilih --</option>
+                              {this.state.chapters.map((item, i) => (
+                                <option
+                                  selected={
+                                    this.state.quizAt == item.chapter_id
+                                      ? "selected"
+                                      : ""
+                                  }
+                                  value={item.chapter_id}
+                                >
+                                  {item.chapter_title}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <button
@@ -409,6 +463,53 @@ export default class QuizList extends Component {
                           type="button"
                           className="btn btn-block f-w-bold"
                           onClick={this.handleClose}
+                        >
+                          Tidak
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+                    <Modal
+                      show={this.state.isImport}
+                      onHide={this.closeImportPertanyaan}
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Upload Pertanyaan
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>File</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              name="file"
+                              onChange={e => {
+                                this.setState({
+                                  importFile: e.target.files[0]
+                                });
+                              }}
+                            />
+                            <Form.Text>
+                              Pastikan format file xls, atau xlsx.
+                            </Form.Text>
+                          </div>
+                        </div>
+
+                        <button
+                          style={{ marginTop: "30px" }}
+                          type="button"
+                          onClick={this.onSubmitPertanyaan}
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.closeImportPertanyaan}
                         >
                           Tidak
                         </button>

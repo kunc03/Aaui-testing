@@ -11176,6 +11176,10 @@ div.code-toolbar > .toolbar span:hover {
   font-weight: bold;
 }
 
+.title-disabled {
+  color: gray !important
+}
+
 .forum-filter {
   margin: 20px 0px;
 }

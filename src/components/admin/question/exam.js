@@ -152,7 +152,7 @@ export default class QuestionExam extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        &nbsp;Pertanyaan Exam
+                        &nbsp;Pertanyaan Ujian
                       </h3>
 
                       <a

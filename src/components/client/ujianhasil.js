@@ -127,7 +127,7 @@ export default class UjianHasil extends Component {
                         <Card.Body className="text-center">
                           <img className="img-fluid" src="/assets/images/component/hasil.png" alt="media" />
                           <h3 style={{position: 'absolute', left: '36%', bottom: '120px', color: 'white'}} 
-                            className="f-40 f-w-800 mb-3">Nilai Quiz</h3>
+                            className="f-40 f-w-800 mb-3">Nilai Akhir</h3>
                           <h3 style={{position: 'absolute', left: '36%', bottom: '60px', color: 'white'}} 
                             className="f-50 f-w-800 mb-3">
                               { Math.round(parseInt(this.state.score)) }
@@ -143,7 +143,7 @@ export default class UjianHasil extends Component {
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>UJIAN</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>SOAL</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
