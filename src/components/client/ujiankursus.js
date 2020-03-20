@@ -324,7 +324,7 @@ export default class UjianKursus extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian pilih-selesai">Submit</Button>
+                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian pilih-selesai">Selesai</Button>
                             </div>
                           </div>
                         </Card.Body>
@@ -373,15 +373,15 @@ export default class UjianKursus extends Component {
                       {/* fungsi untuk kembali dan next jawaban */}
                       <div className="p-1">
                         {nomorUjian === 1 ?
-                          <span className="float-left"><i className="fa  fa-angle-double-left"></i> KEMBALI</span>
+                          <button  className="btn float-left"><span className=""><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
                           :
-                          <a href="javascript:" onClick={this.buttonNextPrevios.bind(this, 'previos')}><span className="float-left"><i className="fa  fa-angle-double-left"></i> KEMBALI</span></a>
+                          <button className="btn btn-ideku float-left" onClick={this.buttonNextPrevios.bind(this, 'previos')}><span><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
                         }
 
                         {nomorUjian === soalUjian.length ? 
-                          <span className="float-right">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span>
+                          <button  className="btn float-right"><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
                         :
-                          <a href="javascript:" onClick={this.buttonNextPrevios.bind(this, 'next')}><span className="float-right">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></a>
+                          <button className="btn btn-ideku float-right" onClick={this.buttonNextPrevios.bind(this, 'next')}><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
                         }
                       </div>
                     </div>

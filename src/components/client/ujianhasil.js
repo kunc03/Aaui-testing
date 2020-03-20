@@ -164,7 +164,7 @@ export default class UjianHasil extends Component {
 
                           <div className="row" style={{marginTop: '20px'}}>
                             <div className="col-sm-12 text-center">    
-                              <Link to='/' className="btn btn-block btn-ideku submit-ujian">Selesai</Link>
+                              <Link to='/' className="btn btn-block btn-ideku submit-ujian">kembali ke kursus</Link>
                             </div>
                           </div>
                         </Card.Body>
