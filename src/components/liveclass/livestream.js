@@ -62,7 +62,6 @@ export default class LiveStream extends Component {
       message: window.location.href
     }
 
-    console.log('form: ', form)
     API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
       if(res.status === 200) {
         if(!res.data.error) {
