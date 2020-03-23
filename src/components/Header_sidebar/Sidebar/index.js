@@ -69,9 +69,9 @@ class Sidebar extends Component {
                   />
                 </span>
               </div>
-              <span className="b-title">IDEKU</span>
+              {/* <span className="b-title">IDEKU</span> */}
             </Link>
-            <a href="javascript:" className="mobile-menu" id="mobile-collapse">
+            <a href="#" className="mobile-menu" id="mobile-collapse">
               <span />
             </a>
           </div>
