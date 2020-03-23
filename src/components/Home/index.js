@@ -476,24 +476,24 @@ class Home extends Component {
                   <div className="row" style={{marginTop: '15px'}}>
                     <div className="col-md-12 col-xl-12 mb-3">
                       <div className="row d-flex align-items-center">
-                        <div className="col-6">
+                        {/* <div className="col-6">
                           <h3 className="f-w-900 f-20">Aktivitas Terakhir</h3>
-                        </div>
-                        <div className="col-6 text-right">
+                        </div> */}
+                        {/* <div className="col-6 text-right">
                           <p className="m-b-0">
                             <span className="f-w-600 f-16">Lihat Semua</span>
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
 
                   <div className="row">
-                    <div className="col-md-12 col-xl-5">
+                    {/* <div className="col-md-12 col-xl-5">
                       <div className="card">
                         <ListAktivitas lists={kursusDiikuti} />
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-12 col-xl-7">
                       <div className="card p-35">

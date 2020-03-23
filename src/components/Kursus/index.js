@@ -337,7 +337,7 @@ class Kursus extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    <div className="col-sm-8">
+                    <div className="col-sm-12">
                     <h3 className="f-20 f-w-800 mb-3">Kursus</h3>
 
                       <div className="row">
@@ -429,7 +429,7 @@ class Kursus extends Component {
 
                     </div>
                     
-                    <div className="col-sm-4">
+                    {/* <div className="col-sm-4">
                       <Card>
                         <Card.Body>
                           <div className="row">
@@ -449,7 +449,7 @@ class Kursus extends Component {
                           </div>
                         </Card.Body>
                       </Card>
-                    </div>
+                    </div> */}
                   </div>
 
 

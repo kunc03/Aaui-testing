@@ -9,10 +9,19 @@ export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
     this.setState({ companyId: res.data.result.company_id })
     API.get(`${FORUM}/company/${res.data.result.company_id}`).then(res=> {
-        console.log('res: ', res.data.result)
+      let aray = [];
+      let splitTags;
+      
+      for(let a in res.data.result){
+        splitTags = res.data.result[a].tags.split(",");
+        for(let b in splitTags){
+          aray.push({tags:splitTags[b]}) 
+        }
+      }
+      
           if(res.status === 200){
             if(!res.data.error){
-                this.setState({ forums: res.data.result })
+                this.setState({ forums: res.data.result, listTags:aray })
             }
           }
         })
