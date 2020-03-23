@@ -5,3 +5,10 @@
   border: 0px;
   margin-bottom: 12px;
 }
+
+#new-toolbox > div.toolbox-content > div.button-group-right > div:nth-child(2) { display: none; }
+#root > div > div > nav > div > div.navbar-brand.header-logo > a.b-brand > div > span { margin-left: 176px;}
+.logo-sidebar {
+  width: auto !important;
+  height: auto !important;
+}
