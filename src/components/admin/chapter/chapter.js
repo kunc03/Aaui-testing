@@ -477,7 +477,7 @@ export default class ChapterPreview extends Component {
                         title="Quiz"
                       >
                         <i className="fa fa-edit"></i>
-                        Edit Course
+                        Edit Kursus
                       </Link>
                       <Link
                         onClick={this.handleModalAdd}
@@ -497,10 +497,10 @@ export default class ChapterPreview extends Component {
                       <Link
                         to={`/exam/${this.state.courseId}`}
                         className="btn btn-ideku buttonku buat-ujian"
-                        title="Exam"
+                        title="Ujian"
                       >
                         <i className="fa fa-plus"></i>
-                        Buat Exam
+                        Tambah Ujian
                       </Link>
                     </div>
                   </div>

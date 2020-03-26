@@ -199,7 +199,7 @@ class Kursus extends Component {
           <div className="col-sm-12">
             <Card>
               <Card.Body>
-                <h3 className="f-w-900 f-20">Tidak ditemukan &quot;{findCourseInput}&quot;</h3>
+                <h3 className="f-w-900 f-20">Tidak ditemukan kursus &quot;{findCourseInput}&quot;</h3>
               </Card.Body>
             </Card>
           </div>
@@ -386,7 +386,7 @@ class Kursus extends Component {
                             <div className="kategori">
                               <img src="/assets/images/component/liveoff.png" className="img-fluid" />
                               &nbsp;
-                              Live Class
+                              Group Meeting
                             </div>
                           </Link>
                         </div>

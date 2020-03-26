@@ -117,8 +117,8 @@ export default class LiveStream extends Component {
             <Link to={`/liveclass`}>
               <div className="kategori-aktif">
                 <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-                &nbsp;
-                Live Class
+              &nbsp;
+              Group Meeting
               </div>
             </Link>
           </div>

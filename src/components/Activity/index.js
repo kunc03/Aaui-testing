@@ -13,7 +13,7 @@ import RiwayatLiveClass from './riwayatliveclass';
 const tabs =[
   {title : 'Riwayat Kursus' },
   {title : 'Riwayat Forum' },
-  {title : 'Live Class' },
+  {title : 'Group Meeting' },
 ]
 
 class Aktivity extends Component {
@@ -181,7 +181,7 @@ class Aktivity extends Component {
                           />
                           <div className="p-l-20"><span className="p-r-5" style={{color:'red'}}><i className="fa fa-square"></i></span>Hari ini</div>
                           <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
-                          <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Live Class</div>
+                          <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Group Meeting</div>
 
                       </div>
                     </div>

@@ -353,10 +353,10 @@ export default class QuizList extends Component {
 			                <div className="row align-items-center justify-content-center">
 			                  <div className="col">
 			                    <small className="f-w-600 f-16 text-c-grey-t ">
-			                      Tidak ada exam
+			                      Tidak ada Ujian
 			                    </small>
 			                    <h5 className="f-w-bold f-20 text-c-purple3">
-			                      Silahkan buat exam Anda
+			                      Tambahkan Ujian{/*"Silahkan buat exam Anda"*/}
 			                    </h5>
 			                  </div>
 			                </div>
@@ -396,7 +396,7 @@ export default class QuizList extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        &nbsp;Exam Course
+                        &nbsp;Ujian Kursus
                       </h3>
 
                       <a
@@ -438,7 +438,7 @@ export default class QuizList extends Component {
                     >
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold">
-                          Form Exam
+                          Form Ujian
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
@@ -451,7 +451,7 @@ export default class QuizList extends Component {
                               name="examTitle"
                               required
                               type="text"
-                              placeholder="judul exam"
+                              placeholder="judul ujian"
                               className="form-control"
                             />
                           </div>
@@ -463,7 +463,7 @@ export default class QuizList extends Component {
                               name="exampDesc"
                               required
                               type="text"
-                              placeholder="deskripsi exam"
+                              placeholder="deskripsi ujian"
                               className="form-control"
                             />
                           </div>
@@ -535,7 +535,7 @@ export default class QuizList extends Component {
                       </Modal.Header>
                       <Modal.Body>
                         <p className="f-w-bold">
-                          Apakah anda yakin untuk menghapus exam ini ?
+                          Apakah anda yakin untuk menghapus ujian ini ?
                         </p>
 
                         <button
