@@ -271,7 +271,7 @@ export default class UserAccess extends Component {
                             <th>Kursus</th>
                             <th>Enroll</th>
                             <th>Quiz</th>
-                            <th>Exam</th>
+                            <th>Ujian</th>
                             <th>Forum</th>
                             <th>Kelas</th>
                             <th className="text-center">

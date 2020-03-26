@@ -119,8 +119,8 @@ export default class LiveClassAdminJoin extends Component {
                         <div className="kategori-aktif">
                           <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
                           &nbsp;
-                          Live Class
-                        </div>
+                          Group Meeting
+              </div>
                       </Link>
                     </div>
 

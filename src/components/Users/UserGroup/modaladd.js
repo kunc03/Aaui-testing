@@ -97,7 +97,7 @@ class ModalAdd extends Component {
                     <div className="state p-success-o">
                       <label className="f-18">
                         <small className="f-w-bold f-18 text-c-black">
-                          Course
+                          Kursus
                         </small>
                       </label>
                     </div>
@@ -119,7 +119,7 @@ class ModalAdd extends Component {
                     <div className="state p-success-o">
                       <label className="f-18">
                         <small className="f-w-bold f-18 text-c-black">
-                          Exam
+                          Ujian
                         </small>
                       </label>
                     </div>
@@ -139,7 +139,7 @@ class ModalAdd extends Component {
                     <div className="state p-success-o">
                       <label className="f-18">
                         <small className="f-w-bold f-18 text-c-black">
-                          Live Class
+                          Group Meeting
                         </small>
                       </label>
                     </div>
@@ -149,7 +149,7 @@ class ModalAdd extends Component {
                     <div className="state p-success-o">
                       <label className="f-18">
                         <small className="f-w-bold f-18 text-c-black">
-                          Live Class
+                          Group Meeting
                         </small>
                       </label>
                     </div>

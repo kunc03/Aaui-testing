@@ -323,7 +323,7 @@ export default class QuizList extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        &nbsp;Quiz Course
+                        &nbsp;Quiz Kursus
                       </h3>
 
                       <a

@@ -208,7 +208,7 @@ export default class LiveClassAdmin extends Component {
                         <div className="kategori-aktif">
                           <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
                           &nbsp;
-                          Live Class
+                          Group Meeting
 								        </div>
                       </Link>
                     </div>
@@ -217,8 +217,8 @@ export default class LiveClassAdmin extends Component {
                   <Row>
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
-                        Semua Live Class &nbsp;&nbsp;
-                        <button className="btn btn-ideku" onClick={e => { this.setState({ isClassModal: true}) }}><i className="fa fa-plus"></i> Buat Live Class</button>
+                        Semua Group Meeting &nbsp;&nbsp;
+                        <button className="btn btn-ideku" onClick={e => { this.setState({ isClassModal: true}) }}><i className="fa fa-plus"></i> Buat Group Meeting</button>
                       </h3>
                     </div>
                   </Row>
@@ -269,7 +269,7 @@ export default class LiveClassAdmin extends Component {
                         className="text-c-purple3 f-w-bold f-21"
                         style={{ marginBottom: "30px" }}
                       >
-                        Membuat Live Class
+                        Membuat Group Meeting
                       </Modal.Title>
 
                       <Form>
