@@ -291,7 +291,7 @@ export default class ForumDetail extends Component {
                                     this.state.isLockedStatus 
                                     ? "fa fa-lock"
                                     : "fa fa-unlock"
-                                  }></i> &nbsp; {this.state.isLockedStatus ? "Terkunci" : "Tidak Terkunci"}
+                                  }></i> &nbsp; {this.state.isLockedStatus ? "Buka Forum" : "Kunci Forum"}
                               </Button>
                           :   ''
                       }
@@ -300,7 +300,7 @@ export default class ForumDetail extends Component {
                             onClick={this.openModalForumAdd}
                             className="btn-block btn-primary"
                           >
-                            <i className="fa fa-plus"></i> &nbsp; Membuat Forum
+                            <i className="fa fa-plus"></i> &nbsp; Buat Forum
                           </Button>
 
                           <div className="forum-filter">

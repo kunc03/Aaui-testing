@@ -281,7 +281,7 @@ export default class Forum extends Component {
                             onClick={this.openModalForumAdd}
                             className="btn-block btn-primary"
                           >
-                            <i className="fa fa-plus"></i> &nbsp; Membuat Forum
+                            <i className="fa fa-plus"></i> &nbsp; Buat Forum
                           </Button>
 
                           <div className="forum-filter">
@@ -377,7 +377,7 @@ export default class Forum extends Component {
                         className="text-c-purple3 f-w-bold f-21"
                         style={{ marginBottom: "30px" }}
                       >
-                        Membuat Forum
+                        Buat Forum
                       </Modal.Title>
 
                       <Form>
