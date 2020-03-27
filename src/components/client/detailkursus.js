@@ -113,8 +113,6 @@ export default class DetailKursus extends Component {
               title : data.type
             }
     
-            console.log(form,"81724gkjsakjcgdaskdakjsdgkasgd",res);
-    
             API.post(`${API_SERVER}v1/api-activity/new-course`, form).then(console.log);
     
 
