@@ -44,6 +44,22 @@ export default class LiveStream extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
+        console.log(liveClass,'asjkdaskjdkjashdkshaj');
+        
+                
+        var data = liveClass.data.result
+        /*mark api get new history course*/
+        let form = {
+          user_id : Storage.get('user').data.user_id,
+          class_id : data.class_id,
+          description : data.room_name,
+          title : data.speaker
+        }
+
+
+        console.log('alsdlaksdklasjdlkasjdlk',form)
+        API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
+
         this.setState({ user: res.data.result, classRooms: liveClass.data.result })
       }
     })
