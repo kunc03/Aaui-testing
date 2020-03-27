@@ -335,7 +335,7 @@ class Home extends Component {
 
                         <div className="col-md-4 col-xl-4 mb-3">
                           <Link to={`/forum`}>
-                            <div className="kategori">
+                            <div className="kategori title-disabled">
                               <img src="/assets/images/component/forumoff.png" className="img-fluid" />
                               &nbsp;
                               Forum
@@ -345,7 +345,7 @@ class Home extends Component {
 
                         <div className="col-md-4 col-xl-4 mb-3">
                           <Link to={`/liveclass`}>
-                            <div className="kategori">
+                            <div className="kategori title-disabled">
                               <img src="/assets/images/component/liveoff.png" className="img-fluid" />
                               &nbsp;
                               Group Meeting

@@ -60,7 +60,7 @@ class Profile extends Component {
     e.preventDefault();
     let formData = new FormData();
     formData.append("avatar", this.state.user_data.tempAvatar);
-
+    console.log('simpen')
     API.put(
       `${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`,
       formData
@@ -106,7 +106,8 @@ class Profile extends Component {
     e.preventDefault();
     const { user_data } = this.state;
     API.put(`${USER}/${user_data.user_id}`, user_data)
-      .then(res => {
+    .then(res => {
+      console.log(res,'sinpenennn')
         if (res.status === 200) {
           if (!res.data.error) {
             this.fetchProfile();

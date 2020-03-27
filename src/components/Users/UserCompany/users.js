@@ -186,10 +186,10 @@ export default class Users extends Component {
     return (
       <div>
         <h3 className="f-24 f-w-800">User Management</h3>
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflow: "auto", maxHeight:'71vh' }}>
           <table
             className="table-curved"
-            style={{ width: "100%" }}
+            style={{ width: "100%" ,whiteSpace: "nowrap"}}
           >
             <thead>
               <tr>
