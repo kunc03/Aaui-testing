@@ -26,6 +26,10 @@ class Aktivity extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
+    recentCourse: [],
+    recentClass: [],
+    recentForum: [],
+    recentLogin: [],
     today : '',
     tabIndex : 1
   }
@@ -33,6 +37,7 @@ class Aktivity extends Component {
   componentDidMount() {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
+    this.fetchHistoryActivity(Storage.get('user').data.user_id);
     let date = new Date();
     console.log(String(date));
     this.setState({today:String(date)})
@@ -82,9 +87,29 @@ class Aktivity extends Component {
     this.setState({tabIndex: b+1});
   }
 
+
+  fetchHistoryActivity(user_id){
+    API.get(`${API_SERVER}v1/api-activity/history/${user_id}`).then(res => {
+      if(res.status === 200) {
+        var {result} = res.data
+        var recentCourse = result.filter(x=>x.tipe == 'course');
+        var recentForum = result.filter(x=>x.tipe == 'forum');
+        var recentClass = result.filter(x=>x.tipe == 'liveclass');
+        var recentLogin = result.filter(x=>x.tipe == 'login');
+       
+        console.log(res.data.result,"dfjdkfsjdfhklsdjflkdsjf",recentCourse);
+
+        this.setState({ recentClass, recentCourse, recentForum, recentLogin}); 
+      }
+    });
+  }
+
+
   render() {
 
-    console.log('user: ', this.state.user)
+    console.log('user: ', this.state.user);
+    var { recentClass, recentCourse, recentForum, recentLogin} = this.state
+    console.log({ recentClass, recentCourse, recentForum, recentLogin},'2342');
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
@@ -199,9 +224,10 @@ class Aktivity extends Component {
                                   </div>
                               )
                       })}
-                      {this.state.tabIndex === 1 ?  <RiwayatKursus/>
-                      : this.state.tabIndex === 2 ? <RiwayatForum/>
-                      :                             <RiwayatLiveClass/>}
+                      {console.log('asjkdhkjsdhkjashdkjashdkjashdkajshdkjashdkjashdkjashd',recentCourse)}
+                      {this.state.tabIndex === 1 ?  <RiwayatKursus recent={recentCourse}/>
+                      : this.state.tabIndex === 2 ? <RiwayatForum recent={recentForum}/>
+                      :                             <RiwayatLiveClass recent={recentClass}/>}
                     
                   </div>
 
