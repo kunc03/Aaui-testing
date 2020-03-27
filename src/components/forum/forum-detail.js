@@ -36,9 +36,18 @@ export default class ForumDetail extends Component {
     async fetchData() {
         await _getDetailForumList.bind(this, this.props.match.params.forum_id)();
         await API.get(`${FORUM}/id/${this.props.match.params.forum_id}`).then(res => {
+
+            let aray = [];
+            let splitTags;
+            let komen = res.data.result[0];
+            for(let a in komen.komentar){
+              splitTags =  komen.komentar[a].attachment_id === null ? null : komen.komentar[a].attachment_id.split("/")[4];
+              komen.komentar[a].filenameattac = splitTags; 
+              }
+             // console.log('res: ', komen)
+              
             if (res.status === 200) {
               if (!res.data.error) {
-                console.log('res: ', res.data)
                 this.setState({
                   isLockedStatus : res.data.result[0].kunci,
                   listKomentar: res.data.result[0].komentar
@@ -52,8 +61,8 @@ export default class ForumDetail extends Component {
     }
 
     closeNotifikasi = e => {
-		this.setState({ isNotifikasi: false, isiNotifikasi: '' })
-	}
+      this.setState({ isNotifikasi: false, isiNotifikasi: '' })
+    }
     
     onClickSubmitKomentar = e => {
         const form = {
@@ -209,13 +218,14 @@ export default class ForumDetail extends Component {
                                       <p>{content.konten}</p>
 
                                       {content.attachment_id && (
+                                        
                                         <a
                                           href={content.attachment_id}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="btn btn-ideku"
+                                          
                                         >
-                                          Attachment
+                                          <i class="fa fa-paperclip" aria-hidden="true"></i> {content.filenameattac}
                                         </a>
                                       )}
                                     </Col>

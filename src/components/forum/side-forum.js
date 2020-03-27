@@ -93,13 +93,16 @@ export default class Forum extends Component {
 
                         <div className="forum-filter">
                         <ListGroup>
+                          <Link to="#" onClick={_postLIstAllForum.bind(this, undefined)}>
                             <ListGroup.Item>
-                            <i className="fa fa-comments"></i> &nbsp; Semua
-                            Diskusi Forum
+                              <i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
                             </ListGroup.Item>
+                          </Link>
+                          <Link to="#"  onClick={_postLIstAllForum.bind(this, 'star')}>
                             <ListGroup.Item>
-                            <i className="fa fa-star"></i> &nbsp; Mengikuti
+                              <i className="fa fa-star"></i> &nbsp; Mengikuti
                             </ListGroup.Item>
+                          </Link>
                         </ListGroup>
                         </div>
 

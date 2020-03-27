@@ -4,24 +4,32 @@ import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
-export function _postLIstAllForum(){
-   // console.log('get')
+export function _postLIstAllForum(side){
+  let sides = side;  console.log(side, 'side')
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
     this.setState({ companyId: res.data.result.company_id })
     API.get(`${FORUM}/company/${res.data.result.company_id}`).then(res=> {
-      let aray = [];
-      let splitTags;
-      
-      for(let a in res.data.result){
-        splitTags = res.data.result[a].tags.split(",");
-        for(let b in splitTags){
-          aray.push({tags:splitTags[b]}) 
-        }
-      }
-      
+          let aray = [],starData = [];
+          let splitTags; 
+         // console.log(res.data.result);
+          for(let a in res.data.result){
+            splitTags = res.data.result[a].tags.split(",");
+            for(let b in splitTags){
+              aray.push({tags:splitTags[b]}) 
+            }
+          }
           if(res.status === 200){
             if(!res.data.error){
-                this.setState({ forums: res.data.result, listTags:aray })
+              if(sides === 'star'){
+                for(let a in res.data.result){
+                  if(res.data.result[a].kunci === 1){
+                    starData.push(res.data.result[a]);
+                  }
+                }
+                this.setState({ forums: starData, listTags:aray })
+              }else{
+                  this.setState({ forums:res.data.result, listTags:aray })
+              }
             }
           }
         })
