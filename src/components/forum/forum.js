@@ -8,6 +8,7 @@ import {
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
+import SideForum from './side-forum';
 
 export default class Forum extends Component {
 
@@ -22,6 +23,8 @@ export default class Forum extends Component {
 		body: '',
 		imgFile: '',
     imgPreview: '',
+
+    listTags : [],
     
 		isNotifikasi: false, 
     isiNotifikasi:'',
@@ -275,72 +278,7 @@ export default class Forum extends Component {
                     </Col>
 
                     <Col sm={4}>
-                      <Card>
-                        <Card.Body>
-                          <Button
-                            onClick={this.openModalForumAdd}
-                            className="btn-block btn-primary"
-                          >
-                            <i className="fa fa-plus"></i> &nbsp; Buat Forum
-                          </Button>
-
-                          <div className="forum-filter">
-                            <ListGroup>
-                              <ListGroup.Item>
-                                <i className="fa fa-comments"></i> &nbsp; Semua
-                                Diskusi Forum
-                              </ListGroup.Item>
-                              <ListGroup.Item>
-                                <i className="fa fa-star"></i> &nbsp; Mengikuti
-                              </ListGroup.Item>
-                            </ListGroup>
-                          </div>
-
-                          <hr />
-
-                          <div className="forum-kategori">
-                            <h3 className="f-16 f-w-800 mb-3">
-                              Kategori Forum
-                            </h3>
-                            <Row>
-                              <Col sm={6}>
-                                <ul className="forum-kategori-list">
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Design
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Marketing
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Teknologi
-                                  </li>
-                                </ul>
-                              </Col>
-                              <Col sm={6}>
-                                <ul className="forum-kategori-list">
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Sales
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Otomotif
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Arsitektur
-                                  </li>
-                                </ul>
-                              </Col>
-                            </Row>
-                          </div>
-
-                          <hr />
-                        </Card.Body>
-                      </Card>
+                      <SideForum/>
                     </Col>
                   </Row>
 
@@ -367,123 +305,6 @@ export default class Forum extends Component {
                     </Modal.Body>
                   </Modal>
 
-                  <Modal
-                    show={this.state.isForumAdd}
-                    onHide={this.closeModalForumAdd}
-                    dialogClassName="modal-lg"
-                  >
-                    <Modal.Body>
-                      <Modal.Title
-                        className="text-c-purple3 f-w-bold f-21"
-                        style={{ marginBottom: "30px" }}
-                      >
-                        Buat Forum
-                      </Modal.Title>
-
-                      <Form>
-                        <Form.Group controlId="formJudul">
-                          <img
-                            alt="media"
-                            src={
-                              this.state.imgFile === ""
-                                ? "/assets/images/component/placeholder-image.png"
-                                : this.state.imgPreview
-                            }
-                            className="img-fluid"
-                            style={{ width: "200px", height: "160px" }}
-                          />
-
-                          <Form.Label className="f-w-bold ml-4">
-                            <h4 className="btn-default">Masukkan Gambar</h4>
-                            <input
-                              accept="image/*"
-                              className="btn-default"
-                              name="avatar"
-                              type="file"
-                              onChange={this.handleChange}
-                              required
-                            />
-                            <Form.Text className="text-muted">
-                              Ukuran gambar 200x200 piksel.
-                            </Form.Text>
-                          </Form.Label>
-                        </Form.Group>
-
-                        <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Judul Forum
-                          </Form.Label>
-                          <FormControl
-                            type="text"
-                            placeholder="Judul Forum"
-                            value={this.state.title}
-                            onKeyPress={e => _handleKeyPress(e, this._target)}
-                            onChange={e =>
-                              this.setState({ title: e.target.value })
-                            }
-                          />
-                          <Form.Text className="text-muted">
-                            Buat judul yang menarik.
-                          </Form.Text>
-                        </Form.Group>
-
-                        <Form.Group controlId="formIsi">
-                          <Form.Label className="f-w-bold">
-                            Isi Forum
-                          </Form.Label>
-                          <FormControl
-                            as="textarea"
-                            rows="5"
-                            placeholder="Isi Forum"
-                            value={this.state.body}
-                            onKeyPress={e => _handleKeyPress(e, this._target)}
-                            onChange={e =>
-                              this.setState({ body: e.target.value })
-                            }
-                          />
-                          <Form.Text className="text-muted">
-                            Jelaskan isi dari forum, peraturan, atau yang lain.
-                          </Form.Text>
-                        </Form.Group>
-
-                        <Form.Group controlId="formTag">
-                          <Form.Label className="f-w-bold">
-                            Tag Forum
-                          </Form.Label>
-                          <FormControl
-                            type="text"
-                            placeholder="Teknologi, Arsitektur, dll"
-                            value={this.state.tags}
-                            onKeyPress={e => _handleKeyPress(e, this._target)}
-                            onChange={e =>
-                              this.setState({ tags: e.target.value })
-                            }
-                          />
-                          <Form.Text className="text-muted">
-                            Jika lebih dari 1 hubungkan dengan koma (,)
-                          </Form.Text>
-                        </Form.Group>
-
-                        <div style={{ marginTop: "20px" }}>
-                          <button
-                            type="button"
-                            onClick={_addforum.bind(this)}
-                            className="btn btn-primary f-w-bold"
-                          >
-                            Simpan
-                          </button>
-                          &nbsp;
-                          <button
-                            type="button"
-                            className="btn f-w-bold"
-                            onClick={this.closeModalForumAdd}
-                          >
-                            Tutup
-                          </button>
-                        </div>
-                      </Form>
-                    </Modal.Body>
-                  </Modal>
                 </div>
               </div>
             </div>

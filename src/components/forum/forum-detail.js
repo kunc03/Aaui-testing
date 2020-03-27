@@ -8,6 +8,7 @@ import {
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
+import SideForum from './side-forum';
 
 
 export default class ForumDetail extends Component {
@@ -288,10 +289,7 @@ export default class ForumDetail extends Component {
                     </Col>
 
                     <Col sm={4}>
-                      <Card>
-                        <Card.Body>
-
-                        {
+                        {/* {
                           Storage.get('user').data.level == 'admin' ||
                           Storage.get('user').data.level == 'superadmin'
                           ?   <Button
@@ -306,72 +304,9 @@ export default class ForumDetail extends Component {
                                   }></i> &nbsp; {this.state.isLockedStatus ? "Buka Forum" : "Kunci Forum"}
                               </Button>
                           :   ''
-                      }
+                      } */}
 
-                          <Button
-                            onClick={this.openModalForumAdd}
-                            className="btn-block btn-primary"
-                          >
-                            <i className="fa fa-plus"></i> &nbsp; Buat Forum
-                          </Button>
-
-                          <div className="forum-filter">
-                            <ListGroup>
-                              <ListGroup.Item>
-                                <i className="fa fa-comments"></i> &nbsp; Semua
-                                Diskusi Forum
-                              </ListGroup.Item>
-                              <ListGroup.Item>
-                                <i className="fa fa-star"></i> &nbsp; Mengikuti
-                              </ListGroup.Item>
-                            </ListGroup>
-                          </div>
-
-                          <hr />
-
-                          <div className="forum-kategori">
-                            <h3 className="f-16 f-w-800 mb-3">
-                              Kategori Forum
-                            </h3>
-                            <Row>
-                              <Col sm={6}>
-                                <ul className="forum-kategori-list">
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Design
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Marketing
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Teknologi
-                                  </li>
-                                </ul>
-                              </Col>
-                              <Col sm={6}>
-                                <ul className="forum-kategori-list">
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Sales
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Otomotif
-                                  </li>
-                                  <li className="forum-item">
-                                    <i className="fa fa-comments"></i> &nbsp;
-                                    Arsitektur
-                                  </li>
-                                </ul>
-                              </Col>
-                            </Row>
-                          </div>
-
-                          <hr />
-                        </Card.Body>
-                      </Card>
+                      <SideForum/>
                     </Col>
                   </Row>
 

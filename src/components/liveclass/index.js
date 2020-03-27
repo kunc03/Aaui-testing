@@ -12,7 +12,7 @@ import Storage from '../../repository/storage';
 const ClassRooms = ({list}) => <Row>
 	{list.map( item => 
 		<div className="col-sm-4" key={item.class_id}>
-			<Link to={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
+			<a target="_blank" href={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
 				<div className="card">
 					<img
 						className="img-fluid img-kursus radius-top-l-r-5"
@@ -31,7 +31,7 @@ const ClassRooms = ({list}) => <Row>
 						</small>
 					</div>
 				</div>
-			</Link>
+			</a>
 		</div>
 	)}
 </Row>;

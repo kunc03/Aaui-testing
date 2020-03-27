@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import { Modal, Form, Accordion, Card, Button } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import {FieldImport} from '../../../modul';
+import {
+  _attach,
+  _data
+} from './_quiz';
 
 export default class QuestionQuiz extends Component {
 
@@ -14,7 +19,11 @@ export default class QuestionQuiz extends Component {
 		question: [],
 
 		isModalDelete: false,
-		questionId: '',
+    questionId: '',
+    
+    statusImport: false,
+		message: '',
+    dataImport : []
 	}
 
 	handleOpenDelete = e => {
@@ -171,7 +180,7 @@ export default class QuestionQuiz extends Component {
 
                       <a
                         href={`/question-quiz-create/${this.state.examId}.${this.state.courseId}`}
-                        className="btn btn-ideku f-14 float-right mb-3"
+                        className="btn btn-ideku f-14 float-right m-l-5 mb-3"
                         style={{
                           padding: "7px 25px !important",
                           color: "white"
@@ -183,7 +192,17 @@ export default class QuestionQuiz extends Component {
                           alt=""
                         />
                         Tambah Baru
-                      </a>
+                      </a> &nbsp;
+                      <button className="btn btn-primary f-14 float-right m-l-5" style={{ padding: "7px 25px !important",color: "white"}}>
+                        Template
+                      </button> &nbsp;
+                      <button className="btn btn-primary f-14 float-right " style={{ padding: "7px 25px !important",color: "white"}}>
+                        Import Quiz
+                      </button> &nbsp;
+                      <FieldImport
+                        _attach={_attach.bind(this)}
+                        _data={_data.bind(this)}
+                        />
                     </div>
 
                     <div className="col-xl-12">
