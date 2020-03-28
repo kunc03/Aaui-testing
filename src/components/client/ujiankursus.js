@@ -86,36 +86,26 @@ export default class UjianKursus extends Component {
       if(res.status === 200) {
         let soalUjian = res.data.result;
 
-        let exam = Storage.get('currentExam');
-        if(exam){
-          soalUjian = soalUjian.map((item,i) => {
-            if(exam.answers[i].answer_option !== '') {
-              item.isJawab = true;
-            }
-            return item;
-          });
-        }else{
-          let answers = soalUjian.map((item,i)=>{
-            return {
-              question_id: item.question_id,
-              exam_id: item.exam_id,
-              tag: item.tag,
-              number: item.number,
-              question: item.question,
-              image: item.image,
-              answer_option : ''
-            }
-          });
-          Storage.set('currentExam',{answers:answers,questions:soalUjian});
-        }
+        let answers = soalUjian.map((item,i)=>{
+          return {
+            question_id: item.question_id,
+            exam_id: item.exam_id,
+            tag: item.tag,
+            number: item.number,
+            question: item.question,
+            image: item.image,
+            answer_option : ''
+          }
+        });
+        
+        Storage.set('currentExam',{answers:answers,questions:soalUjian});
        
         this.setState({ 
           soalUjian: soalUjian, 
           questionId: soalUjian[0].question_id,
           nomorUjian: soalUjian[0].number,
           pertanyaanUjian: soalUjian[0].question,
-          pilihanUjian: soalUjian[0].options,
-          soalTerjawab: exam ? exam.answers.filter(x=>x.answer_option != '').length : 0,
+          pilihanUjian: soalUjian[0].options
         })
       }
     })
