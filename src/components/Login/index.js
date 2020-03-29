@@ -64,11 +64,11 @@ class Login extends Component {
             level: res.data.result.level,
           }});
           Storage.set('token', {data: res.data.result.token});
+          window.location.href = window.location.origin;
 
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
               console.log(arguments)
-              window.location.href = window.location.origin
             }
           );
           
