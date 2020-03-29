@@ -48,6 +48,19 @@ export default class ForumDetail extends Component {
               
             if (res.status === 200) {
               if (!res.data.error) {
+                console.log('res: ', res.data);
+                
+                  var data = res.data.result[0]
+                  /*mark api get new history course*/
+                  let form = {
+                    user_id : Storage.get('user').data.user_id,
+                    forum_id : data.forum_id,
+                    description : data.title,
+                    title : data.tags
+                  }
+                  console.log('alsdlaksdklasjdlkasjdlk',form)
+                  API.post(`${API_SERVER}v1/api-activity/new-forum`, form).then(console.log);
+                  
                 this.setState({
                   isLockedStatus : res.data.result[0].kunci,
                   listKomentar: res.data.result[0].komentar
@@ -299,7 +312,7 @@ export default class ForumDetail extends Component {
                                     this.state.isLockedStatus 
                                     ? "fa fa-lock"
                                     : "fa fa-unlock"
-                                  }></i> &nbsp; {this.state.isLockedStatus ? "Terkunci" : "Tidak Terkunci"}
+                                  }></i> &nbsp; {this.state.isLockedStatus ? "Buka Forum" : "Kunci Forum"}
                               </Button>
                           :   ''
                       } */}

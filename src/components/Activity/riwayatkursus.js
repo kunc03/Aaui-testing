@@ -13,14 +13,14 @@ class RiwayatKursus extends Component {
     },
     kategoriKursus: [],
     kursusTerbaru: [],
-    kursusDiikuti: [],
+    kursusDiikuti: this.props.recent,
     today : '',
     tabIndex : 1
   }
 
   componentDidMount() {
     this.fetchDataUser();
-    this.fetchDataKursusDiikuti();
+    //this.fetchDataKursusDiikuti();
     let date = new Date();
    // console.log(String(date));
     this.setState({today:String(date)})
@@ -98,7 +98,7 @@ class RiwayatKursus extends Component {
                 <div className="row">
                 {
                 kursusDiikuti.map((item, i) => (
-                <div className="col-sm-4" key={item.id_user_course}>
+                <div className="col-sm-4" key={item.id_user_activity}>
                         <Link to='/aktivitas'>
                         <div className="card">
                             <div className="box-image">
@@ -107,11 +107,11 @@ class RiwayatKursus extends Component {
                                 src="assets/images/component/Pattern Geometric-01.png"
                                 alt="dashboard-user"
                             />
-                            <div className="card-text-title">{item.course.category_name}</div>
+                            <div className="card-text-title">{item.activity_title}</div>
                             </div>
                             <div className="card-carousel">
                             <div className="title-head f-16">
-                                {item.course.title}
+                                {item.activity_title}
                             </div>
                             <div className="row m-t-50">
                                 <div className="col-6">
@@ -120,7 +120,7 @@ class RiwayatKursus extends Component {
                                 </small>
                                 <h6>
                                     <small className="f-w-600">
-                                    {item.course.type}
+                                    {item.description}
                                     </small>
                                 </h6>
                                 </div>

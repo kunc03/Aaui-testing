@@ -13,14 +13,14 @@ class RiwayatLiveClass extends Component {
     },
     kategoriKursus: [],
     kursusTerbaru: [],
-    historyForum: [],
+    historyForum: this.props.recent,
     today : '',
     tabIndex : 1
   }
 
   componentDidMount() {
     this.fetchDataUser();
-    this.fetchDatahistoryForum();
+    //this.fetchDatahistoryForum();
     let date = new Date();
    // console.log(String(date));
     this.setState({today:String(date)})
@@ -93,7 +93,7 @@ class RiwayatLiveClass extends Component {
                     {historyForum.map((item, i) => (
                             <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
                                     <h3 className="f-18 f-w-bold f-w-800">
-                                        Anda Sedang Mengikuti GROUP MEETING ({item.course.category_name})
+                                        Anda Sedang Mengikuti GROUP MEETING ({item.title})
                                         <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>12/12/2020 03:00 PM</span>
                                     </h3>
                                     <p><a href="/aktivitas"> Lanjut ikuti </a></p>

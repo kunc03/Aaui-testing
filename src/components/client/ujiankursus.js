@@ -85,6 +85,20 @@ export default class UjianKursus extends Component {
     API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
       if(res.status === 200) {
         let soalUjian = res.data.result;
+
+        let answers = soalUjian.map((item,i)=>{
+          return {
+            question_id: item.question_id,
+            exam_id: item.exam_id,
+            tag: item.tag,
+            number: item.number,
+            question: item.question,
+            image: item.image,
+            answer_option : ''
+          }
+        });
+        
+        Storage.set('currentExam',{answers:answers,questions:soalUjian});
        
         this.setState({ 
           soalUjian: soalUjian, 
@@ -160,7 +174,13 @@ export default class UjianKursus extends Component {
       durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0
     })
 
-    API.get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
+    var exam = Storage.get('currentExam');
+    var answer = exam.answers;
+
+    this.setState({ jawabanKu: answer[indexarray].answer_option || '' });
+
+    /*disable request current answer */ console.log('disabling to api') && API
+    .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
       if(res.status === 200) {
         console.log(res.data.result, 'jawab pertanyaaan')
         this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
@@ -179,9 +199,15 @@ export default class UjianKursus extends Component {
           pertanyaanUjian: this.state.soalUjian[indexarraynext-1].question,
           pilihanUjian: this.state.soalUjian[indexarraynext-1].options,
           durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
-        })
+        });
     
-        API.get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarraynext-1].question_id}`).then(res => {
+        var exam = Storage.get('currentExam');
+        var answer = exam.answers;
+    
+        this.setState({ jawabanKu: answer[indexarraynext-1].answer_option || '' });
+    
+        /*disable request current answer */ console.log('disabling to api') && API
+        .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarraynext-1].question_id}`).then(res => {
           if(res.status === 200) {
             //console.log(res.data.result, 'jawab pertanyaaan')
             this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
@@ -199,9 +225,15 @@ export default class UjianKursus extends Component {
             pertanyaanUjian: this.state.soalUjian[indexarrayprevios-1].question,
             pilihanUjian: this.state.soalUjian[indexarrayprevios-1].options,
             durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
-          })
+          });
+    
+          var exam = Storage.get('currentExam');
+          var answer = exam.answers;
       
-          API.get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarrayprevios-1].question_id}`).then(res => {
+          this.setState({ jawabanKu: answer[indexarrayprevios-1].answer_option || '' });
+      
+          /*disable request current answer */ console.log('disabling to api') && API
+          .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarrayprevios-1].question_id}`).then(res => {
             if(res.status === 200) {
               //console.log(res.data.result, 'jawab pertanyaaan')
               this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
@@ -221,7 +253,31 @@ export default class UjianKursus extends Component {
       answer_option: answerOption
     }
 
-    API.get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
+    var exam = Storage.get('currentExam');
+    var answer = exam.answers;
+    var currentAnswer = answer.find(x=>x.question_id == form.question_id);
+
+    currentAnswer.answer_option = answerOption;
+
+    Storage.set('currentExam',exam);
+
+    //this.setState({ jawabanKu: answers[indexarray].answer_option || '' });
+
+    let refactoring = this.state.soalUjian.map((item) => {
+      if(item.question_id === form.question_id) {
+        item.isJawab = true;
+      }
+      return item;
+    });
+
+    this.setState({ 
+      jawabanKu: form.answer_option, 
+      soalTerjawab: answer.filter(x=>x.answer_option != '').length,
+      soalUjian: refactoring
+    });
+
+    /*disabled*/console.log('disables set correct answer request') && API
+    .get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.result.length === 0) {
           // insert
@@ -250,6 +306,7 @@ export default class UjianKursus extends Component {
   render() {
     const { durasiWaktu, jumlahSoal, soalUjian, jawabanKu, soalTerjawab, nomorUjian } = this.state;
     const Completionist = () => <span>Waktu Habis !</span>;
+    
 
     const ListNomor = ({lists}) => (
       <ul class="flex-container" style={{marginTop: '16px'}}>
