@@ -10,6 +10,7 @@ class Profile extends Component {
       user_id: Storage.get("user").data.user_id,
       company_id: "",
       branch_id: "",
+      grup_id: "",
       level: "",
       status: "",
       email: "",
@@ -60,7 +61,7 @@ class Profile extends Component {
     e.preventDefault();
     let formData = new FormData();
     formData.append("avatar", this.state.user_data.tempAvatar);
-
+    console.log('simpen')
     API.put(
       `${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`,
       formData
@@ -77,7 +78,6 @@ class Profile extends Component {
   fetchProfile = () => {
     const user = Storage.get("user");
     API.get(`${USER_ME}${user.data.email}`).then(res => {
-      console.log(res.data.result);
       if (res.status === 200) {
         if (!res.data.error) {
           this.setState({
@@ -88,6 +88,7 @@ class Profile extends Component {
                 : "https://iacts.org/sites/all/themes/themag/assets/images/default-user.png",
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
+              grup_id: res.data.result.grup_id,
               level: res.data.result.level,
               status: res.data.result.status,
               email: res.data.result.email,
@@ -106,7 +107,8 @@ class Profile extends Component {
     e.preventDefault();
     const { user_data } = this.state;
     API.put(`${USER}/${user_data.user_id}`, user_data)
-      .then(res => {
+    .then(res => {
+      console.log(res,'sinpenennn')
         if (res.status === 200) {
           if (!res.data.error) {
             this.fetchProfile();
@@ -335,6 +337,7 @@ class Profile extends Component {
                                 Status
                               </label>
                               <input
+                                disabled
                                 style={{ textTransform: "capitalize" }}
                                 name="levelStatus"
                                 type="text"
