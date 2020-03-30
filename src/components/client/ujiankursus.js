@@ -49,7 +49,7 @@ export default class UjianKursus extends Component {
   }
 
   konfirmasiSubmitUjian = e => {
-    this.setState({ isModalSubmit: true })
+    this.sendAnswers();
   }
 
   handleModalSubmit = e => {
@@ -241,6 +241,41 @@ export default class UjianKursus extends Component {
           })
         break;
     }
+  }
+
+  sendAnswers = e => {
+    var exam = Storage.get('currentExam');
+    var answers = exam.answers.filter(x=>x.answer_option !== '');
+    var _self = this;
+    (function loop(x){
+      let answer = answers[x];
+      if(answer){ 
+        let form = {
+          user_id: _self.state.userId,
+          question_id: answer.question_id,
+          answer_number: answer.number,
+          answer_option: answer.answer_option
+        };
+        
+        console.log(form,'qweqweqwe') ;
+        API.get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
+          if(res.status === 200) {
+            if(res.data.result.length === 0) {
+              // insert
+              API.post(`${API_SERVER}v1/exam-answer`, form).then(res=>loop(x+1))
+            } else {
+              //update
+              API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form).then(res=>loop(x+1))
+            }
+          }
+        });
+
+      } else {
+        console.log('selesai mengirim jawaban');
+        _self.setState({ isModalSubmit: true });
+      }
+
+    })(0);
   }
 
   jawabPertanyaan = e => {
