@@ -122,10 +122,11 @@ export default class Forum extends Component {
 											</div>
 
 											<div className="forum-action">
-												<Link to='#'>
-													<i className="fa fa-star"></i>
-
-												</Link>
+                        {item.kunci === 0 ? 
+                          <i className="fa fa-star"></i>
+                          :
+                          <Link to='#'><i className="fa fa-star"></i></Link>
+                        }
 											
 												<Link to='#' style={{marginLeft: '10px'}}>
 													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
@@ -210,8 +211,8 @@ export default class Forum extends Component {
 
                         <Row>
                           <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/kursus`}>
-                              <div className="kategori">
+                            <Link to={`/`}>
+                              <div className="kategori title-disabled">
                                 <img
                                   src="/assets/images/component/kursusoff.png"
                                   className="img-fluid"
@@ -237,7 +238,7 @@ export default class Forum extends Component {
 
                           <div className="col-md-4 col-xl-4 mb-3">
                             <Link to={`/liveclass`}>
-                              <div className="kategori">
+                              <div className="kategori title-disabled">
                                 <img
                                   src="/assets/images/component/liveoff.png"
                                   className="img-fluid"

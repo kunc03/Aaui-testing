@@ -414,11 +414,7 @@ export default class UjianKursus extends Component {
                             </div>
                           </div>
 
-                          <div className="row" style={{marginTop: '20px'}}>
-                            <div className="col-sm-12 text-center">    
-                              <Button onClick={this.konfirmasiSubmitUjian} className="btn btn-block submit-ujian pilih-selesai">Selesai</Button>
-                            </div>
-                          </div>
+                          
                         </Card.Body>
                       </Card>
                     </div>
@@ -430,6 +426,7 @@ export default class UjianKursus extends Component {
                         <h4 style={{marginTop: '30px', fontWeight: 'bold', color:'pink'}}>
                           SUBMIT UJIAN
                         </h4>
+                        
                         <h5 className=" f-w-800 mb-3">Apakah Anda Yakin Untuk Submit Ujian Ini ?</h5>
 
                         <Link style={{marginTop: '20px'}} to={`/hasil-ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
@@ -463,18 +460,26 @@ export default class UjianKursus extends Component {
                       </Card>
 
                       {/* fungsi untuk kembali dan next jawaban */}
-                      <div className="p-1">
-                        {nomorUjian === 1 ?
-                          <button  className="btn float-left"><span className=""><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
-                          :
-                          <button className="btn btn-ideku float-left" onClick={this.buttonNextPrevios.bind(this, 'previos')}><span><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
-                        }
+                      <div className="row">
+                        <div className="col-sm-12 "> 
+                          {nomorUjian === 1 ?
+                            <button  className="btn float-left"><span className=""><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
+                            :
+                            <button className="btn btn-ideku float-left" onClick={this.buttonNextPrevios.bind(this, 'previos')}><span><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
+                          }
 
-                        {nomorUjian === soalUjian.length ? 
-                          <button  className="btn float-right"><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
-                        :
-                          <button className="btn btn-ideku float-right" onClick={this.buttonNextPrevios.bind(this, 'next')}><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
-                        }
+                          {nomorUjian === soalUjian.length ? 
+                            <button  className="btn float-right"><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
+                          :
+                            <button className="btn btn-ideku float-right" onClick={this.buttonNextPrevios.bind(this, 'next')}><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
+                          }
+                        </div>
+                      </div><br />
+                      {/* Button Selesai */}
+                      <div className="row">
+                        <div className="col-sm-12 ">    
+                          <button onClick={this.konfirmasiSubmitUjian} className="btn btn-primary float-right">Selesai</button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -484,7 +489,12 @@ export default class UjianKursus extends Component {
                       <div className="text-center" style={{marginTop: '20px'}}>
                         <img className="img-fluid" src="/assets/images/component/tes.png" alt="media" />
                       </div>
-                      <h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3>
+                     
+                      {soalTerjawab == jumlahSoal ? 
+                        <span><h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3></span>
+                      :
+                        <span><h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Anda belum menjawab semua soal, apakah anda yakin tidak ingin menyelesaikan semua soal ?</h3></span>
+                      }
 
                       <Link to={`/ujian-hasil/${this.state.examId}`} style={{marginTop: '30px'}}
                         className="btn btn-block f-w-bold btn-ideku">

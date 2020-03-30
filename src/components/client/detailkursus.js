@@ -221,7 +221,13 @@ export default class DetailKursus extends Component {
             }
           })
         } else {
-          this.setState({ score: res.data.result.score, isShowScore: true, scoreType: 'quiz' });
+          let decimal;
+          if( res.data.result.score === Math.floor(res.data.result.score)){
+            decimal = true;
+          }else{
+            decimal = false;
+          }
+          this.setState({ score: decimal ? res.data.result.score : res.data.result.score.toFixed(2), isShowScore: true, scoreType: 'quiz' });
         }
       }
     })

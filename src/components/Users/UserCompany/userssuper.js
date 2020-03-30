@@ -241,8 +241,8 @@ export default class User extends Component {
       <div>
         <h3 className="f-24 f-w-800">User Management</h3>
 
-        <div style={{ overflowX: "auto" }}>
-          <table className="table-curved" style={{ width: "100%" }}>
+        <div style={{ overflow: "auto", maxHeight:'71vh' }}>
+          <table className="table-curved" style={{ width: "100%",whiteSpace: "nowrap" }}>
             <thead>
               <tr>
                 <th className="text-center">ID</th>

@@ -110,8 +110,8 @@ export default class LiveStream extends Component {
         <Row>
               
           <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/`}>
-              <div className="kategori">
+            <Link to={`/`} className="menu-mati">
+              <div className="kategori title-disabled">
               <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
               &nbsp;
               Kursus & Materi
@@ -120,8 +120,8 @@ export default class LiveStream extends Component {
           </div>
 
           <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/forum`}>
-              <div className="kategori">
+            <Link to={`/forum`} className="menu-mati">
+              <div className="kategori title-disabled">
                 <img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
               &nbsp;
               Forum
@@ -140,9 +140,12 @@ export default class LiveStream extends Component {
           </div>
 
           <Col sm={12} style={{marginBottom: '20px'}}>
-            <div className="kategori text-center" style={{marginBottom: '16px', cursor: 'pointer', color: '#bf337b'}} onClick={this.onClickInvite}>
-              Invite People
-            </div>
+            <h3 className="f-20 f-w-800">
+              {classRooms.room_name}
+              <Link onClick={this.onClickInvite} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
+                <i className="fa fa-user"></i>Invite People
+              </Link>
+            </h3>
             {
               user.name && classRooms.room_name && 
               <JitsiMeetComponent 
