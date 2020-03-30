@@ -13,14 +13,14 @@ class RiwayatForum extends Component {
     },
     kategoriKursus: [],
     kursusTerbaru: [],
-    historyForum: [],
+    historyForum: this.props.recent,
     today : '',
     tabIndex : 1
   }
 
   componentDidMount() {
     this.fetchDataUser();
-    this.fetchDatahistoryForum();
+    //this.fetchDatahistoryForum();
     let date = new Date();
    // console.log(String(date));
     this.setState({today:String(date)})
@@ -93,10 +93,10 @@ class RiwayatForum extends Component {
                     {historyForum.map((item, i) => (
                             <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
                                     <h3 className="f-18 f-w-bold f-w-800">
-                                        Anda Sedang Mengikuti Forum ({item.course.type})
+                                        Anda Sedang Mengikuti Forum ({item.activity_title})
                                         <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>12/12/2020 03:00 PM</span>
                                     </h3>
-                                    <p>ellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. </p>
+                    <p>{item.description}</p>
                             </div>
                         ))
                     }

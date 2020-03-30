@@ -103,6 +103,19 @@ export default class DetailKursus extends Component {
 
         API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
+
+            var data = res.data.result
+            /*mark api get new history course*/
+            let form = {
+              user_id : Storage.get('user').data.user_id,
+              course_id : data.course_id,
+              description : data.title,
+              title : data.type
+            }
+    
+            API.post(`${API_SERVER}v1/api-activity/new-course`, form).then(console.log);
+    
+
             this.setState({
               course: res.data.result,
               judulCourse: res.data.result.title,

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from 'react-router-dom'
 import {Alert} from 'react-bootstrap';
 import axios from 'axios';
-import API, {USER_LOGIN} from '../../repository/api';
+import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Link } from "react-router-dom";
@@ -51,6 +51,13 @@ class Login extends Component {
       //console.log(res.data.result)
       if(res.status === 200) {
         if(!res.data.error) {
+
+          let form = {
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
+            title : 'voucher login'
+          }
+
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
             email: res.data.result.email, 
@@ -58,6 +65,13 @@ class Login extends Component {
           }});
           Storage.set('token', {data: res.data.result.token});
           window.location.href = window.location.origin;
+
+          API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
+            function(){
+              console.log(arguments)
+            }
+          );
+          
         } else {
           this.setState({ toggle_alert: true });
         }
@@ -77,13 +91,26 @@ class Login extends Component {
     axios.post(USER_LOGIN, body).then(res => {
       if(res.status === 200){
         if(!res.data.error){
+
+          let form = {
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
+            title : 'regular login'
+          }
+
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
             email: res.data.result.email,
             level: res.data.result.level,
           }});
           Storage.set('token', {data:res.data.result.token});
-          window.location.href = window.location.origin;
+          
+          API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
+            function(){
+              console.log(arguments)
+              window.location.href = window.location.origin
+            }
+          );
         }else{
           this.setState({
             toggle_alert: true
