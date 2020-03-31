@@ -395,13 +395,16 @@ export default class DetailKursus extends Component {
       }
     };
 
+    // unutk banner photo, responsive center image
     const CheckMedia = ({media}) => {
       if(media) {
         let ekSplit = media.split('.');
         let ektension = ekSplit[ekSplit.length-1];
         if(ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
           return (
-            <img class="img-fluid rounded" src={media} alt="" style={{marginBottom: '20px', width: '100%'}} />
+            <div>
+              <div className="responsive-image-banner" style={{backgroundImage:`url(${media})`}}></div>
+            </div>
           )
         } else {
           return (

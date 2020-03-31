@@ -75,19 +75,16 @@ class Home extends Component {
           ektension === "jpeg"
         ) {
           return (
-            <img
-              className="img-fluid img-kursus radius-top-l-r-5"
-              src={media}
-              alt="dashboard-user"
-            />
+            <div>
+              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${media})`}}></div>
+            </div>
           );
         } else {
           return (
-            <img
-              className="img-fluid img-kursus radius-top-l-r-5"
-              src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
-              alt="Cover"
-            />
+            <div>
+              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url('https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640')`}}></div>
+            </div>
+            
           );
         }
       }
@@ -110,11 +107,14 @@ class Home extends Component {
                   }
                 >
                   <div className="card">
-                    <img
+                  
+                    <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.category_image})`}}></div>
+                  
+                    {/* <img
                       className="img-fluid img-kursus radius-top-l-r-5"
                       src={item.category_image}
                       alt="dashboard-user"
-                    />
+                    /> */}
                     <div className="card-carousel ">
                       <div className="title-head f-w-900 f-16">
                         {item.category_name}

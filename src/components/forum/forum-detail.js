@@ -156,7 +156,10 @@ export default class ForumDetail extends Component {
                       <Card>
                         <Card.Body>
                           <div className="forum-media">
-                            <img
+                            <div className="responsive-image-banner m-b-10" style={{backgroundImage:`url(${dataList.cover
+                                  ? dataList.cover
+                                  : '/assets/images/component/p5.jpg'})`}}></div>
+                            {/* <img
                               src={
                                 dataList.cover
                                   ? dataList.cover
@@ -164,7 +167,7 @@ export default class ForumDetail extends Component {
                               }
                               className="img-fluid mr-3 forum-gambar"
                               alt="media"
-                            />
+                            /> */}
                           </div>
 
                           <div className="forum-body">
@@ -207,12 +210,7 @@ export default class ForumDetail extends Component {
                                 >
                                   <Row>
                                     <Col xl={2} md={1}>
-                                      <img
-                                        src={content.avatar}
-                                        class="img-circle img-responsive"
-                                        alt=""
-                                        style={{ width: "80px" }}
-                                      />
+                                      <div className="responsive-image-profile radius-60" style={{backgroundImage:`url(${content.avatar})`}}></div>
                                     </Col>
                                     <Col xl={10} md={11}>
                                       <h3 className="f-18 f-w-bold f-w-800">

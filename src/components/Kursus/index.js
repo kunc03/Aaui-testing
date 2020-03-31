@@ -128,12 +128,14 @@ class Kursus extends Component {
                       : `/kategori-kursus/${item.category_id}`
                   }
                 >
+                  {/* image resonsive content */}
                   <div className="card">
-                    <img
+                    <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.category_image})`}}></div>
+                    {/* <img
                       className="img-fluid img-kursus radius-top-l-r-5"
                       src={item.category_image}
                       alt="dashboard-user"
-                    />
+                    /> */}
                     <div className="card-carousel ">
                       <div className="title-head f-w-900 f-16">
                         {item.category_name}

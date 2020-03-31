@@ -14,11 +14,12 @@ const ClassRooms = ({list}) => <Row>
 		<div className="col-sm-4" key={item.class_id}>
 			<a target="_blank" href={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
 				<div className="card">
-					<img
+					<div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'})`}}></div>
+					{/* <img
 						className="img-fluid img-kursus radius-top-l-r-5"
 						src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
 						alt="dashboard-user"
-					/>
+					/> */}
 					<div className="card-carousel ">
 						<div className="title-head f-w-900 f-16">
 							{item.room_name}
