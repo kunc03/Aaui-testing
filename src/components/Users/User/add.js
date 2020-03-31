@@ -17,6 +17,7 @@ class UserAdd extends Component {
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
 
     responseMessage: '',
     responseEmail: '',
@@ -31,7 +32,7 @@ class UserAdd extends Component {
     if(name === 'company_id') {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if(res.status === 200) {
-          this.setState({ listBranch: res.data.result, company_id: value })
+          this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1]})
         }
       })
     } else {
@@ -105,6 +106,17 @@ class UserAdd extends Component {
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id}>{item.branch_name}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Cabang</label>
+                              <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
+                                <option value="">-- pilih --</option>
+                                {
+                                  this.state.listGrup.map(item => (
+                                    <option value={item.grup_id}>{item.grup_name}</option>
                                   ))
                                 }
                               </select>
