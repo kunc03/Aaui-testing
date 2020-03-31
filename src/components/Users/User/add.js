@@ -111,7 +111,7 @@ class UserAdd extends Component {
                               </select>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cabang</label>
+                              <label className="label-input">Grup</label>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
