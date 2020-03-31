@@ -22,6 +22,7 @@ class UserEdit extends Component {
 
     listCompany: [],
     listBranch: [],
+    listGrup: [],
     listLevel: [],
 
     responseMessage: ""
@@ -72,7 +73,7 @@ class UserEdit extends Component {
     if (name === "company_id") {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if (res.status === 200) {
-          this.setState({ listBranch: res.data.result, company_id: value });
+          this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1] });
         }
       });
     } else {
@@ -107,7 +108,7 @@ class UserEdit extends Component {
           `${API_SERVER}v1/branch/company/${this.state.user.company_id}`
         ).then(res => {
           if (res.status === 200) {
-            this.setState({ listBranch: res.data.result });
+            this.setState({ listBranch: res.data.result[0], listGrup: res.data.result[1] });
           }
         });
 
@@ -181,6 +182,31 @@ class UserEdit extends Component {
                                     }
                                   >
                                     {item.branch_name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Grup</label>
+                              <select
+                                required
+                                className="form-control"
+                                name="grup_id"
+                                onChange={this.onChangeInput}
+                              >
+                                <option value="">-- pilih --</option>
+                                {this.state.listGrup.map(item => (
+                                  <option
+                                    value={item.grup_id}
+                                    selected={
+                                      item.grup_id ===
+                                      this.state.user.grup_id
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    {item.grup_name}
                                   </option>
                                 ))}
                               </select>
