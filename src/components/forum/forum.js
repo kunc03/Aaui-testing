@@ -109,7 +109,8 @@ export default class Forum extends Component {
 									<Link to={`/forum-detail/${item.forum_id}`} style={{color: 'rgba(109,114,120,0.8)'}}>
 										<Card.Body style={{padding: '16px'}}>
 											<div className="forum-media">
-												<img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} />
+                        <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:`url(${!item.cover ? `/assets/images/component/p5.jpg` : item.cover})`}}></div>
+												{/* <img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} /> */}
 											</div>
 
 											<div className="forum-body">
@@ -148,7 +149,8 @@ export default class Forum extends Component {
               ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
               :  <Card.Body style={{padding: '16px'}}>
                   <div className="forum-media">
-                    <img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" alt="media" />
+                    <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:"url('/assets/images/component/p5.jpg')"}}></div>
+                    {/* <img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" alt="media" /> */}
                   </div>
 
                   <div className="forum-body">

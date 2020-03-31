@@ -10,19 +10,15 @@ const CheckMedia = ({ media }) => {
     let ektension = ekSplit[ekSplit.length - 1];
     if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
       return (
-        <img
-          className="img-fluid img-kursus radius-top-l-r-5"
-          src={media}
-          alt="dashboard-user"
-        />
+        <div>
+          <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${media})`}}></div>
+        </div>
       );
     } else {
       return (
-        <img
-          className="img-fluid img-kursus radius-top-l-r-5"
-          src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
-          alt="Cover"
-        />
+        <div>
+          <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url('https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640')`}}></div>
+        </div>
       );
     }
   }

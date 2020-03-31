@@ -18,3 +18,36 @@
 .menu-mati {
   color: #949495;
 }
+
+/* RESPONSIVE IMAGE */
+.responsive-image-banner {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50vh;
+  width: 100%;
+  background-position: center;
+}
+.responsive-image-content {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 20vh;
+  width: 100%;
+  background-position: center;
+}
+
+.responsive-image-profile {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 10vh;
+  width: 100%;
+  background-position: center;
+}
+
+.responsive-image-forum {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 12vh;
+  width: 25%;
+  background-position: center;
+}
+/* END */
