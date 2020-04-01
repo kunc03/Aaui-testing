@@ -87,7 +87,7 @@ class UserAdd extends Component {
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.company_id}`).then(res => {
           if(res.status === 200) {
-            this.setState({ listBranch: res.data.result })
+            this.setState({ listBranch: res.data.result[0] })
           }
         })
 
@@ -118,7 +118,7 @@ class UserAdd extends Component {
 
                           <form onSubmit={event => this.submitForm(event)}>
                             <div className="form-group">
-                              <label className="label-input">Cabang</label>
+                              <label className="label-input">Group</label>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -130,7 +130,7 @@ class UserAdd extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Grup</label>
+                              <label className="label-input">Role</label>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -203,7 +203,7 @@ class UserAdd extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
-                                    <option value={item.level}>{item.level}</option>
+                                    <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
                                   ))
                                 }
                               </select>

@@ -157,6 +157,7 @@ export default class User extends Component {
           isModalVoucher: false,
           userIdVoucher: ""
         });
+        this.fetchData();
       }
     });
   };
@@ -173,7 +174,7 @@ export default class User extends Component {
           <td>{item.branch_name}</td>
           <td>{item.grup_name}</td>
           <td style={{ textTransform: "capitalize" }}>
-            {item.level}
+          {item.level === 'client' ? 'User' : item.level}
           </td>
           <td>{item.voucher}</td>
           <td>{item.email}</td>
@@ -248,8 +249,8 @@ export default class User extends Component {
                 <th className="text-center">ID</th>
                 <th>Nama</th>
                 <th>Nomor Induk</th>
-                <th>Cabang</th>
-                <th>Grup</th>
+                <th>Group</th>
+                <th>Role</th>
                 <th>Level</th>
                 <th>Voucher</th>
                 <th>Email</th>

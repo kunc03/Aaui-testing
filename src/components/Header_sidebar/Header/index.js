@@ -41,6 +41,9 @@ class Header extends Component {
             ? res.data.result.avatar
             : "/assets/images/user/avatar-1.jpg"
         });
+        if (this.state.level==='client'){
+          this.setState({level:'User'})
+        }
       }
     })
   }

@@ -58,6 +58,7 @@ class Home extends Component {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
       if(res.status === 200) {
         this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
+        console.log('ALVIN',res.data)
       }
     })
   }
