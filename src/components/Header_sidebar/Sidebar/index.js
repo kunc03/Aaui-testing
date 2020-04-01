@@ -77,7 +77,7 @@ class Sidebar extends Component {
                   />
               {/* <span className="b-title">IDEKU</span> */}
             </Link>
-            <a href="#" className="mobile-menu" id="mobile-collapse" >
+            <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" >
               <span />
             </a>
           </div>
