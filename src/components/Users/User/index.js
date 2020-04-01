@@ -30,7 +30,9 @@ export default class User extends Component {
   }
 
   handleChangeInput = e => {
-    this.setState({ userPassword: e.target.value });
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value });
   }
 
   onClickHapus = e => {
@@ -78,6 +80,16 @@ export default class User extends Component {
   onClickModalVoucher = e => {
     e.preventDefault();
     this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id')});
+  }
+  onClickSubmitVoucer = e => {
+    e.preventDefault();
+    let form = { voucher: this.state.voucher };
+    API.put(`${API_SERVER}v1/user/voucher/${this.state.userIdVoucher}`, form).then(res => {
+      if(res.status === 200) {
+        this.setState({ isModalVoucher: false, userIdVoucher: '' });
+        this.fetchData();
+      }
+    }) 
   }
 
   fetchData() {
@@ -134,8 +146,7 @@ export default class User extends Component {
           <td>{item.company_name}</td>
           <td>{item.branch_name}</td>
           <td>{item.grup_name}</td>
-          <td style={{textTransform: 'capitalize'}}>{item.level}</td>
-          <td>{item.voucher}</td>
+          <td style={{textTransform: 'capitalize'}}>{item.level === 'client' ? 'User' : item.level}</td>
           <td>{item.email}</td>
           <td>{item.voucher}</td>
           <td>{item.phone}</td>
@@ -190,7 +201,6 @@ export default class User extends Component {
                               <th>Cabang</th>
                               <th>Grup</th>
                               <th>Level</th>
-                              <th>Voucher</th>
                               <th>Email</th>
                               <th>Voucher</th>
                               <th>Phone</th>

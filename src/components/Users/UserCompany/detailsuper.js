@@ -155,7 +155,7 @@ export default class CompanyDetail extends Component {
 						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 						API.get(linkURLCabang).then(res => {
 							if(res.status === 200) {
-								this.setState({ cabang: res.data.result, isModalCabang: false })
+								this.setState({ cabang: res.data.result[0], isModalCabang: false })
 								this.handleCloseCabang();
 							}
 						}).catch(err => {
@@ -517,15 +517,16 @@ export default class CompanyDetail extends Component {
                       </Card>
 
                       <Row style={{ marginBottom: "32px" }}>
-                        <Col md={6}>
+                        
+                      <Col md={6}>
                           <h3 className="f-24 f-w-800 mb-3">
-                            Cabang Company
+                           Group
                             <Button
                               data-type="cabang"
                               onClick={this.onClickModal}
-                              className="btn btn-sm btn-ideku float-right"
+                              className="btn btn-sm btn-ideku float-right tambah-cabang"
                             >
-                              <i className="fa fa-plus"></i> Tambah Baru
+                              <i className="fa fa-plus"></i> Tambah Group
                             </Button>
                             <div className="clearfix"></div>
                           </h3>
@@ -536,20 +537,20 @@ export default class CompanyDetail extends Component {
                           >
                             <Modal.Body>
                               <Modal.Title className="text-c-purple3 f-w-bold">
-                                Form Cabang
+                                Group Baru
                               </Modal.Title>
                               <div
                                 style={{ marginTop: "20px" }}
                                 className="form-group"
                               >
-                                <label>Cabang Baru</label>
+                                <label>Nama Group</label>
                                 <input
                                   value={this.state.namacabang}
                                   className="form-control"
                                   type="text"
                                   name="namacabang"
                                   onChange={this.onChangeInput}
-                                  placeholder="Nama Cabang"
+                                  placeholder="Nama Group"
                                 />
                               </div>
                               <button
@@ -574,13 +575,13 @@ export default class CompanyDetail extends Component {
 
                         <Col md={6}>
                           <h3 className="f-24 f-w-800 mb-3">
-                            Grup Company
+                            Role
                             <Button
                               data-type="grup"
                               onClick={this.onClickModal}
-                              className="btn btn-sm btn-ideku float-right"
+                              className="btn btn-sm btn-ideku float-right tambah-grup"
                             >
-                              <i className="fa fa-plus"></i> Tambah Baru
+                              <i className="fa fa-plus"></i> Tambah Role
                             </Button>
                             <div className="clearfix"></div>
                           </h3>
@@ -591,20 +592,20 @@ export default class CompanyDetail extends Component {
                           >
                             <Modal.Body>
                               <Modal.Title className="text-c-purple3 f-w-bold">
-                                Grup Company
+                                Role Baru
                               </Modal.Title>
                               <div
                                 style={{ marginTop: "20px" }}
                                 className="form-group"
                               >
-                                <label>Nama Grup</label>
+                                <label>Nama Role</label>
                                 <input
                                   value={this.state.namagrup}
                                   className="form-control"
                                   type="text"
                                   name="namagrup"
                                   onChange={this.onChangeInput}
-                                  placeholder="Nama Grup"
+                                  placeholder="Nama Role"
                                 />
                               </div>
                               <button

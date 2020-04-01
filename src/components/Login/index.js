@@ -97,7 +97,6 @@ class Login extends Component {
             description : res.data.result.email, 
             title : 'regular login'
           }
-
           Storage.set('user', {data: { 
             user_id: res.data.result.user_id, 
             email: res.data.result.email,

@@ -47,6 +47,7 @@ class UserAdd extends Component {
     const formData = {
       company_id: this.state.company_id,
       branch_id: this.state.branch_id,
+      grup_id: this.state.grup_id,
       identity: this.state.identity,
       name: this.state.name,
       email: this.state.email,
@@ -60,6 +61,7 @@ class UserAdd extends Component {
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
       if(res.status === 200) {
         this.props.history.push(`/company-detail-super/${formData.company_id}`)
+        console.log('DATAS',res.data.result)
       }
     })
   };
@@ -100,7 +102,7 @@ class UserAdd extends Component {
                               </select>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cabang</label>
+                              <label className="label-input">Group</label>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -111,7 +113,7 @@ class UserAdd extends Component {
                               </select>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Grup</label>
+                              <label className="label-input">Role</label>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -177,7 +179,7 @@ class UserAdd extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
-                                    <option value={item.level}>{item.level}</option>
+                                    <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
                                   ))
                                 }
                               </select>

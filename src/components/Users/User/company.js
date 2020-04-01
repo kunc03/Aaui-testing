@@ -81,6 +81,7 @@ export default class User extends Component {
     API.put(`${API_SERVER}v1/user/voucher/${this.state.userIdVoucher}`, form).then(res => {
       if(res.status === 200) {
         this.setState({ isModalVoucher: false, userIdVoucher: '' });
+        this.fetchData();
       }
     }) 
   }
@@ -97,6 +98,7 @@ export default class User extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
         this.setState({ myCompanyId: res.data.result.company_id});
+        console.log('STORAGENYA',Storage.get('user').data);
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
           response.data.result.map(item => {
@@ -126,8 +128,7 @@ export default class User extends Component {
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
           <td>{item.grup_name}</td>
-          <td style={{textTransform: 'capitalize'}}>{item.level}</td>
-          <td>{item.voucher}</td>
+          <td style={{textTransform: 'capitalize'}}>{item.level === 'client' ? 'User' : item.level}</td>
           <td>{item.email}</td>
           <td>{item.voucher}</td>
           <td>{item.phone}</td>
@@ -181,7 +182,6 @@ export default class User extends Component {
                               <th>Cabang</th>
                               <th>Grup</th>
                               <th>Level</th>
-                              <th>Voucher</th>
                               <th>Email</th>
                               <th>Voucher</th>
                               <th>Phone</th>

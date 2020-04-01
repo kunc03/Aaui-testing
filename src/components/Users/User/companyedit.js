@@ -66,7 +66,7 @@ class UserEdit extends Component {
     if(name === 'company_id') {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if(res.status === 200) {
-          this.setState({ listBranch: res.data.result, company_id: value })
+          this.setState({ listBranch: res.data.result[0], company_id: value })
         }
       })
     } else if (name === 'email') {
@@ -108,7 +108,7 @@ class UserEdit extends Component {
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
           if(res.status === 200) {
-            this.setState({ listBranch: res.data.result })
+            this.setState({ listBranch: res.data.result[0] })
           }
         })
 
@@ -142,7 +142,7 @@ class UserEdit extends Component {
                           
                           <form onSubmit={this.onSubmitEditUser}>
                             <div className="form-group">
-                              <label className="label-input">Cabang</label>
+                              <label className="label-input">Group</label>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -154,7 +154,7 @@ class UserEdit extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Grup</label>
+                              <label className="label-input">Role</label>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -227,7 +227,7 @@ class UserEdit extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
-                                    <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected': ''}>{item.level}</option>
+                                    <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected': ''}>{item.level === 'client' ? 'User' : item.level}</option>
                                   ))
                                 }
                               </select>

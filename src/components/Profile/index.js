@@ -99,6 +99,12 @@ class Profile extends Component {
               phone: res.data.result.phone
             }
           });
+          if (this.state.user_data.level==='client'){
+            this.setState({user_data:{
+              ...this.state.user_data,
+              level:'User'
+            }})
+          }
         }
       }
     });
@@ -335,7 +341,7 @@ class Profile extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Status
+                                Level
                               </label>
                               <input
                                 disabled

@@ -107,6 +107,7 @@ export default class Users extends Component {
     API.put(`${API_SERVER}v1/user/voucher/${this.state.userIdVoucher}`, form).then(res => {
       if(res.status === 200) {
         this.setState({ isModalVoucher: false, userIdVoucher: '' });
+        this.fetchData();
       }
     }) 
   }
@@ -152,7 +153,7 @@ export default class Users extends Component {
           <td>{item.identity}</td>
           <td>{item.branch_name}</td>
           <td>{item.grup_name}</td>
-          <td style={{textTransform: 'capitalize'}}>{item.level}</td>
+          <td style={{textTransform: 'capitalize'}}>{item.level === 'client' ? 'User' : item.level}</td>
           <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>

@@ -11,6 +11,7 @@ class UserEdit extends Component {
 
     company_id: "",
     branch_id: "",
+    grup_id: "",
 
     identity: "",
     name: "",
@@ -33,6 +34,7 @@ class UserEdit extends Component {
     let formData = {
       company_id: this.state.company_id,
       branch_id: this.state.branch_id,
+      grup_id: this.state.grup_id,
       identity: this.state.identity,
       name: this.state.name,
       email: this.state.email,
@@ -56,7 +58,7 @@ class UserEdit extends Component {
           }
 
           if (Storage.get("user").data.level === "superadmin") {
-            this.props.history.push("/user");
+            this.props.history.push(`/company-detail-super/${formData.company_id}`)
           } else {
             this.props.history.push(`/user-company/${this.state.company_id}`);
           }
@@ -90,6 +92,7 @@ class UserEdit extends Component {
           user: res.data.result,
           company_id: res.data.result.company_id,
           branch_id: res.data.result.branch_id,
+          grup_id: res.data.result.grup_id,
           name: res.data.result.name,
           identity: res.data.result.identity,
           email: res.data.result.email,
@@ -97,6 +100,7 @@ class UserEdit extends Component {
           address: res.data.result.address,
           level: res.data.result.level
         });
+        console.log('ALVIN',this.state)
 
         API.get(`${API_SERVER}v1/company`).then(res => {
           if (res.status === 200) {
@@ -163,7 +167,7 @@ class UserEdit extends Component {
                               </select>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Cabang</label>
+                              <label className="label-input">Group</label>
                               <select
                                 required
                                 className="form-control"
@@ -188,7 +192,7 @@ class UserEdit extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Grup</label>
+                              <label className="label-input">Role</label>
                               <select
                                 required
                                 className="form-control"
@@ -291,7 +295,7 @@ class UserEdit extends Component {
                                         : ""
                                     }
                                   >
-                                    {item.level}
+                                    {item.level === 'client' ? 'User' : item.level}
                                   </option>
                                 ))}
                               </select>
