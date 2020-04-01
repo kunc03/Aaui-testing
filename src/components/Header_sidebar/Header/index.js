@@ -1,18 +1,35 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, {USER_ME} from '../../../repository/api';
+import API, {USER_ME, API_SERVER} from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import Moment from "react-moment";
 
 class Header extends Component {
-  constructor(props) {
-    super(props);
     
-    this.state = {
-      user: "Anonymous",
-      level: "Member",
-      avatar: "/assets/images/user/avatar-1.jpg",
-      logo: '/assets/images/component/logo-icademy.png'
-    };
+  state = {
+    user: "Anonymous",
+    level: "Member",
+    avatar: "/assets/images/user/avatar-1.jpg",
+
+    company: []
+  };
+
+  pilihCompany = e => {
+    e.preventDefault();
+    const id = e.target.getAttribute('data-id');
+    localStorage.setItem('companyID', id);
+    window.location.reload();
+  }
+
+  fetchCompany() {
+    let link = `${API_SERVER}v1/company`;
+    API.get(link).then(response => {
+      this.setState({ company: response.data.result });
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   componentDidMount() {
@@ -46,6 +63,8 @@ class Header extends Component {
         }
       }
     })
+
+    this.fetchCompany();
   }
 
   render() {
@@ -82,7 +101,8 @@ class Header extends Component {
     ];
   
     let menuContent = [];
-    const { user, level } = this.state;
+    const { user, level, company } = this.state;
+
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
         <div className="m-header">
@@ -136,6 +156,7 @@ class Header extends Component {
                 </div>
             </li>
           </ul>
+
           <ul className="navbar-nav ml-auto">
             <li>
               <div className="dropdown">
@@ -229,6 +250,52 @@ class Header extends Component {
             </li>
             
           </ul>
+
+          {
+            level == "superadmin" &&
+
+            <ul className="navbar-nav">
+              <li>
+                <div className="dropdown">
+                  <a href="javascript:;" data-toggle="dropdown">
+                    <i className="fa fa-list" />
+                  </a>
+                  <div className="dropdown-menu dropdown-menu-right notification">
+                    <div className="noti-head">
+                      <h6 className="d-inline-block m-b-0">Pilih Company</h6>
+                    </div>
+                    <ul className="noti-body">
+                      {
+                        company.map((item, i) => (
+                          <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id}>
+                            <div className="media" data-id={item.company_id}>
+                              <img
+                                data-id={item.company_id}
+                                className="img-radius"
+                                src={item.logo}
+                                alt="Generic placeholder image"
+                              />
+                              <div className="media-body" data-id={item.company_id}>
+                                <p data-id={item.company_id}>
+                                  <b data-id={item.company_id}>{item.company_name}</b>
+                                  <span className="n-time text-muted">
+                                    <i className="icon feather icon-clock m-r-10" />
+                                    <Moment format="DD/MM/YYYY">{item.validity}</Moment>
+                                  </span>
+                                </p>
+                                <p data-id={item.company_id}>{item.status}</p>
+                              </div>
+                            </div>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          
+          }
         </div>
       </header>
     );
