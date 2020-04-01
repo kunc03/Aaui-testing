@@ -276,7 +276,7 @@ export default class CompanyDetail extends Component {
 				let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 				API.get(linkURLCabang).then(res => {
 					if(res.status === 200) {
-						this.setState({ cabang: res.data.result })
+						this.setState({ cabang: res.data.result[0] })
 					}
 				}).catch(err => {
 					console.log(err);
@@ -315,7 +315,8 @@ export default class CompanyDetail extends Component {
 	render() {
 		const { cabang, grup, user } = this.state;
 		const statusCompany = ['active', 'nonactive'];
-		let validityCompany = "";
+    
+    let validityCompany = "";
     if (this.state.validity !== "") {
       validityCompany = new Date(this.state.validity);
     }

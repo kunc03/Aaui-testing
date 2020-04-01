@@ -80,6 +80,7 @@ class Profile extends Component {
     API.get(`${USER_ME}${user.data.email}`).then(res => {
       if (res.status === 200) {
         if (!res.data.error) {
+          console.log('res: ', res.data)
           this.setState({
             user_data: {
               ...this.state.user_data,
