@@ -11,7 +11,7 @@ class Header extends Component {
       user: "Anonymous",
       level: "Member",
       avatar: "/assets/images/user/avatar-1.jpg",
-      logo: ''
+      logo: '/assets/images/component/logo-icademy.png'
     };
   }
 
