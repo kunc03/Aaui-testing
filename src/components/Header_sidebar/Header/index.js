@@ -283,7 +283,11 @@ class Header extends Component {
                                     <Moment format="DD/MM/YYYY">{item.validity}</Moment>
                                   </span>
                                 </p>
-                                <p data-id={item.company_id}>{item.status}</p>
+                                {
+                                  localStorage.getItem("companyID") == item.company_id && (
+                                    <p data-id={item.company_id}>{item.status}</p>
+                                  )
+                                }
                               </div>
                             </div>
                           </li>
