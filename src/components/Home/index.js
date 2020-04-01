@@ -209,7 +209,7 @@ class Home extends Component {
                               </small>
                             </h6>
                           </div>
-                          <div className="col-6">
+                          {/* <div className="col-6">
                             <div className="progress m-b-10">
                               <div
                                 className="progress-bar progress-c-yellow"
@@ -223,7 +223,7 @@ class Home extends Component {
                             <small className="f-w-600">
                               Proses (20%)
                             </small>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -380,7 +380,7 @@ class Home extends Component {
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
-                                <span className="f-w-600 f-16">Lihat Semua</span>
+                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
                               </p>
                             </div>
                           </div>
@@ -446,26 +446,28 @@ class Home extends Component {
                           <div className="col-xl-7">
                             <div className="media-body p-t-30 p-l-10 p-b-10 p-r-10">
                               <h5 className="chat-header f-w-800 f-24">
-                                Yuk, Coba Test Kemampuan Kamu Sekarang !{" "}
+                                Yuk, lihat live meeting yang sesuai untuk Kamu{" "}
                               </h5>
                               <div style={{ width: "50%" }}>
                                 <small className="d-block text-c-grey f-w-600 f-16">
-                                  Yuk, Coba Test Kemampuan Kamu Sudah Sesuai
-                                  Atau Belum !
+                                  Kamu bisa belajar dan latihan dengan sistem tatap muka
+                                  melalui video secara langsung loh!
                                 </small>
                               </div>
                             </div>
                           </div>
                           <div className="col-md-12 col-xl-3">
                             <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-center">
-                              <button
-                                type="button"
-                                className="btn f-w-600 f-14 text-c-white bg-c-purple-ideku shadow-box"
-                                title="btn btn-primary"
-                                data-toggle="tooltip"
-                              >
-                                Mulai Sekarang
-                              </button>
+                              <Link to={`/liveclass`}>
+                                <button
+                                  type="button"
+                                  className="btn f-w-600 f-14 text-c-white bg-c-purple-ideku shadow-box"
+                                  title="btn btn-primary"
+                                  data-toggle="tooltip"
+                                >
+                                  Lihat Sekarang
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>

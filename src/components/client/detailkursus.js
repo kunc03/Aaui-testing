@@ -299,8 +299,8 @@ export default class DetailKursus extends Component {
                           }}
                         >
                           <i
-                            className={`fa fa-${
-                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            className={`${
+                              this.state.isIkutiKursus ? "" : "fa fa-lock"
                             }`}
                           ></i>
                         </span>
@@ -337,8 +337,8 @@ export default class DetailKursus extends Component {
                           }}
                         >
                           <i
-                            className={`fa fa-${
-                              this.state.isIkutiKursus ? "unlock" : "lock"
+                            className={`${
+                              this.state.isIkutiKursus ? "" : "fa fa-lock"
                             }`}
                           ></i>
                         </span>

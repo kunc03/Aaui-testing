@@ -20,6 +20,7 @@ class Header extends Component {
     e.preventDefault();
     const id = e.target.getAttribute('data-id');
     localStorage.setItem('companyID', id);
+    window.location.reload();
   }
 
   fetchCompany() {
@@ -34,13 +35,13 @@ class Header extends Component {
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
-        
         if(res.data.error) {
           localStorage.clear();
           window.location.reload();
         }
 
         Storage.set('user', {data: { 
+          logo: res.data.result.logo,
           user_id: res.data.result.user_id, 
           email: res.data.result.email,
           user: res.data.result.name,
@@ -50,6 +51,7 @@ class Header extends Component {
             : "/assets/images/user/avatar-1.jpg"
         }});
         this.setState({
+          logo: res.data.result.logo,
           user: res.data.result.name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
@@ -63,18 +65,53 @@ class Header extends Component {
   }
 
   render() {
+    let levelUser = Storage.get('user').data.level;
+    let menuClients = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+      { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+
+    let menuAdmins = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
+      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
+      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+
+    let menuSuperAdmins = [
+      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Kelas', link: '/liveclass' },
+      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
+      { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
+      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+    ];
+  
+    let menuContent = [];
     const { user, level, company } = this.state;
+
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
         <div className="m-header">
-          <a className="mobile-menu" id="mobile-collapse1" href="javascript:">
+          {/* <a className="mobile-menu" id="mobile-collapse1" href="javascript:">
             <span />
-          </a>
-          <a href="index.html" className="b-brand">
+          </a> */}
+          <a href="/" className="b-brand">
             <div className="b-bg">
               <img
-                src="assets/images/component/Logo Ideku.png"
+                src="assets/images/component/logo-mobile.png"
                 className="logo-sidebar"
+                style={{maxHeight:35}}
                 alt=""
               />
             </div>
@@ -105,6 +142,15 @@ class Header extends Component {
                   </div>
                 </div>
               </Link>
+            </li>
+            <li className="nav-item dropdown">
+                <div className="media">
+                  <img
+                    alt="Media"
+                    style={{ height: 40 }}
+                    src={this.state.logo}
+                  />
+                </div>
             </li>
           </ul>
 
@@ -202,46 +248,51 @@ class Header extends Component {
             
           </ul>
 
-          <ul className="navbar-nav">
-            <li>
-              <div className="dropdown">
-                <a href="javascript:;" data-toggle="dropdown">
-                  <i className="fa fa-list" />
-                </a>
-                <div className="dropdown-menu dropdown-menu-right notification">
-                  <div className="noti-head">
-                    <h6 className="d-inline-block m-b-0">Pilih Company</h6>
-                  </div>
-                  <ul className="noti-body">
-                    {
-                      company.map((item, i) => (
-                        <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id}>
-                          <div className="media" data-id={item.company_id}>
-                            <img
-                              className="img-radius"
-                              src={item.logo}
-                              alt="Generic placeholder image"
-                            />
-                            <div className="media-body" data-id={item.company_id}>
-                              <p data-id={item.company_id}>
-                                <b>{item.company_name}</b>
-                                <span className="n-time text-muted">
-                                  <i className="icon feather icon-clock m-r-10" />
-                                  <Moment format="DD/MM/YYYY">{item.validity}</Moment>
-                                </span>
-                              </p>
-                              <p data-id={item.company_id}>{item.status}</p>
-                            </div>
-                          </div>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              </div>
-            </li>
+          {
+            level == "superadmin" &&
 
-          </ul>
+            <ul className="navbar-nav">
+              <li>
+                <div className="dropdown">
+                  <a href="javascript:;" data-toggle="dropdown">
+                    <i className="fa fa-list" />
+                  </a>
+                  <div className="dropdown-menu dropdown-menu-right notification">
+                    <div className="noti-head">
+                      <h6 className="d-inline-block m-b-0">Pilih Company</h6>
+                    </div>
+                    <ul className="noti-body">
+                      {
+                        company.map((item, i) => (
+                          <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id}>
+                            <div className="media" data-id={item.company_id}>
+                              <img
+                                data-id={item.company_id}
+                                className="img-radius"
+                                src={item.logo}
+                                alt="Generic placeholder image"
+                              />
+                              <div className="media-body" data-id={item.company_id}>
+                                <p data-id={item.company_id}>
+                                  <b data-id={item.company_id}>{item.company_name}</b>
+                                  <span className="n-time text-muted">
+                                    <i className="icon feather icon-clock m-r-10" />
+                                    <Moment format="DD/MM/YYYY">{item.validity}</Moment>
+                                  </span>
+                                </p>
+                                <p data-id={item.company_id}>{item.status}</p>
+                              </div>
+                            </div>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          
+          }
         </div>
       </header>
     );
