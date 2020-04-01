@@ -209,7 +209,7 @@ class Home extends Component {
                               </small>
                             </h6>
                           </div>
-                          <div className="col-6">
+                          {/* <div className="col-6">
                             <div className="progress m-b-10">
                               <div
                                 className="progress-bar progress-c-yellow"
@@ -223,7 +223,7 @@ class Home extends Component {
                             <small className="f-w-600">
                               Proses (20%)
                             </small>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -380,7 +380,7 @@ class Home extends Component {
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
-                                <span className="f-w-600 f-16">Lihat Semua</span>
+                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
                               </p>
                             </div>
                           </div>

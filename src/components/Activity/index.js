@@ -17,27 +17,33 @@ const tabs =[
 ]
 
 class Aktivity extends Component {
-  state = {
-    user: {
-      name: 'AKTIVITAS',
-      registered: '2019-12-09',
-      companyId: '',
-    },
-    kategoriKursus: [],
-    kursusTerbaru: [],
-    kursusDiikuti: [],
-    recentCourse: [],
-    recentClass: [],
-    recentForum: [],
-    recentLogin: [],
-    today : '',
-    tabIndex : 1
+  constructor(props) {
+    super(props);
+    this.state = {
+      tabIndex : 1,
+      user: {
+        name: 'AKTIVITAS',
+        registered: '2019-12-09',
+        companyId: '',
+      },
+      kategoriKursus: [],
+      kursusTerbaru: [],
+      kursusDiikuti: [],
+      recentCourse: [],
+      recentClass: [],
+      recentForum: [],
+      recentLogin: [],
+      today : '',
+      loading:true
+    }
+    this.tabAktivitas = this.tabAktivitas.bind(this)
   }
 
   componentDidMount() {
     this.fetchDataUser();
-    this.fetchDataKursusDiikuti();
     this.fetchHistoryActivity(Storage.get('user').data.user_id);
+    this.fetchDataKursusDiikuti();
+    console.log('RECENTS DID',this.state.recentCourse)
     let date = new Date();
     console.log(String(date));
     this.setState({today:String(date)})
@@ -96,10 +102,10 @@ class Aktivity extends Component {
         var recentForum = result.filter(x=>x.tipe == 'forum');
         var recentClass = result.filter(x=>x.tipe == 'liveclass');
         var recentLogin = result.filter(x=>x.tipe == 'login');
-       
-        console.log(res.data.result,"dfjdkfsjdfhklsdjflkdsjf",recentCourse);
 
-        this.setState({ recentClass, recentCourse, recentForum, recentLogin}); 
+        this.setState({ recentClass, recentCourse, recentForum, recentLogin});
+       
+        console.log("RECENTS 1",recentCourse);
       }
     });
   }
@@ -225,6 +231,7 @@ class Aktivity extends Component {
                               )
                       })}
                       {console.log('asjkdhkjsdhkjashdkjashdkjashdkajshdkjashdkjashdkjashd',recentCourse)}
+                      {console.log(this.state.tabIndex)}
                       {this.state.tabIndex === 1 ?  <RiwayatKursus recent={recentCourse}/>
                       : this.state.tabIndex === 2 ? <RiwayatForum recent={recentForum}/>
                       :                             <RiwayatLiveClass recent={recentClass}/>}

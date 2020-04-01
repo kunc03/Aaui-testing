@@ -10,20 +10,21 @@ class Header extends Component {
     this.state = {
       user: "Anonymous",
       level: "Member",
-      avatar: "/assets/images/user/avatar-1.jpg"
+      avatar: "/assets/images/user/avatar-1.jpg",
+      logo: ''
     };
   }
 
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
-        
         if(res.data.error) {
           localStorage.clear();
           window.location.reload();
         }
 
         Storage.set('user', {data: { 
+          logo: res.data.result.logo,
           user_id: res.data.result.user_id, 
           email: res.data.result.email,
           user: res.data.result.name,
@@ -33,6 +34,7 @@ class Header extends Component {
             : "/assets/images/user/avatar-1.jpg"
         }});
         this.setState({
+          logo: res.data.result.logo,
           user: res.data.result.name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
@@ -86,6 +88,15 @@ class Header extends Component {
                   </div>
                 </div>
               </Link>
+            </li>
+            <li className="nav-item dropdown">
+                <div className="media">
+                  <img
+                    alt="Media"
+                    style={{ height: 40 }}
+                    src={this.state.logo}
+                  />
+                </div>
             </li>
           </ul>
           <ul className="navbar-nav ml-auto">

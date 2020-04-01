@@ -5,17 +5,21 @@ import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class RiwayatKursus extends Component {
-  state = {
-    user: {
-      name: 'AKTIVITAS',
-      registered: '2019-12-09',
-      companyId: '',
-    },
-    kategoriKursus: [],
-    kursusTerbaru: [],
-    kursusDiikuti: this.props.recent,
-    today : '',
-    tabIndex : 1
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {
+        name: 'AKTIVITAS',
+        registered: '2019-12-09',
+        companyId: '',
+      },
+      kategoriKursus: [],
+      kursusTerbaru: [],
+      kursusDiikuti: this.props.recent,
+      today : '',
+      tabIndex : 1
+    }
+    console.log("RECENTTSSS STATES",this.props.recent)
   }
 
   componentDidMount() {
@@ -68,6 +72,8 @@ class RiwayatKursus extends Component {
 
   render() {
     const { kursusDiikuti } = this.state;
+    
+    console.log('state',this.state);
 
     return (
         <div className="col-sm-12">
@@ -124,7 +130,7 @@ class RiwayatKursus extends Component {
                                     </small>
                                 </h6>
                                 </div>
-                                <div className="col-6">
+                                {/* <div className="col-6">
                                 <div className="progress m-b-10">
                                     <div
                                     className="progress-bar progress-c-yellow"
@@ -138,7 +144,7 @@ class RiwayatKursus extends Component {
                                 <small className="f-w-600">
                                     Proses (20%)
                                 </small>
-                                </div>
+                                </div> */}
                             </div>
                             </div>
                         </div>
