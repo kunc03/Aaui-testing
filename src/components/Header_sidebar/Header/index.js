@@ -56,12 +56,13 @@ class Header extends Component {
           <a href="index.html" className="b-brand">
             <div className="b-bg">
               <img
-                src="assets/images/component/Logo Ideku.png"
+                src="assets/images/component/logo-mobile.png"
                 className="logo-sidebar"
+                style={{maxHeight:35}}
                 alt=""
               />
             </div>
-            <span className="b-title">IDEKU</span>
+            <span className="b-title">ICADEMY</span>
           </a>
         </div>
         

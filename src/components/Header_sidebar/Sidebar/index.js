@@ -3,13 +3,22 @@ import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
 
 class Sidebar extends Component {
-  state = {
-    menuAktif: '/'
+  constructor(props) {
+    super(props);
+    this.state = {
+      menuAktif: '/',
+      sideMenu: false,
+    }
   }
 
+//   sideMenuCollapse = e =>{
+//     this.setState({sideMenu:!this.state.sideMenu});
+//     console.log('side menu',this.state.sideMenu);
+// }
   componentDidMount() {
     this.setState({ menuAktif: window.location.pathname })
   }
+
 
   render() {
     let levelUser = Storage.get('user').data.level;
@@ -59,19 +68,16 @@ class Sidebar extends Component {
       <nav className="pcoded-navbar">
         <div className="navbar-wrapper">
           <div className="navbar-brand header-logo">
-            <Link to="/" className="b-brand">
-              <div className="b-bg">  
-                <span className="pcoded-micon">
+            <Link to="/" className="b-brand" style={{width:'100%'}}>
                   <img
-                    src="assets/images/component/Logo Ideku.png"
-                    className="logo-sidebar"
+                    onClick={console.log('alvin',this.state.sideMenu)}
+                    src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile.png':'Logo Ideku.png'}`}
                     alt=""
+                    style={{width:'90%', height:'auto',paddingLeft:'5%'}}
                   />
-                </span>
-              </div>
               {/* <span className="b-title">IDEKU</span> */}
             </Link>
-            <a href="#" className="mobile-menu" id="mobile-collapse">
+            <a href="#" className="mobile-menu" id="mobile-collapse" >
               <span />
             </a>
           </div>
