@@ -39,7 +39,7 @@ export default class KategoriKursus extends Component {
 		this.fetchDataKategori(this.state.categoryId);
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
 				API.get(`${API_SERVER}v1/course/category/${this.state.categoryId}/${this.state.companyId}`).then(res => {
           console.log('res:', res.data.result)

@@ -154,6 +154,15 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
 
+        <Route path="/kursus-materi" exact component={KursusMateri} />
+        <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
+        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
+
+        <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
+        <Route path="/detail-kursus/:course_id" component={DetailKursus} />
+        <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
         <Route path="/user" component={User} />
         <Route path="/user-create" component={UserAdd} />
         <Route path="/user-edit/:user_id" component={UserEdit} />

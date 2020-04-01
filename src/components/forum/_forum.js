@@ -7,8 +7,8 @@ import ReactDOM from 'react-dom';
 export function _postLIstAllForum(side){
   let sides = side;  console.log(side, 'side')
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    this.setState({ companyId: res.data.result.company_id })
-    API.get(`${FORUM}/company/${res.data.result.company_id}`).then(res=> {
+    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id })
+    API.get(`${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res=> {
           let aray = [],starData = [];
           let splitTags; 
          // console.log(res.data.result);
@@ -59,7 +59,7 @@ export function _addforum(e) {
    // console.log(e);
     let stateCopy = this.state,
     user_data = {
-        company_id : stateCopy.companyId,
+        company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : stateCopy.companyId,
         user_id : stateCopy.user_id,
         title : stateCopy.title,
         body : stateCopy.body,
@@ -77,8 +77,8 @@ export function _addforum(e) {
             }
 
             API.get(`${USER_ME}${Storage.get("user").data.email}`).then(res => {
-              this.setState({ companyId: res.data.result.company_id });
-              API.get(`${FORUM}/company/${res.data.result.company_id}`)
+              this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+              API.get(`${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`)
                 .then(res => {
                   console.log("res: ", res.data.result);
                   if (res.status === 200) {

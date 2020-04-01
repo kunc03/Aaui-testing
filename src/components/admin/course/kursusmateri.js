@@ -22,9 +22,9 @@ export default class KursusMateri extends Component {
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
-				API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${res.data.result.company_id}`).then(res => {
+				API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
 					console.log('count: ', res.data.result.length)
 					if (res.status === 200) {
 						this.setState({ kursus: res.data.result.reverse() });
@@ -77,7 +77,7 @@ export default class KursusMateri extends Component {
               src={`https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
               width="200px"
               style={{ height: "100px" }}
-              alth="Cover"
+              alt="Cover"
             />
           )
 				}
