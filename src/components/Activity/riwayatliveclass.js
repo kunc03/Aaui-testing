@@ -84,7 +84,7 @@ class RiwayatLiveClass extends Component {
             {historyForum.length === 0 ? 
                 <Card>
                     <Card.Body>
-                        <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun.</h3>
+                        <h3 className="f-w-900 f-20">Anda tidak mengikuti group meeting apapun.</h3>
                     </Card.Body>
                 </Card>
                 :
@@ -93,7 +93,7 @@ class RiwayatLiveClass extends Component {
                     {historyForum.map((item, i) => (
                             <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
                                     <h3 className="f-18 f-w-bold f-w-800">
-                                        Anda mengikuti {item.title}
+                                        Mengikuti {item.description}
                                         {/* <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>12/12/2020 03:00 PM</span> */}
                                     </h3>
                                     {/* <p><a href="/aktivitas"> Lanjut ikuti </a></p> */}

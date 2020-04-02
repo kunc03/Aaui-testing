@@ -256,10 +256,10 @@ export default class Forum extends Component {
                           <div className="col-md-12 col-xl-12 mb-3 mt-2">
                             <div className="row d-flex align-items-center">
                               <div className="col-4">
-                                <Form.Control as="select">
+                                {/* <Form.Control as="select">
                                   <option>Terbaru</option>
                                   <option>Trending</option>
-                                </Form.Control>
+                                </Form.Control> */}
                               </div>
                               <div className="col-8 text-right">
                                 <p className="m-b-0">

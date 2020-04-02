@@ -62,7 +62,6 @@ class Home extends Component {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
       if(res.status === 200) {
         this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
-        console.log('ALVIN',res.data)
       }
     })
   }
@@ -184,6 +183,7 @@ class Home extends Component {
 
     const ListKursusDiikuti = ({lists}) => {
       if(lists.length !== 0) {
+        console.log('ALVIN2',this.state)
         return (
           <div className="row">
             {
@@ -214,21 +214,21 @@ class Home extends Component {
                               </small>
                             </h6>
                           </div>
-                          {/* <div className="col-6">
+                          <div className="col-6">
                             <div className="progress m-b-10">
                               <div
                                 className="progress-bar progress-c-yellow"
                                 role="progressbar"
-                                style={{ width: "40%", height: 6 }}
+                                style={{ width: item.proses+'%', height: 6 }}
                                 aria-valuenow={60}
                                 aria-valuemin={0}
                                 aria-valuemax={100}
                               />
                             </div>
                             <small className="f-w-600">
-                              Proses (20%)
+                              Proses ({item.proses}%)
                             </small>
-                          </div> */}
+                          </div>
                         </div>
                       </div>
                     </div>

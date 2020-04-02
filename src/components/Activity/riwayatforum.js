@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card,  Row, Col, } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import moment from "moment-timezone";
 
 class RiwayatForum extends Component {
   state = {
@@ -84,7 +85,7 @@ class RiwayatForum extends Component {
             {historyForum.length === 0 ? 
                 <Card>
                     <Card.Body>
-                        <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun.</h3>
+                        <h3 className="f-w-900 f-20">Anda tidak mengikuti forum apapun.</h3>
                     </Card.Body>
                 </Card>
                 :
@@ -94,7 +95,7 @@ class RiwayatForum extends Component {
                             <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
                                     <h3 className="f-18 f-w-bold f-w-800">
                                         Anda Sedang Mengikuti Forum ({item.activity_title})
-                                        {/* <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>12/12/2020 03:00 PM</span> */}
+                                        <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>{moment(item.created_at).tz('Asia/Jakarta').format('DD-MM-YYYY')}</span>
                                     </h3>
                     <p>{item.description}</p>
                             </div>

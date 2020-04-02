@@ -48,6 +48,12 @@ export default class DetailKursus extends Component {
       const chapterId = e.target.getAttribute('data-id');
       API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
         if(res.status === 200) {
+          let formData = {
+            courseId : this.state.courseId,
+            chapterId : chapterId,
+            userId : Storage.get('user').data.user_id
+          }
+          API.post(`${API_SERVER}v1/chapter/course`, formData).then(res=>{console.log(res)})
           let courseChapter = {
             image: res.data.result.chapter_video,
             title: res.data.result.chapter_title,
