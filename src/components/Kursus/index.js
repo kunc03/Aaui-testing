@@ -41,7 +41,7 @@ class Kursus extends Component {
   }
 
   fetchDataKategoriKursus(companyId) {
-    API.get(`${API_SERVER}v1/category/company/${companyId}`).then(res => {
+    API.get(`${API_SERVER}v1/category/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : companyId}`).then(res => {
       if(res.status === 200) {
         this.setState({ kategoriKursus: res.data.result.filter(item => { return item.count_course > 0 }) })
       }
@@ -49,7 +49,7 @@ class Kursus extends Component {
   }
 
   fetchDataKursusTerbaru(companyId) {
-    API.get(`${API_SERVER}v1/course/company/${companyId}`).then(res => {
+    API.get(`${API_SERVER}v1/course/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : companyId}`).then(res => {
       if(res.status === 200) {
         this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }).slice(0,3) })
       }
@@ -121,11 +121,12 @@ class Kursus extends Component {
               <div className="col-sm-4" key={item.category_id}>
                 <Link
                   to={
-                    ["admin", "superadmin"].includes(
-                      Storage.get("user").data.level
-                    )
-                      ? `/kursus-materi`
-                      : `/kategori-kursus/${item.category_id}`
+                    // ["admin", "superadmin"].includes(
+                    //   Storage.get("user").data.level
+                    // )
+                    //   ? `/kursus-materi`
+                    //   : `/kategori-kursus/${item.category_id}`
+                    `/kategori-kursus/${item.category_id}`
                   }
                 >
                   {/* image resonsive content */}
@@ -236,10 +237,10 @@ class Kursus extends Component {
                         <div className="card-text-title">{item.course.category_name}</div>
                       </div>
                       <div className="card-carousel">
-                        <div className="title-head f-16">
-                          {item.course.title}
+                        <div className="title-head f-16" style={{height:72}}>
+                          {item.course.title.length < 55 ? item.course.title : item.course.title.substring(0, 55)+'...'}
                         </div>
-                        <div className="row m-t-50">
+                        <div className="row m-t-50" style={{marginTop:30}}>
                           <div className="col-6">
                             <small className="f-w-600 m-b-10">
                               Tipe
@@ -293,16 +294,15 @@ class Kursus extends Component {
       }
     };
 
-    const ListAktivitas = ({lists}) => {
-      if(lists.length !== 0) {
+    const ListAktivitas = ({ lists }) => {
+      if (lists.length !== 0) {
         return (
           <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
             {lists.map((item, i) => (
               <div key={item.course_id}>
-                <li className="f-16 f-w-800 text-c-black">
-                  <Link to={`/detail-kursus/${item.course_id}`}>
-                    {item.course.title}
-                  </Link>
+                <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
+                  {item.course.title}
+                  <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
                 </li>
                 <table style={{ width: "100%" }}>
                   <ListChapters lists={item.chapters} />
@@ -313,7 +313,9 @@ class Kursus extends Component {
         );
       } else {
         return (
-          <h3 className="f-w-900 f-20" style={{margin: '30px'}}>Belum ada aktivitas.</h3>
+          <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
+            Belum ada aktivitas.
+          </h3>
         );
       }
     };
@@ -403,7 +405,7 @@ class Kursus extends Component {
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
-                                <span className="f-w-600 f-16">Lihat Semua</span>
+                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
                               </p>
                             </div>
                           </div>
@@ -420,7 +422,7 @@ class Kursus extends Component {
                             </div>
                             <div className="col-6 text-right">
                               <p className="m-b-0">
-                                <span className="f-w-600 f-16">Lihat Semua</span>
+                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
                               </p>
                             </div>
                           </div>
@@ -474,7 +476,7 @@ class Kursus extends Component {
                           }}
                           alt=""
                         />
-                        <div className="row">
+                        {/* <div className="row">
                           <div className="col-xl-2 text-center">
                             <img
                               alt="Gambar"
@@ -508,53 +510,37 @@ class Kursus extends Component {
                               </button>
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
 
-                  <div className="row" style={{marginTop: '15px'}}>
+                  {/* <div className="row" style={{marginTop: '15px'}}>
                     <div className="col-md-12 col-xl-12 mb-3">
                       <div className="row d-flex align-items-center">
                         <div className="col-6">
-                          <h3 className="f-w-900 f-20">Aktivitas Terakhir</h3>
+                          <h3 className="f-w-900 f-20">Aktivitas Kursus Terakhir</h3>
                         </div>
                         <div className="col-6 text-right">
                           <p className="m-b-0">
-                            <span className="f-w-600 f-16">Lihat Semua</span>
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="row">
-                    <div className="col-md-12 col-xl-5">
-                      <div className="card">
-                        <ListAktivitas lists={kursusDiikuti} />
-                      </div>
-                    </div>
+                  
+                  <Card>
+                        <Card.Body>
+                          <form style={{ margin: "0 42px" }}>
+                            <h3 className="f-24 f-w-bold mb-3">
+                              Informasi Kursus
+                            </h3>
 
-                    <div className="col-md-12 col-xl-7">
-                      <div className="card p-35">
-                        <div
-                          className="chart-container"
-                          style={{ position: "relative" }}
-                        >
-                          <select
-                            className="form-control"
-                            style={{ position: "absolute", right: 0 }}
-                          >
-                            <option value="november">November 2019</option>
-                            <option value="november">Desember 2019</option>
-                            <option value="november">Januari 2020</option>
-                            <option value="november">Febriari 2020</option>
-                          </select>
-                          <canvas id="canvas" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                            <ListAktivitas lists={kursusDiikuti} />
+                          </form>
+                        </Card.Body>
+                      </Card> */}
                 </div>
               </div>
             </div>

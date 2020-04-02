@@ -81,7 +81,7 @@ export default class LiveClass extends Component {
 					<Row>
 						<div className="col-md-4 col-xl-4 mb-3">
 							<Link to={`/kursus`}>
-								<div className="kategori">
+								<div className="kategori title-disabled">
 								<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
 								&nbsp;
 								Kursus & Materi

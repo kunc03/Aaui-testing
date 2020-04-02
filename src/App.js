@@ -147,8 +147,9 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        <Route path="/aktivitas" component={Activity} />
 
-        <Route path="/liveclass" component={LiveClass} />
+        <Route path="/liveclass" component={LiveClassAdmin} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
@@ -158,10 +159,24 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
 
+        <Route path="/kursus" component={Kursus} />
+
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+
+        <Route path="/chapter/:course_id" exact component={ChapterPreview} />
+        <Route path="/nilaiujian/:course_id" exact component={NilaiUjianPreview} />
+
+        <Route path="/quiz/:course_id" exact component={QuizList} />
+        <Route path="/question-quiz/:exam_id" exact component={QuestionQuiz} />
+        <Route path="/question-quiz-create/:exam_id" exact component={QuestionQuizCreate} />
+        <Route path="/question-quiz-edit/:question_id" exact component={QuestionQuizEdit} />
+
+        <Route path="/exam/:course_id" exact component={ExamList} />
+        <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
+        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
         <Route path="/user" component={User} />
         <Route path="/user-create" component={UserAdd} />
@@ -190,6 +205,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        <Route path="/aktivitas" component={Activity} />
         
         <Route path="/pengaturan" exact component={Pengaturan} />
 
@@ -209,6 +225,13 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
+
+        <Route path="/kursus" component={Kursus} />
+
+        <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
+        <Route path="/detail-kursus/:course_id" component={DetailKursus} />
+        <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
         <Route path="/chapter/:course_id" exact component={ChapterPreview} />
         <Route path="/nilaiujian/:course_id" exact component={NilaiUjianPreview} />
