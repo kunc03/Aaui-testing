@@ -193,16 +193,16 @@ export default class QuestionQuiz extends Component {
                         />
                         Tambah Baru
                       </a> &nbsp;
-                      <button className="btn btn-primary f-14 float-right m-l-5" style={{ padding: "7px 25px !important",color: "white"}}>
+                      {/* <button className="btn btn-primary f-14 float-right m-l-5" style={{ padding: "7px 25px !important",color: "white"}}>
                         Template
                       </button> &nbsp;
                       <button className="btn btn-primary f-14 float-right " style={{ padding: "7px 25px !important",color: "white"}}>
                         Import Quiz
-                      </button> &nbsp;
-                      <FieldImport
+                      </button> &nbsp; */}
+                      {/* <FieldImport
                         _attach={_attach.bind(this)}
                         _data={_data.bind(this)}
-                        />
+                        /> */}
                     </div>
 
                     <div className="col-xl-12">

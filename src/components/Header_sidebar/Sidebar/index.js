@@ -8,6 +8,7 @@ class Sidebar extends Component {
     this.state = {
       menuAktif: '/',
       sideMenu: false,
+      sideMenuCollapse:false,
     }
   }
 
