@@ -25,8 +25,12 @@ class Home extends Component {
   fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.fetchDataKategoriKursus(res.data.result.company_id);
-        this.fetchDataKursusTerbaru(res.data.result.company_id);
+        this.fetchDataKategoriKursus(
+          localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id
+        );
+        this.fetchDataKursusTerbaru(
+          localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id
+        );
         
         Object.keys(res.data.result).map((key, index) => {
           if(key === 'registered') {
@@ -100,7 +104,7 @@ class Home extends Component {
               <div className="col-sm-4" key={item.category_id}>
                 <Link
                   to={
-                    ["admin", "superadmin"].includes(
+                    ["admin"].includes(
                       Storage.get("user").data.level
                     )
                       ? `/kursus-materi`

@@ -56,8 +56,8 @@ export default class LiveClass extends Component {
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if (res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
-				API.get(`${API_SERVER}v1/liveclass/company/${res.data.result.company_id}`).then(res => {
+				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+				API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
 						this.setState({ classRooms: res.data.result.reverse() })
 					}
