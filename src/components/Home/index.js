@@ -184,7 +184,6 @@ class Home extends Component {
 
     const ListKursusDiikuti = ({lists}) => {
       if(lists.length !== 0) {
-        console.log('ALVIN2',this.state)
         return (
           <div className="row">
             {

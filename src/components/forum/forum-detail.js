@@ -152,7 +152,7 @@ export default class ForumDetail extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <Row>
-                    <Col sm={8}>
+                    <Col sm={12}>
                       <Card>
                         <Card.Body>
                           <div className="forum-media">
@@ -297,8 +297,8 @@ export default class ForumDetail extends Component {
                       </Card>
                     </Col>
 
-                    <Col sm={4}>
-                        {/* {
+                    {/* <Col sm={4}>
+                        {
                           Storage.get('user').data.level == 'admin' ||
                           Storage.get('user').data.level == 'superadmin'
                           ?   <Button
@@ -313,10 +313,10 @@ export default class ForumDetail extends Component {
                                   }></i> &nbsp; {this.state.isLockedStatus ? "Buka Forum" : "Kunci Forum"}
                               </Button>
                           :   ''
-                      } */}
+                      }
 
                       <SideForum/>
-                    </Col>
+                    </Col> */}
                   </Row>
 
                   <Modal
