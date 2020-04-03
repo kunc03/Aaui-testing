@@ -319,15 +319,17 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
+											{ item.exam_publish == 0 ?
+													<Link to="#" className="buttonku" title="Tetapkan sebagai ujian utama">
+														<i onClick={this.changeToPublish} data-id={item.exam_id} className="fa fa-check"></i>
+													</Link>
+											:<link></link>}
 													<Link to="#" className="buttonku" title="Import Pertanyaan">
 				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-download"></i>
 				        					</Link>
 					              	<Link to={`/question-exam/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
-													<Link to="#" className="buttonku" title="Tetapkan sebagai ujian utama">
-														<i onClick={this.changeToPublish} data-id={item.exam_id} className="fa fa-check"></i>
-													</Link>
 													<Link to="#" className="buttonku" title="Edit">
 				          					<i onClick={this.handleOpenEdit} data-id={item.exam_id} className="fa fa-edit"></i>
 				        					</Link>
