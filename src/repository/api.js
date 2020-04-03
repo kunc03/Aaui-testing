@@ -3,7 +3,7 @@ import Storage from './storage';
 const axios = require('axios');
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-export const DEV_MODE = true;
+export const DEV_MODE = false;
 const API_SERVER_DEV = 'http://localhost:4000/';
 const API_SERVER_PROD = 'https://icademy.kelola.co.id/';
 //const API_SERVER_PROD = 'https://8023.development.carsworld.co.id/';
