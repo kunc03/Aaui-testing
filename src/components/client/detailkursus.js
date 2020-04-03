@@ -105,7 +105,7 @@ export default class DetailKursus extends Component {
   fetctDataCourse() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ companyId: res.data.result.company_id });
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id })
 
         API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
@@ -154,7 +154,7 @@ export default class DetailKursus extends Component {
         })
 
         // cek apakah ada ujian
-        API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${this.state.companyId}`).then(res => {
+        API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length != 0) {
               // pilih ujian index ke 0 => yang terpublish
@@ -170,7 +170,7 @@ export default class DetailKursus extends Component {
         })
 
         // cek apakah ada quiz
-        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length !== 0) {
               this.setState({ quiz: res.data.result })
