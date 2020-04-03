@@ -17,6 +17,7 @@ class UserEdit extends Component {
     name: "",
     email: "",
     phone: "",
+    validity: "", 
     address: "",
     level: "",
     password: "",
@@ -39,6 +40,7 @@ class UserEdit extends Component {
       name: this.state.name,
       email: this.state.email,
       phone: this.state.phone,
+      validity: this.state.validity || null,
       address: this.state.address,
       level: this.state.level,
       status: "active"
@@ -97,6 +99,7 @@ class UserEdit extends Component {
           identity: res.data.result.identity,
           email: res.data.result.email,
           phone: res.data.result.phone,
+          validity: res.data.result.validity,
           address: res.data.result.address,
           level: res.data.result.level
         });
@@ -237,6 +240,18 @@ class UserEdit extends Component {
                                 className="form-control"
                                 placeholder="210-1971-74"
                                 value={this.state.identity}
+                                onChange={this.onChangeInput}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Validity</label>
+                              <input
+                                type="date"
+                                required
+                                name="validity"
+                                className="form-control"
+                                placeholder="Tanggal valid"
+                                value={this.state.validity && new Date(this.state.validity).toISOString().slice(0,10)}
                                 onChange={this.onChangeInput}
                               />
                             </div>
