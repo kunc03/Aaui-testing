@@ -158,27 +158,27 @@ class Aktivity extends Component {
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
                             <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
-                              Cabang Jakarta Barat
+                              Company 
                             </small>
-                              <a href="/aktivitas">8</a>
+                              {/* <a href="/aktivitas">8</a> */}
                         </div>
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
                             <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
-                              Cabang Jakarta Barat
+                              Group 
                             </small>
-                              <a href="/aktivitas">8</a>
+                              {/* <a href="/aktivitas">8</a> */}
                         </div>
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
                             <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
-                              Cabang Jakarta Barat
+                              Role
                             </small>
-                              <a href="/aktivitas">8</a>
+                              {/* <a href="/aktivitas">8</a> */}
                         </div>
                       </div>
                     </div>
