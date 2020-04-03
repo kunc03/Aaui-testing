@@ -158,9 +158,9 @@ export default class QuizList extends Component {
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+		this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
-				API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
+				API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
 						this.setState({ quiz: res.data.result })
 					}

@@ -246,7 +246,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
         <Route path="/liveclass" exact component={LiveClassAdmin} />
-        <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} />
+        {/* <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} /> */}
+        <Route path="/liveclass-room/:roomid" exact component={LiveStream} />
 
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />

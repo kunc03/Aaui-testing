@@ -4,6 +4,7 @@ import { Modal,Card } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import DownloadFile from 'js-file-download';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 export default class DetailNilaiUjian extends Component {
 
@@ -24,7 +25,7 @@ export default class DetailNilaiUjian extends Component {
         let courseID = url.split('/')[2];
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if(res.status === 200) {
-                this.setState({ companyId: res.data.result.company_id });
+                this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 				API.get(`${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${courseID}`).then(res => {
                     console.log(res.data.result, 'RESSSS=>>>>>>>>>>>>');
 					if(res.status === 200) {
@@ -45,7 +46,7 @@ export default class DetailNilaiUjian extends Component {
         let courseID = url.split('/')[2];
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if(res.status === 200) {
-                this.setState({ companyId: res.data.result.company_id });
+                this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 				API.get(`${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${courseID}`).then(res => {
 					if(res.status === 200) {
 						const buffer = Buffer.from(res.data.result.users, 'base64');
@@ -69,19 +70,21 @@ export default class DetailNilaiUjian extends Component {
                                     <h3 className="f-24 f-w-800">Detail Nilai Ujian</h3>
                                 </div>
                                 <div className="col-xl-4 mb-3">
-                                        <Link
+                                        <ReactHTMLTableToExcel
+                                            id="test-table-xls-button"
                                             className="btn btn-primary float-right"
                                             style={{ padding: "7px 8px !important" }}
-                                            onClick={this.exportToExcel.bind(this)}>
-                                                Simpan ke Excel
-                                        </Link>
+                                            table="table-to-xls"
+                                            filename="nilai-ujian"
+                                            sheet="ujian"
+                                            buttonText="Simpan ke Excel"/>
                                 </div>
                             </div>
                             
                             
 
                             <div style={{ overflowX: "auto" }}>
-                                <table className="table-curved" style={{ width: "100%" }}>
+                                <table id='table-to-xls' className="table-curved" style={{ width: "100%" }}>
                                 <thead>
                                     <tr>
                                         <th className="text-center">No. </th>
@@ -89,16 +92,12 @@ export default class DetailNilaiUjian extends Component {
                                         <th>Nomor Induk</th>
                                         {this.state.detail.length === 0 ? null 
                                             :
-                                            <span>
-                                                {
-                                                    kursus.map((item, i) => (
+                                                    kursus[0].ujian.map((item, i) => (
                                                         
                                                             
                                                                 <th>Ujian {i+1}</th>    
                                                             
                                                     ))
-                                                }
-                                            </span> 
 
                                         }
                                     </tr>
@@ -120,7 +119,13 @@ export default class DetailNilaiUjian extends Component {
                                                     </td>
                                                     <td>{item.identity}</td>
                                                     {item.ujian.map((a, i) =>(
-                                                        <td>{a.score}</td>    
+                                                        <td>
+                                                        {
+                                                        a.map((arr, x)=>(
+                                                            arr.score
+                                                        ))
+                                                        }
+                                                        </td>
                                                     ))}
                                                 </tr>
                                             ))

@@ -28,13 +28,13 @@ export default class User extends Component {
     const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
-    if(name === 'voucher') {
+    if (name === "voucher") {
       API.get(`${API_SERVER}v1/user/cek/voucher/${value}`).then(res => {
         if (res.data.error) {
-          target.value = "";
-          this.setState({ notif: "Voucher sudah digunakan." })
+          this.setState({ notif: "Voucher sudah digunakan." });
         } else {
           this.setState({ [name]: value });
+          this.setState({ notif: "" });
         }
       });
     } else {

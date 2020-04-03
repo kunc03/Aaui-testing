@@ -5,13 +5,15 @@ import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(side){
-  let sides = side;  console.log(side, 'side')
+  let sides = side;  console.log(side, 'side');
+  console.log(this.state.user_id)
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id })
-    API.get(`${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res=> {
+    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+    let listaAPi = sides === 'star' ? `${FORUM}/list/${this.state.user_id}` : `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
+    API.get(listaAPi).then(res=> {
           let aray = [],starData = [];
           let splitTags; 
-         // console.log(res.data.result);
+         console.log(res.data.result.sql);
           for(let a in res.data.result){
             splitTags = res.data.result[a].tags.split(",");
             for(let b in splitTags){

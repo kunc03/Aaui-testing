@@ -31,11 +31,10 @@ export default class NilaiUjian extends Component {
         let courseID = url.split('/')[2];
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if(res.status === 200) {
-                this.setState({ companyId: res.data.result.company_id });
+                this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 				API.get(`${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${courseID}`).then(res => {
-                  //  console.log(res.data.result, 'RESSSS=>>>>>>>>>>>>');
 					if(res.status === 200) {
-						this.setState({ kursus: res.data.result.users, detail: res.data.result });
+                        this.setState({ kursus: res.data.result.users, detail: res.data.result });
 					}
 				})
 			}
