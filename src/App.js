@@ -176,6 +176,8 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/company-detail-super/:company_id" component={CompanyDetailSuper} />
         <Route path="/grup" component={Grup} />
 
+        <Route path="/filemanager" exact component={FilePicker} />
+
         <Route path="/logout" component={Logout} />
       </Switch>
     );
