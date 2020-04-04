@@ -12,6 +12,7 @@ class Home extends Component {
       registered: '2019-12-09',
       companyId: '',
     },
+    findCourseInput: "",
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
@@ -66,8 +67,26 @@ class Home extends Component {
     })
   }
 
+  findCourse = (e) => {
+    e.preventDefault();
+    this.setState({findCourseInput : e.target.value});
+  }
+
   render() {
-    const { user, kategoriKursus, kursusTerbaru, kursusDiikuti } = this.state;
+
+    var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
+    if(findCourseInput != ""){      
+      [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
+        .map(y=>
+          y.filter(x=>
+            JSON.stringify(
+              Object.values(x)
+            ).replace(
+              /[^\w ]/g,''
+            ).match(new RegExp(findCourseInput,"gmi"))
+          )
+        );
+    }
 
     const CheckMedia = ({ media }) => {
       if (media) {
@@ -133,7 +152,17 @@ class Home extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-20">Tidak ditemukan &quot;{findCourseInput}&quot;</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        ) 
+        : (
           <div className="col-sm-12">
             <Card>
               <Card.Body>
@@ -170,7 +199,17 @@ class Home extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <h3 className="f-w-900 f-20">Tidak ditemukan kursus &quot;{findCourseInput}&quot;</h3>
+              </Card.Body>
+            </Card>
+          </div>
+        ) 
+        : (
           <div className="col-sm-12">
             <Card>
               <Card.Body>
@@ -239,7 +278,15 @@ class Home extends Component {
           </div>
         );
       } else {
-        return (
+        return findCourseInput 
+        ? (
+          <Card>
+            <Card.Body>
+              <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus &quot;{findCourseInput}&quot;.</h3>
+            </Card.Body>
+          </Card>
+        )
+        : (
           <Card>
             <Card.Body>
               <h3 className="f-w-900 f-20">Anda tidak mengikuti kursus apapun.</h3>
@@ -318,6 +365,7 @@ class Home extends Component {
                               </InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
+                              onChange={this.findCourse}
                               placeholder="Kursus & Materi"
                               aria-label="Username"
                               aria-describedby="basic-addon1"
