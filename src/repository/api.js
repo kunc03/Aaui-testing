@@ -9,6 +9,7 @@ const API_SERVER_PROD = 'https://icademy.kelola.co.id/';
 //const API_SERVER_PROD = 'https://8023.development.carsworld.co.id/';
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 export const API_JITSI = '8026.development.carsworld.co.id';
+export const API_SOCKET = "http://156.67.214.4:3030";
 
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
