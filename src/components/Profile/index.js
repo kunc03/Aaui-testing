@@ -136,7 +136,7 @@ class Profile extends Component {
 
   handleChange = e => {
     if (e.target.name === "avatar") {
-      if (e.target.files[0].size <= 50000) {
+      if (e.target.files[0].size <= 500000) {
         this.setState({
           user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] }
         });

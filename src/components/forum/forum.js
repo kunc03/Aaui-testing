@@ -123,11 +123,11 @@ export default class Forum extends Component {
 											</div>
 
 											<div className="forum-action">
-                        {item.kunci === 0 ? 
+                        {/* {item.kunci === 0 ? 
                           <i className="fa fa-star"></i>
                           :
-                          <Link to='#'><i className="fa fa-star"></i></Link>
-                        }
+                        } */}
+                        <Link to='#'><i className="fa fa-star"></i></Link>
 											
 												<Link to='#' style={{marginLeft: '10px'}}>
 													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
@@ -147,30 +147,7 @@ export default class Forum extends Component {
 
             {findForumInput != '' 
               ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
-              :  <Card.Body style={{padding: '16px'}}>
-                  <div className="forum-media">
-                    <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:"url('/assets/images/component/p5.jpg')"}}></div>
-                    {/* <img src="/assets/images/component/p5.jpg" className="img-fluid mr-3 forum-gambar" alt="media" /> */}
-                  </div>
-
-                  <div className="forum-body">
-                      <h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>Tidak Ada Forum</h3>
-                      <span className="f-12" style={{marginBottom: '3px'}}>Undefined</span>
-
-                      <p style={{margin: '5px 0'}} className="f-13">
-                        Undefined
-                        </p>
-                      </div>
-
-                      <div className="forum-action">
-                        <Link to='#'>
-                          <i className="fa fa-star"></i>
-                        </Link>
-                        <Link to='#' style={{marginLeft: '10px'}}>
-                          <i className="fa fa-comments"></i> &nbsp; 0 Komentar
-                        </Link>
-                      </div>
-                </Card.Body>
+              :  <Card.Body style={{padding: '16px'}}><span>Tidak ada forum tersedia</span></Card.Body>
             }
 					</Card>
 				)
@@ -213,7 +190,7 @@ export default class Forum extends Component {
 
                         <Row>
                           <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/`}>
+                            <Link to={`/kursus`}>
                               <div className="kategori title-disabled">
                                 <img
                                   src="/assets/images/component/kursusoff.png"
@@ -256,10 +233,10 @@ export default class Forum extends Component {
                           <div className="col-md-12 col-xl-12 mb-3 mt-2">
                             <div className="row d-flex align-items-center">
                               <div className="col-4">
-                                <Form.Control as="select">
+                                {/* <Form.Control as="select">
                                   <option>Terbaru</option>
                                   <option>Trending</option>
-                                </Form.Control>
+                                </Form.Control> */}
                               </div>
                               <div className="col-8 text-right">
                                 <p className="m-b-0">

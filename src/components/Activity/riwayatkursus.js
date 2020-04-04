@@ -15,7 +15,7 @@ class RiwayatKursus extends Component {
       },
       kategoriKursus: [],
       kursusTerbaru: [],
-      kursusDiikuti: this.props.recent,
+      kursusDiikuti: [],
       today : '',
       tabIndex : 1
     }
@@ -24,7 +24,7 @@ class RiwayatKursus extends Component {
 
   componentDidMount() {
     this.fetchDataUser();
-    //this.fetchDataKursusDiikuti();
+    this.fetchDataKursusDiikuti();
     let date = new Date();
    // console.log(String(date));
     this.setState({today:String(date)})
@@ -113,11 +113,11 @@ class RiwayatKursus extends Component {
                                 src="assets/images/component/Pattern Geometric-01.png"
                                 alt="dashboard-user"
                             />
-                            <div className="card-text-title">{item.activity_title}</div>
+                            <div className="card-text-title">{item.course.category_name}</div>
                             </div>
                             <div className="card-carousel">
                             <div className="title-head f-16">
-                                {item.activity_title}
+                                {item.course.title}
                             </div>
                             <div className="row m-t-50">
                                 <div className="col-6">
@@ -126,25 +126,25 @@ class RiwayatKursus extends Component {
                                 </small>
                                 <h6>
                                     <small className="f-w-600">
-                                    {item.description}
+                                    {item.course.type}
                                     </small>
                                 </h6>
                                 </div>
-                                {/* <div className="col-6">
+                                <div className="col-6">
                                 <div className="progress m-b-10">
                                     <div
                                     className="progress-bar progress-c-yellow"
                                     role="progressbar"
-                                    style={{ width: "40%", height: 6 }}
+                                    style={{ width: item.proses+'%', height: 6 }}
                                     aria-valuenow={60}
                                     aria-valuemin={0}
                                     aria-valuemax={100}
                                     />
                                 </div>
                                 <small className="f-w-600">
-                                    Proses (20%)
+                                  Proses ({item.proses}%)
                                 </small>
-                                </div> */}
+                                </div>
                             </div>
                             </div>
                         </div>

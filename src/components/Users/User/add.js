@@ -60,8 +60,11 @@ class UserAdd extends Component {
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
       if(res.status === 200) {
-        this.props.history.push(`/company-detail-super/${formData.company_id}`)
-        console.log('DATAS',res.data.result)
+        if(res.data.error) {
+          this.setState({ responseMessage: res.data.result })
+        } else {
+          this.props.history.push(`/company-detail-super/${formData.company_id}`)
+        }
       }
     })
   };
@@ -194,6 +197,14 @@ class UserAdd extends Component {
                                 placeholder="password"
                                 onChange={this.onChangeInput}
                               />
+                            </div>
+                            <div style={{marginTop: '50px'}}>
+                            {
+                              this.state.responseMessage && 
+                              <div class="alert alert-primary" role="alert">
+                                <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
+                              </div>
+                            }
                             </div>
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                               Simpan

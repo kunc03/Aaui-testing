@@ -23,13 +23,22 @@ export default class KursusMateri extends Component {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if(res.status === 200) {
 				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-
-				API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
-					console.log('count: ', res.data.result.length)
-					if (res.status === 200) {
-						this.setState({ kursus: res.data.result.reverse() });
-					}
-				})
+				if(Storage.get('user').data.level==='superadmin'){
+					API.get(`${API_SERVER}v1/course/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
+						console.log('count: ', res.data.result.length)
+						if (res.status === 200) {
+							this.setState({ kursus: res.data.result.reverse() });
+						}
+					})
+				}
+				else{
+					API.get(`${API_SERVER}v1/mycourse/${Storage.get('user').data.user_id}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
+						console.log('count: ', res.data.result.length)
+						if (res.status === 200) {
+							this.setState({ kursus: res.data.result.reverse() });
+						}
+					})
+				}
 			}
 		});
 

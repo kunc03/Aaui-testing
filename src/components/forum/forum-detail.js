@@ -132,6 +132,18 @@ export default class ForumDetail extends Component {
         .catch(err => console.log("ioOOIAOIs",err))
       }
 
+      starAdd(){
+        console.log("res: fakakakakakakk", this.state.user_id);
+        console.log('forum id', this.state.forumId);
+        API.post(`${FORUM}/add/`, {forum_id: this.state.forumId, user_id: this.state.user_id})
+        .then(res => {
+          console.log(res, 'responseeee')
+          //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+        })
+        .catch(err => console.log("ioOOIAOIs",err))
+      }
+      
+
 	render() {
         const item = {
 			judul: 'Judul 1', 
@@ -152,7 +164,7 @@ export default class ForumDetail extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <Row>
-                    <Col sm={8}>
+                    <Col sm={12}>
                       <Card>
                         <Card.Body>
                           <div className="forum-media">
@@ -184,7 +196,7 @@ export default class ForumDetail extends Component {
                             className="forum-action"
                             style={{ marginTop: "30px" }}
                           >
-                            <Link to="#">
+                            <Link to="#"  onClick={this.starAdd.bind(this)}>
                               <i className="fa fa-star"></i>
                             </Link>
                             <Link to="#" style={{ marginLeft: "10px" }}>
@@ -297,8 +309,8 @@ export default class ForumDetail extends Component {
                       </Card>
                     </Col>
 
-                    <Col sm={4}>
-                        {/* {
+                    {/* <Col sm={4}>
+                        {
                           Storage.get('user').data.level == 'admin' ||
                           Storage.get('user').data.level == 'superadmin'
                           ?   <Button
@@ -313,10 +325,10 @@ export default class ForumDetail extends Component {
                                   }></i> &nbsp; {this.state.isLockedStatus ? "Buka Forum" : "Kunci Forum"}
                               </Button>
                           :   ''
-                      } */}
+                      }
 
                       <SideForum/>
-                    </Col>
+                    </Col> */}
                   </Row>
 
                   <Modal

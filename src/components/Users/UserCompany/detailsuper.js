@@ -11,8 +11,8 @@ import "react-datepicker/dist/react-datepicker.css";
 export default class CompanyDetail extends Component {
 
 	state = {
-    companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : this.props.match.params.company_id,
-    // companyId: this.props.match.params.company_id,
+    // companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : this.props.match.params.company_id,
+    companyId: this.props.match.params.company_id,
 		nama: "",
 		status: "",
 		validity: "",

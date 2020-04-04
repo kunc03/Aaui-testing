@@ -48,6 +48,12 @@ export default class DetailKursus extends Component {
       const chapterId = e.target.getAttribute('data-id');
       API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
         if(res.status === 200) {
+          let formData = {
+            courseId : this.state.courseId,
+            chapterId : chapterId,
+            userId : Storage.get('user').data.user_id
+          }
+          API.post(`${API_SERVER}v1/chapter/course`, formData).then(res=>{console.log(res)})
           let courseChapter = {
             image: res.data.result.chapter_video,
             title: res.data.result.chapter_title,
@@ -99,7 +105,7 @@ export default class DetailKursus extends Component {
   fetctDataCourse() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ companyId: res.data.result.company_id });
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id })
 
         API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
           if(res.status === 200) {
@@ -148,7 +154,7 @@ export default class DetailKursus extends Component {
         })
 
         // cek apakah ada ujian
-        API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${this.state.companyId}`).then(res => {
+        API.get(`${API_SERVER}v1/exam/coursepublish/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length != 0) {
               // pilih ujian index ke 0 => yang terpublish
@@ -164,7 +170,7 @@ export default class DetailKursus extends Component {
         })
 
         // cek apakah ada quiz
-        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${this.state.companyId}`).then(res => {
+        API.get(`${API_SERVER}v1/quiz/course/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if(res.status === 200) {
             if(res.data.result.length !== 0) {
               this.setState({ quiz: res.data.result })
@@ -284,7 +290,7 @@ export default class DetailKursus extends Component {
                   >
                     <Card.Body data-id={item.exam_id}>
                       <h3
-                        className="f-18 f-w-800"
+                        className="f-16 f-w-800"
                         style={{ marginBottom: "0px" }}
                         data-iterasi={i}
                         data-id={item.exam_id}
@@ -320,7 +326,7 @@ export default class DetailKursus extends Component {
                   >
                     <Card.Body data-id={item.chapter_id}>
                       <h3
-                        className="f-18 f-w-800"
+                        className="f-16 f-w-800"
                         style={{ marginBottom: "0px" }}
                         data-id={item.chapter_id}
                         data-iterasi={i}
@@ -449,9 +455,23 @@ export default class DetailKursus extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-                    <div className="col-xl-8">
-                      <CheckMedia media={course.image} />
-
+                    <div className="col-xl-8" style={{padding:0}}>
+                      <div 
+                        style={{
+                          background: '#FFF',
+                          borderRadius: 5,
+                          boxShadow: '0 1px 20px 0 rgba(69, 90, 100, 0.08)',
+                          padding: 20,
+                          marginBottom:20,
+                        }}
+                        >
+                      <h3
+                        className="f-24 f-w-800 mb-3"
+                        style={{ marginTop: "10px" }}
+                      >
+                        {course.title}
+                      </h3>
+                      {course.caption && <p style={{color:'#6d6d6d'}} class="lead">{course.caption}</p>}
                       {course.category_name && (
                         <Link
                           className="btn btn-ideku"
@@ -461,22 +481,14 @@ export default class DetailKursus extends Component {
                           {course.category_name}
                         </Link>
                       )}
-
-                      <h3
-                        className="f-24 f-w-800 mb-3"
-                        style={{ marginTop: "20px" }}
-                      >
-                        {course.title}
-                      </h3>
-
                       {course.created_at && (
                         <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
                       )}
-
-                      {course.caption && <p class="lead">{course.caption}</p>}
+                      <CheckMedia media={course.image} />
 
                       {isIkutiKursus && (
                         <div
+                          style={{paddingTop:20, paddingBottom:20, color:'#3c3939'}}
                           dangerouslySetInnerHTML={{ __html: course.body }}
                         />
                       )}
@@ -499,20 +511,22 @@ export default class DetailKursus extends Component {
                           Ikuti Kursus
                         </Link>
                       )}
+                      </div>
                     </div>
 
                     <div className="col-xl-4">
-                      <h3 className="f-24 f-w-800 mb-3">List Chapter</h3>
+                      {/* <h3 className="f-24 f-w-800 mb-3">List Chapter</h3> */}
                       <Card
                         onClick={this.pilihOverviewChapter}
                         className={`card-active`}
                         data-id={this.state.courseID}
                         key={this.state.courseID}
+                        style={{marginTop:0}}
                       >
                         <Card.Body>
                           <h3
-                            className="f-18 f-w-800"
-                            style={{ marginBottom: "0px" }}
+                            className="f-16 f-w-800"
+                            style={{ marginBottom: "0px", }}
                             data-id={this.state.courseID}
                           >
                             <Form.Text data-id={this.state.courseID}>

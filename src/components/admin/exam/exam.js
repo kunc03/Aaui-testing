@@ -190,9 +190,9 @@ export default class QuizList extends Component {
 		let waktu = this.changeFormatDate(new Date());
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+		this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
-				API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${res.data.result.company_id}`).then(res => {
+				API.get(`${API_SERVER}v1/exam/course/${this.state.courseId}/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
 					if(res.status === 200) {
 						this.setState({ exam: res.data.result, waktuStart: waktu, waktuFinish: waktu })
 					}
@@ -238,7 +238,7 @@ export default class QuizList extends Component {
 		        { 
 		        	lists.map((item, i) => (
 		          	<li key={item.exam_id}>
-					        <div className="card">
+					        <div className="card" style={ item.exam_publish == 0 ? {} : {border:'3px solid #932778'}}>
 					          <div className="card-block" style={{ padding: "25px 30px !important" }}>
 					            <div className="row d-flex align-items-center">
 
@@ -259,9 +259,11 @@ export default class QuizList extends Component {
 					              <div className="col-xl-3 col-md-12">
 					                <div className="row align-items-center justify-content-center">
 					                  <div className="col">
-					                    <small className="f-w-600 f-16 text-c-grey-t ">
-					                      {item.exam_publish == 0 ? 'Judul':'Aktif'}
-					                    </small>
+									  {item.exam_publish == 0 ?
+									  	<small className="f-w-600 f-16 text-c-grey-t ">Judul</small>
+										:
+										<small className="f-w-600 f-16 text-c-grey-t " style={{color:'green'}}>Ujian Aktif</small>}
+					                    
 					                    <h5 className="f-w-bold f-20 text-c-purple3">
 					                      {item.exam_title}
 					                    </h5>
@@ -317,15 +319,17 @@ export default class QuizList extends Component {
 					                </div>
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
+											{ item.exam_publish == 0 ?
+													<Link to="#" className="buttonku" title="Tetapkan sebagai ujian utama">
+														<i onClick={this.changeToPublish} data-id={item.exam_id} className="fa fa-check"></i>
+													</Link>
+											:<link></link>}
 													<Link to="#" className="buttonku" title="Import Pertanyaan">
 				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-download"></i>
 				        					</Link>
 					              	<Link to={`/question-exam/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
 				        					</Link>
-													<Link to="#" className="buttonku" title="Tetapkan sebagai ujian utama">
-														<i onClick={this.changeToPublish} data-id={item.exam_id} className="fa fa-check"></i>
-													</Link>
 													<Link to="#" className="buttonku" title="Edit">
 				          					<i onClick={this.handleOpenEdit} data-id={item.exam_id} className="fa fa-edit"></i>
 				        					</Link>

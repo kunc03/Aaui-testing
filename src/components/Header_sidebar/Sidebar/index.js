@@ -8,6 +8,7 @@ class Sidebar extends Component {
     this.state = {
       menuAktif: '/',
       sideMenu: false,
+      sideMenuCollapse:false,
     }
   }
 
@@ -34,8 +35,11 @@ class Sidebar extends Component {
 
     let menuAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
       { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
       { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
       { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
       { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
@@ -44,10 +48,13 @@ class Sidebar extends Component {
 
     let menuSuperAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
       { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Kelas', link: '/liveclass' },
-      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
       { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
+      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
       { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
       { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
       { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
