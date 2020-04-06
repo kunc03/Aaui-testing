@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import { Form } from 'react-bootstrap';
 import API, { API_SERVER } from '../../../repository/api';
 
+import ToggleSwitch from "react-switch";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 class ModalAdd extends Component {
 
   constructor(props) {
@@ -16,8 +21,20 @@ class ModalAdd extends Component {
       nama: "",
       status: "active",
       logo: "",
-      notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB"
+      notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
+      unlimited:false,
+      validity:new Date()
     };
+  }
+
+  handleChangeValidity = date => {
+    this.setState({
+      validity: date
+    });
+  };
+
+  toggleSwitch(checked) {
+    this.setState({ unlimited:!this.state.unlimited });
   }
 
   onClickSimpan = e => {
@@ -26,17 +43,21 @@ class ModalAdd extends Component {
     let dateNow = new Date();
 
     if(this.state.nama && this.state.logo) {
+      let unlimited = this.state.unlimited == false ? '1' : '0'
       let formData = new FormData();
       formData.append('company_name', this.state.nama);
       formData.append('status', this.state.status);
+      formData.append('unlimited', unlimited);
       formData.append('logo', this.state.logo);
-      formData.append('validity', dateNow.toISOString().split('T')[0]);
+      formData.append('validity', this.state.validity.toISOString().split('T')[0]);
   
       let linkURL = `${API_SERVER}v1/company`;
       API.post(linkURL, formData).then(res => {
         triggerUpdate(res.data.result);
         this.setState({ nama: '', status: '', logo: ''});
         window.$('#modalAdd').modal('hide');
+        console.log('resss',res.data.result)
+        console.log('reqqq',this.state.validate)
       }).catch((err) => {
         console.log(err);
       })
@@ -119,6 +140,32 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
+                    Batasi Waktu
+                  </label>
+                  <div style={{width:'100%'}}>
+                  <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                  </div>
+
+                </div>
+                {
+                  this.state.unlimited &&
+                  <div className="form-group">
+                    <label className="label-input" htmlFor>
+                      Valid Until
+                    </label>
+                    <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.validity}
+                            onChange={this.handleChangeValidity}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd"
+                          />
+                    </div>
+  
+                  </div>
+                }
+                {/* <div className="form-group">
+                  <label className="label-input" htmlFor>
                     Status Company
                   </label>
                   <br />
@@ -138,7 +185,7 @@ class ModalAdd extends Component {
                       );
                     })}
                   </div>
-                </div>
+                </div> */}
               </Form>
             </div>
             <div

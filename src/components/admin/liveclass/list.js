@@ -143,11 +143,18 @@ export default class LiveClassAdmin extends Component {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
         speaker: this.state.speaker,
-        room_name: this.state.roomName
+        room_name: this.state.roomName,
+        moderator: this.state.valueModerator,
+        is_private: this.state.private,
+        is_scheduled: this.state.scheduled,
+        schedule_start: this.state.startDate,
+        schedule_end: this.state.endDate,
+        peserta: this.state.valuePeserta
       }
 
       API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
         if (res.status === 200) {
+          console.log('RESS',res)
           if (this.state.cover) {
             let formData = new FormData();
             formData.append('cover', this.state.cover);

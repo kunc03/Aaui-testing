@@ -7,6 +7,7 @@ import UsersSuper from "./userssuper";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ToggleSwitch from "react-switch";
 
 export default class CompanyDetail extends Component {
 
@@ -16,6 +17,7 @@ export default class CompanyDetail extends Component {
 		nama: "",
 		status: "",
 		validity: "",
+    unlimited:false,
 		logo: "",
 		tempLogo: "",
 		
@@ -39,6 +41,9 @@ export default class CompanyDetail extends Component {
 		idKonfirmasi: ""
 	}
 
+  toggleSwitch(checked) {
+    this.setState({ unlimited:!this.state.unlimited });
+  }
 	closeNotifikasi = e => {
 		this.setState({ isNotifikasi: false, isiNotifikasi: '' })
 	}
@@ -82,11 +87,14 @@ export default class CompanyDetail extends Component {
   }
 
   onClickUpdate = e => {
+    
+    let unlimited = this.state.unlimited == false ? '1' : '0'
   	const formData = {
   		company_id: this.state.companyId,
   		name: this.state.nama,
   		status: this.state.status,
   		validity: this.state.validity,
+  		unlimited: unlimited,
   	};
 
   	const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
@@ -267,16 +275,19 @@ export default class CompanyDetail extends Component {
 		let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
 		API.get(linkURL).then(res => {
 			if(res.status === 200) {
+        let unlimited = res.data.result.unlimited == 0 ? true : false;
 				this.setState({ 
 					nama: res.data.result.company_name, 
 					status: res.data.result.status, 
-					validity: res.data.result.validity.substring(0,10),
-					logo: res.data.result.logo 
-				});
+					validity: res.data.result.validity,
+          logo: res.data.result.logo,
+          unlimited: unlimited
+        });
 
 				let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 				API.get(linkURLCabang).then(res => {
 					if(res.status === 200) {
+            console.log('ALVIN CABANG RES',res)
 						this.setState({ cabang: res.data.result[0] })
 					}
 				}).catch(err => {
@@ -316,6 +327,7 @@ export default class CompanyDetail extends Component {
 	render() {
     console.log('companyID: ', localStorage.getItem('companyID'));
     console.log('companyID: ', this.state.companyId);
+    console.log('ALVIN: ', this.state);
 
 		const { cabang, grup, user } = this.state;
 		const statusCompany = ['active', 'nonactive'];
@@ -439,16 +451,28 @@ export default class CompanyDetail extends Component {
                                 />
                               </div>
                               <div className="form-group">
-                                <label>Validity</label>
-                                <br />
-                                <DatePicker
-                                  selected={validityCompany}
-                                  onChange={this.handleValidityDatePicker}
-                                  showTimeSelect
-                                  className="form-control"
-                                  dateFormat="yyyy-MM-dd"
-                                />
+                                <label className="label-input" htmlFor>
+                                  Batasi Waktu
+                                </label>
+                                <div style={{width:'100%'}}>
+                                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                                </div>
+
                               </div>
+                              {
+                                this.state.unlimited &&
+                                <div className="form-group">
+                                  <label>Validity</label>
+                                  <br />
+                                  <DatePicker
+                                    selected={validityCompany}
+                                    onChange={this.handleValidityDatePicker}
+                                    showTimeSelect
+                                    className="form-control"
+                                    dateFormat="yyyy-MM-dd"
+                                  />
+                                </div>
+                              }
                               <div
                                 className="form-group"
                                 onChange={this.onChangeInput}

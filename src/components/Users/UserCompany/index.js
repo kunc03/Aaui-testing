@@ -111,10 +111,10 @@ class UserCompany extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-16 text-c-grey-t ">
-                      Validity
+                      Waktu Terbatas
                     </small>
                     <h5 className="f-w-bold f-20 text-c-purple3">
-                      {item.validity.toString().substring(0, 10)}
+                      {item.unlimited ? 'Tidak' : item.validity.toString().substring(0, 10)}
                     </h5>
                   </div>
                 </div>
