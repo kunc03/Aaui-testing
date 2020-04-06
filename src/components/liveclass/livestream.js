@@ -15,6 +15,7 @@ export default class LiveStream extends Component {
     classId: this.props.match.params.roomid,
     user: {},
     classRooms: {},
+    fileChat : [],
     attachment: '',
         isNotifikasi: false, 
     		isiNotifikasi:'',
@@ -46,9 +47,7 @@ export default class LiveStream extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
-        console.log(liveClass,'asjkdaskjdkjashdkshaj');
-        
-                
+ 
         var data = liveClass.data.result
         /*mark api get new history course*/
         let form = {
@@ -59,13 +58,32 @@ export default class LiveStream extends Component {
         }
 
 
-        console.log('alsdlaksdklasjdlkasjdlk',form)
+       // console.log('alsdlaksdklasjdlkasjdlk',form)
         API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
 
         this.setState({ user: res.data.result, classRooms: liveClass.data.result })
       }
+    }).then(res=>{
+        console.log(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`,'siniii')
+        API.get(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`).then(res => {
+          console.log(res, 'ini responseeee');
+          let splitTags;
+          let datas = res.data.result;
+          for(let a in datas){
+            splitTags =  datas[a].attachment.split("/")[4];
+            datas[a].filenameattac = splitTags; 
+          }
+          if(res.status === 200) {
+            this.setState({
+              fileChat : res.data.result
+            })
+          }
+    
+        })
     })
+      
   }
+
 
   onClickInvite = e => {
     e.preventDefault();
@@ -115,10 +133,10 @@ export default class LiveStream extends Component {
   sendFileNew(){
 
     let form = new FormData();
-    form.append('class_id ', this.state.classId);
-    form.append('pengirim', String(this.state.user.user_id);
+    form.append('class_id', this.state.classId);
+    form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-    console.log(form, 'form data');
+    console.log(FormData, 'form data');
     API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
       console.log(res, 'response')
       if(res.status === 200) {
@@ -190,14 +208,20 @@ export default class LiveStream extends Component {
 
         </Row>
 
+        {/* CHATING SEND FILE */}
         <div className='box-chat'>
-            <div className='box-chat-send-left'>
-              <span style={{marginBottom: '0rem !important' }}><Link to='#'><b>fikran.jabbar.pasha@gmail.com</b></Link></span><br/>
-              File : my doc.pdf
-              <p><small>12:22 PM</small></p>
-            </div>
             
+            { this.state.fileChat.map((item, i)=>{
+              return (
+                <div className='box-chat-send-left'>
+                  <span className="m-b-5"><Link to='#'><b>{item.pengirim}</b></Link></span><br/>
+                  <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                  <small>{item.created_at}</small>
+                </div>
+              )
+            })}
         </div>
+
         <div className='box-chat-send p-20'>
           <Row>
             <Col sm={10}>
@@ -217,6 +241,8 @@ export default class LiveStream extends Component {
 
           </Row>
         </div>
+
+        {/*  */}
 
         
 
