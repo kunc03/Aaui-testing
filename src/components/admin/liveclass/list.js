@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import { Link, Switch, Route } from "react-router-dom";
 
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
+
+import ToggleSwitch from "react-switch";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import {
   Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image,
   InputGroup, FormControl, Modal
@@ -25,6 +33,41 @@ export default class LiveClassAdmin extends Component {
     imgPreview: '',
 
     isClassModal: false,
+
+    //single select moderator
+    optionsModerator: [],
+    valueModerator: [],
+
+    //multi select peserta
+    optionsPeserta: [],
+    valuePeserta: [],
+    //Toggle Switch
+    private: false,
+    scheduled: false,
+    startDate: new Date(),
+    endDate: new Date(),
+  }
+  
+  handleCreateMeeting() {
+    this.setState({ isClassModal: true});
+  };
+  handleChangeDateFrom = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+  handleChangeDateEnd = date => {
+    this.setState({
+      endDate: date
+    });
+  };
+
+  toggleSwitch(checked) {
+    this.setState({ private:!this.state.private });
+  }
+
+  toggleSwitchScheduled(checked) {
+    this.setState({ scheduled:!this.state.scheduled });
   }
 
   closeClassModal = e => {
@@ -60,7 +103,16 @@ export default class LiveClassAdmin extends Component {
           if (res.status === 200) {
             this.setState({ classRooms: res.data.result.reverse() })
           }
+        });
+        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+          response.data.result.map(item => {
+            this.state.optionsModerator.push({value: item.user_id, label: item.name});
+            this.state.optionsPeserta.push({value: item.user_id, label: item.name});
+          });
         })
+        .catch(function(error) {
+          console.log(error);
+        });
       }
     })
   }
@@ -219,7 +271,7 @@ export default class LiveClassAdmin extends Component {
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
                         Semua Group Meeting &nbsp;&nbsp;
-                        <button className="btn btn-ideku" onClick={e => { this.setState({ isClassModal: true}) }}><i className="fa fa-plus"></i> Buat Group Meeting</button>
+                        <button className="btn btn-ideku" onClick={this.handleCreateMeeting.bind(this)}><i className="fa fa-plus"></i> Buat Group Meeting</button>
                       </h3>
                     </div>
                   </Row>
@@ -303,22 +355,22 @@ export default class LiveClassAdmin extends Component {
 
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
-                            Judul Class
+                            Judul Meeting
                           </Form.Label>
                           <FormControl
                             type="text"
-                            placeholder="Judul Class"
+                            placeholder="Judul"
                             value={this.state.roomName}
                             onChange={e =>
                               this.setState({ roomName: e.target.value })
                             }
                           />
                           <Form.Text className="text-muted">
-                            Buat judul yang menarik.
+                            Judul tidak boleh menggunakan karakter spesial
                           </Form.Text>
                         </Form.Group>
 
-                        <Form.Group controlId="formJudul">
+                        {/* <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Pengisi Class
                           </Form.Label>
@@ -333,7 +385,108 @@ export default class LiveClassAdmin extends Component {
                           <Form.Text className="text-muted">
                             Nama pengisi kelas atau speaker.
                           </Form.Text>
+                        </Form.Group> */}
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Moderator
+                          </Form.Label>
+                          <MultiSelect
+                            id="moderator"
+                            options={this.state.optionsModerator}
+                            value={this.state.valueModerator}
+                            onChange={valueModerator => this.setState({ valueModerator })}
+                            mode="single"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih Moderator"
+                          />
+                          <Form.Text className="text-muted">
+                            Pengisi kelas, moderator, atau speaker.
+                          </Form.Text>
                         </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Private Meeting
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                           <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.private} />
+                          </div>
+                          <Form.Text className="text-muted">
+                            {
+                              this.state.private ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa bergabung pada meeting.'
+                              :
+                              'Meeting room bersifat terbuka. Semua user dapat bergabung.'
+                            }
+                          </Form.Text>
+                        </Form.Group>
+                        {
+                        this.state.private &&
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Peserta
+                          </Form.Label>
+                          <MultiSelect
+                            id="peserta"
+                            options={this.state.optionsPeserta}
+                            value={this.state.valuePeserta}
+                            onChange={valuePeserta => this.setState({ valuePeserta })}
+                            mode="tags"
+                            removableTags={true}
+                            hasSelectAll={true}
+                            selectAllLabel="Pilih Semua"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih Peserta"
+                          />
+                          <Form.Text className="text-muted">
+                            Pilih peserta untuk private meeting.
+                          </Form.Text>
+                        </Form.Group>
+                        }
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Scheduled Meeting
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                           <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
+                          </div>
+                          <Form.Text className="text-muted">
+                            {
+                              this.state.scheduled ? 'Meeting terjadwal.'
+                              :
+                              'Meeting tidak terjadwal. Selalu dapat diakses.'
+                            }
+                          </Form.Text>
+                        </Form.Group>
+                        {
+                          this.state.scheduled &&
+                          <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Waktu
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleChangeDateFrom}
+                            showTimeSelect
+                            dateFormat="dd-MM-yyyy HH:mm"
+                          />
+                          &nbsp;&mdash;&nbsp;
+                          <DatePicker
+                            selected={this.state.endDate}
+                            onChange={this.handleChangeDateEnd}
+                            showTimeSelect
+                            dateFormat="dd-MM-yyyy HH:mm"
+                          />
+                          </div>
+                          <Form.Text className="text-muted">
+                            Pilih waktu meeting akan berlangsung.
+                          </Form.Text>
+                        </Form.Group>
+                        }
 
                         <div style={{ marginTop: "20px" }}>
                           <button type="button" onClick={this.onSubmitForm} className="btn btn-primary f-w-bold mr-3">
@@ -343,7 +496,6 @@ export default class LiveClassAdmin extends Component {
                           <button
                             type="button"
                             className="btn f-w-bold"
-                            onClick={this.closeClassModal}
                           >
                             Tutup
                           </button>

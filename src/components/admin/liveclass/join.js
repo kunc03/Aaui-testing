@@ -87,14 +87,14 @@ export default class LiveClassAdminJoin extends Component {
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
-          <div className="pcoded-content">
+          <div className="pcoded-content" style={{paddingTop: 20}}>
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
 
                   <Row>
 
-                    <div className="col-md-4 col-xl-4 mb-3">
+                    {/* <div className="col-md-4 col-xl-4 mb-3">
                       <Link to={`/`}>
                         <div className="kategori">
                           <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
@@ -120,9 +120,9 @@ export default class LiveClassAdminJoin extends Component {
                           <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
                           &nbsp;
                           Group Meeting
-              </div>
+                        </div>
                       </Link>
-                    </div>
+                    </div> */}
 
                     <Col sm={12} style={{ marginBottom: '20px' }}>
                       <div className="kategori text-center" style={{ marginBottom: '16px', cursor: 'pointer', color: '#bf337b' }} onClick={this.onClickInvite}>

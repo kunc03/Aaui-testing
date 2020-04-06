@@ -55,6 +55,55 @@ File: style.css
 @import url("../fonts/feather/css/feather.css");
 @import url("../plugins/jquery-scrollbar/css/jquery.scrollbar.min.css");
 @import url("../fonts/datta/datta-icon.css");
+
+
+/* MULTI SELECT DROPDOWN */
+
+label.Option {
+  margin-bottom:0px;
+}
+.MultiSelect .Header {
+  background-color: #f4f7fa !important;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057 !important;
+  border: 1px solid #ced4da !important;
+  border-radius: .25rem !important;
+}
+
+/* DATEPICKER */
+
+.react-datepicker__input-container > input{
+  background: #f4f7fa;
+  padding: 10px 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+}
+
+/* TAGS INPUT */
+
+.react-tagsinput-input{
+  width:150px !important;
+}
+
+.react-tagsinput{
+  background-color: #f4f7fa !important;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #495057 !important;
+  border: 1px solid #ced4da !important;
+  border-radius: .25rem !important;
+}
+
+.react-tagsinput-tag{
+  background-color: #1298d4 !important;
+  color: #FFF !important;
+  border:none !important;
+}
+
 /**  =====================
       Custom css start
 ==========================  **/
@@ -66,6 +115,7 @@ body {
   background: #f4f7fa;
   position: relative;
 }
+
 
 *:focus {
   outline: none;

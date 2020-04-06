@@ -5,6 +5,12 @@ import {
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
 
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
+import TagsInput from 'react-tagsinput'
+
+import 'react-tagsinput/react-tagsinput.css'
+
 import JitsiMeetComponent from './livejitsi';
 
 import API, { API_SERVER, USER_ME } from '../../repository/api';
@@ -17,10 +23,17 @@ export default class LiveStream extends Component {
     classRooms: {},
     
     isInvite: false,
-    emailInvite: '',
-    emailResponse: 'Masukkan email yang ingin di invite.'
+    emailInvite: [],
+    emailResponse: 'Masukkan email yang ingin di invite.',
+    //multi select invite
+    optionsInvite: [],
+    valueInvite: [],
   }
   
+  handleChange(emailInvite) {
+    this.setState({emailInvite})
+  }
+
   handleCloseInvite = e => {
     this.setState({
       isInvite: false,
@@ -55,6 +68,17 @@ export default class LiveStream extends Component {
           description : data.room_name,
           title : data.speaker
         }
+
+        //get and push multiselect option
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+          response.data.result.map(item => {
+            this.state.optionsInvite.push({value: item.user_id, label: item.name});
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
 
 
         console.log('alsdlaksdklasjdlkasjdlk',form)
@@ -102,14 +126,14 @@ export default class LiveStream extends Component {
 		return(
 			<div className="pcoded-main-container">
 			<div className="pcoded-wrapper">
-			<div className="pcoded-content">
+			<div className="pcoded-content" style={{paddingTop: 20}}>
 			<div className="pcoded-inner-content">
 			<div className="main-body">
 			<div className="page-wrapper">
 			
         <Row>
               
-          <div className="col-md-4 col-xl-4 mb-3">
+          {/* <div className="col-md-4 col-xl-4 mb-3">
             <Link to={`/`} className="menu-mati">
               <div className="kategori title-disabled">
               <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
@@ -137,7 +161,7 @@ export default class LiveStream extends Component {
               Group Meeting
               </div>
             </Link>
-          </div>
+          </div> */}
 
           <Col sm={12} style={{marginBottom: '20px'}}>
             <h3 className="f-20 f-w-800">
@@ -169,17 +193,34 @@ export default class LiveStream extends Component {
           </Modal.Header>
           <Modal.Body>
             <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Invite User
+                          </Form.Label>
+                          <MultiSelect
+                            id="peserta"
+                            options={this.state.optionsInvite}
+                            value={this.state.valueInvite}
+                            onChange={valueInvite => this.setState({ valueInvite })}
+                            mode="tags"
+                            removableTags={true}
+                            hasSelectAll={true}
+                            selectAllLabel="Pilih Semua"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih"
+                          />
+                          <Form.Text className="text-muted">
+                            Pilih user yang ingin diundang.
+                          </Form.Text>
+                        </Form.Group>
               <div className="form-group">
                 <label style={{ fontWeight: "bold" }}>Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  onChange={e => {
-                    this.setState({
-                      emailInvite: e.target.value
-                    });
-                  }}
+                <TagsInput
+                  value={this.state.emailInvite}
+                  onChange={this.handleChange.bind(this)}
+                  addOnPaste={true}
+                  inputProps={{placeholder:'Email Peserta'}}
                 />
                 <Form.Text>
                   {this.state.emailResponse}
