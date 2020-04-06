@@ -99,9 +99,9 @@ export default class LiveStream extends Component {
         this.setState({ user: res.data.result, classRooms: liveClass.data.result })
       }
     }).then(res=>{
-        console.log(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`,'siniii')
-        API.get(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`).then(res => {
-          console.log(this.state.attachment, 'ini responseeee');
+        console.log(`${API_SERVER}v1/liveclass/file/${this.state.classId}`,'siniii')
+        API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
+          console.log(res, 'ini responseeee');
           let splitTags;
           let datas = res.data.result;
           for(let a in datas){
@@ -173,8 +173,8 @@ export default class LiveStream extends Component {
     form.append('class_id', this.state.classId);
     form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-    console.log(FormData, 'form data');
-    API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
+    console.log('form data',FormData);
+    API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
       console.log(res, 'response');
       
       let splitTags;

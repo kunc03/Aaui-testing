@@ -124,8 +124,8 @@ class Header extends Component {
 
 
     let NotifBody = ({list}) => {
-      let unread = list.filter(x=> x.isread == '0');
-      let unclick = list.filter(x=> x.isread == '2');
+      let unread = Object.values(list).filter(x=> x.isread == '0');
+      let unclick = Object.values(list).filter(x=> x.isread == '2');
 
       return  (
                   <ul className="noti-body">
