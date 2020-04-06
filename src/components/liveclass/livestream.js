@@ -5,6 +5,7 @@ import {
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
 
+import Moment from 'react-moment';
 import JitsiMeetComponent from './livejitsi';
 
 import API, { API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
@@ -22,8 +23,8 @@ export default class LiveStream extends Component {
     classRooms: {},
     fileChat : [],
     attachment: '',
-        isNotifikasi: false, 
-    		isiNotifikasi:'',
+    isNotifikasi: false, 
+		isiNotifikasi:'',
     isInvite: false,
     emailInvite: '',
     emailResponse: 'Masukkan email yang ingin di invite.'
@@ -43,7 +44,9 @@ export default class LiveStream extends Component {
 
   componentDidMount() {
     socket.on("broadcast", data => {
-      this.setState({ fileChat: [...this.state.fileChat, data] })
+      if(data.room == this.state.classId) {
+        this.setState({ fileChat: [...this.state.fileChat, data] })
+      }
     });
     this.fetchData();
     window.onbeforeunload = function() {
@@ -149,16 +152,20 @@ export default class LiveStream extends Component {
     console.log(FormData, 'form data');
     API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
       console.log(res, 'response');
+      
       let splitTags;
-          let datas = res.data.result;
-          splitTags =  datas.attachment.split("/")[4];
-          datas.filenameattac = splitTags; 
+      let datas = res.data.result;
+      splitTags =  datas.attachment.split("/")[4];
+      datas.filenameattac = splitTags; 
+
       if(res.status === 200) {
-        this.setState({ fileChat: [...this.state.fileChat, res.data.result] });
+        //this.setState({ fileChat: [...this.state.fileChat, res.data.result] });
         socket.emit('send', {
-          from: this.state.user.email,
+          pengirim: this.state.user.user_id,
           room: this.state.classId,
-          message: this.state.attachment
+          attachment: this.state.attachment,
+          filenameattac: datas.filenameattac,
+          created_at: new Date()
         })
       }
     })
@@ -235,7 +242,7 @@ export default class LiveStream extends Component {
                 <div className='box-chat-send-left'>
                   <span className="m-b-5"><Link to='#'><b>{item.pengirim}</b></Link></span><br/>
                   <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
-                  <small>{item.created_at}</small>
+                  <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
                 </div>
               )
             })}
