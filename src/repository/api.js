@@ -6,7 +6,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 const API_SERVER_DEV = 'http://localhost:4000/';
 const API_SERVER_PROD = 'https://icademy.kelola.co.id/';
 
-export const DEV_MODE = false;
+export const DEV_MODE = true;
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 
 export const API_JITSI = '8026.development.carsworld.co.id';

@@ -15,6 +15,7 @@ class UserAdd extends Component {
     name: "",
     email: "",
     phone: "",
+    validity: "",
     address: "",
     password: "",
     level: "",
@@ -70,6 +71,7 @@ class UserAdd extends Component {
       name: this.state.name,
       email: this.state.email,
       phone: this.state.phone,
+      phone: this.state.validity,
       address: this.state.address,
       password: this.state.password,
       level: this.state.level,
@@ -170,6 +172,18 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
+                            <div className="form-group">
+                              <label className="label-input">Validity</label>
+                              <input
+                                type="date"
+                                required
+                                name="validity"
+                                className="form-control"
+                                placeholder="Tanggal valid"
+                                onChange={this.onChangeInput}
+                              />
+                            </div>
+                            
                             <div className="form-group">
                               <label className="label-input">Email</label>
                               <input
