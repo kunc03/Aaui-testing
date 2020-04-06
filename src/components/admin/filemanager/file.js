@@ -9,7 +9,7 @@ import Storage from '../../../repository/storage';
 import io from 'socket.io-client';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
-  console.log("connect");
+ // console.log("connect");
 });
 
 const apiOptions = {

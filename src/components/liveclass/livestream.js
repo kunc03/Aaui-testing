@@ -7,8 +7,13 @@ import {
 
 import JitsiMeetComponent from './livejitsi';
 
-import API, { API_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
+import io from 'socket.io-client';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect ganihhhhhhh");
+});
 
 export default class LiveStream extends Component {
 	state = {
@@ -66,7 +71,7 @@ export default class LiveStream extends Component {
     }).then(res=>{
         console.log(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`,'siniii')
         API.get(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`).then(res => {
-          console.log(res, 'ini responseeee');
+          console.log(this.state.attachment, 'ini responseeee');
           let splitTags;
           let datas = res.data.result;
           for(let a in datas){
@@ -77,6 +82,10 @@ export default class LiveStream extends Component {
             this.setState({
               fileChat : res.data.result
             })
+            
+            socket.on("broadcast", data => {
+              this.setState({ fileChat: [...this.state.files, res.data.result] })
+            });
           }
     
         })
@@ -138,9 +147,18 @@ export default class LiveStream extends Component {
     form.append('file', this.state.attachment);
     console.log(FormData, 'form data');
     API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
-      console.log(res, 'response')
+      console.log(res, 'response');
+      let splitTags;
+          let datas = res.data.result;
+          splitTags =  datas.attachment.split("/")[4];
+          datas.filenameattac = splitTags; 
       if(res.status === 200) {
-       
+        this.setState({ fileChat: [...this.state.fileChat, res.data.result] });
+        socket.emit('send', {
+          from: this.state.user.email,
+          room: this.state.classId,
+          message: this.state.attachment
+        })
       }
     })
   }
