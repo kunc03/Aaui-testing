@@ -42,6 +42,9 @@ export default class LiveStream extends Component {
   }
 
   componentDidMount() {
+    socket.on("broadcast", data => {
+      this.setState({ fileChat: [...this.state.fileChat, data] })
+    });
     this.fetchData();
     window.onbeforeunload = function() {
       return "Are you sure you want to leave?";
@@ -83,9 +86,7 @@ export default class LiveStream extends Component {
               fileChat : res.data.result
             })
             
-            socket.on("broadcast", data => {
-              this.setState({ fileChat: [...this.state.files, res.data.result] })
-            });
+            
           }
     
         })
