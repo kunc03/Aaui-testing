@@ -12,6 +12,7 @@ class Header extends Component {
     user: "Anonymous",
     level: "Member",
     avatar: "/assets/images/user/avatar-1.jpg",
+    notificationData : [],
 
     company: []
   };
@@ -101,7 +102,81 @@ class Header extends Component {
     ];
   
     let menuContent = [];
-    const { user, level, company } = this.state;
+    const { user, level, company, notificationData } = this.state;
+
+
+    let NotifBody = ({list}) => {
+      let unread = list.filter(x=> x.isread == '0');
+      let unclick = list.filter(x=> x.isread == '2');
+
+      return  (
+                  <ul className="noti-body">
+
+                  {
+                    unread.length 
+                    ? (<li className="n-title">
+                        <p className="m-b-0">NEW</p>
+                      </li>) +
+
+                      unread.map(item=>
+                     
+                      <li className="notification">
+                        <div className="media">
+                          <img
+                            className="img-radius"
+                            src="assets/images/user/avatar-1.jpg"
+                            alt="Generic placeholder image"
+                          />
+                          <div className="media-body">
+                            <p>
+                              <strong>John Doe</strong>
+                              <span className="n-time text-muted">
+                                <i className="icon feather icon-clock m-r-10" />
+                                {item.created_at}
+                              </span>
+                            </p>
+                            <p>{item.description}</p>
+                          </div>
+                        </div>
+                      </li>
+                      )
+                    : ''
+                  }
+
+                  {
+                    unread.length 
+                    ? (<li className="n-title">
+                        <p className="m-b-0">EARLIER</p>
+                      </li>) +
+
+                      unclick.map(item=>
+                     
+                      <li className="notification">
+                        <div className="media">
+                          <img
+                            className="img-radius"
+                            src="assets/images/user/avatar-1.jpg"
+                            alt="Generic placeholder image"
+                          />
+                          <div className="media-body">
+                            <p>
+                              <strong>John Doe</strong>
+                              <span className="n-time text-muted">
+                                <i className="icon feather icon-clock m-r-10" />
+                                {item.created_at}
+                              </span>
+                            </p>
+                            <p>{item.description}</p>
+                          </div>
+                        </div>
+                      </li>
+                      )
+                    : ''
+                  }
+
+                  </ul>);
+    }   
+
 
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
@@ -177,71 +252,11 @@ class Header extends Component {
                       <a href="javascript:">clear all</a>
                     </div>
                   </div>
-                  <ul className="noti-body">
-                    <li className="n-title">
-                      <p className="m-b-0">NEW</p>
-                    </li>
-                    <li className="notification">
-                      <div className="media">
-                        <img
-                          className="img-radius"
-                          src="assets/images/user/avatar-1.jpg"
-                          alt="Generic placeholder image"
-                        />
-                        <div className="media-body">
-                          <p>
-                            <strong>John Doe</strong>
-                            <span className="n-time text-muted">
-                              <i className="icon feather icon-clock m-r-10" />
-                              30 min
-                            </span>
-                          </p>
-                          <p>New ticket Added</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className="n-title">
-                      <p className="m-b-0">EARLIER</p>
-                    </li>
-                    <li className="notification">
-                      <div className="media">
-                        <img
-                          className="img-radius"
-                          src="assets/images/user/avatar-2.jpg"
-                          alt="Generic placeholder image"
-                        />
-                        <div className="media-body">
-                          <p>
-                            <strong>Joseph William</strong>
-                            <span className="n-time text-muted">
-                              <i className="icon feather icon-clock m-r-10" />
-                              30 min
-                            </span>
-                          </p>
-                          <p>Prchace New Theme and make payment</p>
-                        </div>
-                      </div>
-                    </li>
-                    <li className="notification">
-                      <div className="media">
-                        <img
-                          className="img-radius"
-                          src="assets/images/user/avatar-3.jpg"
-                          alt="Generic placeholder image"
-                        />
-                        <div className="media-body">
-                          <p>
-                            <strong>Sara Soudein</strong>
-                            <span className="n-time text-muted">
-                              <i className="icon feather icon-clock m-r-10" />
-                              30 min
-                            </span>
-                          </p>
-                          <p>currently login</p>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
+
+
+                  <NotifBody list={notificationData}/>
+
+
                   <div className="noti-footer">
                     <a href="javascript:">show all</a>
                   </div>
