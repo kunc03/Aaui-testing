@@ -123,11 +123,11 @@ export default class Forum extends Component {
 											</div>
 
 											<div className="forum-action">
-                        {item.kunci === 0 ? 
+                        {/* {item.kunci === 0 ? 
                           <i className="fa fa-star"></i>
                           :
-                          <Link to='#'><i className="fa fa-star"></i></Link>
-                        }
+                        } */}
+                        <Link to='#'><i className="fa fa-star"></i></Link>
 											
 												<Link to='#' style={{marginLeft: '10px'}}>
 													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar

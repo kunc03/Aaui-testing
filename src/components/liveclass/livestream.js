@@ -11,17 +11,26 @@ import TagsInput from 'react-tagsinput'
 
 import 'react-tagsinput/react-tagsinput.css'
 
+import Moment from 'react-moment';
 import JitsiMeetComponent from './livejitsi';
 
-import API, { API_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
+import io from 'socket.io-client';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect ganihhhhhhh");
+});
 
 export default class LiveStream extends Component {
 	state = {
     classId: this.props.match.params.roomid,
     user: {},
     classRooms: {},
-    
+    fileChat : [],
+    attachment: '',
+    isNotifikasi: false, 
+		isiNotifikasi:'',
     isInvite: false,
     emailInvite: [],
     emailResponse: 'Masukkan email yang ingin di invite.',
@@ -47,6 +56,11 @@ export default class LiveStream extends Component {
   }
 
   componentDidMount() {
+    socket.on("broadcast", data => {
+      if(data.room == this.state.classId) {
+        this.setState({ fileChat: [...this.state.fileChat, data] })
+      }
+    });
     this.fetchData();
     window.onbeforeunload = function() {
       return "Are you sure you want to leave?";
@@ -57,9 +71,7 @@ export default class LiveStream extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
-        console.log(liveClass,'asjkdaskjdkjashdkshaj');
-        
-                
+ 
         var data = liveClass.data.result
         /*mark api get new history course*/
         let form = {
@@ -81,13 +93,34 @@ export default class LiveStream extends Component {
         });
 
 
-        console.log('alsdlaksdklasjdlkasjdlk',form)
+       // console.log('alsdlaksdklasjdlkasjdlk',form)
         API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
 
         this.setState({ user: res.data.result, classRooms: liveClass.data.result })
       }
+    }).then(res=>{
+        console.log(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`,'siniii')
+        API.get(`${API_SERVER}/v1/liveclass/file/${this.state.classId}`).then(res => {
+          console.log(this.state.attachment, 'ini responseeee');
+          let splitTags;
+          let datas = res.data.result;
+          for(let a in datas){
+            splitTags =  datas[a].attachment.split("/")[4];
+            datas[a].filenameattac = splitTags; 
+          }
+          if(res.status === 200) {
+            this.setState({
+              fileChat : res.data.result
+            })
+            
+            
+          }
+    
+        })
     })
+      
   }
+
 
   onClickInvite = e => {
     e.preventDefault();
@@ -115,6 +148,49 @@ export default class LiveStream extends Component {
             emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
           });
         }
+      }
+    })
+  }
+
+  onChangeInput = (e) => {
+      const name = e.target.name;
+      console.log(e.target.files[0], 'attach')
+      if(name === 'attachment') {
+          if (e.target.files[0].size <= 500000) {
+              this.setState({ [name]: e.target.files[0] });
+          } else {
+              e.target.value = null;
+              this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+          }
+      } else {
+          this.setState({ [name]: e.target.value })
+      }
+  }
+
+  sendFileNew(){
+
+    let form = new FormData();
+    form.append('class_id', this.state.classId);
+    form.append('pengirim', String(this.state.user.user_id));
+    form.append('file', this.state.attachment);
+    console.log(FormData, 'form data');
+    API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
+      console.log(res, 'response');
+      
+      let splitTags;
+      let datas = res.data.result;
+      splitTags =  datas.attachment.split("/")[4];
+      datas.filenameattac = splitTags; 
+
+      if(res.status === 200) {
+        //this.setState({ fileChat: [...this.state.fileChat, res.data.result] });
+        socket.emit('send', {
+          pengirim: this.state.user.user_id,
+          room: this.state.classId,
+          attachment: this.state.attachment,
+          filenameattac: datas.filenameattac,
+          created_at: new Date()
+        })
       }
     })
   }
@@ -181,6 +257,44 @@ export default class LiveStream extends Component {
           </Col>
 
         </Row>
+
+        {/* CHATING SEND FILE */}
+        <div className='box-chat'>
+            
+            { this.state.fileChat.map((item, i)=>{
+              return (
+                <div className='box-chat-send-left'>
+                  <span className="m-b-5"><Link to='#'><b>{item.pengirim}</b></Link></span><br/>
+                  <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                  <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+                </div>
+              )
+            })}
+        </div>
+
+        <div className='box-chat-send p-20'>
+          <Row>
+            <Col sm={10}>
+              < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+              <input
+                type="file"
+                id="attachment"
+                name="attachment"
+                onChange={this.onChangeInput}
+              />
+            </Col>
+            <Col sm={2}>
+              <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
+                SEND
+              </Link>
+            </Col>
+
+          </Row>
+        </div>
+
+        {/*  */}
+
+        
 
         <Modal
           show={this.state.isInvite}

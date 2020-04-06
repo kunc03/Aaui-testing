@@ -48,7 +48,7 @@ export default class ForumDetail extends Component {
               
             if (res.status === 200) {
               if (!res.data.error) {
-                console.log('res: ', res.data);
+                //console.log('res: ', res.data);
                 
                   var data = res.data.result[0]
                   /*mark api get new history course*/
@@ -58,7 +58,7 @@ export default class ForumDetail extends Component {
                     description : data.title,
                     title : data.tags
                   }
-                  console.log('alsdlaksdklasjdlkasjdlk',form)
+                  //console.log('alsdlaksdklasjdlkasjdlk',form)
                   API.post(`${API_SERVER}v1/api-activity/new-forum`, form).then(console.log);
                   
                 this.setState({
@@ -132,6 +132,18 @@ export default class ForumDetail extends Component {
         .catch(err => console.log("ioOOIAOIs",err))
       }
 
+      starAdd(){
+        // console.log("res: fakakakakakakk", this.state.user_id);
+        // console.log('forum id', this.state.forumId);
+        API.post(`${FORUM}/add/`, {forum_id: this.state.forumId, user_id: this.state.user_id})
+        .then(res => {
+          console.log(res, 'responseeee')
+          //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+        })
+        .catch(err => console.log("ioOOIAOIs",err))
+      }
+      
+
 	render() {
         const item = {
 			judul: 'Judul 1', 
@@ -184,7 +196,7 @@ export default class ForumDetail extends Component {
                             className="forum-action"
                             style={{ marginTop: "30px" }}
                           >
-                            <Link to="#">
+                            <Link to="#"  onClick={this.starAdd.bind(this)}>
                               <i className="fa fa-star"></i>
                             </Link>
                             <Link to="#" style={{ marginLeft: "10px" }}>
