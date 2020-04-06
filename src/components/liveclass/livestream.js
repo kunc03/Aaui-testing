@@ -15,7 +15,9 @@ export default class LiveStream extends Component {
     classId: this.props.match.params.roomid,
     user: {},
     classRooms: {},
-    
+    attachment: '',
+        isNotifikasi: false, 
+    		isiNotifikasi:'',
     isInvite: false,
     emailInvite: '',
     emailResponse: 'Masukkan email yang ingin di invite.'
@@ -95,6 +97,36 @@ export default class LiveStream extends Component {
     })
   }
 
+  onChangeInput = (e) => {
+      const name = e.target.name;
+      console.log(e.target.files[0], 'attach')
+      if(name === 'attachment') {
+          if (e.target.files[0].size <= 500000) {
+              this.setState({ [name]: e.target.files[0] });
+          } else {
+              e.target.value = null;
+              this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+          }
+      } else {
+          this.setState({ [name]: e.target.value })
+      }
+  }
+
+  sendFileNew(){
+
+    let form = new FormData();
+    form.append('class_id ', this.state.classId);
+    form.append('pengirim', String(this.state.user.user_id));
+    form.append('file', this.state.attachment);
+    console.log(form, 'form data');
+    API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
+      console.log(res, 'response')
+      if(res.status === 200) {
+       
+      }
+    })
+  }
+
 	render() {
 
     const { classRooms, user } = this.state;
@@ -157,6 +189,36 @@ export default class LiveStream extends Component {
           </Col>
 
         </Row>
+
+        <div className='box-chat'>
+            <div className='box-chat-send-left'>
+              <span style={{marginBottom: '0rem !important' }}><Link to='#'><b>fikran.jabbar.pasha@gmail.com</b></Link></span><br/>
+              File : my doc.pdf
+              <p><small>12:22 PM</small></p>
+            </div>
+            
+        </div>
+        <div className='box-chat-send p-20'>
+          <Row>
+            <Col sm={10}>
+              < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+              <input
+                type="file"
+                id="attachment"
+                name="attachment"
+                onChange={this.onChangeInput}
+              />
+            </Col>
+            <Col sm={2}>
+              <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
+                SEND
+              </Link>
+            </Col>
+
+          </Row>
+        </div>
+
+        
 
         <Modal
           show={this.state.isInvite}

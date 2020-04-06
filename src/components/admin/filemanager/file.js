@@ -3,12 +3,45 @@ import ReactDOM from "react-dom";
 import { FileManager, FileNavigator } from "@opuscapita/react-filemanager";
 import connectorNodeV1 from "@opuscapita/react-filemanager-connector-node-v1";
 
+import API, { API_SERVER, API_SOCKET } from "../../../repository/api";
+import Storage from '../../../repository/storage';
+
+import io from 'socket.io-client';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  console.log("connect");
+});
+
 const apiOptions = {
   ...connectorNodeV1.apiOptions,
-  apiRoot: `http://localhost:4000` // Or you local Server Node V1 installation.
+  apiRoot: API_SERVER // Or you local Server Node V1 installation.
 };
 
 export default class FilePicker extends React.Component {
+
+  state = {
+    user: Storage.get('user').data.email,
+    files: []
+  }
+
+  componentDidMount() {
+    this.fetchSocket();
+  }
+
+  fetchSocket() {
+    socket.on("broadcast", data => {
+      this.setState({ files: [...this.state.files, data] })
+    });
+  }
+
+  onClickSendFile = e => {
+    e.preventDefault();
+    socket.emit('send', {
+      from: this.state.user,
+      room: 35,
+      message: 'file.txt'
+    })
+  }
 
   render() {
 
@@ -22,6 +55,15 @@ export default class FilePicker extends React.Component {
                   <div className="row">
                     <div className="col-xl-12">
                       <div style={{ height: "600px" }}>
+                        <button onClick={this.onClickSendFile} className="btn btn-sm btn-ideku">Send File</button>
+                        <ul>
+                        {
+                          this.state.files.map((item, i) => (
+                            <li><b>{item.from}</b><br/>{item.message}</li>
+                          ))
+                        }
+                        </ul>
+                        
                         <FileManager>
                           <FileNavigator
                             id="filemanager-1"

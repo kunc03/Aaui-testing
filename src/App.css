@@ -51,3 +51,67 @@
   background-position: center;
 }
 /* END */
+
+
+/* Create a simple white box, and add the shadow for the initial state */
+.box {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Create the hidden pseudo-element */
+/* include the shadow for the end state */
+/* .box-chat {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: opacity 0.3s ease-in-out;
+} */
+
+/* Scale up the box */
+/* .box-chat:hover {
+  transform: scale(1.2, 1.2);
+} */
+
+/* Fade in the pseudo-element with the bigger shadow */
+/* .box-chat:hover:after {
+  opacity: 1;
+} */
+
+.box-chat {
+  height: 50vh;
+  background-color: white;
+  width: 60vh;
+  /* margin-bottom: 5vh; */
+  border: 1px solid #d6d4d4;
+  overflow: auto;
+  /* box-shadow: -1px 1px 8px 0px; */
+}
+.box-chat-send {
+  /* height: 10vh; */
+  background-color: white;
+  width: 60vh;
+  margin-bottom: 5vh;
+  border: 1px solid #d6d4d4;
+  /* box-shadow: -1px 1px 8px 0px; */
+}
+.box-chat-send-left {
+  background-color: #f1f1f1;
+    /* float: left; */
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    
+}
+
+

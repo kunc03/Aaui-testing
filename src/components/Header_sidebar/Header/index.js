@@ -33,6 +33,20 @@ class Header extends Component {
     });
   }
 
+  goTo = (id) =>{
+    let data = this.state.notificationData.find(x=>x.id==id);
+    if(typeof data == 'object'){
+      API.get('v1/notification/read',{id:id}).then(res=>{
+        if(data.destination){
+          window.location = data.destination;
+        }
+      });
+    }
+
+
+
+  }
+
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
@@ -63,7 +77,11 @@ class Header extends Component {
           this.setState({level:'User'})
         }
       }
-    })
+    });
+
+    API.get(`${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`).then(res=>{
+      this.setState({notificationData:res.data.result})
+    });
 
     this.fetchCompany();
   }
@@ -120,7 +138,7 @@ class Header extends Component {
 
                       unread.map(item=>
                      
-                      <li className="notification">
+                      <li className="notification" onClick={()=>this.goTo(item.id)}>
                         <div className="media">
                           <img
                             className="img-radius"
@@ -151,7 +169,7 @@ class Header extends Component {
 
                       unclick.map(item=>
                      
-                      <li className="notification">
+                      <li className="notification" onClick={()=>this.goTo(item.id)}>
                         <div className="media">
                           <img
                             className="img-radius"
