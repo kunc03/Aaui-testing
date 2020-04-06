@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import API, { API_SERVER } from '../../../repository/api';
+import ToggleSwitch from "react-switch";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class UserAdd extends Component {
 
@@ -14,6 +18,8 @@ class UserAdd extends Component {
     address: "",
     password: "",
     level: "",
+    unlimited:false,
+    validity:new Date(),
 
     listCompany: [],
     listBranch: [],
@@ -23,6 +29,17 @@ class UserAdd extends Component {
     responseEmail: '',
     responsePhone: '' 
   };
+
+  
+  handleChangeValidity = date => {
+    this.setState({
+      validity: date
+    });
+  };
+
+  toggleSwitch(checked) {
+    this.setState({ unlimited:!this.state.unlimited });
+  }
 
   onChangeInput = (event) => {
     const target = event.target;
@@ -44,6 +61,7 @@ class UserAdd extends Component {
 
   submitForm = e => {
     e.preventDefault();
+    let unlimited = this.state.unlimited == false ? '1' : '0'
     const formData = {
       company_id: this.state.company_id,
       branch_id: this.state.branch_id,
@@ -55,7 +73,9 @@ class UserAdd extends Component {
       address: this.state.address,
       password: this.state.password,
       level: this.state.level,
-      status: 'active'
+      status: 'active',
+      unlimited: unlimited,
+      validity: this.state.validity.toISOString().split('T')[0]
     };
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
@@ -70,6 +90,7 @@ class UserAdd extends Component {
   };
 
   componentDidMount() {
+    console.log('STATESS',this.state)
     API.get(`${API_SERVER}v1/company`).then(res => {
       if(res.status === 200) {
         this.setState({ listCompany: res.data.result })
@@ -198,6 +219,33 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
+                            
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Batasi Waktu
+                              </label>
+                              <div style={{width:'100%'}}>
+                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              </div>
+
+                            </div>
+                            {
+                              this.state.unlimited &&
+                              <div className="form-group">
+                                <label className="label-input" htmlFor>
+                                  Valid Until
+                                </label>
+                                <div style={{width:'100%'}}>
+                                      <DatePicker
+                                        selected={this.state.validity}
+                                        onChange={this.handleChangeValidity}
+                                        showTimeSelect
+                                        dateFormat="yyyy-MM-dd"
+                                      />
+                                </div>
+              
+                              </div>
+                            }
                             <div style={{marginTop: '50px'}}>
                             {
                               this.state.responseMessage && 

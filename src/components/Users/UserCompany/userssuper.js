@@ -179,7 +179,7 @@ export default class User extends Component {
           <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
-          <td>{item.validity}</td>
+          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
           <td class="text-center">
             <Link
               to="#"

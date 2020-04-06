@@ -162,6 +162,7 @@ export default class User extends Component {
           <td>{item.email}</td>
           <td>{item.voucher}</td>
           <td>{item.phone}</td>
+          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
               <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
@@ -216,6 +217,7 @@ export default class User extends Component {
                               <th>Email</th>
                               <th>Voucher</th>
                               <th>Phone</th>
+                              <th>Validity</th>
                               <th className="text-center">
                                 <Link
                                   to='/user-create'

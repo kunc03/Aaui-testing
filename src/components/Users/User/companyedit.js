@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Form } from 'react-bootstrap'
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import ToggleSwitch from "react-switch";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class UserEdit extends Component {
 
@@ -20,6 +24,8 @@ class UserEdit extends Component {
     address: "",
     level: "",
     password: "",
+    unlimited:false,
+    validity:"",
 
     listCompany: [],
     listBranch: [],
@@ -29,13 +35,25 @@ class UserEdit extends Component {
     responseMessage: '', 
   }
 
+  handleChangeValidity = date => {
+    this.setState({
+      validity: date
+    });
+  };
+
+  toggleSwitch(checked) {
+    this.setState({ unlimited:!this.state.unlimited });
+  }
   onSubmitEditUser = e => {
     e.preventDefault();
+    let unlimited = this.state.unlimited == false ? '1' : '0'
     let formData = {
       company_id: this.state.company_id, branch_id: this.state.branch_id, grup_id: this.state.grup_id,
       identity: this.state.identity, name: this.state.name, email: this.state.email,
       phone: this.state.phone, address: this.state.address, level: this.state.level,
-      status: 'active'
+      status: 'active',
+      unlimited: unlimited,
+  		validity: this.state.validity.toString().substring(0,10),
     };
 
 
@@ -93,6 +111,7 @@ class UserEdit extends Component {
   componentDidMount() {
     API.get(`${API_SERVER}v1/user/${this.state.user_id}`).then(res => {
       if(res.status === 200) {
+        let unlimited = res.data.result.unlimited == 0 ? true : false;
         this.setState({ 
           user: res.data.result,
           company_id: res.data.result.company_id,
@@ -103,7 +122,9 @@ class UserEdit extends Component {
           email: res.data.result.email,
           phone: res.data.result.phone,
           address: res.data.result.address,
-          level: res.data.result.level
+          level: res.data.result.level,
+          unlimited: unlimited,
+					validity: res.data.result.validity,
         });
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
@@ -125,6 +146,10 @@ class UserEdit extends Component {
   }
 
   render() {
+    let validityUser = "";
+    if (this.state.validity !== "") {
+      validityUser = new Date(this.state.validity);
+    }
     const levelUser = this.state.listLevel;
 
     return (
@@ -242,6 +267,31 @@ class UserEdit extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
+                            <div className="form-group">
+                              <label className="label-input" htmlFor>
+                                Batasi Waktu
+                              </label>
+                              <div style={{width:'100%'}}>
+                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              </div>
+
+                            </div>
+                            {
+                              this.state.unlimited &&
+                              <div className="form-group">
+                                <label className="label-input" htmlFor>
+                                  Valid Until
+                                </label>
+                                <div style={{width:'100%'}}>
+                                      <DatePicker
+                                        selected={validityUser}
+                                        onChange={this.handleChangeValidity}
+                                        dateFormat="yyyy-MM-dd"
+                                      />
+                                </div>
+              
+                              </div>
+                            }
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                               Simpan
                             </button>
