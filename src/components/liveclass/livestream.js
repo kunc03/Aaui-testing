@@ -259,12 +259,15 @@ export default class LiveStream extends Component {
         </Row>
 
         {/* CHATING SEND FILE */}
+        <h3 className="f-20 f-w-800">
+          File Sharing
+        </h3>
         <div className='box-chat'>
             
             { this.state.fileChat.map((item, i)=>{
               return (
                 <div className='box-chat-send-left'>
-                  <span className="m-b-5"><Link to='#'><b>{item.pengirim}</b></Link></span><br/>
+                  <span className="m-b-5"><Link to='#'><b>{item.name}</b></Link></span><br/>
                   <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
                   <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
                 </div>
