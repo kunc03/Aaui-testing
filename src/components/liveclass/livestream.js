@@ -113,12 +113,11 @@ export default class LiveStream extends Component {
   }
 
   sendFileNew(){
-   
-    let form = {
-      class_id : this.state.classId,
-      pengirim: String(this.state.user.user_id),
-      file: this.state.attachment
-    }
+
+    let form = new FormData();
+    form.append('class_id ', this.state.classId);
+    form.append('pengirim', String(this.state.user.user_id);
+    form.append('file', this.state.attachment);
     console.log(form, 'form data');
     API.post(`${API_SERVER}/v1/liveclass/file`, form).then(res => {
       console.log(res, 'response')
