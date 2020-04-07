@@ -9,6 +9,7 @@ import 'react-calendar/dist/Calendar.css';
 import RiwayatKursus from './riwayatkursus';
 import RiwayatForum from './riwayatforum';
 import RiwayatLiveClass from './riwayatliveclass';
+import { Doughnut } from 'react-chartjs-2';
 
 const tabs =[
   {title : 'Riwayat Kursus' },
@@ -132,6 +133,27 @@ class Aktivity extends Component {
 
   render() {
 
+    const data = {
+      labels: [
+        'Kursus',
+        'Forum',
+        'Meeting'
+      ],
+      datasets: [{
+        data: [300, 50, 100],
+        backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56'
+        ],
+        hoverBackgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56'
+        ]
+      }]
+    };
+
     console.log('user: ', this.state.user);
     var { recentClass, recentCourse, recentForum, recentLogin} = this.state
     console.log({ recentClass, recentCourse, recentForum, recentLogin},'2342');
@@ -205,13 +227,17 @@ class Aktivity extends Component {
 
                 <div className="row">
                     <div className="col-md-12 col-xl-7">
-                      <div className="card">
-                        <h4 className="p-10">Waktu Di IDEKU</h4>
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">Jumlah kegiatan 10 hari terakhir</h4>
                         <div
                           className="chart-container"
                           style={{ position: "relative" }}
                         >
-                          <canvas id="canvas" />
+                          <Doughnut
+                            data={data}
+                            height={320}
+                            options={{ maintainAspectRatio: false }}
+                          />
                         </div>
                           
                       </div>
