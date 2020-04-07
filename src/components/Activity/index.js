@@ -26,6 +26,9 @@ class Aktivity extends Component {
         registered: '2019-12-09',
         companyId: '',
       },
+      companyName:'',
+      branchName:'',
+      groupName:'',
       kategoriKursus: [],
       kursusTerbaru: [],
       kursusDiikuti: [],
@@ -61,6 +64,22 @@ class Aktivity extends Component {
           }
         });
         this.setState({ user: res.data.result});
+        API.get(`${API_SERVER}v1/company/${res.data.result.company_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ companyName: res.data.result.company_name });
+          }
+        });
+        API.get(`${API_SERVER}v1/branch/${res.data.result.branch_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ branchName: res.data.result.branch_name });
+          }
+        });
+        API.get(`${API_SERVER}v1/grup/${res.data.result.grup_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ groupName: res.data.result.grup_name });
+            console.log('states',res.data.result)
+          }
+        });
       }
     })
   }
@@ -158,18 +177,18 @@ class Aktivity extends Component {
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
                             <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
-                              Company 
+                              Company
                             </small>
-                              {/* <a href="/aktivitas">8</a> */}
+                              <a href="/aktivitas">{this.state.companyName}</a>
                         </div>
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
                         <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-left">
                             <img src="/assets/images/component/liveon.png" className="img-fluid" alt="cover" />
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
-                              Group 
+                              Group
                             </small>
-                              {/* <a href="/aktivitas">8</a> */}
+                              <a href="/aktivitas">{this.state.branchName}</a>
                         </div>
                       </div>
                       <div className="col-xl-2" style={{ borderLeft: "#dedede solid 1px" }}>
@@ -178,7 +197,7 @@ class Aktivity extends Component {
                             <small className="d-block text-c-grey f-w-600 f-14 m-t-10">
                               Role
                             </small>
-                              {/* <a href="/aktivitas">8</a> */}
+                              <a href="/aktivitas">{this.state.groupName}</a>
                         </div>
                       </div>
                     </div>
