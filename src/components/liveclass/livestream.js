@@ -43,10 +43,10 @@ export default class LiveStream extends Component {
     this.setState({emailInvite})
   }
 
-  handleCloseInvite = e => {
+  handleCloseInvite = e =>{
     this.setState({
       isInvite: false,
-      emailInvite: "",
+      emailInvite: [],
       emailResponse: "Masukkan email yang ingin di invite."
     });
   }
@@ -132,6 +132,12 @@ export default class LiveStream extends Component {
     let form = {
       user: Storage.get('user').data.user,
       email: this.state.emailInvite,
+      room_name: this.state.classRooms.room_name,
+      is_private: this.state.classRooms.is_private,
+      is_scheduled: this.state.classRooms.is_scheduled,
+      schedule_start: this.state.classRooms.schedule_start,
+      schedule_end: this.state.classRooms.schedule_end,
+      userInvite: this.state.valueInvite,
       message: window.location.href
     }
 
@@ -140,13 +146,16 @@ export default class LiveStream extends Component {
         if(!res.data.error) {
           this.setState({
             isInvite: false,
-            emailInvite: "",
+            emailInvite: [],
+            valueInvite: [],
             emailResponse: res.data.result
           });
+          console.log('RESS SUKSES',res)
         } else {
           this.setState({
             emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
           });
+          console.log('RESS GAGAL',res)
         }
       }
     })

@@ -3,6 +3,8 @@ import { Link, Switch, Route } from "react-router-dom";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
+// import Moment from "react-moment";
+import Moment from 'moment-timezone';
 
 import ToggleSwitch from "react-switch";
 
@@ -139,16 +141,20 @@ export default class LiveClassAdmin extends Component {
         }
       })
     } else {
+      let isPrivate = this.state.private == true ? 1 : 0;
+      let isScheduled = this.state.scheduled == true ? 1 : 0;
+      let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let form = {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
         speaker: this.state.speaker,
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
-        is_private: this.state.private,
-        is_scheduled: this.state.scheduled,
-        schedule_start: this.state.startDate,
-        schedule_end: this.state.endDate,
+        is_private: isPrivate,
+        is_scheduled: isScheduled,
+        schedule_start: startDateJkt,
+        schedule_end: endDateJkt,
         peserta: this.state.valuePeserta
       }
 
@@ -184,7 +190,16 @@ export default class LiveClassAdmin extends Component {
     const classId = e.target.getAttribute('data-id');
     const speaker = e.target.getAttribute('data-speaker');
     const roomName = e.target.getAttribute('data-roomname');
-    this.setState({ isClassModal: true, classId: classId, speaker: speaker, roomName: roomName })
+    const isprivate = e.target.getAttribute('data-isprivate');
+    const isscheduled = e.target.getAttribute('data-isscheduled');
+    this.setState({
+      isClassModal: true,
+      classId: classId,
+      speaker: speaker,
+      roomName: roomName,
+      private: isprivate == 1 ? true : false,
+      scheduled: isscheduled == 1 ? true : false,
+    })
   }
 
   onSubmitLock = e => {
@@ -225,7 +240,13 @@ export default class LiveClassAdmin extends Component {
                 </small>
 
                 <Link className="mr-3" data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>{item.is_live ? 'lock' : 'unlock'}</Link>
-                <Link className="mr-3" data-id={item.class_id} data-speaker={item.speaker} data-roomname={item.room_name} onClick={this.onClickEdit}>edit</Link>
+                <Link className="mr-3"
+                  data-id={item.class_id}
+                  data-speaker={item.speaker}
+                  data-roomname={item.room_name}
+                  data-isprivate={item.is_private} 
+                  data-isscheduled={item.is_scheduled} 
+                  onClick={this.onClickEdit}>edit</Link>
                 <Link className="mr-3" data-id={item.class_id} onClick={this.onSubmitDelete}>hapus</Link>
               </div>
             </div>
@@ -479,14 +500,14 @@ export default class LiveClassAdmin extends Component {
                             selected={this.state.startDate}
                             onChange={this.handleChangeDateFrom}
                             showTimeSelect
-                            dateFormat="dd-MM-yyyy HH:mm"
+                            dateFormat="yyyy-MM-dd HH:mm"
                           />
                           &nbsp;&mdash;&nbsp;
                           <DatePicker
                             selected={this.state.endDate}
                             onChange={this.handleChangeDateEnd}
                             showTimeSelect
-                            dateFormat="dd-MM-yyyy HH:mm"
+                            dateFormat="yyyy-MM-dd HH:mm"
                           />
                           </div>
                           <Form.Text className="text-muted">
