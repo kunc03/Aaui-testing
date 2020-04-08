@@ -30,6 +30,7 @@ class Aktivity extends Component {
       companyName:'',
       branchName:'',
       groupName:'',
+      chartData:'',
       kategoriKursus: [],
       kursusTerbaru: [],
       kursusDiikuti: [],
@@ -79,6 +80,11 @@ class Aktivity extends Component {
           if(res.status === 200) {
             this.setState({ groupName: res.data.result.grup_name });
             console.log('states',res.data.result)
+          }
+        });
+        API.get(`${API_SERVER}v1/user/activity/${res.data.result.grup_id}`).then(res => {
+          if(res.status === 200) {
+            this.setState({ chartData: res.data.result });
           }
         });
       }
@@ -140,7 +146,7 @@ class Aktivity extends Component {
         'Meeting'
       ],
       datasets: [{
-        data: [300, 50, 100],
+        data: [this.state.chartData.total_enroll_course, this.state.chartData.total_reply_forum, this.state.chartData.total_meeting],
         backgroundColor: [
         '#FF6384',
         '#36A2EB',
