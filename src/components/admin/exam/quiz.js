@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import LoadingOverlay from 'react-loading-overlay';
 
 export default class QuizList extends Component {
 	
@@ -20,6 +21,7 @@ export default class QuizList extends Component {
 		examRandom: '0',
 		examPublish: '1',
 		quizAt: '0',
+		isLoading:false,
 
 		isModalDelete: false,
 		quizId: '',
@@ -141,12 +143,14 @@ export default class QuizList extends Component {
 		let formData = new FormData();
 		formData.append('exam_id', this.state.importId);
 		formData.append('excel', this.state.importFile);
+		this.closeImportPertanyaan();
+		this.setState({isLoading : true});
 
 		API.post(`${API_SERVER}v1/question/import`, formData).then(res => {
 			console.log('res: ', res.data)
 			if(res.status === 200 && !res.data.error) {
 				this.fetchData();
-				this.closeImportPertanyaan();
+				this.setState({isLoading:false});
 			}
 		})
 	}
@@ -250,7 +254,7 @@ export default class QuizList extends Component {
 					              </div>
 					              <div className="col-xl-2 col-md-12 text-right">
 													<Link to="#" className="buttonku" title="Import Pertanyaan">
-				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-download"></i>
+				          					<i onClick={this.importPertanyaan} data-id={item.exam_id} className="fa fa-upload"></i>
 				        					</Link>
 					              	<Link to={`/question-quiz/${item.exam_id}.${this.state.courseId}`} className="buttonku" title="Buat Pertanyaan">
 				          					<i data-id={item.exam_id} className="fa fa-plus"></i>
@@ -300,6 +304,11 @@ export default class QuizList extends Component {
 		};
 
 		return (
+	<LoadingOverlay
+			active={this.state.isLoading}
+			spinner
+			text='Importing...'
+			>
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -522,6 +531,7 @@ export default class QuizList extends Component {
           </div>
         </div>
       </div>
+	</LoadingOverlay>
     );
 	}
 }

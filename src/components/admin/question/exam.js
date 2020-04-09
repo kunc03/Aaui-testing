@@ -10,6 +10,7 @@ export default class QuestionExam extends Component {
     companyId: '',
     courseId: this.props.match.params.exam_id.split('.')[1],
     examId: this.props.match.params.exam_id.split('.')[0],
+    isLoading:true,
 
     question: [],
 
@@ -45,7 +46,7 @@ export default class QuestionExam extends Component {
         API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
             console.log(res.data.result)
-            this.setState({ question: res.data.result })
+            this.setState({ question: res.data.result, isLoading:false })
           }
         })
       }
@@ -111,10 +112,10 @@ export default class QuestionExam extends Component {
                       <div className="row align-items-center justify-content-center">
                         <div className="col">
                           <small className="f-w-600 f-16 text-c-grey-t ">
-                            Tidak ada pertanyaan
+                            { this.state.isLoading ? 'Loading...' : 'Tidak ada pertanyaan'}
                           </small>
                           <h5 className="f-w-bold f-20 text-c-purple3">
-                            Silahkan buat pertanyaan Anda
+                            { this.state.isLoading ? 'Sedang memuat data soal...' : 'Silahkan buat pertanyaan Anda'}
                           </h5>
                         </div>
                       </div>
