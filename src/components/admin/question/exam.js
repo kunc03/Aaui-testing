@@ -13,6 +13,7 @@ export default class QuestionExam extends Component {
     isLoading:true,
 
     question: [],
+    cekAll : false,
 
     isModalDelete: false,
     questionId: '',
@@ -57,6 +58,20 @@ export default class QuestionExam extends Component {
     this.fetchData()
   }
 
+  onChangeCheckbox(e) {
+    //console.log(document.getElementById("ceked").checked,'cek semuaa');
+    switch (e){
+      case "all":
+            let value = document.getElementById("ceked").checked;
+            if (value) return this.setState({cekAll: true});
+            this.setState({cekAll: false});
+        break;
+      case "per":
+          
+        break;
+    }
+  }
+
   render() {
     const {question} = this.state;
 
@@ -69,13 +84,19 @@ export default class QuestionExam extends Component {
                 <Card style={{marginBottom: '10px'}} key={item.question_id}>
                   <Accordion.Toggle as={Card.Header} variant="link" eventKey={item.question_id}>
                     <div className="row">
-                      <div className="col-xl-1 col-md-12">
+                      <div className="col-sm-1">
+                          <label class="container">
+                            <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'per')} checked={this.state.cekAll} value={this.state.cekAll}/>
+                            <span class="checkmark"></span>
+                          </label>
+                      </div>
+                      <div className="col-sm-1">
                         <h3 className="f-w-bold f-20 text-c-purple3">{item.number}</h3>
                       </div>
-                      <div className="col-xl-9">
+                      <div className="col-sm-9">
                         <p className="f-w-bold f-18 text-c-purple3">{item.question.toString().substring(0, 60)}</p>
                       </div>
-                      <div className="col-xl-2">
+                      <div className="col-sm-1">
                         <Link to={`/question-quiz-edit/${item.question_id}`} className="buttonku" title="Edit">
                           <i data-id={item.question_id} className="fa fa-edit"></i>
                         </Link>
@@ -156,6 +177,17 @@ export default class QuestionExam extends Component {
                         &nbsp;Pertanyaan Ujian
                       </h3>
 
+                    </div>
+                    <div className="col-sm-6">
+                      <div style={{padding: '10px',margin: '10px 0px 0px 15px'}}>
+                        <label class="container"> &nbsp; <small>Pilih Semua</small>
+                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'all')} value={false}/>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                    
                       <a
                         href={`/question-exam-create/${this.state.examId}.${this.state.courseId}`}
                         className="btn btn-ideku f-14 float-right mb-3"
@@ -170,7 +202,17 @@ export default class QuestionExam extends Component {
                           alt=""
                         />
                         Tambah Baru
-                      </a>
+                      </a>  
+                      <a
+                        href='javascript:'
+                        className="btn btn-ideku f-14 float-right mb-3 m-r-5"
+                        style={{
+                          padding: "7px 25px !important",
+                          color: "white"
+                        }}
+                      >
+                        Bulk Delete
+                      </a>  
                     </div>
 
                     <div className="col-xl-12">
