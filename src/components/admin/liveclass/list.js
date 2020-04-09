@@ -3,7 +3,7 @@ import { Link, Switch, Route } from "react-router-dom";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-// import Moment from "react-moment";
+// import moment from "react-moment";
 import Moment from 'moment-timezone';
 
 import ToggleSwitch from "react-switch";
@@ -166,14 +166,16 @@ export default class LiveClassAdmin extends Component {
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
           if (res.data.result.is_private == 1){
+            let start = new Date(res.data.result.schedule_start);
+            let end = new Date(res.data.result.schedule_end);
             let form = {
               user: Storage.get('user').data.user,
               email: [],
               room_name: res.data.result.room_name,
               is_private: res.data.result.is_private,
               is_scheduled: res.data.result.is_scheduled,
-              schedule_start: res.data.result.schedule_start,
-              schedule_end:  res.data.result.schedule_end,
+              schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+              schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
               message: 'https://icademy.id/liveclass-room/'+res.data.result.class_id
             }
