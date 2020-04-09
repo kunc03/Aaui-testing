@@ -135,7 +135,6 @@ export default class LiveClassAdmin extends Component {
             formData.append('cover', this.state.cover);
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
-
           this.fetchData();
           this.closeClassModal();
         }
@@ -166,7 +165,28 @@ export default class LiveClassAdmin extends Component {
             formData.append('cover', this.state.cover);
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
-
+          if (res.data.result.is_private == 1){
+            let form = {
+              user: Storage.get('user').data.user,
+              email: [],
+              room_name: res.data.result.room_name,
+              is_private: res.data.result.is_private,
+              is_scheduled: res.data.result.is_scheduled,
+              schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+              schedule_end:  Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+              userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
+              message: 'https://icademy.id/liveclass-room/'+res.data.result.class_id
+            }
+            API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+              if(res.status === 200) {
+                if(!res.data.error) {
+                  console.log('RESS SUKSES',res)
+                } else {
+                  console.log('RESS GAGAL',res)
+                }
+              }
+            })
+          }
           this.fetchData();
           this.closeClassModal();
         }
