@@ -39,6 +39,7 @@ class Aktivity extends Component {
       recentForum: [],
       recentLogin: [],
       today : '',
+      calendarItems:[],
       loading:true
     }
     this.tabAktivitas = this.tabAktivitas.bind(this)
@@ -48,6 +49,7 @@ class Aktivity extends Component {
     this.fetchDataUser();
     this.fetchHistoryActivity(Storage.get('user').data.user_id);
     this.fetchDataKursusDiikuti();
+    this.fetchUserCalendar();
     console.log('RECENTS DID',this.state.recentCourse)
     let date = new Date();
     console.log(String(date));
@@ -113,6 +115,14 @@ class Aktivity extends Component {
         this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
       }
     })
+  }
+
+  fetchUserCalendar(){
+    API.get(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ calendarItems: res.data.result })
+      }
+    })    
   }
 
   tabAktivitas(a,b){
