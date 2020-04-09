@@ -172,8 +172,8 @@ export default class LiveClassAdmin extends Component {
               room_name: res.data.result.room_name,
               is_private: res.data.result.is_private,
               is_scheduled: res.data.result.is_scheduled,
-              schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-              schedule_end:  Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+              schedule_start: res.data.result.schedule_start,
+              schedule_end:  res.data.result.schedule_end,
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
               message: 'https://icademy.id/liveclass-room/'+res.data.result.class_id
             }
