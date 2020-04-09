@@ -54,12 +54,16 @@ export default class LiveClass extends Component {
 	}
 
 	fetchData() {
+		let invited = [];
+		let not_invited = [];
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
 			if (res.status === 200) {
 				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-				API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
+				API.get(`${API_SERVER}v1/liveclass/invite/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}/${Storage.get('user').data.user_id}`).then(res => {
 					if(res.status === 200) {
-						this.setState({ classRooms: res.data.result.reverse() })
+						not_invited = res.data.not_invited.reverse();
+						invited = res.data.invited.reverse();
+						this.setState({ classRooms: invited.concat(not_invited) })
 					}
 				})
 			}

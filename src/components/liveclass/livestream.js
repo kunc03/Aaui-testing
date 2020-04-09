@@ -12,6 +12,7 @@ import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 
 import Moment from 'react-moment';
+import MomentTZ from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
 
 import API, { API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
@@ -135,8 +136,8 @@ export default class LiveStream extends Component {
       room_name: this.state.classRooms.room_name,
       is_private: this.state.classRooms.is_private,
       is_scheduled: this.state.classRooms.is_scheduled,
-      schedule_start: this.state.classRooms.schedule_start,
-      schedule_end: this.state.classRooms.schedule_end,
+      schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      schedule_end:  MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       userInvite: this.state.valueInvite,
       message: window.location.href
     }
