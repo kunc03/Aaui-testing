@@ -177,7 +177,7 @@ export default class LiveClassAdmin extends Component {
               schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
               schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
-              message: 'https://icademy.id/liveclass-room/'+res.data.result.class_id
+              message: 'https://app.icademy.id/liveclass-room/'+res.data.result.class_id
             }
             API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
               if(res.status === 200) {
