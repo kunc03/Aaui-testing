@@ -159,17 +159,6 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
-                            <div className="form-group">
-                              <label className="label-input">Nomor Induk</label>
-                              <input
-                                type="text"
-                                required
-                                name="identity"
-                                className="form-control"
-                                placeholder="210-1971-74"
-                                onChange={this.onChangeInput}
-                              />
-                            </div>
                             
                             <div className="form-group">
                               <label className="label-input">Email</label>
