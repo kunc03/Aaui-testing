@@ -60,6 +60,7 @@ export default class LiveClass extends Component {
 			if (res.status === 200) {
 				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 				API.get(`${API_SERVER}v1/liveclass/invite/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}/${Storage.get('user').data.user_id}`).then(res => {
+					console.log('RESSS',res)
 					if(res.status === 200) {
 						not_invited = res.data.not_invited.reverse();
 						invited = res.data.invited.reverse();
