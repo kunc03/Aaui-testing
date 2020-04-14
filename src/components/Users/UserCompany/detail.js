@@ -84,7 +84,7 @@ export default class CompanyDetail extends Component {
     const name = target.name;
 
     if(name === 'logo') {
-			if(target.files[0].size <= 50000) {
+			if(target.files[0].size <= 500000) {
 				this.setState({ tempLogo: target.files[0] });
 			} else {
 				target.value = null;
