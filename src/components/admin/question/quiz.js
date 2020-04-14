@@ -70,7 +70,7 @@ export default class QuestionQuiz extends Component {
 		this.fetchData()
   }
   
-  onChangeCheckbox(e) {
+  onChangeAllCheckbox(e) {
     //console.log(document.getElementById("ceked").checked,'cek semuaa');
     let value = document.getElementById("ceked").checked;
     
@@ -241,7 +241,7 @@ export default class QuestionQuiz extends Component {
                     <div className="col-sm-6">
                       <div style={{padding: '10px',margin: '10px 0px 0px 15px'}}>
                         <label class="container"> &nbsp; <small>Pilih Semua</small>
-                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this)} value={false}/>
+                          <input id="ceked" type="checkbox" onChange={this.onChangeAllCheckbox.bind(this)} value={false}/>
                           <span class="checkmark"></span>
                         </label>
                       </div>
