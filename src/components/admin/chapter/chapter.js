@@ -4,6 +4,7 @@ import { Modal, Form, Card, Badge, Accordion } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
+import LoadingOverlay from 'react-loading-overlay';
 
 import ReactPlayer from 'react-player';
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
@@ -35,6 +36,7 @@ export default class ChapterPreview extends Component {
     isiNotifikasi: '',
 
 		isLocalSteps: false,
+		isLoading:false,
 		steps: [
 			{
 				target: '.buat-chapter',
@@ -60,11 +62,18 @@ export default class ChapterPreview extends Component {
   }
 
 	onChangeInput = e => {
+    const target = e.target;
 		const name = e.target.name;
 		const value = e.target.value;
 
 		if(name === 'chapterVideo' || name === 'thumbnail') {
-			this.setState({ [name]: e.target.files[0] });
+      if (target.files[0].size <= 20000000) {
+        this.setState({ [name]: target.files[0] });
+      } else {
+        target.value = null;
+        this.closeNotifikasi()
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      }
 		} else if (name === 'attachmentId') {
       this.setState({ [name]: e.target.files });
     } else {
@@ -112,10 +121,12 @@ export default class ChapterPreview extends Component {
 			if(this.state.chapterVideo !== "") {
 				let form = new FormData();
 				form.append('chapter_video', this.state.chapterVideo);
+        this.handleModalClose();
+        this.setState({isLoading : true});
 				API.put(`${API_SERVER}v1/chapter/video/${this.state.chapterId}`, form).then(res => {
 					if(res.status === 200){
-						this.handleModalClose();
 						this.fetchDataChapter();
+            this.setState({isLoading : false});
 					}
 				})				
       }
@@ -159,6 +170,8 @@ export default class ChapterPreview extends Component {
         form.append('chapter_video', this.state.chapterVideo);
         form.append('attachment_id', null);
   
+        this.handleModalClose()
+        this.setState({isLoading : true});
         API.post(`${API_SERVER}v1/chapter`, form).then(res => {
           if(res.status === 200){
             
@@ -183,8 +196,8 @@ export default class ChapterPreview extends Component {
               });
             }
   
-            this.handleModalClose()
             this.fetchDataChapter()
+            this.setState({isLoading : false});
           }
         })
       } else {
@@ -462,6 +475,11 @@ export default class ChapterPreview extends Component {
 		const dateFormat = new Date(course.created_at);
 
 		return (
+	<LoadingOverlay
+			active={this.state.isLoading}
+			spinner
+			text='Uploading...'
+			>
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -794,6 +812,7 @@ export default class ChapterPreview extends Component {
           </div>
         </div>
       </div>
+    </LoadingOverlay>
     );
 	}
 

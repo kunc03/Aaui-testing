@@ -4,6 +4,7 @@ import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
+import LoadingOverlay from 'react-loading-overlay';
 
 export default class KursusMateriAdd extends Component {
 
@@ -29,6 +30,7 @@ export default class KursusMateriAdd extends Component {
     
     isNotifikasi: false,
     isiNotifikasi: '',
+		isLoading:false,
   }
   
   closeNotifikasi = e => {
@@ -161,6 +163,7 @@ export default class KursusMateriAdd extends Component {
   	form.append('image', this.state.image);
   	form.append('user_id', Storage.get('user').data.user_id);
 
+		this.setState({isLoading : true});
   	API.post(`${API_SERVER}v1/course`, form).then(res => {
   		if(res.status === 200) {
         if(this.state.thumbnail) {
@@ -169,6 +172,7 @@ export default class KursusMateriAdd extends Component {
           API.put(`${API_SERVER}v1/course/thumbnail/${res.data.result.course_id}`, formData);
         }
   			this.props.history.push('/kursus-materi');
+        this.setState({isLoading : false});
   		}
   	})
   }
@@ -185,6 +189,11 @@ export default class KursusMateriAdd extends Component {
     const { kategori } = this.state;
 
 		return (
+	<LoadingOverlay
+			active={this.state.isLoading}
+			spinner
+			text='Uploading...'
+			>
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -478,6 +487,7 @@ export default class KursusMateriAdd extends Component {
           </div>
         </div>
       </div>
+    </LoadingOverlay>
     );
 	}
 }
