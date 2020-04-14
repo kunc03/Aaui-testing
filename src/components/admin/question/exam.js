@@ -60,17 +60,42 @@ export default class QuestionExam extends Component {
 
   onChangeCheckbox(e) {
     //console.log(document.getElementById("ceked").checked,'cek semuaa');
-    switch (e){
-      case "all":
-            let value = document.getElementById("ceked").checked;
-            if (value) return this.setState({cekAll: true});
-            this.setState({cekAll: false});
-        break;
-      case "per":
-          
-        break;
+    let value = document.getElementById("ceked").checked;
+    
+    for(let a in this.state.question){
+      //return console.log(this.state.question[a])
+      if (value){
+        this.state.question[a].check = true;
+        this.setState({question: this.state.question});
+      } else {
+        this.state.question[a].check = false;
+        this.setState({question: this.state.question});
+      }
     }
   }
+
+  handleChecked = e => {
+    const checkboxId = Number(e.target.id);
+    let value = document.getElementById(checkboxId).checked;
+    console.log(value);
+
+    for(let a in this.state.question){
+      //console.log(this.state.question[a].question_id, checkboxId);
+      if(value) {
+        if(this.state.question[a].question_id === checkboxId){
+          this.state.question[a].check = true;
+        }
+      }else{
+        if(this.state.question[a].question_id === checkboxId){
+          this.state.question[a].check = false;
+        }
+      }
+    }
+    this.setState({
+      question: this.state.question
+    });
+    //console.log(this.state.question);
+  };
 
   render() {
     const {question} = this.state;
@@ -86,7 +111,7 @@ export default class QuestionExam extends Component {
                     <div className="row">
                       <div className="col-sm-1">
                           <label class="container">
-                            <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'per')} checked={this.state.cekAll} value={this.state.cekAll}/>
+                            <input type="checkbox" id={item.question_id} onChange={this.handleChecked} checked={item.check}/>
                             <span class="checkmark"></span>
                           </label>
                       </div>
@@ -181,7 +206,7 @@ export default class QuestionExam extends Component {
                     <div className="col-sm-6">
                       <div style={{padding: '10px',margin: '10px 0px 0px 15px'}}>
                         <label class="container"> &nbsp; <small>Pilih Semua</small>
-                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'all')} value={false}/>
+                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this)} value={false}/>
                           <span class="checkmark"></span>
                         </label>
                       </div>
