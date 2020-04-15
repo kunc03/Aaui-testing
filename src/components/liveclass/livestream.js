@@ -38,6 +38,7 @@ export default class LiveStream extends Component {
     //multi select invite
     optionsInvite: [],
     valueInvite: [],
+    nameFile : null
   }
   
   handleChange(emailInvite) {
@@ -57,6 +58,7 @@ export default class LiveStream extends Component {
   }
 
   componentDidMount() {
+    this.onBotoomScroll();
     socket.on("broadcast", data => {
       if(data.room == this.state.classId) {
         this.setState({ fileChat: [...this.state.fileChat, data] })
@@ -69,6 +71,7 @@ export default class LiveStream extends Component {
   }
   
   fetchData() {
+    this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
@@ -162,9 +165,17 @@ export default class LiveStream extends Component {
     })
   }
 
+  onBotoomScroll = (e) => {
+    //let scrollingElement = (document.scrollingElement || document.body);
+    var element = document.getElementById('scrollin');
+    element.scrollTop = element.scrollHeight - element.clientHeight;
+    console.log(element, 'kebawah')
+  }
+
   onChangeInput = (e) => {
       const name = e.target.name;
-      console.log(e.target.files[0], 'attach')
+      console.log(e.target.files[0], 'attach');
+      this.setState({nameFile : e.target.files[0].name});
       if(name === 'attachment') {
           if (e.target.files[0].size <= 500000) {
               this.setState({ [name]: e.target.files[0] });
@@ -183,17 +194,20 @@ export default class LiveStream extends Component {
     form.append('class_id', this.state.classId);
     form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-    console.log('form data',FormData);
+    //console.log('form data',FormData);
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
       console.log(res, 'response');
       
-      let splitTags;
-      let datas = res.data.result;
-      splitTags =  datas.attachment.split("/")[4];
-      datas.filenameattac = splitTags; 
-
+      
       if(res.status === 200) {
-        //this.setState({ fileChat: [...this.state.fileChat, res.data.result] });
+        this.onBotoomScroll();
+
+        let splitTags;
+        let datas = res.data.result;
+        splitTags =  datas.attachment.split("/")[4];
+        datas.filenameattac = splitTags; 
+
+        this.setState({ fileChat: [...this.state.fileChat, res.data.result], nameFile : null });
         socket.emit('send', {
           pengirim: this.state.user.user_id,
           room: this.state.classId,
@@ -203,6 +217,10 @@ export default class LiveStream extends Component {
         })
       }
     })
+  }
+
+  componentDidUpdate() {
+    this.onBotoomScroll();
   }
 
 	render() {
@@ -272,7 +290,7 @@ export default class LiveStream extends Component {
         <h3 className="f-20 f-w-800">
           File Sharing
         </h3>
-        <div className='box-chat'>
+        <div id="scrollin" className='box-chat'>
             
             { this.state.fileChat.map((item, i)=>{
               return (
@@ -288,18 +306,22 @@ export default class LiveStream extends Component {
         <div className='box-chat-send p-20'>
           <Row>
             <Col sm={10}>
-              < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
-              <input
-                type="file"
-                id="attachment"
-                name="attachment"
-                onChange={this.onChangeInput}
-              />
+              <div>
+                < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+                <input
+                  type="file"
+                  id="attachment"
+                  name="attachment"
+                  onChange={this.onChangeInput}
+                /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
+              </div>
+                
             </Col>
             <Col sm={2}>
               <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
                 SEND
               </Link>
+              {/* <button onClick={this.onBotoomScroll}>coba</button> */}
             </Col>
 
           </Row>
