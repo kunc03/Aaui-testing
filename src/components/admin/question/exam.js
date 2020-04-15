@@ -46,7 +46,9 @@ export default class QuestionExam extends Component {
 
         API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
           if(res.status === 200) {
-            console.log(res.data.result)
+            for(let a in res.data.result){
+              res.data.result[a].check = false;
+            }
             this.setState({ question: res.data.result, isLoading:false })
           }
         })
@@ -96,6 +98,21 @@ export default class QuestionExam extends Component {
     });
     //console.log(this.state.question);
   };
+
+  onChangeDelete(){
+    let questionDuplicateCek = [];
+    for(let a in this.state.question){
+      if(this.state.question[a].check){
+        questionDuplicateCek.push({question_id : this.state.question[a].question_id})
+      }
+    }
+    API.delete(`${API_SERVER}v1/question/bulk/`,questionDuplicateCek).then(res => {
+      console.log(res, 'hapiuusuus');
+      if(res.status === 200) {
+        this.fetchData();
+      }
+    })
+  }
 
   render() {
     const {question} = this.state;
@@ -235,6 +252,7 @@ export default class QuestionExam extends Component {
                           padding: "7px 25px !important",
                           color: "white"
                         }}
+                        onClick={this.onChangeDelete.bind(this)}
                       >
                         Bulk Delete
                       </a>  
