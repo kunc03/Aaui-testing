@@ -84,9 +84,7 @@ class Profile extends Component {
           this.setState({
             user_data: {
               ...this.state.user_data,
-              avatar: res.data.result.avatar
-                ? res.data.result.avatar
-                : "https://iacts.org/sites/all/themes/themag/assets/images/default-user.png",
+              avatar: res.data.result.avatar ? res.data.result.avatar : "/assets/images/user/avatar-1.jpg",
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               grup_id: res.data.result.grup_id,
@@ -96,7 +94,9 @@ class Profile extends Component {
               name: res.data.result.name,
               identity: res.data.result.identity,
               address: res.data.result.address,
-              phone: res.data.result.phone
+              phone: res.data.result.phone,
+              unlimited: res.data.result.unlimited,
+              validity: res.data.result.validity ? res.data.result.validity.toString().substring(0,10) : '0000-00-00',
             }
           });
           if (this.state.user_data.level==='client'){
