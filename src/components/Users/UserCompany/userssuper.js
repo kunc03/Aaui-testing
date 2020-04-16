@@ -20,7 +20,13 @@ export default class User extends Component {
       isModalVoucher: false,
       userIdVoucher: "",
       voucher: "",
-      notif: ""
+      notif: "",
+
+      isModalImport: false,
+      excel: '',
+      nameFile: '',
+
+      isLoading: false
     };
   }
 
@@ -162,6 +168,36 @@ export default class User extends Component {
     });
   };
 
+  handleModalImport = () => {
+    this.setState({ isModalImport: false, excel: '', nameFile: '' });
+  }
+
+  handleChangeFile = e => {
+    console.log(e.target.files[0])
+    this.setState({
+      excel: e.target.files[0],
+      nameFile: e.target.files[0].name
+    });
+  }
+
+  onSubmitImportUser = e => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('company_id', this.state.myCompanyId);
+    form.append('excel', this.state.excel);
+    this.setState({ isLoading: true });
+
+    API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.handleModalImport();
+          this.fetchData();
+          this.setState({ isLoading: false });
+        }
+      }
+    })
+  }
+
   render() {
     let { users } = this.state;
 
@@ -241,6 +277,14 @@ export default class User extends Component {
     return (
       <div>
         <h3 className="f-24 f-w-800">User Management</h3>
+        <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
+          <i className="fa fa-plus"></i>
+          Import User
+        </Link>
+        <a href={`${API_SERVER}/user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
+          <i className="fa fa-download"></i>
+          Download Format
+        </a>
 
         <div style={{ overflow: "auto", maxHeight:'71vh' }}>
           <table className="table-curved" style={{ width: "100%",whiteSpace: "nowrap" }}>
@@ -386,6 +430,33 @@ export default class User extends Component {
               </form>
             </Modal.Body>
           </Modal>
+
+          <Modal show={this.state.isModalImport} onHide={this.handleModalImport}>
+            <Modal.Body>
+              <Modal.Title className="text-c-purple3 f-w-bold">Import User</Modal.Title>
+              <form style={{ marginTop: '10px' }} onSubmit={this.onSubmitImportUser}>
+                <div className="form-group">
+                  <label>File Excel</label><br />
+                  <input type="file" required name="excel" onChange={this.handleChangeFile} />
+                  <label id="attachment"> &nbsp;{this.state.nameFile ? this.state.nameFile : 'Pilih File'}</label>
+                  <Form.Text>
+                    Pastikan format file xls, atau xlsx.
+                  </Form.Text>
+                </div>
+
+                <button style={{ marginTop: '50px' }} type="submit"
+                  className="btn btn-block btn-ideku f-w-bold">
+                  {this.state.isLoading ? 'Proses Import...' : 'Submit'}
+                </button>
+                <button type="button"
+                  className="btn btn-block f-w-bold"
+                  onClick={this.handleModalImport}>
+                  Tidak
+                </button>
+              </form>
+            </Modal.Body>
+          </Modal>
+
         </div>
       </div>
     );

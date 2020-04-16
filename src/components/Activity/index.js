@@ -193,7 +193,7 @@ class Aktivity extends Component {
                       <div className="col-xl-2 text-center">
                         <img
                             alt=""
-                            src={this.state.user.avatar}
+                            src={this.state.user.avatar ? this.state.user.avatar : "/assets/images/user/avatar-1.jpg"}
                             className="rounded-circle img-profile"
                             style={{padding:'20px'}}
                           />
