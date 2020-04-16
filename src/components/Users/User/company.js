@@ -4,6 +4,8 @@ import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
+import Users from '../UserCompany/users';
+
 export default class User extends Component {
   constructor(props) {
     super(props);
@@ -180,7 +182,12 @@ export default class User extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">User Management</h3>
+                      
+                      <Users
+                        match={{ params: { company_id: this.state.companyId } }}
+                      />
+
+                      {/* <h3 className="f-24 f-w-800">User Management</h3>
                       <div style={{ overflow: "auto", maxHeight:'71vh' }}>
                         <table
                           className="table-curved"
@@ -282,6 +289,7 @@ export default class User extends Component {
                         </Modal>
 
                       </div>
+                       */}
                     </div>
                   </div>
                 </div>
