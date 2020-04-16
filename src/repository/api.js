@@ -3,7 +3,7 @@ import Storage from './storage';
 const axios = require('axios');
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-const API_SERVER_DEV = 'http://localhost:4000/';
+const API_SERVER_DEV = 'http://localhost:3200/';
 const API_SERVER_PROD = 'https://api.icademy.id/';
 
 export const DEV_MODE = false;

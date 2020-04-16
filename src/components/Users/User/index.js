@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
 
 import Storage from './../../../repository/storage';
 
@@ -18,6 +18,7 @@ export default class User extends Component {
       isModalPassword: false,
       userIdPassword: '',
       userPassword: '',
+      myCompanyId: this.props.match.params.company_id,
 
       isModalVoucher: false,
       userIdVoucher: '',
@@ -105,18 +106,25 @@ export default class User extends Component {
   }
 
   fetchData() {
-    API.get(`${API_SERVER}v1/user`).then(response => {
-      response.data.result.map(item => {
-        let temp = item;
-        if(item.validity != null) {
-          temp.validity = item.validity.toString().substring(0,10);
-        }
-        return temp;
-      });
-      this.setState({ users: response.data.result });
-    })
-    .catch(function(error) {
-      console.log(error);
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        console.log('STORAGENYA',Storage.get('user').data);
+
+        API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
+          response.data.result.map(item => {
+            let temp = item;
+            if(item.validity !== null) {
+              temp.validity = item.validity.toString().substring(0,10);
+            }
+            return temp;
+          });
+          this.setState({ users: response.data.result.reverse() });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      }
     });
   }
 
@@ -211,8 +219,8 @@ export default class User extends Component {
                               <th>Nama</th>
                               <th>Nomor Induk</th>
                               <th>Company</th>
-                              <th>Cabang</th>
-                              <th>Grup</th>
+                              <th>Group</th>
+                              <th>Role</th>
                               <th>Level</th>
                               <th>Email</th>
                               <th>Voucher</th>

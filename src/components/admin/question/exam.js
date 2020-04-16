@@ -13,6 +13,7 @@ export default class QuestionExam extends Component {
     isLoading:true,
 
     question: [],
+    questionChecked:[],
     cekAll : false,
 
     isModalDelete: false,
@@ -34,6 +35,16 @@ export default class QuestionExam extends Component {
       }
     })
   }
+  
+	bulkDelete = e => {
+		e.preventDefault();
+		API.delete(`${API_SERVER}v1/question/bulk/${this.state.questionChecked.join()}`).then(res => {
+			if(res.status === 200) {
+        this.fetchData();
+        console.log('RESSS',res)
+			}
+		})
+	}
 
   handleClose = e => {
     this.setState({ isModalDelete: false, questionId: '' });
@@ -67,9 +78,14 @@ export default class QuestionExam extends Component {
       if (value){
         this.state.question[a].check = true;
         this.setState({question: this.state.question});
+        var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
+        if (index !== -1) this.state.questionChecked.splice(index, 1);
+        this.state.questionChecked.push(this.state.question[a].question_id);
       } else {
         this.state.question[a].check = false;
         this.setState({question: this.state.question});
+        var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
+        if (index !== -1) this.state.questionChecked.splice(index, 1);
       }
     }
   }
@@ -84,10 +100,13 @@ export default class QuestionExam extends Component {
       if(value) {
         if(this.state.question[a].question_id === checkboxId){
           this.state.question[a].check = true;
+          this.state.questionChecked.push(this.state.question[a].question_id);
         }
       }else{
         if(this.state.question[a].question_id === checkboxId){
           this.state.question[a].check = false;
+          var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
+          if (index !== -1) this.state.questionChecked.splice(index, 1);
         }
       }
     }
@@ -230,6 +249,7 @@ export default class QuestionExam extends Component {
                       </a>  
                       <a
                         href='javascript:'
+                        onClick={this.bulkDelete}
                         className="btn btn-ideku f-14 float-right mb-3 m-r-5"
                         style={{
                           padding: "7px 25px !important",
