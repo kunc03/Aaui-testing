@@ -295,7 +295,6 @@ class UserEdit extends Component {
                               <label className="label-input">Phone</label>
                               <input
                                 type="text"
-                                required
                                 name="phone"
                                 value={this.state.phone}
                                 className="form-control"
@@ -307,7 +306,6 @@ class UserEdit extends Component {
                               <label className="label-input">Alamat</label>
                               <textarea
                                 value={this.state.address}
-                                required
                                 name="address"
                                 className="form-control"
                                 placeholder="alamat"

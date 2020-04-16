@@ -173,6 +173,7 @@ export default class Users extends Component {
           this.handleModalImport();
           this.fetchData();
           this.setState({ isLoading: false });
+          console.log('RESS',res)
         }
       }
     })
