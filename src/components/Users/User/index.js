@@ -146,8 +146,15 @@ export default class User extends Component {
   //   }
   // }
 
+  sortData = (name) => {
+      let userdata = this.state.users;
+      userdata.sort((a,b)=>a[name] < b[name] ? -1 : 1);
+      this.setState({users:userdata});
+  }
+
   render() {
     let { users } = this.state;
+    let sorting = this.sortData;
 
     const Item = ({ item, iter }) => {
       return (
@@ -162,6 +169,7 @@ export default class User extends Component {
           <td>{item.email}</td>
           <td>{item.voucher}</td>
           <td>{item.phone}</td>
+          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
               <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
@@ -207,15 +215,16 @@ export default class User extends Component {
                           <thead>
                             <tr>
                               <th className="text-center">No</th>
-                              <th>Nama</th>
-                              <th>Nomor Induk</th>
-                              <th>Company</th>
-                              <th>Cabang</th>
-                              <th>Grup</th>
-                              <th>Level</th>
-                              <th>Email</th>
-                              <th>Voucher</th>
-                              <th>Phone</th>
+                              <th onClick={()=>sorting("name")}>Nama</th>
+                              <th onClick={()=>sorting("identity")}>Nomor Induk</th>
+                              <th onClick={()=>sorting("company_name")}>Company</th>
+                              <th onClick={()=>sorting("branch_name")}>Cabang</th>
+                              <th onClick={()=>sorting("grup_name")}>Grup</th>
+                              <th onClick={()=>sorting("level")}>Level</th>
+                              <th onClick={()=>sorting("email")}>Email</th>
+                              <th onClick={()=>sorting("voucher")}>Voucher</th>
+                              <th onClick={()=>sorting("phone")}>Phone</th>
+                              <th onClick={()=>sorting("validity")}>Validity</th>
                               <th className="text-center">
                                 <Link
                                   to='/user-create'
