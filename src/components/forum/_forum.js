@@ -4,34 +4,55 @@ import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 
-export function _postLIstAllForum(side){
-  let sides = side;  console.log(side, 'side');
-  console.log(this.state.user_id)
+export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
     this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-    let listaAPi = sides === 'star' ? `${FORUM}/list/${this.state.user_id}` : `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
+    let listaAPi = `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
     API.get(listaAPi).then(res=> {
+        //console.log(res, 'ress')
           let aray = [],starData = [];
           let splitTags; 
-         console.log(res.data.result.sql);
           for(let a in res.data.result){
+            starData.push(res.data.result[a]);
             splitTags = res.data.result[a].tags.split(",");
             for(let b in splitTags){
               aray.push({tags:splitTags[b]}) 
             }
           }
+
           if(res.status === 200){
             if(!res.data.error){
-              if(sides === 'star'){
-                for(let a in res.data.result){
-                  if(res.data.result[a].kunci === 1){
-                    starData.push(res.data.result[a]);
-                  }
-                }
-                this.setState({ forums: starData, listTags:aray })
-              }else{
-                  this.setState({ forums:res.data.result, listTags:aray })
-              }
+                console.log(res.data.result);
+                this.setState({ forumlist: res.data.result, listTags:aray })
+            }
+          }
+        })
+        .catch(err=> {
+          console.log(err);
+        })
+  })
+}
+
+export function _postStarForum(){
+  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+    let listaAPi = `${FORUM}/list/${this.state.user_id}`;
+    API.get(listaAPi).then(res=> {
+        //console.log(res, 'ress')
+          let aray = [],starData = [];
+          let splitTags; 
+          for(let a in res.data.result){
+            starData.push(res.data.result[a]);
+            splitTags = res.data.result[a].tags.split(",");
+            for(let b in splitTags){
+              aray.push({tags:splitTags[b]}) 
+            }
+          }
+
+          if(res.status === 200){
+            if(!res.data.error){
+                console.log(res.data.result);
+                this.setState({ forumlist: res.data.result, listTags:aray })
             }
           }
         })
@@ -86,7 +107,7 @@ export function _addforum(e) {
                   if (res.status === 200) {
                     if (!res.data.error) {
                       this.setState({
-                        forums: res.data.result,
+                        forumlist: res.data.result,
                         isForumAdd: false,
                         imgFile: "",
                         imgPreview: ""

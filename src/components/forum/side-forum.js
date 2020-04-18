@@ -4,7 +4,8 @@ import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl
 import {
 	_postLIstAllForum,
 	_addforum, 
-	_handleKeyPress
+  _handleKeyPress,
+  _postStarForum
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
@@ -79,7 +80,7 @@ export default class Forum extends Component {
 	// LIST FORUM SEMUA 
 	render() {
              const { listTags } = this.state;
-            
+            //console.log(listTags, 'listegggg');
 		return (
             <div>
                 <Card>
@@ -98,7 +99,7 @@ export default class Forum extends Component {
                               <i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
                             </ListGroup.Item>
                           </Link>
-                          <Link to="#"  onClick={_postLIstAllForum.bind(this, 'star')}>
+                          <Link to="#"  onClick={_postStarForum.bind(this, 'star')}>
                             <ListGroup.Item>
                               <i className="fa fa-star"></i> &nbsp; Mengikuti
                             </ListGroup.Item>
