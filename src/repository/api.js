@@ -6,7 +6,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 const API_SERVER_DEV = 'http://localhost:3200/';
 const API_SERVER_PROD = 'https://api.icademy.id/';
 
-export const DEV_MODE = true;
+export const DEV_MODE = false;
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 
 export const API_JITSI = 'meet.carsip.co.id';
