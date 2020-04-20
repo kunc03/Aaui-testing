@@ -240,13 +240,13 @@ export default class Forum extends Component {
                                   <option>Trending</option>
                                 </Form.Control> */}
                               </div>
-                              <div className="col-8 text-right">
+                              {/* <div className="col-8 text-right">
                                 <p className="m-b-0">
                                   <span className="f-w-600 f-16">
                                     Lihat Semua
                                   </span>
                                 </p>
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                         </Row>

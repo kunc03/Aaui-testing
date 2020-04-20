@@ -31,6 +31,7 @@ export default class LiveClassAdmin extends Component {
     
     isNotifikasi: false,
     isiNotifikasi: '',
+    filterMeeting: '',
 
     imgPreview: '',
 
@@ -50,6 +51,11 @@ export default class LiveClassAdmin extends Component {
     endDate: new Date(),
   }
   
+  filterMeeting =  (e) => {
+    e.preventDefault();
+    this.setState({filterMeeting : e.target.value});
+  }
+
   handleCreateMeeting() {
     this.setState({ isClassModal: true});
   };
@@ -103,9 +109,8 @@ export default class LiveClassAdmin extends Component {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if (res.status === 200) {
-            console.log('ALVIN TEST123',res.data.result)
-            // console.log('ALVIN TEST123',res.data.result[5].participant.split(','))
             this.setState({ classRooms: res.data.result.reverse() })
+            console.log('ALVINSSSSS',this.state.classRooms)
           }
         });
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
@@ -262,8 +267,16 @@ export default class LiveClassAdmin extends Component {
 
   render() {
 
-    const { classRooms, isLive } = this.state;
+    let { classRooms, isLive } = this.state;
 
+    let { filterMeeting } = this.state;
+    if(filterMeeting != ""){
+      classRooms = classRooms.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filterMeeting,"gmi"))
+      )
+    }
     const ClassRooms = ({ list }) => <Row>
       {list.map(item =>
         <div className="col-sm-4" key={item.class_id}>
@@ -355,6 +368,24 @@ export default class LiveClassAdmin extends Component {
                       </h3>
                     </div>
                   </Row>
+                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              style={{background:'#FFF'}}
+                              onChange={this.filterMeeting}
+                              placeholder="Filter"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                      </div>
 
                   <div>
                     {

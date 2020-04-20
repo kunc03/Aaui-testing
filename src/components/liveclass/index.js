@@ -42,9 +42,14 @@ export default class LiveClass extends Component {
 		companyId: '',
 		classRooms: [],
 		isLive: false,
-		liveURL: ''
+		liveURL: '',
+		filterMeeting: ''
 	}
 
+	filterMeeting =  (e) => {
+		e.preventDefault();
+		this.setState({filterMeeting : e.target.value});
+	}
 	handleCloseLive = e => {
 		this.setState({ isLive: false, liveURL: '' })
 	}
@@ -73,7 +78,15 @@ export default class LiveClass extends Component {
 
 	render() {
 
-		const { classRooms, isLive } = this.state;
+		let { classRooms, isLive } = this.state;
+		let { filterMeeting } = this.state;
+		if(filterMeeting != ""){
+		  classRooms = classRooms.filter(x=>
+			JSON.stringify(
+			  Object.values(x)
+			).match(new RegExp(filterMeeting,"gmi"))
+		  )
+		}
 
 		return(
 			<div className="pcoded-main-container">
@@ -114,6 +127,24 @@ export default class LiveClass extends Component {
 							</Link>
 						</div>
 					</Row>
+                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              style={{background:'#FFF'}}
+                              onChange={this.filterMeeting}
+                              placeholder="Filter"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                      </div>
 
 					<div>
 						{
