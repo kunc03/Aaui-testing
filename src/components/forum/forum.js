@@ -9,11 +9,12 @@ import {
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
 import SideForum from './side-forum';
+import ForumList from './data-forum';
 
 export default class Forum extends Component {
 
 	state = {
-		forums: [],
+		forumlist: [],
 		isForumAdd: false,
 		user : {},
 		user_id: Storage.get('user').data.user_id,
@@ -29,7 +30,8 @@ export default class Forum extends Component {
 		isNotifikasi: false, 
     isiNotifikasi:'',
     
-    findForumInput: ''
+    findForumInput: '',
+   
 	}
 
 	openModalForumAdd = e => {
@@ -85,74 +87,74 @@ export default class Forum extends Component {
 
 	// LIST FORUM SEMUA 
 	render() {
-    var { forums, findForumInput } = this.state;
+    var { forumlist, findForumInput, sides } = this.state;
+    console.log(forumlist, 'porum');
     
     if(findForumInput != ""){
 
-      forums = forums.filter(x=>
+      forumlist = forumlist.filter(x=>
         JSON.stringify(
           Object.values(x)
         ).replace(
           /[^\w ]/g,''
         ).match(new RegExp(findForumInput,"gmi"))
       );
-      console.log(forums)
     }
 
-		const ForumList = ({lists}) => {
-			if(lists.length !== 0) {
-				return(
-					<div>
-						{
-							lists.map((item, i) => (
-								<Card style={{marginBottom: '10px'}} key={i}>
-									<Link to={`/forum-detail/${item.forum_id}`} style={{color: 'rgba(109,114,120,0.8)'}}>
-										<Card.Body style={{padding: '16px'}}>
-											<div className="forum-media">
-                        <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:`url(${!item.cover ? `/assets/images/component/p5.jpg` : item.cover})`}}></div>
-												{/* <img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} /> */}
-											</div>
+		// const ForumList = ({lists}) => {
+		// 	if(lists.length !== 0) {
+		// 		return(
+		// 			<div>
+		// 				{
+		// 					lists.map((item, i) => (
+		// 						<Card style={{marginBottom: '10px'}} key={i}>
+		// 							<Link to={`/forum-detail/${item.forum_id}`} style={{color: 'rgba(109,114,120,0.8)'}}>
+		// 								<Card.Body style={{padding: '16px'}}>
+		// 									<div className="forum-media">
+    //                     <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:`url(${!item.cover ? `/assets/images/component/p5.jpg` : item.cover})`}}></div>
+		// 										{/* <img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} /> */}
+		// 									</div>
 
-											<div className="forum-body">
-												<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.title}</h3>
-												<span className="f-12" style={{marginBottom: '3px'}}>{item.tags} - <Moment format="DD/MM/YYYY">{item.created_at}</Moment></span>
+		// 									<div className="forum-body">
+		// 										<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.title}</h3>
+		// 										<span className="f-12" style={{marginBottom: '3px'}}>{item.tags} - <Moment format="DD/MM/YYYY">{item.created_at}</Moment></span>
 
-												<p style={{margin: '5px 0'}} className="f-13">
-													{item.body}
-													</p>
-											</div>
+		// 										<p style={{margin: '5px 0'}} className="f-13">
+		// 											{item.body}
+		// 											</p>
+		// 									</div>
 
-											<div className="forum-action">
-                        {/* {item.kunci === 0 ? 
-                          <i className="fa fa-star"></i>
-                          :
-                        } */}
-                        <Link to='#'><i className="fa fa-star"></i></Link>
+		// 									<div className="forum-action">
+    //                     {/* {item.kunci === 0 ? 
+    //                       <i className="fa fa-star"></i>
+    //                       :
+    //                     } */}
+    //                     <Link to='#'><i className="fa fa-star"></i></Link>
 											
-												<Link to='#' style={{marginLeft: '10px'}}>
-													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
-												</Link>
+		// 										<Link to='#' style={{marginLeft: '10px'}}>
+		// 											<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
+		// 										</Link>
 
-											</div>
-										</Card.Body>
-									</Link>
-								</Card>
-							))
-						}
-					</div>
-				)
-			} else {
-				return(
-					<Card style={{marginBottom: '10px'}}>
+		// 									</div>
+		// 								</Card.Body>
+		// 							</Link>
+		// 						</Card>
+		// 					))
+		// 				}
+		// 			</div>
+		// 		)
+		// 	} else {
+		// 		return(
+		// 			<Card style={{marginBottom: '10px'}}>
 
-            {findForumInput != '' 
-              ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
-              :  <Card.Body style={{padding: '16px'}}><span>Tidak ada forum tersedia</span></Card.Body>
-            }
-					</Card>
-				)
-			}
-		}
+    //         {findForumInput != '' 
+    //           ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
+    //           :  <Card.Body style={{padding: '16px'}}><span>Tidak ada forum tersedia</span></Card.Body>
+    //         }
+		// 			</Card>
+		// 		)
+		// 	}
+		// }
 
 		return (
       <div className="pcoded-main-container">
@@ -251,7 +253,7 @@ export default class Forum extends Component {
 
                         <Row>
                           <Col sm={12} md={12} xl={12}>
-                            <ForumList lists={forums} />
+                            <ForumList lists={forumlist} />
                           </Col>
                         </Row>
                       </div>

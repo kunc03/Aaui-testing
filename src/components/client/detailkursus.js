@@ -573,10 +573,22 @@ export default class DetailKursus extends Component {
                         {this.state.score}
                       </h3>
 
+                      <a
+                        href={`/nilaiujian/${this.state.courseID}`}
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        className="btn btn-ideku f-w-bold "
+                        onClick={this.handleModalScoreClose}
+                      >
+                        Lihat Jawaban
+                      </a>
+
+                      &nbsp; &nbsp;
+    
                       <button
                         style={{ marginTop: "30px" }}
                         type="button"
-                        className="btn f-w-bold btn-block"
+                        className="btn f-w-bold "
                         onClick={this.handleModalScoreClose}
                       >
                         Mengerti
