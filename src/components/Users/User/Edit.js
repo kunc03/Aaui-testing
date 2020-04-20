@@ -6,6 +6,8 @@ import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Moment from 'moment-timezone';
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
 
 import axios from "axios";
 
@@ -17,6 +19,8 @@ class UserEdit extends Component {
     company_id: "",
     branch_id: "",
     grup_id: "",
+    optionComapny: [],
+    valueCompany: [],
 
     identity: "",
     name: "",
@@ -52,6 +56,7 @@ class UserEdit extends Component {
     let unlimited = this.state.unlimited == false ? '1' : '0'
     let formData = {
       company_id: this.state.company_id,
+      multi_company: this.state.valueCompany,
       branch_id: this.state.branch_id,
       grup_id: this.state.grup_id,
       identity: this.state.identity,
@@ -130,6 +135,9 @@ class UserEdit extends Component {
           if (res.status === 200) {
             this.setState({ listCompany: res.data.result });
           }
+          res.data.result.map(item => {
+            this.state.optionComapny.push({value: item.company_id, label: item.company_name});
+          });
         });
 
         API.get(
@@ -193,6 +201,22 @@ class UserEdit extends Component {
                                   </option>
                                 ))}
                               </select>
+                            </div>
+                            <div className="form-group">
+                              <label className="label-input">Multiple Company</label>
+                              <MultiSelect
+                                id="multicompany"
+                                options={this.state.optionComapny}
+                                value={this.state.valueCompany}
+                                onChange={valueCompany => this.setState({ valueCompany })}
+                                mode="tags"
+                                removableTags={true}
+                                hasSelectAll={true}
+                                selectAllLabel="Pilih Semua"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih Company"
+                              />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Group</label>
