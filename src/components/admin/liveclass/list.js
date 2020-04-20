@@ -140,10 +140,12 @@ export default class LiveClassAdmin extends Component {
         }
       })
     } else {
-      let isPrivate = this.state.private == true ? 1 : 0;
-      let isScheduled = this.state.scheduled == true ? 1 : 0;
+      let isPrivate = this.state.private ? 1 : 0;
+      let isScheduled = this.state.scheduled ? 1 : 0;
+
       let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      
       let form = {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
@@ -165,9 +167,11 @@ export default class LiveClassAdmin extends Component {
             formData.append('cover', this.state.cover);
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
-          if (res.data.result.is_private == 1){
+
+          if (res.data.result.is_private){
             let start = new Date(res.data.result.schedule_start);
             let end = new Date(res.data.result.schedule_end);
+            
             let form = {
               user: Storage.get('user').data.user,
               email: [],
@@ -180,6 +184,7 @@ export default class LiveClassAdmin extends Component {
               //url
               message: 'https://app.icademy.id/liveclass-room/'+res.data.result.class_id
             }
+
             API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
               if(res.status === 200) {
                 if(!res.data.error) {
@@ -190,6 +195,7 @@ export default class LiveClassAdmin extends Component {
               }
             })
           }
+
           this.fetchData();
           this.closeClassModal();
         }
@@ -245,12 +251,8 @@ export default class LiveClassAdmin extends Component {
         <div className="col-sm-4" key={item.class_id}>
           <a target="_blank" href={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
             <div className="card">
-              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'})`}}></div>
-              {/* <img
-                className="img-fluid img-kursus radius-top-l-r-5"
-                src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
-                alt="dashboard-user"
-              /> */}
+              <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${item.cover ? item.cover : 'https://www.seekpng.com/png/detail/807-8073108_live-streaming-wifi-icon.png'})`}}></div>
+              
               <div className="card-carousel ">
                 <div className="title-head f-w-900 f-16">
                   {item.room_name}
@@ -413,7 +415,7 @@ export default class LiveClassAdmin extends Component {
                             placeholder="Judul"
                             value={this.state.roomName}
                             onChange={e =>
-                              this.setState({ roomName: e.target.value })
+                              this.setState({ roomName: e.target.value.replace(/[^A-Za-z0-9 ]/ig, '') })
                             }
                           />
                           <Form.Text className="text-muted">
@@ -446,7 +448,7 @@ export default class LiveClassAdmin extends Component {
                             id="moderator"
                             options={this.state.optionsModerator}
                             value={this.state.valueModerator}
-                            onChange={valueModerator => this.setState({ valueModerator })}
+                            onChange={valueModerator => this.setState({ valueModerator, speaker: this.state.optionsModerator.filter(item => item.value == valueModerator)[0].label })}
                             mode="single"
                             enableSearch={true}
                             resetable={true}
@@ -457,6 +459,9 @@ export default class LiveClassAdmin extends Component {
                           </Form.Text>
                         </Form.Group>
 
+                        {
+                          !this.state.classId &&
+                        
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Private Meeting
@@ -472,8 +477,11 @@ export default class LiveClassAdmin extends Component {
                             }
                           </Form.Text>
                         </Form.Group>
+                        
+                        }
+
                         {
-                        this.state.private &&
+                          !this.state.classId && this.state.private &&
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Peserta
@@ -497,6 +505,9 @@ export default class LiveClassAdmin extends Component {
                         </Form.Group>
                         }
 
+                        {
+                          !this.state.classId &&
+                        
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Scheduled Meeting
@@ -512,8 +523,11 @@ export default class LiveClassAdmin extends Component {
                             }
                           </Form.Text>
                         </Form.Group>
+
+                        }
+                        
                         {
-                          this.state.scheduled &&
+                          !this.state.classId && this.state.scheduled &&
                           <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Waktu
@@ -547,6 +561,7 @@ export default class LiveClassAdmin extends Component {
                           <button
                             type="button"
                             className="btn f-w-bold"
+                            onClick={this.closeClassModal}
                           >
                             Tutup
                           </button>
