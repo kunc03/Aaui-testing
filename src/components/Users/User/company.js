@@ -131,8 +131,15 @@ export default class User extends Component {
     });
   }
 
+  sortData = (name) => {
+      let userdata = this.state.users;
+      userdata.sort((a,b)=>a[name] < b[name] ? -1 : 1);
+      this.setState({users:userdata});
+  }
+
   render() {
     let { users } = this.state;
+    let sorting = this.sortData;
 
     const Item = ({ item, nomor }) => {
       return (
@@ -196,15 +203,15 @@ export default class User extends Component {
                           <thead>
                             <tr>
                               <th className="text-center">ID</th>
-                              <th>Nama</th>
-                              <th>Nomor Induk</th>
-                              <th>Group</th>
-                              <th>Role</th>
-                              <th>Level</th>
-                              <th>Email</th>
-                              <th>Voucher</th>
-                              <th>Phone</th>
-                              <th>Validity</th>
+                              <th onClick={()=>sorting("name")}>Nama</th>
+                              <th onClick={()=>sorting("identity")}>Nomor Induk</th>
+                              <th onClick={()=>sorting("branch_name")}>Cabang</th>
+                              <th onClick={()=>sorting("grup_name")}>Grup</th>
+                              <th onClick={()=>sorting("level")}>Level</th>
+                              <th onClick={()=>sorting("email")}>Email</th>
+                              <th onClick={()=>sorting("voucher")}>Voucher</th>
+                              <th onClick={()=>sorting("phone")}>Phone</th>
+                              <th onClick={()=>sorting("validity")}>Validity</th>
                               <th className="text-center">
                                 <Link
                                   to={"/user-company-create"}
