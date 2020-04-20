@@ -73,7 +73,7 @@ export default class LiveClassAdmin extends Component {
   }
 
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '' });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], startDate: new Date(), endDate: new Date() });
   }
 
   closeNotifikasi = e => {
@@ -103,6 +103,8 @@ export default class LiveClassAdmin extends Component {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if (res.status === 200) {
+            console.log('ALVIN TEST123',res.data.result)
+            // console.log('ALVIN TEST123',res.data.result[5].participant.split(','))
             this.setState({ classRooms: res.data.result.reverse() })
           }
         });
@@ -125,9 +127,18 @@ export default class LiveClassAdmin extends Component {
     e.preventDefault();
 
     if(this.state.classId) {
+      let isPrivate = this.state.private == true ? 1 : 0;
+      let isScheduled = this.state.scheduled == true ? 1 : 0;
+      let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let form = {
-        speaker: this.state.speaker,
-        room_name: this.state.roomName
+        room_name: this.state.roomName,
+        moderator: this.state.valueModerator,
+        is_private: isPrivate,
+        is_scheduled: isScheduled,
+        schedule_start: startDateJkt,
+        schedule_end: endDateJkt,
+        peserta: this.state.valuePeserta
       }
 
       API.put(`${API_SERVER}v1/liveclass/id/${this.state.classId}`, form).then(async res => {
@@ -213,18 +224,29 @@ export default class LiveClassAdmin extends Component {
   onClickEdit = e => {
     e.preventDefault();
     const classId = e.target.getAttribute('data-id');
+    const cover = e.target.getAttribute('data-cover');
     const speaker = e.target.getAttribute('data-speaker');
     const roomName = e.target.getAttribute('data-roomname');
+    const valueModerator = [Number(e.target.getAttribute('data-moderator'))];
     const isprivate = e.target.getAttribute('data-isprivate');
+    const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
     const isscheduled = e.target.getAttribute('data-isscheduled');
+    const schedule_start = new Date(e.target.getAttribute('data-start'));
+    const schedule_end = new Date(e.target.getAttribute('data-end'));
     this.setState({
       isClassModal: true,
       classId: classId,
+      cover: cover,
       speaker: speaker,
       roomName: roomName,
+      valueModerator: valueModerator,
       private: isprivate == 1 ? true : false,
+      valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
+      startDate: schedule_start,
+      endDate: schedule_end
     })
+    console.log('ALVIN TEST',this.state)
   }
 
   onSubmitLock = e => {
@@ -257,8 +279,8 @@ export default class LiveClassAdmin extends Component {
                 <div className="title-head f-w-900 f-16">
                   {item.room_name}
                 </div>
-                <h3 className="f-14 f-w-800">
-                  {item.speaker}
+                <h3 className="f-14">
+                  {item.name}
                 </h3>
                 <small className="mr-3">
                   <i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
@@ -267,10 +289,15 @@ export default class LiveClassAdmin extends Component {
                 <Link className="mr-3" data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>{item.is_live ? 'lock' : 'unlock'}</Link>
                 <Link className="mr-3"
                   data-id={item.class_id}
+                  data-cover={item.cover}
                   data-speaker={item.speaker}
                   data-roomname={item.room_name}
+                  data-moderator={item.moderator} 
                   data-isprivate={item.is_private} 
+                  data-participant={item.participant} 
                   data-isscheduled={item.is_scheduled} 
+                  data-start={item.schedule_start} 
+                  data-end={item.schedule_end} 
                   onClick={this.onClickEdit}>edit</Link>
                 <Link className="mr-3" data-id={item.class_id} onClick={this.onSubmitDelete}>hapus</Link>
               </div>
@@ -375,7 +402,7 @@ export default class LiveClassAdmin extends Component {
                         className="text-c-purple3 f-w-bold f-21"
                         style={{ marginBottom: "30px" }}
                       >
-                        Membuat Group Meeting
+                        {this.state.classId ? 'Ubah Group Meeting' : 'Membuat Group Meeting'}
                       </Modal.Title>
 
                       <Form>
@@ -383,9 +410,9 @@ export default class LiveClassAdmin extends Component {
                           <img
                             alt="media"
                             src={
-                              this.state.cover === ""
+                              this.state.cover == null
                                 ? "/assets/images/component/placeholder-image.png"
-                                : this.state.imgPreview
+                                : this.state.cover
                             }
                             className="img-fluid"
                             style={{ width: "200px", height: "160px" }}

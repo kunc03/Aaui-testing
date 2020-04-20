@@ -24,8 +24,8 @@ const ClassRooms = ({list}) => <Row>
 						<div className="title-head f-w-900 f-16">
 							{item.room_name}
 						</div>
-						<h3 className="f-14 f-w-800">
-							{item.speaker}
+						<h3 className="f-14">
+							{item.name}
 						</h3>
 						<small className="mr-3">
 							<i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}

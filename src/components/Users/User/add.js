@@ -112,7 +112,7 @@ class UserAdd extends Component {
     API.get(`${API_SERVER}v1/company`).then(res => {
       if(res.status === 200) {
         this.setState({ listCompany: res.data.result })
-        console.log('ALVIN',res)
+        console.log('ALVIN',res.data.result)
       }
       res.data.result.map(item => {
         this.state.optionComapny.push({value: item.company_id, label: item.company_name});
