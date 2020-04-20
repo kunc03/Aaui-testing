@@ -112,6 +112,7 @@ export default class User extends Component {
         console.log('STORAGENYA',Storage.get('user').data);
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
+          console.log('resss',response)
           response.data.result.map(item => {
             let temp = item;
             if(item.validity !== null) {

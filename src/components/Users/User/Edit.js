@@ -5,6 +5,7 @@ import ToggleSwitch from "react-switch";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Moment from 'moment-timezone';
 
 import axios from "axios";
 
@@ -21,12 +22,11 @@ class UserEdit extends Component {
     name: "",
     email: "",
     phone: "",
-    validity: "", 
     address: "",
     level: "",
     password: "",
     unlimited:false,
-    validity:"",
+    validity: new Date(),
 
     listCompany: [],
     listBranch: [],
@@ -40,6 +40,8 @@ class UserEdit extends Component {
     this.setState({
       validity: date
     });
+    console.log('XX datepicker',date)
+    console.log('XX state',this.state.validity)
   };
 
   toggleSwitch(checked) {
@@ -56,13 +58,13 @@ class UserEdit extends Component {
       name: this.state.name,
       email: this.state.email,
       phone: this.state.phone,
-      validity: this.state.validity || null,
       address: this.state.address,
       level: this.state.level,
       status: "active",
       unlimited: unlimited,
-  		validity: this.state.validity.toString().substring(0,10),
+      validity: Moment.tz(this.state.validity, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
     };
+    console.log('TANGGAL DIEDIT',formData.validity)
     API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(
       res => {
         if (res.status === 200) {
@@ -118,11 +120,10 @@ class UserEdit extends Component {
           identity: res.data.result.identity,
           email: res.data.result.email,
           phone: res.data.result.phone,
-          validity: res.data.result.validity,
           address: res.data.result.address,
           level: res.data.result.level,
           unlimited: unlimited,
-					validity: res.data.result.validity,
+					validity: new Date(res.data.result.validity),
         });
 
         API.get(`${API_SERVER}v1/company`).then(res => {
@@ -264,18 +265,6 @@ class UserEdit extends Component {
                                 className="form-control"
                                 placeholder="210-1971-74"
                                 value={this.state.identity}
-                                onChange={this.onChangeInput}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input">Validity</label>
-                              <input
-                                type="date"
-                                required
-                                name="validity"
-                                className="form-control"
-                                placeholder="Tanggal valid"
-                                value={this.state.validity && new Date(this.state.validity).toISOString().slice(0,10)}
                                 onChange={this.onChangeInput}
                               />
                             </div>

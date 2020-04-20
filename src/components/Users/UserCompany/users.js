@@ -194,7 +194,7 @@ export default class Users extends Component {
           <td>{item.voucher}</td>
           <td>{item.email}</td>
           <td>{item.phone}</td>
-          <td><Moment format="DD/MM/YYYY">{item.validity}</Moment></td>
+          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
               <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>

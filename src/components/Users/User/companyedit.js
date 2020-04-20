@@ -25,7 +25,7 @@ class UserEdit extends Component {
     level: "",
     password: "",
     unlimited:false,
-    validity:"",
+    validity: new Date(),
 
     listCompany: [],
     listBranch: [],
@@ -53,7 +53,7 @@ class UserEdit extends Component {
       phone: this.state.phone, address: this.state.address, level: this.state.level,
       status: 'active',
       unlimited: unlimited,
-  		validity: this.state.validity.toString().substring(0,10),
+  		validity: this.state.validity.toISOString().split('T')[0]
     };
 
 
@@ -124,7 +124,7 @@ class UserEdit extends Component {
           address: res.data.result.address,
           level: res.data.result.level,
           unlimited: unlimited,
-					validity: res.data.result.validity,
+					validity: new Date(res.data.result.validity),
         });
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
