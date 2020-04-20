@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
+import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -20,7 +21,9 @@ export default class User extends Component {
 
       isModalVoucher: false,
       userIdVoucher: '',
-      voucher: ''
+      voucher: '',
+
+      filterUser: ''
     };
   }
 
@@ -135,8 +138,20 @@ export default class User extends Component {
       this.setState({users:userdata});
   }
 
+  filterUser = (e) => {
+    e.preventDefault();
+    this.setState({filterUser : e.target.value});
+  }
+
   render() {
-    let { users } = this.state;
+    let { users, filterUser } = this.state;
+    if(filterUser != ""){
+      users = users.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filterUser,"gmi"))
+      )
+    }
     let sorting = this.sortData;
 
     const Item = ({ item, nomor }) => {
@@ -188,6 +203,25 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800">User Management</h3>
+                      
+                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              onChange={this.filterUser}
+                              placeholder="filter"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                      </div>
+                      
                       <div style={{ overflow: "auto", maxHeight:'71vh' }}>
                         <table
                           className="table-curved"
