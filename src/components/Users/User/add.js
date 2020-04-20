@@ -89,6 +89,18 @@ class UserAdd extends Component {
         if(res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
+          let userId = res.data.result.user_id;
+          API.delete(`${API_SERVER}v1/user/assign/${res.data.result.user_id}`).then(res => {
+            if(res.status === 200) {
+              for (let i=0;i<this.state.valueCompany.length;i++){
+                let formData = {
+                  user_id: userId,
+                  company_id: this.state.valueCompany[i],
+                };
+                API.post(`${API_SERVER}v1/user/assign`, formData)
+              }
+            }
+          })
           this.props.history.push(`/company-detail-super/${formData.company_id}`)
         }
       }

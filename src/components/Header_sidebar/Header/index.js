@@ -25,9 +25,15 @@ class Header extends Component {
   }
 
   fetchCompany() {
-    let link = this.state.level == 'superadmin' ? `${API_SERVER}v1/company` : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
+    let link = Storage.get('user').data.level == 'superadmin' ? `${API_SERVER}v1/company` : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
     API.get(link).then(response => {
-      this.setState({ company: response.data.result });
+      if (Storage.get('user').data.level == 'superadmin'){
+        this.setState({ company: response.data.result });
+      }
+      else{
+        this.setState({ company: response.data.result.company });
+        console.log('ALVIN COM',this.state.company)
+      }
     }).catch(function (error) {
       console.log(error);
     });
@@ -295,7 +301,7 @@ class Header extends Component {
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
-                      <h6 className="d-inline-block m-b-0">Pilih Company</h6>
+                      <h6 className="d-inline-block m-b-0">{this.state.company.length > 0 ? 'Pilih Company' : 'Tidak multiple company'}</h6>
                     </div>
                     <ul className="noti-body">
                       {

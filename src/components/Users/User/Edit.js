@@ -56,7 +56,6 @@ class UserEdit extends Component {
     let unlimited = this.state.unlimited == false ? '1' : '0'
     let formData = {
       company_id: this.state.company_id,
-      multi_company: this.state.valueCompany,
       branch_id: this.state.branch_id,
       grup_id: this.state.grup_id,
       identity: this.state.identity,
@@ -82,6 +81,17 @@ class UserEdit extends Component {
               console.log("pass: ", res.data);
             });
           }
+          API.delete(`${API_SERVER}v1/user/assign/${this.state.user_id}`).then(res => {
+            if(res.status === 200) {
+              for (let i=0;i<this.state.valueCompany.length;i++){
+                let formData = {
+                  user_id: this.state.user_id,
+                  company_id: this.state.valueCompany[i],
+                };
+                API.post(`${API_SERVER}v1/user/assign`, formData)
+              }
+            }
+          })
 
           if (Storage.get("user").data.level === "superadmin") {
             this.props.history.push(`/company-detail-super/${formData.company_id}`)
@@ -145,6 +155,14 @@ class UserEdit extends Component {
         ).then(res => {
           if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0], listGrup: res.data.result[1] });
+          }
+        });
+
+        API.get(
+          `${API_SERVER}v1/user/assign/${this.state.user_id}`
+        ).then(res => {
+            if (res.status === 200) {
+              this.setState({valueCompany : res.data.result.multi_company})
           }
         });
 
