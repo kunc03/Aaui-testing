@@ -58,7 +58,8 @@ export default class DetailKursus extends Component {
             image: res.data.result.chapter_video,
             title: res.data.result.chapter_title,
             body: res.data.result.chapter_body,
-            attachments: res.data.result.attachment_id
+            attachments: res.data.result.attachment_id,
+            thumbnail: res.data.result.thumbnail
           }
           this.setState({ course: courseChapter })
         }
@@ -402,7 +403,7 @@ export default class DetailKursus extends Component {
     };
 
     // unutk banner photo, responsive center image
-    const CheckMedia = ({media}) => {
+    const CheckMedia = ({media, thumbnail}) => {
       if(media) {
         let ekSplit = media.split('.');
         let ektension = ekSplit[ekSplit.length-1];
@@ -419,6 +420,7 @@ export default class DetailKursus extends Component {
                 style={{position: 'absolute', top: '0', left: '0'}} 
                 url={media}
                 volume='1'
+                light={thumbnail ? thumbnail : `https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640`}
                 controls
                 height='100%'
                 width='100%'
@@ -484,7 +486,7 @@ export default class DetailKursus extends Component {
                       {course.created_at && (
                         <p>Posted on {dateFormat.toString().slice(0, 21)}</p>
                       )}
-                      <CheckMedia media={course.image} />
+                      <CheckMedia media={course.image} thumbnail={course.thumbnail} />
 
                       {isIkutiKursus && (
                         <div

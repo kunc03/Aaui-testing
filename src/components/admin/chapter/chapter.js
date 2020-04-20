@@ -297,9 +297,11 @@ export default class ChapterPreview extends Component {
           image: res.data.result.chapter_video,
           title: res.data.result.chapter_title,
           body: res.data.result.chapter_body,
-          attachments: res.data.result.attachment_id
+          attachments: res.data.result.attachment_id,
+          thumbnail: res.data.result.thumbnail
         }
         this.setState({ course: courseChapter })
+        console.log('ALVIN',this.state.course)
       }
     })
   }
