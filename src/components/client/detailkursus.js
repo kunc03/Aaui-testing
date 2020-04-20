@@ -34,7 +34,8 @@ export default class DetailKursus extends Component {
     course: { category_name: 'Memuat...' },
     courseID: '',
     courseTitle: '',
-		chapters: [],
+    chapters: [],
+    idResultQuiz:'',
     // statChapter: 0,
 	}
 
@@ -234,7 +235,8 @@ export default class DetailKursus extends Component {
           }else{
             decimal = false;
           }
-          this.setState({ score: decimal ? res.data.result.score : res.data.result.score.toFixed(2), isShowScore: true, scoreType: 'quiz' });
+          this.setState({ score: decimal ? res.data.result.score : res.data.result.score.toFixed(2), isShowScore: true, scoreType: 'quiz', idResultQuiz: res.data.result.exam_id });
+          console.log('ALVIN',this.state)
         }
       }
     })
@@ -576,7 +578,7 @@ export default class DetailKursus extends Component {
                       </h3>
 
                       <a
-                        href={`/nilaiujian/${this.state.courseID}`}
+                        href={`/ujian-hasil/${this.state.idResultQuiz}`}
                         style={{ marginTop: "30px" }}
                         type="button"
                         className="btn btn-ideku f-w-bold "
@@ -593,7 +595,7 @@ export default class DetailKursus extends Component {
                         className="btn f-w-bold "
                         onClick={this.handleModalScoreClose}
                       >
-                        Mengerti
+                        Tutup
                       </button>
                     </Modal.Body>
                   </Modal>
