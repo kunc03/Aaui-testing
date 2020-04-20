@@ -19,6 +19,7 @@ export default class CompanyDetail extends Component {
 		nama: '',
 		status: '',
 		validity: '',
+		unlimited: '',
 		dateValidity: new Date(),
 		logo: '',
 		tempLogo: '',
@@ -102,11 +103,13 @@ export default class CompanyDetail extends Component {
   		company_id: this.state.companyId,
   		name: this.state.nama,
   		status: this.state.status,
-  		validity: this.state.validity,
+			validity: this.state.validity,
+			unlimited: this.state.unlimited
   	};
 
   	const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
   	API.put(linkURL, formData).then(res => {
+			console.log('res: ', res)
   		if(res.status === 200) {
   			this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
   		}
@@ -307,7 +310,8 @@ export default class CompanyDetail extends Component {
 							nama: res.data.result.company_name, 
 							status: res.data.result.status, 
 							validity: res.data.result.validity.substring(0,10),
-							logo: res.data.result.logo 
+							logo: res.data.result.logo,
+							unlimited: res.data.result.unlimited
 						});
 
 						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;

@@ -119,16 +119,16 @@ export default class KursusMateri extends Component {
 								<td><Moment format="DD/MM/YYYY">{item.created_at}</Moment></td>
 								<td><i className={(item.publish === 1) ? 'fa fa-check':'fa fa-ban'}></i></td>
 								<td>
-									<Link to={`/nilaiujian/${item.course_id}`} className="buttonku" title="Nilai Ujian">
+									<Link to={`/nilaiujian/${item.course_id}`} className="buttonku ml-2" title="Nilai Ujian">
 										<i data-id={item.course_id} className="fa fa-graduation-cap"></i>
 									</Link>
-									<Link to={`/chapter/${item.course_id}`} className="buttonku" title="Detail">
+									<Link to={`/chapter/${item.course_id}`} className="buttonku ml-2" title="Detail">
 										<i data-id={item.course_id} className="fa fa-search"></i>
 									</Link>
-									<Link to={`/kursus-materi-edit/${item.course_id}`} className="buttonku" title="Edit">
+									<Link to={`/kursus-materi-edit/${item.course_id}`} className="buttonku ml-2" title="Edit">
 										<i data-id={item.course_id} className="fa fa-edit"></i>
 									</Link>
-									<Link to="#" className="buttonku" title="Hapus">
+									<Link to="#" className="buttonku ml-2" title="Hapus">
 										<i onClick={this.onClickHapus} data-id={item.course_id} className="fa fa-trash"></i>
         							</Link>
 								</td>

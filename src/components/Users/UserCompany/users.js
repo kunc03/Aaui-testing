@@ -227,7 +227,7 @@ export default class Users extends Component {
           <i className="fa fa-plus"></i>
           Import User
         </Link>
-        <a href={`${API_SERVER}/user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
+        <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
           <i className="fa fa-download"></i>
           Download Format
         </a>
