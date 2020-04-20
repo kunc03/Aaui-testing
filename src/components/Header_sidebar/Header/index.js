@@ -295,7 +295,7 @@ class Header extends Component {
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
-                      <h6 className="d-inline-block m-b-0">Pilih Company</h6>
+                      <h6 className="d-inline-block m-b-0">{company.length ? `Pilih Company` : `Tidak ada data`}</h6>
                     </div>
                     <ul className="noti-body">
                       {
@@ -311,10 +311,6 @@ class Header extends Component {
                               <div className="media-body" data-id={item.company_id}>
                                 <p data-id={item.company_id}>
                                   <b data-id={item.company_id}>{item.company_name}</b>
-                                  {/* <span className="n-time text-muted">
-                                    <i className="icon feather icon-clock m-r-10" />
-                                    <Moment format="DD/MM/YYYY">{item.validity}</Moment>
-                                  </span> */}
                                 </p>
                                 {
                                   localStorage.getItem("companyID") == item.company_id && (
