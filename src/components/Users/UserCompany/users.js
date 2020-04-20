@@ -173,6 +173,7 @@ export default class Users extends Component {
           this.handleModalImport();
           this.fetchData();
           this.setState({ isLoading: false });
+          console.log('RESS',res)
         }
       }
     })
@@ -241,8 +242,8 @@ export default class Users extends Component {
                 <th className="text-center">ID</th>
                 <th>Nama</th>
                 <th>Nomor Induk</th>
-                <th>Cabang</th>
-                <th>Grup</th>
+                <th>Group</th>
+                <th>Role</th>
                 <th>Level</th>
                 <th>Voucher</th>
                 <th>Email</th>

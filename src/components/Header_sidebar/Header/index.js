@@ -11,7 +11,7 @@ class Header extends Component {
   state = {
     user: "Anonymous",
     level: "Member",
-    avatar: "/assets/images/user/avatar-1.jpg",
+    avatar: "/assets/images/user/avatar-1.png",
     notificationData : [],
 
     company: []
@@ -63,7 +63,7 @@ class Header extends Component {
           level: res.data.result.level,
           avatar: res.data.result.avatar
             ? res.data.result.avatar
-            : "/assets/images/user/avatar-1.jpg"
+            : "/assets/images/user/avatar-1.png"
         }});
         this.setState({
           logo: res.data.result.logo,
@@ -71,7 +71,7 @@ class Header extends Component {
           level: res.data.result.level,
           avatar: res.data.result.avatar
             ? res.data.result.avatar
-            : "/assets/images/user/avatar-1.jpg"
+            : "/assets/images/user/avatar-1.png"
         });
         if (this.state.level==='client'){
           this.setState({level:'User'})
@@ -142,7 +142,7 @@ class Header extends Component {
                         <div className="media">
                           <img
                             className="img-radius"
-                            src="assets/images/user/avatar-1.jpg"
+                            src="assets/images/user/avatar-1.png"
                             alt="Generic placeholder image"
                           />
                           <div className="media-body">

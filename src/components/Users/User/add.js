@@ -186,7 +186,6 @@ class UserAdd extends Component {
                               <label className="label-input">Phone</label>
                               <input
                                 type="text"
-                                required
                                 name="phone"
                                 className="form-control"
                                 placeholder="081-247-9592"
@@ -195,7 +194,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Alamat</label>
-                              <textarea required name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <textarea name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
                             </div>
 
                             <div className="form-group">

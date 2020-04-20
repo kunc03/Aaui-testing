@@ -236,7 +236,7 @@ class Home extends Component {
                           src="assets/images/component/Pattern Geometric-01.png"
                           alt="dashboard-user"
                         />
-                        <div className="card-text-title">{item.course.category_name}</div>
+                        <div className="card-text-title" style={{fontSize:14}}>{item.course.category_name.length < 18 ? item.course.category_name : item.course.category_name.substring(0, 18)+'...'}</div>
                       </div>
                       <div className="card-carousel">
                         <div className="title-head f-16" style={{height:72}}>

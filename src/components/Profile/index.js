@@ -84,7 +84,7 @@ class Profile extends Component {
           this.setState({
             user_data: {
               ...this.state.user_data,
-              avatar: res.data.result.avatar ? res.data.result.avatar : "/assets/images/user/avatar-1.jpg",
+              avatar: res.data.result.avatar ? res.data.result.avatar : "/assets/images/user/avatar-1.png",
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               grup_id: res.data.result.grup_id,

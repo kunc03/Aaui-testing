@@ -198,8 +198,8 @@ export default class User extends Component {
                               <th className="text-center">ID</th>
                               <th>Nama</th>
                               <th>Nomor Induk</th>
-                              <th>Cabang</th>
-                              <th>Grup</th>
+                              <th>Group</th>
+                              <th>Role</th>
                               <th>Level</th>
                               <th>Email</th>
                               <th>Voucher</th>
