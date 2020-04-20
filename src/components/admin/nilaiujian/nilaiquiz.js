@@ -27,10 +27,11 @@ export default class DetailNilaiQuiz extends Component {
 			if(res.status === 200) {
                 this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 				API.get(`${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${courseID}`).then(res => {
+                    console.log('states',this.state)
+                    console.log('states RES',res.data.result)
+
 					if(res.status === 200) {
                         this.setState({ kursus: res.data.result.users, detail: res.data.result });
-                        console.log('states RES',res.data.result)
-                        console.log('states',this.state)
 					}
 				})
 			}
@@ -92,7 +93,8 @@ export default class DetailNilaiQuiz extends Component {
                                         <th className="text-center">No. </th>
                                         <th>Nama</th>
                                         <th>Nomor Induk</th>
-                                        {this.state.detail.length === 0 ? null 
+                                        {
+                                            this.state.kursus.length === 0 ? null 
                                             :
                                             
                                                     kursus[0].quiz.map((item, i) => (

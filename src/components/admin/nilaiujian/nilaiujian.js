@@ -90,7 +90,7 @@ export default class DetailNilaiUjian extends Component {
                                         <th className="text-center">No. </th>
                                         <th>Nama</th>
                                         <th>Nomor Induk</th>
-                                        {this.state.detail.length === 0 ? null 
+                                        {this.state.kursus.length === 0 ? null 
                                             :
                                                     kursus[0].ujian.map((item, i) => (
                                                         

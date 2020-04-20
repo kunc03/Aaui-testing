@@ -25,7 +25,7 @@ class Header extends Component {
   }
 
   fetchCompany() {
-    let link = `${API_SERVER}v1/company`;
+    let link = this.state.level == 'superadmin' ? `${API_SERVER}v1/company` : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
     API.get(link).then(response => {
       this.setState({ company: response.data.result });
     }).catch(function (error) {
@@ -285,7 +285,7 @@ class Header extends Component {
           </ul>
 
           {
-            level == "superadmin" &&
+            (level == "superadmin" || level == "admin") &&
 
             <ul className="navbar-nav">
               <li>
