@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
+import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
@@ -22,7 +23,13 @@ export default class User extends Component {
 
       isModalVoucher: false,
       userIdVoucher: '',
-      voucher: ''
+      voucher: '',
+
+      filterUser: '',
+
+      isModalImport: false,
+      excel: '',
+      nameFile: ''
     };
   }
 
@@ -99,6 +106,36 @@ export default class User extends Component {
       }
     }) 
   }
+  
+  handleModalImport = () => {
+    this.setState({ isModalImport: false, excel: '', nameFile: '' });
+  }
+
+  handleChangeFile = e => {
+    console.log(e.target.files[0])
+    this.setState({
+      excel: e.target.files[0],
+      nameFile: e.target.files[0].name
+    });
+  }
+
+  onSubmitImportUser = e => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('company_id', this.state.myCompanyId);
+    form.append('excel', this.state.excel);
+    this.setState({ isLoading: true });
+
+    API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.handleModalImport();
+          this.fetchData();
+          this.setState({ isLoading: false });
+        }
+      }
+    })
+  }
 
   handleModalVoucher = e => {
     this.setState({ isModalVoucher: false, userIdVoucher: '' });
@@ -137,8 +174,20 @@ export default class User extends Component {
       this.setState({users:userdata});
   }
 
+  filterUser = (e) => {
+    e.preventDefault();
+    this.setState({filterUser : e.target.value});
+  }
+
   render() {
-    let { users } = this.state;
+    let { users, filterUser } = this.state;
+    if(filterUser != ""){
+      users = users.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filterUser,"gmi"))
+      )
+    }
     let sorting = this.sortData;
 
     const Item = ({ item, nomor }) => {
@@ -189,33 +238,37 @@ export default class User extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
+                      <h3 className="f-24 f-w-800">User Management</h3>
                       
-                      <Users
-                        match={{ params: { company_id: this.state.companyId } }}
-                      />
-
-                      {/* <h3 className="f-24 f-w-800">User Management</h3>
-                      <div style={{ overflow: "auto", maxHeight:'71vh' }}>
-                        <table
-                          className="table-curved"
-                          style={{ width: "100%", whiteSpace: "nowrap"}}
-                        >
-                          <thead>
-                            <tr>
-                              <th className="text-center">ID</th>
-                              <th onClick={()=>sorting("name")}>Nama</th>
-                              <th onClick={()=>sorting("identity")}>Nomor Induk</th>
-                              <th onClick={()=>sorting("branch_name")}>Cabang</th>
-                              <th onClick={()=>sorting("grup_name")}>Grup</th>
-                              <th onClick={()=>sorting("level")}>Level</th>
-                              <th onClick={()=>sorting("email")}>Email</th>
-                              <th onClick={()=>sorting("voucher")}>Voucher</th>
-                              <th onClick={()=>sorting("phone")}>Phone</th>
-                              <th onClick={()=>sorting("validity")}>Validity</th>
-                              <th className="text-center">
+                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              style={{background:'#FFF'}}
+                              onChange={this.filterUser}
+                              placeholder="Filter"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                      </div>
+                      <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
+                        <i className="fa fa-plus"></i>
+                        Import User
+                      </Link>
+                      <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
+                        <i className="fa fa-download"></i>
+                        Download Format
+                      </a>
                                 <Link
                                   to={"/user-company-create"}
-                                  className="btn btn-ideku col-12 f-14"
+                                  className="btn btn-ideku ml-2 float-right"
                                   style={{ padding: "7px 8px !important" }}
                                 >
                                   <img
@@ -223,8 +276,27 @@ export default class User extends Component {
                                     className="button-img"
                                     alt=""
                                   />
-                                  Add New
+                                  Tambah Baru
                                 </Link>
+                      
+                      <div style={{ overflow: "auto", maxHeight:'71vh' }}>
+                        <table
+                          className="table-curved"
+                          style={{ width: "100%", whiteSpace: "nowrap"}}
+                        >
+                          <thead>
+                            <tr style={{cursor:'pointer'}}>
+                              <th className="text-center">ID</th>
+                              <th onClick={()=>sorting("name")}><i className="fa fa-sort"></i> Nama</th>
+                              <th onClick={()=>sorting("identity")}><i className="fa fa-sort"></i> Nomor Induk</th>
+                              <th onClick={()=>sorting("branch_name")}><i className="fa fa-sort"></i> Group</th>
+                              <th onClick={()=>sorting("grup_name")}><i className="fa fa-sort"></i> Role</th>
+                              <th onClick={()=>sorting("level")}><i className="fa fa-sort"></i> Level</th>
+                              <th onClick={()=>sorting("email")}><i className="fa fa-sort"></i> Email</th>
+                              <th onClick={()=>sorting("voucher")}><i className="fa fa-sort"></i> Voucher</th>
+                              <th onClick={()=>sorting("phone")}><i className="fa fa-sort"></i> Phone</th>
+                              <th onClick={()=>sorting("validity")}><i className="fa fa-sort"></i> Validity</th>
+                              <th className="text-center">
                               </th>
                             </tr>
                           </thead>
@@ -294,9 +366,33 @@ export default class User extends Component {
                             </form>
                           </Modal.Body>
                         </Modal>
+                        <Modal show={this.state.isModalImport} onHide={this.handleModalImport}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Import User</Modal.Title>
+                            <form style={{ marginTop: '10px' }} onSubmit={this.onSubmitImportUser}>
+                              <div className="form-group">
+                                <label>File Excel</label><br />
+                                <input type="file" required name="excel" onChange={this.handleChangeFile} />
+                                <label id="attachment"> &nbsp;{this.state.nameFile ? this.state.nameFile : 'Pilih File'}</label>
+                                <Form.Text>
+                                  Pastikan format file xls, atau xlsx.
+                                </Form.Text>
+                              </div>
+
+                              <button style={{ marginTop: '50px' }} type="submit"
+                                className="btn btn-block btn-ideku f-w-bold">
+                                {this.state.isLoading ? 'Proses Import...' : 'Submit'}
+                              </button>
+                              <button type="button"
+                                className="btn btn-block f-w-bold"
+                                onClick={this.handleModalImport}>
+                                Tidak
+                              </button>
+                            </form>
+                          </Modal.Body>
+                        </Modal>
 
                       </div>
-                       */}
                     </div>
                   </div>
                 </div>

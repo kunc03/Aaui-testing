@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
+import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import Moment from "react-moment";
@@ -25,6 +26,8 @@ export default class Users extends Component {
       voucher: '',
       notif: "",
 
+      filterUser: '',
+
       isModalImport: false,
       excel: '',
       nameFile: '',
@@ -33,6 +36,16 @@ export default class Users extends Component {
     };
   }
 
+  sortData = (name) => {
+    let userdata = this.state.users;
+    userdata.sort((a,b)=>a[name] < b[name] ? -1 : 1);
+    this.setState({users:userdata});
+  }
+  filterUser =  (e) => {
+    e.preventDefault();
+    this.setState({filterUser : e.target.value});
+  }
+  
   handleChangeInput = e => {
     const target = e.target;
     const name = e.target.name;
@@ -180,7 +193,15 @@ export default class Users extends Component {
   }
 
   render() {
-    let { users } = this.state;
+    let { users, filterUser } = this.state;
+    if(filterUser != ""){
+      users = users.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filterUser,"gmi"))
+      )
+    }
+    let sorting = this.sortData;
 
     const Item = ({ item, nomor }) => {
       return (
@@ -224,6 +245,24 @@ export default class Users extends Component {
     return (
       <div>
         <h3 className="f-24 f-w-800">User Management</h3>
+                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              style={{background:'#FFF'}}
+                              onChange={this.filterUser}
+                              placeholder="Filter"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                      </div>
         <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
           <i className="fa fa-plus"></i>
           Import User
@@ -232,36 +271,36 @@ export default class Users extends Component {
           <i className="fa fa-download"></i>
           Download Format
         </a>
+                                <Link
+                                  to={"/user-company-create"}
+                                  className="btn btn-ideku ml-2 float-right"
+                                  style={{ padding: "7px 8px !important" }}
+                                >
+                                  <img
+                                    src="assets/images/component/person_add.png"
+                                    className="button-img"
+                                    alt=""
+                                  />
+                                  Tambah Baru
+                                </Link>
         <div style={{ overflow: "auto", maxHeight:'71vh' }}>
           <table
             className="table-curved"
             style={{ width: "100%" ,whiteSpace: "nowrap"}}
           >
             <thead>
-              <tr>
-                <th className="text-center">ID</th>
-                <th>Nama</th>
-                <th>Nomor Induk</th>
-                <th>Group</th>
-                <th>Role</th>
-                <th>Level</th>
-                <th>Voucher</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Validity</th>
+              <tr style={{cursor:'pointer'}}>
+                <th className="text-center">No</th>
+                <th onClick={()=>sorting("name")}><i className="fa fa-sort"></i> Nama</th>
+                <th onClick={()=>sorting("identity")}><i className="fa fa-sort"></i> Nomor Induk</th>
+                <th onClick={()=>sorting("branch_name")}><i className="fa fa-sort"></i> Group</th>
+                <th onClick={()=>sorting("grup_name")}><i className="fa fa-sort"></i> Role</th>
+                <th onClick={()=>sorting("level")}><i className="fa fa-sort"></i> Level</th>
+                <th onClick={()=>sorting("voucher")}><i className="fa fa-sort"></i> Voucher</th>
+                <th onClick={()=>sorting("email")}><i className="fa fa-sort"></i> Email</th>
+                <th onClick={()=>sorting("phone")}><i className="fa fa-sort"></i> Phone</th>
+                <th onClick={()=>sorting("validity")}><i className="fa fa-sort"></i> Validity</th>
                 <th className="text-center">
-                  <Link
-                    to={"/user-company-create"}
-                    className="btn btn-ideku col-12 f-14 tambah-user"
-                    style={{ padding: "7px 8px !important" }}
-                  >
-                    <img
-                      src="assets/images/component/person_add.png"
-                      className="button-img"
-                      alt=""
-                    />
-                    Tambah Baru
-                  </Link>
                 </th>
               </tr>
             </thead>
