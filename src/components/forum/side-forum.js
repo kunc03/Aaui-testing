@@ -76,6 +76,13 @@ export default class Forum extends Component {
 
 	}
 
+  StarForum(){
+    let marvelHeroes =  this.props.lists.filter(function(hero) {
+      return hero.status;
+    });
+    this.setState({})
+    console.log(marvelHeroes,'props');
+  }
 
 	// LIST FORUM SEMUA 
 	render() {
@@ -99,7 +106,7 @@ export default class Forum extends Component {
                               <i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
                             </ListGroup.Item>
                           </Link>
-                          <Link to="#"  onClick={_postStarForum.bind(this, 'star')}>
+                          <Link to="#"  onClick={this.StarForum.bind(this, 'star')}>
                             <ListGroup.Item>
                               <i className="fa fa-star"></i> &nbsp; Mengikuti
                             </ListGroup.Item>

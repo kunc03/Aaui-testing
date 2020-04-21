@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl } from "react-bootstrap";
 import {
     _getDetailForumList,
-    _komentarPost
+    _komentarPost,
+    _addStarForum
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
@@ -135,12 +136,7 @@ export default class ForumDetail extends Component {
       starAdd(){
         // console.log("res: fakakakakakakk", this.state.user_id);
         // console.log('forum id', this.state.forumId);
-        API.post(`${FORUM}/add/`, {forum_id: this.state.forumId, user_id: this.state.user_id})
-        .then(res => {
-          console.log(res, 'responseeee')
-          //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
-        })
-        .catch(err => console.log("ioOOIAOIs",err))
+        _addStarForum.bind(this)();
       }
       
 

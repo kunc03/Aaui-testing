@@ -4,7 +4,9 @@ import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl
 import {
 	_postLIstAllForum,
 	_addforum, 
-	_handleKeyPress
+    _handleKeyPress,
+    _addStarForum,
+    _deleteStarForum
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
@@ -65,7 +67,7 @@ export default class Forum extends Component {
 	// LIST FORUM SEMUA 
 	render() {   
         const listForum = this.props.lists;
-        console.log(this.props.lists, 88999);
+        //console.log(this.props.lists, 88999);
         ///console.log( 'proppss');    
 		return (
             <div>
@@ -91,7 +93,14 @@ export default class Forum extends Component {
                                         </div>
 
                                         <div className="forum-action">
-                                        <Link to='#'><i className="fa fa-star"></i></Link>
+                                            {item.status ? 
+                                                <Link to='#' onClick={_deleteStarForum.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
+                                            
+                                            : 
+                                                <Link to='#'  onClick={_addStarForum.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
+                                            
+                                            }
+
                                         
                                             <Link to='#' style={{marginLeft: '10px'}}>
                                                 <i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
