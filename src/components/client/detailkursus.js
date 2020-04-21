@@ -10,7 +10,8 @@ export default class DetailKursus extends Component {
 	state = {
     quiz: [],
     examId: '',
-		courseId: this.props.match.params.course_id,
+    courseId: this.props.match.params.course_id,
+    activeCard: this.props.match.params.course_id,
 		companyId: '',
     isIkutiKursus: false,
     isButtonIkuti: true,
@@ -41,12 +42,13 @@ export default class DetailKursus extends Component {
 
   pilihChapterTampil = e => {
     e.preventDefault();
-      
-
+    
+    
     // cek apakah sudah mengikuti kursus
     if(this.state.isIkutiKursus) {
       
       const chapterId = e.target.getAttribute('data-id');
+      this.setState({activeCard: chapterId});
       API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
         if(res.status === 200) {
           let formData = {
@@ -252,6 +254,7 @@ export default class DetailKursus extends Component {
 
   pilihOverviewChapter = e => {
     e.preventDefault();
+    this.setState({activeCard: this.state.courseID})
     API.get(`${API_SERVER}v1/course/${this.state.courseID}`).then(res => {
       if (res.status === 200) {
         this.setState({
@@ -320,6 +323,7 @@ export default class DetailKursus extends Component {
               } else {
                 return (
                   <Card
+                    style={Number(this.state.activeCard) === Number(item.chapter_id) ? {backgroundColor: '#dcdcdc'} : {}}
                     onClick={this.pilihChapterTampil}
                     className={`card-${
                       this.state.isIkutiKursus ? "active" : "nonactive"
@@ -525,7 +529,10 @@ export default class DetailKursus extends Component {
                         className={`card-active`}
                         data-id={this.state.courseID}
                         key={this.state.courseID}
-                        style={{marginTop:0}}
+                        style={{
+                          marginTop:0,
+                          backgroundColor: Number(this.state.activeCard) === Number(this.state.courseID) ? '#dcdcdc' : ''
+                        }}
                       >
                         <Card.Body>
                           <h3

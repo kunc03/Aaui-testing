@@ -14,6 +14,7 @@ export default class ChapterPreview extends Component {
 	state = {
 		companyId: '',
     courseId: this.props.match.params.course_id,
+    activeCard: this.props.match.params.course_id,
     quiz: [],
     course: {},
     courseID: '',
@@ -291,6 +292,7 @@ export default class ChapterPreview extends Component {
   pilihChapterTampil = e => {
     e.preventDefault();
     const chapterId = e.target.getAttribute('data-id');
+    this.setState({activeCard: chapterId});
     API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
       if(res.status === 200) {
         let courseChapter = {
@@ -322,6 +324,7 @@ export default class ChapterPreview extends Component {
 
   pilihOverviewChapter = e => {
     e.preventDefault();
+    this.setState({activeCard: this.state.courseID});
     API.get(`${API_SERVER}v1/course/${this.state.courseID}`).then(res => {
       if (res.status === 200) {
         this.setState({
@@ -406,6 +409,7 @@ export default class ChapterPreview extends Component {
               } else {
                 return (
                   <Card
+                    style={Number(this.state.activeCard) === Number(item.chapter_id) ? {backgroundColor: '#dcdcdc'} : {}}
                     onClick={this.pilihChapterTampil}
                     className={`card-active`}
                     data-id={item.chapter_id}
@@ -582,6 +586,7 @@ export default class ChapterPreview extends Component {
 
                     <div className="col-xl-4">
                       <Card
+                        style={Number(this.state.activeCard) === Number(this.state.courseID) ? {backgroundColor: '#dcdcdc'} : {}}
                         onClick={this.pilihOverviewChapter}
                         className={`card-active`}
                         data-id={this.state.courseID}
