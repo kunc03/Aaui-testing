@@ -66,7 +66,7 @@ class UserEdit extends Component {
       level: this.state.level,
       status: "active",
       unlimited: unlimited,
-      validity: Moment.tz(this.state.validity, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      validity: this.state.validity.toISOString().split('T')[0]
     };
     console.log('TANGGAL DIEDIT',formData.validity)
     API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(

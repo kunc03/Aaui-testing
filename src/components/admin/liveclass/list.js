@@ -282,7 +282,7 @@ export default class LiveClassAdmin extends Component {
         <div className="col-sm-4" key={item.class_id}>
           <a target="_blank" href={item.is_live ? `/liveclass-room/${item.class_id}` : '/liveclass'}>
             <div className="card">
-              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'})`}}></div>
+              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
               {/* <img
                 className="img-fluid img-kursus radius-top-l-r-5"
                 src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
@@ -441,7 +441,7 @@ export default class LiveClassAdmin extends Component {
                           <img
                             alt="media"
                             src={
-                              this.state.cover == null
+                              this.state.cover == null || this.state.cover == ''
                                 ? "/assets/images/component/placeholder-image.png"
                                 : this.state.cover
                             }

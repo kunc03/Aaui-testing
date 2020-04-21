@@ -16,7 +16,8 @@ export default class CompanyDetail extends Component {
     companyId: this.props.match.params.company_id,
 		nama: "",
 		status: "",
-		validity: "",
+		validity: '',
+		dateValidity: new Date(),
     unlimited:false,
 		logo: "",
 		tempLogo: "",
@@ -89,18 +90,19 @@ export default class CompanyDetail extends Component {
   onClickUpdate = e => {
     
     let unlimited = this.state.unlimited == false ? '1' : '0'
-  	const formData = {
+  	let formData = {
   		company_id: this.state.companyId,
   		name: this.state.nama,
   		status: this.state.status,
-  		validity: this.state.validity,
+  		validity: this.state.validity.split('T')[0],
   		unlimited: unlimited,
   	};
 
   	const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
   	API.put(linkURL, formData).then(res => {
   		if(res.status === 200) {
-  			this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
+        this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
+        console.log('ALVIN',res.data.result)
   		}
   	});
 
