@@ -8,7 +8,10 @@ export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
     this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
     let listaAPi = `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
-    API.get(listaAPi).then(res=> {
+    let listaAPi2 = `${FORUM}/${this.state.user_id}`;
+    
+    //console.log(listaAPi, 'proppss')
+    API.get(listaAPi2).then(res=> {
         //console.log(res, 'ress')
           let aray = [],starData = [];
           let splitTags; 
@@ -22,24 +25,8 @@ export function _postLIstAllForum(){
 
           if(res.status === 200){
             if(!res.data.error){
-              API.get( `${FORUM}/list/${this.state.user_id}`).then(starListt=> {
-                console.log(res, 'starListts')
-                  if(starListt.data.result.length !== 0){
-                    for(let a in starListt.data.result){
-                      for(let b in res.data.result){
-                        //console.log(starListt.data.result[a].forum_id, 'listtt');
-                          if(starListt.data.result[a].forum_id === res.data.result[b].forum_id){
-                            res.data.result[b].status = true;
-                          }else{
-                            res.data.result[b].status = false;
-                          }
-                        }
-                      }
-                    }
-                    this.setState({ forumlist: res.data.result, forumListStar: starListt.data.result, listTags:aray })
-                
-              })
-                //this.setState({ forumlist: res.data.result, listTags:aray })
+              console.log(res.data.result, 'data forumm')
+              //this.setState({ forumlist: res.data.result, listTags:aray })
             }
           }
         })
@@ -100,7 +87,7 @@ export function _deleteStarForum(forumId, userId) {
 
 export function _getDetailForumList(idForum){
   //console.log(idForum, 'ID >>>>>>>>>>>>>>>>>>>>>>>');
-  API.get(`${FORUM}/id/${idForum}`).then(res=> {
+  API.get(`${FORUM}/id/${idForum}/${this.state.user_id}`).then(res=> {
      console.log(res)
       if(res.status === 200){
         if(!res.data.error){
