@@ -5,12 +5,14 @@ import {
 	_postLIstAllForum,
 	_addforum, 
   _handleKeyPress,
-  _postStarForum
+  _postStarForum,
+  _deleteStarForum,
+  _addStarForum
 } from './_forum';
+import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
-import SideForum from './side-forum';
-import ForumList from './data-forum';
+
 
 export default class Forum extends Component {
 
@@ -89,7 +91,7 @@ export default class Forum extends Component {
 
   StarForum(){
     let marvelHeroes =  this.state.forumlist.filter(function(hero) {
-      return hero.status;
+      return hero.bookmark !== null;
     });
     let aray = [],starData = [];
     let splitTags; 
@@ -101,7 +103,31 @@ export default class Forum extends Component {
       }
     }
     this.setState({forumlist : marvelHeroes, listTags:aray})
-    console.log(aray,'props');
+   // console.log(aray,'props');
+  }
+
+  starAdd(forumId, userId){
+    API.post(`${FORUM}/add/`, {forum_id: forumId, user_id: userId})
+    .then(res => {
+      console.log(res, 'responseeee add');
+      if(res.status === 200){
+        this.fetchData();
+      }
+      // this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+    })
+    .catch(err => console.log("ioOOIAOIs",err))
+  }
+
+  deleteStar(forumId, userId) {
+    API.delete(`${FORUM}/remove/${forumId}/${userId}`)
+      .then(res => {
+        console.log(res, 'responseeee delet');
+        if(res.status === 200){
+          this.fetchData();
+        }
+        //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+      })
+      .catch(err => console.log("ioOOIAOIs",err))
   }
 
 	// LIST FORUM SEMUA 
@@ -119,60 +145,62 @@ export default class Forum extends Component {
       );
     }
 
-		// const ForumList = ({lists}) => {
-		// 	if(lists.length !== 0) {
-		// 		return(
-		// 			<div>
-		// 				{
-		// 					lists.map((item, i) => (
-		// 						<Card style={{marginBottom: '10px'}} key={i}>
-		// 							<Link to={`/forum-detail/${item.forum_id}`} style={{color: 'rgba(109,114,120,0.8)'}}>
-		// 								<Card.Body style={{padding: '16px'}}>
-		// 									<div className="forum-media">
-    //                     <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:`url(${!item.cover ? `/assets/images/component/p5.jpg` : item.cover})`}}></div>
-		// 										{/* <img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} /> */}
-		// 									</div>
+		const ForumList = ({lists}) => {
+			if(lists.length !== 0) {
+				return(
+					<div>
+						{
+							lists.map((item, i) => (
+								<Card style={{marginBottom: '10px'}} key={i}>
+									<Link to={`/forum-detail/${item.forum_id}`} style={{color: 'rgba(109,114,120,0.8)'}}>
+										<Card.Body style={{padding: '16px'}}>
+											<div className="forum-media">
+                        <div className="responsive-image-forum img-fluid mr-3 forum-gambar" style={{backgroundImage:`url(${!item.cover ? `/assets/images/component/p5.jpg` : item.cover})`}}></div>
+												{/* <img src={!item.cover ? `/assets/images/component/p5.jpg` : item.cover} alt="media" className="img-fluid mr-3 forum-gambar" style={{marginBottom: '15px'}} /> */}
+											</div>
 
-		// 									<div className="forum-body">
-		// 										<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.title}</h3>
-		// 										<span className="f-12" style={{marginBottom: '3px'}}>{item.tags} - <Moment format="DD/MM/YYYY">{item.created_at}</Moment></span>
+											<div className="forum-body">
+												<h3 className="f-16 f-w-800" style={{marginBottom: '0'}}>{item.title}</h3>
+												<span className="f-12" style={{marginBottom: '3px'}}>{item.tags} - <Moment format="DD/MM/YYYY">{item.created_at}</Moment></span>
 
-		// 										<p style={{margin: '5px 0'}} className="f-13">
-		// 											{item.body}
-		// 											</p>
-		// 									</div>
+												<p style={{margin: '5px 0'}} className="f-13">
+													{item.body}
+													</p>
+											</div>
 
-		// 									<div className="forum-action">
-    //                     {/* {item.kunci === 0 ? 
-    //                       <i className="fa fa-star"></i>
-    //                       :
-    //                     } */}
-    //                     <Link to='#'><i className="fa fa-star"></i></Link>
+											<div className="forum-action">
+                        {item.bookmark !== null ? 
+                               <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
+                            
+                               : 
+                                   <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
+                          
+                          }
 											
-		// 										<Link to='#' style={{marginLeft: '10px'}}>
-		// 											<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
-		// 										</Link>
+												<Link to='#' style={{marginLeft: '10px'}}>
+													<i className="fa fa-comments"></i> &nbsp; {item.komentar} Komentar
+												</Link>
 
-		// 									</div>
-		// 								</Card.Body>
-		// 							</Link>
-		// 						</Card>
-		// 					))
-		// 				}
-		// 			</div>
-		// 		)
-		// 	} else {
-		// 		return(
-		// 			<Card style={{marginBottom: '10px'}}>
+											</div>
+										</Card.Body>
+									</Link>
+								</Card>
+							))
+						}
+					</div>
+				)
+			} else {
+				return(
+					<Card style={{marginBottom: '10px'}}>
 
-    //         {findForumInput != '' 
-    //           ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
-    //           :  <Card.Body style={{padding: '16px'}}><span>Tidak ada forum tersedia</span></Card.Body>
-    //         }
-		// 			</Card>
-		// 		)
-		// 	}
-		// }
+            {findForumInput != '' 
+              ? <Card.Body style={{padding: '16px'}}><span>Tidak ditemukan forum {findForumInput}</span></Card.Body>
+              :  <Card.Body style={{padding: '16px'}}><span>Tidak ada forum tersedia</span></Card.Body>
+            }
+					</Card>
+				)
+			}
+		}
 
 		return (
       <div className="pcoded-main-container">
@@ -323,7 +351,7 @@ export default class Forum extends Component {
 
                             <hr />
                         </Card.Body>
-                    </Card>
+                       </Card>
                     </Col>
                   </Row>
 
@@ -347,6 +375,147 @@ export default class Forum extends Component {
                       >
                         Mengerti
                       </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
+                    show={this.state.isNotifikasi}
+                    onHide={this.closeNotifikasi}
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Notifikasi
+                      </Modal.Title>
+
+                      <p style={{ color: "black", margin: "20px 0px" }}>
+                        {this.state.isiNotifikasi}
+                      </p>
+
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.closeNotifikasi}
+                      >
+                        Mengerti
+                      </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
+                    show={this.state.isForumAdd}
+                    onHide={this.closeModalForumAdd}
+                    dialogClassName="modal-lg"
+                  >
+                    <Modal.Body>
+                      <Modal.Title
+                        className="text-c-purple3 f-w-bold f-21"
+                        style={{ marginBottom: "30px" }}
+                      >
+                        Membuat Forum
+                      </Modal.Title>
+
+                      <Form>
+                        <Form.Group controlId="formJudul">
+                          <img
+                            alt="media"
+                            src={
+                              this.state.imgFile === ""
+                                ? "/assets/images/component/placeholder-image.png"
+                                : this.state.imgPreview
+                            }
+                            className="img-fluid"
+                            style={{ width: "200px", height: "160px" }}
+                          />
+
+                          <Form.Label className="f-w-bold ml-4">
+                            <h4 className="btn-default">Masukkan Gambar</h4>
+                            <input
+                              accept="image/*"
+                              className="btn-default"
+                              name="avatar"
+                              type="file"
+                              onChange={this.handleChange}
+                              required
+                            />
+                            <Form.Text className="text-muted">
+                              Ukuran gambar 200x200 piksel.
+                            </Form.Text>
+                          </Form.Label>
+                        </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Judul Forum
+                          </Form.Label>
+                          <FormControl
+                            type="text"
+                            placeholder="Judul Forum"
+                            value={this.state.title}
+                            onKeyPress={e => _handleKeyPress(e, this._target)}
+                            onChange={e =>
+                              this.setState({ title: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Buat judul yang menarik.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formIsi">
+                          <Form.Label className="f-w-bold">
+                            Isi Forum
+                          </Form.Label>
+                          <FormControl
+                            as="textarea"
+                            rows="5"
+                            placeholder="Isi Forum"
+                            value={this.state.body}
+                            onKeyPress={e => _handleKeyPress(e, this._target)}
+                            onChange={e =>
+                              this.setState({ body: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Jelaskan isi dari forum, peraturan, atau yang lain.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formTag">
+                          <Form.Label className="f-w-bold">
+                            Tag Forum
+                          </Form.Label>
+                          <FormControl
+                            type="text"
+                            placeholder="Teknologi, Arsitektur, dll"
+                            value={this.state.tags}
+                            onKeyPress={e => _handleKeyPress(e, this._target)}
+                            onChange={e =>
+                              this.setState({ tags: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Jika lebih dari 1 hubungkan dengan koma (,)
+                          </Form.Text>
+                        </Form.Group>
+
+                        <div style={{ marginTop: "20px" }}>
+                          <button
+                            type="button"
+                            onClick={_addforum.bind(this)}
+                            className="btn btn-primary f-w-bold"
+                          >
+                            Simpan
+                          </button>
+                          &nbsp;
+                          <button
+                            type="button"
+                            className="btn f-w-bold"
+                            onClick={this.closeModalForumAdd}
+                          >
+                            Tutup
+                          </button>
+                        </div>
+                      </Form>
                     </Modal.Body>
                   </Modal>
 
