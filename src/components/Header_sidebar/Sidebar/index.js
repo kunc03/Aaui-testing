@@ -22,13 +22,14 @@ class Sidebar extends Component {
 
 
   render() {
+    let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let menuClients = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-      { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
+      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+      { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass', access: 'group_meeting' },
       { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
       { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
     ];
@@ -97,21 +98,25 @@ class Sidebar extends Component {
 
               <div>
               {
-                menuContent.map((item, i) => (
-                  <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
-                    <Link to={item.link} className="nav-link">
-                      <span className="pcoded-micon">
-                        <img
-                          src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
-                          alt=""
-                        ></img>
-                      </span>
-                      <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
-                        {item.label}
-                      </span>
-                    </Link>
-                  </li>
-                ))
+                menuContent.map((item, i) => {
+                  if(item.access == undefined || access[item.access]) {
+                    return (
+                      <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
+                        <Link to={item.link} className="nav-link">
+                          <span className="pcoded-micon">
+                            <img
+                              src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                              alt=""
+                            ></img>
+                          </span>
+                          <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                            {item.label}
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                  }
+                })
               }
               </div>
 

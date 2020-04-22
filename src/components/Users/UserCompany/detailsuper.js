@@ -24,7 +24,15 @@ export default class CompanyDetail extends Component {
 		
 		cabang: [],
 		grup: [],
-		user: [],
+    user: [],
+    access: {
+      activity: 0,
+      course: 0,
+      manage_course: 0,
+      forum: 0,
+      group_meeting: 0,
+      manage_group_meeting: 0
+    },
 		
 		isModalCabang: false,
 		namacabang: "",
@@ -126,11 +134,21 @@ export default class CompanyDetail extends Component {
   }
 
   onClickModal = e => {
-  	const tipe = e.target.getAttribute('data-type');
+    const tipe = e.target.getAttribute('data-type');
+    
   	if(tipe === 'cabang') {
-  		this.setState({ isModalCabang: true });
+      this.setState({ isModalCabang: true });
   	} else {
-  		this.setState({ isModalGrup: true });
+      let access = this.state.access;
+      access['activity'] = 0;
+      access['course'] = 0;
+      access['manage_course'] = 0;
+      access['forum'] = 0;
+      access['group_meeting'] = 0;
+      access['manage_group_meeting'] = 0;
+
+      this.setState({ isModalGrup: true });
+      this.setState(access);
   	}
 	}
 	
@@ -183,11 +201,15 @@ export default class CompanyDetail extends Component {
   }
 
   onClickTambahGrup = e => {
-  	e.preventDefault();
+    e.preventDefault();
   	const formData = {
-  		company_id: this.state.companyId,
+      company_id: this.state.companyId,
   		grup_name: this.state.namagrup
-		}
+    }
+    /**
+     * concat object with state access
+     */
+    Object.assign(formData, this.state.access);
 		
 		if(formData.grup_name) {
 			if(this.state.actiongrup === 'add') {
@@ -261,11 +283,26 @@ export default class CompanyDetail extends Component {
   onClickUbah = e => {
   	const tipe = e.target.getAttribute('data-type');
   	const action = e.target.getAttribute('data-action');
-  	const idNya = e.target.getAttribute('data-id');
+    const idNya = e.target.getAttribute('data-id');
+    
   	if(tipe === 'cabang') {
-  		this.setState({ isModalCabang: true, namacabang: e.target.getAttribute('data-nama'), actioncabang: `action_${idNya}`});
+      this.setState({ isModalCabang: true, namacabang: e.target.getAttribute('data-nama'), actioncabang: `action_${idNya}`});
   	} else {  		
-  		this.setState({ isModalGrup: true, namagrup: e.target.getAttribute('data-nama'), actiongrup: `action_${idNya}` });
+      const parsing = JSON.parse(e.target.getAttribute('data-access'));
+      let access = this.state.access;
+      access['activity'] = parsing.activity;
+      access['course'] = parsing.course;
+      access['manage_course'] = parsing.manage_course;
+      access['forum'] = parsing.forum;
+      access['group_meeting'] = parsing.group_meeting;
+      access['manage_group_meeting'] = parsing.manage_group_meeting;
+      
+  		this.setState({ 
+        isModalGrup: true, 
+        namagrup: e.target.getAttribute('data-nama'), 
+        actiongrup: `action_${idNya}`
+      });
+      this.setState(access);
   	}
   }
 
@@ -324,6 +361,20 @@ export default class CompanyDetail extends Component {
 		}).catch(err => {
 			console.log(err);
 		});
+  }
+  
+  /**
+   * update checkbox
+   * set state access true or false
+   */
+  handleChangeAccess = e => {
+		const name = e.target.name;
+		const checked = e.target.checked;
+
+    let access = this.state.access;
+    access[name] = checked ? 1 : 0;
+    
+    this.setState(access);
 	}
 
 	render() {
@@ -331,7 +382,7 @@ export default class CompanyDetail extends Component {
     console.log('companyID: ', this.state.companyId);
     console.log('ALVIN: ', this.state);
 
-		const { cabang, grup, user } = this.state;
+		const { cabang, grup, user, access } = this.state;
 		const statusCompany = ['active', 'nonactive'];
     
     let validityCompany = "";
@@ -405,7 +456,7 @@ export default class CompanyDetail extends Component {
 		          			<Col xs={8}>{item.grup_name}</Col>
 		          			<Col>
 		          				<Link to="#" className="buttonku">
-		          					<i data-type="grup" data-action="update" data-id={item.grup_id} data-nama={item.grup_name} onClick={this.onClickUbah} className="fa fa-edit"></i>
+		          					<i data-type="grup" data-action="update" data-id={item.grup_id} data-nama={item.grup_name} data-access={JSON.stringify(item)} onClick={this.onClickUbah} className="fa fa-edit"></i>
 		          					</Link>
 		          				<Link to="#" className="buttonku">
 		          					<i data-type="grup" data-id={item.grup_id} onClick={this.openKonfirmasi} className="fa fa-trash"></i>
@@ -633,6 +684,35 @@ export default class CompanyDetail extends Component {
                                   onChange={this.onChangeInput}
                                   placeholder="Nama Role"
                                 />
+
+                                <table
+                                  className="table-curved"
+                                  style={{ width: "100%" }}>
+                                    <tr>
+                                      <td>Aktivitas</td>
+                                      <td><input checked={(access.activity)} onChange={this.handleChangeAccess} type="checkbox" name="activity" /></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Kursus & Materi</td>
+                                      <td><input checked={(access.course)} onChange={this.handleChangeAccess} type="checkbox" name="course" /></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Kelola Kursus</td>
+                                      <td><input checked={(access.manage_course)} onChange={this.handleChangeAccess} type="checkbox" name="manage_course" /></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Forum</td>
+                                      <td><input checked={(access.forum)} onChange={this.handleChangeAccess} type="checkbox" name="forum" /></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Group Meeting</td>
+                                      <td><input checked={(access.group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="group_meeting" /></td>
+                                    </tr>
+                                    <tr>
+                                      <td>Buat Group Meeting</td>
+                                      <td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
+                                    </tr>
+                                </table>
                               </div>
                               <button
                                 style={{ marginTop: "50px" }}
