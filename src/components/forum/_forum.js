@@ -8,7 +8,10 @@ export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
     this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
     let listaAPi = `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
-    API.get(listaAPi).then(res=> {
+    let listaAPi2 = `${FORUM}/${this.state.user_id}`;
+    
+    //console.log(listaAPi, 'proppss')
+    API.get(listaAPi2).then(res=> {
         //console.log(res, 'ress')
           let aray = [],starData = [];
           let splitTags; 
@@ -22,8 +25,8 @@ export function _postLIstAllForum(){
 
           if(res.status === 200){
             if(!res.data.error){
-                console.log(res.data.result);
-                this.setState({ forumlist: res.data.result, listTags:aray })
+              console.log(res.data.result, 'data forumm')
+              this.setState({ forumlist: res.data.result, listTags:aray })
             }
           }
         })
@@ -42,6 +45,8 @@ export function _postStarForum(){
           let aray = [],starData = [];
           let splitTags; 
           for(let a in res.data.result){
+
+            
             starData.push(res.data.result[a]);
             splitTags = res.data.result[a].tags.split(",");
             for(let b in splitTags){
@@ -51,8 +56,8 @@ export function _postStarForum(){
 
           if(res.status === 200){
             if(!res.data.error){
-                console.log(res.data.result);
-                this.setState({ forumlist: res.data.result, listTags:aray })
+              
+                this.setState({ forumlist: this.state.forumlist, forumListStar: res.data.result, listTags:aray })
             }
           }
         })
@@ -62,10 +67,28 @@ export function _postStarForum(){
   })
 }
 
+export function _addStarForum(forumId, userId){
+  API.post(`${FORUM}/add/`, {forum_id: forumId, user_id: userId})
+    .then(res => {
+      console.log(res, 'responseeee add')
+      //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+    })
+    .catch(err => console.log("ioOOIAOIs",err))
+}
+
+export function _deleteStarForum(forumId, userId) {
+  API.delete(`${FORUM}/remove/`, {forum_id: forumId, user_id: userId})
+  .then(res => {
+    console.log(res, 'responseeee delet')
+    //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+  })
+  .catch(err => console.log("ioOOIAOIs",err))
+}
+
 export function _getDetailForumList(idForum){
   //console.log(idForum, 'ID >>>>>>>>>>>>>>>>>>>>>>>');
-  API.get(`${FORUM}/id/${idForum}`).then(res=> {
-     //console.log(res)
+  API.get(`${FORUM}/id/${idForum}/${this.state.user_id}`).then(res=> {
+     console.log(res)
       if(res.status === 200){
         if(!res.data.error){
             this.setState({ listDetail: res.data.result, listKomentar: res.data.result[0].komentar })

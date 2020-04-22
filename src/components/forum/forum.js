@@ -4,7 +4,8 @@ import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl
 import {
 	_postLIstAllForum,
 	_addforum, 
-	_handleKeyPress
+  _handleKeyPress,
+  _postStarForum
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
@@ -14,7 +15,8 @@ import ForumList from './data-forum';
 export default class Forum extends Component {
 
 	state = {
-		forumlist: [],
+    forumlist: [],
+    forumListStar: [],
 		isForumAdd: false,
 		user : {},
 		user_id: Storage.get('user').data.user_id,
@@ -55,6 +57,7 @@ export default class Forum extends Component {
   
   fetchData() {
     _postLIstAllForum.bind(this)();
+    //_postStarForum.bind(this)();
   }
 
 	closeNotifikasi = e => {
@@ -84,11 +87,26 @@ export default class Forum extends Component {
     this.setState({findForumInput : e.target.value});
   }
 
+  StarForum(){
+    let marvelHeroes =  this.state.forumlist.filter(function(hero) {
+      return hero.status;
+    });
+    let aray = [],starData = [];
+    let splitTags; 
+    for(let a in marvelHeroes){
+      starData.push(marvelHeroes[a]);
+      splitTags = marvelHeroes[a].tags.split(",");
+      for(let b in splitTags){
+        aray.push({tags:splitTags[b]}) 
+      }
+    }
+    this.setState({forumlist : marvelHeroes, listTags:aray})
+    console.log(aray,'props');
+  }
 
 	// LIST FORUM SEMUA 
 	render() {
-    var { forumlist, findForumInput, sides } = this.state;
-    console.log(forumlist, 'porum');
+    var { forumlist, findForumInput, listTags, forumListStar } = this.state;
     
     if(findForumInput != ""){
 
@@ -260,7 +278,52 @@ export default class Forum extends Component {
                     </Col>
 
                     <Col sm={4}>
-                      <SideForum/>
+                      {/* <SideForum lists={forumlist}/> */}
+                      <Card>
+                        <Card.Body>
+                            <Button
+                            onClick={this.openModalForumAdd}
+                            className="btn-block btn-primary"
+                            >
+                            <i className="fa fa-plus"></i> &nbsp; Buat Forum
+                            </Button>
+
+                            <div className="forum-filter">
+                            <ListGroup>
+                              <Link to="#" onClick={_postLIstAllForum.bind(this, undefined)}>
+                                <ListGroup.Item>
+                                  <i className="fa fa-comments"></i> &nbsp; Semua Diskusi Forum
+                                </ListGroup.Item>
+                              </Link>
+                              <Link to="#"  onClick={this.StarForum.bind(this, 'star')}>
+                                <ListGroup.Item>
+                                  <i className="fa fa-star"></i> &nbsp; Mengikuti
+                                </ListGroup.Item>
+                              </Link>
+                            </ListGroup>
+                            </div>
+
+                            <hr />
+
+                            <div className="forum-kategori">
+                            <h3 className="f-16 f-w-800 mb-3">
+                                Tags
+                            </h3>
+                            <span>
+                                {
+                                listTags.map((item, i) => (
+                                    <span key={item.i}>
+                                        {item.tags}, &nbsp;
+                                    </span>
+                                ))
+                                }
+                            </span>
+                            
+                            </div>
+
+                            <hr />
+                        </Card.Body>
+                    </Card>
                     </Col>
                   </Row>
 
