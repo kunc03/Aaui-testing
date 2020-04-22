@@ -26,7 +26,7 @@ export function _postLIstAllForum(){
           if(res.status === 200){
             if(!res.data.error){
               console.log(res.data.result, 'data forumm')
-              //this.setState({ forumlist: res.data.result, listTags:aray })
+              this.setState({ forumlist: res.data.result, listTags:aray })
             }
           }
         })

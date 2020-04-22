@@ -5,7 +5,8 @@ import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl
 import {
     _getDetailForumList,
     _komentarPost,
-    _addStarForum
+    _addStarForum,
+    _deleteStarForum
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
@@ -136,7 +137,11 @@ export default class ForumDetail extends Component {
       starAdd(){
         // console.log("res: fakakakakakakk", this.state.user_id);
         // console.log('forum id', this.state.forumId);
-        _addStarForum.bind(this)();
+        _addStarForum.bind(this, this.state.forumId, this.state.user_id);
+      }
+
+      deleteStar(){
+        _deleteStarForum.bind(this, this.state.forumId, this.state.user_id);
       }
       
 
@@ -192,9 +197,17 @@ export default class ForumDetail extends Component {
                             className="forum-action"
                             style={{ marginTop: "30px" }}
                           >
-                            <Link to="#"  onClick={this.starAdd.bind(this)}>
+
+                          {dataList.follow ? 
+                                <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
+                            
+                            : 
+                                <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
+                            
+                            }
+                            {/* <Link to="#" onClick={this.starAdd.bind(this)}>
                               <i className="fa fa-star"></i>
-                            </Link>
+                            </Link> */}
                             <Link to="#" style={{ marginLeft: "10px" }}>
                               <i className="fa fa-comments"></i> &nbsp;{" "}
                               {this.state.listKomentar.length} Komentar

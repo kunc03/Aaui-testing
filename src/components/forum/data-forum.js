@@ -93,7 +93,7 @@ export default class Forum extends Component {
                                         </div>
 
                                         <div className="forum-action">
-                                            {item.status ? 
+                                            {item.follow ? 
                                                 <Link to='#' onClick={_deleteStarForum.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
                                             
                                             : 
