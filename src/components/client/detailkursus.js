@@ -494,17 +494,6 @@ export default class DetailKursus extends Component {
                       )}
                       <CheckMedia media={course.image} thumbnail={course.thumbnail} />
 
-                      {isIkutiKursus && (
-                        <div
-                          style={{paddingTop:20, paddingBottom:20, color:'#3c3939'}}
-                          dangerouslySetInnerHTML={{ __html: course.body }}
-                        />
-                      )}
-
-                      {course.attachments && (
-                        <Attachments media={course.attachments} />
-                      )}
-
                       {isButtonIkuti && (
                         <Link
                           onClick={this.onClickIkutiKursus}
@@ -519,6 +508,17 @@ export default class DetailKursus extends Component {
                           Ikuti Kursus
                         </Link>
                       )}
+                      {/* {isIkutiKursus && ( */}
+                        <div
+                          style={{paddingTop:20, paddingBottom:20, color:'#3c3939'}}
+                          dangerouslySetInnerHTML={{ __html: course.body }}
+                        />
+                      {/* )} */}
+
+                      {course.attachments && (
+                        <Attachments media={course.attachments} />
+                      )}
+
                       </div>
                     </div>
 
