@@ -10,12 +10,13 @@ import {
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
-import SideForum from './side-forum';
+
 
 
 export default class ForumDetail extends Component {
     
     state = {
+      companyId: '',
         user_id: Storage.get('user').data.user_id,
         forumId: Number(this.props.match.params.forum_id),
         listDetail : '',
@@ -37,7 +38,7 @@ export default class ForumDetail extends Component {
 
     async fetchData() {
         await _getDetailForumList.bind(this, this.props.match.params.forum_id)();
-        await API.get(`${FORUM}/id/${this.props.match.params.forum_id}`).then(res => {
+        await API.get(`${FORUM}/id/${this.props.match.params.forum_id}/${this.state.user_id}`).then(res => {
 
             let aray = [];
             let splitTags;
@@ -136,12 +137,29 @@ export default class ForumDetail extends Component {
 
       starAdd(){
         // console.log("res: fakakakakakakk", this.state.user_id);
-        // console.log('forum id', this.state.forumId);
-        _addStarForum.bind(this, this.state.forumId, this.state.user_id);
+        console.log('add')
+        API.post(`${FORUM}/add/`, {forum_id: this.state.forumId, user_id: this.state.user_id})
+        .then(res => {
+          console.log(res, 'responseeee add');
+          if(res.status === 200){
+            this.fetchData();
+          }
+          // this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+        })
+        .catch(err => console.log("ioOOIAOIs",err))
       }
 
       deleteStar(){
-        _deleteStarForum.bind(this, this.state.forumId, this.state.user_id);
+        console.log('delete');
+        API.delete(`${FORUM}/remove/${this.state.forumId}/${this.state.user_id}`)
+          .then(res => {
+            console.log(res, 'responseeee delet');
+            if(res.status === 200){
+              this.fetchData();
+            }
+            //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
+          })
+          .catch(err => console.log("ioOOIAOIs",err))
       }
       
 
@@ -198,16 +216,14 @@ export default class ForumDetail extends Component {
                             style={{ marginTop: "30px" }}
                           >
 
-                          {dataList.follow ? 
+                          {dataList.bookmark !== null ? 
                                 <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
                             
                             : 
                                 <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
                             
                             }
-                            {/* <Link to="#" onClick={this.starAdd.bind(this)}>
-                              <i className="fa fa-star"></i>
-                            </Link> */}
+        
                             <Link to="#" style={{ marginLeft: "10px" }}>
                               <i className="fa fa-comments"></i> &nbsp;{" "}
                               {this.state.listKomentar.length} Komentar

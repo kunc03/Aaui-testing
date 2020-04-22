@@ -6,12 +6,12 @@ import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-    let listaAPi = `${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`;
-    let listaAPi2 = `${FORUM}/${this.state.user_id}`;
+    //this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+    let listaAPi = `${FORUM}/company/${res.data.result.company_id}/${res.data.result.user_id}`;
+    //let listaAPi2 = `${FORUM}/${this.state.user_id}`;
     
-    //console.log(listaAPi, 'proppss')
-    API.get(listaAPi2).then(res=> {
+    console.log(listaAPi, 'proppss')
+    API.get(listaAPi).then(res=> {
         //console.log(res, 'ress')
           let aray = [],starData = [];
           let splitTags; 
@@ -36,57 +36,8 @@ export function _postLIstAllForum(){
   })
 }
 
-export function _postStarForum(){
-  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-    let listaAPi = `${FORUM}/list/${this.state.user_id}`;
-    API.get(listaAPi).then(res=> {
-        //console.log(res, 'ress')
-          let aray = [],starData = [];
-          let splitTags; 
-          for(let a in res.data.result){
-
-            
-            starData.push(res.data.result[a]);
-            splitTags = res.data.result[a].tags.split(",");
-            for(let b in splitTags){
-              aray.push({tags:splitTags[b]}) 
-            }
-          }
-
-          if(res.status === 200){
-            if(!res.data.error){
-              
-                this.setState({ forumlist: this.state.forumlist, forumListStar: res.data.result, listTags:aray })
-            }
-          }
-        })
-        .catch(err=> {
-          console.log(err);
-        })
-  })
-}
-
-export function _addStarForum(forumId, userId){
-  API.post(`${FORUM}/add/`, {forum_id: forumId, user_id: userId})
-    .then(res => {
-      console.log(res, 'responseeee add')
-      //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
-    })
-    .catch(err => console.log("ioOOIAOIs",err))
-}
-
-export function _deleteStarForum(forumId, userId) {
-  API.delete(`${FORUM}/remove/`, {forum_id: forumId, user_id: userId})
-  .then(res => {
-    console.log(res, 'responseeee delet')
-    //this.setState({isLockedStatus : res.data.result.kunci},console.log(res.data.result.kunci,"35546456")); 
-  })
-  .catch(err => console.log("ioOOIAOIs",err))
-}
-
 export function _getDetailForumList(idForum){
-  //console.log(idForum, 'ID >>>>>>>>>>>>>>>>>>>>>>>');
+  console.log(idForum, 'ID >>>>>>>>>>>>>>>>>>>>>>>');
   API.get(`${FORUM}/id/${idForum}/${this.state.user_id}`).then(res=> {
      console.log(res)
       if(res.status === 200){
@@ -102,15 +53,15 @@ export function _getDetailForumList(idForum){
 
 export function _addforum(e) {
     e.preventDefault();
-   // console.log(e);
     let stateCopy = this.state,
     user_data = {
-        company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : stateCopy.companyId,
-        user_id : stateCopy.user_id,
-        title : stateCopy.title,
-        body : stateCopy.body,
-        tags : stateCopy.tags,
+      company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : stateCopy.companyId,
+      user_id : stateCopy.user_id,
+      title : stateCopy.title,
+      body : stateCopy.body,
+      tags : stateCopy.tags,
     };
+    console.log(user_data);
     
     API.post(`${FORUM}`, user_data).then(res=> {
       //console.log(res.data)
@@ -123,8 +74,9 @@ export function _addforum(e) {
             }
 
             API.get(`${USER_ME}${Storage.get("user").data.email}`).then(res => {
-              this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-              API.get(`${FORUM}/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`)
+              //this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+              let listaAPi = `${FORUM}/company/${res.data.result.company_id}/${res.data.result.user_id}`;
+              API.get(listaAPi)
                 .then(res => {
                   console.log("res: ", res.data.result);
                   if (res.status === 200) {
