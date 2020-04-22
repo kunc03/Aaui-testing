@@ -346,7 +346,7 @@ export default class DetailKursus extends Component {
                           style={{
                             position: "absolute",
                             right: "30px",
-                            bottom: "36px"
+                            bottom: "36px",
                           }}
                         >
                           <i
@@ -495,19 +495,76 @@ export default class DetailKursus extends Component {
                       <CheckMedia media={course.image} thumbnail={course.thumbnail} />
 
                       {isButtonIkuti && (
-                        <Link
-                          onClick={this.onClickIkutiKursus}
-                          to="#"
-                          className="btn f-18 f-w-bold btn-primary btn-block f-24"
-                          style={{
-                            fontWeight: "bold",
-                            margin: "10px 0px",
-                            padding: "20px"
-                          }}
-                        >
-                          Ikuti Kursus
-                        </Link>
+                        // <Link
+                        //   onClick={this.onClickIkutiKursus}
+                        //   to="#"
+                        //   className="btn f-18 f-w-bold btn-primary btn-block f-24"
+                        //   style={{
+                        //     fontWeight: "bold",
+                        //     margin: "10px 0px",
+                        //     padding: "20px"
+                        //   }}
+                        // >
+                        //   Ikuti Kursus
+                        // </Link>
+                          <div className="row" style={{position:'fixed',bottom:0,zIndex:1}}>
+                          <div className="col-md-12 col-xl-12">
+                            <div
+                              className="card"
+                              style={{ position: "relative", overflow: "hidden" }}
+                            >
+                              <img
+                                src="assets/images/component/Ilustrasi.png"
+                                style={{
+                                  position: "absolute",
+                                  right: "5%",
+                                  bottom: "-115px",
+                                  width: 394,
+                                  height: 366,
+                                  opacity: "0.1"
+                                }}
+                                alt=""
+                              />
+                              <div className="row">
+                                <div className="col-xl-2 text-center">
+                                  <img
+                                    alt="Gambar"
+                                    className="img-radius p-1"
+                                    style={{ width: 136, height: 136 }}
+                                    src="assets/images/component/Ilustrasi.png"
+                                  />
+                                </div>
+                                <div className="col-xl-7">
+                                  <div className="media-body p-t-30 p-l-10 p-b-10 p-r-10">
+                                    <h5 className="chat-header f-w-800 f-24">
+                                      Yuk, kuasai kursus ini dengan mengikuti materi lengkapnya{" "}
+                                    </h5>
+                                    <div style={{ width: "50%" }}>
+                                      <small className="d-block text-c-grey f-w-600 f-16">
+                                        Klik tombol "Ikuti Kursus" untuk melihat materi lengkap.
+                                      </small>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-md-12 col-xl-3">
+                                  <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-center">
+                                  <button
+                                      onClick={this.onClickIkutiKursus}
+                                      type="button"
+                                      className="btn f-w-600 f-14 text-c-white bg-c-purple-ideku shadow-box"
+                                      title="Ikuti kursus"
+                                      data-toggle="tooltip"
+                                    >
+                                      Ikuti Kursus
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       )}
+                      
                       {/* {isIkutiKursus && ( */}
                         <div
                           style={{paddingTop:20, paddingBottom:20, color:'#3c3939'}}
