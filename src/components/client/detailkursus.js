@@ -323,7 +323,7 @@ export default class DetailKursus extends Component {
               } else {
                 return (
                   <Card
-                    bg={Number(this.state.activeCard) === Number(item.chapter_id) ? `secondary` : ``}
+                    style={Number(this.state.activeCard) === Number(item.chapter_id) ? {backgroundColor: '#dcdcdc'} : {}}
                     onClick={this.pilihChapterTampil}
                     className={`card-${
                       this.state.isIkutiKursus ? "active" : "nonactive"
@@ -525,12 +525,15 @@ export default class DetailKursus extends Component {
                     <div className="col-xl-4">
                       {/* <h3 className="f-24 f-w-800 mb-3">List Chapter</h3> */}
                       <Card
-                        bg={Number(this.state.activeCard) === Number(this.state.courseID) ? `secondary` : ``}
+                        bg={Number(this.state.activeCard) === Number(this.state.courseID) ? `#dcdcdc` : ``}
                         onClick={this.pilihOverviewChapter}
                         className={`card-active`}
                         data-id={this.state.courseID}
                         key={this.state.courseID}
-                        style={{marginTop:0}}
+                        style={{
+                          marginTop:0,
+                          backgroundColor: Number(this.state.activeCard) === Number(this.state.courseID) ? '#dcdcdc' : ''
+                        }}
                       >
                         <Card.Body>
                           <h3
