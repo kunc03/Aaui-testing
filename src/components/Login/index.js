@@ -63,6 +63,14 @@ class Login extends Component {
             email: res.data.result.email, 
             level: res.data.result.level,
           }});
+          Storage.set('access', {
+            activity: res.data.result.activity,
+            course: res.data.result.course,
+            manage_course: res.data.result.manage_course,
+            forum: res.data.result.forum,
+            group_meeting: res.data.result.group_meeting,
+            manage_group_meeting: res.data.result.manage_group_meeting
+          });
           Storage.set('token', {data: res.data.result.token});
           window.location.href = window.location.origin;
 
