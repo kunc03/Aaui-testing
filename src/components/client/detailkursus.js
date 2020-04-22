@@ -507,7 +507,7 @@ export default class DetailKursus extends Component {
                         // >
                         //   Ikuti Kursus
                         // </Link>
-                          <div className="row" style={{position:'fixed',bottom:0,zIndex:1}}>
+                          <div className="row" style={{marginTop:20}}>
                           <div className="col-md-12 col-xl-12">
                             <div
                               className="card"
