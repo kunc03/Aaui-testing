@@ -132,6 +132,8 @@ export default class Forum extends Component {
 
 	// LIST FORUM SEMUA 
 	render() {
+    let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
     var { forumlist, findForumInput, listTags, forumListStar } = this.state;
     
     if(findForumInput != ""){
@@ -170,10 +172,10 @@ export default class Forum extends Component {
 
 											<div className="forum-action">
                         {item.bookmark !== null ? 
-                               <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
+                               <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, this.state.user_id)}><i className="fa fa-star"></i></Link>
                             
                                : 
-                                   <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
+                                   <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, this.state.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
                           
                           }
 											
@@ -209,6 +211,52 @@ export default class Forum extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+                        <Row>
+                        {
+                        levelUser == 'client' && access.course == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/kursus`}>
+                            <div className="kategori title-disabled">
+                              <img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+                              &nbsp;
+                              Kursus & Materi
+                            </div>
+                          </Link>
+                        </div>
+                        }
+
+                        {
+                        levelUser == 'client' && access.forum == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/forum`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/forumon.png" className="img-fluid" />
+                              &nbsp;
+                              Forum
+                            </div>
+                          </Link>
+                        </div>
+                        }
+
+                        {
+                        levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
+                            <div className="kategori title-disabled">
+                              <img src="/assets/images/component/liveoff.png" className="img-fluid" />
+                              &nbsp;
+                              Group Meeting
+                            </div>
+                          </Link>
+                        </div>
+                        }
+                        </Row>
                   <Row>
                     <Col sm={8}>
                       <h3 className="f-20 f-w-800 mb-3">Forum</h3>
@@ -217,13 +265,14 @@ export default class Forum extends Component {
                         className="col-md-12 col-xl-12"
                         style={{ marginBottom: "42px", marginLeft: "-16px" }}
                       >
-                        <InputGroup className="mb-3">
+                        <InputGroup className="mb-3" style={{background:'#FFF'}}>
                           <InputGroup.Prepend>
                             <InputGroup.Text id="basic-addon1">
                               <i className="fa fa-search"></i>
                             </InputGroup.Text>
                           </InputGroup.Prepend>
                           <FormControl
+                            style={{background:'#FFF'}}
                             onChange={this.findForum}
                             placeholder="Cari Forum Lain"
                             aria-label="Username"
@@ -235,47 +284,6 @@ export default class Forum extends Component {
                             </InputGroup.Text>
                           </InputGroup.Append>
                         </InputGroup>
-
-                        <Row>
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/kursus`}>
-                              <div className="kategori title-disabled">
-                                <img
-                                  src="/assets/images/component/kursusoff.png"
-                                  className="img-fluid"
-                                  alt="media"
-                                />
-                                &nbsp; Kursus & Materi
-                              </div>
-                            </Link>
-                          </div>
-
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/forum`}>
-                              <div className="kategori-aktif">
-                                <img
-                                  src="/assets/images/component/forumon.png"
-                                  className="img-fluid"
-                                  alt="media"
-                                />
-                                &nbsp; Forum
-                              </div>
-                            </Link>
-                          </div>
-
-                          <div className="col-md-4 col-xl-4 mb-3">
-                            <Link to={`/liveclass`}>
-                              <div className="kategori title-disabled">
-                                <img
-                                  src="/assets/images/component/liveoff.png"
-                                  className="img-fluid"
-                                  alt="media"
-                                />
-                                &nbsp; Group Meeting
-                              </div>
-                            </Link>
-                          </div>
-                        </Row>
 
                         <Row>
                           <div className="col-md-12 col-xl-12 mb-3 mt-2">

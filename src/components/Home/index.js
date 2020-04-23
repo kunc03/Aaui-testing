@@ -73,6 +73,8 @@ class Home extends Component {
   }
 
   render() {
+    let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
 
     var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
     if(findCourseInput != ""){      
@@ -357,14 +359,65 @@ class Home extends Component {
                           </div>
                         </div>
 
+                        {
+                        levelUser == 'client' && access.course == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/kursus`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/kursuson.png" className="img-fluid" />
+                              &nbsp;
+                              Kursus & Materi
+                            </div>
+                          </Link>
+                        </div>
+                        }
+
+                        {
+                        levelUser == 'client' && access.forum == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/forum`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/forumon.png" className="img-fluid" />
+                              &nbsp;
+                              Forum
+                            </div>
+                          </Link>
+                        </div>
+                        }
+
+                        {
+                        levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/liveon.png" className="img-fluid" />
+                              &nbsp;
+                              Group Meeting
+                            </div>
+                          </Link>
+                        </div>
+                        }
+
+                      </div>
+                        {
+                        levelUser == 'client' && access.course == 0 ?
+                        null
+                        :
                         <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
-                          <InputGroup className="mb-3">
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
                             <InputGroup.Prepend>
                               <InputGroup.Text id="basic-addon1">
                                 <i className="fa fa-search"></i>
                               </InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
+                              style={{background:'#FFF'}}
                               onChange={this.findCourse}
                               placeholder="Kursus & Materi"
                               aria-label="Username"
@@ -375,39 +428,13 @@ class Home extends Component {
                             </InputGroup.Append>
                           </InputGroup>
                         </div>
+                        }
 
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/`}>
-                            <div className="kategori-aktif">
-                              <img src="/assets/images/component/kursuson.png" className="img-fluid" />
-                              &nbsp;
-                              Kursus & Materi
-                            </div>
-                          </Link>
-                        </div>
-
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/forum`}>
-                            <div className="kategori title-disabled">
-                              <img src="/assets/images/component/forumoff.png" className="img-fluid" />
-                              &nbsp;
-                              Forum
-                            </div>
-                          </Link>
-                        </div>
-
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/liveclass`}>
-                            <div className="kategori title-disabled">
-                              <img src="/assets/images/component/liveoff.png" className="img-fluid" />
-                              &nbsp;
-                              Group Meeting
-                            </div>
-                          </Link>
-                        </div>
-
-                      </div>
-
+                      {
+                      levelUser == 'client' && access.course == 0 ?
+                      null
+                      :
+                      <div>
                       <div className="row" style={{marginTop: '15px'}}>
                         <div className="col-md-12 col-xl-12 mb-3">
                           <div className="row d-flex align-items-center">
@@ -441,9 +468,14 @@ class Home extends Component {
                       </div>
 
                       <ListKursusDiikuti lists={kursusDiikuti} />
-
+                      </div>
+                      }
                     </div>
                     
+                    {
+                    levelUser == 'client' && access.course == 0 ?
+                    null
+                    :
                     <div className="col-sm-4">
                       <Card>
                         <Card.Body>
@@ -465,10 +497,15 @@ class Home extends Component {
                         </Card.Body>
                       </Card>
                     </div>
+                    }
                   </div>
 
 
                   {/* BANNER YUK IKUTI */}
+                  {
+                  levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
+                  null
+                  :
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
                       <div
@@ -511,7 +548,7 @@ class Home extends Component {
                           </div>
                           <div className="col-md-12 col-xl-3">
                             <div className="media-body p-t-50 p-l-10 p-b-10 p-r-10 text-center">
-                              <Link to={`/liveclass`}>
+                              <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
                                 <button
                                   type="button"
                                   className="btn f-w-600 f-14 text-c-white bg-c-purple-ideku shadow-box"
@@ -527,6 +564,7 @@ class Home extends Component {
                       </div>
                     </div>
                   </div>
+                  }
 
                   <div className="row" style={{marginTop: '15px'}}>
                     <div className="col-md-12 col-xl-12 mb-3">

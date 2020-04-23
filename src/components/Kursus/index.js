@@ -70,6 +70,8 @@ class Kursus extends Component {
   }
 
   render() {
+    let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
     var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
     if(findCourseInput != ""){      
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
@@ -341,30 +343,10 @@ class Kursus extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    <div className="col-sm-12">
-                    <h3 className="f-20 f-w-800 mb-3">Kursus</h3>
-
-                      <div className="row">
-
-                        <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
-                          <InputGroup className="mb-3">
-                            <InputGroup.Prepend>
-                              <InputGroup.Text id="basic-addon1">
-                                <i className="fa fa-search"></i>
-                              </InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl
-                              onChange={this.findCourse}
-                              placeholder="Kursus & Materi"
-                              aria-label="Username"
-                              aria-describedby="basic-addon1"
-                            />
-                            <InputGroup.Append style={{cursor: 'pointer'}}>
-                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
-                            </InputGroup.Append>
-                          </InputGroup>
-                        </div>
-
+                        {
+                        levelUser == 'client' && access.course == 0 ?
+                        null
+                        :
                         <div className="col-md-4 col-xl-4 mb-3">
                           <Link to={`/kursus`}>
                             <div className="kategori-aktif">
@@ -374,7 +356,12 @@ class Kursus extends Component {
                             </div>
                           </Link>
                         </div>
+                        }
 
+                        {
+                        levelUser == 'client' && access.forum == 0 ?
+                        null
+                        :
                         <div className="col-md-4 col-xl-4 mb-3">
                           <Link to={`/forum`}>
                             <div className="kategori title-disabled">
@@ -384,15 +371,44 @@ class Kursus extends Component {
                             </div>
                           </Link>
                         </div>
+                        }
 
+                        {
+                        levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
+                        null
+                        :
                         <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/liveclass`}>
+                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
                             <div className="kategori title-disabled">
                               <img src="/assets/images/component/liveoff.png" className="img-fluid" />
                               &nbsp;
                               Group Meeting
                             </div>
                           </Link>
+                        </div>
+                        }
+                    <div className="col-sm-12">
+                    <h3 className="f-20 f-w-800 mb-3">Kursus</h3>
+
+                      <div className="row">
+                        <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                          <InputGroup className="mb-3" style={{background:'#FFF'}}>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                <i className="fa fa-search"></i>
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                              style={{background:'#FFF'}}
+                              onChange={this.findCourse}
+                              placeholder="Kursus & Materi"
+                              aria-label="Username"
+                              aria-describedby="basic-addon1"
+                            />
+                            <InputGroup.Append style={{cursor: 'pointer'}}>
+                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
                         </div>
 
                       </div>

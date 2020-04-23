@@ -217,10 +217,10 @@ export default class ForumDetail extends Component {
                           >
 
                           {dataList.bookmark !== null ? 
-                                <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, item.user_id)}><i className="fa fa-star"></i></Link>
+                                <Link to='#' onClick={this.deleteStar.bind(this, item.forum_id, this.state.user_id)}><i className="fa fa-star"></i></Link>
                             
                             : 
-                                <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, item.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
+                                <Link to='#'  onClick={this.starAdd.bind(this, item.forum_id, this.state.user_id)} style={{color: 'gray'}}><i className="fa fa-star"></i></Link>
                             
                             }
         

@@ -182,7 +182,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/user-create" component={UserAdd} />
         <Route path="/user-edit/:user_id" component={UserEdit} />
         
-        <Route path="/user-access" component={UserAccess} />
+        {/* <Route path="/user-access" component={UserAccess} /> */}
         <Route path="/user-company/:company_id" component={UserCompany} />
         
         <Route path="/cabang" component={Cabang} />
@@ -212,7 +212,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/pengaturan" exact component={Pengaturan} />
 
         <Route path="/profile" exact component={Profile} />
-        <Route path="/user-access" component={UserAccess} />
+        {/* <Route path="/user-access" component={UserAccess} /> */}
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
@@ -221,7 +221,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/user-company" exact component={UserCompany} />
         <Route path="/user-company-create" component={UserCompanyAdd} />
         <Route path="/user-company-edit/:user_id" exact component={UserCompanyEdit} />
-        <Route path="/user-access" exactcomponent={UserAccess} />
+        {/* <Route path="/user-access" exactcomponent={UserAccess} /> */}
         <Route path="/my-company" exact component={CompanyDetail} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />

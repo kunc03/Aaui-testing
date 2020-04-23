@@ -78,6 +78,8 @@ export default class LiveClass extends Component {
 
 	render() {
 
+		let access = Storage.get('access');
+		let levelUser = Storage.get('user').data.level;
 		let { classRooms, isLive } = this.state;
 		let { filterMeeting } = this.state;
 		if(filterMeeting != ""){
@@ -97,35 +99,50 @@ export default class LiveClass extends Component {
 			<div className="page-wrapper">
 			
 					<Row>
-						<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/kursus`}>
-								<div className="kategori title-disabled">
-								<img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
-								&nbsp;
-								Kursus & Materi
-								</div>
-							</Link>
-						</div>
+                        {
+                        levelUser == 'client' && access.course == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/kursus`}>
+                            <div className="kategori title-disabled">
+                              <img src="/assets/images/component/kursusoff.png" className="img-fluid" />
+                              &nbsp;
+                              Kursus & Materi
+                            </div>
+                          </Link>
+                        </div>
+                        }
 
-						<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/forum`}>
-								<div className="kategori title-disabled">
-									<img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
-								&nbsp;
-								Forum
-								</div>
-							</Link>
-						</div>
+                        {
+                        levelUser == 'client' && access.forum == 0 ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={`/forum`}>
+                            <div className="kategori title-disabled">
+                              <img src="/assets/images/component/forumoff.png" className="img-fluid" />
+                              &nbsp;
+                              Forum
+                            </div>
+                          </Link>
+                        </div>
+                        }
 
-						<div className="col-md-4 col-xl-4 mb-3">
-							<Link to={`/liveclass`}>
-								<div className="kategori-aktif">
-									<img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-								&nbsp;
-								Group Meeting
-								</div>
-							</Link>
-						</div>
+                        {
+                        levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
+                        null
+                        :
+                        <div className="col-md-4 col-xl-4 mb-3">
+                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
+                            <div className="kategori-aktif">
+                              <img src="/assets/images/component/liveon.png" className="img-fluid" />
+                              &nbsp;
+                              Group Meeting
+                            </div>
+                          </Link>
+                        </div>
+                        }
 					</Row>
                       <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
                           <InputGroup className="mb-3" style={{background:'#FFF'}}>
