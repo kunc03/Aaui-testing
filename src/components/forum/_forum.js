@@ -6,8 +6,8 @@ import ReactDOM from 'react-dom';
 
 export function _postLIstAllForum(){
   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    //this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-    let listaAPi = `${FORUM}/company/${res.data.result.company_id}/${res.data.result.user_id}`;
+    this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+    let listaAPi = `${FORUM}/company/${this.state.companyId}/${res.data.result.user_id}`;
     //let listaAPi2 = `${FORUM}/${this.state.user_id}`;
     
     console.log(listaAPi, 'proppss')
@@ -74,8 +74,8 @@ export function _addforum(e) {
             }
 
             API.get(`${USER_ME}${Storage.get("user").data.email}`).then(res => {
-              //this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-              let listaAPi = `${FORUM}/company/${res.data.result.company_id}/${res.data.result.user_id}`;
+              this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+              let listaAPi = `${FORUM}/company/${this.state.companyId}/${res.data.result.user_id}`;
               API.get(listaAPi)
                 .then(res => {
                   console.log("res: ", res.data.result);

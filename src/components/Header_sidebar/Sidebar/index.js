@@ -29,7 +29,8 @@ class Sidebar extends Component {
       { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
       { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
       { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass', access: 'group_meeting' },
+      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
       { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
       { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
     ];

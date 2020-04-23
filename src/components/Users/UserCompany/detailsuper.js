@@ -709,7 +709,7 @@ export default class CompanyDetail extends Component {
                                       <td><input checked={(access.group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="group_meeting" /></td>
                                     </tr>
                                     <tr>
-                                      <td>Buat Group Meeting</td>
+                                      <td>Kelola Group Meeting</td>
                                       <td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
                                     </tr>
                                 </table>

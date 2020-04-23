@@ -274,11 +274,16 @@ export class ClientSwitch extends React.Component {
         
         <Route path="/aktivitas" component={Activity} />
         
+        <Route path="/kursus-materi" exact component={KursusMateri} />
+        <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
+        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
+        
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
+        <Route path="/meeting" exact component={LiveClassAdmin} />
         <Route path="/liveclass" component={LiveClass} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
