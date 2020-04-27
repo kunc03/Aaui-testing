@@ -9,7 +9,7 @@ const API_SERVER_PROD = 'https://api.icademy.id/';
 export const DEV_MODE = false;
 export const API_SERVER = DEV_MODE ? API_SERVER_DEV : API_SERVER_PROD;
 
-export const API_JITSI = 'meet.carsip.co.id';
+export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.id";
 
 export const USER_LOGIN = `${API_SERVER}v1/auth`;

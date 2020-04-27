@@ -15,7 +15,7 @@ export default class User extends Component {
       users: [],
       isModalHapus: false,
       userIdHapus: '',
-      myCompanyId: this.props.match.params.company_id,
+      myCompanyId: localStorage.getItem('companyID') ? parseInt(localStorage.getItem('companyID')) : this.props.match.params.company_id,
 
       isModalPassword: '',
       userIdPassword: '',
@@ -148,7 +148,8 @@ export default class User extends Component {
   fetchData() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ myCompanyId: res.data.result.company_id});
+
+        this.setState({ myCompanyId: localStorage.getItem('companyID') ? parseInt(localStorage.getItem('companyID')) : res.data.result.company_id});
         console.log('STORAGENYA',Storage.get('user').data);
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
@@ -164,6 +165,7 @@ export default class User extends Component {
         .catch(function(error) {
           console.log(error);
         });
+      
       }
     });
   }
@@ -180,6 +182,9 @@ export default class User extends Component {
   }
 
   render() {
+    console.log('myCompanyId: ', this.state.myCompanyId);
+    console.log('users: ', this.state.users);
+
     let { users, filterUser } = this.state;
     if(filterUser != ""){
       users = users.filter(x=>
