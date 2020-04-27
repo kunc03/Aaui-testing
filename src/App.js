@@ -62,6 +62,9 @@ import LiveClassAdminJoin from "./components/admin/liveclass/join";
 
 import Kursus from "./components/Kursus";
 
+import Certificate from './components/admin/certificate';
+import CertificateCreate from './components/admin/certificate/create';
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -192,6 +195,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/grup" component={Grup} />
 
         <Route path="/filemanager" exact component={FilePicker} />
+
+        <Route path='/certificate' component={Certificate} />
+        <Route path='/certificate-create' component={CertificateCreate} />
 
         <Route path="/logout" component={Logout} />
       </Switch>
