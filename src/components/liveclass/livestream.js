@@ -60,6 +60,7 @@ export default class LiveStream extends Component {
   componentDidMount() {
     this.onBotoomScroll();
     socket.on("broadcast", data => {
+      console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
@@ -200,21 +201,26 @@ export default class LiveStream extends Component {
       
       
       if(res.status === 200) {
-        this.onBotoomScroll();
-
-        let splitTags;
-        let datas = res.data.result;
-        splitTags =  datas.attachment.split("/")[4];
-        datas.filenameattac = splitTags; 
-
-        this.setState({ fileChat: [...this.state.fileChat, res.data.result], nameFile : null });
-        socket.emit('send', {
-          pengirim: this.state.user.user_id,
-          room: this.state.classId,
-          attachment: this.state.attachment,
-          filenameattac: datas.filenameattac,
-          created_at: new Date()
-        })
+        if(!res.data.error){
+          this.onBotoomScroll();
+          let splitTags;
+          
+          let datas = res.data.result;
+          console.log(datas, 'datass')
+          splitTags =  datas.attachment.split("/")[4];
+          datas.filenameattac = splitTags; 
+  
+          //this.setState({ fileChat: [...this.state.fileChat, res.data.result], attachment : datas.attachment,  nameFile : null });
+          socket.emit('send', {
+            pengirim: this.state.user.user_id,
+            room: this.state.classId,
+            attachment: datas.attachment,
+            filenameattac: datas.filenameattac,
+            created_at: new Date()
+          })
+        }else{
+          alert('File yang anda input salah')
+        }
       }
     })
   }
@@ -295,7 +301,7 @@ export default class LiveStream extends Component {
             { this.state.fileChat.map((item, i)=>{
               return (
                 <div className='box-chat-send-left'>
-                  <span className="m-b-5"><Link to='#'><b>{item.name}</b></Link></span><br/>
+                  <span className="m-b-5"><Link to='#'><b>{user.name} </b></Link></span><br/>
                   <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
                   <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
                 </div>
