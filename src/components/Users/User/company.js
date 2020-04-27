@@ -29,7 +29,8 @@ export default class User extends Component {
 
       isModalImport: false,
       excel: '',
-      nameFile: ''
+      nameFile: '',
+      direction: 'ascending'
     };
   }
 
@@ -174,7 +175,22 @@ export default class User extends Component {
 
   sortData = (name) => {
       let userdata = this.state.users;
-      userdata.sort((a,b)=>a[name] < b[name] ? -1 : 1);
+      if (this.state.direction === 'ascending') {
+        this.setState({direction: 'descending'})
+      }
+      else{
+        this.setState({direction: 'ascending'})
+      }
+      let direction = this.state.direction
+      userdata.sort((a,b)=>{
+        if (a[name] < b[name]) {
+          return direction === 'ascending' ? -1 : 1;
+        }
+        if ([name] > b[name]) {
+          return direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
       this.setState({users:userdata});
   }
 
