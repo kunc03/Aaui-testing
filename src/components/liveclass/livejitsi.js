@@ -47,7 +47,6 @@ function JitsiMeetComponent(props) {
       window.close();
     });
 
-    api.executeCommand('avatarUrl', konten.userAvatar);
   } catch (error) {
    console.error('Failed to load Jitsi API', error);
   }
@@ -63,7 +62,12 @@ function JitsiMeetComponent(props) {
   <div
    style={containerStyle}
   >
-   {loading && <div>Loading...</div>}
+   {loading &&
+    <div>
+      <div>Microphone ON</div>
+      <div>Camera ON</div>
+    </div>
+    }
    <div
     id="jitsi-container"
     style={jitsiContainerStyle}

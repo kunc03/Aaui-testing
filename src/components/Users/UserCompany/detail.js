@@ -163,16 +163,23 @@ export default class CompanyDetail extends Component {
   		branch_name: this.state.namacabang
   	}
 
+	if(formData.branch_name) {
   	if(this.state.actioncabang === 'add') {
   		// action for insert
 	  	API.post(`${API_SERVER}v1/branch`, formData).then(res => {
 	  		if(res.status === 200) {
-	  			formData.branch_id = res.data.result.insertId;
-	  			this.setState({
-	  				cabang: [...this.state.cabang, formData ],
-	  				isModalCabang: false
-					})
+				if (res.data.result==='double data'){
 					this.handleCloseCabang()
+					this.setState({ isNotifikasi: true, isiNotifikasi: 'Data sudah ada. Nama group tidak boleh sama.' })
+				}
+				else{
+					formData.branch_id = res.data.result.branch_id;
+					  this.setState({
+						  cabang: [...this.state.cabang, formData ],
+						  isModalCabang: false
+						})
+						this.handleCloseCabang()
+				}
 	  		}
 	  	})
 	  } else {
@@ -191,6 +198,7 @@ export default class CompanyDetail extends Component {
 	  		}
 	  	})
 	  }
+		}
 	}
 	
   handleCloseCabang = e => {
@@ -215,12 +223,18 @@ export default class CompanyDetail extends Component {
 	  	API.post(`${API_SERVER}v1/grup`, formData).then(res => {
 	  		console.log(res);
 	  		if(res.status === 200) {
-	  			formData.grup_id = res.data.result.insertId;
-	  			this.setState({
-	  				grup: [...this.state.grup, formData ],
-	  				isModalGrup: false
-					})
+				if (res.data.result==='double data'){
 					this.handleCloseGrup()
+					this.setState({ isNotifikasi: true, isiNotifikasi: 'Data sudah ada. Nama role tidak boleh sama.' })
+				}
+				else{
+					formData.grup_id = res.data.result.insertId;
+					this.setState({
+						grup: [...this.state.grup, formData ],
+						isModalGrup: false
+						})
+					this.handleCloseGrup()
+				}
 	  		}
 	  	})
   	} else {
@@ -336,7 +350,7 @@ export default class CompanyDetail extends Component {
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+				this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
 				let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
 				API.get(linkURL).then(res => {

@@ -168,12 +168,18 @@ export default class CompanyDetail extends Component {
 				// action for insert
 				API.post(`${API_SERVER}v1/branch`, formData).then(res => {
 					if(res.status === 200) {
-						formData.branch_id = res.data.result.insertId;
-						this.setState({
-							cabang: [...this.state.cabang, formData ],
-							isModalCabang: false
-						})
-						this.handleCloseCabang();
+            if (res.data.result==='double data'){
+              this.handleCloseCabang()
+              this.setState({ isNotifikasi: true, isiNotifikasi: 'Data sudah ada. Nama group tidak boleh sama.' })
+            }
+            else{
+              formData.branch_id = res.data.result.branch_id;
+              this.setState({
+                cabang: [...this.state.cabang, formData ],
+                isModalCabang: false
+              })
+              this.handleCloseCabang();
+            }
 					}
 				})
 			} else {
@@ -217,12 +223,18 @@ export default class CompanyDetail extends Component {
 				API.post(`${API_SERVER}v1/grup`, formData).then(res => {
 					console.log(res);
 					if(res.status === 200) {
-						formData.grup_id = res.data.result.insertId;
-						this.setState({
-							grup: [...this.state.grup, formData ],
-							isModalGrup: false
-						})
-						this.handleCloseGrup();					
+            if (res.data.result==='double data'){
+              this.handleCloseGrup()
+              this.setState({ isNotifikasi: true, isiNotifikasi: 'Data sudah ada. Nama role tidak boleh sama.' })
+            }
+            else{
+              formData.grup_id = res.data.result.insertId;
+              this.setState({
+                grup: [...this.state.grup, formData ],
+                isModalGrup: false
+              })
+              this.handleCloseGrup();				
+            }	
 					}
 				})
 			} else {

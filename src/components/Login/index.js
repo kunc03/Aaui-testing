@@ -17,7 +17,8 @@ class Login extends Component {
     password: '',
     toggle_alert: false,
     isVoucher: false,
-    voucher: ''
+    voucher: '',
+    alertMessage : ''
   };
 
   onChangeEmail = e => {
@@ -48,7 +49,7 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
-      //console.log(res.data.result)
+      console.log(res)
       if(res.status === 200) {
         if(!res.data.error) {
 
@@ -81,10 +82,15 @@ class Login extends Component {
           );
           
         } else {
-          this.setState({ toggle_alert: true });
+          if (res.data.result.status=='expired'){
+            this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
+          }
+          else{
+            this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+          }
         }
       } else {
-        this.setState({ toggle_alert: true });
+        this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
       }
     }).catch(err => {
       console.log('failed fetch', err);
@@ -118,15 +124,16 @@ class Login extends Component {
               window.location.href = window.location.origin
             }
           );
-        }else{
-          this.setState({
-            toggle_alert: true
-          })
+        } else {
+          if (res.data.result.status=='expired'){
+            this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
+          }
+          else{
+            this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+          }
         }
-      }else{
-        this.setState({
-          toggle_alert: true
-        })
+      } else {
+        this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
       }
     }).catch(err => {
       console.log('failed fetch', err);
@@ -155,7 +162,7 @@ class Login extends Component {
           {
             toggle_alert &&
             <Alert variant={'danger'}>
-              Login failed. Please verify the data correct!
+              {this.state.alertMessage}
             </Alert>
           }
         </form>
@@ -189,7 +196,7 @@ class Login extends Component {
           {
             toggle_alert &&
             <Alert variant={'danger'}>
-              Login failed. Please verify the data correct!
+              {this.state.alertMessage}
             </Alert>
           }
         </form>

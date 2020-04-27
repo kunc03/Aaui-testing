@@ -14,13 +14,17 @@ class Header extends Component {
     avatar: "/assets/images/user/avatar-1.png",
     notificationData : [],
 
-    company: []
+    company: [],
+    company_id:'',
+    myCompanyName : ''
   };
 
   pilihCompany = e => {
     e.preventDefault();
     const id = e.target.getAttribute('data-id');
+    const logo = e.target.getAttribute('data-logo');
     localStorage.setItem('companyID', id);
+    localStorage.setItem('logo', logo);
     window.location.reload();
   }
 
@@ -32,7 +36,6 @@ class Header extends Component {
       }
       else{
         this.setState({ company: response.data.result.company });
-        console.log('ALVIN COM',this.state.company)
       }
     }).catch(function (error) {
       console.log(error);
@@ -56,6 +59,7 @@ class Header extends Component {
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
+        console.log('res company', res)
         if(res.data.error) {
           localStorage.clear();
           window.location.reload();
@@ -73,6 +77,8 @@ class Header extends Component {
         }});
         this.setState({
           logo: res.data.result.logo,
+          myCompanyName: res.data.result.company_name,
+          company_id: res.data.result.company_id,
           user: res.data.result.name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
@@ -250,7 +256,7 @@ class Header extends Component {
                   <img
                     alt="Media"
                     style={{ height: 40 }}
-                    src={this.state.logo}
+                    src={localStorage.getItem("logo") ? localStorage.getItem("logo") : this.state.logo}
                   />
                 </div>
             </li>
@@ -305,22 +311,47 @@ class Header extends Component {
                     </div>
                     <ul className="noti-body">
                       {
+                        level == 'admin' &&
+                        <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={this.state.company_id} data-logo={this.state.logo}>
+                          <div className="media" data-id={this.state.company_id} data-logo={this.state.logo}>
+                            <img
+                              data-id={this.state.company_id}
+                              data-logo={this.state.logo}
+                              className="img-radius"
+                              src={this.state.logo}
+                              alt="Generic placeholder image"
+                            />
+                            <div className="media-body" data-id={this.state.company_id} data-logo={this.state.logo}>
+                              <p data-id={this.state.company_id} data-logo={this.state.logo}>
+                                <b data-id={this.state.company_id} data-logo={this.state.logo}>{this.state.myCompanyName}</b>
+                              </p>
+                              {
+                                localStorage.getItem("companyID") == this.state.company_id && (
+                                  <p data-id={this.state.company_id} data-logo={this.state.logo} style={{color:'green'}}>active</p>
+                                )
+                              }
+                            </div>
+                          </div>
+                        </li>
+                      }
+                      {
                         company.map((item, i) => (
-                          <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id}>
-                            <div className="media" data-id={item.company_id}>
+                          <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id} data-logo={item.logo}>
+                            <div className="media" data-id={item.company_id} data-logo={item.logo}>
                               <img
                                 data-id={item.company_id}
+                                data-logo={item.logo}
                                 className="img-radius"
                                 src={item.logo}
                                 alt="Generic placeholder image"
                               />
-                              <div className="media-body" data-id={item.company_id}>
-                                <p data-id={item.company_id}>
-                                  <b data-id={item.company_id}>{item.company_name}</b>
+                              <div className="media-body" data-id={item.company_id} data-logo={item.logo}>
+                                <p data-id={item.company_id} data-logo={item.logo}>
+                                  <b data-id={item.company_id} data-logo={item.logo}>{item.company_name}</b>
                                 </p>
                                 {
                                   localStorage.getItem("companyID") == item.company_id && (
-                                    <p data-id={item.company_id} style={{color:'green'}}>{item.status}</p>
+                                    <p data-id={item.company_id} data-logo={item.logo} style={{color:'green'}}>{item.status}</p>
                                   )
                                 }
                               </div>

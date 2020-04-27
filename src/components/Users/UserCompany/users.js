@@ -142,7 +142,7 @@ export default class Users extends Component {
   fetchData() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ myCompanyId: res.data.result.company_id});
+        this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
           response.data.result.map(item => {

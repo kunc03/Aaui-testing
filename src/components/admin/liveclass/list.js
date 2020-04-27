@@ -624,6 +624,7 @@ export default class LiveClassAdmin extends Component {
                           <button
                             type="button"
                             className="btn f-w-bold"
+                            onClick={this.closeClassModal}
                           >
                             Tutup
                           </button>

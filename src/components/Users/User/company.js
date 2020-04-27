@@ -125,6 +125,7 @@ export default class User extends Component {
     form.append('company_id', this.state.myCompanyId);
     form.append('excel', this.state.excel);
     this.setState({ isLoading: true });
+    console.log('alvin state',this.state.myCompanyId)
 
     API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
       if (res.status === 200) {
@@ -148,10 +149,11 @@ export default class User extends Component {
   fetchData() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ myCompanyId: res.data.result.company_id});
+        this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         console.log('STORAGENYA',Storage.get('user').data);
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
+          console.log('alvin res comp',response)
           response.data.result.map(item => {
             let temp = item;
             if(item.validity !== null) {
