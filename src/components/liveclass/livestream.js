@@ -283,7 +283,7 @@ export default class LiveStream extends Component {
             {
               user.name && classRooms.room_name && 
               <JitsiMeetComponent 
-                roomName={classRooms.room_name.replace(/\s/g, '')} 
+                roomName={classRooms.room_name} 
                 userName={user.name} 
                 userEmail={user.email}
                 userAvatar={user.avatar} />

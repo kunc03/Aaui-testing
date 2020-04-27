@@ -42,6 +42,10 @@ function JitsiMeetComponent(props) {
       api.executeCommand('displayName', konten.userName);
     });
 
+    api.addEventListener('screenSharingStatusChanged', () => {
+        api.executeCommand('toggleVideo');
+    });
+
     api.addEventListener('videoConferenceLeft', () => {
       // window.location.href = window.location.origin+'/liveclass';
       window.close();
@@ -64,6 +68,7 @@ function JitsiMeetComponent(props) {
   >
    {loading &&
     <div>
+      <div>Loading...</div>
       <div>Microphone ON</div>
       <div>Camera ON</div>
     </div>
