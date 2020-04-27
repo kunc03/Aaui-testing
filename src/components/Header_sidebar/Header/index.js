@@ -51,13 +51,10 @@ class Header extends Component {
         }
       });
     }
-
-
-
   }
 
-  componentDidMount() {
-    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+  async componentDidMount() {
+    await API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
         console.log('res company', res)
         if(res.data.error) {
@@ -67,6 +64,7 @@ class Header extends Component {
 
         Storage.set('user', {data: { 
           logo: res.data.result.logo,
+          company_id: res.data.result.company_id,
           user_id: res.data.result.user_id, 
           email: res.data.result.email,
           user: res.data.result.name,
@@ -75,6 +73,7 @@ class Header extends Component {
             ? res.data.result.avatar
             : "/assets/images/user/avatar-1.png"
         }});
+        
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
@@ -85,6 +84,7 @@ class Header extends Component {
             ? res.data.result.avatar
             : "/assets/images/user/avatar-1.png"
         });
+        
         if (this.state.level==='client'){
           this.setState({level:'User'})
         }
@@ -99,41 +99,9 @@ class Header extends Component {
   }
 
   render() {
-    let levelUser = Storage.get('user').data.level;
-    let menuClients = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-      { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-    ];
-
-    let menuAdmins = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus-materi' },
-      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
-      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-    ];
-
-    let menuSuperAdmins = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Kelas', link: '/liveclass' },
-      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
-      { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
-      { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-      { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-    ];
-  
-    let menuContent = [];
     const { user, level, company, notificationData } = this.state;
 
+    // console.table(company);
 
     let NotifBody = ({list}) => {
       let unread = Object.values(list).filter(x=> x.isread == '0');
@@ -350,8 +318,8 @@ class Header extends Component {
                                   <b data-id={item.company_id} data-logo={item.logo}>{item.company_name}</b>
                                 </p>
                                 {
-                                  localStorage.getItem("companyID") == item.company_id && (
-                                    <p data-id={item.company_id} data-logo={item.logo} style={{color:'green'}}>{item.status}</p>
+                                  parseInt(localStorage.getItem("companyID")) == item.company_id && (
+                                    <p data-id={item.company_id} style={{color:'green'}}>{item.status}</p>
                                   )
                                 }
                               </div>
