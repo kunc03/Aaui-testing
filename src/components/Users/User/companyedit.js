@@ -114,7 +114,7 @@ class UserEdit extends Component {
         let unlimited = res.data.result.unlimited == 0 ? true : false;
         this.setState({ 
           user: res.data.result,
-          company_id: res.data.result.company_id,
+          company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id,
           branch_id: res.data.result.branch_id,
           grup_id: res.data.result.grup_id,
           name: res.data.result.name, 
@@ -168,6 +168,7 @@ class UserEdit extends Component {
                           <form onSubmit={this.onSubmitEditUser}>
                             <div className="form-group">
                               <label className="label-input">Group</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -180,6 +181,7 @@ class UserEdit extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Role</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -192,6 +194,7 @@ class UserEdit extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Nama</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
                                 type="text"
@@ -204,6 +207,7 @@ class UserEdit extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Nomor Induk</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
                                 required
@@ -216,6 +220,7 @@ class UserEdit extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Email</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="email"
                                 required
@@ -247,6 +252,7 @@ class UserEdit extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
@@ -258,6 +264,7 @@ class UserEdit extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Password</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="password"
                                 name="password"

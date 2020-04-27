@@ -92,7 +92,17 @@ class UserAdd extends Component {
         if(res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
-          this.props.history.push('/my-company')
+          if (Storage.get('User').data.level === 'superadmin'){
+            this.props.history.push('/user')
+          }
+          else{
+            if (Storage.get('User').data.level === 'superadmin'){
+              this.props.history.push('/user')
+            }
+            else{
+              this.props.history.push('/my-company')
+            }
+          }
         }
       }
     })
@@ -101,7 +111,7 @@ class UserAdd extends Component {
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
-        this.setState({ company_id: res.data.result.company_id});
+        this.setState({ company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.company_id}`).then(res => {
           if(res.status === 200) {
@@ -137,6 +147,7 @@ class UserAdd extends Component {
                           <form onSubmit={event => this.submitForm(event)}>
                             <div className="form-group">
                               <label className="label-input">Group</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -149,6 +160,7 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Role</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -161,6 +173,7 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Nama</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
                                 type="text"
@@ -172,6 +185,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Nomor Induk</label>
+                              <Form.Text className="text-danger">Required</Form.Text> 
                               <input
                                 type="text"
                                 required
@@ -183,6 +197,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Email</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="email"
                                 required
@@ -216,6 +231,7 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select name="level" className="form-control" onChange={this.onChangeInput} required style={{textTransform: 'capitalize'}}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -227,6 +243,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Password</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="password"
                                 name="password"

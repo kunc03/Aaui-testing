@@ -182,8 +182,11 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
         <Route path="/user" component={User} />
-        <Route path="/user-create" component={UserAdd} />
-        <Route path="/user-edit/:user_id" component={UserEdit} />
+        {/* <Route path="/user-create" component={UserAdd} />
+        <Route path="/user-edit/:user_id" component={UserEdit} /> */}
+        
+        <Route path="/user-create" component={UserCompanyAdd} />
+        <Route path="/user-edit/:user_id" exact component={UserCompanyEdit} />
         
         {/* <Route path="/user-access" component={UserAccess} /> */}
         <Route path="/user-company/:company_id" component={UserCompany} />
