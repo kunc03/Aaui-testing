@@ -16,7 +16,7 @@ import {
   InputGroup, FormControl, Modal
 } from 'react-bootstrap';
 
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import API, { API_JITSI, API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
 export default class LiveClassAdmin extends Component {
@@ -196,7 +196,8 @@ export default class LiveClassAdmin extends Component {
               schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
               //url
-              message: 'https://app.icademy.id/liveclass-room/'+res.data.result.class_id
+              message: 'https://app.icademy.id/liveclass-room/'+res.data.result.class_id,
+              messageNonStaff: 'https://'+API_JITSI+'/'+res.data.result.room_name
             }
             API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
               if(res.status === 200) {

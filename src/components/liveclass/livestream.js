@@ -15,7 +15,7 @@ import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
 
-import API, { API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
+import API, { API_JITSI, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 const socket = io(`${API_SOCKET}`);
@@ -143,8 +143,10 @@ export default class LiveStream extends Component {
       schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       schedule_end:  MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       userInvite: this.state.valueInvite,
-      message: window.location.href
+      message: window.location.href,
+      messageNonStaff: 'https://'+API_JITSI+'/'+this.state.classRooms.room_name
     }
+    console.log('ALVIN KIRIM',form)
 
     API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
       if(res.status === 200) {
