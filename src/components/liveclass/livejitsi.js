@@ -51,6 +51,8 @@ function JitsiMeetComponent(props) {
       window.close();
     });
     api.executeCommand('avatarUrl', konten.userAvatar);
+    !konten.startMic && api.executeCommand('toggleAudio');
+    !konten.startCam && api.executeCommand('toggleVideo');
   } catch (error) {
    console.error('Failed to load Jitsi API', error);
   }
@@ -69,8 +71,6 @@ function JitsiMeetComponent(props) {
    {loading &&
     <div>
       <div>Loading...</div>
-      <div>Microphone ON</div>
-      <div>Camera ON</div>
     </div>
     }
    <div

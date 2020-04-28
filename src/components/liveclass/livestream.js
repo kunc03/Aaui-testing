@@ -5,6 +5,7 @@ import {
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
 
+import ToggleSwitch from "react-switch";
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
@@ -38,9 +39,22 @@ export default class LiveStream extends Component {
     //multi select invite
     optionsInvite: [],
     valueInvite: [],
-    nameFile : null
+    nameFile : null,
+    join: false,
+    startMic: localStorage.getItem('startMic') === 'true' ? true : false,
+    startCam: localStorage.getItem('startCam') === 'true' ? true : false,
+    modalStart: true
   }
   
+  toggleSwitchMic(checked) {
+    localStorage.setItem('startMic', !this.state.startMic)
+    this.setState({ startMic:!this.state.startMic });
+  }
+  toggleSwitchCam(checked) {
+    localStorage.setItem('startCam', !this.state.startCam)
+    this.setState({ startCam:!this.state.startCam });
+  }
+
   handleChange(emailInvite) {
     this.setState({emailInvite})
   }
@@ -51,6 +65,9 @@ export default class LiveStream extends Component {
       emailInvite: [],
       emailResponse: "Masukkan email yang ingin di invite."
     });
+  }
+  handleCloseMeeting = e => {
+    window.close();
   }
 
 	handleCloseLive = e => {
@@ -231,6 +248,10 @@ export default class LiveStream extends Component {
     this.onBotoomScroll();
   }
 
+  joinRoom(){
+    this.setState({join:true, modalStart:false});
+  }
+
 	render() {
 
     const { classRooms, user } = this.state;
@@ -283,12 +304,17 @@ export default class LiveStream extends Component {
               </Link>
             </h3>
             {
-              user.name && classRooms.room_name && 
+              user.name && classRooms.room_name && this.state.join ?
               <JitsiMeetComponent 
                 roomName={classRooms.room_name} 
                 userName={user.name} 
                 userEmail={user.email}
-                userAvatar={user.avatar} />
+                userAvatar={user.avatar}
+                startMic={this.state.startMic}
+                startCam={this.state.startCam}
+              />
+              :
+              null
             }
           </Col>
 
@@ -400,6 +426,41 @@ export default class LiveStream extends Component {
             >
               Tidak
             </button>
+          </Modal.Body>
+        </Modal>
+
+        
+        <Modal
+          show={this.state.modalStart}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold">
+            {classRooms.room_name}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                      <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
+                      <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
+                    </Row>
+                    <Row>
+                      <Col><h4><i className="fa fa-camera"></i> Camera</h4></Col>
+                      <Col><ToggleSwitch onChange={this.toggleSwitchCam.bind(this)} checked={this.state.startCam} /></Col>
+                    </Row>
+                      <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-video"></i>Join Meeting
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.handleCloseMeeting}
+                      >
+                        Keluar
+                      </button>
+                  </Card.Body>
+                </Card>
           </Modal.Body>
         </Modal>
 
