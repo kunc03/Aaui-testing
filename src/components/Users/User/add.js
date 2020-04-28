@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Form } from 'react-bootstrap';
 import API, { API_SERVER } from '../../../repository/api';
 import ToggleSwitch from "react-switch";
 
@@ -138,6 +139,7 @@ class UserAdd extends Component {
                           <form onSubmit={event => this.submitForm(event)}>
                             <div className="form-group">
                               <label className="label-input">Company</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="company_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -165,6 +167,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Group</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -176,6 +179,7 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Role</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
@@ -188,35 +192,38 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input">Nama</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
                                 type="text"
                                 name="name"
                                 className="form-control"
-                                placeholder="nama"
+                                placeholder="Nama"
                                 onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Nomor Induk</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
                                 required
                                 name="identity"
                                 className="form-control"
-                                placeholder="210-1971-74"
+                                placeholder="001"
                                 onChange={this.onChangeInput}
                               />
                             </div>
                             
                             <div className="form-group">
                               <label className="label-input">Email</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="email"
                                 required
                                 name="email"
                                 className="form-control"
-                                placeholder="rakaal@gmail.com"
+                                placeholder="emailanda@domain.com"
                                 onChange={this.onChangeInput}
                               />
                             </div>
@@ -226,17 +233,18 @@ class UserAdd extends Component {
                                 type="text"
                                 name="phone"
                                 className="form-control"
-                                placeholder="081-247-9592"
+                                placeholder="08119680220"
                                 onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Alamat</label>
-                              <textarea name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <textarea name="address" className="form-control" placeholder="Alamat" onChange={this.onChangeInput}></textarea>
                             </div>
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <select style={{textTransform: 'capitalize'}} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
@@ -248,12 +256,13 @@ class UserAdd extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input">Password</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="password"
                                 name="password"
                                 required
                                 className="form-control"
-                                placeholder="password"
+                                placeholder="Password"
                                 onChange={this.onChangeInput}
                               />
                             </div>

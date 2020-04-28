@@ -179,7 +179,7 @@ class UserAdd extends Component {
                                 type="text"
                                 name="name"
                                 className="form-control"
-                                placeholder="nama"
+                                placeholder="Nama"
                                 onChange={this.onChangeInput}
                               />
                             </div>
@@ -191,7 +191,7 @@ class UserAdd extends Component {
                                 required
                                 name="identity"
                                 className="form-control"
-                                placeholder="210-1971-74"
+                                placeholder="001"
                                 onChange={this.onChangeInput}
                               />
                             </div>
@@ -203,7 +203,7 @@ class UserAdd extends Component {
                                 required
                                 name="email"
                                 className="form-control"
-                                placeholder="rakaal@gmail.com"
+                                placeholder="emailanda@domain.com"
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text className="text-muted">
@@ -217,13 +217,13 @@ class UserAdd extends Component {
                                 type="text"
                                 name="phone"
                                 className="form-control"
-                                placeholder="081-247-9592"
+                                placeholder="08119680220"
                                 onChange={this.onChangeInput}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input">Alamat</label>
-                              <textarea maxLength="100" name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput}></textarea>
+                              <textarea maxLength="100" name="address" className="form-control" placeholder="Alamat" onChange={this.onChangeInput}></textarea>
                               <Form.Text className="text-muted">
                                 Maksimal 100 karakter untuk alamat
                               </Form.Text>
@@ -249,7 +249,7 @@ class UserAdd extends Component {
                                 name="password"
                                 required
                                 className="form-control"
-                                placeholder="password"
+                                placeholder="Password"
                                 onChange={this.onChangeInput}
                               />
                             </div>
