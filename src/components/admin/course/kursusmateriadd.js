@@ -274,7 +274,7 @@ export default class KursusMateriAdd extends Component {
                             <div className="form-group">
                               <label className="label-input">Media</label>
                               <input
-                                accept="image/*,video/*"
+                                accept="image/*,video/*,application/pdf"
                                 type="file"
                                 required
                                 name="image"
@@ -283,8 +283,8 @@ export default class KursusMateriAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text>
-                                Pastikan file berformat mp4, png, jpg, jpeg,
-                                atau gif dan ukuran file tidak melebihi 20MB.
+                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau
+                              pdf dan ukuran file tidak melebihi 20MB.
                               </Form.Text>
                               {this.state.resMsg && (
                                 <Form.Text className="text-danger">
@@ -297,7 +297,6 @@ export default class KursusMateriAdd extends Component {
                               <input
                                 accept="image/*"
                                 type="file"
-                                required
                                 name="thumbnail"
                                 className="form-control"
                                 placeholder="konten"

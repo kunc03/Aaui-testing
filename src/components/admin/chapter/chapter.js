@@ -9,6 +9,9 @@ import LoadingOverlay from 'react-loading-overlay';
 import ReactPlayer from 'react-player';
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
+import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
+
 export default class ChapterPreview extends Component {
 
 	state = {
@@ -345,7 +348,17 @@ export default class ChapterPreview extends Component {
 					return (
 						<img class="img-fluid rounded" src={media} alt="" style={{ marginBottom: '20px', width: '100%' }} />
 					)
-				} else {
+        }
+        else if (ektension === "pdf") {
+          return(
+            <div style={{height:850}}>
+              <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.3.200/pdf.worker.min.js">
+                <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
+              </Worker>
+            </div>
+          )
+        }
+        else {
 					return (
             <div style={{ position: "relative", paddingTop: "56.25%" }}>
               <ReactPlayer
@@ -694,7 +707,7 @@ export default class ChapterPreview extends Component {
                           <div className="form-group">
                             <label>Media Chapter</label>
                             <input
-                              accept="image/*,video/*"
+                              accept="image/*,video/*,application/pdf"
                               name="chapterVideo"
                               onChange={this.onChangeInput}
                               type="file"
@@ -709,8 +722,8 @@ export default class ChapterPreview extends Component {
                                   Required &nbsp;
                                 </span>
                               )}
-                              Pastikan file berformat mp4, png, jpg, jpeg, atau
-                              gif dan ukuran file tidak melebihi 20MB.
+                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau
+                              pdf dan ukuran file tidak melebihi 20MB.
                             </Form.Text>
                           </div>
                           <div className="form-group">

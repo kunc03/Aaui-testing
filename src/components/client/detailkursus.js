@@ -5,6 +5,9 @@ import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactPlayer from 'react-player';
 
+import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
+
 export default class DetailKursus extends Component {
 
 	state = {
@@ -419,7 +422,17 @@ export default class DetailKursus extends Component {
               <div className="responsive-image-banner" style={{backgroundImage:`url(${media})`}}></div>
             </div>
           )
-        } else {
+        }
+        else if (ektension === "pdf") {
+          return(
+            <div style={{height:850}}>
+              <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.3.200/pdf.worker.min.js">
+                <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
+              </Worker>
+            </div>
+          )
+        }
+        else {
           return (
             <div style={{position: 'relative', paddingTop: '56.25%'}}>
               <ReactPlayer 
