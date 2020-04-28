@@ -50,7 +50,7 @@ function JitsiMeetComponent(props) {
       // window.location.href = window.location.origin+'/liveclass';
       window.close();
     });
-
+    api.executeCommand('avatarUrl', konten.userAvatar);
   } catch (error) {
    console.error('Failed to load Jitsi API', error);
   }
