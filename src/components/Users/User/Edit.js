@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import ToggleSwitch from "react-switch";
+import { Form } from 'react-bootstrap';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
