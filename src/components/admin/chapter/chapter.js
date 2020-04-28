@@ -99,7 +99,7 @@ export default class ChapterPreview extends Component {
 			chapterTitle: '',
 			chapterBody: '',
 			chapterVideo: '',
-			attachmentId: ''
+			attachmentId: []
 		});
 	}
 
@@ -135,7 +135,9 @@ export default class ChapterPreview extends Component {
 				})				
       }
 
-      if (this.state.attachmentId !== "") {
+      console.log('jumlah: ', this.state.attachmentId.length);
+
+      if (this.state.attachmentId.length != 0) {
         let formData = new FormData();
         for (let i = 0; i < this.state.attachmentId.length; i++) {
           formData.append('attachment_id', this.state.attachmentId[i]);
@@ -174,17 +176,24 @@ export default class ChapterPreview extends Component {
         form.append('chapter_video', this.state.chapterVideo);
         form.append('attachment_id', null);
   
-        this.handleModalClose()
         this.setState({isLoading : true});
-        API.post(`${API_SERVER}v1/chapter`, form).then(res => {
+
+        API.post(`${API_SERVER}v1/chapter`, form).then((res) => {
           if(res.status === 200){
+            console.log('files: ', res.data.result);
             
-            if(this.state.attachmentId.length !== "") {
+            if (this.state.attachmentId.length != 0) {
               let formData = new FormData();
-              for(let i=0; i<this.state.attachmentId.length; i++) {
+              for (let i = 0; i < this.state.attachmentId.length; i++) {
                 formData.append('attachment_id', this.state.attachmentId[i]);
               }
-              API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => console.log('res: '))
+              API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => {
+                if (res.status === 200) {
+                  this.handleModalClose();
+                  this.fetchDataChapter();
+                  this.setState({ isLoading: false });
+                }
+              })
             }
 
             if (this.state.thumbnail !== "") {
@@ -199,9 +208,7 @@ export default class ChapterPreview extends Component {
                 }
               });
             }
-  
-            this.fetchDataChapter()
-            this.setState({isLoading : false});
+            
           }
         })
       } else {
@@ -338,7 +345,9 @@ export default class ChapterPreview extends Component {
   }
 
 	render() {
-		const {chapters, course, quiz} = this.state;
+    const {chapters, course, quiz} = this.state;
+    
+    console.log('state: ', this.state.attachmentId);
 
 		const CheckMedia = ({ media, thumbnail }) => {
 			if (media) {
@@ -761,6 +770,7 @@ export default class ChapterPreview extends Component {
                                   "insertdatetime media table paste code help wordcount"
                                 ],
                                 toolbar:
+                                  // eslint-disable-next-line no-multi-str
                                   "undo redo | formatselect | bold italic backcolor | \
                                  alignleft aligncenter alignright alignjustify | \
                                   bullist numlist outdent indent | removeformat | help"
