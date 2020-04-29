@@ -9,7 +9,8 @@ import 'react-calendar/dist/Calendar.css';
 import RiwayatKursus from './riwayatkursus';
 import RiwayatForum from './riwayatforum';
 import RiwayatLiveClass from './riwayatliveclass';
-import { Doughnut } from 'react-chartjs-2';
+import { Doughnut,Bar, Line, Pie } from 'react-chartjs-2';
+import {dataBar, dataUser, dataSpeaker, dataPie} from './data';
 
 const tabs =[
   {title : 'Riwayat Kursus' },
@@ -40,7 +41,9 @@ class Aktivity extends Component {
       recentLogin: [],
       today : '',
       calendarItems:[],
-      loading:true
+      loading:true,
+
+      tanggalCoba : [{id:1, date : '21 April 2020 - 22 April 2020'},{id:2, date : '23 April 2020 - 24 April 2020'}]
     }
     this.tabAktivitas = this.tabAktivitas.bind(this)
   }
@@ -275,6 +278,136 @@ class Aktivity extends Component {
                           <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
                           <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Group Meeting</div>
 
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                      <div className="col-xl-4 mb-3">
+                        
+                              <div className="form-group">
+                                <label className="label-input"></label>
+                                <select required className="form-control" name="company_id" >
+                                  <option value="">-- pilih --</option>
+                                  {
+                                    this.state.tanggalCoba.map(item => (
+                                      <option value={item.id}>{item.date}</option>
+                                    ))
+                                  }
+                                </select>
+                              </div>
+                          
+                      </div>
+                  </div>
+
+                  <div className="row">
+                      <div className="col-xl-2">
+                        <div className="card" style={{backgroundColor:'#1087FF'}}>
+                          <center>
+                            <h6 className="f-16 text-c-white">Active Meeting</h6>
+                            <h3 className="d-block text-c-white f-w-600">
+                              6
+                            </h3>
+                            <h6 className="f-16 text-c-white">Group</h6>
+                          </center>
+                        </div>
+                      </div>
+                      <div className="col-xl-2">
+                         <div className="card">
+                          <center>
+                            <h6 className="f-16">Audience</h6>
+                            <h3 className="d-block text-c-grey f-w-600">
+                              6
+                            </h3>
+                            <h6 className="f-16">User</h6>
+                          </center>
+                        </div>
+                      </div>
+                      <div className="col-xl-2">
+                        <div className="card">
+                          <center>
+                            <h6 className="f-16">Duration</h6>
+                            <h3 className="d-block text-c-grey f-w-600">
+                              01:10:10
+                            </h3>
+                            <h6 className="f-16">Hour</h6>
+                          </center>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-12 col-xl-6">
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">Role</h4>
+                        <div
+                          className="chart-container"
+                          style={{ position: "relative" }}
+                        >
+                          <Bar
+                            data={dataBar}
+                            width={100}
+                            height={320}
+                            options={{
+                              maintainAspectRatio: false
+                            }}
+                          />
+                        </div>
+                          
+                      </div>
+                    </div>
+                    <div className="col-md-12 col-xl-6">
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">User</h4>
+                        <div
+                          className="chart-container"
+                          style={{ position: "relative" }}
+                        >
+                          <Line
+                            data={dataUser}
+                            height={320}
+                            options={{ maintainAspectRatio: false }}
+                          />
+                        </div>
+                          
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-12 col-xl-6">
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">Speaker Stats</h4>
+                        <div
+                          className="chart-container"
+                          style={{ position: "relative" }}
+                        >
+                          <Bar
+                            data={dataSpeaker}
+                            width={100}
+                            height={320}
+                            options={{
+                              maintainAspectRatio: false
+                            }}
+                          />
+                        </div>
+                          
+                      </div>
+                    </div>
+                    <div className="col-md-12 col-xl-6">
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">Average Time</h4>
+                        <div
+                          className="chart-container"
+                          style={{ position: "relative" }}
+                        >
+                          <Pie
+                            data={dataPie}
+                            height={320}
+                            options={{ maintainAspectRatio: false }}
+                          />
+                        </div>
+                          
                       </div>
                     </div>
                   </div>
