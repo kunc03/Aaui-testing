@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Form, Table } from 'react-bootstrap';
+import { Form, Table, Modal } from 'react-bootstrap';
+import axios from 'axios';
+import API, { API_SERVER } from '../../../repository/api';
 
 export default class CertificateCreate extends Component {
   state = {
@@ -10,17 +12,22 @@ export default class CertificateCreate extends Component {
     type_activity: !this.props.location.params
       ? ''
       : this.props.location.params.type_activity,
-    activity: !this.props.location.params
+    activity_id: !this.props.location.params
       ? ''
       : this.props.location.params.activity,
-    sign1: '',
-    sign2: '',
+    signature_1: '',
+    signature_name_1: '',
+    signature_2: '',
+    signature_name_2: '',
     listUser: [
       { id: 1, name: 'stefanus', email: 'adhie', value: false },
       { id: 2, name: 'adhie', email: 'stefanus', value: false },
       { id: 3, name: 'stefanus1', email: 'adhie1', value: false },
       { id: 4, name: 'adhie1', email: 'stefanus1', value: false },
     ],
+
+    isNotifikasi: false,
+    isiNotifikasi: '',
   };
 
   onChangeForm = (e) => {
@@ -39,11 +46,43 @@ export default class CertificateCreate extends Component {
     }
   };
 
+  handleChange = (e) => {
+    if (e.target.files[0].size <= 500000) {
+      this.setState({
+        [e.target.id]: e.target.files[0],
+      });
+    } else {
+      e.target.value = null;
+      this.setState({
+        isNotifikasi: true,
+        isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.',
+      });
+    }
+  };
+
+  closeNotifikasi = (e) => {
+    this.setState({ isNotifikasi: false, isiNotifikasi: '' });
+  };
+
   onSubmit = () => {
     let listUser = this.state.listUser
       .filter((elem) => elem.value)
       .map((obj) => obj.id);
-    console.log(listUser);
+
+    let formData = new FormData();
+    formData.append('title', this.state.title);
+    formData.append('template', this.state.template);
+    formData.append('type_activity', this.state.type_activity);
+    formData.append('activity_id', this.state.activity_id);
+    formData.append('signature_1', this.state.signature_1);
+    formData.append('signature_name_1', this.state.signature_name_1);
+    formData.append('signature_2', this.state.signature_2);
+    formData.append('signature_name_2', this.state.signature_name_2);
+    formData.append('listUser', JSON.stringify(listUser));
+
+    API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
+      console.log(res);
+    });
   };
 
   render() {
@@ -57,7 +96,9 @@ export default class CertificateCreate extends Component {
               <div className="pcoded-inner-content">
                 <div className="main-body">
                   <div className="page-wrapper">
-                    <h3 className="f-w-900 f-20">{this.state.activity}</h3>
+                    <h3 className="f-w-900 f-20">
+                      {this.props.location.params.title}
+                    </h3>
                     <Form>
                       <Form.Group controlId="title">
                         <Form.Label className="f-w-bold">Title</Form.Label>
@@ -85,48 +126,45 @@ export default class CertificateCreate extends Component {
                         </Form.Control>
                       </Form.Group>
 
-                      {/* <Form.Group controlId="type_activity">
-                        <Form.Label className="f-w-bold">
-                          Select Type of Activity
-                        </Form.Label>
-                        <Form.Control
-                          as="select"
-                          onChange={this.onChangeForm}
-                          value={this.state.type_activity}
-                        >
-                          <option value={''}>Select</option>
-                          <option value={1}>Kursus</option>
-                          <option value={2}>Forum</option>
-                          <option value={3}>Group Meeting</option>
-                        </Form.Control>
-                      </Form.Group> */}
+                      {this.state.template !== '' ? (
+                        <img
+                          alt="media"
+                          src={'/assets/images/component/placeholder-image.png'}
+                          className="img-fluid"
+                          style={{ width: '200px', height: '160px' }}
+                        />
+                      ) : null}
+                      <br></br>
 
-                      {/* <Form.Group
-                        controlId="activity"
-                        onChange={this.onChangeForm}
-                      >
-                        <Form.Label className="f-w-bold">
-                          Select Activity
-                        </Form.Label>
-                        <Form.Control
-                          as="select"
-                          onChange={this.onChangeForm}
-                          value={this.state.activity}
-                        >
-                          <option value={''}>Select</option>
-                          <option value={1}>a</option>
-                          <option value={2}>b</option>
-                          <option value={3}>c</option>
-                        </Form.Control>
-                      </Form.Group> */}
+                      <input
+                        id="signature_1"
+                        accept="image/*"
+                        className="btn-default"
+                        name="signature_1"
+                        type="file"
+                        onChange={this.handleChange}
+                      />
+                      <br></br>
 
-                      <Form.Group controlId="sign1">
+                      <img
+                        alt="media"
+                        src={
+                          this.state.signature_1 === null ||
+                          this.state.signature_1 === ''
+                            ? '/assets/images/component/placeholder-image.png'
+                            : URL.createObjectURL(this.state.signature_1)
+                        }
+                        className="img-fluid"
+                        style={{ width: '200px', height: '160px' }}
+                      />
+
+                      <Form.Group controlId="signature_name_1">
                         <Form.Label className="f-w-bold">
                           First Signature
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          value={this.state.sign1}
+                          value={this.state.signature_name_1}
                           className="form-control"
                           placeholder="First Signature"
                           onChange={this.onChangeForm}
@@ -134,13 +172,35 @@ export default class CertificateCreate extends Component {
                         />
                       </Form.Group>
 
-                      <Form.Group controlId="sign2">
+                      <input
+                        id="signature_2"
+                        accept="image/*"
+                        className="btn-default"
+                        name="signature_2"
+                        type="file"
+                        onChange={this.handleChange}
+                      />
+                      <br></br>
+
+                      <img
+                        alt="media"
+                        src={
+                          this.state.signature_2 === null ||
+                          this.state.signature_2 === ''
+                            ? '/assets/images/component/placeholder-image.png'
+                            : URL.createObjectURL(this.state.signature_2)
+                        }
+                        className="img-fluid"
+                        style={{ width: '200px', height: '160px' }}
+                      />
+
+                      <Form.Group controlId="signature_name_2">
                         <Form.Label className="f-w-bold">
                           Second Signature
                         </Form.Label>
                         <Form.Control
                           type="text"
-                          value={this.state.sign2}
+                          value={this.state.signature_name_2}
                           className="form-control"
                           placeholder="Second Signature"
                           onChange={this.onChangeForm}
@@ -160,6 +220,29 @@ export default class CertificateCreate extends Component {
                         </button>
                       </div>
                     </Form>
+
+                    <Modal
+                      show={this.state.isNotifikasi}
+                      onHide={this.closeNotifikasi}
+                    >
+                      <Modal.Body>
+                        <Modal.Title className="text-c-purple3 f-w-bold">
+                          Notifikasi
+                        </Modal.Title>
+
+                        <p style={{ color: 'black', margin: '20px 0px' }}>
+                          {this.state.isiNotifikasi}
+                        </p>
+
+                        <button
+                          type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.closeNotifikasi}
+                        >
+                          Mengerti
+                        </button>
+                      </Modal.Body>
+                    </Modal>
                   </div>
                 </div>
               </div>
@@ -171,7 +254,7 @@ export default class CertificateCreate extends Component {
   }
 
   table() {
-    if (this.state.activity !== '') {
+    if (this.state.activity_id !== '') {
       return (
         <Table>
           <thead>

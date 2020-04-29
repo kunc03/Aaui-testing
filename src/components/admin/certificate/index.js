@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ListCourse from './course';
+import ListForum from './forum';
+import ListGroup from './group';
 
 export default class Certificate extends Component {
   state = {
@@ -105,49 +108,13 @@ export default class Certificate extends Component {
   listActivity() {
     switch (this.state.type_activity) {
       case '1':
-        return (
-          <Link
-            to={{
-              pathname: '/certificate-create',
-              params: {
-                type_activity: this.state.type_activity,
-                activity: 'kursus',
-              },
-            }}
-          >
-            kursus
-          </Link>
-        );
+        return <ListCourse />;
 
       case '2':
-        return (
-          <Link
-            to={{
-              pathname: '/certificate-create',
-              params: {
-                type_activity: this.state.type_activity,
-                activity: 'forum',
-              },
-            }}
-          >
-            forum
-          </Link>
-        );
+        return <ListForum />;
 
       case '3':
-        return (
-          <Link
-            to={{
-              pathname: '/certificate-create',
-              params: {
-                type_activity: this.state.type_activity,
-                activity: 'grup',
-              },
-            }}
-          >
-            grup
-          </Link>
-        );
+        return <ListGroup />;
 
       default:
         return;
