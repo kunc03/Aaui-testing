@@ -27,7 +27,11 @@ socket.on("connect", () => {
 export default class LiveStream extends Component {
 	state = {
     classId: this.props.match.params.roomid,
-    user: {},
+    user: {
+        name : '',
+        email : '',
+        avatar : ''
+    },
     classRooms: {},
     fileChat : [],
     attachment: '',
@@ -90,40 +94,10 @@ export default class LiveStream extends Component {
   
   fetchData() {
     this.onBotoomScroll();
-    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
-      if(res.status === 200) {
-        let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
- 
-        var data = liveClass.data.result
-        /*mark api get new history course*/
-        let form = {
-          user_id : Storage.get('user').data.user_id,
-          class_id : data.class_id,
-          description : data.room_name,
-          title : data.speaker
-        }
-
-        //get and push multiselect option
-        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
-          response.data.result.map(item => {
-            this.state.optionsInvite.push({value: item.user_id, label: item.name});
-          });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-
-
-       // console.log('alsdlaksdklasjdlkasjdlk',form)
-        API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
-
-        this.setState({ user: res.data.result, classRooms: liveClass.data.result })
-      }
-    }).then(res=>{
-        console.log(`${API_SERVER}v1/liveclass/file/${this.state.classId}`,'siniii')
-        API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
-          console.log(res, 'ini responseeee');
+    API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
+        console.log('RESSS', response)
+        this.setState({ classRooms: response.data.result })
+        API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
           let splitTags;
           let datas = res.data.result;
           for(let a in datas){
@@ -140,9 +114,10 @@ export default class LiveStream extends Component {
     
         })
     })
-      
+    .catch(function(error) {
+      console.log(error);
+    });
   }
-
 
   onClickInvite = e => {
     e.preventDefault();
@@ -163,9 +138,8 @@ export default class LiveStream extends Component {
       message: window.location.href,
       messageNonStaff: 'https://'+window.location.hostname+'/meeting/'+this.state.classId
     }
-    console.log('ALVIN KIRIM',form)
 
-    API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+    API.post(`${API_SERVER}v1/liveclasspublic/share`, form).then(res => {
       if(res.status === 200) {
         if(!res.data.error) {
           this.setState({
@@ -193,20 +167,22 @@ export default class LiveStream extends Component {
   }
 
   onChangeInput = (e) => {
-      const name = e.target.name;
-      console.log(e.target.files[0], 'attach');
-      this.setState({nameFile : e.target.files[0].name});
-      if(name === 'attachment') {
-          if (e.target.files[0].size <= 500000) {
-              this.setState({ [name]: e.target.files[0] });
-          } else {
-              e.target.value = null;
-              this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
-          }
-      } else {
-          this.setState({ [name]: e.target.value })
-      }
-  }
+    const name = e.target.name;
+    if(name === 'attachment') {
+        if (e.target.files[0].size <= 500000) {
+          this.setState({nameFile : e.target.files[0].name});
+            this.setState({ [name]: e.target.files[0] });
+        } else {
+            e.target.value = null;
+            this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+        }
+    } else {
+        this.setState({ [name]: e.target.value })
+    }
+}
+onChangeName = (e) => {
+        this.setState({ user : { name : e.target.value } })
+}
 
   sendFileNew(){
 
@@ -249,7 +225,12 @@ export default class LiveStream extends Component {
   }
 
   joinRoom(){
-    this.setState({join:true, modalStart:false});
+    if (this.state.user.name){
+        this.setState({join:true, modalStart:false});
+    }
+    else{
+        alert('Nama harus diisi')
+    }
   }
 
 	render() {
@@ -257,7 +238,7 @@ export default class LiveStream extends Component {
     const { classRooms, user } = this.state;
 
 		return(
-			<div className="pcoded-main-container">
+			<div className="pcoded-main-container" style={{marginLeft:0}}>
 			<div className="pcoded-wrapper">
 			<div className="pcoded-content" style={{paddingTop: 20}}>
 			<div className="pcoded-inner-content">
@@ -337,29 +318,6 @@ export default class LiveStream extends Component {
             })}
         </div>
 
-        <div className='box-chat-send p-20'>
-          <Row>
-            <Col sm={10}>
-              <div>
-                < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
-                <input
-                  type="file"
-                  id="attachment"
-                  name="attachment"
-                  onChange={this.onChangeInput}
-                /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
-              </div>
-                
-            </Col>
-            <Col sm={2}>
-              <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
-                SEND
-              </Link>
-              {/* <button onClick={this.onBotoomScroll}>coba</button> */}
-            </Col>
-
-          </Row>
-        </div>
 
         {/*  */}
 
@@ -376,27 +334,6 @@ export default class LiveStream extends Component {
           </Modal.Header>
           <Modal.Body>
             <div className="form-vertical">
-                          <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Invite User
-                          </Form.Label>
-                          <MultiSelect
-                            id="peserta"
-                            options={this.state.optionsInvite}
-                            value={this.state.valueInvite}
-                            onChange={valueInvite => this.setState({ valueInvite })}
-                            mode="tags"
-                            removableTags={true}
-                            hasSelectAll={true}
-                            selectAllLabel="Pilih Semua"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Pilih"
-                          />
-                          <Form.Text className="text-muted">
-                            Pilih user yang ingin diundang.
-                          </Form.Text>
-                        </Form.Group>
               <div className="form-group">
                 <label style={{ fontWeight: "bold" }}>Email</label>
                 <TagsInput
@@ -442,6 +379,20 @@ export default class LiveStream extends Component {
                 <Card className="cardku">
                   <Card.Body>
                     <Row>
+                        <Col>
+                            <div className="input-group mb-4">
+                                <input
+                                type="text"
+                                value={this.state.user.name}
+                                className="form-control"
+                                placeholder="Nama"
+                                onChange={this.onChangeName}
+                                required
+                                />
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
                       <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
                       <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
                     </Row>
@@ -452,13 +403,6 @@ export default class LiveStream extends Component {
                       <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
                         <i className="fa fa-video"></i>Join Meeting
                       </Link>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleCloseMeeting}
-                      >
-                        Keluar
-                      </button>
                   </Card.Body>
                 </Card>
           </Modal.Body>

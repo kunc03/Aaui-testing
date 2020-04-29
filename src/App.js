@@ -56,6 +56,7 @@ import ForumDetail from "./components/forum/forum-detail";
 
 import LiveClass from "./components/liveclass";
 import LiveStream from "./components/liveclass/livestream";
+import LiveStreamPublic from "./components/liveclass/livestreamPublic";
 
 import LiveClassAdmin from "./components/admin/liveclass/list";
 import LiveClassAdminJoin from "./components/admin/liveclass/join";
@@ -88,10 +89,26 @@ export default class App extends React.Component {
     if (this.state.userLogin) {
       workSpace = <Main />;
     } else {
-      workSpace = <Login />;
+      workSpace = <PublicContent />;
     }
 
-    return <div>{workSpace}</div>;
+    return (
+      <div>{workSpace}</div>
+    );
+  }
+}
+
+export class PublicContent extends React.Component {
+  render() {
+    return (
+      <div>
+        <Switch>
+          <Route path="/" exact component={Login} />
+          <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
+          <Route component={Login} />
+        </Switch>
+      </div>
+    );
   }
 }
 
