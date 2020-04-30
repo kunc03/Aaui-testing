@@ -73,7 +73,12 @@ class Login extends Component {
             manage_group_meeting: res.data.result.manage_group_meeting
           });
           Storage.set('token', {data: res.data.result.token});
-          window.location.href = window.location.origin;
+          if (this.props.redirectUrl){
+            window.location.href = window.location.origin+this.props.redirectUrl
+          }
+          else{
+            window.location.href = window.location.origin;
+          }
 
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
@@ -121,7 +126,12 @@ class Login extends Component {
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
               console.log(arguments)
-              window.location.href = window.location.origin
+              if (this.props.redirectUrl){
+                window.location.href = window.location.origin+this.props.redirectUrl
+              }
+              else{
+                window.location.href = window.location.origin;
+              }
             }
           );
         } else {

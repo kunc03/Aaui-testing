@@ -160,7 +160,7 @@ export default class LiveStream extends Component {
       schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       schedule_end:  MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       userInvite: this.state.valueInvite,
-      message: window.location.href,
+      message: 'https://'+window.location.hostname+'/redirect/liveclass-room/'+this.state.classId,
       messageNonStaff: 'https://'+window.location.hostname+'/meeting/'+this.state.classId
     }
     console.log('ALVIN KIRIM',form)

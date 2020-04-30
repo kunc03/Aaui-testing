@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import API, { API_SERVER } from './repository/api'; 
 import Storage from './repository/storage';
@@ -105,10 +105,24 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
+          <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route component={Login} />
         </Switch>
       </div>
     );
+  }
+}
+
+
+export class RedirectPage extends React.Component {
+  render() {
+    let userInfo = localStorage.getItem("user");
+    if (userInfo){
+      return <Redirect to={'/'+this.props.match.params.url} />
+    }
+    else{
+      return <Login redirectUrl={'/'+this.props.match.params.url} />
+    }
   }
 }
 
