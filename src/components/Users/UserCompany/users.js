@@ -31,7 +31,7 @@ export default class Users extends Component {
       isModalImport: false,
       excel: '',
       nameFile: '',
-      direction: 'ascending',
+      direction: 'descending',
 
       isLoading: false
     };
@@ -169,6 +169,7 @@ export default class Users extends Component {
             return temp;
           });
           this.setState({ users: response.data.result.reverse() });
+          this.sortData('name');
         })
         .catch(function(error) {
           console.log(error);
