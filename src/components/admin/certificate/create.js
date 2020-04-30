@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Table, Modal } from 'react-bootstrap';
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 export default class CertificateCreate extends Component {
   state = {
@@ -109,13 +110,38 @@ export default class CertificateCreate extends Component {
     );
   };
 
+  fetchUserCourse() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
+      if (res.status === 200) {
+        this.setState({
+          companyId: localStorage.getItem('companyID')
+            ? localStorage.getItem('companyID')
+            : res.data.result.company_id,
+        });
+        API.get(
+          `${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${this.state.activity_id}`
+        ).then((res) => {
+          console.log(res.data.result, 'RESSSS=>>>>>>>>>>>>');
+          if (res.status === 200) {
+            this.setState({
+              kursus: res.data.result.users,
+              detail: res.data.result,
+            });
+          }
+        });
+      }
+    });
+  }
+
   componentDidMount() {
+    // this.fetchUserCourse();
+
     API.get(
       `${API_SERVER}v1/certificate/${this.state.type_activity}/${this.state.activity_id}`
     ).then(async (res) => {
-      if (res.data.result[0].length !== 0 && res.data.result[1].length !== 0) {
-        let a = res.data.result[0][0];
-        let b = res.data.result[1];
+      if (res.data.result[1].length !== 0 && res.data.result[2].length !== 0) {
+        let a = res.data.result[1][0];
+        let b = res.data.result[2];
         let listUser = this.state.listUser;
 
         b.map((elem) => {
