@@ -18,6 +18,7 @@ class UserAdd extends Component {
     identity: "",
     name: "",
     email: "",
+    alertEmail: "",
     phone: "",
     address: "",
     password: "",
@@ -52,6 +53,7 @@ class UserAdd extends Component {
       API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
         if(res.data.error) {
           target.value = ''
+          this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
         } else {
           this.setState({ [name]: value })
         }
@@ -206,6 +208,7 @@ class UserAdd extends Component {
                                 placeholder="emailanda@domain.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-danger">{this.state.alertemail}</Form.Text>
                               <Form.Text className="text-muted">
                                 Pastikan isi sesuai dengan format email ex. user@email.com
                               </Form.Text>

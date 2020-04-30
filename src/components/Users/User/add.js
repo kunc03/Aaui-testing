@@ -20,6 +20,7 @@ class UserAdd extends Component {
     identity: "",
     name: "",
     email: "",
+    alertemail:"",
     phone: "",
     address: "",
     password: "",
@@ -52,10 +53,21 @@ class UserAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-    if(name === 'company_id') {
+    if(name === 'email') {
+      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+        if(res.data.error) {
+          target.value = ''
+          this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
+        } else {
+          this.setState({ [name]: value })
+        }
+      })
+    }
+    else if(name === 'company_id') {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if(res.status === 200) {
           this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1]})
+          this.showMultipleCompany(value)
         }
       })
     } else {
@@ -108,16 +120,23 @@ class UserAdd extends Component {
     })
   };
 
-  componentDidMount() {
-    console.log('STATESS',this.state)
+  showMultipleCompany(except) {
     API.get(`${API_SERVER}v1/company`).then(res => {
-      if(res.status === 200) {
-        this.setState({ listCompany: res.data.result })
-        console.log('ALVIN',res.data.result)
-      }
+      this.setState({valueCompany:[]})
+      this.setState({optionComapny:[]})
       res.data.result.map(item => {
         this.state.optionComapny.push({value: item.company_id, label: item.company_name});
       });
+        this.setState({
+          optionComapny: this.state.optionComapny.filter(item => item.value != except),
+        })
+    });
+  }
+  componentDidMount() {
+    API.get(`${API_SERVER}v1/company`).then(res => {
+      if(res.status === 200) {
+        this.setState({ listCompany: res.data.result })
+      }
     });
   }
 
@@ -226,6 +245,7 @@ class UserAdd extends Component {
                                 placeholder="emailanda@domain.com"
                                 onChange={this.onChangeInput}
                               />
+                              <Form.Text className="text-danger">{this.state.alertemail}</Form.Text>
                             </div>
                             <div className="form-group">
                               <label className="label-input">Phone</label>

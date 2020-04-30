@@ -35,7 +35,7 @@ export default class LiveStream extends Component {
 		isiNotifikasi:'',
     isInvite: false,
     emailInvite: [],
-    emailResponse: 'Masukkan email yang ingin di invite.',
+    emailResponse: '',
     //multi select invite
     optionsInvite: [],
     valueInvite: [],
@@ -63,7 +63,7 @@ export default class LiveStream extends Component {
     this.setState({
       isInvite: false,
       emailInvite: [],
-      emailResponse: "Masukkan email yang ingin di invite."
+      emailResponse: ""
     });
   }
   handleCloseMeeting = e => {
@@ -406,10 +406,14 @@ export default class LiveStream extends Component {
                   inputProps={{placeholder:'Email Peserta'}}
                 />
                 <Form.Text>
-                  {this.state.emailResponse}
+                  Masukkan email yang ingin di invite.
                 </Form.Text>
               </div>
             </div>
+            
+            <Form.Text style={{color:'red'}}>
+              {this.state.emailResponse}
+            </Form.Text>
 
             <button
               style={{ marginTop: "30px" }}

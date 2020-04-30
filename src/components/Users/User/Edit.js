@@ -113,6 +113,7 @@ class UserEdit extends Component {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if (res.status === 200) {
           this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1] });
+          this.showMultipleCompany(value)
         }
       });
     } else {
@@ -122,8 +123,19 @@ class UserEdit extends Component {
     }
   };
 
+  showMultipleCompany(except) {
+    API.get(`${API_SERVER}v1/company`).then(res => {
+      this.setState({valueCompany:[]})
+      this.setState({optionComapny:[]})
+      res.data.result.map(item => {
+        this.state.optionComapny.push({value: item.company_id, label: item.company_name});
+      });
+        this.setState({
+          optionComapny: this.state.optionComapny.filter(item => item.value != except),
+        })
+    });
+  }
   componentDidMount() {
-    console.log('STATESS',this.state)
     API.get(`${API_SERVER}v1/user/${this.state.user_id}`).then(res => {
       if (res.status === 200) {
         let unlimited = res.data.result.unlimited == 0 ? true : false;
@@ -149,6 +161,9 @@ class UserEdit extends Component {
           res.data.result.map(item => {
             this.state.optionComapny.push({value: item.company_id, label: item.company_name});
           });
+          this.setState({
+            optionComapny: this.state.optionComapny.filter(item => item.value != this.state.company_id),
+          })
         });
 
         API.get(
