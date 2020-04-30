@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Table, Modal } from 'react-bootstrap';
-import axios from 'axios';
 import API, { API_SERVER } from '../../../repository/api';
 
 export default class CertificateCreate extends Component {
@@ -16,8 +15,10 @@ export default class CertificateCreate extends Component {
       ? ''
       : this.props.location.params.activity,
     signature_1: '',
+    signature_1_img: '',
     signature_name_1: '',
     signature_2: '',
+    signature_2_img: '',
     signature_name_2: '',
     listUser: [
       { id: 1, name: 'stefanus', email: 'adhie', value: false },
@@ -48,8 +49,10 @@ export default class CertificateCreate extends Component {
 
   handleChange = (e) => {
     if (e.target.files[0].size <= 500000) {
+      console.log(e.target.files[0]);
       this.setState({
         [e.target.id]: e.target.files[0],
+        [`${e.target.id}_img`]: URL.createObjectURL(e.target.files[0]),
       });
     } else {
       e.target.value = null;
@@ -79,11 +82,64 @@ export default class CertificateCreate extends Component {
     formData.append('signature_2', this.state.signature_2);
     formData.append('signature_name_2', this.state.signature_name_2);
     formData.append('listUser', JSON.stringify(listUser));
-
-    API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
-      console.log(res);
-    });
+    if (this.state.id === '') {
+      /**
+       * create
+       */
+      API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
+        console.log(res);
+      });
+    } else {
+      /**
+       * update
+       */
+      API.put(`${API_SERVER}v1/certificate/${this.state.id}`, formData).then(
+        async (res) => {
+          console.log(res);
+        }
+      );
+    }
   };
+
+  onDelete = () => {
+    API.delete(`${API_SERVER}v1/certificate/${this.state.id}`).then(
+      async (res) => {
+        console.log(res);
+      }
+    );
+  };
+
+  componentDidMount() {
+    API.get(
+      `${API_SERVER}v1/certificate/${this.state.type_activity}/${this.state.activity_id}`
+    ).then(async (res) => {
+      if (res.data.result[0].length !== 0 && res.data.result[1].length !== 0) {
+        let a = res.data.result[0][0];
+        let b = res.data.result[1];
+        let listUser = this.state.listUser;
+
+        b.map((elem) => {
+          let id = listUser.find((val) => {
+            return val.id === elem.user_id;
+          });
+          id['value'] = !id.value;
+        });
+
+        this.setState({
+          id: a.id,
+          title: a.title,
+          template: a.template,
+          signature_1: `http://localhost:3200/${a.signature_1}`,
+          signature_1_img: `http://localhost:3200/${a.signature_1}`,
+          signature_name_1: a.signature_name_1,
+          signature_2: `http://localhost:3200/${a.signature_2}`,
+          signature_2_img: `http://localhost:3200/${a.signature_2}`,
+          signature_name_2: a.signature_name_2,
+        });
+        this.setState(listUser);
+      }
+    });
+  }
 
   render() {
     if (!this.props.location.params) {
@@ -149,10 +205,10 @@ export default class CertificateCreate extends Component {
                       <img
                         alt="media"
                         src={
-                          this.state.signature_1 === null ||
-                          this.state.signature_1 === ''
+                          this.state.signature_1_img === null ||
+                          this.state.signature_1_img === ''
                             ? '/assets/images/component/placeholder-image.png'
-                            : URL.createObjectURL(this.state.signature_1)
+                            : this.state.signature_1_img
                         }
                         className="img-fluid"
                         style={{ width: '200px', height: '160px' }}
@@ -185,10 +241,10 @@ export default class CertificateCreate extends Component {
                       <img
                         alt="media"
                         src={
-                          this.state.signature_2 === null ||
-                          this.state.signature_2 === ''
+                          this.state.signature_2_img === null ||
+                          this.state.signature_2_img === ''
                             ? '/assets/images/component/placeholder-image.png'
-                            : URL.createObjectURL(this.state.signature_2)
+                            : this.state.signature_2_img
                         }
                         className="img-fluid"
                         style={{ width: '200px', height: '160px' }}
@@ -210,14 +266,28 @@ export default class CertificateCreate extends Component {
 
                       {this.table()}
 
-                      <div>
-                        <button
-                          type="button"
-                          onClick={this.onSubmit}
-                          className="btn btn-primary f-w-bold"
-                        >
-                          Submit
-                        </button>
+                      <div className="row">
+                        <div>
+                          <button
+                            type="button"
+                            onClick={this.onSubmit}
+                            className="btn btn-primary f-w-bold"
+                          >
+                            {this.state.id ? 'Update' : 'Submit'}
+                          </button>
+                        </div>
+                        &nbsp;
+                        {this.state.id ? (
+                          <div>
+                            <button
+                              type="button"
+                              onClick={this.onDelete}
+                              className="btn btn-danger f-w-bold"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ) : null}
                       </div>
                     </Form>
 
@@ -274,6 +344,7 @@ export default class CertificateCreate extends Component {
                       <Form.Check
                         type="checkbox"
                         value={elem.id}
+                        checked={elem.value}
                         onChange={this.onChangeForm}
                       />
                     </Form.Group>
