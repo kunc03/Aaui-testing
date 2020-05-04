@@ -3,6 +3,19 @@ import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+import Dropdown, {
+  DropdownToggle,
+  DropdownMenu,
+  DropdownMenuWrapper,
+  MenuItem,
+  DropdownButton
+} from '@trendmicro/react-dropdown';
+
+// Be sure to include styles at some point, probably during your bootstraping
+import '@trendmicro/react-buttons/dist/react-buttons.css';
+import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import Storage from './../../../repository/storage';
 
@@ -14,6 +27,7 @@ export default class User extends Component {
 
     this.state = {
       users: [],
+      dataUser: [],
       isModalHapus: false,
       userIdHapus: '',
       isModalPassword: false,
@@ -100,7 +114,8 @@ export default class User extends Component {
 
   onClickModalVoucher = e => {
     e.preventDefault();
-    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id')});
+    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id'), voucher: e.target.getAttribute('data-voucher')});
+    this.sortData('name');
   }
   onClickSubmitVoucer = e => {
     e.preventDefault();
@@ -159,6 +174,22 @@ export default class User extends Component {
           });
           this.setState({ users: response.data.result.reverse() });
           this.sortData('name');
+          let dUser=[]
+          this.state.users.map(item => {
+            dUser.push({
+              id: item.user_id,
+              nama: item.name,
+              nomorinduk: item.identity,
+              email: item.email,
+              phone: item.phone,
+              group: item.branch_name,
+              role: item.grup_name,
+              level: item.level,
+              voucher: item.voucher,
+              validity: item.validity
+            })
+          });
+          this.setState({dataUser : dUser})
         })
         .catch(function(error) {
           console.log(error);
@@ -220,9 +251,101 @@ export default class User extends Component {
   }
 
   render() {
-    let { users, filterUser } = this.state;
+    const columns = [
+      {
+        name: 'Nama',
+        selector: 'nama',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        name: 'Nomor Induk',
+        selector: 'nomorinduk',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Email',
+        selector: 'email',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Group',
+        selector: 'group',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Role',
+        selector: 'role',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Level',
+        selector: 'level',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Voucher',
+        selector: 'voucher',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Validity',
+        selector: 'validity',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => 
+        <Dropdown
+        pullRight
+        onSelect={(eventKey) => {
+          if (eventKey === 1){
+            window.open('/user-edit/'+row.id,"_self")
+          }
+        }}
+        >
+            <Dropdown.Toggle
+                btnStyle="flat"
+                noCaret
+                iconOnly
+            >
+                <i className="fa fa-ellipsis-h"></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+                <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> Atur Voucher</MenuItem>
+                <MenuItem data-id={row.id} onClick={this.onClickModalPassword}><i className="fa fa-key" /> Atur Password</MenuItem>
+                <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Ubah</MenuItem>
+                <MenuItem data-id={row.id} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
+            </Dropdown.Menu>
+        </Dropdown>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      },
+    ];
+    let { dataUser, filterUser } = this.state;
     if(filterUser != ""){
-      users = users.filter(x=>
+      dataUser = dataUser.filter(x=>
         JSON.stringify(
           Object.values(x)
         ).match(new RegExp(filterUser,"gmi"))
@@ -319,7 +442,7 @@ export default class User extends Component {
                                   Add New
                                 </Link>
 
-                      <div style={{ overflow: "auto", maxHeight:'71vh' }}>
+                      {/* <div style={{ overflow: "auto", maxHeight:'71vh' }}>
                         <table
                           className="table-curved"
                           style={{ width: "100%",whiteSpace: "nowrap" }}
@@ -344,6 +467,8 @@ export default class User extends Component {
                           <Lists lists={users} />
                         </table>
 
+
+                      </div> */}
                         <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
                           <Modal.Body>
                             <Modal.Title className="text-c-purple3 f-w-bold">Hapus User</Modal.Title>
@@ -389,7 +514,7 @@ export default class User extends Component {
                             <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitVoucer}>
                               <div className="form-group">
                                 <label>Voucher</label>
-                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" onChange={this.handleChangeInput} />
+                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" value={this.state.voucher} onChange={this.handleChangeInput} />
                                 {this.state.notif && (
                                   <Form.Text className="text-danger">{this.state.notif}</Form.Text>
                                 )}
@@ -432,7 +557,17 @@ export default class User extends Component {
                             </form>
                           </Modal.Body>
                         </Modal>
-
+                      <div style={{backgroundColor:'#FFF'}}>
+                          <DataTable
+                          style={{marginTop:20}}
+                          title="Data User"
+                          columns={columns}
+                          data={dataUser}
+                          highlightOnHover
+                          defaultSortField="title"
+                          pagination
+                          fixedHeader
+                          />
                       </div>
                     </div>
                   </div>
