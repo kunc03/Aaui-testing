@@ -461,7 +461,7 @@ export default class LiveClassAdmin extends Component {
                             src={
                               this.state.cover == null || this.state.cover == ''
                                 ? "/assets/images/component/placeholder-image.png"
-                                : this.state.cover
+                                : URL.createObjectURL(this.state.cover)
                             }
                             className="img-fluid"
                             style={{ width: "200px", height: "160px" }}
