@@ -74,6 +74,23 @@ class Profile extends Component {
       }
     });
   };
+  onClickSubmitModalDelete = e => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("avatar", null);
+    console.log('simpen')
+    API.put(
+      `${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`,
+      formData
+    ).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          user_data: { ...this.state.user_data, avatar: "/assets/images/user/avatar-1.png" },
+          isModalAvatar: false
+        });
+      }
+    });
+  };
 
   fetchProfile = () => {
     const user = Storage.get("user");
@@ -260,10 +277,17 @@ class Profile extends Component {
                               </button>
                               <button
                                 type="button"
+                                onClick={this.onClickSubmitModalDelete}
+                                className="btn btn-block btn-ideku f-w-bold"
+                              >
+                                Hapus Foto
+                              </button>
+                              <button
+                                type="button"
                                 className="btn btn-block f-w-bold"
                                 onClick={this.handleModalAvatarClose}
                               >
-                                Tidak
+                                Batal
                               </button>
                             </Modal.Body>
                           </Modal>
