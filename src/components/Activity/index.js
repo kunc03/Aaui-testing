@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, InputGroup, FormControl, Row } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import Calendar from 'react-calendar';
@@ -32,6 +32,7 @@ class Aktivity extends Component {
       branchName:'',
       groupName:'',
       chartData:'',
+      classRooms: [],
       kategoriKursus: [],
       kursusTerbaru: [],
       kursusDiikuti: [],
@@ -53,10 +54,25 @@ class Aktivity extends Component {
     this.fetchHistoryActivity(Storage.get('user').data.user_id);
     this.fetchDataKursusDiikuti();
     this.fetchUserCalendar();
+    this.fetchDataRekaman();
     console.log('RECENTS DID',this.state.recentCourse)
     let date = new Date();
     console.log(String(date));
     this.setState({today:String(date)})
+  }
+
+  fetchDataRekaman() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
+          if (res.status === 200) {
+            let data = res.data.result.reverse()
+            this.setState({ classRooms: data.filter(data => data.record) })
+          }
+        });
+      }
+    })
   }
 
   fetchDataUser() {
@@ -151,6 +167,34 @@ class Aktivity extends Component {
 
 
   render() {
+    let { classRooms } = this.state;
+    const ClassRooms = ({ list }) => <Row>
+      {list.map(item =>
+        <div className="col-sm-4" key={item.class_id}>
+          <a target="_blank" href={item.record}>
+            <div className="card">
+              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
+              {/* <img
+                className="img-fluid img-kursus radius-top-l-r-5"
+                src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
+                alt="dashboard-user"
+              /> */}
+              <div className="card-carousel ">
+                <div className="title-head f-w-900 f-16">
+                  {item.room_name}
+                </div>
+                <h3 className="f-14">
+                  {item.name}
+                </h3>
+                <medium className="mr-3" style={{position:'absolute', top:20, left:20, background:'#FFF', borderRadius:'5px', padding:'5px 10px'}}>
+                  <i className='fa fa-compact-disc'></i> REKAMAN
+                </medium>
+              </div>
+            </div>
+          </a>
+        </div>
+      )}
+    </Row>;
 
     const data = {
       labels: [
@@ -278,6 +322,32 @@ class Aktivity extends Component {
                           <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
                           <div className="p-l-20"><span className="p-r-5" style={{color:'cyan'}}><i className="fa fa-square"></i></span>Group Meeting</div>
 
+                      </div>
+                    </div>
+                  </div>
+                  
+                <div className="row">
+                    <div className="col-md-12">
+                      <div className="card" style={{padding:10}}>
+                        <h4 className="p-10">Rekaman Meeting</h4>
+                        <div
+                          className="chart-container"
+                          style={{ position: "relative", margin:20 }}
+                        >
+                        <div>
+                          {
+                            classRooms.length ?
+                              
+                              <ClassRooms list={classRooms} />
+                              
+                              :
+                              <div className="col-md-3 col-xl-3 mb-3">
+                                Tidak ada rekaman meeting
+                              </div>
+                          }
+                        </div>
+                        </div>
+                          
                       </div>
                     </div>
                   </div>

@@ -90,7 +90,7 @@ export default class LiveClassAdmin extends Component {
     const name = e.target.name;
     if (e.target.files[0].size <= 500000) {
       this.setState({
-        cover: e.target.files[0],
+        cover: URL.createObjectURL(e.target.files[0]),
         imgPreview: URL.createObjectURL(e.target.files[0])
       });
     } else {
@@ -110,7 +110,6 @@ export default class LiveClassAdmin extends Component {
         API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if (res.status === 200) {
             this.setState({ classRooms: res.data.result.reverse() })
-            console.log('ALVINSSSSS',this.state.classRooms)
           }
         });
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
@@ -302,20 +301,40 @@ export default class LiveClassAdmin extends Component {
                   <i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
                 </small>
 
-                <Link className="mr-3" data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>{item.is_live ? 'lock' : 'unlock'}</Link>
-                <Link className="mr-3"
-                  data-id={item.class_id}
-                  data-cover={item.cover}
-                  data-speaker={item.speaker}
-                  data-roomname={item.room_name}
-                  data-moderator={item.moderator} 
-                  data-isprivate={item.is_private} 
-                  data-participant={item.participant} 
-                  data-isscheduled={item.is_scheduled} 
-                  data-start={item.schedule_start} 
-                  data-end={item.schedule_end} 
-                  onClick={this.onClickEdit}>edit</Link>
-                <Link className="mr-3" data-id={item.class_id} onClick={this.onSubmitDelete}>hapus</Link>
+                <small className="mr-3">
+                  <Link data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>
+                    <i className={`fa fa-${item.is_live ? 'lock' : 'lock-open'}`}></i> {item.is_live ? 'LOCK' : 'UNLOCK'}
+                  </Link>
+                </small>
+                <small className="mr-3">
+                  <Link
+                    data-id={item.class_id}
+                    data-cover={item.cover}
+                    data-speaker={item.speaker}
+                    data-roomname={item.room_name}
+                    data-moderator={item.moderator} 
+                    data-isprivate={item.is_private} 
+                    data-participant={item.participant} 
+                    data-isscheduled={item.is_scheduled} 
+                    data-start={item.schedule_start} 
+                    data-end={item.schedule_end} 
+                    onClick={this.onClickEdit}>
+                      <i className='fa fa-edit'></i> UBAH
+                  </Link>
+                </small>
+                <small className="mr-3">
+                  <Link data-id={item.class_id} onClick={this.onSubmitDelete}>
+                    <i className='fa fa-trash'></i> HAPUS
+                  </Link>
+                </small><br />
+                {
+                  item.record &&
+                  <small className="mr-3">
+                    <a target='_blank' href={item.record}>
+                      <i className='fa fa-compact-disc'></i> REKAMAN
+                    </a>
+                  </small>
+                }
               </div>
             </div>
           </a>
@@ -461,7 +480,8 @@ export default class LiveClassAdmin extends Component {
                             src={
                               this.state.cover == null || this.state.cover == ''
                                 ? "/assets/images/component/placeholder-image.png"
-                                : URL.createObjectURL(this.state.cover)
+                                :
+                                this.state.cover
                             }
                             className="img-fluid"
                             style={{ width: "200px", height: "160px" }}

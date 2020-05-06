@@ -30,6 +30,14 @@ const ClassRooms = ({list}) => <Row>
 						<small className="mr-3">
 							<i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
 						</small>
+						{
+						item.record &&
+						<small className="mr-3">
+							<a target='_blank' href={item.record}>
+							<i className='fa fa-compact-disc'></i> REKAMAN
+							</a>
+						</small>
+						}
 					</div>
 				</div>
 			</a>
