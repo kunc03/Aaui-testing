@@ -21,12 +21,7 @@ export default class CertificateCreate extends Component {
     signature_2: '',
     signature_2_img: '',
     signature_name_2: '',
-    listUser: [
-      { id: 1, name: 'stefanus', email: 'adhie', value: false },
-      { id: 2, name: 'adhie', email: 'stefanus', value: false },
-      { id: 3, name: 'stefanus1', email: 'adhie1', value: false },
-      { id: 4, name: 'adhie1', email: 'stefanus1', value: false },
-    ],
+    listUser: [],
 
     isNotifikasi: false,
     isiNotifikasi: '',
@@ -134,7 +129,22 @@ export default class CertificateCreate extends Component {
   }
 
   componentDidMount() {
-    // this.fetchUserCourse();
+    switch (this.state.type_activity) {
+      case 1:
+        API.get(
+          `${API_SERVER}v1/hasilkursus/${Storage.get('user').data.user_id}/${
+            this.state.activity_id
+          }`
+        ).then(async (res) => {
+          let listUser = res.data.result.users;
+
+          this.setState({ listUser: listUser });
+        });
+        break;
+
+      default:
+        break;
+    }
 
     API.get(
       `${API_SERVER}v1/certificate/${this.state.type_activity}/${this.state.activity_id}`
@@ -155,11 +165,11 @@ export default class CertificateCreate extends Component {
           id: a.id,
           title: a.title,
           template: a.template,
-          signature_1: `http://localhost:3200/${a.signature_1}`,
-          signature_1_img: `http://localhost:3200/${a.signature_1}`,
+          signature_1: a.signature_1,
+          signature_1_img: a.signature_1,
           signature_name_1: a.signature_name_1,
-          signature_2: `http://localhost:3200/${a.signature_2}`,
-          signature_2_img: `http://localhost:3200/${a.signature_2}`,
+          signature_2: a.signature_2,
+          signature_2_img: a.signature_2,
           signature_name_2: a.signature_name_2,
         });
         this.setState(listUser);
@@ -169,7 +179,7 @@ export default class CertificateCreate extends Component {
 
   render() {
     if (!this.props.location.params) {
-      return <Redirect to="/certificate" />;
+      return <Redirect to="/certificate-create" />;
     } else {
       return (
         <div className="pcoded-main-container">

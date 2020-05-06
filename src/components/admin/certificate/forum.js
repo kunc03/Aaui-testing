@@ -108,11 +108,11 @@ export default class Forum extends Component {
                     {item.bookmark !== null ? (
                       <Link
                         to="#"
-                        onClick={this.deleteStar.bind(
-                          this,
-                          item.forum_id,
-                          this.state.user_id
-                        )}
+                        // onClick={this.deleteStar.bind(
+                        //   this,
+                        //   item.forum_id,
+                        //   this.state.user_id
+                        // )}
                       >
                         <i className="fa fa-star"></i>
                       </Link>
