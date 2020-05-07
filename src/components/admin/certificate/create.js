@@ -136,6 +136,7 @@ export default class CertificateCreate extends Component {
         ).then(async (res) => {
           let listUser = res.data.result.users;
 
+          // eslint-disable-next-line array-callback-return
           listUser.map((elem) => {
             elem['id'] = elem.user_id;
             elem['value'] = false;

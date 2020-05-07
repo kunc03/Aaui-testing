@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import BG from './images/BG.png';
+import TTD from './images/TTD.png';
 import TTD2 from './images/TTD2.png';
 import Icademy from './images/Icademy.png';
-import Star from './images/Star.png';
-import Group1 from './images/Group1.png';
+import Logo from './images/Logo.png';
+import Icon from './images/Icon.png';
 import API, { API_SERVER } from '../../../../repository/api';
 
 export default class Component1 extends Component {
@@ -87,48 +88,56 @@ export default class Component1 extends Component {
                         <div style={Style.CERTIFICATEOFCOMPLET}>
                           {this.state.title}
                         </div>
-                        <div style={Style.THISCERTIFICATEISPRO}>
-                          THIS CERTIFICATE IS PROUDLY PRESENTED TO
-                        </div>
-                        <div style={Style.YoanitaRianti}>
-                          {this.state.user_id}
-                        </div>
-                        <div style={Style.FORSUCCESSFULLYCOMPL}>
-                          FOR SUCCESSFULLY COMPLETING
-                        </div>
-                        <div style={Style.ALLCONTENTSONONLINEC}>
-                          ALL CONTENTS ON ONLINE COURSE
-                        </div>
-                        <div style={Style.KuasaiTOEFELPBTRaih6}>
-                          Kuasai TOEFEL PBT, Raih 600+
-                        </div>
-                        <div style={Style.TANGGAL}>
-                          {moment(this.state.date)
-                            .tz('Asia/Jakarta')
-                            .format('DD MMMM YYYY')}
-                        </div>
+                        <div
+                          style={{
+                            position: 'relative',
+                            left: '-8vh',
+                            top: '28vh',
+                          }}
+                        >
+                          <div style={Style.THISCERTIFICATEISPRO}>
+                            THIS CERTIFICATE IS PROUDLY PRESENTED TO
+                          </div>
+                          <div style={Style.YoanitaRianti}>
+                            {this.state.user_id}
+                          </div>
+                          <div style={Style.FORSUCCESSFULLYCOMPL}>
+                            FOR SUCCESSFULLY COMPLETING
+                          </div>
+                          <div style={Style.ALLCONTENTSONONLINEC}>
+                            ALL CONTENTS ON ONLINE COURSE
+                          </div>
+                          <div style={Style.KuasaiTOEFELPBTRaih6}>
+                            Kuasai TOEFEL PBT, Raih 600+
+                          </div>
+                          <div style={Style.TANGGAL}>
+                            {moment(this.state.date)
+                              .tz('Asia/Jakarta')
+                              .format('DD MMMM YYYY')}
+                          </div>
 
-                        <div style={Style.TTD}>
-                          <img alt="" src={this.state.signature_1} />
-                        </div>
-                        <div style={Style.TandaTanganPenangung}>
-                          {this.state.signature_name_1}
-                        </div>
-                        <div style={Style.TTD2}>
-                          <img alt="" src={TTD2} />
-                        </div>
-                        <div style={Style.TandaTanganPenangung_0}>
-                          {this.state.signature_name_2}
+                          <div style={Style.TTD}>
+                            <img alt="" src={TTD} style={{ width: '200px' }} />
+                          </div>
+                          <div style={Style.TandaTanganPenangung}>
+                            Tanda Tangan Penangung Jawab
+                          </div>
+                          <div style={Style.TTD2}>
+                            <img alt="" src={TTD2} style={{ width: '200px' }} />
+                          </div>
+                          <div style={Style.TandaTanganPenangung_0}>
+                            Tanda Tangan Penangung Jawab
+                          </div>
                         </div>
 
                         <div style={Style.Icademy}>
                           <img alt="" src={Icademy} />
                         </div>
-                        <div style={Style.Star}>
-                          <img alt="" src={Star} />
+                        <div style={Style.Logo}>
+                          <img alt="" src={Logo} />
                         </div>
-                        <div style={Style.Group1}>
-                          <img alt="" src={Group1} />
+                        <div style={Style.Icon}>
+                          <img alt="" src={Icon} />
                         </div>
                       </div>
                     </div>
@@ -172,19 +181,19 @@ const Style = {
 
   TandaTanganPenangung: {
     left: '502px',
-    top: '1087px',
+    top: '932px',
     position: 'absolute',
     width: '100%',
     height: '29px',
     zIndex: '2',
 
-    fontSize: 'xx-large',
+    fontSize: 'large',
     color: '#6f7975',
   },
 
   TTD2: {
     left: '516px',
-    top: '859px',
+    top: '803px',
     position: 'absolute',
     width: '396px',
     height: '192px',
@@ -193,19 +202,19 @@ const Style = {
 
   TandaTanganPenangung_0: {
     left: '1154px',
-    top: '1087px',
+    top: '932px',
     position: 'absolute',
     width: '428px',
     height: '29px',
     zIndex: '4',
 
-    fontSize: 'xx-large',
+    fontSize: 'large',
     color: '#6f7975',
   },
 
   TTD: {
     left: '1168px',
-    top: '859px',
+    top: '803px',
     position: 'absolute',
     width: '396px',
     height: '192px',
@@ -213,14 +222,13 @@ const Style = {
   },
 
   YoanitaRianti: {
-    left: '650px',
+    left: '400px',
     top: '452px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '39px',
     zIndex: '6',
-
-    fontSize: '63px',
+    fontSize: '32px',
     color: '#674817',
     fontFamily: 'sans-serif',
     fontWeight: '600',
@@ -228,42 +236,40 @@ const Style = {
   },
 
   CERTIFICATEOFCOMPLET: {
-    left: '650px',
-    top: '330px',
+    left: '400px',
+    top: '147px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '34px',
     zIndex: '7',
-
-    fontFamily: 'sans-serif',
-    fontSize: '38px',
-    color: '#657373',
+    /* fontFamily:'sans-serif', */
+    fontSize: '45px',
+    color: '#ffffff',
     textAlign: 'center',
     letterSpacing: '5px',
   },
 
   THISCERTIFICATEISPRO: {
-    left: '650px',
+    left: '400px',
     top: '403px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '21px',
     zIndex: '8',
 
-    fontSize: 'xx-large',
+    fontSize: 'large',
     color: '#6f7975',
     textAlign: 'center',
   },
 
   KuasaiTOEFELPBTRaih6: {
-    left: '650px',
-    top: '671px',
+    left: '400px',
+    top: '616px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '46px',
     zIndex: '9',
-
-    fontSize: '51px',
+    fontSize: '34px',
     color: '#674817',
     fontFamily: 'sans-serif',
     fontWeight: '300',
@@ -271,40 +277,37 @@ const Style = {
   },
 
   FORSUCCESSFULLYCOMPL: {
-    left: '650px',
-    top: '560px',
+    left: '400px',
+    top: '517px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '21px',
     zIndex: '10',
-
-    fontSize: 'xx-large',
+    fontSize: 'large',
     color: '#6f7975',
     textAlign: 'center',
   },
 
   ALLCONTENTSONONLINEC: {
-    left: '650px',
-    top: '605px',
+    left: '400px',
+    top: '554px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '21px',
     zIndex: '11',
-
-    fontSize: 'xx-large',
+    fontSize: 'large',
     color: '#6f7975',
     textAlign: 'center',
   },
 
   TANGGAL: {
-    left: '650px',
-    top: '776px',
+    left: '400px',
+    top: '692px',
     position: 'absolute',
-    width: '800px',
+    width: '1000px',
     height: '21px',
     zIndex: '12',
-
-    fontSize: 'x-large',
+    fontSize: 'large',
     color: '#6f7975',
     textAlign: 'center',
   },
@@ -334,5 +337,22 @@ const Style = {
     width: '251px',
     height: '201px',
     zIndex: '15',
+  },
+  Logo: {
+    left: '91px',
+    top: '96px',
+    position: 'absolute',
+    width: '251px',
+    height: '201px',
+    zIndex: '2',
+  },
+
+  Icon: {
+    left: '791px',
+    top: '367px',
+    position: 'absolute',
+    width: '128px',
+    height: '142px',
+    zIndex: '14',
   },
 };
