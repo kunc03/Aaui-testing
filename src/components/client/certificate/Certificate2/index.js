@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import BG from './images/BG.png';
-import TTD from './images/TTD.png';
-import TTD2 from './images/TTD2.png';
 import Icademy from './images/Icademy.png';
-import Star from './images/Star.png';
-import Group1 from './images/Group1.png';
+import Logo from './images/Logo.png';
+import Icon from './images/Icon.png';
 import API, { API_SERVER } from '../../../../repository/api';
 
 export default class Component1 extends Component {
@@ -22,10 +20,11 @@ export default class Component1 extends Component {
     template: '',
     title: '',
     type_activity: '',
-    user_id: '',
+    name: '',
   };
 
   printHandler() {
+    // eslint-disable-next-line no-unused-vars
     let originalContents, popupWin, printContents;
     return (
       (printContents = document.getElementById('print').innerHTML),
@@ -61,10 +60,9 @@ export default class Component1 extends Component {
           template: res.data.result[0].template,
           title: res.data.result[0].title,
           type_activity: res.data.result[0].type_activity,
-          user_id: res.data.result[0].user_id,
+          name: res.data.result[0].name,
         });
       }
-      console.log(res);
     });
   }
 
@@ -85,51 +83,61 @@ export default class Component1 extends Component {
                           <img alt="" src={BG} />
                         </div>
 
-                        <div style={Style.CERTIFICATEOFCOMPLET}>
-                          {this.state.title}
-                        </div>
-                        <div style={Style.THISCERTIFICATEISPRO}>
-                          THIS CERTIFICATE IS PROUDLY PRESENTED TO
-                        </div>
-                        <div style={Style.YoanitaRianti}>
-                          {this.state.user_id}
-                        </div>
-                        <div style={Style.FORSUCCESSFULLYCOMPL}>
-                          FOR SUCCESSFULLY COMPLETING
-                        </div>
-                        <div style={Style.ALLCONTENTSONONLINEC}>
-                          ALL CONTENTS ON ONLINE COURSE
-                        </div>
-                        <div style={Style.KuasaiTOEFELPBTRaih6}>
-                          Kuasai TOEFEL PBT, Raih 600+
-                        </div>
-                        <div style={Style.TANGGAL}>
-                          {moment(this.state.date)
-                            .tz('Asia/Jakarta')
-                            .format('DD MMMM YYYY')}
-                        </div>
+                        <div style={{ position: 'relative', left: '-25vh' }}>
+                          <div style={Style.CERTIFICATEOFCOMPLET}>
+                            {this.state.title}
+                          </div>
+                          <div style={Style.THISCERTIFICATEISPRO}>
+                            THIS CERTIFICATE IS PROUDLY PRESENTED TO
+                          </div>
+                          <div style={Style.YoanitaRianti}>
+                            {this.state.name}
+                          </div>
+                          <div style={Style.FORSUCCESSFULLYCOMPL}>
+                            FOR SUCCESSFULLY COMPLETING
+                          </div>
+                          <div style={Style.ALLCONTENTSONONLINEC}>
+                            ALL CONTENTS ON ONLINE COURSE
+                          </div>
+                          <div style={Style.KuasaiTOEFELPBTRaih6}>
+                            Kuasai TOEFEL PBT, Raih 600+
+                          </div>
+                          <div style={Style.TANGGAL}>
+                            {moment(this.state.date)
+                              .tz('Asia/Jakarta')
+                              .format('DD MMMM YYYY')}
+                          </div>
 
-                        <div style={Style.TTD}>
-                          <img alt="" src={this.state.signature_1} />
-                        </div>
-                        <div style={Style.TandaTanganPenangung}>
-                          {this.state.signature_name_1}
-                        </div>
-                        <div style={Style.TTD2}>
-                          <img alt="" src={TTD2} />
-                        </div>
-                        <div style={Style.TandaTanganPenangung_0}>
-                          {this.state.signature_name_2}
+                          <div style={Style.TTD}>
+                            <img
+                              alt=""
+                              src={this.state.signature_1}
+                              style={Style.imgttd}
+                            />
+                          </div>
+                          <div style={Style.TandaTanganPenangung_0}>
+                            {this.state.signature_name_1}
+                          </div>
+                          <div style={Style.TTD2}>
+                            <img
+                              alt=""
+                              src={this.state.signature_2}
+                              style={Style.imgttd}
+                            />
+                          </div>
+                          <div style={Style.TandaTanganPenangung}>
+                            {this.state.signature_name_2}
+                          </div>
                         </div>
 
                         <div style={Style.Icademy}>
                           <img alt="" src={Icademy} />
                         </div>
-                        <div style={Style.Star}>
-                          <img alt="" src={Star} />
+                        <div style={Style.Logo}>
+                          <img alt="" src={Logo} />
                         </div>
-                        <div style={Style.Group1}>
-                          <img alt="" src={Group1} />
+                        <div style={Style.Icon}>
+                          <img alt="" src={Icon} />
                         </div>
                       </div>
                     </div>
@@ -168,7 +176,7 @@ const Style = {
     position: 'absolute',
     width: '1755px',
     height: '1240px',
-    zIndex: '1',
+    zIndex: 1,
   },
 
   TandaTanganPenangung: {
@@ -177,7 +185,7 @@ const Style = {
     position: 'absolute',
     width: '100%',
     height: '29px',
-    zIndex: '2',
+    zIndex: 2,
 
     fontSize: 'xx-large',
     color: '#6f7975',
@@ -213,11 +221,17 @@ const Style = {
     zIndex: '5',
   },
 
+  imgttd: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+
   YoanitaRianti: {
-    left: '837px',
+    left: '650px',
     top: '452px',
     position: 'absolute',
-    width: '100%',
+    width: '800px',
     height: '39px',
     zIndex: '6',
 
@@ -225,38 +239,42 @@ const Style = {
     color: '#674817',
     fontFamily: 'sans-serif',
     fontWeight: '600',
+    textAlign: 'center',
   },
 
   CERTIFICATEOFCOMPLET: {
     left: '650px',
     top: '330px',
     position: 'absolute',
-    width: '1000px',
+    width: '800px',
     height: '34px',
     zIndex: '7',
 
     fontFamily: 'sans-serif',
     fontSize: '38px',
     color: '#657373',
+    textAlign: 'center',
+    letterSpacing: '5px',
   },
 
   THISCERTIFICATEISPRO: {
-    left: '701px',
+    left: '650px',
     top: '403px',
     position: 'absolute',
-    width: '100%',
+    width: '800px',
     height: '21px',
     zIndex: '8',
 
     fontSize: 'xx-large',
     color: '#6f7975',
+    textAlign: 'center',
   },
 
   KuasaiTOEFELPBTRaih6: {
-    left: '682px',
+    left: '650px',
     top: '671px',
     position: 'absolute',
-    width: '100%',
+    width: '800px',
     height: '46px',
     zIndex: '9',
 
@@ -264,42 +282,46 @@ const Style = {
     color: '#674817',
     fontFamily: 'sans-serif',
     fontWeight: '300',
+    textAlign: 'center',
   },
 
   FORSUCCESSFULLYCOMPL: {
-    left: '786px',
+    left: '650px',
     top: '560px',
     position: 'absolute',
-    width: '100%',
+    width: '800px',
     height: '21px',
     zIndex: '10',
 
     fontSize: 'xx-large',
     color: '#6f7975',
+    textAlign: 'center',
   },
 
   ALLCONTENTSONONLINEC: {
-    left: '772px',
+    left: '650px',
     top: '605px',
     position: 'absolute',
-    width: '100%',
+    width: '800px',
     height: '21px',
     zIndex: '11',
 
     fontSize: 'xx-large',
     color: '#6f7975',
+    textAlign: 'center',
   },
 
   TANGGAL: {
-    left: '938px',
+    left: '650px',
     top: '776px',
     position: 'absolute',
-    width: '257px',
+    width: '800px',
     height: '21px',
     zIndex: '12',
 
     fontSize: 'x-large',
     color: '#6f7975',
+    textAlign: 'center',
   },
 
   Icademy: {
@@ -326,6 +348,23 @@ const Style = {
     position: 'absolute',
     width: '251px',
     height: '201px',
+    zIndex: '15',
+  },
+  Logo: {
+    left: '752px',
+    top: '79px',
+    position: 'absolute',
+    width: '250px',
+    height: '201px',
+    zIndex: '14',
+  },
+
+  Icon: {
+    left: '189px',
+    top: '173px',
+    position: 'absolute',
+    width: '139px',
+    height: '155px',
     zIndex: '15',
   },
 };

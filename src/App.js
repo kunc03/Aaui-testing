@@ -66,9 +66,9 @@ import Kursus from "./components/Kursus";
 import CertificateAdmin from './components/admin/certificate';
 import CertificateCreate from './components/admin/certificate/create';
 import Certificate from './components/client/certificate';
-import PrintCertificate1 from './components/client/certificate/Certificate 1'
-// import PrintCertificate2 from './components/client/certificate/Certificate 2'
-// import PrintCertificate3 from './components/client/certificate/Certificate 3'
+import PrintCertificate1 from './components/client/certificate/Certificate1'
+import PrintCertificate2 from './components/client/certificate/Certificate2'
+import PrintCertificate3 from './components/client/certificate/Certificate3'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -239,8 +239,8 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />
-        {/* <Route path='/print-certificate2' component={PrintCertificate2} /> */}
-        {/* <Route path='/print-certificate3' component={PrintCertificate3} /> */}
+        <Route path='/print-certificate2' component={PrintCertificate2} />
+        <Route path='/print-certificate3' component={PrintCertificate3} />
 
         <Route path="/logout" component={Logout} />
       </Switch>

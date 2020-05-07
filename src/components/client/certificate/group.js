@@ -8,17 +8,15 @@ export default class Course extends Component {
     certificates: [],
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const user_id = Storage.get('user').data.user_id;
     API.get(`${API_SERVER}v1/client-certificate/3/${user_id}`).then(
       async (res) => {
         if (res.status === 200) {
           let certificates = this.state.certificates;
           certificates = res.data.result;
-          console.log(certificates);
           this.setState({ certificates: certificates });
         }
-        console.log(res);
       }
     );
   }

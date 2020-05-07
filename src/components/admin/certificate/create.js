@@ -22,6 +22,8 @@ export default class CertificateCreate extends Component {
     signature_2_img: '',
     signature_name_2: '',
     listUser: [],
+    quiz: 0,
+    ujian: 0,
 
     isNotifikasi: false,
     isiNotifikasi: '',
@@ -45,7 +47,6 @@ export default class CertificateCreate extends Component {
 
   handleChange = (e) => {
     if (e.target.files[0].size <= 500000) {
-      console.log(e.target.files[0]);
       this.setState({
         [e.target.id]: e.target.files[0],
         [`${e.target.id}_img`]: URL.createObjectURL(e.target.files[0]),
@@ -83,7 +84,7 @@ export default class CertificateCreate extends Component {
        * create
        */
       API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
-        console.log(res);
+        alert('success');
       });
     } else {
       /**
@@ -91,7 +92,7 @@ export default class CertificateCreate extends Component {
        */
       API.put(`${API_SERVER}v1/certificate/${this.state.id}`, formData).then(
         async (res) => {
-          console.log(res);
+          alert('success');
         }
       );
     }
@@ -100,7 +101,7 @@ export default class CertificateCreate extends Component {
   onDelete = () => {
     API.delete(`${API_SERVER}v1/certificate/${this.state.id}`).then(
       async (res) => {
-        console.log(res);
+        alert('success');
       }
     );
   };
@@ -116,7 +117,6 @@ export default class CertificateCreate extends Component {
         API.get(
           `${API_SERVER}v1/hasilkursus/${res.data.result.user_id}/${this.state.activity_id}`
         ).then((res) => {
-          console.log(res.data.result, 'RESSSS=>>>>>>>>>>>>');
           if (res.status === 200) {
             this.setState({
               kursus: res.data.result.users,
@@ -128,7 +128,7 @@ export default class CertificateCreate extends Component {
     });
   }
 
-  componentDidMount() {
+  getListUser() {
     switch (this.state.type_activity) {
       case 1:
         API.get(
@@ -138,14 +138,28 @@ export default class CertificateCreate extends Component {
         ).then(async (res) => {
           let listUser = res.data.result.users;
 
-          this.setState({ listUser: listUser });
+          // eslint-disable-next-line array-callback-return
+          listUser.map((elem) => {
+            elem['id'] = elem.user_id;
+            elem['value'] = false;
+          });
+
+          this.setState({
+            listUser: listUser,
+            quiz: res.data.result.quiz,
+            ujian: res.data.result.ujian,
+          });
+
+          this.getCertificate();
         });
         break;
 
       default:
         break;
     }
+  }
 
+  getCertificate() {
     API.get(
       `${API_SERVER}v1/certificate/${this.state.type_activity}/${this.state.activity_id}`
     ).then(async (res) => {
@@ -154,6 +168,7 @@ export default class CertificateCreate extends Component {
         let b = res.data.result[2];
         let listUser = this.state.listUser;
 
+        // eslint-disable-next-line array-callback-return
         b.map((elem) => {
           let id = listUser.find((val) => {
             return val.id === elem.user_id;
@@ -177,9 +192,13 @@ export default class CertificateCreate extends Component {
     });
   }
 
+  componentDidMount() {
+    this.getListUser();
+  }
+
   render() {
     if (!this.props.location.params) {
-      return <Redirect to="/certificate-create" />;
+      return <Redirect to="/certificate-admin" />;
     } else {
       return (
         <div className="pcoded-main-container">
@@ -359,6 +378,20 @@ export default class CertificateCreate extends Component {
     }
   }
 
+  createHeader() {
+    let header = [];
+
+    for (let i = 0; i < this.state.quiz; i++) {
+      header.push(<th>quiz {i + 1}</th>);
+    }
+
+    for (let i = 0; i < this.state.ujian; i++) {
+      header.push(<th>ujian {i + 1}</th>);
+    }
+
+    return header;
+  }
+
   table() {
     if (this.state.activity_id !== '') {
       return (
@@ -367,7 +400,7 @@ export default class CertificateCreate extends Component {
             <tr>
               <th>#</th>
               <th>name</th>
-              <th>email</th>
+              {this.createHeader()}
             </tr>
           </thead>
 
@@ -386,7 +419,12 @@ export default class CertificateCreate extends Component {
                     </Form.Group>
                   </td>
                   <td>{elem.name}</td>
-                  <td>{elem.email}</td>
+                  {elem.quiz.map((value, id) => {
+                    return <td key={id}>{value[0] ? value[0].score : null}</td>;
+                  })}
+                  {elem.ujian.map((value, id) => {
+                    return <td key={id}>{value[0] ? value[0].score : null}</td>;
+                  })}
                 </tr>
               );
             })}
