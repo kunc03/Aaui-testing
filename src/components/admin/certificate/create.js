@@ -126,7 +126,7 @@ export default class CertificateCreate extends Component {
     });
   }
 
-  componentDidMount() {
+  getListUser() {
     switch (this.state.type_activity) {
       case 1:
         API.get(
@@ -142,13 +142,17 @@ export default class CertificateCreate extends Component {
           });
 
           this.setState({ listUser: listUser });
+
+          this.getCertificate();
         });
         break;
 
       default:
         break;
     }
+  }
 
+  getCertificate() {
     API.get(
       `${API_SERVER}v1/certificate/${this.state.type_activity}/${this.state.activity_id}`
     ).then(async (res) => {
@@ -179,6 +183,10 @@ export default class CertificateCreate extends Component {
         this.setState(listUser);
       }
     });
+  }
+
+  componentDidMount() {
+    this.getListUser();
   }
 
   render() {
