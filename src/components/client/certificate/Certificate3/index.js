@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import BG from './images/BG.png';
-import TTD from './images/TTD.png';
-import TTD2 from './images/TTD2.png';
 import Icademy from './images/Icademy.png';
 import Logo from './images/Logo.png';
 import Icon from './images/Icon.png';
@@ -22,7 +20,7 @@ export default class Component1 extends Component {
     template: '',
     title: '',
     type_activity: '',
-    user_id: '',
+    name: '',
   };
 
   printHandler() {
@@ -62,7 +60,7 @@ export default class Component1 extends Component {
           template: res.data.result[0].template,
           title: res.data.result[0].title,
           type_activity: res.data.result[0].type_activity,
-          user_id: res.data.result[0].user_id,
+          name: res.data.result[0].name,
         });
       }
     });
@@ -99,7 +97,7 @@ export default class Component1 extends Component {
                             THIS CERTIFICATE IS PROUDLY PRESENTED TO
                           </div>
                           <div style={Style.YoanitaRianti}>
-                            {this.state.user_id}
+                            {this.state.name}
                           </div>
                           <div style={Style.FORSUCCESSFULLYCOMPL}>
                             FOR SUCCESSFULLY COMPLETING
@@ -117,16 +115,24 @@ export default class Component1 extends Component {
                           </div>
 
                           <div style={Style.TTD}>
-                            <img alt="" src={TTD} style={{ width: '200px' }} />
-                          </div>
-                          <div style={Style.TandaTanganPenangung}>
-                            Tanda Tangan Penangung Jawab
-                          </div>
-                          <div style={Style.TTD2}>
-                            <img alt="" src={TTD2} style={{ width: '200px' }} />
+                            <img
+                              alt=""
+                              src={this.state.signature_1}
+                              style={Style.imgttd}
+                            />
                           </div>
                           <div style={Style.TandaTanganPenangung_0}>
-                            Tanda Tangan Penangung Jawab
+                            {this.state.signature_name_1}
+                          </div>
+                          <div style={Style.TTD2}>
+                            <img
+                              alt=""
+                              src={this.state.signature_2}
+                              style={Style.imgttd}
+                            />
+                          </div>
+                          <div style={Style.TandaTanganPenangung}>
+                            {this.state.signature_name_2}
                           </div>
                         </div>
 
@@ -193,7 +199,7 @@ const Style = {
 
   TTD2: {
     left: '516px',
-    top: '803px',
+    top: '733px',
     position: 'absolute',
     width: '396px',
     height: '192px',
@@ -214,11 +220,17 @@ const Style = {
 
   TTD: {
     left: '1168px',
-    top: '803px',
+    top: '733px',
     position: 'absolute',
     width: '396px',
     height: '192px',
     zIndex: '5',
+  },
+
+  imgttd: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
   },
 
   YoanitaRianti: {
