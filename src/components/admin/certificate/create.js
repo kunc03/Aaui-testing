@@ -22,6 +22,8 @@ export default class CertificateCreate extends Component {
     signature_2_img: '',
     signature_name_2: '',
     listUser: [],
+    quiz: 0,
+    ujian: 0,
 
     isNotifikasi: false,
     isiNotifikasi: '',
@@ -142,7 +144,11 @@ export default class CertificateCreate extends Component {
             elem['value'] = false;
           });
 
-          this.setState({ listUser: listUser });
+          this.setState({
+            listUser: listUser,
+            quiz: res.data.result.quiz,
+            ujian: res.data.result.ujian,
+          });
 
           this.getCertificate();
         });
@@ -192,7 +198,7 @@ export default class CertificateCreate extends Component {
 
   render() {
     if (!this.props.location.params) {
-      return <Redirect to="/certificate-create" />;
+      return <Redirect to="/certificate-admin" />;
     } else {
       return (
         <div className="pcoded-main-container">
@@ -372,6 +378,20 @@ export default class CertificateCreate extends Component {
     }
   }
 
+  createHeader() {
+    let header = [];
+
+    for (let i = 0; i < this.state.quiz; i++) {
+      header.push(<th>quiz {i + 1}</th>);
+    }
+
+    for (let i = 0; i < this.state.ujian; i++) {
+      header.push(<th>ujian {i + 1}</th>);
+    }
+
+    return header;
+  }
+
   table() {
     if (this.state.activity_id !== '') {
       return (
@@ -380,7 +400,7 @@ export default class CertificateCreate extends Component {
             <tr>
               <th>#</th>
               <th>name</th>
-              <th>email</th>
+              {this.createHeader()}
             </tr>
           </thead>
 
@@ -399,7 +419,12 @@ export default class CertificateCreate extends Component {
                     </Form.Group>
                   </td>
                   <td>{elem.name}</td>
-                  <td>{elem.email}</td>
+                  {elem.quiz.map((value, id) => {
+                    return <td key={id}>{value[0] ? value[0].score : null}</td>;
+                  })}
+                  {elem.ujian.map((value, id) => {
+                    return <td key={id}>{value[0] ? value[0].score : null}</td>;
+                  })}
                 </tr>
               );
             })}
