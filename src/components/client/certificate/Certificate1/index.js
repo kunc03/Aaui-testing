@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import BG from './images/BG.png';
-import TTD from './images/TTD.png';
 import TTD2 from './images/TTD2.png';
 import Icademy from './images/Icademy.png';
 import Star from './images/Star.png';
@@ -26,6 +25,7 @@ export default class Component1 extends Component {
   };
 
   printHandler() {
+    // eslint-disable-next-line no-unused-vars
     let originalContents, popupWin, printContents;
     return (
       (printContents = document.getElementById('print').innerHTML),

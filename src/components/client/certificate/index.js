@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Modal } from 'react-bootstrap';
-import Certificate1 from './Certificate 1';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import API, { API_SERVER } from '../../../repository/api';
