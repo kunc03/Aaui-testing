@@ -84,7 +84,6 @@ export default class CertificateCreate extends Component {
        * create
        */
       API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
-        l
         alert('success simpan');
       });
     } else {
