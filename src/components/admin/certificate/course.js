@@ -46,8 +46,7 @@ export default class Course extends Component {
           kursusTerbaru: res.data.result
             .filter((item) => {
               return item.count_chapter > 0;
-            })
-            .slice(0, 3),
+            }),
         });
       }
     });
