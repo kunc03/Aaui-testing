@@ -21,6 +21,7 @@ export default class Component1 extends Component {
     title: '',
     type_activity: '',
     name: '',
+    title_certificate: '',
   };
 
   printHandler() {
@@ -48,20 +49,7 @@ export default class Component1 extends Component {
       `${API_SERVER}v1/detail-certificate/${user_id}/${certificate_id}`
     ).then(async (res) => {
       if (res.status === 200) {
-        this.setState({
-          activity_id: res.data.result[0].activity_id,
-          certificate_id: res.data.result[0].certificate_id,
-          date: res.data.result[0].date,
-          id: res.data.result[0].id,
-          signature_1: res.data.result[0].signature_1,
-          signature_2: res.data.result[0].signature_2,
-          signature_name_1: res.data.result[0].signature_name_1,
-          signature_name_2: res.data.result[0].signature_name_2,
-          template: res.data.result[0].template,
-          title: res.data.result[0].title,
-          type_activity: res.data.result[0].type_activity,
-          name: res.data.result[0].name,
-        });
+        this.setState(res.data.result[0]);
       }
     });
   }
@@ -100,7 +88,7 @@ export default class Component1 extends Component {
                             ALL CONTENTS ON ONLINE COURSE
                           </div>
                           <div style={Style.KuasaiTOEFELPBTRaih6}>
-                            Kuasai TOEFEL PBT, Raih 600+
+                            {this.state.title_certificate}
                           </div>
                           <div style={Style.TANGGAL}>
                             {moment(this.state.date)
@@ -109,21 +97,25 @@ export default class Component1 extends Component {
                           </div>
 
                           <div style={Style.TTD}>
-                            <img
-                              alt=""
-                              src={this.state.signature_1}
-                              style={Style.imgttd}
-                            />
+                            {this.state.signature_1 === '' ? null : (
+                              <img
+                                alt=""
+                                src={this.state.signature_1}
+                                style={Style.imgttd}
+                              />
+                            )}
                           </div>
                           <div style={Style.TandaTanganPenangung_0}>
                             {this.state.signature_name_1}
                           </div>
                           <div style={Style.TTD2}>
-                            <img
-                              alt=""
-                              src={this.state.signature_2}
-                              style={Style.imgttd}
-                            />
+                            {this.state.signature_2 === '' ? null : (
+                              <img
+                                alt=""
+                                src={this.state.signature_2}
+                                style={Style.imgttd}
+                              />
+                            )}
                           </div>
                           <div style={Style.TandaTanganPenangung}>
                             {this.state.signature_name_2}
