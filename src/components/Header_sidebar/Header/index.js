@@ -16,7 +16,11 @@ class Header extends Component {
 
     company: [],
     company_id:'',
-    myCompanyName : ''
+    myCompanyName : '',
+
+    menuAktif: '/',
+      sideMenu: false,
+      sideMenuCollapse:false,
   };
 
   pilihCompany = e => {
@@ -29,6 +33,7 @@ class Header extends Component {
   }
 
   fetchCompany() {
+    this.setState({ menuAktif: window.location.pathname })
     let link = Storage.get('user').data.level == 'superadmin' ? `${API_SERVER}v1/company` : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
     API.get(link).then(response => {
       if (Storage.get('user').data.level == 'superadmin'){
@@ -54,6 +59,7 @@ class Header extends Component {
   }
 
   async componentDidMount() {
+    
     await API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200){
         console.log('res company', res)
@@ -106,6 +112,9 @@ class Header extends Component {
     let NotifBody = ({list}) => {
       let unread = Object.values(list).filter(x=> x.isread == '0');
       let unclick = Object.values(list).filter(x=> x.isread == '2');
+
+
+      
 
       return  (
                   <ul className="noti-body">
@@ -176,12 +185,69 @@ class Header extends Component {
     }   
 
 
+
+    let access = Storage.get('access');
+      let levelUser = Storage.get('user').data.level;
+      let menuClients = [
+        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+        { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
+        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+      ];
+  
+      let menuAdmins = [
+        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+        { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
+        // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+      ];
+  
+      let menuSuperAdmins = [
+        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
+        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
+        // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
+      ];
+  
+      const { menuAktif } = this.state;
+    
+      let menuContent = [];
+      if(levelUser === 'superadmin') {
+        menuContent = menuSuperAdmins;
+      } else if(levelUser === 'admin') {
+        menuContent = menuAdmins;
+      } else {
+        menuContent = menuClients;
+      }
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
         <div className="m-header">
-          {/* <a className="mobile-menu" id="mobile-collapse1" href="javascript:">
+          <a className="mobile-menu" id="mobile-collapse1" href="javascript:" 
+              onClick={(a)=>{
+                  this.setState({
+                    sideMenu : a.currentTarget.className.split(" ")[1] === 'on' ? true : false})
+              }}>
             <span />
-          </a> */}
+          </a>
           <a href="/" className="b-brand">
             <div className="b-bg">
               <img
@@ -198,6 +264,50 @@ class Header extends Component {
         <a className="mobile-menu" id="mobile-header" href="javascript:">
           <i className="feather icon-more-horizontal" />
         </a>
+
+        <div className={this.state.sideMenu ?  "collapse navbar-collapse side-mobile-custom" : "hidden" }>
+          <ul className="navbar-nav mr-auto">
+            <div>
+            {
+              menuContent.map((item, i) => {
+                if(item.access == undefined || access[item.access]) {
+                  return (
+                    <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
+                      <Link to={item.link} className="nav-link">
+                        <span className="pcoded-micon">
+                          <img
+                            src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                            alt=""
+                          ></img>
+                        </span>
+                        <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                          {item.label}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                }
+              })
+            }
+            </div>
+
+            <li data-username="Sample Page" className="nav-item mt-4">
+              <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
+                <span className="pcoded-micon">
+                  <img
+                    src="assets/images/component/Icon Logout.png"
+                    style={{
+                      paddingLeft: "3px"
+                    }}
+                    alt=""
+                  ></img>
+                </span>
+                <span className="pcoded-mtext f-16 f-w-bold" style={{color: 'white'}}>Logout</span>
+              </Link>
+            </li>
+
+          </ul>
+        </div>
 
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">

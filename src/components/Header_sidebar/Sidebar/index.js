@@ -76,72 +76,76 @@ class Sidebar extends Component {
     }
 
     return (
-      <nav className="pcoded-navbar">
-        <div className="navbar-wrapper">
-          <div className="navbar-brand header-logo">
-            <Link to="/" className="b-brand" style={{width:'100%'}}>
-                  <img
-                    onClick={console.log('alvin',this.state.sideMenu)}
-                    src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile.png':'Logo Ideku.png'}`}
-                    alt=""
-                    style={{width:'90%', height:'auto',paddingLeft:'5%'}}
-                  />
-              {/* <span className="b-title">IDEKU</span> */}
-            </Link>
-            <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" >
-              <span />
-            </a>
-          </div>
-
-          <div className="navbar-content scroll-div">
-            <ul className="nav pcoded-inner-navbar">
-              <li className="nav-item pcoded-menu-caption">
-                <label />
-              </li>
-
-              <div>
-              {
-                menuContent.map((item, i) => {
-                  if(item.access == undefined || access[item.access]) {
-                    return (
-                      <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
-                        <Link to={item.link} className="nav-link">
-                          <span className="pcoded-micon">
-                            <img
-                              src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
-                              alt=""
-                            ></img>
-                          </span>
-                          <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
-                            {item.label}
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  }
-                })
-              }
-              </div>
-
-              <li data-username="Sample Page" className="nav-item mt-4  bg-c-purple-dark">
-                <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
-                  <span className="pcoded-micon">
+      
+        <nav className="pcoded-navbar">
+          <div className="navbar-wrapper">
+            <div className="navbar-brand header-logo">
+              <Link to="/" className="b-brand" style={{width:'100%'}}>
                     <img
-                      src="assets/images/component/Icon Logout.png"
-                      style={{
-                        paddingLeft: "3px"
-                      }}
+                      onClick={console.log('alvin',this.state.sideMenu)}
+                      src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile.png':'Logo Ideku.png'}`}
                       alt=""
-                    ></img>
-                  </span>
-                  <span className="pcoded-mtext f-16 f-w-bold">Logout</span>
-                </Link>
-              </li>
+                      style={{width:'90%', height:'auto',paddingLeft:'5%'}}
+                    />
+                {/* <span className="b-title">IDEKU</span> */}
+              </Link>
+              
+                <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" ><span /></a>
+              
+            </div>
 
-            </ul>
+            <div className="navbar-content scroll-div">
+              <ul className="nav pcoded-inner-navbar">
+                <li className="nav-item pcoded-menu-caption">
+                  <label />
+                </li>
+
+                <div>
+                {
+                  menuContent.map((item, i) => {
+                    if(item.access == undefined || access[item.access]) {
+                      return (
+                        <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
+                          <Link to={item.link} className="nav-link">
+                            <span className="pcoded-micon">
+                              <img
+                                src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                                alt=""
+                              ></img>
+                            </span>
+                            <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                              {item.label}
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    }
+                  })
+                }
+                </div>
+
+                <li data-username="Sample Page" className="nav-item mt-4  bg-c-purple-dark">
+                  <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
+                    <span className="pcoded-micon">
+                      <img
+                        src="assets/images/component/Icon Logout.png"
+                        style={{
+                          paddingLeft: "3px"
+                        }}
+                        alt=""
+                      ></img>
+                    </span>
+                    <span className="pcoded-mtext f-16 f-w-bold">Logout</span>
+                  </Link>
+                </li>
+
+              </ul>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+
+        
+       
     );
   }
 }
