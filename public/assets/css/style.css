@@ -445,10 +445,18 @@ p.text-muted {
   .container {
     max-width: 1540px;
   }
+  
 }
 @media (max-width: 992px) {
   .container {
     max-width: 100%;
+  }
+  .side-mobile-custom {
+    z-index: 1000;
+    position: absolute;
+    top: 9vh;
+    padding: 34px;
+    background: #3d0c31 !important;
   }
 }
 /* ========================================================
@@ -11269,8 +11277,19 @@ div.code-toolbar > .toolbar span:hover {
     line-height: 1.42857;
 }
 
+
+
+.hidden { display : none !important}
+
 @media (min-width: 992px) {
   .modal-xlg {
     max-width: 1200px;
+  }
+  .side-mobile-custom {
+    z-index: 1000;
+    position: absolute;
+    top: -229vh;
+    padding: 34px;
+    background: red !important;
   }
 }
