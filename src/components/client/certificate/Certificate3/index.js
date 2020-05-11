@@ -6,6 +6,7 @@ import Icademy from './images/Icademy.png';
 import Logo from './images/Logo.png';
 import Icon from './images/Icon.png';
 import API, { API_SERVER } from '../../../../repository/api';
+import Storage from '../../../../repository/storage';
 
 export default class Component1 extends Component {
   state = {
