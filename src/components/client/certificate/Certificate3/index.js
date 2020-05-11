@@ -103,7 +103,7 @@ export default class Component1 extends Component {
                           </div>
 
                           <div style={Style.TTD}>
-                            {this.state.signature_1 === '' ? null : (
+                            {this.state.signature_1 == null ? null : (
                               <img
                                 alt=""
                                 src={this.state.signature_1}
@@ -115,7 +115,7 @@ export default class Component1 extends Component {
                             {this.state.signature_name_1}
                           </div>
                           <div style={Style.TTD2}>
-                            {this.state.signature_2 === '' ? null : (
+                            {this.state.signature_2 == null ? null : (
                               <img
                                 alt=""
                                 src={this.state.signature_2}
@@ -132,7 +132,7 @@ export default class Component1 extends Component {
                           <img alt="" src={Icademy} />
                         </div>
                         <div style={Style.Logo}>
-                          <img alt="" src={Logo} />
+                          <img alt="" src={Storage.get('user').data.logo} />
                         </div>
                         <div style={Style.Icon}>
                           <img alt="" src={Icon} />

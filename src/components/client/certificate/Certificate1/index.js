@@ -6,6 +6,7 @@ import Icademy from './images/Icademy.png';
 import Star from './images/Star.png';
 import Group1 from './images/Group1.png';
 import API, { API_SERVER } from '../../../../repository/api';
+import Storage from '../../../../repository/storage';
 
 export default class Component1 extends Component {
   state = {
@@ -94,7 +95,7 @@ export default class Component1 extends Component {
                         </div>
 
                         <div style={Style.TTD}>
-                          {this.state.signature_1 === '' ? null : (
+                          {this.state.signature_1 == null ? null : (
                             <img
                               alt=""
                               src={this.state.signature_1}
@@ -106,7 +107,7 @@ export default class Component1 extends Component {
                           {this.state.signature_name_1}
                         </div>
                         <div style={Style.TTD2}>
-                          {this.state.signature_2 === '' ? null : (
+                          {this.state.signature_2 == null ? null : (
                             <img
                               alt=""
                               src={this.state.signature_2}
@@ -125,7 +126,7 @@ export default class Component1 extends Component {
                           <img alt="" src={Star} />
                         </div>
                         <div style={Style.Group1}>
-                          <img alt="" src={Group1} />
+                          <img alt="" src={Storage.get('user').data.logo} />
                         </div>
                       </div>
                     </div>

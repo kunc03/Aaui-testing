@@ -57,6 +57,10 @@ class Header extends Component {
       });
     }
   }
+  
+  mobileMenuClicked() {
+    this.setState({sideMenu: false})
+  }
 
   async componentDidMount() {
     
@@ -103,6 +107,7 @@ class Header extends Component {
 
     this.fetchCompany();
   }
+
 
   render() {
     const { user, level, company, notificationData } = this.state;
@@ -265,7 +270,7 @@ class Header extends Component {
           <i className="feather icon-more-horizontal" />
         </a>
 
-        <div className={this.state.sideMenu ?  "collapse navbar-collapse side-mobile-custom" : "hidden" }>
+        <div className={this.state.sideMenu ?  "collapse navbar-collapse side-mobile-custom" : "hidden" } style={{width:'100%'}}>
           <ul className="navbar-nav mr-auto">
             <div>
             {
@@ -273,7 +278,7 @@ class Header extends Component {
                 if(item.access == undefined || access[item.access]) {
                   return (
                     <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
-                      <Link to={item.link} className="nav-link">
+                      <Link to={item.link} className="nav-link" onClick={this.mobileMenuClicked.bind(this)}>
                         <span className="pcoded-micon">
                           <img
                             src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
@@ -281,7 +286,7 @@ class Header extends Component {
                           ></img>
                         </span>
                         <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
-                          {item.label}
+                          &nbsp;{item.label}
                         </span>
                       </Link>
                     </li>
@@ -289,8 +294,6 @@ class Header extends Component {
                 }
               })
             }
-            </div>
-
             <li data-username="Sample Page" className="nav-item mt-4">
               <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
                 <span className="pcoded-micon">
@@ -302,9 +305,10 @@ class Header extends Component {
                     alt=""
                   ></img>
                 </span>
-                <span className="pcoded-mtext f-16 f-w-bold" style={{color: 'white'}}>Logout</span>
+                <span className="pcoded-mtext f-16 f-w-bold" style={{color: '#945A86'}}>&nbsp;Logout</span>
               </Link>
             </li>
+            </div>
 
           </ul>
         </div>

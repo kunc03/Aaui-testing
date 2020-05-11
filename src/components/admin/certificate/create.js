@@ -84,7 +84,8 @@ export default class CertificateCreate extends Component {
        * create
        */
       API.post(`${API_SERVER}v1/certificate`, formData).then(async (res) => {
-        alert('success simpan');
+        alert('Sukses menyimpan sertifikat');
+
       });
     } else {
       /**
@@ -92,7 +93,7 @@ export default class CertificateCreate extends Component {
        */
       API.put(`${API_SERVER}v1/certificate/${this.state.id}`, formData).then(
         async (res) => {
-          alert('success update');
+          alert('Sukses update sertifikat');
         }
       );
     }
@@ -101,7 +102,7 @@ export default class CertificateCreate extends Component {
   onDelete = () => {
     API.delete(`${API_SERVER}v1/certificate/${this.state.id}`).then(
       async (res) => {
-        alert('success hapus');
+        alert('Sukses hapus sertifikat');
       }
     );
   };
