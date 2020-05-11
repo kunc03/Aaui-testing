@@ -75,7 +75,7 @@ export default class LiveStream extends Component {
   }
 
   componentDidMount() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
@@ -89,7 +89,7 @@ export default class LiveStream extends Component {
   }
   
   fetchData() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
@@ -221,7 +221,7 @@ export default class LiveStream extends Component {
       
       if(res.status === 200) {
         if(!res.data.error){
-          this.onBotoomScroll();
+          // this.onBotoomScroll();
           let splitTags;
           
           let datas = res.data.result;
@@ -245,7 +245,7 @@ export default class LiveStream extends Component {
   }
 
   componentDidUpdate() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
   }
 
   joinRoom(){
@@ -321,7 +321,7 @@ export default class LiveStream extends Component {
         </Row>
 
         {/* CHATING SEND FILE */}
-        <h3 className="f-20 f-w-800">
+        {/* <h3 className="f-20 f-w-800">
           File Sharing
         </h3>
         <div id="scrollin" className='box-chat'>
@@ -355,11 +355,10 @@ export default class LiveStream extends Component {
               <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
                 SEND
               </Link>
-              {/* <button onClick={this.onBotoomScroll}>coba</button> */}
             </Col>
 
           </Row>
-        </div>
+        </div> */}
 
         {/*  */}
 

@@ -79,7 +79,7 @@ export default class LiveStream extends Component {
   }
 
   componentDidMount() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
@@ -93,7 +93,7 @@ export default class LiveStream extends Component {
   }
   
   fetchData() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
         console.log('RESSS', response)
         this.setState({ classRooms: response.data.result })
@@ -197,7 +197,7 @@ onChangeName = (e) => {
       
       if(res.status === 200) {
         if(!res.data.error){
-          this.onBotoomScroll();
+          // this.onBotoomScroll();
           let splitTags;
           
           let datas = res.data.result;
@@ -221,7 +221,7 @@ onChangeName = (e) => {
   }
 
   componentDidUpdate() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
   }
 
   joinRoom(){
@@ -302,7 +302,7 @@ onChangeName = (e) => {
         </Row>
 
         {/* CHATING SEND FILE */}
-        <h3 className="f-20 f-w-800">
+        {/* <h3 className="f-20 f-w-800">
           File Sharing
         </h3>
         <div id="scrollin" className='box-chat'>
@@ -316,7 +316,7 @@ onChangeName = (e) => {
                 </div>
               )
             })}
-        </div>
+        </div> */}
 
 
         {/*  */}
