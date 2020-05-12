@@ -39,7 +39,7 @@ export default class Course extends Component {
                   <div
                     className="responsive-image-content radius-top-l-r-5"
                     style={{
-                      backgroundImage: `url(${elem.signature_1})`,
+                      backgroundImage: `url('/assets/images/certificate/certificate${elem.template}.jpeg')`,
                     }}
                   ></div>
                   <div className="card-carousel ">
