@@ -241,7 +241,7 @@ export default class CertificateCreate extends Component {
                       {this.state.template !== '' ? (
                         <img
                           alt="media"
-                          src={'/assets/images/component/placeholder-image.png'}
+                          src={`/assets/images/certificate/certificate${this.state.template}.jpeg`}
                           className="img-fluid"
                           style={{ width: '200px', height: '160px' }}
                         />
