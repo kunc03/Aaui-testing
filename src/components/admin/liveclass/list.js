@@ -23,6 +23,7 @@ export default class LiveClassAdmin extends Component {
   state = {
     companyId: '',
     classRooms: [],
+    classRoomsActive: [],
 
     classId: '',
     speaker: '',
@@ -109,7 +110,11 @@ export default class LiveClassAdmin extends Component {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
           if (res.status === 200) {
-            this.setState({ classRooms: res.data.result.reverse() })
+            let dataClass = res.data.result
+            this.setState({
+              classRooms: dataClass.filter((item) => item.active_participants <= 0).reverse(),
+              classRoomsActive: dataClass.filter((item) => item.active_participants >= 1).reverse()
+            })
           }
         });
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
@@ -269,7 +274,7 @@ export default class LiveClassAdmin extends Component {
 
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;
-    let { classRooms, isLive } = this.state;
+    let { classRooms, classRoomsActive, isLive } = this.state;
 
     let { filterMeeting } = this.state;
     if(filterMeeting != ""){
@@ -297,9 +302,17 @@ export default class LiveClassAdmin extends Component {
                 <h3 className="f-14">
                   {item.name}
                 </h3>
-                <small className="mr-3">
+                {
+                  item.active_participants > 0 ?
+                  <medium className="mr-3" style={{position:'absolute', top:20, left:20, background:'#FFF', borderRadius:'5px', padding:'5px 10px'}}>
+                    <i className='fa fa-video'></i> AKTIF
+                  </medium>
+                  :
+                  null
+                }
+                {/* <small className="mr-3">
                   <i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
-                </small>
+                </small> */}
 
                 <small className="mr-3">
                   <Link data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>
@@ -397,14 +410,14 @@ export default class LiveClassAdmin extends Component {
                         }
                   </Row>
 
-                  <Row>
+                  {/* <Row>
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
                         Semua Group Meeting &nbsp;&nbsp;
                         <button className="btn btn-ideku" onClick={this.handleCreateMeeting.bind(this)}><i className="fa fa-plus"></i> Buat Group Meeting</button>
                       </h3>
                     </div>
-                  </Row>
+                  </Row> */}
                       <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
                           <InputGroup className="mb-3" style={{background:'#FFF'}}>
                             <InputGroup.Prepend>
@@ -424,6 +437,32 @@ export default class LiveClassAdmin extends Component {
                           </InputGroup>
                       </div>
 
+                  <Row>
+                    <div className="col-md-12">
+                      <h3 className="f-20 f-w-800">
+                        Meeting Aktif
+                      </h3>
+                    </div>
+                  </Row>
+                  <div>
+                    {
+                      classRoomsActive.length ?
+                        
+                        <ClassRooms list={classRoomsActive} />
+                        
+                        :
+                        <div className="col-md-3 col-xl-3 mb-3">
+                          Tidak ada meeting aktif
+                        </div>
+                    }
+                  </div>
+                  <Row>
+                    <div className="col-md-12">
+                      <h3 className="f-20 f-w-800">
+                        Meeting Tidak Aktif
+                      </h3>
+                    </div>
+                  </Row>
                   <div>
                     {
                       classRooms.length ?
@@ -432,7 +471,7 @@ export default class LiveClassAdmin extends Component {
                         
                         :
                         <div className="col-md-3 col-xl-3 mb-3">
-                          No Classroom
+                          Tidak ada meeting
                         </div>
                     }
                   </div>

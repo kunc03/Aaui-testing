@@ -27,9 +27,17 @@ const ClassRooms = ({list}) => <Row>
 						<h3 className="f-14">
 							{item.name}
 						</h3>
-						<small className="mr-3">
+						{
+						item.active_participants > 0 ?
+						<medium className="mr-3" style={{position:'absolute', top:20, left:20, background:'#FFF', borderRadius:'5px', padding:'5px 10px'}}>
+							<i className='fa fa-video'></i> AKTIF
+						</medium>
+						:
+						null
+						}
+						{/* <small className="mr-3">
 							<i className={`fa fa-${item.is_live ? 'video' : 'stop-circle'}`}></i>&nbsp;{item.is_live ? 'LIVE' : 'ENDED'}
-						</small>
+						</small> */}
 						{
 						item.record &&
 						<small className="mr-3">
@@ -48,6 +56,7 @@ const ClassRooms = ({list}) => <Row>
 export default class LiveClass extends Component {
 	state = {
 		companyId: '',
+		classRoomsActive: [],
 		classRooms: [],
 		isLive: false,
 		liveURL: '',
@@ -77,7 +86,11 @@ export default class LiveClass extends Component {
 					if(res.status === 200) {
 						not_invited = res.data.not_invited.reverse();
 						invited = res.data.invited.reverse();
-						this.setState({ classRooms: invited.concat(not_invited) })
+						let dataClass = invited.concat(not_invited)
+						this.setState({
+						  classRooms: dataClass.filter((item) => item.active_participants <= 0).reverse(),
+						  classRoomsActive: dataClass.filter((item) => item.active_participants >= 1).reverse()
+						})
 					}
 				})
 			}
@@ -88,7 +101,7 @@ export default class LiveClass extends Component {
 
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;
-		let { classRooms, isLive } = this.state;
+		let { classRooms, classRoomsActive, isLive } = this.state;
 		let { filterMeeting } = this.state;
 		if(filterMeeting != ""){
 		  classRooms = classRooms.filter(x=>
@@ -171,13 +184,39 @@ export default class LiveClass extends Component {
                           </InputGroup>
                       </div>
 
+					  <Row>
+                    <div className="col-md-12">
+                      <h3 className="f-20 f-w-800">
+                        Meeting Aktif
+                      </h3>
+                    </div>
+                  </Row>
+                  <div>
+                    {
+                      classRoomsActive.length ?
+                        
+                        <ClassRooms list={classRoomsActive} />
+                        
+                        :
+                        <div className="col-md-3 col-xl-3 mb-3">
+                          Tidak ada meeting aktif
+                        </div>
+                    }
+                  </div>
+                  <Row>
+                    <div className="col-md-12">
+                      <h3 className="f-20 f-w-800">
+                        Meeting Tidak Aktif
+                      </h3>
+                    </div>
+                  </Row>
 					<div>
 						{
 							classRooms.length ?
 								<ClassRooms list={classRooms} />
 								:
 								<div className="col-md-3 col-xl-3 mb-3">
-									No Classroom
+									Tidak ada meeting aktif
 								</div>
 						}
 					</div>

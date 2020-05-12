@@ -1,5 +1,5 @@
 import React, {useState, useEffect } from 'react';
-import { API_JITSI } from '../../repository/api';
+import API, { API_JITSI, API_SERVER } from '../../repository/api';
 
 function JitsiMeetComponent(props) {
 
@@ -39,7 +39,13 @@ function JitsiMeetComponent(props) {
     
     api.addEventListener('videoConferenceJoined', () => {
       setLoading(false);
-      api.executeCommand('displayName', konten.userName);
+      const classId = konten.roomId;
+      const action = 'join';
+      API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {action: action}).then(res => {
+        if(res.status === 200) {
+          api.executeCommand('displayName', konten.userName);
+        }
+      })
     });
 
     api.addEventListener('screenSharingStatusChanged', () => {
@@ -47,8 +53,24 @@ function JitsiMeetComponent(props) {
     });
 
     api.addEventListener('videoConferenceLeft', () => {
-      // window.location.href = window.location.origin+'/liveclass';
-      window.close();
+      const classId = konten.roomId;
+      const action = 'leave';
+      API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {action: action}).then(res => {
+        if(res.status === 200) {
+          api.executeCommand('displayName', konten.userName);
+          if (res.data.result.active_participants === 0){
+            const classId = konten.roomId;
+            API.delete(`${API_SERVER}v1/liveclass/file/delete/${classId}`).then(res => {
+              if(res.status === 200) {
+                window.close();
+              }
+            })
+          }
+          else{
+            window.close();
+          }
+        }
+      })
     });
     api.executeCommand('avatarUrl', konten.userAvatar);
     !konten.startMic && api.executeCommand('toggleAudio');

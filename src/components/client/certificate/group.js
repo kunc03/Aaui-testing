@@ -25,7 +25,7 @@ export default class Course extends Component {
     return (
       <div className="row">
         {this.state.certificates.length === 0 ? (
-          <div>not found certificate</div>
+          <div>Tidak ada sertifikat</div>
         ) : (
           this.state.certificates.map((elem, index) => {
             return (

@@ -288,6 +288,9 @@ onChangeName = (e) => {
               user.name && classRooms.room_name && this.state.join ?
               <JitsiMeetComponent 
                 roomName={classRooms.room_name} 
+                roomId={classRooms.class_id} 
+                moderator={classRooms.moderator} 
+                userId={user.user_id} 
                 userName={user.name} 
                 userEmail={user.email}
                 userAvatar={user.avatar}

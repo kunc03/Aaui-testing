@@ -305,6 +305,14 @@ export class AdminSwitch extends React.Component {
         <Route path="/grup" exact component={Grup} />
 
         <Route path="/filemanager" exact component={FilePicker} />
+        
+        <Route path='/certificate-admin' component={CertificateAdmin} />
+        <Route path='/certificate-create' component={CertificateCreate} />
+
+        <Route path='/certificate' component={Certificate} />
+        <Route path='/print-certificate1' component={PrintCertificate1} />
+        <Route path='/print-certificate2' component={PrintCertificate2} />
+        <Route path='/print-certificate3' component={PrintCertificate3} />
 
         <Route path="/logout" exact component={Logout} />
       </Switch>
@@ -341,6 +349,11 @@ export class ClientSwitch extends React.Component {
         <Route path="/kursus" component={Kursus} />
 
         <Route path="/profile" component={Profile} />
+
+        <Route path='/certificate' component={Certificate} />
+        <Route path='/print-certificate1' component={PrintCertificate1} />
+        <Route path='/print-certificate2' component={PrintCertificate2} />
+        <Route path='/print-certificate3' component={PrintCertificate3} />
         
         <Route path="/logout" component={Logout} />
       </Switch>

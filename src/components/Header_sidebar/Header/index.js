@@ -224,7 +224,7 @@ class Header extends Component {
         { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
         { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
         { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
         { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Sertifikat', link: '/certificate' },
         { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
         { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
