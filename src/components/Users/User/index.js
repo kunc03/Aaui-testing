@@ -96,7 +96,7 @@ export default class User extends Component {
 
   onClickSubmitPassword = e => {
     e.preventDefault();
-    let formData = { password: this.state.userPassword };
+    let formData = { password: this.state.password };
     API.put(`${API_SERVER}v1/user/password/${this.state.userIdPassword}`, formData).then(res => {
       if(res.status === 200) {
         this.setState({ isModalPassword: false, userIdPassword: '' });
