@@ -3,14 +3,64 @@ import { Link } from "react-router-dom";
 import { Card, InputGroup, FormControl, Row } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+// import Calendar from 'react-calendar';
+// import 'react-calendar/dist/Calendar.css';
 
 import RiwayatKursus from './riwayatkursus';
 import RiwayatForum from './riwayatforum';
 import RiwayatLiveClass from './riwayatliveclass';
 import { Doughnut,Bar, Line, Pie } from 'react-chartjs-2';
 import {dataBar, dataUser, dataSpeaker, dataPie} from './data';
+
+import { Calendar, momentLocalizer } from 'react-big-calendar'
+import Toolbar from 'react-big-calendar/lib/Toolbar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import moment from 'moment'
+const localizer = momentLocalizer(moment)
+const event = [
+  {
+    id: 0,
+    title: 'Today',
+    start: new Date(),
+    end: new Date(),
+    bgColor: 'red'
+  },
+  {
+    id: 2,
+    title: 'Ujian',
+    start: moment(moment()).add(3, 'days'),
+    end: moment(moment()).add(3, 'days'),
+    bgColor: 'purple'
+  },
+  {
+    id: 3,
+    title: 'Group',
+    start: moment(moment()).add(4, 'days'),
+    end: moment(moment()).add(4, 'days'),
+    bgColor: 'cyan'
+  }
+]
+
+class CustomToolbar extends Toolbar {
+  render() {
+    return (
+      <div className='rbc-toolbar'>
+        <span className="rbc-btn-group">
+          <button type="button" onClick={() => this.navigate('PREV')}>{'<'}</button>
+          <button type="button" onClick={() => this.navigate('TODAY')}>today</button>
+          <button type="button" onClick={() => this.navigate('NEXT')}>{'>'}</button>
+        </span>
+        <span className="rbc-toolbar-label">{this.props.label}</span>
+      </div>
+    );
+  }
+
+  navigate = action => {
+    console.log(action);
+    
+    this.props.onNavigate(action)
+  }
+}
 
 const tabs =[
   {title : 'Riwayat Kursus' },
@@ -298,7 +348,7 @@ class Aktivity extends Component {
                         >
                           <Doughnut
                             data={data}
-                            height={320}
+                            height={443}
                             options={{ maintainAspectRatio: false }}
                           />
                         </div>
@@ -311,12 +361,28 @@ class Aktivity extends Component {
                     <div className="col-md-12 col-xl-5">
                       <div className="card">
                         <h4 className="p-10">Kalender</h4>
-                          <Calendar
+                          {/* <Calendar
                             onChange={(a)=>{console.log(a)}}
                             value={new Date()}
                             locale='id-ID'
+                            tileContent={({ activeStartDate, date, view }) => { var d = new Date(); d.setHours(0,0,0,0); console.log(new Date(date), d, view); return view == 'month' && new Date(date) == d ? <p>asdf</p> : null }}
                             // activeStartDate={}
                             // defaultActiveStartDate={this.state.today}
+                          /> */}
+                          <Calendar
+                            popup
+                            events={event}
+                            defaultDate={new Date()}
+                            localizer={localizer}
+                            style={{ height: 400 }}
+                            components = {{toolbar : CustomToolbar}}
+                            eventPropGetter={(event, start, end, isSelected) => {
+                              if (event.bgColor) {
+                                return { style: { backgroundColor: event.bgColor }}
+                              }
+                              return {}
+                            }}
+                            views={['month']}
                           />
                           <div className="p-l-20"><span className="p-r-5" style={{color:'red'}}><i className="fa fa-square"></i></span>Hari ini</div>
                           <div className="p-l-20"><span className="p-r-5" style={{color:'purple'}}><i className="fa fa-square"></i></span>Ujian</div>
