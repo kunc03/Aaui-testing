@@ -19,10 +19,16 @@ import JitsiMeetComponent from './livejitsi';
 import API, { API_JITSI, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
+import { Editor } from '@tinymce/tinymce-react';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
 });
+
+const tabs =[
+  {title : 'File Sharing' },
+  {title : 'MOM' }
+]
 
 export default class LiveStream extends Component {
 	state = {
@@ -43,9 +49,15 @@ export default class LiveStream extends Component {
     join: false,
     startMic: localStorage.getItem('startMic') === 'true' ? true : false,
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
-    modalStart: true
+    modalStart: true,
+    tabIndex : 1,
+    body: '',
   }
   
+  tabAktivitas(a,b){
+    this.setState({tabIndex: b+1});
+  }
+
   toggleSwitchMic(checked) {
     localStorage.setItem('startMic', !this.state.startMic)
     this.setState({ startMic:!this.state.startMic });
@@ -323,50 +335,110 @@ export default class LiveStream extends Component {
 
         </Row>
 
-        {/* CHATING SEND FILE */}
-        <h3 className="f-20 f-w-800">
-          File Sharing
-        </h3>
-        <div id="scrollin" className='box-chat'>
-            
-            { this.state.fileChat.map((item, i)=>{
-              return (
-                <div className='box-chat-send-left'>
-                  <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                  <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
-                  <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
-                </div>
-              )
+        <div className="row">
+            {tabs.map((tab, index)=>{
+                return (
+                        <div className="col-xl-6 p-b-20">
+                            <Link onClick={this.tabAktivitas.bind(this, tab, index)}>
+                                <div className={this.state.tabIndex === index+1 ? "kategori-aktif" : "kategori title-disabled"}>
+                                    {tab.title}
+                                </div>
+                            </Link>
+                        </div>
+                    )
             })}
-        </div>
 
-        <div className='box-chat-send p-20'>
-          <Row>
-            <Col sm={10}>
-              <div>
-                < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
-                <input
-                  type="file"
-                  id="attachment"
-                  name="attachment"
-                  onChange={this.onChangeInput}
-                /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
+            {this.state.tabIndex === 1 ?  
+              <div>{/* CHATING SEND FILE */}
+                <h3 className="f-20 f-w-800">
+                  File Sharing
+                </h3>
+                <div id="scrollin" className='box-chat '>
+                    
+                    { this.state.fileChat.map((item, i)=>{
+                      return (
+                        <div className='box-chat-send-left'>
+                          <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
+                          <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                          <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+                        </div>
+                      )
+                    })}
+                </div>
+
+                <div className='box-chat-send p-20'>
+                  <Row>
+                    <Col sm={10}>
+                      <div>
+                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+                        <input
+                          type="file"
+                          id="attachment"
+                          name="attachment"
+                          onChange={this.onChangeInput}
+                        /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
+                      </div>
+                        
+                    </Col>
+                    <Col sm={2}>
+                      <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
+                        SEND
+                      </Link>
+                      {/* <button onClick={this.onBotoomScroll}>coba</button> */}
+                    </Col>
+
+                  </Row>
+                </div>
+
+               </div>
+            :                 
+              <div className="col-sm-12">{/* CHATING SEND FILE */}
+                <div id="scrollin" className="card" style={{padding:10}}>
+                      <Link
+                        to={""}
+                        className="btn btn-ideku col-2 float-right f-14"
+                        style={{ padding: "7px 8px !important" }}>
+                        Add New
+                      </Link>
+                      <h4 className="p-10">JUDUL MEETING</h4>
+                      <h6 className="p-10" style={{marginTop: '-20px'}}>SUB JUDUL MEETING</h6>
+                      <p className="p-10">21 Peserta</p>
+                      <div
+                        className="chart-container"
+                        style={{ position: "relative", margin:20 }}
+                      >
+                        <div className="form-group">
+                          <Editor
+                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                            initialValue={this.state.body}
+                            init={{
+                              height: 400,
+                              menubar: false,
+                              plugins: [
+                                "advlist autolink lists link image charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table paste code help wordcount"
+                              ],
+                              toolbar:
+                                "undo redo | formatselect | bold italic backcolor | \
+                                alignleft aligncenter alignright alignjustify | \
+                                bullist numlist outdent indent | removeformat | help"
+                            }}
+                            onChange={this.onChangeTinyMce}
+                          />
+                        </div>
+                    </div>
+                      <Link
+                        to={""}
+                        className="btn btn-ideku col-2 float-right f-14"
+                        style={{ padding: "7px 8px !important" }}>
+                        Simpan
+                      </Link>
+                </div>
               </div>
-                
-            </Col>
-            <Col sm={2}>
-              <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
-                SEND
-              </Link>
-              {/* <button onClick={this.onBotoomScroll}>coba</button> */}
-            </Col>
-
-          </Row>
+            }
+          
         </div>
-
-        {/*  */}
-
-        
 
         <Modal
           show={this.state.isInvite}
