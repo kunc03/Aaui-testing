@@ -91,7 +91,7 @@ export default class LiveClassAdmin extends Component {
     const name = e.target.name;
     if (e.target.files[0].size <= 500000) {
       this.setState({
-        cover: URL.createObjectURL(e.target.files[0]),
+        cover: e.target.files[0],
         imgPreview: URL.createObjectURL(e.target.files[0])
       });
     } else {
@@ -517,7 +517,7 @@ export default class LiveClassAdmin extends Component {
                               this.state.cover == null || this.state.cover == ''
                                 ? "/assets/images/component/placeholder-image.png"
                                 :
-                                this.state.cover
+                                this.state.imgPreview
                             }
                             className="img-fluid"
                             style={{ width: "200px", height: "160px" }}
