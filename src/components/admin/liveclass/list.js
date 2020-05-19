@@ -410,14 +410,6 @@ export default class LiveClassAdmin extends Component {
                         }
                   </Row>
 
-                  {/* <Row>
-                    <div className="col-md-12">
-                      <h3 className="f-20 f-w-800">
-                        Semua Group Meeting &nbsp;&nbsp;
-                        <button className="btn btn-ideku" onClick={this.handleCreateMeeting.bind(this)}><i className="fa fa-plus"></i> Buat Group Meeting</button>
-                      </h3>
-                    </div>
-                  </Row> */}
                       <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
                           <InputGroup className="mb-3" style={{background:'#FFF'}}>
                             <InputGroup.Prepend>
@@ -437,6 +429,11 @@ export default class LiveClassAdmin extends Component {
                           </InputGroup>
                       </div>
 
+                  <Row>
+                    <div className="col-md-12">
+                        <button className="btn btn-ideku" onClick={this.handleCreateMeeting.bind(this)}><i className="fa fa-plus"></i> Buat Group Meeting</button>
+                    </div>
+                  </Row>
                   <Row>
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
