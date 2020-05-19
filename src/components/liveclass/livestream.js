@@ -30,6 +30,16 @@ const tabs =[
   {title : 'MOM' }
 ]
 
+const listMOM = [];
+const arr = {};
+for(let i = 0; i < 5; i++){
+  //console.log(listMOM[i]);
+  arr.title = 'ini judul ';
+  arr.description = 'ini deskripsi ';
+  listMOM.push(arr);
+}
+
+
 export default class LiveStream extends Component {
 	state = {
     classId: this.props.match.params.roomid,
@@ -52,6 +62,7 @@ export default class LiveStream extends Component {
     modalStart: true,
     tabIndex : 1,
     body: '',
+    editMOM : false,
   }
   
   tabAktivitas(a,b){
@@ -277,36 +288,6 @@ export default class LiveStream extends Component {
 			<div className="page-wrapper">
 			
         <Row>
-              
-          {/* <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/`} className="menu-mati">
-              <div className="kategori title-disabled">
-              <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Kursus & Materi
-              </div>
-            </Link>
-          </div>
-
-          <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/forum`} className="menu-mati">
-              <div className="kategori title-disabled">
-                <img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Forum
-              </div>
-            </Link>
-          </div>
-
-          <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/liveclass`}>
-              <div className="kategori-aktif">
-                <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Group Meeting
-              </div>
-            </Link>
-          </div> */}
 
           <Col sm={12} style={{marginBottom: '20px'}}>
             <h3 className="f-20 f-w-800">
@@ -391,50 +372,88 @@ export default class LiveStream extends Component {
                 </div>
 
                </div>
-            :                 
+            :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}
                 <div id="scrollin" className="card" style={{padding:10}}>
-                      <Link
-                        to={""}
-                        className="btn btn-ideku col-2 float-right f-14"
-                        style={{ padding: "7px 8px !important" }}>
-                        Add New
-                      </Link>
-                      <h4 className="p-10">JUDUL MEETING</h4>
-                      <h6 className="p-10" style={{marginTop: '-20px'}}>SUB JUDUL MEETING</h6>
-                      <p className="p-10">21 Peserta</p>
-                      <div
-                        className="chart-container"
-                        style={{ position: "relative", margin:20 }}
-                      >
-                        <div className="form-group">
-                          <Editor
-                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                            initialValue={this.state.body}
-                            init={{
-                              height: 400,
-                              menubar: false,
-                              plugins: [
-                                "advlist autolink lists link image charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table paste code help wordcount"
-                              ],
-                              toolbar:
-                                "undo redo | formatselect | bold italic backcolor | \
-                                alignleft aligncenter alignright alignjustify | \
-                                bullist numlist outdent indent | removeformat | help"
-                            }}
-                            onChange={this.onChangeTinyMce}
-                          />
-                        </div>
+                  <div className={this.state.editMOM ? 'hidden' : ''}>
+                    <Link
+                      to={"#"}
+                      onClick={(a)=>{this.setState({editMOM : true})}}
+                      className="btn btn-ideku col-2 float-right f-14"
+                      style={{ padding: "7px 8px !important" }}>
+                      Add New
+                    </Link>
+                  </div>
+                  {!this.state.editMOM 
+                  ?
+                  <div className="card">
+                    <div className="col-sm-12">
+                      {listMOM.map((item, i) => (
+                              <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
+                                <h3 className="f-18 f-w-bold f-w-800">
+                                    Judul Meeting ({item.title})
+                                    <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>
+                                      <Link to='#' className="buttonku ml-2" title="Edit" onClick={(a)=>{this.setState({editMOM : true})}}>
+                                        <i data-id={item.course_id} className="fa fa-edit"></i>
+                                      </Link>
+                                      <Link to="#" className="buttonku ml-2" title="Hapus" onClick={(a)=> {console.log('apsuus')}}>
+                                        <i data-id={item.course_id} className="fa fa-trash"></i>
+                                      </Link>
+                                    </span>
+                                </h3>
+                                <p>{item.description}</p>
+                              </div>
+                          ))
+                      }
                     </div>
+                  </div>
+                  
+                  :
+                  <div>
+                    <h4 className="p-10">JUDUL MEETING</h4>
+                    <h6 className="p-10" style={{marginTop: '-20px'}}>SUB JUDUL MEETING</h6>
+                    <p className="p-10">21 Peserta</p>
+
+                    <div className="chart-container" style={{ position: "relative", margin:20 }}>
+                      <div className="form-group">
+                        <Editor
+                          apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                          initialValue={this.state.body}
+                          init={{
+                            height: 400,
+                            menubar: false,
+                            plugins: [
+                              "advlist autolink lists link image charmap print preview anchor",
+                              "searchreplace visualblocks code fullscreen",
+                              "insertdatetime media table paste code help wordcount"
+                            ],
+                            toolbar:
+                              "undo redo | formatselect | bold italic backcolor | \
+                              alignleft aligncenter alignright alignjustify | \
+                              bullist numlist outdent indent | removeformat | help"
+                          }}
+                          onChange={this.onChangeTinyMce}
+                        />
+                      </div>
+                    </div>
+                    <div>
                       <Link
-                        to={""}
-                        className="btn btn-ideku col-2 float-right f-14"
-                        style={{ padding: "7px 8px !important" }}>
+                        to={"#"}
+                        onClick={(a)=>{this.setState({editMOM : false})}}
+                        className="btn btn-ideku float-right col-2 f-14"
+                        style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
                         Simpan
                       </Link>
-                </div>
+                      <Link
+                        to={"#"}
+                        className="btn btn-ideku float-right col-2 f-14"
+                        style={{ padding: "7px 8px !important" }}>
+                        Export PDF
+                      </Link>
+                    </div>
+                  </div>
+                }
+               </div>
               </div>
             }
           
