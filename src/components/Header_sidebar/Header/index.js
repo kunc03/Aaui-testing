@@ -1,89 +1,93 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import API, {USER_ME, API_SERVER} from '../../../repository/api';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import API, { USER_ME, API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from "react-moment";
+import Moment from 'react-moment';
 
 class Header extends Component {
-    
   state = {
-    user: "Anonymous",
-    level: "Member",
-    avatar: "/assets/images/user/avatar-1.png",
-    notificationData : [],
+    user: 'Anonymous',
+    level: 'Member',
+    avatar: '/assets/images/user/avatar-1.png',
+    notificationData: [],
 
     company: [],
-    company_id:'',
-    myCompanyName : '',
+    company_id: '',
+    myCompanyName: '',
 
     menuAktif: '/',
-      sideMenu: false,
-      sideMenuCollapse:false,
+    sideMenu: false,
+    sideMenuCollapse: false,
   };
 
-  pilihCompany = e => {
+  pilihCompany = (e) => {
     e.preventDefault();
     const id = e.target.getAttribute('data-id');
     const logo = e.target.getAttribute('data-logo');
     localStorage.setItem('companyID', id);
     localStorage.setItem('logo', logo);
     window.location.reload();
-  }
+  };
 
   fetchCompany() {
-    this.setState({ menuAktif: window.location.pathname })
-    let link = Storage.get('user').data.level == 'superadmin' ? `${API_SERVER}v1/company` : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
-    API.get(link).then(response => {
-      if (Storage.get('user').data.level == 'superadmin'){
-        this.setState({ company: response.data.result });
-      }
-      else{
-        this.setState({ company: response.data.result.company });
-      }
-    }).catch(function (error) {
-      console.log(error);
-    });
+    this.setState({ menuAktif: window.location.pathname });
+    let link =
+      Storage.get('user').data.level == 'superadmin'
+        ? `${API_SERVER}v1/company`
+        : `${API_SERVER}v1/user/assign/${Storage.get('user').data.user_id}`;
+    API.get(link)
+      .then((response) => {
+        if (Storage.get('user').data.level == 'superadmin') {
+          this.setState({ company: response.data.result });
+        } else {
+          this.setState({ company: response.data.result.company });
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
-  goTo = (id) =>{
-    let data = this.state.notificationData.find(x=>x.id==id);
-    if(typeof data == 'object'){
-      API.get('v1/notification/read',{id:id}).then(res=>{
-        if(data.destination){
+  goTo = (id) => {
+    let data = this.state.notificationData.find((x) => x.id == id);
+    if (typeof data == 'object') {
+      API.get('v1/notification/read', { id: id }).then((res) => {
+        if (data.destination) {
           window.location = data.destination;
         }
       });
     }
-  }
-  
+  };
+
   mobileMenuClicked() {
-    this.setState({sideMenu: false})
+    this.setState({ sideMenu: false });
   }
 
   async componentDidMount() {
-    
-    await API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200){
-        console.log('res company', res)
-        if(res.data.error) {
+    await API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
+      if (res.status === 200) {
+        console.log('res company', res);
+        if (res.data.error) {
           localStorage.clear();
           window.location.reload();
         }
 
-        Storage.set('user', {data: { 
-          logo: res.data.result.logo,
-          company_id: res.data.result.company_id,
-          user_id: res.data.result.user_id, 
-          email: res.data.result.email,
-          user: res.data.result.name,
-          level: res.data.result.level,
-          avatar: res.data.result.avatar
-            ? res.data.result.avatar
-            : "/assets/images/user/avatar-1.png"
-        }});
-        
+        Storage.set('user', {
+          data: {
+            logo: res.data.result.logo,
+            company_id: res.data.result.company_id,
+            user_id: res.data.result.user_id,
+            email: res.data.result.email,
+            user: res.data.result.name,
+            level: res.data.result.level,
+            avatar: res.data.result.avatar
+              ? res.data.result.avatar
+              : '/assets/images/user/avatar-1.png',
+          },
+        });
+
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
@@ -92,165 +96,315 @@ class Header extends Component {
           level: res.data.result.level,
           avatar: res.data.result.avatar
             ? res.data.result.avatar
-            : "/assets/images/user/avatar-1.png"
+            : '/assets/images/user/avatar-1.png',
         });
-        
-        if (this.state.level==='client'){
-          this.setState({level:'User'})
+
+        if (this.state.level === 'client') {
+          this.setState({ level: 'User' });
         }
       }
     });
 
-    API.get(`${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`).then(res=>{
-      this.setState({notificationData:res.data.result})
+    API.get(
+      `${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`
+    ).then((res) => {
+      this.setState({ notificationData: res.data.result });
     });
 
     this.fetchCompany();
   }
-
 
   render() {
     const { user, level, company, notificationData } = this.state;
 
     // console.table(company);
 
-    let NotifBody = ({list}) => {
-      let unread = Object.values(list).filter(x=> x.isread == '0');
-      let unclick = Object.values(list).filter(x=> x.isread == '2');
+    let NotifBody = ({ list }) => {
+      let unread = Object.values(list).filter((x) => x.isread == '0');
+      let unclick = Object.values(list).filter((x) => x.isread == '2');
 
+      console.log(unread, unclick);
+      return (
+        <ul className="noti-body">
+          {unread.length ? (
+            <li className="n-title">
+              <p className="m-b-0">NEW</p>
+            </li>
+          ) : null}
 
-      
+          {unread.map((item) => (
+            <li className="notification" onClick={() => this.goTo(item.id)}>
+              <div className="media">
+                <img
+                  className="img-radius"
+                  src="assets/images/user/avatar-1.png"
+                  alt="Generic placeholder image"
+                />
+                <div className="media-body">
+                  <p>
+                    <strong>John Doe</strong>
+                    <span className="n-time text-muted">
+                      <i className="icon feather icon-clock m-r-10" />
+                      {item.created_at}
+                    </span>
+                  </p>
+                  <p>{item.description}</p>
+                </div>
+              </div>
+            </li>
+          ))}
 
-      return  (
-                  <ul className="noti-body">
+          {unclick.length ? (
+            <li className="n-title">
+              <p className="m-b-0">EARLIER</p>
+            </li>
+          ) : null}
 
-                  {
-                    unread.length 
-                    ? (<li className="n-title">
-                        <p className="m-b-0">NEW</p>
-                      </li>) +
-
-                      unread.map(item=>
-                     
-                      <li className="notification" onClick={()=>this.goTo(item.id)}>
-                        <div className="media">
-                          <img
-                            className="img-radius"
-                            src="assets/images/user/avatar-1.png"
-                            alt="Generic placeholder image"
-                          />
-                          <div className="media-body">
-                            <p>
-                              <strong>John Doe</strong>
-                              <span className="n-time text-muted">
-                                <i className="icon feather icon-clock m-r-10" />
-                                {item.created_at}
-                              </span>
-                            </p>
-                            <p>{item.description}</p>
-                          </div>
-                        </div>
-                      </li>
-                      )
-                    : ''
-                  }
-
-                  {
-                    unread.length 
-                    ? (<li className="n-title">
-                        <p className="m-b-0">EARLIER</p>
-                      </li>) +
-
-                      unclick.map(item=>
-                     
-                      <li className="notification" onClick={()=>this.goTo(item.id)}>
-                        <div className="media">
-                          <img
-                            className="img-radius"
-                            src="assets/images/user/avatar-1.jpg"
-                            alt="Generic placeholder image"
-                          />
-                          <div className="media-body">
-                            <p>
-                              <strong>John Doe</strong>
-                              <span className="n-time text-muted">
-                                <i className="icon feather icon-clock m-r-10" />
-                                {item.created_at}
-                              </span>
-                            </p>
-                            <p>{item.description}</p>
-                          </div>
-                        </div>
-                      </li>
-                      )
-                    : ''
-                  }
-
-                  </ul>);
-    }   
-
-
+          {unclick.map((item) => (
+            <li className="notification" onClick={() => this.goTo(item.id)}>
+              <div className="media">
+                <img
+                  className="img-radius"
+                  src="assets/images/user/avatar-1.jpg"
+                  alt="Generic placeholder image"
+                />
+                <div className="media-body">
+                  <p>
+                    <strong>John Doe</strong>
+                    <span className="n-time text-muted">
+                      <i className="icon feather icon-clock m-r-10" />
+                      {item.created_at}
+                    </span>
+                  </p>
+                  <p>{item.description}</p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      );
+    };
 
     let access = Storage.get('access');
-      let levelUser = Storage.get('user').data.level;
-      let menuClients = [
-        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
-        { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
-        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      ];
-  
-      let menuAdmins = [
-        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-        { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
-        // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      ];
-  
-      let menuSuperAdmins = [
-        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-        { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Sertifikat', link: '/certificate' },
-        { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
-        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
-        // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-        { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      ];
-  
-      const { menuAktif } = this.state;
-    
-      let menuContent = [];
-      if(levelUser === 'superadmin') {
-        menuContent = menuSuperAdmins;
-      } else if(levelUser === 'admin') {
-        menuContent = menuAdmins;
-      } else {
-        menuContent = menuClients;
-      }
+    let levelUser = Storage.get('user').data.level;
+    let menuClients = [
+      {
+        iconOn: 'dashboardon.png',
+        iconOff: 'dashboardoff.png',
+        label: 'Dashboard',
+        link: '/',
+      },
+      {
+        iconOn: 'aktivitason.png',
+        iconOff: 'aktivitasoff.png',
+        label: 'Aktivitas',
+        link: '/aktivitas',
+        access: 'activity',
+      },
+      {
+        iconOn: 'materion.png',
+        iconOff: 'materioff.png',
+        label: 'Kursus & Materi',
+        link: '/kursus',
+        access: 'course',
+      },
+      {
+        iconOn: 'diskusion.png',
+        iconOff: 'diskusioff.png',
+        label: 'Forum',
+        link: '/forum',
+        access: 'forum',
+      },
+      {
+        iconOn: 'kelason.png',
+        iconOff: 'kelasoff.png',
+        label: 'Group Meeting',
+        link: access.manage_group_meeting ? '/meeting' : '/liveclass',
+        access: access.manage_group_meeting
+          ? 'manage_group_meeting'
+          : 'group_meeting',
+      },
+      {
+        iconOn: 'kelola-kursus-on.png',
+        iconOff: 'kelola-kursus-off.png',
+        label: 'Kelola Kursus',
+        link: '/kursus-materi',
+        access: 'manage_course',
+      },
+      {
+        iconOn: 'profileon.png',
+        iconOff: 'profileoff.png',
+        label: 'Profile',
+        link: '/profile',
+      },
+      {
+        iconOn: 'pengaturanon.png',
+        iconOff: 'pengaturanoff.png',
+        label: 'Pengaturan',
+        link: '/pengaturan',
+      },
+    ];
+
+    let menuAdmins = [
+      {
+        iconOn: 'dashboardon.png',
+        iconOff: 'dashboardoff.png',
+        label: 'Dashboard',
+        link: '/',
+      },
+      {
+        iconOn: 'aktivitason.png',
+        iconOff: 'aktivitasoff.png',
+        label: 'Aktivitas',
+        link: '/aktivitas',
+      },
+      {
+        iconOn: 'mycompanyon.png',
+        iconOff: 'mycompanyoff.png',
+        label: 'My Company',
+        link: '/my-company',
+      },
+      {
+        iconOn: 'materion.png',
+        iconOff: 'materioff.png',
+        label: 'Kursus & Materi',
+        link: '/kursus',
+      },
+      {
+        iconOn: 'kelason.png',
+        iconOff: 'kelasoff.png',
+        label: 'Group Meeting',
+        link: '/liveclass',
+      },
+      {
+        iconOn: 'kelola-kursus-on.png',
+        iconOff: 'kelola-kursus-off.png',
+        label: 'Kelola Kursus',
+        link: '/kursus-materi',
+      },
+      {
+        iconOn: 'userson.png',
+        iconOff: 'usersoff.png',
+        label: 'Users',
+        link: '/user-company',
+      },
+      // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      {
+        iconOn: 'profileon.png',
+        iconOff: 'profileoff.png',
+        label: 'Profile',
+        link: '/profile',
+      },
+      {
+        iconOn: 'pengaturanon.png',
+        iconOff: 'pengaturanoff.png',
+        label: 'Pengaturan',
+        link: '/pengaturan',
+      },
+    ];
+
+    let menuSuperAdmins = [
+      {
+        iconOn: 'dashboardon.png',
+        iconOff: 'dashboardoff.png',
+        label: 'Dashboard',
+        link: '/',
+      },
+      {
+        iconOn: 'aktivitason.png',
+        iconOff: 'aktivitasoff.png',
+        label: 'Aktivitas',
+        link: '/aktivitas',
+      },
+      {
+        iconOn: 'materion.png',
+        iconOff: 'materioff.png',
+        label: 'Kursus & Materi',
+        link: '/kursus',
+      },
+      {
+        iconOn: 'foron.png',
+        iconOff: 'foroff.png',
+        label: 'Forum',
+        link: '/forum',
+      },
+      {
+        iconOn: 'kelason.png',
+        iconOff: 'kelasoff.png',
+        label: 'Group Meeting',
+        link: '/liveclass',
+      },
+      {
+        iconOn: 'kelola-kursus-on.png',
+        iconOff: 'kelola-kursus-off.png',
+        label: 'Kelola Kursus',
+        link: '/kursus-materi',
+      },
+      {
+        iconOn: 'kelola-kursus-on.png',
+        iconOff: 'kelola-kursus-off.png',
+        label: 'Kelola Sertifikat',
+        link: '/certificate-admin',
+      },
+      {
+        iconOn: 'kelola-kursus-on.png',
+        iconOff: 'kelola-kursus-off.png',
+        label: 'Sertifikat',
+        link: '/certificate',
+      },
+      {
+        iconOn: 'companyon.png',
+        iconOff: 'companyoff.png',
+        label: 'Company',
+        link: '/company',
+      },
+      {
+        iconOn: 'userson.png',
+        iconOff: 'usersoff.png',
+        label: 'Users',
+        link: '/user',
+      },
+      // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
+      {
+        iconOn: 'profileon.png',
+        iconOff: 'profileoff.png',
+        label: 'Profile',
+        link: '/profile',
+      },
+      {
+        iconOn: 'pengaturanon.png',
+        iconOff: 'pengaturanoff.png',
+        label: 'Pengaturan',
+        link: '/pengaturan',
+      },
+    ];
+
+    const { menuAktif } = this.state;
+
+    let menuContent = [];
+    if (levelUser === 'superadmin') {
+      menuContent = menuSuperAdmins;
+    } else if (levelUser === 'admin') {
+      menuContent = menuAdmins;
+    } else {
+      menuContent = menuClients;
+    }
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light">
         <div className="m-header">
-          <a className="mobile-menu" id="mobile-collapse1" href="javascript:" 
-              onClick={(a)=>{
-                  this.setState({
-                    sideMenu : a.currentTarget.className.split(" ")[1] === 'on' ? true : false})
-              }}>
+          <a
+            className="mobile-menu"
+            id="mobile-collapse1"
+            href="javascript:"
+            onClick={(a) => {
+              this.setState({
+                sideMenu:
+                  a.currentTarget.className.split(' ')[1] === 'on'
+                    ? true
+                    : false,
+              });
+            }}
+          >
             <span />
           </a>
           <a href="/" className="b-brand">
@@ -258,58 +412,91 @@ class Header extends Component {
               <img
                 src="assets/images/component/logo-mobile.png"
                 className="logo-sidebar"
-                style={{maxHeight:35}}
+                style={{ maxHeight: 35 }}
                 alt=""
               />
             </div>
             <span className="b-title">ICADEMY</span>
           </a>
         </div>
-        
+
         <a className="mobile-menu" id="mobile-header" href="javascript:">
           <i className="feather icon-more-horizontal" />
         </a>
 
-        <div className={this.state.sideMenu ?  "collapse navbar-collapse side-mobile-custom" : "hidden" } style={{width:'100%'}}>
+        <div
+          className={
+            this.state.sideMenu
+              ? 'collapse navbar-collapse side-mobile-custom'
+              : 'hidden'
+          }
+          style={{ width: '100%' }}
+        >
           <ul className="navbar-nav mr-auto">
             <div>
-            {
-              menuContent.map((item, i) => {
-                if(item.access == undefined || access[item.access]) {
+              {menuContent.map((item, i) => {
+                if (item.access == undefined || access[item.access]) {
                   return (
-                    <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
-                      <Link to={item.link} className="nav-link" onClick={this.mobileMenuClicked.bind(this)}>
+                    <li
+                      data-username="Sample Page"
+                      className={`nav-item mt-4 ${
+                        menuAktif === item.link ? 'active' : ''
+                      }`}
+                    >
+                      <Link
+                        to={item.link}
+                        className="nav-link"
+                        onClick={this.mobileMenuClicked.bind(this)}
+                      >
                         <span className="pcoded-micon">
                           <img
-                            src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                            src={`assets/images/component/${
+                              menuAktif === item.link
+                                ? item.iconOn
+                                : item.iconOff
+                            }`}
                             alt=""
                           ></img>
                         </span>
-                        <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                        <span
+                          className="pcoded-mtext f-16 f-w-bold"
+                          style={{
+                            color: `${
+                              menuAktif == item.link ? '#fff' : '#945A86'
+                            }`,
+                          }}
+                        >
                           &nbsp;{item.label}
                         </span>
                       </Link>
                     </li>
-                  )
+                  );
                 }
-              })
-            }
-            <li data-username="Sample Page" className="nav-item mt-4">
-              <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
-                <span className="pcoded-micon">
-                  <img
-                    src="assets/images/component/Icon Logout.png"
-                    style={{
-                      paddingLeft: "3px"
-                    }}
-                    alt=""
-                  ></img>
-                </span>
-                <span className="pcoded-mtext f-16 f-w-bold" style={{color: '#945A86'}}>&nbsp;Logout</span>
-              </Link>
-            </li>
+              })}
+              <li data-username="Sample Page" className="nav-item mt-4">
+                <Link
+                  to="/logout"
+                  className="nav-link"
+                  style={{ marginBottom: '8px' }}
+                >
+                  <span className="pcoded-micon">
+                    <img
+                      src="assets/images/component/Icon Logout.png"
+                      style={{
+                        paddingLeft: '3px',
+                      }}
+                      alt=""
+                    ></img>
+                  </span>
+                  <span
+                    className="pcoded-mtext f-16 f-w-bold"
+                    style={{ color: '#945A86' }}
+                  >
+                    &nbsp;Logout
+                  </span>
+                </Link>
+              </li>
             </div>
-
           </ul>
         </div>
 
@@ -327,20 +514,29 @@ class Header extends Component {
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
                       {user}
-                      <small className="d-block  mt-2 text-c-grey" style={{textTransform: 'capitalize'}}>{level}</small>
+                      <small
+                        className="d-block  mt-2 text-c-grey"
+                        style={{ textTransform: 'capitalize' }}
+                      >
+                        {level}
+                      </small>
                     </h6>
                   </div>
                 </div>
               </Link>
             </li>
             <li className="nav-item dropdown">
-                <div className="media">
-                  <img
-                    alt="Media"
-                    style={{ height: 40 }}
-                    src={localStorage.getItem("logo") ? localStorage.getItem("logo") : this.state.logo}
-                  />
-                </div>
+              <div className="media">
+                <img
+                  alt="Media"
+                  style={{ height: 40 }}
+                  src={
+                    localStorage.getItem('logo')
+                      ? localStorage.getItem('logo')
+                      : this.state.logo
+                  }
+                />
+              </div>
             </li>
           </ul>
 
@@ -365,9 +561,7 @@ class Header extends Component {
                     </div>
                   </div>
 
-
-                  <NotifBody list={notificationData}/>
-
+                  <NotifBody list={notificationData} />
 
                   <div className="noti-footer">
                     <a href="javascript:">show all</a>
@@ -375,12 +569,9 @@ class Header extends Component {
                 </div>
               </div>
             </li>
-            
           </ul>
 
-          {
-            (level == "superadmin" || level == "admin") &&
-
+          {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
@@ -389,13 +580,26 @@ class Header extends Component {
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
-                      <h6 className="d-inline-block m-b-0">{this.state.company.length > 0 ? 'Pilih Company' : 'Tidak multiple company'}</h6>
+                      <h6 className="d-inline-block m-b-0">
+                        {this.state.company.length > 0
+                          ? 'Pilih Company'
+                          : 'Tidak multiple company'}
+                      </h6>
                     </div>
                     <ul className="noti-body">
-                      {
-                        level == 'admin' &&
-                        <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={this.state.company_id} data-logo={this.state.logo}>
-                          <div className="media" data-id={this.state.company_id} data-logo={this.state.logo}>
+                      {level == 'admin' && (
+                        <li
+                          className="notification"
+                          style={{ cursor: 'pointer' }}
+                          onClick={this.pilihCompany}
+                          data-id={this.state.company_id}
+                          data-logo={this.state.logo}
+                        >
+                          <div
+                            className="media"
+                            data-id={this.state.company_id}
+                            data-logo={this.state.logo}
+                          >
                             <img
                               data-id={this.state.company_id}
                               data-logo={this.state.logo}
@@ -403,51 +607,91 @@ class Header extends Component {
                               src={this.state.logo}
                               alt="Generic placeholder image"
                             />
-                            <div className="media-body" data-id={this.state.company_id} data-logo={this.state.logo}>
-                              <p data-id={this.state.company_id} data-logo={this.state.logo}>
-                                <b data-id={this.state.company_id} data-logo={this.state.logo}>{this.state.myCompanyName}</b>
+                            <div
+                              className="media-body"
+                              data-id={this.state.company_id}
+                              data-logo={this.state.logo}
+                            >
+                              <p
+                                data-id={this.state.company_id}
+                                data-logo={this.state.logo}
+                              >
+                                <b
+                                  data-id={this.state.company_id}
+                                  data-logo={this.state.logo}
+                                >
+                                  {this.state.myCompanyName}
+                                </b>
                               </p>
-                              {
-                                localStorage.getItem("companyID") == this.state.company_id && (
-                                  <p data-id={this.state.company_id} data-logo={this.state.logo} style={{color:'green'}}>active</p>
-                                )
-                              }
+                              {localStorage.getItem('companyID') ==
+                                this.state.company_id && (
+                                <p
+                                  data-id={this.state.company_id}
+                                  data-logo={this.state.logo}
+                                  style={{ color: 'green' }}
+                                >
+                                  active
+                                </p>
+                              )}
                             </div>
                           </div>
                         </li>
-                      }
-                      {
-                        company.map((item, i) => (
-                          <li className="notification" style={{ cursor: 'pointer' }} onClick={this.pilihCompany} data-id={item.company_id} data-logo={item.logo}>
-                            <div className="media" data-id={item.company_id} data-logo={item.logo}>
-                              <img
+                      )}
+                      {company.map((item, i) => (
+                        <li
+                          className="notification"
+                          style={{ cursor: 'pointer' }}
+                          onClick={this.pilihCompany}
+                          data-id={item.company_id}
+                          data-logo={item.logo}
+                        >
+                          <div
+                            className="media"
+                            data-id={item.company_id}
+                            data-logo={item.logo}
+                          >
+                            <img
+                              data-id={item.company_id}
+                              data-logo={item.logo}
+                              className="img-radius"
+                              src={item.logo}
+                              alt="Generic placeholder image"
+                            />
+                            <div
+                              className="media-body"
+                              data-id={item.company_id}
+                              data-logo={item.logo}
+                            >
+                              <p
                                 data-id={item.company_id}
                                 data-logo={item.logo}
-                                className="img-radius"
-                                src={item.logo}
-                                alt="Generic placeholder image"
-                              />
-                              <div className="media-body" data-id={item.company_id} data-logo={item.logo}>
-                                <p data-id={item.company_id} data-logo={item.logo}>
-                                  <b data-id={item.company_id} data-logo={item.logo}>{item.company_name}</b>
+                              >
+                                <b
+                                  data-id={item.company_id}
+                                  data-logo={item.logo}
+                                >
+                                  {item.company_name}
+                                </b>
+                              </p>
+                              {parseInt(localStorage.getItem('companyID')) ==
+                                item.company_id && (
+                                <p
+                                  data-id={item.company_id}
+                                  style={{ color: 'green' }}
+                                >
+                                  {item.status}
                                 </p>
-                                {
-                                  parseInt(localStorage.getItem("companyID")) == item.company_id && (
-                                    <p data-id={item.company_id} style={{color:'green'}}>{item.status}</p>
-                                  )
-                                }
-                              </div>
+                              )}
                             </div>
-                          </li>
-                        ))
-                      }
+                          </div>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </li>
             </ul>
-          
-          }
+          )}
         </div>
       </header>
     );
