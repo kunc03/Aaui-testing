@@ -9,8 +9,8 @@ import Storage from '../../repository/storage';
 import RiwayatKursus from './riwayatkursus';
 import RiwayatForum from './riwayatforum';
 import RiwayatLiveClass from './riwayatliveclass';
-import { Doughnut, Bar, Line, Pie } from 'react-chartjs-2';
-import { dataBar, dataUser, dataSpeaker, dataPie } from './data';
+import { Doughnut, Bar, Line, Pie, Radar } from 'react-chartjs-2';
+import { dataBar, dataUser, dataRadar, dataPie } from './data';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
@@ -118,6 +118,23 @@ class Aktivity extends Component {
     let date = new Date();
     console.log(String(date));
     this.setState({ today: String(date) });
+
+    API.get(
+      `${API_SERVER}v1/api-activity/chart/${
+        Storage.get('user').data.company_id
+      }/2020-01-01/2020-06-01`
+    ).then((res) => {
+      if (res.status === 200) {
+        dataBar.labels = res.data.result.chart1.grup;
+        dataBar.datasets[0].data = res.data.result.chart1.count;
+        dataUser.labels = res.data.result.chart2.name;
+        dataUser.datasets[0].data = res.data.result.chart2.count;
+        dataRadar.labels = res.data.result.chart4.tipe;
+        dataRadar.datasets[0].data = res.data.result.chart4.count;
+        dataPie.labels = res.data.result.chart4.tipe;
+        dataPie.datasets[0].data = res.data.result.chart4.count;
+      }
+    });
   }
 
   fetchDataRekaman() {
@@ -618,8 +635,8 @@ class Aktivity extends Component {
                           className="chart-container"
                           style={{ position: 'relative' }}
                         >
-                          <Bar
-                            data={dataSpeaker}
+                          <Radar
+                            data={dataRadar}
                             width={100}
                             height={320}
                             options={{
