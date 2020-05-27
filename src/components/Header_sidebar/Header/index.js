@@ -128,21 +128,21 @@ class Header extends Component {
         <ul className="noti-body">
           {unread.length ? (
             <li className="n-title">
-              <p className="m-b-0">NEW</p>
+              {/* <p className="m-b-0">NEW</p> */}
             </li>
           ) : null}
 
           {unread.map((item) => (
             <li className="notification" onClick={() => this.goTo(item.id)}>
               <div className="media">
-                <img
+                {/* <img
                   className="img-radius"
                   src="assets/images/user/avatar-1.png"
                   alt="Generic placeholder image"
-                />
+                /> */}
                 <div className="media-body">
                   <p>
-                    <strong>John Doe</strong>
+                    {/* <strong>John Doe</strong> */}
                     <span className="n-time text-muted">
                       <i className="icon feather icon-clock m-r-10" />
                       {item.created_at}
@@ -554,18 +554,18 @@ class Header extends Component {
                   <div className="noti-head">
                     <h6 className="d-inline-block m-b-0">Notifications</h6>
                     <div className="float-right">
-                      <a href="javascript:" className="m-r-10">
+                      {/* <a href="javascript:" className="m-r-10">
                         mark as read
                       </a>
-                      <a href="javascript:">clear all</a>
+                      <a href="javascript:">clear all</a> */}
                     </div>
                   </div>
 
                   <NotifBody list={notificationData} />
 
-                  <div className="noti-footer">
+                  {/* <div className="noti-footer">
                     <a href="javascript:">show all</a>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </li>

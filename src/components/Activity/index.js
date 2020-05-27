@@ -114,16 +114,18 @@ class Aktivity extends Component {
     this.fetchDataKursusDiikuti();
     this.fetchUserCalendar();
     this.fetchDataRekaman();
+    this.fetchDataChart();
     console.log('RECENTS DID', this.state.recentCourse);
     let date = new Date();
     console.log(String(date));
     this.setState({ today: String(date) });
-
-    API.get(
-      `${API_SERVER}v1/api-activity/chart/${
-        Storage.get('user').data.company_id
-      }/2020-01-01/2020-06-01`
-    ).then((res) => {
+  }
+  
+  fetchDataChart() {
+    API.get(`${API_SERVER}v1/api-activity/chart/${
+      Storage.get('user').data.company_id
+    }/2020-01-01/2020-06-01`).then((res) => {
+      console.log('alvin res',res)
       if (res.status === 200) {
         dataBar.labels = res.data.result.chart1.grup;
         dataBar.datasets[0].data = res.data.result.chart1.count;
@@ -202,6 +204,8 @@ class Aktivity extends Component {
         ).then((res) => {
           if (res.status === 200) {
             this.setState({ chartData: res.data.result });
+            
+          console.log('resss',res)
           }
         });
       }
@@ -487,14 +491,14 @@ class Aktivity extends Component {
                           eventPropGetter={(event, start, end, isSelected) => {
                             if (event.bgColor) {
                               return {
-                                style: { backgroundColor: event.bgColor },
+                                style: { backgroundColor: '#ffce56' },
                               };
                             }
                             return {};
                           }}
                           views={['month']}
                         />
-                        <div className="p-l-20">
+                        {/* <div className="p-l-20">
                           <span className="p-r-5" style={{ color: 'red' }}>
                             <i className="fa fa-square"></i>
                           </span>
@@ -505,9 +509,9 @@ class Aktivity extends Component {
                             <i className="fa fa-square"></i>
                           </span>
                           Ujian
-                        </div>
+                        </div> */}
                         <div className="p-l-20">
-                          <span className="p-r-5" style={{ color: 'cyan' }}>
+                          <span className="p-r-5" style={{ color: '#ffce56' }}>
                             <i className="fa fa-square"></i>
                           </span>
                           Group Meeting
@@ -630,7 +634,7 @@ class Aktivity extends Component {
                   <div className="row">
                     <div className="col-md-12 col-xl-6">
                       <div className="card" style={{ padding: 10 }}>
-                        <h4 className="p-10">Speaker Stats</h4>
+                        <h4 className="p-10">Usage</h4>
                         <div
                           className="chart-container"
                           style={{ position: 'relative' }}
@@ -648,7 +652,7 @@ class Aktivity extends Component {
                     </div>
                     <div className="col-md-12 col-xl-6">
                       <div className="card" style={{ padding: 10 }}>
-                        <h4 className="p-10">Average Time</h4>
+                        <h4 className="p-10">Total Activity</h4>
                         <div
                           className="chart-container"
                           style={{ position: 'relative' }}

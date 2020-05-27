@@ -54,8 +54,9 @@ export default class KursusMateri extends Component {
 	}
 
 	onClickHapusKursus = e => {
-		API.delete(`${API_SERVER}v1/course/${this.state.courseIdHapus}`).then(res => {
+		API.put(`${API_SERVER}v1/course/delete/${this.state.courseIdHapus}`).then(res => {
 			if(res.status === 200) {
+				console.log('resss',res)
 				this.fetchData();
 				this.handleModalHapus();
 			}
