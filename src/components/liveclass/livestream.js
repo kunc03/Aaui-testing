@@ -25,6 +25,8 @@ socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
 });
 
+const axios = require('axios');
+
 const tabs =[
   {title : 'File Sharing' },
   {title : 'MOM' }
@@ -63,6 +65,7 @@ export default class LiveStream extends Component {
     tabIndex : 1,
     body: '',
     editMOM : false,
+    jwt: ''
   }
   
   tabAktivitas(a,b){
@@ -141,7 +144,10 @@ export default class LiveStream extends Component {
        // console.log('alsdlaksdklasjdlkasjdlk',form)
         API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
 
-        this.setState({ user: res.data.result, classRooms: liveClass.data.result })
+        let url = `${API_SOCKET}/users/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
+        let token = await axios.get(url);
+
+        this.setState({ user: res.data.result, classRooms: liveClass.data.result, jwt: token });
       }
     }).then(res=>{
         console.log(`${API_SERVER}v1/liveclass/file/${this.state.classId}`,'siniii')
@@ -301,13 +307,14 @@ export default class LiveStream extends Component {
               <JitsiMeetComponent 
                 roomName={classRooms.room_name} 
                 roomId={classRooms.class_id} 
-                moderator={classRooms.moderator} 
+                moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
                 userId={user.user_id} 
                 userName={user.name} 
                 userEmail={user.email}
                 userAvatar={user.avatar}
                 startMic={this.state.startMic}
                 startCam={this.state.startCam}
+                jwt={this.state.jwt}
               />
               :
               null

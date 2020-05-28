@@ -70,6 +70,7 @@ export default class LiveStream extends Component {
       emailResponse: "Masukkan email yang ingin di invite."
     });
   }
+
   handleCloseMeeting = e => {
     window.close();
   }
@@ -289,7 +290,7 @@ onChangeName = (e) => {
               <JitsiMeetComponent 
                 roomName={classRooms.room_name} 
                 roomId={classRooms.class_id} 
-                moderator={classRooms.moderator} 
+                moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
                 userId={user.user_id} 
                 userName={user.name} 
                 userEmail={user.email}
