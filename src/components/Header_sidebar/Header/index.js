@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import API, { USER_ME, API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'react-moment';
+import moment from 'moment-timezone';
 
 class Header extends Component {
   state = {
@@ -127,9 +127,7 @@ class Header extends Component {
       return (
         <ul className="noti-body">
           {unread.length ? (
-            <li className="n-title">
-              {/* <p className="m-b-0">NEW</p> */}
-            </li>
+            <li className="n-title">{/* <p className="m-b-0">NEW</p> */}</li>
           ) : null}
 
           {unread.map((item) => (
@@ -145,10 +143,19 @@ class Header extends Component {
                     {/* <strong>John Doe</strong> */}
                     <span className="n-time text-muted">
                       <i className="icon feather icon-clock m-r-10" />
-                      {item.created_at}
+                      {moment(item.created_at)
+                        .tz('Asia/Jakarta')
+                        .format('DD MMMM YYYY')}
                     </span>
                   </p>
-                  <p>{item.description}</p>
+                  <p>
+                    {item.type === 1
+                      ? 'Course'
+                      : item.type === 2
+                      ? 'Forum'
+                      : 'Meeting'}{' '}
+                    {item.description}
+                  </p>
                 </div>
               </div>
             </li>
@@ -173,10 +180,19 @@ class Header extends Component {
                     <strong>John Doe</strong>
                     <span className="n-time text-muted">
                       <i className="icon feather icon-clock m-r-10" />
-                      {item.created_at}
+                      {moment(item.created_at)
+                        .tz('Asia/Jakarta')
+                        .format('DD MMMM YYYY')}
                     </span>
                   </p>
-                  <p>{item.description}</p>
+                  <p>
+                    {item.type === 1
+                      ? 'Course'
+                      : item.type === 2
+                      ? 'Forum'
+                      : 'Meeting'}{' '}
+                    {item.description}
+                  </p>
                 </div>
               </div>
             </li>
