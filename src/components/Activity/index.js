@@ -105,6 +105,7 @@ class Aktivity extends Component {
         { id: 2, date: '23 April 2020 - 24 April 2020' },
       ],
 
+      event: [],
       active: '0',
       audience: '0',
       duration: '00:00:00',
@@ -264,7 +265,38 @@ class Aktivity extends Component {
     API.get(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`).then(
       (res) => {
         if (res.status === 200) {
-          event = res.data.result;
+          let data = res.data.result.map((elem) => {
+            let start = new Date(elem.start);
+            let end = new Date(elem.end);
+            return {
+              id: elem.id,
+              title:
+                elem.type === 1
+                  ? 'Ujian ' + elem.description
+                  : elem.type === 2
+                  ? 'Forum ' + elem.description
+                  : 'Meeting ' + elem.description,
+              start: new Date(
+                start.getFullYear(),
+                start.getMonth(),
+                start.getDate(),
+                start.getHours(),
+                start.getMinutes(),
+                start.getSeconds()
+              ),
+              end: new Date(
+                end.getFullYear(),
+                end.getMonth(),
+                end.getDate(),
+                end.getHours(),
+                end.getMinutes(),
+                end.getSeconds()
+              ),
+              bgColor:
+                elem.type === 1 ? 'red' : elem.type === 2 ? 'purple' : 'cyan',
+            };
+          });
+          this.setState({ event: data });
           // this.setState({ calendarItems: res.data.result });
         }
       }
@@ -495,11 +527,11 @@ class Aktivity extends Component {
                           /> */}
                         <Calendar
                           popup
-                          events={event}
+                          events={this.state.event}
                           defaultDate={new Date()}
                           localizer={localizer}
                           style={{ height: 400 }}
-                          components={{ toolbar: CustomToolbar }}
+                          // components={{ toolbar: CustomToolbar }}
                           eventPropGetter={(event, start, end, isSelected) => {
                             if (event.bgColor) {
                               return {
@@ -508,7 +540,12 @@ class Aktivity extends Component {
                             }
                             return {};
                           }}
-                          views={['month']}
+                          // views={['month']}
+                          views={['month', 'day']}
+                          // views={{
+                          //   month: true,
+                          //   week: true,
+                          // }}
                         />
                         {/* <div className="p-l-20">
                           <span className="p-r-5" style={{ color: 'red' }}>
