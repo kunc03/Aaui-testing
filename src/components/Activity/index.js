@@ -104,6 +104,11 @@ class Aktivity extends Component {
         { id: 1, date: '21 April 2020 - 22 April 2020' },
         { id: 2, date: '23 April 2020 - 24 April 2020' },
       ],
+
+      event: [],
+      active: '0',
+      audience: '0',
+      duration: '00:00:00',
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
@@ -120,12 +125,14 @@ class Aktivity extends Component {
     console.log(String(date));
     this.setState({ today: String(date) });
   }
-  
+
   fetchDataChart() {
-    API.get(`${API_SERVER}v1/api-activity/chart/${
-      Storage.get('user').data.company_id
-    }/2020-01-01/2020-06-01`).then((res) => {
-      console.log('alvin res',res)
+    API.get(
+      `${API_SERVER}v1/api-activity/chart/${
+        Storage.get('user').data.company_id
+      }/2020-01-01/2020-07-01`
+    ).then((res) => {
+      console.log('alvin res', res);
       if (res.status === 200) {
         dataBar.labels = res.data.result.chart1.grup;
         dataBar.datasets[0].data = res.data.result.chart1.count;
@@ -135,6 +142,12 @@ class Aktivity extends Component {
         dataRadar.datasets[0].data = res.data.result.chart4.count;
         dataPie.labels = res.data.result.chart4.tipe;
         dataPie.datasets[0].data = res.data.result.chart4.count;
+
+        this.setState({
+          active: res.data.result.active,
+          audience: res.data.result.audience,
+          duration: res.data.result.duration,
+        });
       }
     });
   }
@@ -204,8 +217,8 @@ class Aktivity extends Component {
         ).then((res) => {
           if (res.status === 200) {
             this.setState({ chartData: res.data.result });
-            
-          console.log('resss',res)
+
+            console.log('resss', res);
           }
         });
       }
@@ -252,7 +265,38 @@ class Aktivity extends Component {
     API.get(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`).then(
       (res) => {
         if (res.status === 200) {
-          event = res.data.result;
+          let data = res.data.result.map((elem) => {
+            let start = new Date(elem.start);
+            let end = new Date(elem.end);
+            return {
+              id: elem.id,
+              title:
+                elem.type === 1
+                  ? 'Ujian ' + elem.description
+                  : elem.type === 2
+                  ? 'Forum ' + elem.description
+                  : 'Meeting ' + elem.description,
+              start: new Date(
+                start.getFullYear(),
+                start.getMonth(),
+                start.getDate(),
+                start.getHours(),
+                start.getMinutes(),
+                start.getSeconds()
+              ),
+              end: new Date(
+                end.getFullYear(),
+                end.getMonth(),
+                end.getDate(),
+                end.getHours(),
+                end.getMinutes(),
+                end.getSeconds()
+              ),
+              bgColor:
+                elem.type === 1 ? 'red' : elem.type === 2 ? 'purple' : 'cyan',
+            };
+          });
+          this.setState({ event: data });
           // this.setState({ calendarItems: res.data.result });
         }
       }
@@ -483,11 +527,11 @@ class Aktivity extends Component {
                           /> */}
                         <Calendar
                           popup
-                          events={event}
+                          events={this.state.event}
                           defaultDate={new Date()}
                           localizer={localizer}
                           style={{ height: 400 }}
-                          components={{ toolbar: CustomToolbar }}
+                          // components={{ toolbar: CustomToolbar }}
                           eventPropGetter={(event, start, end, isSelected) => {
                             if (event.bgColor) {
                               return {
@@ -496,7 +540,12 @@ class Aktivity extends Component {
                             }
                             return {};
                           }}
-                          views={['month']}
+                          // views={['month']}
+                          views={['month', 'day']}
+                          // views={{
+                          //   month: true,
+                          //   week: true,
+                          // }}
                         />
                         {/* <div className="p-l-20">
                           <span className="p-r-5" style={{ color: 'red' }}>
@@ -568,7 +617,9 @@ class Aktivity extends Component {
                       >
                         <center>
                           <h6 className="f-16 text-c-white">Active Meeting</h6>
-                          <h3 className="d-block text-c-white f-w-600">6</h3>
+                          <h3 className="d-block text-c-white f-w-600">
+                            {this.state.active}
+                          </h3>
                           <h6 className="f-16 text-c-white">Group</h6>
                         </center>
                       </div>
@@ -577,7 +628,9 @@ class Aktivity extends Component {
                       <div className="card">
                         <center>
                           <h6 className="f-16">Audience</h6>
-                          <h3 className="d-block text-c-grey f-w-600">6</h3>
+                          <h3 className="d-block text-c-grey f-w-600">
+                            {this.state.audience}
+                          </h3>
                           <h6 className="f-16">User</h6>
                         </center>
                       </div>
@@ -587,7 +640,7 @@ class Aktivity extends Component {
                         <center>
                           <h6 className="f-16">Duration</h6>
                           <h3 className="d-block text-c-grey f-w-600">
-                            01:10:10
+                            {this.state.duration}
                           </h3>
                           <h6 className="f-16">Hour</h6>
                         </center>
