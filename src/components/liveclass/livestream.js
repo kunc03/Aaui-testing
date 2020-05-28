@@ -144,13 +144,10 @@ export default class LiveStream extends Component {
        // console.log('alsdlaksdklasjdlkasjdlk',form)
         API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
 
-        // let url = `${API_SOCKET}/users/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
-        
-        let url = `https://api.icademy.id/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
-        
+        let url = `${API_SERVER}token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;
         let token = await axios.get(url);
-
-        this.setState({ user: res.data.result, classRooms: liveClass.data.result, jwt: token });
+        
+        this.setState({ user: res.data.result, classRooms: liveClass.data.result, jwt: token.data.token });
       }
     }).then(res=>{
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
@@ -404,7 +401,7 @@ export default class LiveStream extends Component {
 	render() {
 
     const { classRooms, user } = this.state;
-
+    
 		return(
 			<div className="pcoded-main-container">
 			<div className="pcoded-wrapper">
