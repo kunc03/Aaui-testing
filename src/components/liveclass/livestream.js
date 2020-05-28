@@ -4,6 +4,7 @@ import {
 	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
 import ToggleSwitch from "react-switch";
 import { MultiSelect } from 'react-sm-select';
@@ -12,9 +13,13 @@ import TagsInput from 'react-tagsinput'
 
 import 'react-tagsinput/react-tagsinput.css'
 
+
 import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import API, { API_JITSI, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
@@ -31,16 +36,6 @@ const tabs =[
   {title : 'File Sharing' },
   {title : 'MOM' }
 ]
-
-const listMOM = [];
-const arr = {};
-for(let i = 0; i < 5; i++){
-  //console.log(listMOM[i]);
-  arr.title = 'ini judul ';
-  arr.description = 'ini deskripsi ';
-  listMOM.push(arr);
-}
-
 
 export default class LiveStream extends Component {
 	state = {
@@ -65,7 +60,12 @@ export default class LiveStream extends Component {
     tabIndex : 1,
     body: '',
     editMOM : false,
-    jwt: ''
+    jwt: '',
+    listMOM: [],
+    startDate: new Date(),
+    title:'',
+    momid:'',
+    modalExportMOM: false
   }
   
   tabAktivitas(a,b){
@@ -144,13 +144,15 @@ export default class LiveStream extends Component {
        // console.log('alsdlaksdklasjdlkasjdlk',form)
         API.post(`${API_SERVER}v1/api-activity/new-class`, form).then(console.log);
 
-        let url = `${API_SOCKET}/users/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
+        // let url = `${API_SOCKET}/users/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
+        
+        let url = `https://api.icademy.id/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;        
+        
         let token = await axios.get(url);
 
         this.setState({ user: res.data.result, classRooms: liveClass.data.result, jwt: token });
       }
     }).then(res=>{
-        console.log(`${API_SERVER}v1/liveclass/file/${this.state.classId}`,'siniii')
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
           console.log(res, 'ini responseeee');
           let splitTags;
@@ -162,6 +164,17 @@ export default class LiveStream extends Component {
           if(res.status === 200) {
             this.setState({
               fileChat : res.data.result
+            })
+
+            API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
+              console.log(res, 'ini responseeee alvin');
+              if(res.status === 200) {
+                this.setState({
+                  listMOM : res.data.result
+                })
+                
+              }
+        
             })
             
             
@@ -271,6 +284,113 @@ export default class LiveStream extends Component {
         }
       }
     })
+  }
+
+  handleChangeDateFrom = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+
+  onChangeInput = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({ [name]: value })
+  }
+
+  addMOM = e => {
+    e.preventDefault();
+
+    if (this.state.momid){
+      let form = {
+        classId: this.state.classId,
+        title: this.state.title,
+        content: this.state.body,
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      }
+      console.log('MOM DATA', form)
+  
+      API.put(`${API_SERVER}v1/liveclass/mom/${this.state.momid}`, form).then(res => {
+        if(res.status === 200) {
+          if(!res.data.error) {
+            this.setState({
+              editMOM: false
+            });
+            this.fetchData();
+            this.setState({
+              momid: '',
+              title: '',
+              body: '',
+              time: new Date()
+            })
+          }
+        }
+      })
+    }
+    else{
+      let form = {
+        classId: this.state.classId,
+        title: this.state.title,
+        content: this.state.body,
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      }
+      console.log('MOM DATA', form)
+  
+      API.post(`${API_SERVER}v1/liveclass/mom`, form).then(res => {
+        if(res.status === 200) {
+          if(!res.data.error) {
+            this.setState({
+              editMOM: false
+            });
+            this.fetchData();
+            this.setState({
+              momid: '',
+              title: '',
+              body: '',
+              time: new Date()
+            })
+          }
+        }
+      })
+    }
+  }
+  
+  onClickEditMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    const title = e.target.getAttribute('data-title');
+    const content = e.target.getAttribute('data-content');
+    const time = new Date(e.target.getAttribute('data-time'));
+    this.setState({
+      editMOM: true,
+      momid: momid,
+      title: title,
+      body: content,
+      startDate: time
+    })
+    console.log('MOM DATA STATE', this.state.title)
+  }
+  
+  exportMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    window.open(`https://app.icademy.id/mom/?id=${momid}`, "_blank");
+  }
+
+  deleteMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v1/liveclass/mom/delete/${momid}`).then(res => {
+      if(res.status === 200) {
+        this.fetchData();
+      }
+    })
+  }
+  
+  onChangeTinyMce = e => {
+    this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
   }
 
   componentDidUpdate() {
@@ -395,20 +515,23 @@ export default class LiveStream extends Component {
                   ?
                   <div className="card">
                     <div className="col-sm-12">
-                      {listMOM.map((item, i) => (
+                      {this.state.listMOM.map((item, i) => (
                               <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
                                 <h3 className="f-18 f-w-bold f-w-800">
-                                    Judul Meeting ({item.title})
+                                    {item.title}
                                     <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>
-                                      <Link to='#' className="buttonku ml-2" title="Edit" onClick={(a)=>{this.setState({editMOM : true})}}>
-                                        <i data-id={item.course_id} className="fa fa-edit"></i>
+                                      <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
+                                        Export PDF
                                       </Link>
-                                      <Link to="#" className="buttonku ml-2" title="Hapus" onClick={(a)=> {console.log('apsuus')}}>
-                                        <i data-id={item.course_id} className="fa fa-trash"></i>
+                                      <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
+                                        <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
+                                      </Link>
+                                      <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
+                                        <i data-id={item.id} className="fa fa-trash"></i>
                                       </Link>
                                     </span>
                                 </h3>
-                                <p>{item.description}</p>
+                                <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
                               </div>
                           ))
                       }
@@ -417,9 +540,36 @@ export default class LiveStream extends Component {
                   
                   :
                   <div>
-                    <h4 className="p-10">JUDUL MEETING</h4>
-                    <h6 className="p-10" style={{marginTop: '-20px'}}>SUB JUDUL MEETING</h6>
-                    <p className="p-10">21 Peserta</p>
+                    <h4 className="p-10">{classRooms.room_name}</h4>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Judul MOM
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                              <input
+                                required
+                                type="text"
+                                name="title"
+                                value={this.state.title}
+                                className="form-control"
+                                placeholder="isi judul MOM..."
+                                onChange={this.onChangeInput}
+                              />
+                            </div>
+                        </Form.Group>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Waktu Meeting
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleChangeDateFrom}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          </div>
+                        </Form.Group>
 
                     <div className="chart-container" style={{ position: "relative", margin:20 }}>
                       <div className="form-group">
@@ -428,7 +578,7 @@ export default class LiveStream extends Component {
                           initialValue={this.state.body}
                           init={{
                             height: 400,
-                            menubar: false,
+                            menubar: true,
                             plugins: [
                               "advlist autolink lists link image charmap print preview anchor",
                               "searchreplace visualblocks code fullscreen",
@@ -446,16 +596,10 @@ export default class LiveStream extends Component {
                     <div>
                       <Link
                         to={"#"}
-                        onClick={(a)=>{this.setState({editMOM : false})}}
+                        onClick={this.addMOM}
                         className="btn btn-ideku float-right col-2 f-14"
                         style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
                         Simpan
-                      </Link>
-                      <Link
-                        to={"#"}
-                        className="btn btn-ideku float-right col-2 f-14"
-                        style={{ padding: "7px 8px !important" }}>
-                        Export PDF
                       </Link>
                     </div>
                   </div>
@@ -568,7 +712,6 @@ export default class LiveStream extends Component {
                 </Card>
           </Modal.Body>
         </Modal>
-
 			</div>
 			</div>
 			</div>
