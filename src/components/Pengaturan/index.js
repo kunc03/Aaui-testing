@@ -174,7 +174,7 @@ class Pengaturan extends Component {
                             </div>
                           </div>
 
-                          <div className="row">
+                          {/* <div className="row">
                             <div className="col-xl-2 col-md-12">
                               <h3 className="pengaturan-title f-24 f-w-bold">
                                 Notifikasi
@@ -339,7 +339,7 @@ class Pengaturan extends Component {
                           <button type="button" onClick={this.onClickSubmitSetting}
                             className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                             Simpan
-                          </button>
+                          </button> */}
                         </div>
 
                         <ModalEmail

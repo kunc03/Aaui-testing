@@ -4,7 +4,6 @@ import {
 	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
 import ToggleSwitch from "react-switch";
 import { MultiSelect } from 'react-sm-select';

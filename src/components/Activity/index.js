@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, InputGroup, FormControl, Row } from 'react-bootstrap';
+import { Form, Card, InputGroup, FormControl, Row } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 // import Calendar from 'react-calendar';
 // import 'react-calendar/dist/Calendar.css';
 
@@ -16,6 +20,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
+import MomentTZ from 'moment-timezone';
 const localizer = momentLocalizer(moment);
 let event = [
   // {
@@ -99,6 +104,8 @@ class Aktivity extends Component {
       today: '',
       calendarItems: [],
       loading: true,
+      startDate: new Date(),
+      endDate: new Date(),
 
       tanggalCoba: [
         { id: 1, date: '21 April 2020 - 22 April 2020' },
@@ -113,27 +120,51 @@ class Aktivity extends Component {
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
 
+  handleChangeDateStart = date => {
+    this.setState({
+      startDate: date
+    }, () => {
+      let start = MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      this.fetchDataChart(start, end);
+    });
+  };
+  handleChangeDateEnd = date => {
+    this.setState({
+      endDate: date
+    }, () => {
+      let start = MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      this.fetchDataChart(start, end);
+    });
+  };
   componentDidMount() {
     this.fetchDataUser();
     this.fetchHistoryActivity(Storage.get('user').data.user_id);
     this.fetchDataKursusDiikuti();
     this.fetchUserCalendar();
     this.fetchDataRekaman();
-    this.fetchDataChart();
+
+    this.setState({startDate: moment(this.state.startDate).subtract(1, 'month')._d})
+    let start = MomentTZ.tz(moment(this.state.startDate).subtract(1, 'month'), 'Asia/Jakarta').format("YYYY-MM-DD");
+    let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+    this.fetchDataChart(start, end);
+    
     console.log('RECENTS DID', this.state.recentCourse);
     let date = new Date();
     console.log(String(date));
     this.setState({ today: String(date) });
   }
 
-  fetchDataChart() {
+  fetchDataChart(start, stop) {
     API.get(
       `${API_SERVER}v1/api-activity/chart/${
         Storage.get('user').data.company_id
-      }/2020-01-01/2020-07-01`
+      }/${start}/${stop}`
     ).then((res) => {
       console.log('alvin res', res);
       if (res.status === 200) {
+        console.log('ALVIN',res.data.result)
         dataBar.labels = res.data.result.chart1.grup;
         dataBar.datasets[0].data = res.data.result.chart1.count;
         dataUser.labels = res.data.result.chart2.name;
@@ -494,7 +525,7 @@ class Aktivity extends Component {
                   </Card>
 
                   <div className="row">
-                    <div className="col-md-12 col-xl-7">
+                    {/* <div className="col-md-12 col-xl-7">
                       <div className="card" style={{ padding: 10 }}>
                         <h4 className="p-10">
                           Jumlah kegiatan 10 hari terakhir
@@ -510,12 +541,12 @@ class Aktivity extends Component {
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     {/* *
                      * Kalender View
                      */}
-                    <div className="col-md-12 col-xl-5">
-                      <div className="card">
+                    <div className="col-md-12">
+                      <div className="card p-10">
                         <h4 className="p-10">Kalender</h4>
                         {/* <Calendar
                             onChange={(a)=>{console.log(a)}}
@@ -591,43 +622,44 @@ class Aktivity extends Component {
                     </div>
                   </div>
 
-                  <div className="row">
-                    <div className="col-xl-4 mb-3">
-                      <div className="form-group">
-                        <label className="label-input"></label>
-                        <select
-                          required
-                          className="form-control"
-                          name="company_id"
-                        >
-                          <option value="">-- pilih --</option>
-                          {this.state.tanggalCoba.map((item) => (
-                            <option value={item.id}>{item.date}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Filter Waktu
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleChangeDateStart}
+                            dateFormat="yyyy-MM-dd"
+                          />
+                          &nbsp;&mdash;&nbsp;
+                          <DatePicker
+                            selected={this.state.endDate}
+                            onChange={this.handleChangeDateEnd}
+                            dateFormat="yyyy-MM-dd"
+                          />
+                          </div>
+                        </Form.Group>
 
                   <div className="row">
                     <div className="col-xl-2">
                       <div
-                        className="card"
+                        className="card p-10"
                         style={{ backgroundColor: '#1087FF' }}
                       >
                         <center>
-                          <h6 className="f-16 text-c-white">Active Meeting</h6>
+                          <h6 className="f-16 text-c-white">Active Private Meeting</h6>
                           <h3 className="d-block text-c-white f-w-600">
                             {this.state.active}
                           </h3>
-                          <h6 className="f-16 text-c-white">Group</h6>
+                          <h6 className="f-16 text-c-white">Room</h6>
                         </center>
                       </div>
                     </div>
                     <div className="col-xl-2">
-                      <div className="card">
+                      <div className="card p-10">
                         <center>
-                          <h6 className="f-16">Audience</h6>
+                          <h6 className="f-16">Private Meeting Participants</h6>
                           <h3 className="d-block text-c-grey f-w-600">
                             {this.state.audience}
                           </h3>
@@ -636,9 +668,9 @@ class Aktivity extends Component {
                       </div>
                     </div>
                     <div className="col-xl-2">
-                      <div className="card">
+                      <div className="card p-10">
                         <center>
-                          <h6 className="f-16">Duration</h6>
+                          <h6 className="f-16">Scheduled Meeting Duration</h6>
                           <h3 className="d-block text-c-grey f-w-600">
                             {this.state.duration}
                           </h3>
