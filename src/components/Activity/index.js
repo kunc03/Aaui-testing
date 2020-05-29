@@ -297,8 +297,8 @@ class Aktivity extends Component {
       (res) => {
         if (res.status === 200) {
           let data = res.data.result.map((elem) => {
-            let start = new Date(elem.start);
-            let end = new Date(elem.end);
+            let start = new Date(elem.string_start);
+            let end = new Date(elem.string_end);
             return {
               id: elem.id,
               title:
