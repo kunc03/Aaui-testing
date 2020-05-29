@@ -1,9 +1,12 @@
 import React, {useState, useEffect } from 'react';
 import API, { API_JITSI, API_SERVER, API_SOCKET } from '../../repository/api';
+import { CenturyView } from 'react-calendar';
 
 function JitsiMeetComponent(props) {
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+  const [joining, setJoining] = useState(false);
   const containerStyle = {
     width: '100%',
     height: '600px',
@@ -16,6 +19,7 @@ function JitsiMeetComponent(props) {
   }
 
   function startConference(konten) {
+    setJoining(true);
     try {
       const domain = API_JITSI;
       const options = {
@@ -39,7 +43,7 @@ function JitsiMeetComponent(props) {
       const api = new JitsiMeetExternalAPI(domain, options);
       
       api.addEventListener('videoConferenceJoined', () => {
-        setLoading(false);
+        setJoining(false);
         const classId = konten.roomId;
         const action = 'join';
         API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {action: action}).then(res => {
@@ -82,9 +86,30 @@ function JitsiMeetComponent(props) {
     }
   }
 
+  function checkWaiting(konten){
+    setLoading(true);
+    const interval = setInterval(() => {
+      const classId = konten.roomId;
+      API.get(`${API_SERVER}v1/liveclass/activeparticipant/${classId}`).then(res => {
+        if(res.status === 200) {
+          if ((res.data.result.active_participants === 0 && konten.moderator == true) || res.data.result.active_participants > 0){
+            setWaiting(false);
+            setLoading(false);
+            startConference(props);
+            clearInterval(interval);
+          }
+          else{
+            setWaiting(true);
+            setLoading(false);
+          }
+        }
+      })
+    }, 3000);
+  }
+
   useEffect(() => {
   // verify the JitsiMeetExternalAPI constructor is added to the global..
-    if (window.JitsiMeetExternalAPI) startConference(props);
+    if (window.JitsiMeetExternalAPI) checkWaiting(props);
     else alert('Jitsi Meet API script not loaded');
   }, []);
 
@@ -92,11 +117,42 @@ function JitsiMeetComponent(props) {
   <div
    style={containerStyle}
   >
-   {loading &&
+  {loading &&
     <div>
-      <div>Loading...</div>
+      <div style={{marginTop: 20, display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+        <img
+          src="/assets/images/component/tes.png"
+          className="img-fluid"
+        />
+        </div>
+      <h3 style={{marginTop:10, textAlign:'center'}}>Loading...</h3>
+    </div>
+   }
+
+   {joining &&
+     <div>
+       <div style={{marginTop: 20, display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+         <img
+           src="/assets/images/component/tes.png"
+           className="img-fluid"
+         />
+         </div>
+       <h3 style={{marginTop:10, textAlign:'center'}}>Bergabung dalam meeting...</h3>
+     </div>
+    }
+
+   {waiting &&
+    <div>
+      <div style={{marginTop: 20, display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+        <img
+          src="/assets/images/component/tes.png"
+          className="img-fluid"
+        />
+        </div>
+      <h3 style={{marginTop:10, textAlign:'center'}}>Menunggu moderator...</h3>
     </div>
     }
+    
    <div
     id="jitsi-container"
     style={jitsiContainerStyle}
