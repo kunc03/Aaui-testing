@@ -386,6 +386,17 @@ export default class LiveStream extends Component {
       }
     })
   }
+
+  backMOM = e => {
+    e.preventDefault();
+    this.setState({
+      momid: '',
+      title: '',
+      body: '',
+      time: new Date(),
+      editMOM: false
+    })
+  }
   
   onChangeTinyMce = e => {
     this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
@@ -538,6 +549,11 @@ export default class LiveStream extends Component {
                   
                   :
                   <div>
+                    <Link to='#' title="Kembali" onClick={this.backMOM}>
+                        <h4 className="f-20 f-w-800 p-10">
+                          <i className="fa fa-arrow-left"></i> Kembali
+                        </h4>
+                    </Link>
                     <h4 className="p-10">{classRooms.room_name}</h4>
                           <Form.Group controlId="formJudul" style={{padding:10}}>
                           <Form.Label className="f-w-bold">
