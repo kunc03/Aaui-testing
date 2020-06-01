@@ -45,8 +45,8 @@ function JitsiMeetComponent(props) {
       api.addEventListener('videoConferenceJoined', () => {
         setJoining(false);
         const classId = konten.roomId;
-        const action = 'join';
-        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {action: action}).then(res => {
+        const numberOfParticipants = api.getNumberOfParticipants();
+        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
           if(res.status === 200) {
             api.executeCommand('displayName', konten.userName);
           }
@@ -59,8 +59,8 @@ function JitsiMeetComponent(props) {
 
       api.addEventListener('videoConferenceLeft', () => {
         const classId = konten.roomId;
-        const action = 'leave';
-        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {action: action}).then(res => {
+        const numberOfParticipants = api.getNumberOfParticipants();
+        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
           if(res.status === 200) {
             api.executeCommand('displayName', konten.userName);
             if (res.data.result.active_participants === 0){
