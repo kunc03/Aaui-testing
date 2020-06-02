@@ -92,7 +92,7 @@ function JitsiMeetComponent(props) {
       const classId = konten.roomId;
       API.get(`${API_SERVER}v1/liveclass/activeparticipant/${classId}`).then(res => {
         if(res.status === 200) {
-          if ((res.data.result.active_participants === 0 && konten.moderator == true) || res.data.result.active_participants > 0){
+          if ((konten.moderator == true) || res.data.result.active_participants > 0){
             setWaiting(false);
             setLoading(false);
             startConference(props);
