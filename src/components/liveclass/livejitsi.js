@@ -59,8 +59,8 @@ function JitsiMeetComponent(props) {
 
       api.addEventListener('videoConferenceLeft', () => {
         const classId = konten.roomId;
-        const numberOfParticipants = api.getNumberOfParticipants();
-        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
+        API.get(`${API_SERVER}v1/liveclass/activeparticipant/${classId}`).then(response => {
+        API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: response.data.result.active_participants-1}).then(res => {
           if(res.status === 200) {
             api.executeCommand('displayName', konten.userName);
             if (res.data.result.active_participants === 0){
@@ -75,6 +75,7 @@ function JitsiMeetComponent(props) {
               window.close();
             }
           }
+        })
         })
       });
       api.executeCommand('avatarUrl', konten.userAvatar);
