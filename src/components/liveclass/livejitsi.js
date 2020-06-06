@@ -23,7 +23,6 @@ function JitsiMeetComponent(props) {
     try {
       const domain = API_JITSI;
       const options = {
-        jwt: konten.jwt,
         roomName: konten.roomName,
         height: 600,
         parentNode: document.getElementById('jitsi-container'),
@@ -59,7 +58,7 @@ function JitsiMeetComponent(props) {
 
       api.addEventListener('videoConferenceLeft', () => {
         const classId = konten.roomId;
-        API.get(`${API_SERVER}v1/liveclass/activeparticipant/${classId}`).then(response => {
+        API.get(`${API_SERVER}v1/liveclass/activeparticipantpublic/${classId}`).then(response => {
         API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: response.data.result.active_participants-1}).then(res => {
           if(res.status === 200) {
             api.executeCommand('displayName', konten.userName);
@@ -91,7 +90,7 @@ function JitsiMeetComponent(props) {
     setLoading(true);
     const interval = setInterval(() => {
       const classId = konten.roomId;
-      API.get(`${API_SERVER}v1/liveclass/activeparticipant/${classId}`).then(res => {
+      API.get(`${API_SERVER}v1/liveclass/activeparticipantpublic/${classId}`).then(res => {
         if(res.status === 200) {
           if ((konten.moderator == true) || res.data.result.active_participants > 0){
             setWaiting(false);
