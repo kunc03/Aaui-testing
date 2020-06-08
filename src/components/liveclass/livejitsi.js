@@ -48,6 +48,15 @@ function JitsiMeetComponent(props) {
         API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
           if(res.status === 200) {
             api.executeCommand('displayName', konten.userName);
+            const interval = setInterval(() => {
+              const classId = konten.roomId;
+              const numberOfParticipants = api.getNumberOfParticipants();
+              API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
+                if(res.status === 200) {
+                  console.log('UPDATE ACTIVE PARTICIPANTS', res.data.result.active_participants)
+                }
+              })
+            }, 3000);
           }
         })
       });
@@ -80,7 +89,7 @@ function JitsiMeetComponent(props) {
       api.executeCommand('avatarUrl', konten.userAvatar);
       !konten.startMic && api.executeCommand('toggleAudio');
       !konten.startCam && api.executeCommand('toggleVideo');
-
+      
     } catch (error) {
      console.error('Failed to load Jitsi API', error);
     }

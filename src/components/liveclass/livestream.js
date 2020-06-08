@@ -20,7 +20,7 @@ import JitsiMeetComponent from './livejitsi';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import API, { API_JITSI, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
+import API, { API_JITSI, APPS_SERVER, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
@@ -378,7 +378,7 @@ export default class LiveStream extends Component {
   exportMOM = e => {
     e.preventDefault();
     const momid = e.target.getAttribute('data-id');
-    window.open(`https://app.icademy.id/mom/?id=${momid}`, "_blank");
+    window.open(`${APPS_SERVER}mom/?id=${momid}`, "_blank");
   }
 
   deleteMOM = e => {
