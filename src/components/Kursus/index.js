@@ -378,7 +378,7 @@ class Kursus extends Component {
                         null
                         :
                         <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
+                          <Link to={access.manage_group_meeting ? `/liveclass` : `/liveclass`}>
                             <div className="kategori title-disabled">
                               <img src="/assets/images/component/liveoff.png" className="img-fluid" />
                               &nbsp;

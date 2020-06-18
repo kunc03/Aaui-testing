@@ -115,6 +115,7 @@ export default class LiveClassAdmin extends Component {
               classRooms: dataClass.filter((item) => item.active_participants <= 0).reverse(),
               classRoomsActive: dataClass.filter((item) => item.active_participants >= 1).reverse()
             })
+            console.log('ALVIN',res.data.result)
           }
         });
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
