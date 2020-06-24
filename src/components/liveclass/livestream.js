@@ -241,6 +241,7 @@ export default class LiveStream extends Component {
       console.log(e.target.files[0], 'attach');
       this.setState({nameFile : e.target.files[0].name});
       if(name === 'attachment') {
+        console.log('ALVIN ATTACHMENT', e.target.files[0])
           if (e.target.files[0].size <= 500000) {
               this.setState({ [name]: e.target.files[0] });
           } else {
@@ -294,7 +295,7 @@ export default class LiveStream extends Component {
     });
   };
 
-  onChangeInput = (event) => {
+  onChangeInputMOM = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -571,7 +572,7 @@ export default class LiveStream extends Component {
                                 value={this.state.title}
                                 className="form-control"
                                 placeholder="isi judul MOM..."
-                                onChange={this.onChangeInput}
+                                onChange={this.onChangeInputMOM}
                               />
                             </div>
                         </Form.Group>
