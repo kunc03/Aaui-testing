@@ -58,13 +58,17 @@ export default class LiveStream extends Component {
     modalStart: true,
     tabIndex : 1,
     body: '',
+    contentMOM: '',
     editMOM : false,
     jwt: '',
     listMOM: [],
+    listSubtitle: [],
     startDate: new Date(),
     title:'',
     momid:'',
-    modalExportMOM: false
+    modalExportMOM: false,
+    selectSubtitle: '',
+    subtitle: '',
   }
   
   tabAktivitas(a,b){
@@ -169,16 +173,29 @@ export default class LiveStream extends Component {
             })
 
             API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
-              console.log(res, 'ini responseeee alvin');
               if(res.status === 200) {
                 this.setState({
                   listMOM : res.data.result
+                })
+                API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
+                  if(res.status === 200) {
+                    let publishSubsSelect = []
+                    res.data.result.map((item, i) => {
+                      if (item.events.length > 0){
+                        publishSubsSelect.push(item)
+                      }
+                    })
+                    this.setState({
+                      listSubtitle : publishSubsSelect
+                    })
+                    
+                  }
+            
                 })
                 
               }
         
             })
-            
             
           }
     
@@ -302,6 +319,20 @@ export default class LiveStream extends Component {
 
     this.setState({ [name]: value })
   }
+  
+  addSubsToMOM = e => {
+    e.preventDefault();
+    if (this.state.subtitle == ''){
+      alert('Silahkan pilih subtitle')
+    }
+    else{
+      let subsContainer = ''
+      this.state.listSubtitle[this.state.subtitle].events.map((item, i) => {
+        subsContainer = subsContainer + this.state.listSubtitle[this.state.subtitle].events[i].participant.name + " : " + this.state.listSubtitle[this.state.subtitle].events[i].transcript[0].text + "<br>"
+      })
+      this.setState({contentMOM: this.state.contentMOM + "<br>" + subsContainer + "<br>"})
+    }
+  }
 
   addMOM = e => {
     e.preventDefault();
@@ -326,6 +357,7 @@ export default class LiveStream extends Component {
               momid: '',
               title: '',
               body: '',
+              contentMOM: '',
               time: new Date()
             })
           }
@@ -352,6 +384,7 @@ export default class LiveStream extends Component {
               momid: '',
               title: '',
               body: '',
+              contentMOM: '',
               time: new Date()
             })
           }
@@ -371,6 +404,7 @@ export default class LiveStream extends Component {
       momid: momid,
       title: title,
       body: content,
+      contentMOM: content,
       startDate: time
     })
     console.log('MOM DATA STATE', this.state.title)
@@ -398,6 +432,7 @@ export default class LiveStream extends Component {
       momid: '',
       title: '',
       body: '',
+      contentMOM: '',
       time: new Date(),
       editMOM: false
     })
@@ -418,6 +453,8 @@ export default class LiveStream extends Component {
 	render() {
 
     const { classRooms, user } = this.state;
+
+    const dataMOM = this.state.listSubtitle;
     
 		return(
 			<div className="pcoded-main-container">
@@ -588,6 +625,41 @@ export default class LiveStream extends Component {
                             dateFormat="yyyy-MM-dd HH:mm"
                           />
                           </div>
+                          </Form.Group>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Text Dari Subtitle
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                              <select
+                                style={{textTransform: 'capitalize', width: '40%', display:'inline-block'}}
+                                name="subtitle"
+                                className="form-control"
+                                onChange={this.onChangeInputMOM}
+                                required
+                              >
+                                <option value="">Pilih</option>
+                                {dataMOM.map((item, index) => (
+                                  <option
+                                    value={index}
+                                    selected={
+                                      item._id === this.state.selectSubtitle
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    {MomentTZ.tz(item.start_time, 'Asia/Jakarta').format("DD MMMM YYYY, HH:mm") + " - " + MomentTZ.tz(item.end_time, 'Asia/Jakarta').format("HH:mm")}
+                                  </option>
+                                ))}
+                              </select>
+                              <Link
+                                to={"#"}
+                                onClick={this.addSubsToMOM}
+                                className="btn btn-ideku col-2 f-14"
+                                style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                                Tambahkan ke MOM
+                              </Link>
+                          </div>
                         </Form.Group>
 
                     <div className="chart-container" style={{ position: "relative", margin:20 }}>
@@ -595,6 +667,7 @@ export default class LiveStream extends Component {
                         <Editor
                           apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                           initialValue={this.state.body}
+                          value={this.state.contentMOM}
                           init={{
                             height: 400,
                             menubar: true,
