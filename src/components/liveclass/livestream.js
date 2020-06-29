@@ -58,7 +58,6 @@ export default class LiveStream extends Component {
     modalStart: true,
     tabIndex : 1,
     body: '',
-    contentMOM: '',
     editMOM : false,
     jwt: '',
     listMOM: [],
@@ -82,6 +81,10 @@ export default class LiveStream extends Component {
   toggleSwitchCam(checked) {
     localStorage.setItem('startCam', !this.state.startCam)
     this.setState({ startCam:!this.state.startCam });
+  }
+
+  handleEditorChange(body, editor) {
+    this.setState({ body });
   }
 
   handleChange(emailInvite) {
@@ -330,7 +333,9 @@ export default class LiveStream extends Component {
       this.state.listSubtitle[this.state.subtitle].events.map((item, i) => {
         subsContainer = subsContainer + this.state.listSubtitle[this.state.subtitle].events[i].participant.name + " : " + this.state.listSubtitle[this.state.subtitle].events[i].transcript[0].text + "<br>"
       })
-      this.setState({contentMOM: this.state.contentMOM + "<br>" + subsContainer + "<br>"})
+      this.setState({
+        body: this.state.body + "<br>" + subsContainer + "<br>"
+      })
     }
   }
 
@@ -341,7 +346,7 @@ export default class LiveStream extends Component {
       let form = {
         classId: this.state.classId,
         title: this.state.title,
-        content: this.state.body,
+        content: this.state.body.replace(/'/g, "\\'"),
         time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       }
       console.log('MOM DATA', form)
@@ -357,7 +362,6 @@ export default class LiveStream extends Component {
               momid: '',
               title: '',
               body: '',
-              contentMOM: '',
               time: new Date()
             })
           }
@@ -368,7 +372,7 @@ export default class LiveStream extends Component {
       let form = {
         classId: this.state.classId,
         title: this.state.title,
-        content: this.state.body,
+        content: this.state.body.replace(/'/g, "\\'"),
         time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       }
       console.log('MOM DATA', form)
@@ -384,7 +388,6 @@ export default class LiveStream extends Component {
               momid: '',
               title: '',
               body: '',
-              contentMOM: '',
               time: new Date()
             })
           }
@@ -404,7 +407,6 @@ export default class LiveStream extends Component {
       momid: momid,
       title: title,
       body: content,
-      contentMOM: content,
       startDate: time
     })
     console.log('MOM DATA STATE', this.state.title)
@@ -432,7 +434,6 @@ export default class LiveStream extends Component {
       momid: '',
       title: '',
       body: '',
-      contentMOM: '',
       time: new Date(),
       editMOM: false
     })
@@ -667,7 +668,8 @@ export default class LiveStream extends Component {
                         <Editor
                           apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                           initialValue={this.state.body}
-                          value={this.state.contentMOM}
+                          value={this.state.body}
+                          onEditorChange={this.handleEditorChange.bind(this)}
                           init={{
                             height: 400,
                             menubar: true,
@@ -681,7 +683,7 @@ export default class LiveStream extends Component {
                               alignleft aligncenter alignright alignjustify | \
                               bullist numlist outdent indent | removeformat | help"
                           }}
-                          onChange={this.onChangeTinyMce}
+                          // onChange={this.onChangeTinyMce}
                         />
                       </div>
                     </div>
