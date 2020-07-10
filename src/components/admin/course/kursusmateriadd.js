@@ -79,7 +79,8 @@ export default class KursusMateriAdd extends Component {
     const name = target.name;
 
     if(name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
-      if (target.files[0].size <= 20000000) {
+      // if (target.files[0].size <= 20000000) {
+      if (target.files[0].size >= 0) {
         this.setState({ [name]: target.files[0] });
       } else {
         target.value = null;
@@ -283,8 +284,8 @@ export default class KursusMateriAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text>
-                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau
-                              pdf dan ukuran file tidak melebihi 20MB.
+                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
+                              {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                               {this.state.resMsg && (
                                 <Form.Text className="text-danger">
@@ -303,8 +304,8 @@ export default class KursusMateriAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text>
-                                Pastikan file berformat png, jpg, jpeg,
-                                atau gif dan ukuran file tidak melebihi 20MB.
+                                Pastikan file berformat png, jpg, jpeg, atau gif 
+                                {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                               {this.state.resMsg && (
                                 <Form.Text className="text-danger">
@@ -369,7 +370,7 @@ export default class KursusMateriAdd extends Component {
                               />
                               <Form.Text>
                                 Pastikan file berformat png, jpg, jpeg, atau gif
-                                dan ukuran tidak melebihi 500KB
+                                {/* dan ukuran tidak melebihi 500KB */}
                               </Form.Text>
                               {this.state.resMsg && (
                                 <Form.Text className="text-danger">

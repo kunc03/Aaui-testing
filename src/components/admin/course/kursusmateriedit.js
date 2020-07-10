@@ -39,7 +39,8 @@ export default class KursusMateriEdit extends Component {
     const name = target.name;
 
   	if(name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
-      if (target.files[0].size <= 20000000) {
+      // if (target.files[0].size <= 20000000) {
+      if (target.files[0].size >= 0) {
         this.setState({ [name]: target.files[0] });
       } else {
         target.value = null;
@@ -304,8 +305,8 @@ export default class KursusMateriEdit extends Component {
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text>
-                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau
-                              pdf dan ukuran file tidak melebihi 20MB.
+                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
+                              {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                             </div>
                             <div className="form-group">
@@ -319,8 +320,8 @@ export default class KursusMateriEdit extends Component {
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text>
-                                Pastikan file berformat png, jpg, jpeg,
-                                atau gif dan ukuran file tidak melebihi 20MB.
+                                Pastikan file berformat png, jpg, jpeg, atau gif 
+                                {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                             </div>
                             <div className="form-group">
