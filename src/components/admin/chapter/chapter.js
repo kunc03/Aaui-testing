@@ -101,7 +101,7 @@ export default class ChapterPreview extends Component {
 			chapterBody: '',
 			chapterVideo: '',
 			attachmentId: []
-		});
+    });
 	}
 
 	onSubmitChapter = e => {
@@ -177,6 +177,7 @@ export default class ChapterPreview extends Component {
         form.append('chapter_video', this.state.chapterVideo);
         form.append('attachment_id', null);
   
+        this.handleModalClose();
         this.setState({isLoading : true});
 
         API.post(`${API_SERVER}v1/chapter`, form).then((res) => {
@@ -190,9 +191,7 @@ export default class ChapterPreview extends Component {
               }
               API.put(`${API_SERVER}v1/chapter/attachment/${res.data.result.chapter_id}`, formData).then(res => {
                 if (res.status === 200) {
-                  this.handleModalClose();
-                  this.fetchDataChapter();
-                  this.setState({ isLoading: false });
+                  //nothing
                 }
               })
             }
@@ -209,7 +208,8 @@ export default class ChapterPreview extends Component {
                 }
               });
             }
-            
+            this.fetchDataChapter();
+            this.setState({ isLoading: false });
           }
         })
       } else {
@@ -314,7 +314,6 @@ export default class ChapterPreview extends Component {
           thumbnail: res.data.result.thumbnail
         }
         this.setState({ course: courseChapter })
-        console.log('ALVIN',this.state.course)
       }
     })
   }
