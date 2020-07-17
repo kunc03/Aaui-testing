@@ -283,6 +283,7 @@ export default class KursusMateriAdd extends Component {
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
+                              <label style={{color:'#000', padding:'5px 10px'}}>{this.state.image.name === null ? 'Pilih File' : this.state.image.name }</label>
                               <Form.Text>
                               Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
                               {/* dan ukuran file tidak melebihi 20MB. */}
@@ -303,6 +304,7 @@ export default class KursusMateriAdd extends Component {
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
+                              <label style={{color:'#000', padding:'5px 10px'}}>{this.state.thumbnail.name === null ? 'Pilih File' : this.state.thumbnail.name }</label>
                               <Form.Text>
                                 Pastikan file berformat png, jpg, jpeg, atau gif 
                                 {/* dan ukuran file tidak melebihi 20MB. */}

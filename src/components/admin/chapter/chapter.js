@@ -81,6 +81,7 @@ export default class ChapterPreview extends Component {
       }
 		} else if (name === 'attachmentId') {
       this.setState({ [name]: e.target.files });
+      console.log('ALVIN LAMPIRAN', this.state.attachmentId)
     } else {
 			this.setState({ [name]: value });
 		}
@@ -718,11 +719,13 @@ export default class ChapterPreview extends Component {
                             <input
                               accept="image/*,video/*,application/pdf"
                               name="chapterVideo"
+                              id="chapterVideo"
                               onChange={this.onChangeInput}
                               type="file"
                               placeholder="media chapter"
                               className="form-control"
                             />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{this.state.chapterVideo.name === null ? 'Pilih File' : this.state.chapterVideo.name }</label>
                             <Form.Text>
                               {!this.state.chapterId && (
                                 <span
@@ -742,9 +745,10 @@ export default class ChapterPreview extends Component {
                               name="thumbnail"
                               onChange={this.onChangeInput}
                               type="file"
-                              placeholder="media chapter"
+                              placeholder="thumbnail chapter"
                               className="form-control"
                             />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{this.state.thumbnail.name === null ? 'Pilih File' : this.state.thumbnail.name }</label>
                             <Form.Text>
                               {!this.state.chapterId && (
                                 <span
@@ -789,6 +793,7 @@ export default class ChapterPreview extends Component {
                               placeholder="media chapter"
                               className="form-control"
                             />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{ this.state.attachmentId.length } File</label>
                             <Form.Text>
                               Bisa banyak file, pastikan file berformat pdf 
                               {/* dan ukuran file tidak melebihi 20MB. */}

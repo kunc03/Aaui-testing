@@ -592,6 +592,7 @@ export default class QuizList extends Component {
                                 });
                               }}
                             />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{this.state.importFile.name === null ? 'Pilih File' : this.state.importFile.name }</label>
                             <Form.Text>
                               Pastikan format file xls, atau xlsx.
                             </Form.Text>
