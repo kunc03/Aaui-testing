@@ -19,7 +19,7 @@ function JitsiMeetComponent(props) {
   }
 
   function startConference(konten) {
-    setJoining(true);
+    // setJoining(true);
     try {
       const domain = API_JITSI;
       const options = {
@@ -34,7 +34,8 @@ function JitsiMeetComponent(props) {
           disableSimulcast: false,
         },
         userInfo: {
-          email: konten.userEmail
+          email: konten.userEmail,
+          displayName: konten.userName
         }
       };
 
@@ -42,12 +43,12 @@ function JitsiMeetComponent(props) {
       const api = new JitsiMeetExternalAPI(domain, options);
       
       api.addEventListener('videoConferenceJoined', () => {
-        setJoining(false);
+        // setJoining(false);
         const classId = konten.roomId;
         const numberOfParticipants = api.getNumberOfParticipants();
         API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
           if(res.status === 200) {
-            api.executeCommand('displayName', konten.userName);
+            // api.executeCommand('displayName', konten.userName);
             const interval = setInterval(() => {
               const classId = konten.roomId;
               const numberOfParticipants = api.getNumberOfParticipants();
