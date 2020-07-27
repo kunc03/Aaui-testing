@@ -71,6 +71,7 @@ import PrintCertificate2 from './components/client/certificate/Certificate2'
 import PrintCertificate3 from './components/client/certificate/Certificate3'
 
 import ResetPassword from './components/resetPassword';
+import ForgotPassword from './components/forgotPassword';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -112,6 +113,7 @@ export class PublicContent extends React.Component {
           <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/reset-password/:id/:key' component={ResetPassword} />
+          <Route path='/forgot-password' component={ForgotPassword} />
           <Route component={Login} />
         </Switch>
       </div>
