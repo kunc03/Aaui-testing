@@ -1,0 +1,25 @@
+stages:
+  - buildstaging
+  - deploystaging
+
+build_staging:
+  stage: buildstaging
+  only:
+    - staging
+  tags:
+    - autobuild
+  script:
+    - echo $HOME
+    - cd $HOME/ideku-react && git pull origin staging
+
+deploy_staging:
+  stage: deploystaging
+  only:
+    - staging
+  tags:
+    - autobuild
+  script:
+    - echo $HOME
+    - cd $HOME/ideku-react && npm i
+    - cd $HOME/ideku-react && forever list
+

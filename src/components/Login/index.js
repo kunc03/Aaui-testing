@@ -1,0 +1,351 @@
+import React, { Component } from "react";
+import { Redirect } from 'react-router-dom'
+import {Alert, Row} from 'react-bootstrap';
+import axios from 'axios';
+import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
+import Storage from '../../repository/storage';
+
+import { Link } from "react-router-dom";
+
+const tabs = [
+  { title: 'Login' },
+  { title: 'Vouchers' },
+];
+
+
+class Login extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    email: '',
+    password: '',
+    toggle_alert: false,
+    isVoucher: false,
+    voucher: '',
+    alertMessage : '',
+    tabIndex : 1
+  };
+
+  tabLogin(a, b) {
+    this.setState({ tabIndex: b + 1 });
+    if(b === 1){
+      this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
+    }else{
+      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
+    }
+    // console.log(b, this.state.tabIndex)
+  }
+
+  onChangeEmail = e => {
+    this.setState({ email: e.target.value, toggle_alert: false });
+  };
+
+  onChangePassword = e => {
+    this.setState({ password: e.target.value, toggle_alert: false, });
+  };
+
+  onChangeVoucher = e => {
+    this.setState({ voucher: e.target.value, toggle_alert: false });
+  };
+
+  onClickVoucher = e => {
+    e.preventDefault();
+    this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
+  };
+
+  onClickEmail = e => {
+    e.preventDefault();
+    this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
+  };
+
+  submitFormVoucher = e => {
+    e.preventDefault();
+    const { voucher } = this.state;
+    let body = { voucher };
+
+    axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
+      console.log(res)
+      if(res.status === 200) {
+        if(!res.data.error) {
+
+          let form = {
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
+            title : 'voucher login'
+          }
+
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
+            email: res.data.result.email, 
+            level: res.data.result.level,
+          }});
+          Storage.set('access', {
+            activity: res.data.result.activity,
+            course: res.data.result.course,
+            manage_course: res.data.result.manage_course,
+            forum: res.data.result.forum,
+            group_meeting: res.data.result.group_meeting,
+            manage_group_meeting: res.data.result.manage_group_meeting
+          });
+          Storage.set('token', {data: res.data.result.token});
+          if (this.props.redirectUrl){
+            window.location.href = window.location.origin+this.props.redirectUrl
+          }
+          else{
+            window.location.href = window.location.origin;
+          }
+
+          API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
+            function(){
+              console.log(arguments)
+            }
+          );
+          
+        } else {
+          if (res.data.result.status=='expired'){
+            this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
+          }
+          else{
+            this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+          }
+        }
+      } else {
+        this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+      }
+    }).catch(err => {
+      console.log('failed fetch', err);
+    });
+  }
+
+  submitForm = e => {
+    e.preventDefault();
+    const { email, password } = this.state;
+    let body = { email, password }
+
+    axios.post(USER_LOGIN, body).then(res => {
+      console.log('ALVINS 2', res)
+      if(res.status === 200){
+        if(!res.data.error){
+
+          let form = {
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
+            title : 'regular login'
+          }
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
+            email: res.data.result.email,
+            level: res.data.result.level,
+          }});
+          Storage.set('token', {data:res.data.result.token});
+          if (this.props.redirectUrl){
+            window.location.href = window.location.origin+this.props.redirectUrl
+          }
+          else{
+            window.location.href = window.location.origin;
+          }
+          
+          API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
+            function(){
+            }
+          );
+        } else {
+          if (res.data.result.status=='expired'){
+            this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
+          }
+          else{
+            this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+          }
+        }
+      } else {
+        this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
+      }
+    }).catch(err => {
+      console.log('failed fetch', err);
+    })
+  };
+
+  render() {
+    const { toggle_alert, isVoucher } = this.state;
+    let formKu = null;
+    if(isVoucher) {
+      formKu = (
+        <form onSubmit={this.submitFormVoucher}>
+          <b style={{float: 'left' , color: 'black'}}>Nomor Voucher</b>
+          <div className="input-group mb-4 mt-5">
+            <input
+              type="text"
+              value={this.state.voucher}
+              className="form-control"
+              placeholder="Masukan nomor voucher Anda"
+              onChange={this.onChangeVoucher}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mt-10 b-r-3 f-16">
+            Masuk
+          </button>
+          {
+            toggle_alert &&
+            <Alert variant={'danger'}>
+              {this.state.alertMessage}
+            </Alert>
+          }
+        </form>
+      );
+    } else {
+      formKu = (
+        <form onSubmit={this.submitForm}>
+          <b style={{float: 'left' , color: 'black'}}>Email</b>
+          <div className="input-group mb-4">
+            <input
+              type="text"
+              value={this.state.email}
+              className="form-control"
+              placeholder="Masukan email Anda"
+              onChange={this.onChangeEmail}
+              required
+            />
+          </div>
+          <b style={{float: 'left' , color: 'black'}}>Password</b>
+          <div className="input-group mb-3">
+            <input
+              type="password"
+              value={this.state.password}
+              className="form-control"
+              placeholder="Masukan password Anda"
+              onChange={this.onChangePassword}
+              required
+            />
+          </div>
+          <p className="mt-5">
+            <a href="#" >Lupa Password ?</a>
+          </p>
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+            Masuk
+          </button>
+          {
+            toggle_alert &&
+            <Alert variant={'danger'}>
+              {this.state.alertMessage}
+            </Alert>
+          }
+        </form>
+      );
+    }
+
+    return (
+      <div style={{background:"#fafbfc"}}>
+        <header className="header-login">
+          <center>
+            <div className="mb-4">
+              <img
+                src="newasset/logo-horizontal.svg"
+                style={{ paddingTop: 18 }}
+                alt=""
+              />
+            </div>
+          </center>
+        </header>
+        <div
+          className="auth-wrapper"
+          
+        >
+          <div className="auth-content mb-4">
+            <div className=" b-r-15">
+              <div
+                className=" text-center"
+                style={{ padding: "50px !important" }}
+              >
+                <div className="mb-4">
+                  <img
+                    src="newasset/user-computer.svg"
+                    style={{ width: 350 }}
+                    alt=""
+                  />
+                </div>
+                <h4 className="mb-0 mt-1" style={{textTransform: 'uppercase'}}>
+                   <b>Connect with people anytime anywhere</b>
+                </h4>
+                <p className="mb-0 mt-1">
+                    We are ready to connect you with others
+                </p>
+                
+              </div>
+            </div>
+          </div>
+          <div className="auth-content mb-4">
+            <div className="card b-r-15">
+              <div
+                className="card-body text-center"
+                style={{ padding: "50px !important", height: 500}}
+              >
+                <div className="row ">
+                  {tabs.map((tab, index) => {
+                    return (
+                      <div className="col-md-6 mb-4">
+                        <Link
+                          onClick={this.tabLogin.bind(this, tab, index)}
+                        >
+                          <div
+                            className={
+                              this.state.tabIndex === index + 1
+                                ? 'kategori-aktif'
+                                : 'kategori title-disabled'
+                            }
+                          >
+                            {tab.title}
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                  {/* {console.log(this.state.tabIndex)} */}
+                  {this.state.tabIndex === 1 && (!isVoucher) ? (
+                      <div className="col-sm-12">{formKu}</div>
+                  ) : this.state.tabIndex === 2 && (isVoucher) ? (
+                      <div className="col-sm-12">{formKu}</div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+                {/* <p className="mb-0 mt-1">
+                  <a
+                    href="#"
+                    className="text-cc-purple f-16 f-w-600"
+                    onClick={ (!isVoucher) ? this.onClickVoucher : this.onClickEmail }
+                  >
+                    Masuk dengan {(!isVoucher) ? 'Voucher' : 'Email'}
+                  </a>
+                </p> */}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="footer-info">
+          <div className="row ">      
+            <div className="col-md-6"></div>
+            <div className="col-md-3 mt-5">
+              Gedung Total, Lantai 10.
+              <p className="mb-0">Jl. Let. Jen. S. Parman Kav. 106 A</p>
+              Jakarta 11440 - Indonesia
+            </div>
+            <div className="col-md-3 mt-5">
+              <p className="mt-3 mb-0">Email	: Support@infovesta.com</p>
+              Phone	: 021 - 5697 2929
+            </div>
+          </div>
+        </div>
+        <footer className="footer-ideku">
+          <div className="footer-copyright text-right">
+            Copyright © 2019 - Ideku Platform
+          </div>
+        </footer>
+      </div>
+    );
+  }
+}
+
+export default Login;
