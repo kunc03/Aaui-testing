@@ -2309,10 +2309,32 @@ th, td {
   url(assets/images/component/login.jpg);
 }
 
-.footer-ideku {
-  background-color: #24031C;
+.header-login {
+  background-color: #fff;
   color: #fff;
-  position: fixed;
+  /* position: fixed; */
+  left: 0;
+  bottom: 0;
+  height: 80px;
+  width: 100%;
+  border-bottom: 1 solid #E6E6E6;
+}
+
+.footer-info {
+  background-image: linear-gradient(#008AE6, #0055C7);
+    color: #fff;
+    /* position: absolute; */
+    left: 0;
+    bottom: 40px;
+    height: 166px;
+    width: 100%;
+    border-radius: 145px 0px 0px 0px;
+}
+
+.footer-ideku {
+  background-color: #02439E;
+  color: #fff;
+  /* position: fixed; */
   left: 0;
   bottom: 0;
   height: 34px;
@@ -2322,7 +2344,7 @@ th, td {
 .footer-ideku .footer-copyright {
   font-size: 12px;
   color: #E2E2E2;
-  padding: 9px;
+  /* padding: 20px; */
 }
 
 /* Jack update */
@@ -2887,7 +2909,7 @@ hr {
   -webkit-transition: all 0.15s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
-.pcoded-navbar.navbar-collapsed:hover {
+/* .pcoded-navbar.navbar-collapsed:hover {
   width: 264px !important;
 }
 .pcoded-navbar.navbar-collapsed:hover .pcoded-badge {
@@ -2909,7 +2931,7 @@ hr {
   -webkit-transform: rotateY(-90deg);
           transform: rotateY(-90deg);
   opacity: 0;
-}
+} */
 .pcoded-navbar.navbar-collapsed:hover .header-logo .mobile-menu {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2987,7 +3009,7 @@ hr {
 .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-main-container {
   margin-left: 80px;
 }
-.pcoded-navbar.mob-open ~ .pcoded-header:before,
+/* .pcoded-navbar.mob-open ~ .pcoded-header:before,
 .pcoded-navbar.mob-open ~ .pcoded-main-container:before, .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-header:before,
 .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-main-container:before {
   position: absolute;
@@ -2997,7 +3019,7 @@ hr {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   z-index: 1;
-}
+} */
 
 /* menu [ vartical ] css end */
 /* menu[ horizontal ] css start */
@@ -5901,6 +5923,9 @@ body.layout-6 .pcoded-navbar.menu-light .slimScrollDiv {
 body.layout-6 .pcoded-navbar.menu-light .slimScrollDiv .slimScrollBar {
   z-index: 1028 !important;
 }
+.slimScrollBar {
+  background: rgba(191, 175, 225, 0.73) !important;
+}
 body.layout-6 .pcoded-navbar.mob-open ~ .pcoded-header:before,
 body.layout-6 .pcoded-navbar.mob-open ~ .pcoded-main-container:before,
 body.layout-6 .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-header:before,
@@ -7410,12 +7435,21 @@ pre[class*=language-]:after, pre[class*=language-]:before {
 /**  =====================
       Form Componant css start
 ==========================  **/
-.custom-select,
-.form-control {
-  background: #f4f7fa;
-  padding: 10px 20px;
+.custom-select, .form-control {
+  background: #ffffff;
+  padding: 18px 20px;
   font-size: 14px;
+  border-radius: 9px;
 }
+
+.custom-select, .form-control-login {
+  background: #ffffff;
+  padding: 18px 20px;
+  font-size: 14px;
+  margin-top: 5px;
+  border-radius: 9px;
+}
+
 .custom-select:focus,
 .form-control:focus {
   background: #f4f7fa;
@@ -7907,7 +7941,7 @@ table.footable-paging-center > tfoot > tr.footable-paging > td {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -7916,7 +7950,7 @@ table.footable-paging-center > tfoot > tr.footable-paging > td {
           justify-content: center;
   overflow: hidden;
   min-width: 100%;
-  min-height: 100vh;
+  min-height: 85vh;
 }
 .auth-wrapper a,
 .auth-wrapper p > a {
@@ -8310,11 +8344,17 @@ a.btn-theme.active {
 
 .btn-ideku {
   color: #fff;
-  background-color: #BF337B;
+  background-color: #00478C;
+  /* height: 60px; */
+  font-weight: bold;
+  font-size: 17px;
 }
 .btn-ideku:hover {
   color: #fff;
-  background-color: rgb(146, 31, 91);
+  background-color: #0d4175;
+  /* height: 60px; */
+  font-weight: bold;
+  font-size: 17px;
 }
 
 .btn-info {
@@ -11234,8 +11274,26 @@ div.code-toolbar > .toolbar span:hover {
   font-weight: bold;
 }
 
+
+.customtab {
+  border-radius: 10px;
+  background-color: white;
+  padding: 5px; 
+  font-size: 15.9px;
+  font-weight: bold;
+}
+
+.customtab-aktif {
+    background-color: white;
+    padding: 5px;
+    border-bottom: 3px solid #004887;
+    font-size: 15.9px;
+    font-weight: bold;
+    color : #004887;
+}
+
 .title-disabled {
-  color: gray !important
+  color: #C8C8C8 !important
 }
 
 .forum-filter {

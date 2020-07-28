@@ -80,7 +80,7 @@ class Sidebar extends Component {
 
     return (
       
-        <nav className="pcoded-navbar navbar-collapsed" onMouseOver={e => this.setState({sideMenu:false})} onMouseOut={e => this.setState({sideMenu:true})}>
+        <nav className="pcoded-navbar navbar-collapsed" >
           <div className="navbar-wrapper">
             <div className="navbar-brand header-logo">
               <Link to="/" className="b-brand" style={{width:'100%'}}>
@@ -124,7 +124,7 @@ class Sidebar extends Component {
                             </span>
                             <span
                               className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
-                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:2, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
+                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:5, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
                               {item.label}
                             </span>
                           </Link>
