@@ -172,10 +172,13 @@ export class Logout extends React.Component {
   onClickLogout(e) {
     e.preventDefault();
   }
-
+  
   componentDidMount() {
-    localStorage.clear();
-    window.location.href = window.location.origin;
+    const user_id = Storage.get('user').data.user_id;
+    API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
+      localStorage.clear();
+      window.location.href = window.location.origin;
+  });
   }
 
   render() {
