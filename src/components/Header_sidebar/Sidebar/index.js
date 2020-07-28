@@ -108,15 +108,17 @@ class Sidebar extends Component {
                   menuContent.map((item, i) => {
                     if(item.access == undefined || access[item.access]) {
                       return (
-                        <li data-username="Sample Page" className={`nav-item mt-4 ${menuAktif === item.link ? 'active':''}`}>
+                        <li data-username="Sample Page" className={`nav-item ${menuAktif === item.link ? 'active':''}`}>
                           <Link to={item.link} className="nav-link">
                             <span className="pcoded-micon">
                               <img
                                 src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
                                 alt=""
+                                width={20}
+                                height={20}
                               ></img>
                             </span>
-                            <span className="pcoded-mtext f-16 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                            <span className="pcoded-mtext f-14 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
                               {item.label}
                             </span>
                           </Link>
@@ -132,13 +134,15 @@ class Sidebar extends Component {
                     <span className="pcoded-micon">
                       <img
                         src="assets/images/component/Icon Logout.png"
+                        width={20}
+                        height={20}
                         style={{
                           paddingLeft: "3px"
                         }}
                         alt=""
                       ></img>
                     </span>
-                    <span className="pcoded-mtext f-16 f-w-bold">Logout</span>
+                    <span className="pcoded-mtext f-14 f-w-bold">Logout</span>
                   </Link>
                 </li>
 
