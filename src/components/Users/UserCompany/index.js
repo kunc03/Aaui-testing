@@ -82,7 +82,7 @@ class UserCompany extends Component {
             style={{ padding: "25px 30px !important" }}
           >
             <div className="row d-flex align-items-center">
-              <div className="col-xl-2 col-md-12">
+              <div className="col-xl-1 col-md-12">
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <img
@@ -131,7 +131,19 @@ class UserCompany extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xl-2 col-md-12 text-right">
+              <div className="col-xl-2 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-16 text-c-grey-t ">
+                      Status
+                    </small>
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-20 text-c-purple3">
+                      {item.company_type ? item.company_type : 'Not Set'}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-1 col-md-12 text-right">
                 <p className="m-b-0">
                   <Link to={`${linkCompany}/${item.company_id}`}>
                     <img
