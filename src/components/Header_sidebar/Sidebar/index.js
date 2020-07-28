@@ -7,7 +7,7 @@ class Sidebar extends Component {
     super(props);
     this.state = {
       menuAktif: '/',
-      sideMenu: false,
+      sideMenu: true,
       sideMenuCollapse:false,
     }
   }
@@ -80,12 +80,11 @@ class Sidebar extends Component {
 
     return (
       
-        <nav className="pcoded-navbar">
+        <nav className="pcoded-navbar navbar-collapsed" onMouseOver={e => this.setState({sideMenu:false})} onMouseOut={e => this.setState({sideMenu:true})}>
           <div className="navbar-wrapper">
             <div className="navbar-brand header-logo">
               <Link to="/" className="b-brand" style={{width:'100%'}}>
                     <img
-                      onClick={console.log('alvin',this.state.sideMenu)}
                       src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile.png':'Logo Ideku.png'}`}
                       alt=""
                       style={{width:'90%', height:'auto',paddingLeft:'5%'}}
@@ -93,7 +92,7 @@ class Sidebar extends Component {
                 {/* <span className="b-title">IDEKU</span> */}
               </Link>
               
-                <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" ><span /></a>
+                {/* <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" ><span /></a> */}
               
             </div>
 
@@ -108,9 +107,14 @@ class Sidebar extends Component {
                   menuContent.map((item, i) => {
                     if(item.access == undefined || access[item.access]) {
                       return (
-                        <li data-username="Sample Page" className={`nav-item ${menuAktif === item.link ? 'active':''}`}>
-                          <Link to={item.link} className="nav-link">
-                            <span className="pcoded-micon">
+                        <li data-username="Sample Page"
+                          className={`nav-item ${menuAktif === item.link ? 'active':''}`}
+                          style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
+                        >
+                          <Link to={item.link} className="nav-link"
+                            style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
+                          >
+                            <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
                               <img
                                 src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
                                 alt=""
@@ -118,7 +122,9 @@ class Sidebar extends Component {
                                 height={20}
                               ></img>
                             </span>
-                            <span className="pcoded-mtext f-14 f-w-bold" style={{ color: `${menuAktif == item.link ? '#fff':'#945A86'}` }}>
+                            <span
+                              className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
+                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:2, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
                               {item.label}
                             </span>
                           </Link>
@@ -130,7 +136,7 @@ class Sidebar extends Component {
                 </div>
 
                 <li data-username="Sample Page" className="nav-item mt-4  bg-c-purple-dark">
-                  <Link to="/logout" className="nav-link" style={{marginBottom: '8px'}}>
+                  <Link to="/logout" className="nav-link" style={{marginBottom: '8px', padding:"7px 20px"}} >
                     <span className="pcoded-micon">
                       <img
                         src="assets/images/component/Icon Logout.png"
