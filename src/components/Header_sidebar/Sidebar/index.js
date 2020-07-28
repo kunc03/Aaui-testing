@@ -133,24 +133,29 @@ class Sidebar extends Component {
                     }
                   })
                 }
-                </div>
-
-                <li data-username="Sample Page" className="nav-item mt-4  bg-c-purple-dark">
-                  <Link to="/logout" className="nav-link" style={{marginBottom: '8px', padding:"7px 20px"}} >
-                    <span className="pcoded-micon">
+                <li data-username="Sample Page"
+                  className={`nav-item mt-4  bg-c-purple-dark`}
+                  style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
+                >
+                  <Link to="/logout" className="nav-link"
+                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
+                  >
+                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
                       <img
-                        src="assets/images/component/Icon Logout.png"
+                        src={`assets/images/component/Icon Logout.png`}
+                        alt=""
                         width={20}
                         height={20}
-                        style={{
-                          paddingLeft: "3px"
-                        }}
-                        alt=""
                       ></img>
                     </span>
-                    <span className="pcoded-mtext f-14 f-w-bold">Logout</span>
+                    <span
+                      className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
+                      style={{position: 'relative', textAlign:'center', padding:5, color: '#945A86'}}>
+                      Logout
+                    </span>
                   </Link>
                 </li>
+                </div>
 
               </ul>
             </div>
