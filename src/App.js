@@ -12,6 +12,7 @@ import Home from "./components/Home/index";
 import Activity from "./components/Activity/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
+import Files from "./components/files/index";
 
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
@@ -192,6 +193,7 @@ export class SuperAdminSwitch extends React.Component {
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
+        <Route path="/files" component={Files} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
@@ -262,6 +264,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
+        <Route path="/files" component={Files} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
@@ -349,6 +352,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/kursus" component={Kursus} />
 
         <Route path="/profile" component={Profile} />
+        <Route path="/files" component={Files} />
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />

@@ -66,7 +66,7 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
-      console.log(res)
+      console.log('alvin',res)
       if(res.status === 200) {
         if(!res.data.error) {
 

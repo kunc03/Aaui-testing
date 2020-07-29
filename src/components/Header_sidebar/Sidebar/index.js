@@ -54,6 +54,7 @@ class Sidebar extends Component {
     let menuSuperAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
       { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Files', link: '/files' },
       { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
       { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
       { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
@@ -124,7 +125,7 @@ class Sidebar extends Component {
                             </span>
                             <span
                               className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
-                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:5, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
+                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:'0px 5px', top:0, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
                               {item.label}
                             </span>
                           </Link>
@@ -150,7 +151,7 @@ class Sidebar extends Component {
                     </span>
                     <span
                       className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
-                      style={{position: 'relative', textAlign:'center', padding:5, color: '#945A86'}}>
+                      style={{position: 'relative', textAlign:'center', top:0, padding:'0px 5px', color: '#945A86'}}>
                       Logout
                     </span>
                   </Link>

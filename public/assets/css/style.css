@@ -11335,6 +11335,21 @@ div.code-toolbar > .toolbar span:hover {
     line-height: 1.42857;
 }
 
+.folder{
+  margin:10px;
+}
+
+.folder-icon{
+  width:80px;
+}
+
+.filename{
+  font-size:11px;
+  text-align:center;
+  padding:2px 5px;
+  max-width:80px
+}
+
 
 
 .hidden { display : none !important}
