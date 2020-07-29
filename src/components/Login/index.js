@@ -77,7 +77,6 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
-      console.log('alvin',res)
       if(res.status === 200) {
         if(!res.data.error) {
 
@@ -101,13 +100,13 @@ class Login extends Component {
             manage_group_meeting: res.data.result.manage_group_meeting
           });
           Storage.set('token', {data: res.data.result.token});
+
           if (this.props.redirectUrl){
             window.location.href = window.location.origin+this.props.redirectUrl
           }
           else{
             window.location.href = window.location.origin;
           }
-
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
               console.log(arguments)

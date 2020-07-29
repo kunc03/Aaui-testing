@@ -24,6 +24,7 @@ class ForgotPassword extends Component {
     showPass : false,
     showResendPass : false,
     email: "",
+    loading: false,
 };
 
     onChange(state, e) {
@@ -33,16 +34,17 @@ class ForgotPassword extends Component {
     }
 
   kirimEMail = e => {
-    console.log('kirim'); 
-    this.setState({showResendPass : true});
+    this.setState({loading:true})
 
     API.get(`${API_SERVER}v1/user/forgot-password/${this.state.email}`).then((res) => {
         if (res.status === 200 && !res.data.error) {
-            alert(res.data.result.message);
+            this.setState({showResendPass : true});
+            return console.log(this.props.history)
             this.props.history.push(`/OTP/${res.data.result.id}`)
         } else {
             alert(res.data.result)
         }
+        this.setState({loading:false})
     });
   }
 
@@ -74,7 +76,7 @@ class ForgotPassword extends Component {
                 </div>
             </div>
 
-            <div className={showResendPass ? 'hidden' : 'row'}>
+            <div className={showResendPass ? 'hidden' : 'row'} style={{padding:'0px 20px'}}>
                 <div className="col-sm-3"></div>
                 <img
                     src="newasset/back.svg"
@@ -94,7 +96,7 @@ class ForgotPassword extends Component {
                         required
                         />
                     </div>
-                    <button className="btn btn-ideku col-12 shadow-2 mt-5 b-r-3 f-16" style={{height:60}} onClick={this.kirimEMail.bind(this)}>
+                    <button disabled={this.state.loading} className="btn btn-ideku col-12 shadow-2 mt-5 b-r-3 f-16" style={{height:60}} onClick={this.kirimEMail.bind(this)}>
                         Kirim
                     </button>
                 </div>
