@@ -45,7 +45,6 @@ class Login extends Component {
   }
 
   lupaPassword(){
-    console.log('sasdf', this.state.tabIndex);
     this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: true, showPass: true, tabIndex: 4});
   }
 
@@ -135,7 +134,6 @@ class Login extends Component {
     let body = { email, password }
 
     axios.post(USER_LOGIN, body).then(res => {
-      console.log('ALVINS 2', res)
       if(res.status === 200){
         if(!res.data.error){
 
@@ -176,7 +174,11 @@ class Login extends Component {
       console.log('failed fetch', err);
     })
   };
-
+  componentDidMount(){
+    if (this.props.match.params.id && this.props.match.params.key){
+      this.lupaPassword()
+    }
+  }
   render() {
     const { toggle_alert, isVoucher } = this.state;
     let formKu = null;
@@ -293,7 +295,7 @@ class Login extends Component {
             <div className="card b-r-15">
               <div
                 className="card-body text-center"
-                style={{ padding: "50px !important", height: 500}}
+                style={{ padding: "50px !important"}}
               >
                 <div className="row ">
                   <span className={!this.state.showPass ? 'hidden' : ''} style={{color: '#00478C', paddingLeft: 15, cursor: 'pointer'}}
@@ -325,7 +327,7 @@ class Login extends Component {
                   ) : this.state.tabIndex === 2 && (isVoucher) ? (
                       <div className="col-sm-12">{formKu}</div>
                   ) : (
-                    <div><LupaPassword/></div>
+                    <div><LupaPassword id={this.props.match.params.id} otp={this.props.match.params.key}/></div>
                   )}
                 </div>
                 {/* <p className="mb-0 mt-1">

@@ -73,7 +73,7 @@ import PrintCertificate3 from './components/client/certificate/Certificate3'
 
 import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
-import ResetPassword from './components/resetPassword';
+// import ResetPassword from './components/resetPassword';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -116,7 +116,7 @@ export class PublicContent extends React.Component {
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/OTP/:id' component={OTP} />
-          <Route path='/reset-password/:id/:key' component={ResetPassword} />
+          <Route path='/reset-password/:id/:key' component={Login} />
           <Route component={Login} />
         </Switch>
       </div>
