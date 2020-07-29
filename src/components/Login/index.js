@@ -1,11 +1,17 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router-dom'
-import {Alert} from 'react-bootstrap';
+import {Alert, Row} from 'react-bootstrap';
 import axios from 'axios';
 import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Link } from "react-router-dom";
+
+const tabs = [
+  { title: 'Login' },
+  { title: 'Vouchers' },
+];
+
 
 class Login extends Component {
   constructor(props) {
@@ -18,8 +24,19 @@ class Login extends Component {
     toggle_alert: false,
     isVoucher: false,
     voucher: '',
-    alertMessage : ''
+    alertMessage : '',
+    tabIndex : 1
   };
+
+  tabLogin(a, b) {
+    this.setState({ tabIndex: b + 1 });
+    if(b === 1){
+      this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
+    }else{
+      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
+    }
+    // console.log(b, this.state.tabIndex)
+  }
 
   onChangeEmail = e => {
     this.setState({ email: e.target.value, toggle_alert: false });
@@ -156,17 +173,19 @@ class Login extends Component {
     if(isVoucher) {
       formKu = (
         <form onSubmit={this.submitFormVoucher}>
-          <div className="input-group mb-4">
+          <b style={{float: 'left' , color: 'black'}}>Nomor Voucher</b>
+          <div className="input-group mb-4 mt-5">
             <input
               type="text"
               value={this.state.voucher}
               className="form-control"
-              placeholder="Voucher"
+              style={{marginTop:8}}
+              placeholder="Masukan nomor voucher Anda"
               onChange={this.onChangeVoucher}
               required
             />
           </div>
-          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mt-10 b-r-3 f-16" style={{height:60}}>
             Masuk
           </button>
           {
@@ -180,27 +199,34 @@ class Login extends Component {
     } else {
       formKu = (
         <form onSubmit={this.submitForm}>
+          <b style={{float: 'left' , color: 'black'}}>Email</b>
           <div className="input-group mb-4">
             <input
               type="text"
               value={this.state.email}
               className="form-control"
-              placeholder="Email"
+              style={{marginTop:8}}
+              placeholder="Masukan email Anda"
               onChange={this.onChangeEmail}
               required
             />
           </div>
+          <b style={{float: 'left' , color: 'black'}}>Password</b>
           <div className="input-group mb-3">
             <input
               type="password"
               value={this.state.password}
               className="form-control"
-              placeholder="Password"
+              style={{marginTop:8}}
+              placeholder="Masukan password Anda"
               onChange={this.onChangePassword}
               required
             />
           </div>
-          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16">
+          <p className="mt-5">
+            <a href="#" >Lupa Password ?</a>
+          </p>
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16" style={{height:60}}>
             Masuk
           </button>
           {
@@ -214,30 +240,81 @@ class Login extends Component {
     }
 
     return (
-      <div>
+      <div style={{background:"#fafbfc"}}>
+        <header className="header-login">
+          <center>
+            <div className="mb-4">
+              <img
+                src="newasset/logo-horizontal.svg"
+                style={{ paddingTop: 18 }}
+                alt=""
+              />
+            </div>
+          </center>
+        </header>
         <div
           className="auth-wrapper"
-          style={{
-            background:
-              "linear-gradient(rgba(61, 12, 49, 0.90), rgba(61, 12, 49, 0.90) ),url(assets/images/component/login.jpg)"
-          }}
+          
         >
-          <h1 className="text-c-white f-28 f-w-600">Selamat Datang!</h1>
           <div className="auth-content mb-4">
-            <div className="card b-r-15">
+            <div className=" b-r-15">
               <div
-                className="card-body text-center"
+                className=" text-center"
                 style={{ padding: "50px !important" }}
               >
                 <div className="mb-4">
                   <img
-                    src="assets/images/component/LOGO IDEKU-01.png"
-                    style={{ width: 200 }}
+                    src="newasset/user-computer.svg"
+                    style={{ width: 350 }}
                     alt=""
                   />
                 </div>
-                {formKu}
+                <h4 className="mb-0 mt-1" style={{textTransform: 'uppercase'}}>
+                   <b>Connect with people anytime anywhere</b>
+                </h4>
                 <p className="mb-0 mt-1">
+                    We are ready to connect you with others
+                </p>
+                
+              </div>
+            </div>
+          </div>
+          <div className="auth-content mb-4">
+            <div className="card b-r-15">
+              <div
+                className="card-body text-center"
+                style={{ padding: "50px !important", height: 500}}
+              >
+                <div className="row ">
+                  {tabs.map((tab, index) => {
+                    return (
+                      <div className="col-md-6 mb-4">
+                        <Link
+                          onClick={this.tabLogin.bind(this, tab, index)}
+                        >
+                          <div
+                            className={
+                              this.state.tabIndex === index + 1
+                                ? 'customtab-aktif'
+                                : 'customtab title-disabled'
+                            }
+                          >
+                            {tab.title}
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                  {/* {console.log(this.state.tabIndex)} */}
+                  {this.state.tabIndex === 1 && (!isVoucher) ? (
+                      <div className="col-sm-12">{formKu}</div>
+                  ) : this.state.tabIndex === 2 && (isVoucher) ? (
+                      <div className="col-sm-12">{formKu}</div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+                {/* <p className="mb-0 mt-1">
                   <a
                     href="#"
                     className="text-cc-purple f-16 f-w-600"
@@ -245,14 +322,28 @@ class Login extends Component {
                   >
                     Masuk dengan {(!isVoucher) ? 'Voucher' : 'Email'}
                   </a>
-                </p>
+                </p> */}
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="footer-info">
+          <div className="row ">      
+            <div className="col-md-6"></div>
+            <div className="col-md-3 mt-5">
+              Gedung Total, Lantai 10.
+              <p className="mb-0">Jl. Let. Jen. S. Parman Kav. 106 A</p>
+              Jakarta 11440 - Indonesia
+            </div>
+            <div className="col-md-3 mt-5">
+              <p className="mt-3 mb-0">Email	: support@infovesta.com</p>
+              Phone	: 021 - 5697 2929
             </div>
           </div>
         </div>
         <footer className="footer-ideku">
           <div className="footer-copyright text-right">
-            Copyright © 2019 - Ideku Platform
+            Copyright © 2020 - ICADEMY
           </div>
         </footer>
       </div>
