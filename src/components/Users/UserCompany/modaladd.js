@@ -19,6 +19,7 @@ class ModalAdd extends Component {
 
     this.state = {
       nama: "",
+      tipe: "",
       status: "active",
       logo: "",
       notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
@@ -42,10 +43,11 @@ class ModalAdd extends Component {
     const { triggerUpdate } = this.props;
     let dateNow = new Date();
 
-    if(this.state.nama && this.state.logo) {
+    if(this.state.nama && this.state.logo && this.state.tipe) {
       let unlimited = this.state.unlimited == false ? '1' : '0'
       let formData = new FormData();
       formData.append('company_name', this.state.nama);
+      formData.append('company_type', this.state.tipe);
       formData.append('status', this.state.status);
       formData.append('unlimited', unlimited);
       formData.append('logo', this.state.logo);
@@ -66,6 +68,10 @@ class ModalAdd extends Component {
 
   onChangeNama = e => {
     this.setState({ nama: e.target.value });
+  }
+
+  onChangeTipe = e => {
+    this.setState({ tipe: e.target.value }); 
   }
 
   onChangeStatus = e => {
@@ -114,6 +120,16 @@ class ModalAdd extends Component {
             </div>
             <div className="modal-body">
               <Form>
+                <div className="form-group">
+                  <label className="label-input" htmlFor>
+                    Tipe Company
+                  </label>
+                  <select onChange={this.onChangeTipe} className="form-control" style={{textTransform: "capitalize"}}>
+                    <option value="">Pilih tipe company</option>
+                    <option value="perusahaan">Perusahaan</option>
+                    <option value="pendidikan">Pendidikan</option>
+                  </select>
+                </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
                     Nama Company
