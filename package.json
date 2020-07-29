@@ -12,6 +12,7 @@
     "axios": "^0.19.0",
     "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
+    "flickity": "^2.2.1",
     "html2canvas": "^1.0.0-rc.5",
     "js-file-download": "^0.4.10",
     "jsonwebtoken": "^8.5.1",

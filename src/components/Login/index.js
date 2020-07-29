@@ -4,7 +4,7 @@ import {Alert, Row} from 'react-bootstrap';
 import axios from 'axios';
 import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
-
+import LupaPassword from './lupaPassword'
 import { Link } from "react-router-dom";
 
 const tabs = [
@@ -25,7 +25,8 @@ class Login extends Component {
     isVoucher: false,
     voucher: '',
     alertMessage : '',
-    tabIndex : 1
+    tabIndex : 1,
+    showPass : false
   };
 
   tabLogin(a, b) {
@@ -33,9 +34,19 @@ class Login extends Component {
     if(b === 1){
       this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
     }else{
-      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
+      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false});
     }
     // console.log(b, this.state.tabIndex)
+  }
+
+  backToLogin(){
+    //console.log('balikk')
+    this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false, showPass: false, tabIndex: 1});
+  }
+
+  lupaPassword(){
+    console.log('sasdf', this.state.tabIndex);
+    this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: true, showPass: true, tabIndex: 4});
   }
 
   onChangeEmail = e => {
@@ -224,7 +235,7 @@ class Login extends Component {
             />
           </div>
           <p className="mt-5">
-            <a href="#" >Lupa Password ?</a>
+            <a style={{cursor: 'pointer', color: '#00478C'}} onClick={this.lupaPassword.bind(this)}>Lupa Password ?</a>
           </p>
           <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16" style={{height:60}}>
             Masuk
@@ -286,9 +297,13 @@ class Login extends Component {
                 style={{ padding: "50px !important", height: 500}}
               >
                 <div className="row ">
+                  <span className={!this.state.showPass ? 'hidden' : ''} style={{color: '#00478C', paddingLeft: 15, cursor: 'pointer'}}
+                        onClick={this.backToLogin.bind(this)}> 
+                    <i className="fa fa-arrow-left fa-2x"></i>
+                  </span>
                   {tabs.map((tab, index) => {
                     return (
-                      <div className="col-md-6 mb-4">
+                      <div className={this.state.showPass ? 'hidden' : 'col-md-6 mb-4'}>
                         <Link
                           onClick={this.tabLogin.bind(this, tab, index)}
                         >
@@ -311,7 +326,7 @@ class Login extends Component {
                   ) : this.state.tabIndex === 2 && (isVoucher) ? (
                       <div className="col-sm-12">{formKu}</div>
                   ) : (
-                    <div></div>
+                    <div><LupaPassword/></div>
                   )}
                 </div>
                 {/* <p className="mb-0 mt-1">

@@ -71,6 +71,9 @@ import PrintCertificate1 from './components/client/certificate/Certificate1'
 import PrintCertificate2 from './components/client/certificate/Certificate2'
 import PrintCertificate3 from './components/client/certificate/Certificate3'
 
+import ForgotPassword from './components/forgotPassword';
+import OTP from './components/OTP';
+import ResetPassword from './components/resetPassword';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -111,6 +114,9 @@ export class PublicContent extends React.Component {
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
+          <Route path='/forgot-password' component={ForgotPassword} />
+          <Route path='/OTP/:id' component={OTP} />
+          <Route path='/reset-password/:id/:key' component={ResetPassword} />
           <Route component={Login} />
         </Switch>
       </div>
@@ -167,10 +173,13 @@ export class Logout extends React.Component {
   onClickLogout(e) {
     e.preventDefault();
   }
-
+  
   componentDidMount() {
-    localStorage.clear();
-    window.location.href = window.location.origin;
+    const user_id = Storage.get('user').data.user_id;
+    API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
+      localStorage.clear();
+      window.location.href = window.location.origin;
+  });
   }
 
   render() {
