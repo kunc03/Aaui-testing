@@ -68,6 +68,7 @@ export default class LiveStream extends Component {
     modalExportMOM: false,
     selectSubtitle: '',
     subtitle: '',
+    sendingEmail: false
   }
   
   tabAktivitas(a,b){
@@ -215,6 +216,7 @@ export default class LiveStream extends Component {
 
   onClickSubmitInvite = e => {
     e.preventDefault();
+    this.setState({sendingEmail: true})
     let form = {
       user: Storage.get('user').data.user,
       email: this.state.emailInvite,
@@ -224,8 +226,8 @@ export default class LiveStream extends Component {
       schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       schedule_end:  MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       userInvite: this.state.valueInvite,
-      message: 'https://'+window.location.hostname+'/redirect/liveclass-room/'+this.state.classId,
-      messageNonStaff: 'https://'+window.location.hostname+'/meeting/'+this.state.classId
+      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classId,
+      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classId
     }
     console.log('ALVIN KIRIM',form)
 
@@ -236,9 +238,9 @@ export default class LiveStream extends Component {
             isInvite: false,
             emailInvite: [],
             valueInvite: [],
-            emailResponse: res.data.result
+            emailResponse: res.data.result,
+            sendingEmail:false
           });
-          console.log('RESS SUKSES',res)
         } else {
           this.setState({
             emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
@@ -755,11 +757,12 @@ export default class LiveStream extends Component {
 
             <button
               style={{ marginTop: "30px" }}
+              disabled={this.state.sendingEmail}
               type="button"
               onClick={this.onClickSubmitInvite}
               className="btn btn-block btn-ideku f-w-bold"
             >
-              Submit
+              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
             </button>
             <button
               type="button"

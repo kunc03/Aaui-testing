@@ -218,6 +218,12 @@ class Header extends Component {
         access: 'activity',
       },
       {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
+      },
+      {
         iconOn: 'materion.png',
         iconOff: 'materioff.png',
         label: 'Kursus & Materi',
@@ -273,6 +279,12 @@ class Header extends Component {
         iconOff: 'aktivitasoff.png',
         label: 'Aktivitas',
         link: '/aktivitas',
+      },
+      {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
       },
       {
         iconOn: 'mycompanyon.png',
@@ -331,6 +343,12 @@ class Header extends Component {
         iconOff: 'aktivitasoff.png',
         label: 'Aktivitas',
         link: '/aktivitas',
+      },
+      {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
       },
       {
         iconOn: 'materion.png',

@@ -11364,7 +11364,46 @@ div.code-toolbar > .toolbar span:hover {
   overflow-wrap: break-word;
 }
 
+.legend-kehadiran {
+  padding: 7px 15px;
+  color: #FFF;
+  margin:2px;
+  border-radius:4px
+}
+.peserta {
+  padding: 7px 15px;
+  color: #FFF;
+  margin:2px;
+  border-radius:4px
+}
+.hadir {
+  background: #61c061;
+}
+.tidak-hadir {
+  background: #ab4848;
+}
+.tentative {
+  background: #bebebe;
+}
 
+.btn-icademy-green {
+  background: #479d47;
+  padding: '5px 10px';
+  color: #FFF;
+  margin:2px;
+}
+.btn-icademy-green:hover {
+  color: #FFF;
+}
+.btn-icademy-red {
+  background: #9f4040;
+  padding: '5px 10px';
+  color: #FFF;
+  margin:2px;
+}
+.btn-icademy-red:hover {
+  color: #FFF;
+}
 
 .hidden { display : none !important}
 

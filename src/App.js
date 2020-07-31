@@ -198,6 +198,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/aktivitas" component={Activity} />
 
         <Route path="/liveclass" component={LiveClassAdmin} />
+        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
