@@ -295,14 +295,14 @@ export default class LiveClassAdmin extends Component {
               if(res.status === 200) {
                 if(!res.data.error) {
                   this.setState({sendingEmail: false})
-                  this.fetchData();
-                  this.closeClassModal();
                 } else {
                   console.log('RESS GAGAL',res)
                 }
               }
             })
           }
+          this.fetchData();
+          this.closeClassModal();
         }
       })
     }

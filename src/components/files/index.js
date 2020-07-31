@@ -47,13 +47,18 @@ fetchData(){
   })
 }
 fetchMOM(folder){
-  API.get(`${API_SERVER}v1/files-mom/${folder}`).then(res => {
-    if(res.status === 200) {
-      this.setState({
-        mom : res.data.result
-      })
-    }
-  })
+  if (folder == 0){
+    this.setState({mom:[]})
+  }
+  else{
+    API.get(`${API_SERVER}v1/files-mom/${folder}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          mom : res.data.result
+        })
+      }
+    })
+  }
 }
 fetchFolder(mother){
   API.get(`${API_SERVER}v1/folder/${this.state.company}/${mother}`).then(res => {
