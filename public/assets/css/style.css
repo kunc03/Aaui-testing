@@ -7437,9 +7437,14 @@ pre[class*=language-]:after, pre[class*=language-]:before {
 ==========================  **/
 .custom-select, .form-control {
   background: #ffffff;
-  padding: 18px 20px;
+  /* padding: 18px 20px; */
+  min-height:40px;
   font-size: 14px;
   border-radius: 9px;
+}
+
+.auth-content .form-control {
+  min-height:60px;
 }
 
 .custom-select, .form-control-login {
