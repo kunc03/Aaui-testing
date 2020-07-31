@@ -3324,7 +3324,7 @@ hr {
   clear: both;
   float: unset;
   right: 0;
-  margin-left: 264px;
+  margin-left: 50px;
   min-height: 100vh;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -11370,4 +11370,8 @@ div.code-toolbar > .toolbar span:hover {
     padding: 34px;
     background: red !important;
   }
+}
+
+.back-active {
+  background: #e9e9e9;
 }
