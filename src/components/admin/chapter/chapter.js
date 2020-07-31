@@ -33,6 +33,7 @@ export default class ChapterPreview extends Component {
     attachmentId: [],
     thumbnail: '',
 
+    isModalChoose: false,
 		isModalAdd: false,
     isModalHapus: false,
     
@@ -55,6 +56,10 @@ export default class ChapterPreview extends Component {
 				content: 'Tahap terakhir adalah membuat ujian akhir dari kursus ini.',
 			},
 		]
+  }
+
+  closeNotifikasiChoose = e => {
+    this.setState({ isModalChoose: false })
   }
   
   closeNotifikasi = e => {
@@ -85,6 +90,12 @@ export default class ChapterPreview extends Component {
     } else {
 			this.setState({ [name]: value });
 		}
+  }
+
+  /** CLICK CHOOSE */
+  handleModalChoose = e => {
+    e.preventDefault();
+    this.setState({ isModalChoose: true });
   }
 
 	/** CLICK ADD */
@@ -474,7 +485,7 @@ export default class ChapterPreview extends Component {
       } else {
         return (
           <Card style={{ marginTop: "10px" }}>
-            <Card.Body>Memuat halaman...</Card.Body>
+            <Card.Body>Belum ada chapter</Card.Body>
           </Card>
         );
       }
@@ -527,7 +538,8 @@ export default class ChapterPreview extends Component {
                         Edit Kursus
                       </Link>
                       <Link
-                        onClick={this.handleModalAdd}
+                        // onClick={this.handleModalAdd}
+                        onClick={this.handleModalChoose}
                         className="btn btn-ideku buttonku buat-chapter"
                       >
                         <i className="fa fa-plus"></i>
@@ -839,6 +851,43 @@ export default class ChapterPreview extends Component {
                       >
                         Mengerti
                       </button>
+                    </Modal.Body>
+                  </Modal>
+
+                  <Modal
+                    show={this.state.isModalChoose}
+                    onHide={this.closeNotifikasiChoose}
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Pilih Jenis Pembelajaran
+                      </Modal.Title>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        onClick={this.handleModalAdd}
+                        className="btn mr-3 btn-ideku f-w-bold"
+                      >
+                        Media
+                      </button>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        className="btn mr-3 btn-ideku f-w-bold"
+                      >
+                        Forum
+                      </button>
+
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        className="btn btn-ideku f-w-bold"
+                      >
+                        Group Meeting
+                      </button>
+
                     </Modal.Body>
                   </Modal>
                 </div>
