@@ -42,6 +42,10 @@ export default class LiveClassAdmin extends Component {
     optionsModerator: [],
     valueModerator: [],
 
+    //single select folder
+    optionsFolder: [],
+    valueFolder: [],
+
     //multi select peserta
     optionsPeserta: [],
     valuePeserta: [],
@@ -80,7 +84,7 @@ export default class LiveClassAdmin extends Component {
   }
 
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], startDate: new Date(), endDate: new Date() });
   }
 
   closeNotifikasi = e => {
@@ -129,6 +133,16 @@ export default class LiveClassAdmin extends Component {
             console.log(error);
           });
         }
+        if (this.state.optionsFolder.length==0){
+          API.get(`${API_SERVER}v1/folder/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}/0`).then(response => {
+            response.data.result.map(item => {
+              this.state.optionsFolder.push({value: item.id, label: item.name});
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+        }
       }
     })
   }
@@ -144,6 +158,7 @@ export default class LiveClassAdmin extends Component {
       let form = {
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
+        folder_id: this.state.valueFolder,
         is_private: isPrivate,
         is_scheduled: isScheduled,
         schedule_start: startDateJkt,
@@ -170,6 +185,7 @@ export default class LiveClassAdmin extends Component {
       let form = {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
+        folder_id: this.state.valueFolder,
         speaker: this.state.speaker,
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
@@ -244,6 +260,7 @@ export default class LiveClassAdmin extends Component {
     const isscheduled = e.target.getAttribute('data-isscheduled');
     const schedule_start = new Date(e.target.getAttribute('data-start'));
     const schedule_end = new Date(e.target.getAttribute('data-end'));
+    const valueFolder = [Number(e.target.getAttribute('data-folder'))];
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -251,6 +268,7 @@ export default class LiveClassAdmin extends Component {
       speaker: speaker,
       roomName: roomName,
       valueModerator: valueModerator,
+      valueFolder: valueFolder,
       private: isprivate == 1 ? true : false,
       valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
@@ -332,6 +350,7 @@ export default class LiveClassAdmin extends Component {
                     data-isscheduled={item.is_scheduled} 
                     data-start={item.schedule_start} 
                     data-end={item.schedule_end} 
+                    data-folder={item.folder_id} 
                     onClick={this.onClickEdit}>
                       <i className='fa fa-edit'></i> UBAH
                   </Link>
@@ -553,6 +572,26 @@ export default class LiveClassAdmin extends Component {
                           />
                           <Form.Text className="text-muted">
                             Judul tidak boleh menggunakan karakter spesial
+                          </Form.Text>
+                        </Form.Group>
+
+                        
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Folder Project
+                          </Form.Label>
+                          <MultiSelect
+                            id="folder"
+                            options={this.state.optionsFolder}
+                            value={this.state.valueFolder}
+                            onChange={valueFolder => this.setState({ valueFolder })}
+                            mode="single"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih Folder Project"
+                          />
+                          <Form.Text className="text-muted">
+                            Seluruh MOM akan dikumpulkan dalam 1 folder project pada menu Files.
                           </Form.Text>
                         </Form.Group>
 

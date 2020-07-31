@@ -27,6 +27,7 @@ class Sidebar extends Component {
     let menuClients = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
       { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
+      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
       { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
       { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
       { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
@@ -39,6 +40,7 @@ class Sidebar extends Component {
     let menuAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
       { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
+      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
       { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
       { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
       { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
@@ -54,7 +56,7 @@ class Sidebar extends Component {
     let menuSuperAdmins = [
       { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
       { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-      { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Files', link: '/files' },
+      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
       { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
       { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
       { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },

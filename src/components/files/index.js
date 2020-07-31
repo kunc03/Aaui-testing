@@ -1,18 +1,29 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
-import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
+import API, {USER_ME, USER, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Files extends Component {
   state = {
       modalNewFolder : false,
       modalUpload : false,
+      folder: [],
       attachmentId: [],
-      folderName : ''
+      mom: [],
+      folderName : '',
+      alert: '',
+      company: '',
+      selectFolder: false,
+      folderId: 0,
+      prevFolderId: 0,
+      uploading: false,
+      files: [],
+      navigation: ['Home'],
   };
 
   componentDidMount() {
+    this.fetchData();
   }
 
 onChangeInput = e => {
@@ -26,7 +37,99 @@ onChangeInput = e => {
         this.setState({ [name]: value });
     }
 }
+
+fetchData(){
+  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+    if (res.status === 200) {
+      this.setState({company: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id})
+      this.fetchFolder(0);
+    }
+  })
+}
+fetchMOM(folder){
+  API.get(`${API_SERVER}v1/files-mom/${folder}`).then(res => {
+    if(res.status === 200) {
+      this.setState({
+        mom : res.data.result
+      })
+    }
+  })
+}
+fetchFolder(mother){
+  API.get(`${API_SERVER}v1/folder/${this.state.company}/${mother}`).then(res => {
+    if (res.status === 200) {
+      this.setState({folder: res.data.result})
+    }
+  })
+  API.get(`${API_SERVER}v1/folder/back/${this.state.company}/${mother}`).then(res => {
+    if (res.status === 200) {
+      this.setState({prevFolderId: res.data.result})
+    }
+  })
+}
+fetchFile(folder){
+  API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
+    if (res.status === 200) {
+      this.setState({files: res.data.result})
+    }
+  })
+}
+
+selectFolder(id, name) {
+  this.setState({selectFolder: true, folderId: id})
+  this.fetchFolder(id)
+  this.fetchFile(id)
+  this.fetchMOM(id)
+  if (name == null){
+    this.state.navigation.pop()
+  }
+  else{
+    this.state.navigation.push(name)
+  }
+}
+
+saveFolder = e => {
+  e.preventDefault();
+  const formData = {
+    name: this.state.folderName,
+    company: this.state.company,
+    mother: this.state.folderId
+  };
+
+  API.post(`${API_SERVER}v1/folder`, formData).then(res => {
+    if(res.status === 200) {
+      if(res.data.error) {
+        this.setState({alert: res.data.result});
+      } else {
+        this.setState({modalNewFolder:false, alert: ''})
+        this.fetchFolder(this.state.folderId);
+      }
+    }
+  })
+}
+
+uploadFile = e => {
+  e.preventDefault();
+  this.setState({uploading: true})
+  for (let i=0; i<=this.state.attachmentId.length-1; i++){
+    let form = new FormData();
+    form.append('folder', this.state.folderId);
+    form.append('file', this.state.attachmentId[i]);
+    API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          this.setState({alert: res.data.result, uploading: false, attachmentId: []});
+        } else {
+          this.setState({modalUpload:false, alert: '', uploading: false, attachmentId: []})
+          this.fetchFolder(this.state.folderId);
+          this.fetchFile(this.state.folderId)
+        }
+      }
+    })
+  }
+}
   render() {
+    let levelUser = Storage.get('user').data.level;
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -37,6 +140,8 @@ onChangeInput = e => {
                   <div className="row">
                     <div className="col-xl-12">
                         <div className="row">
+                          {
+                            levelUser == 'admin' || levelUser == 'superadmin' &&
                             <Button
                                 onClick={e=>this.setState({modalNewFolder:true})}
                                 className="btn-block btn-primary"
@@ -44,42 +149,81 @@ onChangeInput = e => {
                             >
                                 <i className="fa fa-plus"></i> &nbsp; Tambah Folder Project
                             </Button>
-                            <Button
-                                onClick={e=>this.setState({modalUpload:true})}
-                                className="btn-block btn-primary"
-                                style={{width:150, margin:5}}
-                            >
-                                <i className="fa fa-upload"></i> &nbsp; Upload File
-                            </Button>
+                          }
+                            {
+                              this.state.folderId !== 0 &&
+                              <Button
+                                  onClick={e=>this.setState({modalUpload:true})}
+                                  className="btn-block btn-primary"
+                                  style={{width:150, margin:5}}
+                              >
+                                  <i className="fa fa-upload"></i> &nbsp; Upload File
+                              </Button>
+                            }
                         </div>
+                      <div className="row" style={{background:'#FFF', borderRadius:4, padding:'10px 20px', marginBottom:10, marginTop:10}}>
+                           {
+                              this.state.navigation.map(item =>
+                                item + ' > '
+                             )
+                           }
+                      </div>
                       <div className="row" style={{background:'#FFF', borderRadius:4, padding:20}}>
-                            <div className="folder" onDoubleClick={e=>alert('mantap back')}>
-                                <img
-                                src='assets/images/component/folder-back.png'
-                                className="folder-icon"
-                                />
-                                <div className="filename">
-                                    Kembali
-                                </div>
-                            </div>
-                            <div className="folder" onDoubleClick={e=>alert('mantap folder')}>
+                            {
+                              this.state.folderId !== 0 &&
+                              <div className="folder" onDoubleClick={this.selectFolder.bind(this,this.state.prevFolderId, null)}>
+                                  <img
+                                  src='assets/images/component/folder-back.png'
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                      Kembali
+                                  </div>
+                              </div>
+                            }
+                            {this.state.folder.map(item =>
+                            <div className="folder" onDoubleClick={this.selectFolder.bind(this, item.id, item.name)}>
                                 <img
                                 src='assets/images/component/folder.png'
                                 className="folder-icon"
                                 />
                                 <div className="filename">
-                                    Project ASD
+                                    {item.name}
                                 </div>
                             </div>
-                            <div className="folder" onDoubleClick={e=>alert('mantap file')}>
-                                <img
-                                src='assets/images/component/file.png'
-                                className="folder-icon"
-                                />
-                                <div className="filename">
-                                    Server Evaluation.pdf
-                                </div>
-                            </div>
+                            )}
+                            {
+                              this.state.files.map(item =>
+                              this.state.selectFolder &&
+                              <div className="folder" onDoubleClick={e=>window.open(item.location, 'Downloading files')}>
+                                  <img
+                                  src={
+                                    item.type == 'png' || item.type == 'pdf' || item.type == 'dox' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg'
+                                    ? `assets/images/component/${item.type}.png`
+                                    : 'assets/images/component/file.png'
+                                  }
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                    {item.name}
+                                  </div>
+                              </div>
+                              )
+                            }
+                            {
+                              this.state.mom.map(item =>
+                              this.state.selectFolder &&
+                              <div className="folder" onDoubleClick={e=>window.open(`${APPS_SERVER}mom/?id=${item.id}`, 'Downloading files')}>
+                                  <img
+                                  src='assets/images/component/file.png'
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                    MOM-{item.title}
+                                  </div>
+                              </div>
+                              )
+                            }
                       </div>
                     </div>
                   </div>
@@ -113,15 +257,16 @@ onChangeInput = e => {
                                 required
                                 />
                             </div>
+                            <div style={{color:'#F00'}}>{this.state.alert}</div>
                         </Col>
                     </Row>
-                      <Link onClick={e=>this.setState({modalNewFolder:false})} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                      <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
                         <i className="fa fa-save"></i>Simpan
                       </Link>
                       <button
                         type="button"
                         className="btn btn-block f-w-bold"
-                        onClick={e=> this.setState({modalNewFolder:false})}
+                        onClick={e=> this.setState({modalNewFolder:false, alert: ''})}
                       >
                         Batal
                       </button>
@@ -145,7 +290,7 @@ onChangeInput = e => {
                           <div className="form-group">
                             <label>Lampiran</label>
                             <input
-                              accept="application/pdf"
+                              accept="all"
                               name="attachmentId"
                               onChange={this.onChangeInput}
                               type="file"
@@ -159,10 +304,11 @@ onChangeInput = e => {
                               {/* dan ukuran file tidak melebihi 20MB. */}
                             </Form.Text>
                           </div>
+                          <div style={{color:'#F00'}}>{this.state.alert}</div>
                         </Col>
                     </Row>
-                      <Link onClick={e=>this.setState({modalUpload:false})} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
-                        <i className="fa fa-save"></i>Simpan
+                      <Link disabled={this.state.uploading} onClick={this.uploadFile.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-upload"></i>{this.state.uploading ? 'Uploading...' : 'Upload'}
                       </Link>
                       <button
                         type="button"
