@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Card, Badge, Accordion } from "react-bootstrap";
+import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl, Badge, Accordion } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
@@ -11,6 +11,19 @@ import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
 import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
+
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
+
+import Moment from 'moment-timezone';
+
+import ToggleSwitch from "react-switch";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
 
 export default class ChapterPreview extends Component {
 
@@ -36,6 +49,23 @@ export default class ChapterPreview extends Component {
     isModalChoose: false,
 		isModalAdd: false,
     isModalHapus: false,
+
+    isModalForum: false,
+    imgFile: "",
+    imgPreview: "",
+    titleForum: "",
+    bodyForum: "",
+    tagsForum: [],
+
+    isModalMeeting: false,
+    coverMeeting: "",
+    imgPreviewMeeting: "",
+    roomName: "",
+    optionsModerator: [],
+    valueModerator: [],
+    scheduled: false,
+    startDate: new Date(),
+    endDate: new Date(),
     
     isNotifikasi: false,
     isiNotifikasi: '',
@@ -56,6 +86,10 @@ export default class ChapterPreview extends Component {
 				content: 'Tahap terakhir adalah membuat ujian akhir dari kursus ini.',
 			},
 		]
+  }
+
+  toggleSwitchScheduled(checked) {
+    this.setState({ scheduled:!this.state.scheduled });
   }
 
   closeNotifikasiChoose = e => {
@@ -98,23 +132,58 @@ export default class ChapterPreview extends Component {
     this.setState({ isModalChoose: true });
   }
 
+  /** CLICK FORUM */
+  handleModalForum = e => {
+    e.preventDefault();
+    this.setState({ isModalForum: true, isModalChoose: false });
+  }
+
+  /** CLICK MEETING */
+  handleModalMeeting = e => {
+    e.preventDefault();
+    this.setState({ isModalMeeting: true, isModalChoose: false });
+  }
+
 	/** CLICK ADD */
 	handleModalAdd = e => {
 		e.preventDefault();
-		this.setState({ isModalAdd: true });
+		this.setState({ isModalAdd: true, isModalChoose: false });
 	}
 
 	handleModalClose = e => {
 		this.setState({ 
-			isModalAdd: false, 
-			chapterId: '',
+      isModalAdd: false, 
+      isModalForum: false, 
+      isModalMeeting: false, 
+			isModalChoose: true,
+			
+      chapterId: '',
 			chapterNumber: '',
 			chapterTitle: '',
 			chapterBody: '',
 			chapterVideo: '',
-			attachmentId: []
+			attachmentId: [],
+
+      imgFile: "",
+      imgPreview: "",
+      titleForum: "",
+      bodyForum: "",
+      tagsForum: [],
+
+      coverMeeting: "",
+      imgPreviewMeeting: "",
+      roomName: "",
+      optionsModerator: [],
+      valueModerator: [],
+      scheduled: false,
+      startDate: new Date(),
+      endDate: new Date(),
     });
 	}
+
+  handleChangeTagsForum(grade) {
+    this.setState({tagsForum: grade});
+  }
 
 	onSubmitChapter = e => {
     e.preventDefault();
@@ -398,6 +467,7 @@ export default class ChapterPreview extends Component {
 
 			return null
 		}
+
 		let refactoryChapters = [...chapters];
     for (let i = 0; i < quiz.length; i++) {
       for (let j = 0; j < chapters.length; j++) {
@@ -515,11 +585,12 @@ export default class ChapterPreview extends Component {
 		const dateFormat = new Date(course.created_at);
 
 		return (
-	<LoadingOverlay
+	   <LoadingOverlay
 			active={this.state.isLoading}
 			spinner
 			text='Uploading...'
 			>
+
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -644,6 +715,10 @@ export default class ChapterPreview extends Component {
                     </div>
                   </div>
 
+                  {
+                    // Modal For Notifikasi
+                    // Notifikasi hapus chapter
+                  }
                   <Modal
                     show={this.state.isModalHapus}
                     onHide={this.handleModalHapus}
@@ -675,6 +750,123 @@ export default class ChapterPreview extends Component {
                     </Modal.Body>
                   </Modal>
 
+                  {
+                    // Modal For Forum
+                    // Create Media Forum
+                  }
+                  <Modal
+                    show={this.state.isModalForum}
+                    onHide={this.handleModalClose}
+                    dialogClassName="modal-lg"
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Forum
+                      </Modal.Title>
+
+                      <Form>
+                        <Form.Group controlId="formJudul">
+                          <img
+                            alt="media"
+                            src={
+                              this.state.imgFile === ""
+                                ? "/assets/images/component/placeholder-image.png"
+                                : this.state.imgPreview
+                            }
+                            className="img-fluid"
+                            style={{ width: "200px", height: "160px" }}
+                          />
+
+                          <Form.Label className="f-w-bold ml-4">
+                            <h4 className="btn-default">Masukkan Gambar</h4>
+                            <input
+                              accept="image/*"
+                              className="btn-default"
+                              name="avatar"
+                              type="file"
+                              onChange={this.handleChange}
+                              required
+                            />
+                            <Form.Text className="text-muted">
+                              Ukuran gambar 200x200 piksel.
+                            </Form.Text>
+                          </Form.Label>
+                        </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Judul Forum
+                          </Form.Label>
+                          <FormControl
+                            type="text"
+                            placeholder="Judul Forum"
+                            value={this.state.titleForum}
+                            onChange={e =>
+                              this.setState({ titleForum: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Buat judul yang menarik.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formIsi">
+                          <Form.Label className="f-w-bold">
+                            Isi Forum
+                          </Form.Label>
+
+                          <FormControl
+                            as="textarea"
+                            rows="5"
+                            placeholder="Isi Forum"
+                            value={this.state.bodyForum}
+                            onChange={e =>
+                              this.setState({ bodyForum: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Jelaskan isi dari forum, peraturan, atau yang lain.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formTag">
+                          <Form.Label className="f-w-bold">
+                            Tag Forum
+                          </Form.Label>
+                          <TagsInput
+                            value={this.state.tagsForum}
+                            onChange={this.handleChangeTagsForum.bind(this)}
+                            addOnPaste={true}
+                            inputProps={{placeholder:'Tag Forum'}}
+                          />
+                          <Form.Text className="text-muted">
+                            Jika lebih dari 1 hubungkan dengan koma (,)
+                          </Form.Text>
+                        </Form.Group>
+
+                        <div style={{ marginTop: "20px" }}>
+                          <button
+                            type="button"
+                            className="btn btn-primary f-w-bold"
+                          >
+                            Simpan
+                          </button>
+                          <button
+                            type="button"
+                            className="btn ml-3 f-w-bold"
+                            onClick={this.handleModalClose}
+                          >
+                            Tutup
+                          </button>
+                        </div>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
+
+                  {
+                    // Modal For Media
+                    // Create Media Chapter
+                  }
                   <Modal
                     show={this.state.isModalAdd}
                     onHide={this.handleModalClose}
@@ -815,22 +1007,27 @@ export default class ChapterPreview extends Component {
                           <button
                             style={{ marginTop: "50px" }}
                             type="submit"
-                            className="btn btn-block btn-ideku f-w-bold"
+                            className="btn btn-primary f-w-bold"
                           >
                             Simpan
                           </button>
+                          <button
+                            style={{ marginTop: "50px" }}
+                            type="button"
+                            className="btn f-w-bold ml-3"
+                            onClick={this.handleModalClose}
+                          >
+                            Tutup
+                          </button>
                         </form>
                       </div>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleModalClose}
-                      >
-                        Tidak
-                      </button>
                     </Modal.Body>
                   </Modal>
 
+                  {
+                    // Modal For Notifikasi
+                    // Any Message
+                  }
                   <Modal
                     show={this.state.isNotifikasi}
                     onHide={this.closeNotifikasi}
@@ -854,6 +1051,146 @@ export default class ChapterPreview extends Component {
                     </Modal.Body>
                   </Modal>
 
+                  {
+                    // Modal For Meeting
+                    // Create Media Meeting
+                  }
+                  <Modal
+                    show={this.state.isModalMeeting}
+                    onHide={this.handleModalClose}
+                  >
+                    <Modal.Body>
+                      <Modal.Title className="text-c-purple3 f-w-bold">
+                        Group Meeting
+                      </Modal.Title>
+                      <Form>
+                        <Form.Group controlId="formJudul">
+                          <img
+                            alt="media"
+                            src={
+                              this.state.coverMeeting == null || this.state.coverMeeting == ''
+                                ? "/assets/images/component/placeholder-image.png"
+                                :
+                                this.state.imgPreviewMeeting
+                            }
+                            className="img-fluid"
+                            style={{ width: "200px", height: "160px" }}
+                          />
+
+                          <Form.Label className="f-w-bold ml-4">
+                            <h4 className="btn-default">Masukkan Gambar</h4>
+                            <input
+                              accept="image/*"
+                              className="btn-default"
+                              name="cover"
+                              type="file"
+                              onChange={this.handleChange}
+                            />
+                            <Form.Text className="text-muted">
+                              Ukuran gambar 200x200 piksel.
+                            </Form.Text>
+                          </Form.Label>
+                        </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Judul Meeting
+                          </Form.Label>
+                          <FormControl
+                            type="text"
+                            placeholder="Judul"
+                            value={this.state.roomName}
+                            onChange={e =>
+                              this.setState({ roomName: e.target.value })
+                            }
+                          />
+                          <Form.Text className="text-muted">
+                            Judul tidak boleh menggunakan karakter spesial
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Moderator
+                          </Form.Label>
+                          <MultiSelect
+                            id="moderator"
+                            options={this.state.optionsModerator}
+                            value={this.state.valueModerator}
+                            onChange={valueModerator => this.setState({ valueModerator })}
+                            mode="single"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih Moderator"
+                          />
+                          <Form.Text className="text-muted">
+                            Pengisi kelas, moderator, atau speaker.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Scheduled Meeting
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                           <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
+                          </div>
+                          <Form.Text className="text-muted">
+                            {
+                              this.state.scheduled ? 'Meeting terjadwal.'
+                              :
+                              'Meeting tidak terjadwal. Selalu dapat diakses.'
+                            }
+                          </Form.Text>
+                        </Form.Group>
+                        {
+                          this.state.scheduled &&
+                          <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Waktu
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleChangeDateFrom}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          &nbsp;&mdash;&nbsp;
+                          <DatePicker
+                            selected={this.state.endDate}
+                            onChange={this.handleChangeDateEnd}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          </div>
+                          <Form.Text className="text-muted">
+                            Pilih waktu meeting akan berlangsung.
+                          </Form.Text>
+                        </Form.Group>
+                        }
+
+                        <div style={{ marginTop: "20px" }}>
+                          <button type="button" className="btn btn-primary f-w-bold mr-3">
+                            Simpan
+                          </button>
+                          &nbsp;
+                          <button
+                            type="button"
+                            className="btn f-w-bold"
+                            onClick={this.handleModalClose}
+                          >
+                            Tutup
+                          </button>
+                        </div>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
+
+                  {
+                    // Modal For Choose 
+                    // Media Pembelajaran
+                  }
                   <Modal
                     show={this.state.isModalChoose}
                     onHide={this.closeNotifikasiChoose}
@@ -875,6 +1212,7 @@ export default class ChapterPreview extends Component {
                       <button
                         style={{ marginTop: "30px" }}
                         type="button"
+                        onClick={this.handleModalForum}
                         className="btn mr-3 btn-ideku f-w-bold"
                       >
                         Forum
@@ -883,11 +1221,11 @@ export default class ChapterPreview extends Component {
                       <button
                         style={{ marginTop: "30px" }}
                         type="button"
+                        onClick={this.handleModalMeeting}
                         className="btn btn-ideku f-w-bold"
                       >
                         Group Meeting
                       </button>
-
                     </Modal.Body>
                   </Modal>
                 </div>
