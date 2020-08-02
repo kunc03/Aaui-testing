@@ -332,6 +332,8 @@ export default class LiveClassAdmin extends Component {
     const schedule_start = new Date(e.target.getAttribute('data-start'));
     const schedule_end = new Date(e.target.getAttribute('data-end'));
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
+    const schedule_start_jkt = new Date(schedule_start.toISOString().slice(0, 16).replace('T', ' '));
+    const schedule_end_jkt = new Date(schedule_end.toISOString().slice(0, 16).replace('T', ' '));
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -343,8 +345,8 @@ export default class LiveClassAdmin extends Component {
       private: isprivate == 1 ? true : false,
       valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
-      startDate: schedule_start,
-      endDate: schedule_end
+      startDate: schedule_start_jkt,
+      endDate: schedule_end_jkt
     })
   }
 
@@ -364,6 +366,8 @@ export default class LiveClassAdmin extends Component {
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;
     let { classRooms, classRoomsActive, isLive } = this.state;
+    let infoDateStart = new Date(this.state.infoClass.schedule_start);
+    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
 
     let { filterMeeting } = this.state;
     if(filterMeeting != ""){
@@ -859,10 +863,10 @@ export default class LiveClassAdmin extends Component {
                                     this.state.infoClass.is_scheduled ?
                                     <div className="col-sm-6">
                                       <h3 className="f-14">
-                                        Mulai : {Moment.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD MMMM YY HH:mm")}
+                                        Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
                                       </h3>
                                       <h3 className="f-14">
-                                        Selesai : {Moment.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD MMMM YY HH:mm")}
+                                        Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
                                       </h3>
                                     </div>
                                     : null
