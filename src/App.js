@@ -310,6 +310,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
         <Route path="/liveclass" exact component={LiveClassAdmin} />
+        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         {/* <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} /> */}
         <Route path="/liveclass-room/:roomid" exact component={LiveStream} />
 
@@ -353,8 +354,10 @@ export class ClientSwitch extends React.Component {
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
-        <Route path="/meeting" exact component={LiveClassAdmin} />
+        {/* <Route path="/meeting" exact component={LiveClassAdmin} /> */}
         <Route path="/liveclass" component={LiveClass} />
+        <Route path="/meeting" component={LiveClass} />
+        <Route path="/meeting/information/:roomid" exact component={LiveClass} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
