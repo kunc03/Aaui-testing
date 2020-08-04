@@ -84,7 +84,7 @@ class Sidebar extends Component {
     return (
       
         <nav className="pcoded-navbar navbar-collapsed" >
-          <div className="navbar-wrapper">
+          <div className="navbar-wrapper" style={{borderTopRightRadius: '60px'}}>
             <div className="navbar-brand header-logo">
               <Link to="/" className="b-brand" style={{width:'100%'}}>
                     <img
@@ -137,7 +137,7 @@ class Sidebar extends Component {
                   })
                 }
                 <li data-username="Sample Page"
-                  className={`nav-item mt-4  bg-c-purple-dark`}
+                  className={`nav-item mt-4 `}
                   style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
                 >
                   <Link to="/logout" className="nav-link"
