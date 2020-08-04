@@ -303,6 +303,10 @@ export default class LiveClassAdmin extends Component {
               }
             })
           }
+          else{
+            this.fetchData();
+            this.closeClassModal();
+          }
         }
       })
     }
