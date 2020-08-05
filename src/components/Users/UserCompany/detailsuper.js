@@ -127,7 +127,6 @@ export default class CompanyDetail extends Component {
   	API.put(linkURL, formData).then(res => {
   		if(res.status === 200) {
         this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
-        console.log('ALVIN',res.data.result)
   		}
   	});
 
@@ -399,24 +398,24 @@ export default class CompanyDetail extends Component {
 	}
 
 	fetchData() {
-		let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
+    let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
+    
 		API.get(linkURL).then(res => {
 			if(res.status === 200) {
         let unlimited = res.data.result.unlimited == 0 ? true : false;
 				this.setState({ 
           nama: res.data.result.company_name, 
 					tipe: res.data.result.company_type, 
-					grade: res.data.result.company_grade.split(','), 
+					grade: res.data.result.company_grade == null ? [] : res.data.result.company_grade.split(','), 
 					status: res.data.result.status, 
 					validity: res.data.result.validity,
           logo: res.data.result.logo,
           unlimited: unlimited
         });
 
-				let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
+        let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 				API.get(linkURLCabang).then(res => {
 					if(res.status === 200) {
-            console.log('ALVIN CABANG RES', res)
 						this.setState({ cabang: res.data.result[0] })
 					}
 				}).catch(err => {
@@ -485,9 +484,6 @@ export default class CompanyDetail extends Component {
   }
 
 	render() {
-    console.log('companyID: ', localStorage.getItem('companyID'));
-    console.log('companyID: ', this.state.companyId);
-    console.log('ALVIN: ', this.state);
 
 		const { cabang, grup, user, access } = this.state;
 		const statusCompany = ['active', 'nonactive'];
