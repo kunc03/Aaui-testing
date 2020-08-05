@@ -372,7 +372,7 @@ export default class DetailKursus extends Component {
       } else {
         return (
           <Card style={{marginTop: '10px'}}>
-            <Card.Body>Memuat halaman...</Card.Body>
+            <Card.Body>Tidak ada chapter</Card.Body>
           </Card>
         )
       }
@@ -552,7 +552,7 @@ export default class DetailKursus extends Component {
                                     <h5 className="chat-header f-w-800 f-24">
                                       Yuk, kuasai kursus ini dengan mengikuti materi lengkapnya{" "}
                                     </h5>
-                                    <div style={{ width: "50%" }}>
+                                    <div style={{ width: "90%" }}>
                                       <small className="d-block text-c-grey f-w-600 f-16">
                                         Klik tombol "Ikuti Kursus" untuk melihat materi lengkap.
                                       </small>
