@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
+import Tooltip from '@material-ui/core/Tooltip';
 
 class Sidebar extends Component {
   constructor(props) {
@@ -26,14 +27,13 @@ class Sidebar extends Component {
     let levelUser = Storage.get('user').data.level;
     let menuClients = {
       submenu : [
-        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
-        { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
-        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
@@ -41,22 +41,22 @@ class Sidebar extends Component {
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
-        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
 
     let menuAdmins = {
       submenu : [
-        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-        { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-        { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Kelola Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Company', link: '/company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user' },
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
@@ -64,22 +64,22 @@ class Sidebar extends Component {
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
-        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
 
     let menuSuperAdmins = {
       submenu : [
-        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
-        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-        { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-        { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
-        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
-        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Kelola Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Company', link: '/company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user' },
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
@@ -87,7 +87,7 @@ class Sidebar extends Component {
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
-        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
 
@@ -137,6 +137,7 @@ class Sidebar extends Component {
                 <li id="mobile-collapse" data-username="Sample Page"
                     className={`nav-item`}
                     style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                      <Tooltip title="Menu" arrow placement="right">
                       <div className="nav-link"
                         style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
                       >
@@ -148,6 +149,7 @@ class Sidebar extends Component {
                           ></img>
                         </span>
                       </div>
+                      </Tooltip>
                 </li>
                 
                 {
@@ -157,6 +159,7 @@ class Sidebar extends Component {
                 <li data-username="Sample Page"
                     className={`nav-item`}
                     style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                      <Tooltip title={item.label} arrow placement="right">
                       <Link className="nav-link" to={item.link}
                         style={this.state.sideMenu ? {marginTop:35, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
                       >
@@ -168,6 +171,7 @@ class Sidebar extends Component {
                           ></img>
                         </span>
                       </Link>
+                      </Tooltip>
                 </li>
                       )
                     }
@@ -185,6 +189,7 @@ class Sidebar extends Component {
                             className={`nav-item mt-4 `}
                             style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
                           >
+                            <Tooltip title={item.label} arrow placement="right">
                             <Link to={item.link} className="nav-link"
                               style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
                             >
@@ -196,6 +201,7 @@ class Sidebar extends Component {
                                 ></img>
                               </span>
                             </Link>
+                            </Tooltip>
                           </li>
                       )
                     }
@@ -231,12 +237,12 @@ class Sidebar extends Component {
                       return (
                         <Link to={item.link} style={{color: '#797979'}}>
                           <div className="p-10" style={{borderBottom: '1px solid #E6E6E6', paddingLeft:28}}>
-                            {/* <img
-                              src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                            <img
+                              src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                              style={{marginRight:15}}
                               alt=""
-                              width={20}
-                              height={20}
-                            ></img>  */}
+                              height={15}
+                            ></img> 
                               {item.label} 
                           </div>
                         </Link>

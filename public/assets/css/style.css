@@ -2583,7 +2583,7 @@ hr {
   width: 59px;
   height: 100vh;
   top: 0;
-  background: transparent;
+  background: #FFF;
   color: #a9b7d0;
 }
 .pcoded-navbar ul {
