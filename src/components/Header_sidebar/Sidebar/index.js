@@ -24,64 +24,90 @@ class Sidebar extends Component {
   render() {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
-    let menuClients = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      // { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas', access: 'activity' },
-      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
-      { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
-      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
-      { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-      // { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      // { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
-    ];
+    let menuClients = {
+      submenu : [
+        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+        { iconOn: 'diskusion.png', iconOff: 'diskusioff.png', label: 'Forum', link: '/forum', access: 'forum' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
+        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+      ],
+      menuAtas : [
+        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
+      ],
+      menuBawah : [
+        { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
+        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+      ]
+    };
 
-    let menuAdmins = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      // { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-      { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-      { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-      { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
-      // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-      // { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      // { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
-    ];
+    let menuAdmins = {
+      submenu : [
+        { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
+        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
+        { iconOn: 'mycompanyon.png', iconOff: 'mycompanyoff.png', label: 'My Company', link: '/my-company' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user-company' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+      ],
+      menuAtas : [
+        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
+      ],
+      menuBawah : [
+        { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
+        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+      ]
+    };
 
-    let menuSuperAdmins = [
-      { iconOn: 'dashboardon.png', iconOff: 'dashboardoff.png', label: 'Dashboard', link: '/' },
-      // { iconOn: 'aktivitason.png', iconOff: 'aktivitasoff.png', label: 'Aktivitas', link: '/aktivitas' },
-      { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
-      { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
-      { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
-      { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
-      { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
-      { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
-      { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-      { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
-      { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
-      // { iconOn: 'accesson.png', iconOff: 'accessoff.png', label: 'Access', link: '/user-access' },
-      // { iconOn: 'profileon.png', iconOff: 'profileoff.png', label: 'Profile', link: '/profile' },
-      // { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Pengaturan', link: '/pengaturan' },
-      { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
-    ];
+    let menuSuperAdmins = {
+      submenu : [
+        { iconOn: 'files-on.png', iconOff: 'files-off.png', label: 'Files', link: '/files' },
+        { iconOn: 'materion.png', iconOff: 'materioff.png', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'foron.png', iconOff: 'foroff.png', label: 'Forum', link: '/forum' },
+        { iconOn: 'kelason.png', iconOff: 'kelasoff.png', label: 'Group Meeting', link: '/liveclass' },
+        { iconOn: 'kelola-kursus-on.png', iconOff: 'kelola-kursus-off.png', label: 'Kelola Kursus', link: '/kursus-materi' },
+        { iconOn: 'certificateon.png', iconOff: 'certificate.png', label: 'Sertifikat', link: '/certificate' },
+        { iconOn: 'kelolacertificateon.png', iconOff: 'kelolacertificate.png', label: 'Kelola Sertifikat', link: '/certificate-admin' },
+        { iconOn: 'companyon.png', iconOff: 'companyoff.png', label: 'Company', link: '/company' },
+        { iconOn: 'userson.png', iconOff: 'usersoff.png', label: 'Users', link: '/user' },
+        { iconOn: 'pengaturanon.png', iconOff: 'pengaturanoff.png', label: 'Logout', link: '/logout' },
+      ],
+      menuAtas : [
+        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
+      ],
+      menuBawah : [
+        { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
+        { iconOn: 'user.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+      ]
+    };
 
     const { menuAktif } = this.state;
   
     let menuContent = [];
+    let menuAtas = [];
+    let menuBawah = [];
     if(levelUser === 'superadmin') {
-      menuContent = menuSuperAdmins;
+      menuContent = menuSuperAdmins.submenu;
+      menuAtas = menuSuperAdmins.menuAtas;
+      menuBawah = menuSuperAdmins.menuBawah;
     } else if(levelUser === 'admin') {
-      menuContent = menuAdmins;
+      menuContent = menuAdmins.submenu;
+      menuAtas = menuAdmins.menuAtas;
+      menuBawah = menuAdmins.menuBawah;
     } else {
-      menuContent = menuClients;
+      menuContent = menuClients.submenu;
+      menuAtas = menuClients.menuAtas;
+      menuBawah = menuClients.menuBawah;
     }
 
     return (
@@ -123,128 +149,58 @@ class Sidebar extends Component {
                         </span>
                       </div>
                 </li>
+                
+                {
+                  menuAtas.map((item, i) => {
+                    if(item.access == undefined || access[item.access]) {
+                      return (
                 <li data-username="Sample Page"
                     className={`nav-item`}
                     style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
-                      <Link className="nav-link" to="/aktivitas"
+                      <Link className="nav-link" to={item.link}
                         style={this.state.sideMenu ? {marginTop:35, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
                       >
                         <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
                           <img
-                            src={`newasset/calendar.svg`}
+                            src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
                             alt=""
                             width={25}
                           ></img>
                         </span>
                       </Link>
                 </li>
-
-                <div>
-                {/* {
-                  menuContent.map((item, i) => {
-                    if(item.access == undefined || access[item.access]) {
-                      return (
-                        <li data-username="Sample Page"
-                          className={`nav-item ${menuAktif === item.link ? 'active':''}`}
-                          style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
-                        >
-                          <Link to={item.link} className="nav-link"
-                            style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                          >
-                            <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                              <img
-                                src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
-                                alt=""
-                                width={20}
-                                height={20}
-                              ></img>
-                            </span>
-                            <span
-                              className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
-                              style={this.state.sideMenu ? {position: 'relative', textAlign:'center', padding:'0px 5px', top:0, color: `${menuAktif == item.link ? '#fff':'#945A86'}`} : {color: `${menuAktif == item.link ? '#fff':'#945A86'}`}}>
-                              {item.label}
-                            </span>
-                          </Link>
-                        </li>
                       )
                     }
                   })
-                } */}
-                {/* <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
-                >
-                  <Link to="/logout" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`assets/images/component/Icon Logout.png`}
-                        alt=""
-                        width={20}
-                        height={20}
-                      ></img>
-                    </span>
-                    <span
-                      className={ this.state.sideMenu ? "pcoded-mtext f-12" : "pcoded-mtext f-14 f-w-bold"}
-                      style={{position: 'relative', textAlign:'center', top:0, padding:'0px 5px', color: '#945A86'}}>
-                      Logout
-                    </span>
-                  </Link>
-                </li> */}
-                </div>
+                }
 
               </ul>
               <ul className="nav pcoded-inner-navbar" style={{position:'fixed', bottom:35}}>
 
-              <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
-                >
-                  <Link to="" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`newasset/dashboard.svg`}
-                        alt=""
-                        width={25}
-                      ></img>
-                    </span>
-                  </Link>
-                </li>
-              <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
-                >
-                  <Link to="/pengaturan" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`newasset/setting.svg`}
-                        alt=""
-                        width={25}
-                      ></img>
-                    </span>
-                  </Link>
-                </li>
-              <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
-                >
-                  <Link to="/profile" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`newasset/user.svg`}
-                        alt=""
-                        width={25}
-                      ></img>
-                    </span>
-                  </Link>
-                </li>
+              {
+                  menuBawah.map((item, i) => {
+                    if(item.access == undefined || access[item.access]) {
+                      return (
+                        <li data-username="Sample Page"
+                            className={`nav-item mt-4 `}
+                            style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
+                          >
+                            <Link to={item.link} className="nav-link"
+                              style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
+                            >
+                              <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
+                                <img
+                                  src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                                  alt=""
+                                  width={25}
+                                ></img>
+                              </span>
+                            </Link>
+                          </li>
+                      )
+                    }
+                  })
+                }
                 {/* <li data-username="Sample Page"
                   className={`nav-item mt-4 `}
                   style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
