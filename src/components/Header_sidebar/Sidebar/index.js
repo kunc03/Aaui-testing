@@ -54,8 +54,8 @@ class Sidebar extends Component {
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Kelola Sertifikat', link: '/certificate-admin' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Company', link: '/company' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
