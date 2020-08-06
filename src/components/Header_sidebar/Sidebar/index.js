@@ -102,7 +102,7 @@ class Sidebar extends Component {
             </div>
 
             {/* scroll-div */}
-            <div className="navbar-content ">
+            <div className="navbar-content" style={{background:'none'}}>
               <ul className="nav pcoded-inner-navbar">
                 {/* <li className="nav-item pcoded-menu-caption">
                   <label />
