@@ -585,13 +585,13 @@ export default class ChapterPreview extends Component {
 		const dateFormat = new Date(course.created_at);
 
 		return (
-	   <LoadingOverlay
-			active={this.state.isLoading}
-			spinner
-			text='Uploading...'
-			>
 
       <div className="pcoded-main-container">
+      <LoadingOverlay
+       active={this.state.isLoading}
+       spinner
+       text='Uploading...'
+       >
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -1233,8 +1233,8 @@ export default class ChapterPreview extends Component {
             </div>
           </div>
         </div>
-      </div>
     </LoadingOverlay>
+      </div>
     );
 	}
 
