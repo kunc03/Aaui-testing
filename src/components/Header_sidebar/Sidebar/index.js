@@ -82,9 +82,8 @@ class Sidebar extends Component {
     }
 
     return (
-      
-        <nav className="pcoded-navbar navbar-collapsed" >
-          <div className="navbar-wrapper">
+        <nav className="pcoded-navbar navbar-collapsed" style={{backgroundColor:'#fff'}}> {/** navbar-collapsed */}
+          <div className="navbar-wrapper" style={{borderTopRightRadius: '60px'}}>
             <div className="navbar-brand header-logo">
               <Link to="/" className="b-brand" style={{width:'100%'}}>
                     <img
@@ -99,14 +98,32 @@ class Sidebar extends Component {
               
             </div>
 
-            <div className="navbar-content scroll-div">
+            {/* scroll-div */}
+            <div className="navbar-content ">
               <ul className="nav pcoded-inner-navbar">
-                <li className="nav-item pcoded-menu-caption">
+                {/* <li className="nav-item pcoded-menu-caption">
                   <label />
+                </li> */}
+
+                <li id="mobile-collapse" data-username="Sample Page"
+                    className={`nav-item`}
+                    style={this.state.sideMenu ? {width:80, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                      <div className="nav-link"
+                        style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
+                      >
+                        <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
+                          <img
+                            src={`newasset/burger-menu.svg`}
+                            alt=""
+                            width={20}
+                            height={20}
+                          ></img>
+                        </span>
+                      </div>
                 </li>
 
                 <div>
-                {
+                {/* {
                   menuContent.map((item, i) => {
                     if(item.access == undefined || access[item.access]) {
                       return (
@@ -135,9 +152,9 @@ class Sidebar extends Component {
                       )
                     }
                   })
-                }
+                } */}
                 <li data-username="Sample Page"
-                  className={`nav-item mt-4  bg-c-purple-dark`}
+                  className={`nav-item mt-4 `}
                   style={this.state.sideMenu ? {width:80} : {marginTop:25}}  
                 >
                   <Link to="/logout" className="nav-link"
@@ -163,10 +180,35 @@ class Sidebar extends Component {
               </ul>
             </div>
           </div>
-        </nav>
 
-        
-       
+          <div className="custom-side-bar"> 
+            <h4 className="p-20 mt-5 mb-3"><strong> Side Menu </strong></h4>
+            <div>
+                {
+                  menuContent.map((item, i) => {
+                    if(item.access == undefined || access[item.access]) {
+                      return (
+                        <Link to={item.link} style={{color: '#797979'}}>
+                          <div className="p-20" style={{border: '1px solid #E6E6E6'}}>
+                            <img
+                              src={`assets/images/component/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                              alt=""
+                              width={20}
+                              height={20}
+                            ></img> 
+                              &nbsp;  {item.label} 
+                          </div>
+                        </Link>
+                      )
+                    }
+                  })
+                }
+              </div>
+
+
+            
+          </div>
+        </nav>
     );
   }
 }
