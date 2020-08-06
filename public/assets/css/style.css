@@ -2557,6 +2557,19 @@ hr {
   transition: all 0.3s ease-in-out;
 }
 
+/* CUSTOM */
+.custom-side-bar {
+  background: white;
+    position: fixed;
+    height: 100%;
+    z-index: 100;
+    top: 0px;
+    left: 80px;
+    width: 18%;
+    overflow-x: auto;
+}
+/*  */
+
 .pcoded-navbar {
   display: block;
   /* z-index: 1029; */
@@ -2565,7 +2578,8 @@ hr {
   transition: all 0.3s ease-in-out;
   /* -webkit-box-shadow: 1px 0 20px 0 #3f4d67;
           box-shadow: 1px 0 20px 0 #3f4d67; */
-  width: 264px;
+  /* width: 264px; */
+  width: 80px;
   height: 100vh;
   top: 0;
   background: transparent;
@@ -2590,7 +2604,8 @@ hr {
   float: left;
   height: 120px;
   text-align: center;
-  width: 264px;
+  /* width: 264px; */
+  width: 80px;
   margin-right: 0;
   padding: 10px 20px;
   -webkit-transition: all 0.3s ease-in-out;
@@ -3326,6 +3341,7 @@ hr {
   min-height: 100vh;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
+  background: #FAFBFC;
 }
 
 /* main content end*/
