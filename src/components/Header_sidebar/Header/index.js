@@ -424,7 +424,7 @@ class Header extends Component {
       menuContent = menuClients;
     }
     return (
-      <header className="navbar pcoded-header navbar-expand-lg navbar-light">
+      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{marginBottom:-1, background:'#FFF'}}>
         <div className="m-header">
           <a
             className="mobile-menu"
