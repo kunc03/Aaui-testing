@@ -51,10 +51,6 @@ export default class ChapterPreview extends Component {
     isModalHapus: false,
 
     isModalForum: false,
-    imgFile: "",
-    imgPreview: "",
-    titleForum: "",
-    bodyForum: "",
     tagsForum: [],
 
     isModalMeeting: false,
@@ -150,6 +146,18 @@ export default class ChapterPreview extends Component {
 		this.setState({ isModalAdd: true, isModalChoose: false });
 	}
 
+  handleChangeDateFrom = date => {
+    this.setState({
+      startDate: date
+    });
+  }
+  
+  handleChangeDateEnd = date => {
+    this.setState({
+      endDate: date
+    });
+  }
+
 	handleModalClose = e => {
 		this.setState({ 
       isModalAdd: false, 
@@ -164,16 +172,12 @@ export default class ChapterPreview extends Component {
 			chapterVideo: '',
 			attachmentId: [],
 
-      imgFile: "",
-      imgPreview: "",
-      titleForum: "",
-      bodyForum: "",
       tagsForum: [],
 
       coverMeeting: "",
       imgPreviewMeeting: "",
       roomName: "",
-      optionsModerator: [],
+      // optionsModerator: [],
       valueModerator: [],
       scheduled: false,
       startDate: new Date(),
@@ -183,6 +187,133 @@ export default class ChapterPreview extends Component {
 
   handleChangeTagsForum(grade) {
     this.setState({tagsForum: grade});
+  }
+
+  onSubmitChapterMeeting = e => {
+    e.preventDefault();
+    if(this.state.chapterId !== "") {
+      // action for edit
+      let sDate = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+      let eDate = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+      let form = {
+        course_id: this.state.courseId,
+        company_id: this.state.companyId,
+        chapter_title: this.state.chapterTitle,
+        chapter_body: this.state.chapterBody,
+        moderator: this.state.valueModerator.length ? this.state.valueModerator[0] : null,
+        start_date: this.state.scheduled ? sDate : null,
+        end_date: this.state.scheduled ? eDate : null,
+      };
+
+      API.put(`${API_SERVER}v1/chapter/forum/${this.state.chapterId}`, form).then(res => {
+        if(res.status === 200){
+          this.fetchDataChapter();
+          this.handleModalClose();
+          this.setState({ isLoading: false});
+        }
+      })
+
+      if(this.state.chapterVideo !== "") {
+        let form = new FormData();
+        form.append('chapter_video', this.state.chapterVideo);
+        this.setState({ isLoading: true, isModalForum: false, isModalChoose: false});
+        this.setState({});
+        API.put(`${API_SERVER}v1/chapter/video/${this.state.chapterId}`, form).then(res => {
+          if(res.status === 200){
+            this.fetchDataChapter();
+            this.handleModalClose();
+            this.setState({ isLoading: false});
+          }
+        })        
+      }
+
+    } else {
+      // action for insert
+      if(this.state.chapterVideo !== "") {
+        let sDate = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+        let eDate = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+        let form = new FormData();
+        form.append('course_id', this.state.courseId);
+        form.append('company_id', this.state.companyId);
+        form.append('chapter_title', this.state.chapterTitle);
+        form.append('chapter_body', this.state.chapterBody);
+        form.append('chapter_video', this.state.chapterVideo);
+        form.append('moderator', this.state.valueModerator.length ? this.state.valueModerator[0] : null);
+        form.append('start_date', this.state.scheduled ? sDate : null);
+        form.append('end_date', this.state.scheduled ? eDate : null);
+    
+        this.setState({ isModalForum: false, isModalChoose: false, isLoading: true });
+
+        API.post(`${API_SERVER}v1/chapter/meeting`, form).then((res) => {
+          if(res.status === 200){
+            this.fetchDataChapter();
+            this.handleModalClose();
+            this.setState({ isLoading: false});
+          }
+        });
+      } else {
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'Media chapter tidak boleh kosong, harus diisi.' })
+      }
+    }
+  }
+
+  onSubmitChapterForum = e => {
+    e.preventDefault();
+    if(this.state.chapterId !== "") {
+      // action for edit
+      let form = {
+        course_id: this.state.courseId,
+        company_id: this.state.companyId,
+        tags: this.state.tagsForum,
+        chapter_title: this.state.chapterTitle,
+        chapter_body: this.state.chapterBody,
+      };
+
+      API.put(`${API_SERVER}v1/chapter/forum/${this.state.chapterId}`, form).then(res => {
+        if(res.status === 200){
+          this.fetchDataChapter();
+          this.handleModalClose();
+          this.setState({ isLoading: false});
+        }
+      })
+
+      if(this.state.chapterVideo !== "") {
+        let form = new FormData();
+        form.append('chapter_video', this.state.chapterVideo);
+        this.setState({ isLoading: true, isModalForum: false, isModalChoose: false});
+        this.setState({});
+        API.put(`${API_SERVER}v1/chapter/video/${this.state.chapterId}`, form).then(res => {
+          if(res.status === 200){
+            this.fetchDataChapter();
+            this.handleModalClose();
+            this.setState({ isLoading: false});
+          }
+        })        
+      }
+
+    } else {
+      // action for insert
+      if(this.state.chapterVideo !== "") {
+        let form = new FormData();
+        form.append('course_id', this.state.courseId);
+        form.append('company_id', this.state.companyId);
+        form.append('chapter_title', this.state.chapterTitle);
+        form.append('chapter_body', this.state.chapterBody);
+        form.append('chapter_video', this.state.chapterVideo);
+        form.append('tags', this.state.tagsForum.toString());
+    
+        this.setState({ isModalForum: false, isModalChoose: false, isLoading: true });
+
+        API.post(`${API_SERVER}v1/chapter/forum`, form).then((res) => {
+          if(res.status === 200){
+            this.fetchDataChapter();
+            this.setState({ isLoading: false, isModalForum: false, isModalChoose: true});
+          }
+        });
+      } else {
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'Media chapter tidak boleh kosong, harus diisi.' })
+      }
+    }
   }
 
 	onSubmitChapter = e => {
@@ -293,6 +424,7 @@ export default class ChapterPreview extends Component {
             this.setState({ isLoading: false });
           }
         })
+      
       } else {
         this.setState({ isNotifikasi: true, isiNotifikasi: 'Media chapter tidak boleh kosong, harus diisi.' })
       }
@@ -339,6 +471,47 @@ export default class ChapterPreview extends Component {
 	}
 	/** END CLICK EDIT CHAPTER */
 
+  onClickEditChapterForum = e => {
+    e.preventDefault();
+    let chapterId = e.target.getAttribute('data-id');
+    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          isModalForum: true, 
+          chapterId: chapterId,
+          chapterNumber: res.data.result.chapter_number,
+          chapterTitle: res.data.result.chapter_title,
+          chapterBody: res.data.result.chapter_body,
+          tagsForum: res.data.result.tags_forum.split(',')
+        })
+      }
+    })
+  }
+
+  onClickEditChapterMeeting = e => {
+    e.preventDefault();
+    let chapterId = e.target.getAttribute('data-id');
+    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+      if(res.status === 200) {
+        console.log('RES: ', res.data)
+        if(res.data.result.start_date) {
+          this.setState({ scheduled: true })
+        }
+
+        this.setState({
+          isModalMeeting: true, 
+          chapterId: chapterId,
+          chapterNumber: res.data.result.chapter_number,
+          chapterTitle: res.data.result.chapter_title,
+          chapterBody: res.data.result.chapter_body,
+          valueModerator: [res.data.result.moderator],
+          startDate: Date.parse(res.data.result.start_date),
+          endDate: Date.parse(res.data.result.end_date)
+        })
+      }
+    })
+  }
+
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
@@ -351,6 +524,16 @@ export default class ChapterPreview extends Component {
 				})
 
 				this.fetchDataChapter();
+
+        if (this.state.optionsModerator.length == 0){
+
+          API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+            response.data.result.map(item => {
+              this.state.optionsModerator.push({value: item.user_id, label: item.name});
+            });
+          })
+
+        }
 
 			}
 		})
@@ -411,7 +594,7 @@ export default class ChapterPreview extends Component {
 			this.setState({ isLocalSteps: true });
 			localStorage.setItem('isTourChapter', true);
     }
-  };
+  }
 
   pilihOverviewChapter = e => {
     e.preventDefault();
@@ -428,7 +611,7 @@ export default class ChapterPreview extends Component {
 	render() {
     const {chapters, course, quiz} = this.state;
     
-    console.log('state: ', this.state.attachmentId);
+    console.log('state: ', this.state);
 
 		const CheckMedia = ({ media, thumbnail }) => {
 			if (media) {
@@ -529,11 +712,14 @@ export default class ChapterPreview extends Component {
                         <Form.Text data-id={item.chapter_id}>
                           Chapter {item.chapter_number}
                         </Form.Text>
+                        <Form.Text style={{float: 'right'}} data-id={item.chapter_id}>
+                          {item.jenis_pembelajaran == "forum" ? "Forum" : item.jenis_pembelajaran == "group meeting" ? "Meeting" : "Media"}
+                        </Form.Text>
                         {item.chapter_title}
                       </h3>
                       <Link to="#" className="buttonku" title="Edit">
                         <i
-                          onClick={this.onClickEditChapter}
+                          onClick={item.jenis_pembelajaran == "media" ? this.onClickEditChapter : item.jenis_pembelajaran == "forum" ? this.onClickEditChapterForum : this.onClickEditChapterMeeting}
                           data-id={item.chapter_id}
                           className="fa fa-edit"
                         ></i>
@@ -606,7 +792,7 @@ export default class ChapterPreview extends Component {
                         title="Quiz"
                       >
                         <i className="fa fa-edit"></i>
-                        Edit Kursus
+                        Kursus
                       </Link>
                       <Link
                         // onClick={this.handleModalAdd}
@@ -614,7 +800,7 @@ export default class ChapterPreview extends Component {
                         className="btn btn-ideku buttonku buat-chapter"
                       >
                         <i className="fa fa-plus"></i>
-                        Buat Chapter
+                        Chapter
                       </Link>
                       <Link
                         to={`/quiz/${this.state.courseId}`}
@@ -622,7 +808,7 @@ export default class ChapterPreview extends Component {
                         title="Quiz"
                       >
                         <i className="fa fa-plus"></i>
-                        Buat Quiz
+                        Quiz
                       </Link>
                       <Link
                         to={`/exam/${this.state.courseId}`}
@@ -630,7 +816,7 @@ export default class ChapterPreview extends Component {
                         title="Ujian"
                       >
                         <i className="fa fa-plus"></i>
-                        Tambah Ujian
+                        Ujian
                       </Link>
                     </div>
                   </div>
@@ -766,31 +952,28 @@ export default class ChapterPreview extends Component {
 
                       <Form>
                         <Form.Group controlId="formJudul">
-                          <img
-                            alt="media"
-                            src={
-                              this.state.imgFile === ""
-                                ? "/assets/images/component/placeholder-image.png"
-                                : this.state.imgPreview
-                            }
-                            className="img-fluid"
-                            style={{ width: "200px", height: "160px" }}
-                          />
-
-                          <Form.Label className="f-w-bold ml-4">
-                            <h4 className="btn-default">Masukkan Gambar</h4>
+                          <label>Cover Forum</label>
                             <input
-                              accept="image/*"
-                              className="btn-default"
-                              name="avatar"
+                              accept="image/*,video/*,application/pdf"
+                              name="chapterVideo"
+                              id="chapterVideo"
+                              onChange={this.onChangeInput}
                               type="file"
-                              onChange={this.handleChange}
-                              required
+                              placeholder="media chapter"
+                              className="form-control"
                             />
-                            <Form.Text className="text-muted">
-                              Ukuran gambar 200x200 piksel.
+                            <label style={{color:'#000', padding:'5px 10px'}}>{this.state.chapterVideo.name === null ? 'Pilih File' : this.state.chapterVideo.name }</label>
+                            <Form.Text>
+                              {!this.state.chapterId && (
+                                <span
+                                  style={{ color: "red", fontWeight: "bold" }}
+                                >
+                                  Required &nbsp;
+                                </span>
+                              )}
+                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
+                              {/* dan ukuran file tidak melebihi 20MB. */}
                             </Form.Text>
-                          </Form.Label>
                         </Form.Group>
 
                         <Form.Group controlId="formJudul">
@@ -800,9 +983,9 @@ export default class ChapterPreview extends Component {
                           <FormControl
                             type="text"
                             placeholder="Judul Forum"
-                            value={this.state.titleForum}
+                            value={this.state.chapterTitle}
                             onChange={e =>
-                              this.setState({ titleForum: e.target.value })
+                              this.setState({ chapterTitle: e.target.value })
                             }
                           />
                           <Form.Text className="text-muted">
@@ -819,9 +1002,9 @@ export default class ChapterPreview extends Component {
                             as="textarea"
                             rows="5"
                             placeholder="Isi Forum"
-                            value={this.state.bodyForum}
+                            value={this.state.chapterBody}
                             onChange={e =>
-                              this.setState({ bodyForum: e.target.value })
+                              this.setState({ chapterBody: e.target.value })
                             }
                           />
                           <Form.Text className="text-muted">
@@ -840,13 +1023,14 @@ export default class ChapterPreview extends Component {
                             inputProps={{placeholder:'Tag Forum'}}
                           />
                           <Form.Text className="text-muted">
-                            Jika lebih dari 1 hubungkan dengan koma (,)
+                            Jika lebih dari 1 hubungkan dengan [enter]
                           </Form.Text>
                         </Form.Group>
 
                         <div style={{ marginTop: "20px" }}>
                           <button
                             type="button"
+                            onClick={this.onSubmitChapterForum}
                             className="btn btn-primary f-w-bold"
                           >
                             Simpan
@@ -1065,31 +1249,28 @@ export default class ChapterPreview extends Component {
                       </Modal.Title>
                       <Form>
                         <Form.Group controlId="formJudul">
-                          <img
-                            alt="media"
-                            src={
-                              this.state.coverMeeting == null || this.state.coverMeeting == ''
-                                ? "/assets/images/component/placeholder-image.png"
-                                :
-                                this.state.imgPreviewMeeting
-                            }
-                            className="img-fluid"
-                            style={{ width: "200px", height: "160px" }}
+                          <label>Cover Meeting</label>
+                          <input
+                            accept="image/*,video/*,application/pdf"
+                            name="chapterVideo"
+                            id="chapterVideo"
+                            onChange={this.onChangeInput}
+                            type="file"
+                            placeholder="media chapter"
+                            className="form-control"
                           />
-
-                          <Form.Label className="f-w-bold ml-4">
-                            <h4 className="btn-default">Masukkan Gambar</h4>
-                            <input
-                              accept="image/*"
-                              className="btn-default"
-                              name="cover"
-                              type="file"
-                              onChange={this.handleChange}
-                            />
-                            <Form.Text className="text-muted">
-                              Ukuran gambar 200x200 piksel.
-                            </Form.Text>
-                          </Form.Label>
+                          <label style={{color:'#000', padding:'5px 10px'}}>{this.state.chapterVideo.name === null ? 'Pilih File' : this.state.chapterVideo.name }</label>
+                          <Form.Text>
+                            {!this.state.chapterId && (
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                Required &nbsp;
+                              </span>
+                            )}
+                            Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
+                            {/* dan ukuran file tidak melebihi 20MB. */}
+                          </Form.Text>
                         </Form.Group>
 
                         <Form.Group controlId="formJudul">
@@ -1099,9 +1280,9 @@ export default class ChapterPreview extends Component {
                           <FormControl
                             type="text"
                             placeholder="Judul"
-                            value={this.state.roomName}
+                            value={this.state.chapterTitle}
                             onChange={e =>
-                              this.setState({ roomName: e.target.value })
+                              this.setState({ chapterTitle: e.target.value })
                             }
                           />
                           <Form.Text className="text-muted">
@@ -1171,7 +1352,7 @@ export default class ChapterPreview extends Component {
                         }
 
                         <div style={{ marginTop: "20px" }}>
-                          <button type="button" className="btn btn-primary f-w-bold mr-3">
+                          <button onClick={this.onSubmitChapterMeeting} type="button" className="btn btn-primary f-w-bold mr-3">
                             Simpan
                           </button>
                           &nbsp;
