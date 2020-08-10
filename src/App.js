@@ -52,6 +52,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
+import InformasiAdmin from "./components/admin/informasi";
+
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
@@ -123,7 +125,6 @@ export class PublicContent extends React.Component {
     );
   }
 }
-
 
 export class RedirectPage extends React.Component {
   render() {
@@ -264,6 +265,8 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+
+        <Route path="/informasi" component={InformasiAdmin} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
