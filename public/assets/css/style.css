@@ -2568,6 +2568,10 @@ hr {
     width: 18%;
     overflow-x: auto;
 }
+
+.custom-side-bar::-webkit-scrollbar {
+  display: none;
+}
 /*  */
 
 .pcoded-navbar {
