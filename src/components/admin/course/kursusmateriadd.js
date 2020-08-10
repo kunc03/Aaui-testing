@@ -190,12 +190,12 @@ export default class KursusMateriAdd extends Component {
     const { kategori } = this.state;
 
 		return (
-	<LoadingOverlay
-			active={this.state.isLoading}
-			spinner
-			text='Uploading...'
-			>
       <div className="pcoded-main-container">
+      <LoadingOverlay
+          active={this.state.isLoading}
+          spinner
+          text='Uploading...'
+          >
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
@@ -488,8 +488,8 @@ export default class KursusMateriAdd extends Component {
             </div>
           </div>
         </div>
-      </div>
     </LoadingOverlay>
+      </div>
     );
 	}
 }

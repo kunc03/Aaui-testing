@@ -68,9 +68,81 @@ export default class LiveStream extends Component {
     modalExportMOM: false,
     selectSubtitle: '',
     subtitle: '',
-    sendingEmail: false
+    sendingEmail: false,
+    
+    folder: [],
+    mom: [],
+    folderName : '',
+    selectFolder: false,
+    folderId: 0,
+    prevFolderId: 0,
+    files: [],
+    projectName: ''
   }
   
+fetchMOM(folder){
+  if (folder == 0){
+    this.setState({mom:[]})
+  }
+  else{
+    API.get(`${API_SERVER}v1/files-mom/${folder}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          mom : res.data.result
+        })
+      }
+    })
+  }
+}
+fetchFolder(mother){
+  API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`).then(res => {
+    if (res.status === 200) {
+      this.setState({folder: res.data.result})
+    }
+  })
+  API.get(`${API_SERVER}v1/folder/back/${this.state.companyId}/${mother}`).then(res => {
+    if (res.status === 200) {
+      this.setState({prevFolderId: res.data.result})
+    }
+  })
+}
+fetchFile(folder){
+  API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
+    if (res.status === 200) {
+      this.setState({files: res.data.result})
+      if (!this.state.selectFolder){
+        this.setState({projectName: res.data.result[0].name})
+      }
+    }
+  })
+}
+
+selectFolder(id, name) {
+  this.setState({selectFolder: id == this.state.classRooms.folder_id ? false : true, folderId: id})
+  this.fetchFolder(id)
+  this.fetchFile(id)
+  this.fetchMOM(id)
+}
+
+saveFolder = e => {
+  e.preventDefault();
+  const formData = {
+    name: this.state.folderName,
+    company: this.state.company,
+    mother: this.state.folderId
+  };
+
+  API.post(`${API_SERVER}v1/folder`, formData).then(res => {
+    if(res.status === 200) {
+      if(res.data.error) {
+        this.setState({alert: res.data.result});
+      } else {
+        this.setState({modalNewFolder:false, alert: ''})
+        this.fetchFolder(this.state.folderId);
+      }
+    }
+  })
+}
   tabAktivitas(a,b){
     this.setState({tabIndex: b+1});
   }
@@ -163,6 +235,11 @@ export default class LiveStream extends Component {
         });
       }
     }).then(res=>{
+      if (this.state.classRooms.folder_id !== 0 ){
+        this.fetchFolder(this.state.classRooms.folder_id);
+        this.fetchMOM(this.state.classRooms.folder_id);
+        this.fetchFile(this.state.classRooms.folder_id);
+      }
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
           console.log(res, 'ini responseeee');
           let splitTags;
@@ -510,48 +587,111 @@ export default class LiveStream extends Component {
             })}
 
             {this.state.tabIndex === 1 ?  
-              <div>{/* CHATING SEND FILE */}
-                <h3 className="f-20 f-w-800">
-                  File Sharing
-                </h3>
-                <div id="scrollin" className='box-chat '>
-                    
-                    { this.state.fileChat.map((item, i)=>{
-                      return (
-                        <div className='box-chat-send-left'>
-                          <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                          <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
-                          <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+              <div className="row col-sm-12">
+                <div className="col-sm-6">
+                  <h3 className="f-20 f-w-800">
+                    File Sharing
+                  </h3>
+                  <div id="scrollin" className='box-chat '>
+                      
+                      { this.state.fileChat.map((item, i)=>{
+                        return (
+                          <div className='box-chat-send-left'>
+                            <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
+                            <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                            <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+                          </div>
+                        )
+                      })}
+                  </div>
+
+                  <div className='box-chat-send p-20'>
+                    <Row>
+                      <Col sm={10}>
+                        <div>
+                          < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+                          <input
+                            type="file"
+                            id="attachment"
+                            name="attachment"
+                            onChange={this.onChangeInput}
+                          /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
                         </div>
-                      )
-                    })}
+                          
+                      </Col>
+                      <Col sm={2}>
+                        <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
+                          SEND
+                        </Link>
+                        {/* <button onClick={this.onBotoomScroll}>coba</button> */}
+                      </Col>
+
+                    </Row>
+                  </div>
+
                 </div>
-
-                <div className='box-chat-send p-20'>
-                  <Row>
-                    <Col sm={10}>
-                      <div>
-                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
-                        <input
-                          type="file"
-                          id="attachment"
-                          name="attachment"
-                          onChange={this.onChangeInput}
-                        /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
-                      </div>
-                        
-                    </Col>
-                    <Col sm={2}>
-                      <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
-                        SEND
-                      </Link>
-                      {/* <button onClick={this.onBotoomScroll}>coba</button> */}
-                    </Col>
-
-                  </Row>
+                <div className="col-sm-6">
+                  <h3 className="f-20 f-w-800">
+                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+this.state.projectName : 'Project Files : Tidak terkait'}
+                  </h3>
+                    <div className='row box-chat'>
+                            {
+                              this.state.folderId !== 0 &&
+                              this.state.selectFolder &&
+                              <div className="folder" onDoubleClick={this.selectFolder.bind(this,this.state.prevFolderId, null)}>
+                                  <img
+                                  src='assets/images/component/folder-back.png'
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                      Kembali
+                                  </div>
+                              </div>
+                            }
+                            {this.state.folder.map(item =>
+                            <div className="folder" onDoubleClick={this.selectFolder.bind(this, item.id, item.name)}>
+                                <img
+                                src='assets/images/component/folder.png'
+                                className="folder-icon"
+                                />
+                                <div className="filename">
+                                    {item.name}
+                                </div>
+                            </div>
+                            )}
+                            {
+                              this.state.files.map(item =>
+                              <div className="folder" onDoubleClick={e=>window.open(item.location, 'Downloading files')}>
+                                  <img
+                                  src={
+                                    item.type == 'png' || item.type == 'pdf' || item.type == 'dox' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg'
+                                    ? `assets/images/component/${item.type}.png`
+                                    : 'assets/images/component/file.png'
+                                  }
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                    {item.name}
+                                  </div>
+                              </div>
+                              )
+                            }
+                            {
+                              this.state.mom.map(item =>
+                              <div className="folder" onDoubleClick={e=>window.open(`${APPS_SERVER}mom/?id=${item.id}`, 'Downloading files')}>
+                                  <img
+                                  src='assets/images/component/file.png'
+                                  className="folder-icon"
+                                  />
+                                  <div className="filename">
+                                    MOM-{item.title}
+                                  </div>
+                              </div>
+                              )
+                            }
+                    </div>
                 </div>
-
-               </div>
+              </div>
             :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}
                 <div id="scrollin" className="card" style={{padding:10}}>

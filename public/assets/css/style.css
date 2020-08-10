@@ -56,7 +56,6 @@ File: style.css
 @import url("../plugins/jquery-scrollbar/css/jquery.scrollbar.min.css");
 @import url("../fonts/datta/datta-icon.css");
 
-
 /* MULTI SELECT DROPDOWN */
 
 label.Option {
@@ -109,7 +108,8 @@ label.Option {
 ==========================  **/
 body {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px;
+  letter-spacing: 0.5px;
+  font-size: 13.5px;
   color: #888;
   font-weight: 400;
   background: #f4f7fa;
@@ -1825,7 +1825,7 @@ p.text-muted {
   background: transparent;
   color: #3f4d67;
   width: calc(100% - 264px);
-  margin-left: 264px;
+  margin-left: 259px;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
@@ -2564,9 +2564,10 @@ hr {
     height: 100%;
     z-index: 100;
     top: 0px;
-    left: 80px;
-    width: 18%;
+    left: 59px;
+    width: 200px;
     overflow-x: auto;
+    border-right:1px solid #E6E6E6;
 }
 
 .custom-side-bar::-webkit-scrollbar {
@@ -2583,10 +2584,10 @@ hr {
   /* -webkit-box-shadow: 1px 0 20px 0 #3f4d67;
           box-shadow: 1px 0 20px 0 #3f4d67; */
   /* width: 264px; */
-  width: 80px;
+  width: 59px;
   height: 100vh;
   top: 0;
-  background: transparent;
+  background: #FFF;
   color: #a9b7d0;
 }
 .pcoded-navbar ul {
@@ -2609,9 +2610,9 @@ hr {
   height: 120px;
   text-align: center;
   /* width: 264px; */
-  width: 80px;
+  width: 59px;
   margin-right: 0;
-  padding: 10px 20px;
+  padding: 10px 13px;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
@@ -2726,10 +2727,10 @@ hr {
 }
 .pcoded-navbar .pcoded-inner-navbar li > a > .pcoded-micon {
   font-size: 1rem;
-  padding: 4px 7px;
+  /* padding: 4px 7px; */
   margin-right: 50px;
   border-radius: 4px;
-  width: 30px;
+  /* width: 30px; */
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -2815,13 +2816,13 @@ hr {
 
 }
 .pcoded-navbar.navbar-collapsed {
-  width: 80px;
+  width: 59px;
   height: 100%;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 .pcoded-navbar.navbar-collapsed .header-logo {
-  width: 80px;
+  width: 59px;
 }
 /* .pcoded-navbar.navbar-collapsed .header-logo img {
   -webkit-transform: rotateY(-90deg);
@@ -2911,11 +2912,11 @@ hr {
   opacity: 0;
 }
 .pcoded-navbar.navbar-collapsed ~ .pcoded-header {
-  width: calc(100% - 80px);
+  width: calc(100% - 59px);
 }
 .pcoded-navbar.navbar-collapsed ~ .pcoded-header,
 .pcoded-navbar.navbar-collapsed ~ .pcoded-main-container {
-  margin-left: 80px;
+  margin-left: 59px;
 }
 .pcoded-navbar.navbar-collapsed .pcoded-badge {
   -webkit-transform: rotateX(-90deg);
@@ -3024,7 +3025,7 @@ hr {
 .pcoded-navbar.mob-open ~ .pcoded-header,
 .pcoded-navbar.mob-open ~ .pcoded-main-container, .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-header,
 .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-main-container {
-  margin-left: 80px;
+  margin-left: 59px;
 }
 /* .pcoded-navbar.mob-open ~ .pcoded-header:before,
 .pcoded-navbar.mob-open ~ .pcoded-main-container:before, .pcoded-navbar.navbar-collapsed:hover ~ .pcoded-header:before,
@@ -3341,7 +3342,7 @@ hr {
   clear: both;
   float: unset;
   right: 0;
-  margin-left: 264px;
+  margin-left: 259px;
   min-height: 100vh;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
@@ -11436,4 +11437,8 @@ div.code-toolbar > .toolbar span:hover {
     padding: 34px;
     background: red !important;
   }
+}
+
+.back-active {
+  background: #e9e9e9;
 }

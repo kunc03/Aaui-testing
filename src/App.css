@@ -91,7 +91,7 @@
 .box-chat {
   height: 50vh;
   background-color: white;
-  width: 60vh;
+  /* width: 60vh; */
   /* margin-bottom: 5vh; */
   border: 1px solid #d6d4d4;
   overflow: auto;
@@ -100,7 +100,7 @@
 .box-chat-send {
   /* height: 10vh; */
   background-color: white;
-  width: 60vh;
+  /* width: 60vh; */
   margin-bottom: 5vh;
   border: 1px solid #d6d4d4;
   /* box-shadow: -1px 1px 8px 0px; */
