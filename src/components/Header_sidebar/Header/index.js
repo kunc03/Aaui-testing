@@ -559,19 +559,7 @@ class Header extends Component {
                 </div>
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <div className="media">
-                <img
-                  alt="Media"
-                  style={{ height: 40 }}
-                  src={
-                    localStorage.getItem('logo')
-                      ? localStorage.getItem('logo')
-                      : this.state.logo
-                  }
-                />
-              </div>
-            </li>
+            
           </ul>
 
           <ul className="navbar-nav ml-auto">
@@ -604,8 +592,25 @@ class Header extends Component {
               </div>
             </li>
           </ul>
+          
+          <ul className="navbar-nav">
+            <li className="nav-item dropdown">
+              <div className="media">
+                <img
+                  alt="Media"
+                  style={{ height: 40 }}
+                  src={
+                    localStorage.getItem('logo')
+                      ? localStorage.getItem('logo')
+                      : this.state.logo
+                  }
+                />
+              </div>
+            </li>
+          </ul>
+          
 
-          {(level == 'superadmin' || level == 'admin') && (
+          {/* {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
@@ -725,7 +730,7 @@ class Header extends Component {
                 </div>
               </li>
             </ul>
-          )}
+          )} */}
         </div>
       </header>
     );

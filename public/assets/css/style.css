@@ -456,7 +456,7 @@ p.text-muted {
     position: absolute;
     top: 9vh;
     padding: 34px;
-    background: #3d0c31 !important;
+    /* background: #3d0c31 !important; */
   }
 }
 /* ========================================================
@@ -3352,6 +3352,9 @@ hr {
 /* main content end*/
 /* ==========================    Rsponsive Menu  start   ====================== */
 @media only screen and (max-width: 991px) {
+  .custom-side-bar {
+      display: none;
+  }
   .small-text {
     font-size: 10px !important;
     /* font-weight: 500 !important; */
@@ -3401,7 +3404,8 @@ hr {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    background: #3D0C31;
+    /* background: #3D0C31; */
+    background-image: linear-gradient(#008AE6, #0055C7);
     width: 100%;
     height: 70px;
   }
@@ -3446,6 +3450,7 @@ hr {
     margin-left: 0;
   }
 }
+
 @media only screen and (max-width: 575px) {
   .carousel-cell {
     width: 70%;
