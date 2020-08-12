@@ -81,6 +81,20 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li data-username="Sample Page" className="nav-item mt-4">
+                <Link to="#" className="nav-link">
+                  <span className="pcoded-micon">
+                    <img
+                      src="assets/images/component/files-off.png.png"
+                      alt=""
+                      style={{
+                        paddingLeft: "3px"
+                      }}
+                    ></img>
+                  </span>
+                  <span className="pcoded-mtext f-16 f-w-bold">Files</span>
+                </Link>
+              </li>
+              <li data-username="Sample Page" className="nav-item mt-4">
                 <Link to="/Pengaturan" className="nav-link">
                   <span className="pcoded-micon">
                     <img

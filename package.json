@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "@opuscapita/react-filemanager": "^1.1.0-beta.7",
     "@opuscapita/react-filemanager-connector-node-v1": "^1.1.0-beta.7",
     "@phuocng/react-pdf-viewer": "^1.5.0",

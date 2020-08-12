@@ -218,6 +218,12 @@ class Header extends Component {
         access: 'activity',
       },
       {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
+      },
+      {
         iconOn: 'materion.png',
         iconOff: 'materioff.png',
         label: 'Kursus & Materi',
@@ -273,6 +279,12 @@ class Header extends Component {
         iconOff: 'aktivitasoff.png',
         label: 'Aktivitas',
         link: '/aktivitas',
+      },
+      {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
       },
       {
         iconOn: 'mycompanyon.png',
@@ -331,6 +343,12 @@ class Header extends Component {
         iconOff: 'aktivitasoff.png',
         label: 'Aktivitas',
         link: '/aktivitas',
+      },
+      {
+        iconOn: 'files-on.png',
+        iconOff: 'files-off.png',
+        label: 'Files',
+        link: '/files',
       },
       {
         iconOn: 'materion.png',
@@ -406,7 +424,7 @@ class Header extends Component {
       menuContent = menuClients;
     }
     return (
-      <header className="navbar pcoded-header navbar-expand-lg navbar-light">
+      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{marginBottom:-1, background:'#FFF'}}>
         <div className="m-header">
           <a
             className="mobile-menu"
