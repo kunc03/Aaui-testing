@@ -18,6 +18,7 @@ import {
 
 import API, { API_JITSI, API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import {isMobile} from 'react-device-detect';
 
 export default class LiveClassAdmin extends Component {
   state = {
@@ -120,6 +121,9 @@ export default class LiveClassAdmin extends Component {
     this.fetchData();
     if (this.props.match.params.roomid){
       this.fetchMeetingInfo(this.props.match.params.roomid)
+      if (isMobile){
+        alert('ini mobile')
+      }
     }
   }
 

@@ -16,9 +16,10 @@ import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
 
-import API, { API_JITSI, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
+import API, { API_JITSI,APPS_SERVER, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
+import {isMobile} from 'react-device-detect';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
@@ -98,6 +99,9 @@ export default class LiveStream extends Component {
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
         console.log('RESSS', response)
         this.setState({ classRooms: response.data.result })
+        if (isMobile){
+          window.location.replace(APPS_SERVER+'mobile-meeting/'+this.state.classRooms.room_name+'/no-user')
+        }
         API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
           let splitTags;
           let datas = res.data.result;

@@ -58,6 +58,7 @@ import ForumDetail from "./components/forum/forum-detail";
 import LiveClass from "./components/liveclass";
 import LiveStream from "./components/liveclass/livestream";
 import LiveStreamPublic from "./components/liveclass/livestreamPublic";
+import MobileMeeting from "./components/liveclass/mobileMeeting";
 
 import LiveClassAdmin from "./components/admin/liveclass/list";
 import LiveClassAdminJoin from "./components/admin/liveclass/join";
@@ -113,6 +114,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
+          <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/OTP/:id' component={OTP} />
@@ -199,6 +201,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/liveclass" component={LiveClassAdmin} />
         <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
+        <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />
@@ -356,7 +359,7 @@ export class ClientSwitch extends React.Component {
 
         {/* <Route path="/meeting" exact component={LiveClassAdmin} /> */}
         <Route path="/liveclass" component={LiveClass} />
-        <Route path="/meeting" component={LiveClass} />
+        {/* <Route path="/meeting" component={LiveClass} /> */}
         <Route path="/meeting/information/:roomid" exact component={LiveClass} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         

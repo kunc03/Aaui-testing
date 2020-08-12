@@ -24,6 +24,7 @@ import API, { API_JITSI, APPS_SERVER, API_SERVER, USER_ME, API_SOCKET } from '..
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
+import {isMobile} from 'react-device-detect';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
@@ -233,6 +234,9 @@ saveFolder = e => {
           classRooms: liveClass.data.result,
           // jwt: token.data.token
         });
+        if (isMobile){
+          window.location.replace(APPS_SERVER+'mobile-meeting/'+this.state.classRooms.room_name+'/no-user')
+        }
       }
     }).then(res=>{
       if (this.state.classRooms.folder_id !== 0 ){
