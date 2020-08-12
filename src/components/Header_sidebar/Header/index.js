@@ -610,19 +610,24 @@ class Header extends Component {
           </ul>
           
 
-          {/* {(level == 'superadmin' || level == 'admin') && (
+          {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
                   <a href="javascript:;" data-toggle="dropdown">
-                    <i className="fa fa-list" />
+                      <img
+                        src={`newasset/company.svg`}
+                        alt=""
+                        width={25}
+                      ></img>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
                       <h6 className="d-inline-block m-b-0">
-                        {this.state.company.length > 0
-                          ? 'Pilih Company'
+                        <b>{this.state.company.length > 0
+                          ? 'Pilih Perusahaan'
                           : 'Tidak multiple company'}
+                          </b>
                       </h6>
                     </div>
                     <ul className="noti-body">
@@ -709,10 +714,13 @@ class Header extends Component {
                                   data-id={item.company_id}
                                   data-logo={item.logo}
                                 >
-                                  {item.company_name}
+                                   {item.company_name}
                                 </b>
+
+                                <span style={{color: item.status === 'active' ? 'green' : 'red', float: 'right'}}>{item.status === 'active' ? 'Aktif' : 'Tidak Aktif' }</span>
                               </p>
-                              {parseInt(localStorage.getItem('companyID')) ==
+                              
+                              {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p
                                   data-id={item.company_id}
@@ -720,7 +728,7 @@ class Header extends Component {
                                 >
                                   {item.status}
                                 </p>
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </li>
@@ -730,7 +738,7 @@ class Header extends Component {
                 </div>
               </li>
             </ul>
-          )} */}
+          )}
         </div>
       </header>
     );
