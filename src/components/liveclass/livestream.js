@@ -184,6 +184,7 @@ saveFolder = e => {
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
+        this.fetchData();
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
     });
@@ -357,11 +358,8 @@ saveFolder = e => {
     form.append('class_id', this.state.classId);
     form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-    //console.log('form data',FormData);
+
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
-      console.log(res, 'response');
-      
-      
       if(res.status === 200) {
         if(!res.data.error){
           this.onBotoomScroll();
@@ -369,6 +367,7 @@ saveFolder = e => {
           
           let datas = res.data.result;
           console.log(datas, 'datass')
+
           splitTags =  datas.attachment.split("/")[4];
           datas.filenameattac = splitTags; 
   
@@ -516,6 +515,23 @@ saveFolder = e => {
       editMOM: false
     })
   }
+
+  onClickRemoveChat = e => {
+    e.preventDefault();
+    let form = { attachment: e.target.getAttribute('data-file') };
+    API.post(`${API_SERVER}v1/liveclass/file/remove`, form).then(res => {
+      if(res.status === 200) {
+        this.fetchData();
+        socket.emit('send', {
+          pengirim: this.state.user.user_id,
+          room: this.state.classId,
+          attachment: form.attachment,
+          filenameattac: form.attachment,
+          created_at: new Date()
+        })
+      }
+    })
+  }
   
   onChangeTinyMce = e => {
     this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
@@ -553,21 +569,21 @@ saveFolder = e => {
               </Link>
             </h3>
             {
-              user.name && classRooms.room_name && this.state.join ?
-              <JitsiMeetComponent 
-                roomName={classRooms.room_name} 
-                roomId={classRooms.class_id} 
-                moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                userId={user.user_id} 
-                userName={user.name} 
-                userEmail={user.email}
-                userAvatar={user.avatar}
-                startMic={this.state.startMic}
-                startCam={this.state.startCam}
-                // jwt={this.state.jwt}
-              />
-              :
-              null
+              // user.name && classRooms.room_name && this.state.join ?
+              // <JitsiMeetComponent 
+              //   roomName={classRooms.room_name} 
+              //   roomId={classRooms.class_id} 
+              //   moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
+              //   userId={user.user_id} 
+              //   userName={user.name} 
+              //   userEmail={user.email}
+              //   userAvatar={user.avatar}
+              //   startMic={this.state.startMic}
+              //   startCam={this.state.startCam}
+              //   // jwt={this.state.jwt}
+              // />
+              // :
+              // null
             }
           </Col>
 
@@ -600,6 +616,10 @@ saveFolder = e => {
                             <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
                             <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
                             <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+                            {
+                              classRooms.moderator == Storage.get("user").data.user_id &&
+                              <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                            }
                           </div>
                         )
                       })}
@@ -609,7 +629,7 @@ saveFolder = e => {
                     <Row>
                       <Col sm={10}>
                         <div>
-                          < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+                          <i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
                           <input
                             type="file"
                             id="attachment"
