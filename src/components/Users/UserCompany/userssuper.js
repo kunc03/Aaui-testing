@@ -115,15 +115,6 @@ export default class User extends Component {
         this.handleModalHapus();
       }
     })
-
-    // API.delete(
-    //   `${API_SERVER}v1/user/${this.state.userIdHapus}`
-    // ).then(res => {
-    //   if (res.status === 200) {
-    //     this.fetchData();
-    //     this.setState({ isModalHapus: false, userIdHapus: "" });
-    //   }
-    // });
   };
 
   handleModalHapus = e => {

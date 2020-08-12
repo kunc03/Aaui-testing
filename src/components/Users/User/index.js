@@ -30,6 +30,7 @@ export default class User extends Component {
       dataUser: [],
       isModalHapus: false,
       userIdHapus: '',
+      userStatusHapus: '',
       isModalPassword: false,
       userIdPassword: '',
       userPassword: '',
@@ -72,15 +73,18 @@ export default class User extends Component {
 
   onClickHapus = e => {
     e.preventDefault();
-    this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id') });
+    this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id'), userStatusHapus: e.target.getAttribute('data-status') });
   }
 
   onClickSubmitHapus = e => {
     e.preventDefault();
-    API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
+    let form = {
+      active: this.state.userStatusHapus == 'active' ? 'pasive' : 'active'
+    }
+    API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
       if(res.status === 200) {
         this.fetchData();
-        this.setState({isModalHapus: false, userIdHapus: ''})
+        this.handleModalHapus();
       }
     })
   }

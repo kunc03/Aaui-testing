@@ -29,6 +29,7 @@ export default class User extends Component {
       dataUser: [],
       isModalHapus: false,
       userIdHapus: '',
+      userStatusHapus: '',
       myCompanyId: localStorage.getItem('companyID') ? parseInt(localStorage.getItem('companyID')) : this.props.match.params.company_id,
 
       isModalPassword: '',
@@ -68,7 +69,11 @@ export default class User extends Component {
 
   onClickHapus = e => {
     e.preventDefault();
-    this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id') });
+    this.setState({
+      isModalHapus: true,
+      userIdHapus: e.target.getAttribute("data-id"),
+      userStatusHapus: e.target.getAttribute("data-status")
+    });
   }
 
   onClickSubmitHapus = e => {
@@ -78,7 +83,6 @@ export default class User extends Component {
     }
     API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
       if(res.status === 200) {
-        console.log('RES filecompany: ', res.data)
         this.fetchData();
         this.handleModalHapus();
       }

@@ -97,8 +97,6 @@ export default class Users extends Component {
 
   onClickHapus = e => {
     e.preventDefault();
-    console.log('RES: ', e.target.getAttribute('data-status'));
-    console.log('RES: ', e.target.getAttribute('data-id'));
     this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id'), userStatusHapus: e.target.getAttribute('data-status') });
   }
 
@@ -110,7 +108,6 @@ export default class Users extends Component {
     console.log('RES: ', form);
     API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
       if(res.status === 200) {
-        console.log('RES fileusercompany: ', res.data)
         this.fetchData();
         this.handleModalHapus();
       }
