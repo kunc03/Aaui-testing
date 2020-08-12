@@ -186,6 +186,7 @@ export default class User extends Component {
               role: item.grup_name,
               level: item.level,
               voucher: item.voucher,
+              status: item.status,
               validity: item.validity
             })
           });
@@ -335,7 +336,7 @@ export default class User extends Component {
                 <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> Atur Voucher</MenuItem>
                 <MenuItem data-id={row.id} onClick={this.onClickModalPassword}><i className="fa fa-key" /> Atur Password</MenuItem>
                 <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Ubah</MenuItem>
-                <MenuItem data-id={row.id} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
+                <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
             </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
