@@ -569,21 +569,21 @@ saveFolder = e => {
               </Link>
             </h3>
             {
-              // user.name && classRooms.room_name && this.state.join ?
-              // <JitsiMeetComponent 
-              //   roomName={classRooms.room_name} 
-              //   roomId={classRooms.class_id} 
-              //   moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-              //   userId={user.user_id} 
-              //   userName={user.name} 
-              //   userEmail={user.email}
-              //   userAvatar={user.avatar}
-              //   startMic={this.state.startMic}
-              //   startCam={this.state.startCam}
-              //   // jwt={this.state.jwt}
-              // />
-              // :
-              // null
+              user.name && classRooms.room_name && this.state.join ?
+              <JitsiMeetComponent 
+                roomName={classRooms.room_name} 
+                roomId={classRooms.class_id} 
+                moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
+                userId={user.user_id} 
+                userName={user.name} 
+                userEmail={user.email}
+                userAvatar={user.avatar}
+                startMic={this.state.startMic}
+                startCam={this.state.startCam}
+                // jwt={this.state.jwt}
+              />
+              :
+              null
             }
           </Col>
 
