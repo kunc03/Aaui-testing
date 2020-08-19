@@ -16,6 +16,7 @@ export default class DetailKursus extends Component {
     courseId: this.props.match.params.course_id,
     activeCard: this.props.match.params.course_id,
 		companyId: '',
+
     isIkutiKursus: false,
     isButtonIkuti: true,
     isModalQuiz: false,
@@ -41,18 +42,19 @@ export default class DetailKursus extends Component {
     chapters: [],
     idResultQuiz:'',
     // statChapter: 0,
+
 	}
 
   pilihChapterTampil = e => {
     e.preventDefault();
-    
     
     // cek apakah sudah mengikuti kursus
     if(this.state.isIkutiKursus) {
       
       const chapterId = e.target.getAttribute('data-id');
       this.setState({activeCard: chapterId});
-      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
+
+      API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(async res => {
         if(res.status === 200) {
           let formData = {
             courseId : this.state.courseId,
@@ -60,12 +62,25 @@ export default class DetailKursus extends Component {
             userId : Storage.get('user').data.user_id
           }
           API.post(`${API_SERVER}v1/chapter/course`, formData).then(res=>{console.log(res)})
+
+          let getModerator = {};
+          if(res.data.result.moderator) {
+            getModerator = await API.get(`${API_SERVER}v1/user/${res.data.result.moderator}`);
+          } else  {
+            getModerator = {data: { result: {name: ""}}};
+          }
+
           let courseChapter = {
             image: res.data.result.chapter_video,
             title: res.data.result.chapter_title,
             body: res.data.result.chapter_body,
             attachments: res.data.result.attachment_id,
-            thumbnail: res.data.result.thumbnail
+            thumbnail: res.data.result.thumbnail,
+            jenis_pembelajaran: res.data.result.jenis_pembelajaran,
+            waktu_mulai: res.data.result.waktu_mulai,
+            waktu_selesai: res.data.result.waktu_selesai,
+            moderator: getModerator.data.result.name,
+            tags_forum: res.data.result.tags_forum ? res.data.result.tags_forum.split(',') : []
           }
           this.setState({ course: courseChapter })
         }
@@ -271,6 +286,8 @@ export default class DetailKursus extends Component {
     const { quiz, chapters, course, isIkutiKursus, isButtonIkuti, countSoal, durasiWaktu, isMatiJikaTidakAdaUjian } = this.state;
     const dateFormat = new Date(course.created_at);
 
+    console.log('RES: ', this.state);
+
     let refactoryChapters = [...chapters];
     for(let i=0; i < quiz.length; i++) {
       for (let j = 0; j < chapters.length; j++) {
@@ -343,6 +360,9 @@ export default class DetailKursus extends Component {
                       >
                         <Form.Text data-id={item.chapter_id}>
                           Chapter {item.chapter_number}
+                        </Form.Text>
+                        <Form.Text style={{float: 'right'}} data-id={item.chapter_id}>
+                          {item.jenis_pembelajaran == "forum" ? "Forum" : item.jenis_pembelajaran == "group meeting" ? "Meeting" : "Media"}
                         </Form.Text>
                         {item.chapter_title}
                         <span
@@ -588,6 +608,76 @@ export default class DetailKursus extends Component {
                       {course.attachments && (
                         <Attachments media={course.attachments} />
                       )}
+
+                      {
+                        // START JIKA JENIS PEMBELAJARAN MEETING
+                      }
+                      {
+                        this.state.course.jenis_pembelajaran == "group meeting" &&
+                        <div>
+                          <h3>Moderator : {this.state.course.moderator}</h3>
+                          <a href="#" target="_blank" style={{marginTop: '20px'}} className="btn btn-ideku btn-block">Ikuti Group Meeting</a>
+                        </div>
+                      }
+                      {
+                        // END JIKA JENIS PEMBELAJARAN MEETING
+                      }
+
+                      {
+                        // START JIKA JENIS PEMBELAJARAN FORUM
+                      }
+                      {
+                        this.state.course.jenis_pembelajaran == "forum" &&
+                        this.state.course.tags_forum.map(item => (
+                          <span className="label label-info">{item}</span>
+                        ))
+                      }
+                      {
+                        this.state.course.jenis_pembelajaran == "forum" &&
+                        <Form style={{ marginTop: "30px" }}>
+                          <hr/>
+                          <Form.Group controlId="formIsi">
+                            <Form.Label className="f-w-bold">
+                              Berikan Komentar
+                            </Form.Label>
+                            <Form.Control
+                              as="textarea"
+                              rows="5"
+                              value={this.state.komentar}
+                              onChange={this.onChangeInput}
+                              name="komentar"
+                              placeholder="Berikan Komentar"
+                            />
+                            <Form.Text className="text-muted">
+                              Isi komentar anda dalam forum ini.
+                            </Form.Text>
+                          </Form.Group>
+                          <Form.Group>
+                            <input
+                              type="file"
+                              id="attachment"
+                              name="attachment"
+                              onChange={this.onChangeInput}
+                            />
+                            <Form.Text className="text-muted">
+                              Pastikan file berformat pdf, png, jpeg, jpg, atau gif.
+                            </Form.Text>
+                          </Form.Group>
+
+                          <div style={{ marginTop: "20px" }}>
+                            <button
+                              type="button"
+                              onClick={this.onClickSubmitKomentar}
+                              className="btn btn-primary f-w-bold"
+                            >
+                              Beri Komentar
+                            </button>
+                          </div>
+                        </Form>
+                      }
+                      {
+                        // END JIKA JENIS PEMBELAJARAN FORUM
+                      }
 
                       </div>
                     </div>

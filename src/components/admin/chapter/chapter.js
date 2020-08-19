@@ -46,6 +46,9 @@ export default class ChapterPreview extends Component {
     attachmentId: [],
     thumbnail: '',
 
+    waktuSelesai: new Date(),
+    waktuMulai: new Date(),
+
     isModalChoose: false,
 		isModalAdd: false,
     isModalHapus: false,
@@ -158,6 +161,14 @@ export default class ChapterPreview extends Component {
     });
   }
 
+  handleChangeWaktuMulai = d => {
+    this.setState({ waktuMulai: d });
+  }
+
+  handleChangeWaktuSelesai = d => {
+    this.setState({ waktuSelesai: d });
+  }
+
 	handleModalClose = e => {
 		this.setState({ 
       isModalAdd: false, 
@@ -182,6 +193,9 @@ export default class ChapterPreview extends Component {
       scheduled: false,
       startDate: new Date(),
       endDate: new Date(),
+
+      waktuMulai: new Date(),
+      waktuSelesai: new Date()
     });
 	}
 
@@ -200,12 +214,14 @@ export default class ChapterPreview extends Component {
         company_id: this.state.companyId,
         chapter_title: this.state.chapterTitle,
         chapter_body: this.state.chapterBody,
+        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
         moderator: this.state.valueModerator.length ? this.state.valueModerator[0] : null,
         start_date: this.state.scheduled ? sDate : null,
         end_date: this.state.scheduled ? eDate : null,
       };
 
-      API.put(`${API_SERVER}v1/chapter/forum/${this.state.chapterId}`, form).then(res => {
+      API.put(`${API_SERVER}v1/chapter/meeting/${this.state.chapterId}`, form).then(res => {
         if(res.status === 200){
           this.fetchDataChapter();
           this.handleModalClose();
@@ -237,6 +253,8 @@ export default class ChapterPreview extends Component {
         form.append('company_id', this.state.companyId);
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
+        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_video', this.state.chapterVideo);
         form.append('moderator', this.state.valueModerator.length ? this.state.valueModerator[0] : null);
         form.append('start_date', this.state.scheduled ? sDate : null);
@@ -265,6 +283,8 @@ export default class ChapterPreview extends Component {
         course_id: this.state.courseId,
         company_id: this.state.companyId,
         tags: this.state.tagsForum,
+        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
         chapter_title: this.state.chapterTitle,
         chapter_body: this.state.chapterBody,
       };
@@ -297,6 +317,8 @@ export default class ChapterPreview extends Component {
         let form = new FormData();
         form.append('course_id', this.state.courseId);
         form.append('company_id', this.state.companyId);
+        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
         form.append('chapter_video', this.state.chapterVideo);
@@ -307,6 +329,7 @@ export default class ChapterPreview extends Component {
         API.post(`${API_SERVER}v1/chapter/forum`, form).then((res) => {
           if(res.status === 200){
             this.fetchDataChapter();
+            this.handleModalClose();
             this.setState({ isLoading: false, isModalForum: false, isModalChoose: true});
           }
         });
@@ -326,6 +349,8 @@ export default class ChapterPreview extends Component {
 				chapter_number: this.state.chapterNumber,
 				chapter_title: this.state.chapterTitle,
 				chapter_body: this.state.chapterBody,
+        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
 			}
 
 			API.put(`${API_SERVER}v1/chapter/${this.state.chapterId}`, form).then(res => {
@@ -386,15 +411,16 @@ export default class ChapterPreview extends Component {
         form.append('chapter_number', this.state.chapterNumber);
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
+        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_video', this.state.chapterVideo);
         form.append('attachment_id', null);
-  
+
         this.handleModalClose();
         this.setState({isLoading : true});
 
         API.post(`${API_SERVER}v1/chapter`, form).then((res) => {
           if(res.status === 200){
-            console.log('files: ', res.data.result);
             
             if (this.state.attachmentId.length != 0) {
               let formData = new FormData();
@@ -464,6 +490,8 @@ export default class ChapterPreview extends Component {
 					chapterId: chapterId,
 					chapterNumber: res.data.result.chapter_number,
 					chapterTitle: res.data.result.chapter_title,
+          waktuMulai: Date.parse(res.data.result.waktu_mulai),
+          waktuSelesai: Date.parse(res.data.result.waktu_selesai),
 					chapterBody: res.data.result.chapter_body
 				})
 			}
@@ -482,6 +510,8 @@ export default class ChapterPreview extends Component {
           chapterNumber: res.data.result.chapter_number,
           chapterTitle: res.data.result.chapter_title,
           chapterBody: res.data.result.chapter_body,
+          waktuMulai: Date.parse(res.data.result.waktu_mulai),
+          waktuSelesai: Date.parse(res.data.result.waktu_selesai),
           tagsForum: res.data.result.tags_forum.split(',')
         })
       }
@@ -504,6 +534,8 @@ export default class ChapterPreview extends Component {
           chapterNumber: res.data.result.chapter_number,
           chapterTitle: res.data.result.chapter_title,
           chapterBody: res.data.result.chapter_body,
+          waktuMulai: Date.parse(res.data.result.waktu_mulai),
+          waktuSelesai: Date.parse(res.data.result.waktu_selesai),
           valueModerator: [res.data.result.moderator],
           startDate: Date.parse(res.data.result.start_date),
           endDate: Date.parse(res.data.result.end_date)
@@ -1027,6 +1059,30 @@ export default class ChapterPreview extends Component {
                           </Form.Text>
                         </Form.Group>
 
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Waktu Mulai & Selesai
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.waktuMulai}
+                            onChange={this.handleChangeWaktuMulai}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          &nbsp;&mdash;&nbsp;
+                          <DatePicker
+                            selected={this.state.waktuSelesai}
+                            onChange={this.handleChangeWaktuSelesai}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          </div>
+                          <Form.Text className="text-muted">
+                            Pilih waktu mulai dan selesai untuk chapter.
+                          </Form.Text>
+                        </Form.Group>
+
                         <div style={{ marginTop: "20px" }}>
                           <button
                             type="button"
@@ -1188,6 +1244,30 @@ export default class ChapterPreview extends Component {
                             </Form.Text>
                           </div>
 
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Waktu Mulai & Selesai
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <DatePicker
+                              selected={this.state.waktuMulai}
+                              onChange={this.handleChangeWaktuMulai}
+                              showTimeSelect
+                              dateFormat="yyyy-MM-dd HH:mm"
+                            />
+                            &nbsp;&mdash;&nbsp;
+                            <DatePicker
+                              selected={this.state.waktuSelesai}
+                              onChange={this.handleChangeWaktuSelesai}
+                              showTimeSelect
+                              dateFormat="yyyy-MM-dd HH:mm"
+                            />
+                            </div>
+                            <Form.Text className="text-muted">
+                              Pilih waktu mulai dan selesai untuk chapter.
+                            </Form.Text>
+                          </Form.Group>
+
                           <button
                             style={{ marginTop: "50px" }}
                             type="submit"
@@ -1311,45 +1391,27 @@ export default class ChapterPreview extends Component {
 
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
-                            Scheduled Meeting
-                          </Form.Label>
-                          <div style={{width:'100%'}}>
-                           <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
-                          </div>
-                          <Form.Text className="text-muted">
-                            {
-                              this.state.scheduled ? 'Meeting terjadwal.'
-                              :
-                              'Meeting tidak terjadwal. Selalu dapat diakses.'
-                            }
-                          </Form.Text>
-                        </Form.Group>
-                        {
-                          this.state.scheduled &&
-                          <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Waktu
+                            Waktu Mulai & Selesai
                           </Form.Label>
                           <div style={{width:'100%'}}>
                           <DatePicker
-                            selected={this.state.startDate}
-                            onChange={this.handleChangeDateFrom}
+                            selected={this.state.waktuMulai}
+                            onChange={this.handleChangeWaktuMulai}
                             showTimeSelect
                             dateFormat="yyyy-MM-dd HH:mm"
                           />
                           &nbsp;&mdash;&nbsp;
                           <DatePicker
-                            selected={this.state.endDate}
-                            onChange={this.handleChangeDateEnd}
+                            selected={this.state.waktuSelesai}
+                            onChange={this.handleChangeWaktuSelesai}
                             showTimeSelect
                             dateFormat="yyyy-MM-dd HH:mm"
                           />
                           </div>
                           <Form.Text className="text-muted">
-                            Pilih waktu meeting akan berlangsung.
+                            Pilih waktu mulai dan selesai untuk chapter.
                           </Form.Text>
                         </Form.Group>
-                        }
 
                         <div style={{ marginTop: "20px" }}>
                           <button onClick={this.onSubmitChapterMeeting} type="button" className="btn btn-primary f-w-bold mr-3">
