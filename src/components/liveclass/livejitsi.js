@@ -52,11 +52,15 @@ function JitsiMeetComponent(props) {
             const interval = setInterval(() => {
               const classId = konten.roomId;
               const numberOfParticipants = api.getNumberOfParticipants();
-              API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
-                if(res.status === 200) {
-                  console.log('UPDATE ACTIVE PARTICIPANTS', res.data.result.active_participants)
-                }
-              })
+              if (numberOfParticipants <= 0){
+              }
+              else{
+                API.put(`${API_SERVER}v1/liveclass/active/${classId}`, {numberOfParticipants: numberOfParticipants}).then(res => {
+                  if(res.status === 200) {
+                    console.log('UPDATE ACTIVE PARTICIPANTS', res.data.result.active_participants)
+                  }
+                })
+              }
             }, 3000);
           }
         })
