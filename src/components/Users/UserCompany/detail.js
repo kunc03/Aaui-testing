@@ -9,13 +9,20 @@ import Users from './users';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
+import TagsInput from 'react-tagsinput'
+import 'react-tagsinput/react-tagsinput.css'
+
+
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
 export default class CompanyDetail extends Component {
 
 	state = {
 		companyId: '',
-
+		tipe: '',
+		grade: [],
 		nama: '',
 		status: '',
 		validity: '',
@@ -23,6 +30,8 @@ export default class CompanyDetail extends Component {
 		dateValidity: new Date(),
 		logo: '',
 		tempLogo: '',
+
+		menukiri: 'group',
 		
 		cabang: [],
 		grup: [],
@@ -39,6 +48,10 @@ export default class CompanyDetail extends Component {
 		isModalCabang: false,
 		namacabang: '',
 		actioncabang: 'add',
+
+		isModalSemester: false,
+		namasemester: "",
+		actionsemester: "add",
 		
 		isModalGrup: false,
 		namagrup: '',
@@ -81,6 +94,55 @@ export default class CompanyDetail extends Component {
       validity: this.changeFormatDate(date), dateValidity: date,
     })
 	}
+
+	handleCloseSemester = e => {
+  	this.setState({ isModalSemester: false, namasemester: '', actionsemester: 'add' });
+  }
+
+  onClickTambahSemester = e => {
+  	e.preventDefault();
+  	const formData = {
+  		company_id: this.state.companyId,
+  		semester_name: this.state.namasemester
+		}
+		
+		if(formData.semester_name) {
+			if(this.state.actionsemester === 'add') {
+				// action for insert
+				API.post(`${API_SERVER}v1/semester`, formData).then(res => {
+					if(res.status === 200) {
+            if (res.data.result==='double data'){
+              this.handleCloseSemester()
+              this.setState({ isNotifikasi: true, isiNotifikasi: 'Data sudah ada. Nama group tidak boleh sama.' })
+            }
+            else{
+              formData.semester_id = res.data.result.semester_id;
+              this.setState({
+                semester: [...this.state.semester, formData ],
+                isModalSemester: false
+              })
+              this.handleCloseSemester();
+            }
+					}
+				})
+			} else {
+				const idNya = this.state.actionsemester.split('_')[1];
+				API.put(`${API_SERVER}v1/semester/${idNya}`, formData).then(res => {
+					if(res.status === 200) {
+						let linkURLSemester = `${API_SERVER}v1/semester/company/${this.state.companyId}`;
+						API.get(linkURLSemester).then(res => {
+							if(res.status === 200) {
+								this.setState({ semester: res.data.result, isModalSemester: false })
+								this.handleCloseSemester();
+							}
+						}).catch(err => {
+							console.log(err);
+						});
+					}
+				})
+			}
+		}
+  }
 	
 	changeFormatDate = (value) => {
 		let dt = new Date(value)
@@ -106,20 +168,23 @@ export default class CompanyDetail extends Component {
     }
   }
 
-  onClickUpdate = e => {
-  	const formData = {
+    onClickUpdate = e => {
+    
+    let unlimited = this.state.unlimited == false ? '1' : '0'
+  	let formData = {
   		company_id: this.state.companyId,
-  		name: this.state.nama,
+      name: this.state.nama,
+  		type: this.state.tipe,
+  		grade: this.state.grade.toString(),
   		status: this.state.status,
-			validity: this.state.validity,
-			unlimited: this.state.unlimited
+  		validity: this.state.validity.split('T')[0],
+  		unlimited: unlimited,
   	};
 
   	const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
   	API.put(linkURL, formData).then(res => {
-			console.log('res: ', res)
   		if(res.status === 200) {
-  			this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
+        this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
   		}
   	});
 
@@ -135,26 +200,33 @@ export default class CompanyDetail extends Component {
   		})
 		}
 		
-		this.setState({ isNotifikasi: true, isiNotifikasi: 'Informasi company berhasil di ubah.' })
+		this.setState({
+      isNotifikasi: true,
+      isiNotifikasi: "Informasi company berhasil di ubah."
+    });
+
   }
 
   onClickModal = e => {
-  	const tipe = e.target.getAttribute('data-type');
+    const tipe = e.target.getAttribute('data-type');
+    
   	if(tipe === 'cabang') {
-  		this.setState({ isModalCabang: true });
+      this.setState({ isModalCabang: true });
+  	} else if(tipe === 'semester') {
+  		this.setState({ isModalSemester: true });
   	} else {
-		let access = this.state.access;
-		access['activity'] = 0;
-		access['course'] = 0;
-		access['manage_course'] = 0;
-		access['forum'] = 0;
-		access['group_meeting'] = 0;
-		access['manage_group_meeting'] = 0;
-  
-		this.setState({ isModalGrup: true });
-		this.setState(access);
+      let access = this.state.access;
+      access['activity'] = 0;
+      access['course'] = 0;
+      access['manage_course'] = 0;
+      access['forum'] = 0;
+      access['group_meeting'] = 0;
+      access['manage_group_meeting'] = 0;
+
+      this.setState({ isModalGrup: true });
+      this.setState(access);
   	}
-  }
+	}
 
   onClickTambahCabang = e => {
   	e.preventDefault();
@@ -275,6 +347,8 @@ export default class CompanyDetail extends Component {
 
   	if(tipe === 'cabang') {
   		linkURL += `/branch/${idNya}`;
+  	} else if (tipe === 'semester') {
+  		linkURL += `/semester/${idNya}`;
   	} else {
   		linkURL += `/grup/${idNya}`;
   	}
@@ -283,14 +357,19 @@ export default class CompanyDetail extends Component {
   		if(res.status === 200) {
   			if(tipe === 'cabang') {
 	  			this.setState({
-						cabang: this.state.cabang.filter(item => { return item.branch_id != idNya }),
+	  				cabang: this.state.cabang.filter(item => { return item.branch_id != idNya })
 					})
-					this.closeKonfirmasi()
+					this.closeKonfirmasi();					
+  			} else if(tipe === 'semester') {
+  				this.setState({
+	  				semester: this.state.semester.filter(item => { return item.semester_id != idNya })
+					})
+					this.closeKonfirmasi();
   			} else {
   				this.setState({
-						grup: this.state.grup.filter(item => { return item.grup_id != idNya }),
+	  				grup: this.state.grup.filter(item => { return item.grup_id != idNya })
 					})
-					this.closeKonfirmasi()
+					this.closeKonfirmasi();
   			}
   		}
   	})
@@ -347,6 +426,14 @@ export default class CompanyDetail extends Component {
     console.groupEnd();
   };
 
+  onClickMenuKiri = e => {
+    this.setState({ menukiri: e.target.getAttribute('menu') });
+  }
+
+  handleChangeGrade(grade) {
+    this.setState({grade: grade});
+  }
+
 	fetchData() {
 		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
@@ -356,11 +443,22 @@ export default class CompanyDetail extends Component {
 				API.get(linkURL).then(res => {
 					if(res.status === 200) {
 						this.setState({ 
+							tipe: res.data.result.company_type, 
+							grade: res.data.result.company_grade == null ? [] : res.data.result.company_grade.split(','), 
 							nama: res.data.result.company_name, 
 							status: res.data.result.status, 
 							validity: res.data.result.validity.substring(0,10),
 							logo: res.data.result.logo,
 							unlimited: res.data.result.unlimited
+						});
+
+						let linkURLSemester = `${API_SERVER}v1/semester/company/${this.state.companyId}`;
+						API.get(linkURLSemester).then(res => {
+							if(res.status === 200) {
+								this.setState({ semester: res.data.result })
+							}
+						}).catch(err => {
+							console.log(err);
 						});
 
 						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
@@ -507,6 +605,47 @@ export default class CompanyDetail extends Component {
 			}
 		}
 
+		const ListSemester = ({items}) => {
+			if(items.length == 0) {
+				return (
+					<div>
+						<Card className="cardku" >
+	          	<Card.Body>
+	          		<Row>
+	          			<Col>Tidak ada data</Col>
+	          		</Row>
+	          	</Card.Body>
+	          </Card>
+					</div>
+				)
+			} else {
+				return (
+					<div>
+					{	
+						items.map((item, i) => (
+							<Card className="cardku" key={item.semester_id}>
+		          	<Card.Body>
+		          		<Row>
+		          			<Col xs={2}>{i+1}</Col>
+		          			<Col xs={8}>{item.semester_name}</Col>
+		          			<Col>
+		          				<Link to="#" className="buttonku">
+		          					<i data-type="semester" data-action="update" data-id={item.semester_id} data-nama={item.semester_name} onClick={this.onClickUbah} className="fa fa-edit"></i>
+	          					</Link>
+		          				<Link to="#" className="buttonku">
+		          					<i data-type="semester" data-id={item.semester_id} onClick={this.openKonfirmasi} className="fa fa-trash"></i>
+	          					</Link>
+		          			</Col>
+		          		</Row>
+		          	</Card.Body>
+		          </Card>
+						))
+					}
+					</div>
+				)
+			}
+		};
+
 		return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -621,145 +760,258 @@ export default class CompanyDetail extends Component {
                         </Card.Body>
                       </Card>
 
-                      <Row style={{ marginBottom: "32px" }}>
-                      <Col md={6}>
-                          <h3 className="f-24 f-w-800 mb-3">
-                           Group
-                            <Button
-                              data-type="cabang"
-                              onClick={this.onClickModal}
-                              className="btn btn-sm btn-ideku float-right tambah-cabang"
-                            >
-                              <i className="fa fa-plus"></i> Tambah Group
-                            </Button>
-                            <div className="clearfix"></div>
-                          </h3>
-                          <ListCabang items={cabang} />
-                          <Modal
-                            show={this.state.isModalCabang}
-                            onHide={this.handleCloseCabang}
-                          >
-                            <Modal.Body>
-                              <Modal.Title className="text-c-purple3 f-w-bold">
-                                Group Baru
-                              </Modal.Title>
-                              <div
-                                style={{ marginTop: "20px" }}
-                                className="form-group"
-                              >
-                                <label>Nama Group</label>
-                                <input
-                                  value={this.state.namacabang}
-                                  className="form-control"
-                                  type="text"
-                                  name="namacabang"
-                                  onChange={this.onChangeInput}
-                                  placeholder="Nama Group"
-                                />
-                              </div>
-                              <button
-                                style={{ marginTop: "50px" }}
-                                type="button"
-                                data-grup={this.state.namacabang}
-                                onClick={this.onClickTambahCabang}
-                                className="btn btn-block btn-ideku f-w-bold"
-                              >
-                                Simpan
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-block f-w-bold"
-                                onClick={this.handleCloseCabang}
-                              >
-                                Tidak
-                              </button>
-                            </Modal.Body>
-                          </Modal>
-                        </Col>
+                      <Card>
+                        <Card.Body>
+                          <Row style={{ marginBottom: "32px" }}>
+                            <Col md={2}>
+                              <ul className="list-group list-group-flush" style={{fontWeight: 'bold'}}>
+                                <li onClick={this.onClickMenuKiri} menu="group" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'group' ? 'back-active' : ''}`}>{this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</li>
+                                <li onClick={this.onClickMenuKiri} menu="role" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
+                              
+                              	{this.state.tipe == 'pendidikan' &&  
+                              		<div style={{marginTop: '1px'}}>
+		                                <li onClick={this.onClickMenuKiri} menu="grade" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'grade' ? 'back-active' : ''}`}>Grade</li>
+		                                <li onClick={this.onClickMenuKiri} menu="semester" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'semester' ? 'back-active' : ''}`}>Semester</li>
+	                                </div>
+                              	}
+                              </ul>
+                            </Col>
+                            
+                            <Col md={10}>
+                              
+                              {this.state.menukiri == 'group' && 
+                                <div id="gorup">
+                                  <h3 className="f-24 f-w-800 mb-3">
+                                    {this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}
+                                    <Button
+                                      data-type="cabang"
+                                      onClick={this.onClickModal}
+                                      className="btn btn-sm btn-ideku float-right tambah-cabang"
+                                    >
+                                      <i className="fa fa-plus"></i> Tambah
+                                    </Button>
+                                    <div className="clearfix"></div>
+                                  </h3>
+                                  <ListCabang items={cabang} />
+                                  <Modal
+                                    show={this.state.isModalCabang}
+                                    onHide={this.handleCloseCabang}
+                                  >
+                                    <Modal.Body>
+                                      <Modal.Title className="text-c-purple3 f-w-bold">
+                                        {this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}
+                                      </Modal.Title>
+                                      <div
+                                        style={{ marginTop: "20px" }}
+                                        className="form-group"
+                                      >
+                                        <label>Nama {this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</label>
+                                        <input
+                                          value={this.state.namacabang}
+                                          className="form-control"
+                                          type="text"
+                                          name="namacabang"
+                                          onChange={this.onChangeInput}
+                                          placeholder="Nama"
+                                        />
+                                      </div>
+                                      <button
+                                        style={{ marginTop: "50px" }}
+                                        type="button"
+                                        data-grup={this.state.namacabang}
+                                        onClick={this.onClickTambahCabang}
+                                        className="btn btn-block btn-ideku f-w-bold"
+                                      >
+                                        Simpan
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-block f-w-bold"
+                                        onClick={this.handleCloseCabang}
+                                      >
+                                        Tidak
+                                      </button>
+                                    </Modal.Body>
+                                  </Modal>
+                                </div>
+                              }
 
-                        <Col md={6}>
-                          <h3 className="f-24 f-w-800 mb-3">
-                            Role
-                            <Button
-                              data-type="grup"
-                              onClick={this.onClickModal}
-                              className="btn btn-sm btn-ideku float-right tambah-grup"
-                            >
-                              <i className="fa fa-plus"></i> Tambah Role
-                            </Button>
-                            <div className="clearfix"></div>
-                          </h3>
-                          <ListGrup items={grup} />
-                          <Modal
-                            show={this.state.isModalGrup}
-                            onHide={this.handleCloseGrup}
-                          >
-                            <Modal.Body>
-                              <Modal.Title className="text-c-purple3 f-w-bold">
-                                Role Baru
-                              </Modal.Title>
-                              <div
-                                style={{ marginTop: "20px" }}
-                                className="form-group"
-                              >
-                                <label>Nama Role</label>
-                                <input
-                                  value={this.state.namagrup}
-                                  className="form-control"
-                                  type="text"
-                                  name="namagrup"
-                                  onChange={this.onChangeInput}
-                                  placeholder="Nama Role"
-                                />
-                                <table
-                                  className="table-curved"
-                                  style={{ width: "100%" }}>
-                                    <tr>
-                                      <td>Aktivitas</td>
-                                      <td><input checked={(access.activity)} onChange={this.handleChangeAccess} type="checkbox" name="activity" /></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Kursus & Materi</td>
-                                      <td><input checked={(access.course)} onChange={this.handleChangeAccess} type="checkbox" name="course" /></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Kelola Kursus</td>
-                                      <td><input checked={(access.manage_course)} onChange={this.handleChangeAccess} type="checkbox" name="manage_course" /></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Forum</td>
-                                      <td><input checked={(access.forum)} onChange={this.handleChangeAccess} type="checkbox" name="forum" /></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Group Meeting</td>
-                                      <td><input checked={(access.group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="group_meeting" /></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Kelola Group Meeting</td>
-                                      <td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
-                                    </tr>
-                                </table>
-                              </div>
-                              <button
-                                style={{ marginTop: "50px" }}
-                                type="button"
-                                data-grup={this.state.namagrup}
-                                onClick={this.onClickTambahGrup}
-                                className="btn btn-block btn-ideku f-w-bold"
-                              >
-                                Simpan
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-block f-w-bold"
-                                onClick={this.handleCloseGrup}
-                              >
-                                Tidak
-                              </button>
-                            </Modal.Body>
-                          </Modal>
-                        </Col>
-                      </Row>
+                              {this.state.menukiri == 'role' && 
+                                <div id="role">
+                                  <h3 className="f-24 f-w-800 mb-3">
+                                    Role
+                                    <Button
+                                      data-type="grup"
+                                      onClick={this.onClickModal}
+                                      className="btn btn-sm btn-ideku float-right tambah-grup"
+                                    >
+                                      <i className="fa fa-plus"></i> Tambah
+                                    </Button>
+                                    <div className="clearfix"></div>
+                                  </h3>
+                                  <ListGrup items={grup} />
+                                  <Modal
+                                    show={this.state.isModalGrup}
+                                    onHide={this.handleCloseGrup}
+                                  >
+                                    <Modal.Body>
+                                      <Modal.Title className="text-c-purple3 f-w-bold">
+                                        Role Baru
+                                      </Modal.Title>
+                                      <div
+                                        style={{ marginTop: "20px" }}
+                                        className="form-group"
+                                      >
+                                        <label>Nama Role</label>
+                                        <input
+                                          value={this.state.namagrup}
+                                          className="form-control"
+                                          type="text"
+                                          name="namagrup"
+                                          onChange={this.onChangeInput}
+                                          placeholder="Nama Role"
+                                        />
+
+                                        <table
+                                          className="table-curved"
+                                          style={{ width: "100%" }}>
+                                            <tr>
+                                              <td>Aktivitas</td>
+                                              <td><input checked={(access.activity)} onChange={this.handleChangeAccess} type="checkbox" name="activity" /></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Kursus & Materi</td>
+                                              <td><input checked={(access.course)} onChange={this.handleChangeAccess} type="checkbox" name="course" /></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Kelola Kursus</td>
+                                              <td><input checked={(access.manage_course)} onChange={this.handleChangeAccess} type="checkbox" name="manage_course" /></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Forum</td>
+                                              <td><input checked={(access.forum)} onChange={this.handleChangeAccess} type="checkbox" name="forum" /></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Group Meeting</td>
+                                              <td><input checked={(access.group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="group_meeting" /></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Kelola Group Meeting</td>
+                                              <td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
+                                            </tr>
+                                        </table>
+                                      </div>
+                                      <button
+                                        style={{ marginTop: "50px" }}
+                                        type="button"
+                                        data-grup={this.state.namagrup}
+                                        onClick={this.onClickTambahGrup}
+                                        className="btn btn-block btn-ideku f-w-bold"
+                                      >
+                                        Simpan
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-block f-w-bold"
+                                        onClick={this.handleCloseGrup}
+                                      >
+                                        Tidak
+                                      </button>
+                                    </Modal.Body>
+                                  </Modal>
+                                </div>
+                              }
+
+                              {this.state.tipe == 'pendidikan' &&  
+                              	<div>
+		                              {this.state.menukiri == 'grade' && 
+		                                <div id="grade">
+		                                  <h3 className="f-24 f-w-800 mb-3">
+		                                    Grade
+		                                    <div className="clearfix"></div>
+		                                  </h3>
+		                                  <div className="form-group">
+		                                  	<label>Company Grade</label>
+		                                  	<TagsInput
+												                  value={this.state.grade}
+												                  onChange={this.handleChangeGrade.bind(this)}
+												                  addOnPaste={true}
+												                  inputProps={{placeholder:'Company Grade'}}
+												                />
+		                                  </div>
+		                                  <button
+				                                className="btn btn-sm btn-ideku"
+				                                onClick={this.onClickUpdate}
+				                              >
+				                                <i className="fa fa-save"></i>
+				                                Simpan
+				                              </button>
+		                                </div>
+		                              }
+
+		                              {this.state.menukiri == 'semester' && 
+		                                <div id="semester">
+		                                  <h3 className="f-24 f-w-800 mb-3">
+		                                    Semester
+		                                    <Button
+		                                      data-type="semester"
+		                                      onClick={this.onClickModal}
+		                                      className="btn btn-sm btn-ideku float-right tambah-semester"
+		                                    >
+		                                      <i className="fa fa-plus"></i> Tambah
+		                                    </Button>
+		                                    <div className="clearfix"></div>
+		                                  </h3>
+		                                  <ListSemester items={this.state.semester} />
+		                                  <Modal
+		                                    show={this.state.isModalSemester}
+		                                    onHide={this.handleCloseSemester}
+		                                  >
+		                                    <Modal.Body>
+		                                      <Modal.Title className="text-c-purple3 f-w-bold">
+		                                        Semester
+		                                      </Modal.Title>
+		                                      <div
+		                                        style={{ marginTop: "20px" }}
+		                                        className="form-group"
+		                                      >
+		                                        <label>Nama Semester</label>
+		                                        <input
+		                                          value={this.state.namasemester}
+		                                          className="form-control"
+		                                          type="text"
+		                                          name="namasemester"
+		                                          onChange={this.onChangeInput}
+		                                          placeholder="Nama Semester"
+		                                        />
+		                                      </div>
+		                                      <button
+		                                        style={{ marginTop: "50px" }}
+		                                        type="button"
+		                                        data-grup={this.state.namasemester}
+		                                        onClick={this.onClickTambahSemester}
+		                                        className="btn btn-block btn-ideku f-w-bold"
+		                                      >
+		                                        Simpan
+		                                      </button>
+		                                      <button
+		                                        type="button"
+		                                        className="btn btn-block f-w-bold"
+		                                        onClick={this.handleCloseSemester}
+		                                      >
+		                                        Tidak
+		                                      </button>
+		                                    </Modal.Body>
+		                                  </Modal>
+		                                </div>
+		                              }
+	                              </div>
+                            	}
+
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
 
                       <Users
                         match={{ params: { company_id: this.state.companyId } }}
