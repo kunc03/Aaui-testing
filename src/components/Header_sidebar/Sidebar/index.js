@@ -36,6 +36,7 @@ class Sidebar extends Component {
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [
@@ -59,6 +60,7 @@ class Sidebar extends Component {
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [
@@ -82,6 +84,7 @@ class Sidebar extends Component {
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [
