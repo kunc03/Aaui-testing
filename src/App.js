@@ -9,7 +9,9 @@ import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
 import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home/index";
+import HomeNew from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
+import Notification from "./components/Notification/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 import Files from "./components/files/index";
@@ -193,7 +195,7 @@ export class SuperAdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -207,6 +209,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
         <Route path="/files" component={Files} />
+        <Route path="/notification" component={Notification} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
@@ -267,7 +270,7 @@ export class AdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -341,7 +344,7 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />

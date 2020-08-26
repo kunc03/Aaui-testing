@@ -20,6 +20,7 @@ class Header extends Component {
     menuAktif: '/',
     sideMenu: false,
     sideMenuCollapse: false,
+    dateNow : Date.now(),
   };
 
   pilihCompany = (e) => {
@@ -563,7 +564,9 @@ class Header extends Component {
           </ul>
 
           <ul className="navbar-nav ml-auto">
-            <li>
+            
+            <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
+            {/* <li>
               <div className="dropdown">
                 <a className href="javascript:" data-toggle="dropdown">
                   <i className="icon feather icon-bell f-20 text-c-grey" />
@@ -576,21 +579,21 @@ class Header extends Component {
                   <div className="noti-head">
                     <h6 className="d-inline-block m-b-0">Notifications</h6>
                     <div className="float-right">
-                      {/* <a href="javascript:" className="m-r-10">
+                      <a href="javascript:" className="m-r-10">
                         mark as read
                       </a>
-                      <a href="javascript:">clear all</a> */}
+                      <a href="javascript:">clear all</a>
                     </div>
                   </div>
 
                   <NotifBody list={notificationData} />
 
-                  {/* <div className="noti-footer">
+                  <div className="noti-footer">
                     <a href="javascript:">show all</a>
-                  </div> */}
+                  </div>
                 </div>
               </div>
-            </li>
+            </li> */}
           </ul>
           
           <ul className="navbar-nav">
@@ -598,7 +601,7 @@ class Header extends Component {
               <div className="media">
                 <img
                   alt="Media"
-                  style={{ height: 40 }}
+                  style={{ height: 26 }}
                   src={
                     localStorage.getItem('logo')
                       ? localStorage.getItem('logo')
