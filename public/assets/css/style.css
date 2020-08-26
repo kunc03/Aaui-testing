@@ -11452,10 +11452,77 @@ div.code-toolbar > .toolbar span:hover {
 .fc-blue {
   color: #004887
 }
+.fc-skyblue {
+  color: #0091FF
+}
+
+.fc-black {
+  color: #424242
+}
 
 .fc-muted {
   color: #797979
 }
 
 
-/*  */
+/* Bordered Box */s
+.border-blue-1 {
+  border: 1px solid #0091FF;
+    border-radius: 10px;
+}
+
+.border-blue-2 {
+  border: 2px solid #0091FF;
+    border-radius: 10px;
+}
+
+.border-disabled {
+  border: 1px solid #dbdbdb;
+    border-radius: 10px;
+}
+
+/* Boxed */
+.box-event {
+  padding: 25px 15px;
+}
+
+.box-project {
+  padding: 10px;
+}
+
+.project-info {
+  background: transparent;
+    padding: 6px 18px;
+    border: 1px solid #0895ff;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-left: 6px;
+    color: #0895ff;
+}
+
+.project-info-disabled {
+  background: #f7f7f7;
+    padding: 6px 18px;
+    border: 1px solid #ebebeb;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-left: 6px;
+    color: #cfcfcf;
+}
+
+.box-disabled {
+  background: #F7F7F7;
+  padding: 10px;
+}
+
+
+.box-badge-red {
+  background: crimson;
+  color: white;
+  width: fit-content;
+  padding: 1px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+}
