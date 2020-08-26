@@ -125,7 +125,7 @@ class Header extends Component {
 
       console.log(unread, unclick);
       return (
-        <ul className="noti-body">
+        <ul className="noti-body" style={{maxHeight:400, overflowY:'scroll', overflowX:'hidden'}}>
           {unread.length ? (
             <li className="n-title">{/* <p className="m-b-0">NEW</p> */}</li>
           ) : null}
@@ -149,11 +149,11 @@ class Header extends Component {
                     </span>
                   </p>
                   <p>
-                    {item.type === 1
+                    {/* {item.type === 1
                       ? 'Course'
                       : item.type === 2
                       ? 'Forum'
-                      : 'Meeting'}{' '}
+                      : 'Meeting'}{' '} */}
                     {item.description}
                   </p>
                 </div>

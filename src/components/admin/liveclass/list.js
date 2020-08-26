@@ -160,6 +160,22 @@ export default class LiveClassAdmin extends Component {
             }
           }
         })
+        let formNotif = {
+          user_id: this.state.infoClass.moderator,
+          type: 3,
+          activity_id: this.state.infoClass.class_id,
+          desc: Storage.get('user').data.user+' Akan '+confirmation+' Pada Meeting : '+this.state.infoClass.room_name,
+          dest: null,
+        }
+        API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
+          if(res.status === 200) {
+            if(!res.data.error) {
+              console.log('Sukses Notif')
+            } else {
+              console.log('Gagal Notif')
+            }
+          }
+        })
       }
     })
   }
@@ -895,6 +911,23 @@ export default class LiveClassAdmin extends Component {
                                       {
                                         this.state.infoParticipant.map(item=>
                                           <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                                        )
+                                      }
+                                    </div>
+                                  </div>
+                                  : null
+                                }
+                                {
+                                  this.state.infoClass.is_private ?
+                                  <div>
+                                    <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                                      Kehadiran Aktual
+                                    </div>
+                                    <div className="row mt-3" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
+                                      {
+                                        this.state.infoParticipant.map(item=>
+                                          item.actual == 'Hadir' &&
+                                          <div className='peserta aktual-hadir'>{item.name}</div>
                                         )
                                       }
                                     </div>

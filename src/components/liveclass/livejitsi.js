@@ -1,6 +1,7 @@
 import React, {useState, useEffect } from 'react';
 import API, { API_JITSI, API_SERVER, API_SOCKET } from '../../repository/api';
 import { CenturyView } from 'react-calendar';
+import Storage from '../../repository/storage';
 
 function JitsiMeetComponent(props) {
 
@@ -43,6 +44,18 @@ function JitsiMeetComponent(props) {
       const api = new JitsiMeetExternalAPI(domain, options);
       
       api.addEventListener('videoConferenceJoined', () => {
+        // update actual hadir
+        
+      let form = {
+        confirmation: 'Hadir',
+      }
+
+      API.put(`${API_SERVER}v1/liveclass/actualattendance/${konten.roomId}/${Storage.get('user').data.user_id}`, form).then(async res => {
+        if (res.status === 200) {
+          console.log('Kehadiran Aktual : Hadir')
+        }
+      })
+
         // setJoining(false);
         const classId = konten.roomId;
         const numberOfParticipants = api.getNumberOfParticipants();
