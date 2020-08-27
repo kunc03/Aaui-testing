@@ -589,10 +589,12 @@ saveFolder = e => {
                 <i className="fa fa-user"></i>Invite People
               </Link>
               {
-                classRooms.is_private &&
+                classRooms.is_private ?
                 <Link onClick={this.onClickInfo.bind(this, classRooms.class_id)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px', marginRight:20}}>
                   <i className="far fa-list-alt"></i>Kehadiran
                 </Link>
+                :
+                null
               }
             </h3>
             {
