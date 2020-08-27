@@ -195,7 +195,7 @@ export class SuperAdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={HomeNew} />
+        <Route path="/" exact component={Home} />
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -270,7 +270,7 @@ export class AdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={HomeNew} />
+        <Route path="/" exact component={Home} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -344,7 +344,7 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={HomeNew} />
+        <Route path="/" exact component={Home} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
