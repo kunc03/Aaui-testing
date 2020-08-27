@@ -11447,6 +11447,9 @@ div.code-toolbar > .toolbar span:hover {
 .hadir {
   background: #61c061;
 }
+.aktual-hadir {
+  background: #2f7dc8;
+}
 .tidak-hadir {
   background: #ab4848;
 }
