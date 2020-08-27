@@ -114,7 +114,7 @@ class ModalEmail extends Component {
                   { this.state.msgEmailBaru && <span className={`label label-${(this.state.isEmailBaru) ? 'success':'danger'}`}>{this.state.msgEmailBaru}</span> }
                 </div>
                 <div className="modal-footer mt-4 p-b-0" style={{ borderTop: "0 !important" }}>
-                  <button type="submit" className="btn btn-primary btn-block f-18 f-w-bold openConfirm">
+                  <button type="submit" className="btn btn-icademy-primary ml-2">
                     Simpan
                   </button>
                 </div>

@@ -99,20 +99,15 @@ class Pengaturan extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-                    <div className="col-xl-12">
-                      <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3>
+                    <div className="col-sm-8">
+                      {/* <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3> */}
                       <div className="card">
                         <div className="card-block">
                           <div className="row m-b-100">
                             <div className="col-xl-2">
-                              <h3 className="pengaturan-title f-24 f-w-bold">
-                                Akun
-                              </h3>
+                              <h3 className="f-w-bold f-18 fc-blue mb-4">Pengaman</h3>
                             </div>
-                            <div
-                              className="col-xl-10 p-l-30"
-                              style={{ borderLeft: "black solid 1px" }}
-                            >
+                            <div className="col-xl-10">
                               <form>
                                 <div className="form-group">
                                   <label className="label-input" htmlFor>
@@ -130,12 +125,12 @@ class Pengaturan extends Component {
                                     />
                                     <div className="input-group-append">
                                       <button
-                                        className="btn btn-ideku"
+                                        className="btn btn-icademy-primary ml-2"
                                         data-toggle="modal"
                                         data-target="#modalEmail"
                                         type="button"
                                       >
-                                        Ganti
+                                        Ubah
                                       </button>
                                     </div>
                                   </div>
@@ -153,19 +148,19 @@ class Pengaturan extends Component {
                                       aria-describedby="basic-addon2"
                                     />
                                     <div className="input-group-append">
-                                      <span
+                                      {/* <span
                                         className="input-group-text"
                                         id="basic-addon2"
                                       >
                                         <i className="fa fa-eye text-c-grey" />
-                                      </span>
+                                      </span> */}
                                       <button
-                                        className="btn btn-ideku"
+                                        className="btn btn-icademy-primary ml-2"
                                         data-toggle="modal"
                                         data-target="#modalPassword"
                                         type="button"
                                       >
-                                        Ganti
+                                        Ubah
                                       </button>
                                     </div>
                                   </div>

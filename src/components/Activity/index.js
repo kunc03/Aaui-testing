@@ -435,7 +435,7 @@ class Aktivity extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-                  <Card>
+                  {/* <Card>
                     <div
                       className="row p-20"
                       style={{
@@ -445,7 +445,6 @@ class Aktivity extends Component {
                         backgroundPositionX: 'right',
                         backgroundPositionY: 'center',
                         backgroundBlendMode: 'luminosity',
-                        // opacity: 0.1
                       }}
                     >
                       <div className="col-xl-2 text-center">
@@ -522,7 +521,7 @@ class Aktivity extends Component {
                         </div>
                       </div>
                     </div>
-                  </Card>
+                  </Card> */}
 
                   <div className="row">
                     {/* <div className="col-md-12 col-xl-7">
