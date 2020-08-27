@@ -222,21 +222,21 @@ class Profile extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
+                  <h3 className="f-w-bold f-18 fc-blue">Profile</h3>
                   <div className="row">
-                    <div className="col-xl-12">
+                    <div className="col-sm-8">
                       <div className="card">
                         <div className="card-block">
-                          <div className="text-center mt-5 mb-5">
+                          <div className="mt-3 mb-3">
                             <img
                               alt=""
                               src={this.state.user_data.avatar}
                               className="rounded-circle img-profile mb-4"
                             />
-                            <br />
+                            
                             <button
                               onClick={this.onClickModalAvatar}
-                              className="btn btn-ideku f-16 f-w-bold"
-                              style={{ width: 180, padding: "15px 0" }}
+                              className="btn btn-icademy-primary mb-2 ml-3"
                             >
                               Ganti
                             </button>
@@ -267,35 +267,33 @@ class Profile extends Component {
                                   dan ukuran file tidak lebih dari 500KB
                                 </Form.Text>
                               </div>
-                              <button
-                                style={{ marginTop: "50px" }}
-                                type="button"
-                                onClick={this.onClickSubmitModal}
-                                className="btn btn-block btn-ideku f-w-bold"
-                              >
-                                Simpan
-                              </button>
-                              <button
-                                type="button"
-                                onClick={this.onClickSubmitModalDelete}
-                                className="btn btn-block btn-ideku f-w-bold"
-                              >
-                                Hapus Foto
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-block f-w-bold"
-                                onClick={this.handleModalAvatarClose}
-                              >
-                                Batal
-                              </button>
+                              <div className="float-right">
+                                <button
+                                  type="button"
+                                  onClick={this.onClickSubmitModal}
+                                  className="btn btn-icademy-primary ml-2"
+                                >
+                                  Simpan
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={this.onClickSubmitModalDelete}
+                                  className="btn btn-icademy-danger ml-2"
+                                >
+                                  Hapus Foto
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-icademy-block ml-2"
+                                  onClick={this.handleModalAvatarClose}
+                                >
+                                  Batal
+                                </button>
+                              </div>
                             </Modal.Body>
                           </Modal>
 
-                          <form style={{ margin: "0 42px" }}>
-                            <h3 className="f-24 f-w-bold mb-3">
-                              Informasi Profile
-                            </h3>
+                          <form style={{ margin: "0 0px" }}>
                             {toggle_alert && (
                               <Alert variant={"success"}>
                                 Data profil kamu berhasil di simpan.
@@ -381,7 +379,7 @@ class Profile extends Component {
                               />
                             </div>
                             <button
-                              className="btn btn-ideku btn-block m-t-10 f-20 f-w-600"
+                              className="btn btn btn-icademy-primary float-right mt-3"
                               onClick={event => this.updateProfile(event)}
                             >
                               Simpan
@@ -390,7 +388,7 @@ class Profile extends Component {
                         </div>
                       </div>
 
-                      <Card>
+                      {/* <Card>
                         <Card.Body>
                           <form style={{ margin: "0 42px" }}>
                             <h3 className="f-24 f-w-bold mb-3">
@@ -429,9 +427,9 @@ class Profile extends Component {
                             </Link>
                           </form>
                         </Card.Body>
-                      </Card>
+                      </Card> */}
 
-                      <Card>
+                      {/* <Card>
                         <Card.Body>
                           <form style={{ margin: "0 42px" }}>
                             <h3 className="f-24 f-w-bold mb-3">
@@ -441,7 +439,7 @@ class Profile extends Component {
                             <ListAktivitas lists={kursusDiikuti} />
                           </form>
                         </Card.Body>
-                      </Card>
+                      </Card> */}
 
                       <Modal
                         show={this.state.isNotifikasi}

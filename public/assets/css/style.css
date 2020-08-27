@@ -49,6 +49,7 @@ File: style.css
 /**  =====================
      Google Font
 ==========================  **/
+@import url("http://fonts.googleapis.com/css?family=Lato:400,700");
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,600,800&display=swap");
 @import url("../plugins/bootstrap/css/bootstrap.min.css");
@@ -56,7 +57,31 @@ File: style.css
 @import url("../plugins/jquery-scrollbar/css/jquery.scrollbar.min.css");
 @import url("../fonts/datta/datta-icon.css");
 
-/* MULTI SELECT DROPDOWN */
+
+@font-face {
+  font-family: "Lato";
+  src: url('698242188-Lato-Bla.eot');
+  src: url('698242188-Lato-Bla.eot?#iefix') format('embedded-opentype'),
+  url('698242188-Lato-Bla.svg#Lato Black') format('svg'),
+  url('698242188-Lato-Bla.woff') format('woff'),
+  url('698242188-Lato-Bla.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/**  =====================
+      Custom css start
+==========================  **/
+body {
+  font-family: 'lato', sans-serif;
+    letter-spacing: 0.5px;
+    font-size: 13.5px;
+    color: #888;
+    font-weight: 400;
+    background: #f4f7fa;
+    position: relative;
+    Line-height: 17px;
+}
 
 label.Option {
   margin-bottom:0px;
@@ -103,18 +128,7 @@ label.Option {
   border:none !important;
 }
 
-/**  =====================
-      Custom css start
-==========================  **/
-body {
-  font-family: 'Nunito', sans-serif;
-  letter-spacing: 0.5px;
-  font-size: 13.5px;
-  color: #888;
-  font-weight: 400;
-  background: #f4f7fa;
-  position: relative;
-}
+
 
 
 *:focus {
@@ -2358,7 +2372,7 @@ th, td {
 }
 
 .label-input {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -2376,8 +2390,8 @@ th, td {
 }
 
 .img-profile {
-  height: 154px;
-  width: 154px;
+  height: 109px;
+  width: 109px;
 }
 
 .m-b-100 {
@@ -7464,7 +7478,7 @@ pre[class*=language-]:after, pre[class*=language-]:before {
   /* padding: 18px 20px; */
   min-height:40px;
   font-size: 14px;
-  border-radius: 9px;
+  border-radius: 2px;
 }
 
 .auth-content .form-control {
@@ -8369,6 +8383,36 @@ a.btn-theme.active {
   color: #fff;
   background-color: #BF337B;
   border-color: #12b58c;
+}
+
+.btn-icademy-primary {
+  color: #fff;
+  background-color: #0091FF;
+  font-size: 14px;
+  width: 96px !important;
+  height: 39px !important;
+  padding: 0px !important;
+  border-radius: 19px !important;
+}
+
+.btn-icademy-danger {
+  color: #fff;
+  background-color: #ff0052;
+  font-size: 14px;
+  width: 96px !important;
+  height: 39px !important;
+  padding: 0px !important;
+  border-radius: 19px !important;
+}
+
+.btn-icademy-block {
+  color: #fff;
+  background-color: #3e4142;
+  font-size: 14px;
+  width: 96px !important;
+  height: 39px !important;
+  padding: 0px !important;
+  border-radius: 19px !important;
 }
 
 .btn-ideku {
