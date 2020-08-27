@@ -70,7 +70,7 @@ class Notification extends Component {
         {pengirim : 'Putri Mengomentari Postingan Anda', date : '02:05PM 22/02/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
         {pengirim : 'Doni Mengomentari Postingan Anda', date : '02:05PM 01/12/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '}
     ]
-    console.log('ds0', notificationData)
+    console.log('data notifikasi cui', notificationData)
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -79,11 +79,11 @@ class Notification extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-                    <div className="col-xl-12">
+                    <div className="col-sm-8">
                         <div className="row">
                             <h4 className="fc-blue"><b> Notification </b></h4>
                         </div>
-                        <div className="row" style={{background:'#FFF', borderRadius:4}}>
+                        
                         {notificationData.length === 0 ?
                             <span style={{ width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
                                 <b className="fc-blue ">Tidak ada notifikasi saat ini ...</b> 
@@ -93,14 +93,18 @@ class Notification extends Component {
                             {
                                 notificationData.map((item, i) => {
                                     return (
-                                    
-                                        <span style={{borderBottom: '1.5px solid #dcdcdc', width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
-                                            <b className="fc-blue ">{item.id}</b> &nbsp; &nbsp; <small>{moment(item.created_at).tz('Asia/Jakarta').format('DD MMMM YYYY')}</small>
+                                      <div className="row" style={{background:'#FFF', borderRadius:4, padding:20}}>
+                                        <span style={{borderBottom: '1px solid #dcdcdc', width: '-webkit-fill-available'}}>
+                                            <b className="fc-blue ">Meeting</b> &nbsp; &nbsp; 
+                                            <small >
+                                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} &nbsp; 
+                                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}</small>
                                             <p className="fc-muted mt-1 mb-4">  {item.description.length < 74
                                                                                 ? `${item.description}`
                                                                                 : `${item.description.substring(0, 75)}...`}</p>
                                         </span>
                                         
+                                      </div>
                                         // DAMIIII DATA NOTIFICATION
                                         // <span style={{borderBottom: '1.5px solid #dcdcdc', width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
                                         //     <b className="fc-blue ">{item.pengirim}</b> &nbsp; &nbsp; <small>{item.date}</small>
@@ -114,7 +118,7 @@ class Notification extends Component {
                             </span>
                         }
                         
-                        </div>
+                        
                     </div>
                   </div>
                 </div>
