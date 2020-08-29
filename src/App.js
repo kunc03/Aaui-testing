@@ -79,6 +79,10 @@ import PrintCertificate3 from './components/client/certificate/Certificate3'
 import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
 // import ResetPassword from './components/resetPassword';
+
+import HomeClient from './components/client/dashboard/index';
+import WebinarClient from './components/client/webinar/index';
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -147,6 +151,10 @@ export class Main extends React.Component {
     level: Storage.get('user').data.level
   }
 
+  changeLevel = (value) => {
+    this.setState({ level: value });
+  }
+
   render() {
     let workSpaceSwitch = null;
     if(this.state.level === 'superadmin') {
@@ -154,14 +162,14 @@ export class Main extends React.Component {
     } else if(this.state.level === 'admin') {
       workSpaceSwitch = <AdminSwitch />;
     } else {
-      workSpaceSwitch = <ClientSwitch />;
+      workSpaceSwitch = <ClientSwitch changeLevel={this.changeLevel} getLevel={this.state.level} />;
     }
 
     return (
       <div>
         <Loader />
         <Sidebar />
-        <Header />
+        <Header getLevel={this.state.level} />
         {workSpaceSwitch}
       </div>
     );
@@ -347,7 +355,8 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeClient} />
+        <Route path="/webinar" component={() => <WebinarClient changeLevel={this.props.changeLevel} /> } />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
