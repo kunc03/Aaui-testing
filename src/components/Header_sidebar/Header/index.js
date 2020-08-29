@@ -20,6 +20,7 @@ class Header extends Component {
     menuAktif: '/',
     sideMenu: false,
     sideMenuCollapse: false,
+    dateNow : Date.now(),
   };
 
   pilihCompany = (e) => {
@@ -125,7 +126,7 @@ class Header extends Component {
 
       console.log(unread, unclick);
       return (
-        <ul className="noti-body">
+        <ul className="noti-body" style={{maxHeight:400, overflowY:'scroll', overflowX:'hidden'}}>
           {unread.length ? (
             <li className="n-title">{/* <p className="m-b-0">NEW</p> */}</li>
           ) : null}
@@ -149,11 +150,11 @@ class Header extends Component {
                     </span>
                   </p>
                   <p>
-                    {item.type === 1
+                    {/* {item.type === 1
                       ? 'Course'
                       : item.type === 2
                       ? 'Forum'
-                      : 'Meeting'}{' '}
+                      : 'Meeting'}{' '} */}
                     {item.description}
                   </p>
                 </div>
@@ -559,23 +560,13 @@ class Header extends Component {
                 </div>
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <div className="media">
-                <img
-                  alt="Media"
-                  style={{ height: 40 }}
-                  src={
-                    localStorage.getItem('logo')
-                      ? localStorage.getItem('logo')
-                      : this.state.logo
-                  }
-                />
-              </div>
-            </li>
+            
           </ul>
 
           <ul className="navbar-nav ml-auto">
-            <li>
+            
+            <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
+            {/* <li>
               <div className="dropdown">
                 <a className href="javascript:" data-toggle="dropdown">
                   <i className="icon feather icon-bell f-20 text-c-grey" />
@@ -588,36 +579,58 @@ class Header extends Component {
                   <div className="noti-head">
                     <h6 className="d-inline-block m-b-0">Notifications</h6>
                     <div className="float-right">
-                      {/* <a href="javascript:" className="m-r-10">
+                      <a href="javascript:" className="m-r-10">
                         mark as read
                       </a>
-                      <a href="javascript:">clear all</a> */}
+                      <a href="javascript:">clear all</a>
                     </div>
                   </div>
 
                   <NotifBody list={notificationData} />
 
-                  {/* <div className="noti-footer">
+                  <div className="noti-footer">
                     <a href="javascript:">show all</a>
-                  </div> */}
+                  </div>
                 </div>
+              </div>
+            </li> */}
+          </ul>
+          
+          <ul className="navbar-nav">
+            <li className="nav-item dropdown">
+              <div className="media">
+                <img
+                  alt="Media"
+                  style={{ height: 26 }}
+                  src={
+                    localStorage.getItem('logo')
+                      ? localStorage.getItem('logo')
+                      : this.state.logo
+                  }
+                />
               </div>
             </li>
           </ul>
+          
 
           {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
                   <a href="javascript:;" data-toggle="dropdown">
-                    <i className="fa fa-list" />
+                      <img
+                        src={`newasset/company.svg`}
+                        alt=""
+                        width={25}
+                      ></img>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
                       <h6 className="d-inline-block m-b-0">
-                        {this.state.company.length > 0
-                          ? 'Pilih Company'
+                        <b>{this.state.company.length > 0
+                          ? 'Pilih Perusahaan'
                           : 'Tidak multiple company'}
+                          </b>
                       </h6>
                     </div>
                     <ul className="noti-body">
@@ -704,10 +717,13 @@ class Header extends Component {
                                   data-id={item.company_id}
                                   data-logo={item.logo}
                                 >
-                                  {item.company_name}
+                                   {item.company_name}
                                 </b>
+
+                                <span style={{color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right'}}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null }</span>
                               </p>
-                              {parseInt(localStorage.getItem('companyID')) ==
+                              
+                              {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p
                                   data-id={item.company_id}
@@ -715,7 +731,7 @@ class Header extends Component {
                                 >
                                   {item.status}
                                 </p>
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </li>

@@ -175,8 +175,12 @@ class Login extends Component {
     })
   };
   componentDidMount(){
-    if (this.props.match.params.id && this.props.match.params.key){
-      this.lupaPassword()
+    try {
+      if (this.props.match.params.id && this.props.match.params.key){
+        this.lupaPassword()
+      }
+    } catch (error) {
+      console.log('Continue',error)
     }
   }
   render() {

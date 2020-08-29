@@ -8,6 +8,7 @@ import {
 
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
+import {isMobile} from 'react-device-detect';
 
 
 export default class LiveClass extends Component {
@@ -31,7 +32,13 @@ export default class LiveClass extends Component {
 	}
 
 	componentDidMount() {
-		this.fetchData();
+    this.fetchData();
+    if (this.props.match.params.roomid){
+      this.fetchMeetingInfo(this.props.match.params.roomid)
+      if (isMobile){
+        alert('ini mobile')
+      }
+    }
 	}
 
 	fetchData() {
@@ -398,27 +405,6 @@ export default class LiveClass extends Component {
                                     : null
                                   }
                                 </div>
-                                {
-                                  this.state.infoClass.is_private ?
-                                  <div>
-                                    <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
-                                      Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
-                                    </div>
-                                    <div className="row mt-3" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
-                                          <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                          <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                          <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
-                                    </div>
-                                    <div className="row mt-3" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
-                                      {
-                                        this.state.infoParticipant.map(item=>
-                                          <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                                        )
-                                      }
-                                    </div>
-                                  </div>
-                                  : null
-                                }
                               </div>
                             </div>
                             {

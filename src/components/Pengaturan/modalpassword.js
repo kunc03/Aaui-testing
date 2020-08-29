@@ -139,7 +139,7 @@ class ModalPassword extends Component {
                 >
                   <button
                     type="submit"
-                    className="btn btn-primary btn-block f-18 f-w-bold openalert"
+                    className="btn btn-icademy-primary mt-3"
                   >
                     Simpan
                   </button>
