@@ -4,6 +4,8 @@ import { Link, Switch, Route } from 'react-router-dom';
 
 import Webinar from './webinar';
 import WebinarAdd from './add';
+import WebinarLive from './live';
+import WebinarRiwayat from './riwayat';
 
 export default class WebinarClient extends Component {
 
@@ -20,7 +22,9 @@ export default class WebinarClient extends Component {
 
                 	<Switch>
 						        <Route path="/webinar" exact component={() => <Webinar changeLevel={this.props.changeLevel} />} />
-						        <Route path="/webinar/add" component={WebinarAdd} />
+                    <Route path="/webinar/add" component={WebinarAdd} />
+                    <Route path="/webinar/live" component={WebinarLive} />
+						        <Route path="/webinar/riwayat" component={WebinarRiwayat} />
 					        </Switch>
 
                 </div>

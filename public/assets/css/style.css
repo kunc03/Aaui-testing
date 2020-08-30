@@ -11573,3 +11573,18 @@ div.code-toolbar > .toolbar span:hover {
   border-radius: 6px;
   font-size: 11px;
 }
+
+.btn-v2 {
+  border-radius: 40px;
+  padding: 6px 12px;
+}
+
+.box-lampiran {
+  padding: 20px;
+}
+
+.link-lampiran {
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  padding: 4px;
+}

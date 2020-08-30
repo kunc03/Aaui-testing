@@ -94,8 +94,7 @@ class Header extends Component {
           myCompanyName: res.data.result.company_name,
           company_id: res.data.result.company_id,
           user: res.data.result.name,
-          // level: res.data.result.level,
-          level: this.props.getLevel,
+          level: res.data.result.level,
           avatar: res.data.result.avatar
             ? res.data.result.avatar
             : '/assets/images/user/avatar-1.png',
@@ -554,8 +553,7 @@ class Header extends Component {
                         className="d-block  mt-2 text-c-grey"
                         style={{ textTransform: 'capitalize' }}
                       >
-                        {/* level */}
-                        {this.props.getLevel}
+                        {level}
                       </small>
                     </h6>
                   </div>

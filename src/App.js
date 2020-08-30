@@ -151,10 +151,6 @@ export class Main extends React.Component {
     level: Storage.get('user').data.level
   }
 
-  changeLevel = (value) => {
-    this.setState({ level: value });
-  }
-
   render() {
     let workSpaceSwitch = null;
     if(this.state.level === 'superadmin') {
@@ -162,14 +158,14 @@ export class Main extends React.Component {
     } else if(this.state.level === 'admin') {
       workSpaceSwitch = <AdminSwitch />;
     } else {
-      workSpaceSwitch = <ClientSwitch changeLevel={this.changeLevel} getLevel={this.state.level} />;
+      workSpaceSwitch = <ClientSwitch />;
     }
 
     return (
       <div>
         <Loader />
         <Sidebar />
-        <Header getLevel={this.state.level} />
+        <Header />
         {workSpaceSwitch}
       </div>
     );
