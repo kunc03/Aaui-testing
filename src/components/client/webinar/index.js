@@ -6,6 +6,7 @@ import Webinar from './webinar';
 import WebinarAdd from './add';
 import WebinarLive from './live';
 import WebinarRiwayat from './riwayat';
+import WebinarKuesioner from './kuesioner';
 
 export default class WebinarClient extends Component {
 
@@ -21,10 +22,11 @@ export default class WebinarClient extends Component {
                 <div className="page-wrapper">
 
                 	<Switch>
-						        <Route path="/webinar" exact component={() => <Webinar changeLevel={this.props.changeLevel} />} />
+						        <Route path="/webinar" exact component={Webinar} />
                     <Route path="/webinar/add" component={WebinarAdd} />
                     <Route path="/webinar/live" component={WebinarLive} />
-						        <Route path="/webinar/riwayat" component={WebinarRiwayat} />
+                    <Route path="/webinar/riwayat" component={WebinarRiwayat} />
+						        <Route path="/webinar/kuesioner" component={WebinarKuesioner} />
 					        </Switch>
 
                 </div>

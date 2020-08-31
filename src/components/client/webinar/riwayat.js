@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import {Doughnut} from 'react-chartjs-2';
@@ -11,9 +11,41 @@ export default class WebinarRiwayat extends Component {
       {nama: 'Ahmad', status: 'Selesai', jam_mulai: '08:01', jam_selesai: '09:01', via: 'Voucher', durasi: '1 Jam'},
       {nama: 'Ardiansyah', status: 'Selesai', jam_mulai: '08:00', jam_selesai: '09:00', via: 'Login', durasi: '1 Jam'},
     ],
+    lampiran: [
+      {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
+      {id: 2, nama: 'file-presentasi.pdf', url: 'https://google.com'},
+      {id: 3, nama: 'formulir-pendaftaran.docx', url: 'https://google.com'},
+    ],
+
+    isModalDownloadFileWebinar: false
+  }
+
+  handleModal = () => {
+    this.setState({
+      isModalDownloadFileWebinar: false
+    });
   }
 
 	render() {
+
+    const Lampiran = ({items}) => (
+      <div className="row">
+        {
+          items.map((item, i) => (
+            <div className="col-sm-12 mb-3" key={item.id}>
+              <div className='border-disabled'>
+                <div className="box-lampiran">
+                  <div className="title-head f-w-900 f-16 fc-skyblue">
+                    {item.nama} 
+                    <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    );
 
     const Peserta = ({items}) => (
       <table className="table table-striped">
@@ -60,7 +92,8 @@ export default class WebinarRiwayat extends Component {
         '#36A2EB',
         ]
       }]
-    }, dataVia = {
+    };
+    const dataVia = {
       labels: [
         'Voucher',
         'Login',
@@ -77,6 +110,38 @@ export default class WebinarRiwayat extends Component {
         ]
       }]
     };
+
+    const ModalDownloadFileWebinar = () => (
+      <Modal
+        show={this.state.isModalDownloadFileWebinar}
+        onHide={this.handleModal}
+      >
+        <Modal.Body>
+          <h5>
+            File Webinar
+          </h5>
+
+          <div style={{ marginTop: "20px" }} className="form-group">
+            <Lampiran items={this.state.lampiran} />
+          </div>
+          
+          <button
+            type="button"
+            className="btn btn-v2 btn-primary f-w-bold mr-2"
+          >
+            <i className="fa fa-download"></i>
+            Download Semua File
+          </button>
+          <button
+            type="button"
+            className="btn btn-v2 f-w-bold"
+            onClick={this.handleModal}
+          >
+            Tutup
+          </button>
+        </Modal.Body>
+      </Modal>
+    );
 		
     return (
 			<div className="row">                     
@@ -105,6 +170,7 @@ export default class WebinarRiwayat extends Component {
                 <div className="row">
                   <div className="col-sm-8">
                     <h5>Trik Jitu Marketing</h5>
+                    <h6>Pembicara : Ahmad Ardiansyah</h6>
                     <p>
                       Untuk mengakomodasi proses work from home (WFH), diperlukan media untuk berkoordinasi 
                       di dalam sebuah team secara online, sehingga team work bisa tetap terjaga dengan baik. 
@@ -120,8 +186,8 @@ export default class WebinarRiwayat extends Component {
 
                   <div className="col-sm-4">
                     <h5>Lampiran</h5>
-                    <Link to="" className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Download File Webinar</Link>
-                    <Link to="" className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Hasil Kuesioner Peserta</Link>
+                    <button onClick={e => this.setState({ isModalDownloadFileWebinar: true }) } className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Download File Webinar</button>
+                    <Link to="/webinar/kuesioner" className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Hasil Kuesioner Peserta</Link>
                   </div>
                 </div>
               </div>
@@ -144,6 +210,8 @@ export default class WebinarRiwayat extends Component {
 
             </Card.Body>
           </Card>
+
+          <ModalDownloadFileWebinar />
         </div>
       </div>
 		);
