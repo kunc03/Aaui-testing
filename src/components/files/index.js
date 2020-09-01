@@ -20,6 +20,7 @@ class Files extends Component {
       uploading: false,
       files: [],
       navigation: ['Home'],
+      recordedMeeting: []
   };
 
   componentDidMount() {
@@ -60,6 +61,20 @@ fetchMOM(folder){
     })
   }
 }
+fetchRekaman(folder){
+  if (folder == 0){
+    this.setState({recordedMeeting:[]})
+  }
+  else{
+    API.get(`${API_SERVER}v1/files-recorded/${folder}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          recordedMeeting : res.data.result
+        })
+      }
+    })
+  }
+}
 fetchFolder(mother){
   API.get(`${API_SERVER}v1/folder/${this.state.company}/${mother}`).then(res => {
     if (res.status === 200) {
@@ -85,6 +100,7 @@ selectFolder(id, name) {
   this.fetchFolder(id)
   this.fetchFile(id)
   this.fetchMOM(id)
+  this.fetchRekaman(id)
   if (name == null){
     this.state.navigation.pop()
   }
@@ -227,6 +243,22 @@ uploadFile = e => {
                                     MOM-{item.title}
                                   </div>
                               </div>
+                              )
+                            }
+                            {
+                              this.state.recordedMeeting.map(item =>
+                                item.record.split(',').map(item =>
+                                  this.state.selectFolder &&
+                                  <div className="folder" onDoubleClick={e=>window.open(item, 'Rekaman Meeting')}>
+                                      <img
+                                      src='assets/images/component/mp4.png'
+                                      className="folder-icon"
+                                      />
+                                      <div className="filename">
+                                        {item.substring(40)}
+                                      </div>
+                                  </div>
+                                )
                               )
                             }
                       </div>

@@ -73,6 +73,7 @@ export default class LiveStream extends Component {
     
     folder: [],
     mom: [],
+    recordedMeeting: [],
     folderName : '',
     selectFolder: false,
     folderId: 0,
@@ -107,6 +108,20 @@ fetchMOM(folder){
     })
   }
 }
+fetchRekaman(folder){
+  if (folder == 0){
+    this.setState({recordedMeeting:[]})
+  }
+  else{
+    API.get(`${API_SERVER}v1/files-recorded/${folder}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          recordedMeeting : res.data.result
+        })
+      }
+    })
+  }
+}
 fetchFolder(mother){
   API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`).then(res => {
     if (res.status === 200) {
@@ -123,9 +138,6 @@ fetchFile(folder){
   API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
     if (res.status === 200) {
       this.setState({files: res.data.result})
-      if (!this.state.selectFolder){
-        this.setState({projectName: res.data.result[0].name})
-      }
     }
   })
 }
@@ -135,6 +147,7 @@ selectFolder(id, name) {
   this.fetchFolder(id)
   this.fetchFile(id)
   this.fetchMOM(id)
+  this.fetchRekaman(id)
 }
 
 saveFolder = e => {
@@ -272,6 +285,7 @@ saveFolder = e => {
       if (this.state.classRooms.folder_id !== 0 ){
         this.fetchFolder(this.state.classRooms.folder_id);
         this.fetchMOM(this.state.classRooms.folder_id);
+        this.fetchRekaman(this.state.classRooms.folder_id)
         this.fetchFile(this.state.classRooms.folder_id);
       }
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
@@ -677,7 +691,7 @@ saveFolder = e => {
                 </div>
                 <div className="col-sm-6">
                   <h3 className="f-20 f-w-800">
-                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+this.state.projectName : 'Project Files : Tidak terkait'}
+                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
                   </h3>
                     <div className='row box-chat'>
                             {
@@ -732,6 +746,21 @@ saveFolder = e => {
                                     MOM-{item.title}
                                   </div>
                               </div>
+                              )
+                            }
+                            {
+                              this.state.recordedMeeting.map(item =>
+                                item.record.split(',').map(item =>
+                                  <div className="folder" onDoubleClick={e=>window.open(item, 'Rekaman Meeting')}>
+                                      <img
+                                      src='assets/images/component/mp4.png'
+                                      className="folder-icon"
+                                      />
+                                      <div className="filename">
+                                        {item.substring(40)}
+                                      </div>
+                                  </div>
+                                )
                               )
                             }
                     </div>

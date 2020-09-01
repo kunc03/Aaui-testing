@@ -258,7 +258,7 @@ export default class LiveClass extends Component {
 													{
 													item.record &&
 													<small className="mr-3">
-														<a target='_blank' href={item.record}>
+                            <a target='_blank' href='aktivitas'>
 														<i className='fa fa-compact-disc'></i> REKAMAN
 														</a>
 													</small>
@@ -353,7 +353,7 @@ export default class LiveClass extends Component {
                       </Modal.Title>
                       
                       {
-                        this.state.needConfirmation >= 1
+                        this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1
                         ?
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                           <div className="card" style={{background:'#dac88c',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
@@ -370,6 +370,19 @@ export default class LiveClass extends Component {
                               <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{padding: '5px 10px'}}>
                                 Hadir
                               </Link>
+                            </div>
+                          </div>
+                        </div>
+                        :
+                        this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1
+                        ?
+                        <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                          <div className="card" style={{background:'rgb(134 195 92)',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
+                            <div className="card-carousel col-sm-8">
+                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                                Anda Telah Mengkonfirmasi Kehadiran
+                              </div>
+                              <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
                             </div>
                           </div>
                         </div>

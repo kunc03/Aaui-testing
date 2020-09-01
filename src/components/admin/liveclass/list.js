@@ -93,7 +93,7 @@ export default class LiveClassAdmin extends Component {
   }
 
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, scheduled: false, startDate: new Date(), endDate: new Date() });
   }
 
   closeModalConfirmation = e => {
@@ -127,6 +127,13 @@ export default class LiveClassAdmin extends Component {
     }
   }
 
+  deleteParticipant(id, classId){
+    API.delete(`${API_SERVER}v1/liveclass/participant/delete/${id}`).then(res => {
+      if(res.status === 200) {
+        this.fetchMeetingInfo(classId);
+      }
+    })
+  }
   confirmAttendance(confirmation){
     let form = {
       confirmation: confirmation,
@@ -151,6 +158,7 @@ export default class LiveClassAdmin extends Component {
           message: APPS_SERVER+'redirect/meeting/information/'+this.state.infoClass.class_id,
           messageNonStaff: APPS_SERVER+'meeting/'+this.state.infoClass.class_id
         }
+        this.setState({alertSuccess:true})
         API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
           if(res.status === 200) {
             if(!res.data.error) {
@@ -263,8 +271,39 @@ export default class LiveClassAdmin extends Component {
             formData.append('cover', this.state.cover);
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
-          this.fetchData();
-          this.closeClassModal();
+          if (res.data.result.is_private == 1){
+            this.setState({sendingEmail: true})
+            let start = new Date(res.data.result.schedule_start);
+            let end = new Date(res.data.result.schedule_end);
+            let form = {
+              user: Storage.get('user').data.user,
+              email: [],
+              room_name: res.data.result.room_name,
+              is_private: res.data.result.is_private,
+              is_scheduled: res.data.result.is_scheduled,
+              schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+              schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+              userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
+              //url
+              message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
+              messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
+            }
+            API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+              if(res.status === 200) {
+                if(!res.data.error) {
+                  this.setState({sendingEmail: false})
+                  this.fetchData();
+                  this.closeClassModal();
+                } else {
+                  console.log('RESS GAGAL',res)
+                }
+              }
+            })
+          }
+          else{
+            this.fetchData();
+            this.closeClassModal();
+          }
         }
       })
     } else {
@@ -367,11 +406,13 @@ export default class LiveClassAdmin extends Component {
       valueModerator: valueModerator,
       valueFolder: valueFolder,
       private: isprivate == 1 ? true : false,
-      valuePeserta: participant,
+      // valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt
     })
+
+    this.fetchMeetingInfo(classId)
   }
 
   onSubmitLock = e => {
@@ -465,7 +506,7 @@ export default class LiveClassAdmin extends Component {
                 {
                   item.record &&
                   <small className="mr-3">
-                    <a target='_blank' href={item.record}>
+                    <a target='_blank' href='aktivitas'>
                       <i className='fa fa-compact-disc'></i> REKAMAN
                     </a>
                   </small>
@@ -752,6 +793,26 @@ export default class LiveClassAdmin extends Component {
                           <Form.Label className="f-w-bold">
                             Peserta
                           </Form.Label>
+                          <div className="row mt-1" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
+                                      {
+                                        this.state.infoParticipant.map(item=>
+                                          <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
+                                            {item.name}
+                                            <button
+                                              type="button"
+                                              className=""
+                                              style={{background:'none', border:'none', cursor:'pointer', color:'rgb(31 31 31)'}}
+                                              onClick={this.deleteParticipant.bind(this, item.participant_id, item.class_id)}
+                                            >
+                                              X
+                                            </button>
+                                          </div>
+                                        )
+                                      }
+                          </div>
+                          <Form.Label className="f-w-bold">
+                            Tambah Peserta
+                          </Form.Label>
                           <MultiSelect
                             id="peserta"
                             options={this.state.optionsPeserta}
@@ -842,9 +903,8 @@ export default class LiveClassAdmin extends Component {
                       >
                         Informasi Meeting dan Kehadiran
                       </Modal.Title>
-                      
                       {
-                        this.state.needConfirmation >= 1
+                        this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1
                         ?
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                           <div className="card" style={{background:'#dac88c',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
@@ -864,7 +924,21 @@ export default class LiveClassAdmin extends Component {
                             </div>
                           </div>
                         </div>
-                        : null
+                        :
+                        this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1
+                        ?
+                        <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                          <div className="card" style={{background:'rgb(134 195 92)',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
+                            <div className="card-carousel col-sm-8">
+                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                                Anda Telah Mengkonfirmasi Kehadiran
+                              </div>
+                              <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                            </div>
+                          </div>
+                        </div>
+                        :
+                        null
                       }
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                             <div className="card">
