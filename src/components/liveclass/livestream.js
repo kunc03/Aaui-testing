@@ -284,6 +284,7 @@ saveFolder = e => {
     }).then(res=>{
       if (this.state.classRooms.folder_id !== 0 ){
         this.fetchFolder(this.state.classRooms.folder_id);
+        console.log('ALVIN FOLDER',this.state.classRooms.folder_id)
         this.fetchMOM(this.state.classRooms.folder_id);
         this.fetchRekaman(this.state.classRooms.folder_id)
         this.fetchFile(this.state.classRooms.folder_id);
@@ -750,7 +751,7 @@ saveFolder = e => {
                             }
                             {
                               this.state.recordedMeeting.map(item =>
-                                item.record.split(',').map(item =>
+                                item.record && item.record.split(',').map(item =>
                                   <div className="folder" onDoubleClick={e=>window.open(item, 'Rekaman Meeting')}>
                                       <img
                                       src='assets/images/component/mp4.png'
