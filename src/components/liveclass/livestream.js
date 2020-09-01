@@ -80,6 +80,12 @@ export default class LiveStream extends Component {
     prevFolderId: 0,
     files: [],
     projectName: '',
+    modalNewFolder: false,
+    modalUpload: false,
+    attachmentId: [],
+    folderName : '',
+    uploading: false,
+    alert: '',
 
     //kehadiran
     isModalConfirmation: false,
@@ -154,7 +160,7 @@ saveFolder = e => {
   e.preventDefault();
   const formData = {
     name: this.state.folderName,
-    company: this.state.company,
+    company: this.state.companyId,
     mother: this.state.folderId
   };
 
@@ -168,6 +174,27 @@ saveFolder = e => {
       }
     }
   })
+}
+
+uploadFile = e => {
+  e.preventDefault();
+  this.setState({uploading: true})
+  for (let i=0; i<=this.state.attachmentId.length-1; i++){
+    let form = new FormData();
+    form.append('folder', this.state.folderId);
+    form.append('file', this.state.attachmentId[i]);
+    API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          this.setState({alert: res.data.result, uploading: false, attachmentId: []});
+        } else {
+          this.setState({modalUpload:false, alert: '', uploading: false, attachmentId: []})
+          this.fetchFolder(this.state.folderId);
+          this.fetchFile(this.state.folderId)
+        }
+      }
+    })
+  }
 }
   tabAktivitas(a,b){
     this.setState({tabIndex: b+1});
@@ -283,11 +310,7 @@ saveFolder = e => {
       }
     }).then(res=>{
       if (this.state.classRooms.folder_id !== 0 ){
-        this.fetchFolder(this.state.classRooms.folder_id);
-        console.log('ALVIN FOLDER',this.state.classRooms.folder_id)
-        this.fetchMOM(this.state.classRooms.folder_id);
-        this.fetchRekaman(this.state.classRooms.folder_id)
-        this.fetchFile(this.state.classRooms.folder_id);
+        this.selectFolder(this.state.classRooms.folder_id)
       }
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
           console.log(res, 'ini responseeee');
@@ -384,6 +407,17 @@ saveFolder = e => {
     console.log(element, 'kebawah')
   }
 
+  onChangeInputFile = e => {
+    const target = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+        this.setState({ [name]: e.target.files });
+    } else {
+        this.setState({ [name]: value });
+    }
+}
   onChangeInput = (e) => {
       const name = e.target.name;
       console.log(e.target.files[0], 'attach');
@@ -582,6 +616,7 @@ saveFolder = e => {
 
     const { classRooms, user } = this.state;
 
+    let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
     
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -694,6 +729,28 @@ saveFolder = e => {
                   <h3 className="f-20 f-w-800">
                     {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
                   </h3>
+                        <div className="row">
+                          {
+                            ((levelUser == 'admin' || levelUser == 'superadmin') && this.state.classRooms.folder_id !==0) &&
+                            <Button
+                                onClick={e=>this.setState({modalNewFolder:true})}
+                                className="btn-block btn-primary"
+                                style={{width:250, margin:5}}
+                            >
+                                <i className="fa fa-plus"></i> &nbsp; Tambah Folder Project
+                            </Button>
+                          }
+                            {
+                              (this.state.selectFolder !== 0 && this.state.classRooms.folder_id !==0) &&
+                              <Button
+                                  onClick={e=>this.setState({modalUpload:true})}
+                                  className="btn-block btn-primary"
+                                  style={{width:150, margin:5}}
+                              >
+                                  <i className="fa fa-upload"></i> &nbsp; Upload File
+                              </Button>
+                            }
+                        </div>
                     <div className='row box-chat'>
                             {
                               this.state.folderId !== 0 &&
@@ -1134,6 +1191,94 @@ saveFolder = e => {
                         onClick={this.handleCloseMeeting}
                       >
                         Keluar
+                      </button>
+                  </Card.Body>
+                </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalNewFolder}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Tambah Folder Project
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                        <Col>
+                            <div className="input-group mb-4">
+                                <input
+                                type="text"
+                                name="folderName"
+                                value={this.state.folderName}
+                                className="form-control"
+                                placeholder="Nama Folder Project"
+                                onChange={this.onChangeInputFile}
+                                required
+                                />
+                            </div>
+                            <div style={{color:'#F00'}}>{this.state.alert}</div>
+                        </Col>
+                    </Row>
+                      <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-save"></i>Simpan
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={e=> this.setState({modalNewFolder:false, alert: ''})}
+                      >
+                        Batal
+                      </button>
+                  </Card.Body>
+                </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalUpload}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Upload File
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                        <Col>
+                          <div className="form-group">
+                            <label>Lampiran</label>
+                            <input
+                              accept="all"
+                              name="attachmentId"
+                              onChange={this.onChangeInputFile}
+                              type="file"
+                              multiple
+                              placeholder="media chapter"
+                              className="form-control"
+                            />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{ this.state.attachmentId.length } File</label>
+                            <Form.Text>
+                              Bisa banyak file, pastikan file tidak melebihi 500MB  
+                              {/* dan ukuran file tidak melebihi 20MB. */}
+                            </Form.Text>
+                          </div>
+                          <div style={{color:'#F00'}}>{this.state.alert}</div>
+                        </Col>
+                    </Row>
+                      <Link disabled={this.state.uploading} onClick={this.uploadFile.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-upload"></i>{this.state.uploading ? 'Uploading...' : 'Upload'}
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={e=> this.setState({modalUpload:false})}
+                      >
+                        Batal
                       </button>
                   </Card.Body>
                 </Card>

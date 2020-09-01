@@ -421,7 +421,7 @@ export default class LiveClass extends Component {
                               </div>
                             </div>
                             {
-                              this.state.infoClass.is_live && (this.state.infoClass.is_private == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' '))) ? 
+                              this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' '))) ? 
                               <Link target='_blank' to={`/liveclass-room/${this.state.infoClass.class_id}`} onClick={e=> this.closeModalConfirmation()} className="btn btn-sm btn-ideku" style={{width:'100%',padding:'20px 20px'}}>
                                 <i className='fa fa-video'></i> Masuk
                               </Link>

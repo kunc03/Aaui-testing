@@ -371,7 +371,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/kursus" component={Kursus} />
 
         <Route path="/profile" component={Profile} />
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />

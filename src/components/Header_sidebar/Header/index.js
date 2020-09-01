@@ -218,12 +218,12 @@ class Header extends Component {
         link: '/aktivitas',
         access: 'activity',
       },
-      {
-        iconOn: 'files-on.png',
-        iconOff: 'files-off.png',
-        label: 'Files',
-        link: '/files',
-      },
+      // {
+      //   iconOn: 'files-on.png',
+      //   iconOff: 'files-off.png',
+      //   label: 'Files',
+      //   link: '/files',
+      // },
       {
         iconOn: 'materion.png',
         iconOff: 'materioff.png',

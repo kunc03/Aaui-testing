@@ -27,7 +27,7 @@ class Sidebar extends Component {
     let levelUser = Storage.get('user').data.level;
     let menuClients = {
       submenu : [
-        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
