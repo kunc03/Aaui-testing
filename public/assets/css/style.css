@@ -95,6 +95,20 @@ label.Option {
   border-radius: .25rem !important;
 }
 
+
+/* INPUT FILE */
+
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 1px 8px 7px 8px;
+  cursor: pointer;
+  background: #f1f1f1;
+}
+
 /* DATEPICKER */
 
 .react-datepicker__input-container > input{
@@ -8387,21 +8401,21 @@ a.btn-theme.active {
 
 .btn-icademy-primary {
   color: #fff;
-  background-color: #0091FF;
-  font-size: 14px;
-  width: 96px !important;
-  height: 39px !important;
-  padding: 0px !important;
-  border-radius: 19px !important;
+    background-color: #0091FF;
+    font-size: 14px;
+    width: auto;
+    height: 39px !important;
+    padding: 0px 40px !important;
+    border-radius: 19px !important;
 }
 
 .btn-icademy-danger {
   color: #fff;
   background-color: #ff0052;
   font-size: 14px;
-  width: 96px !important;
-  height: 39px !important;
-  padding: 0px !important;
+  width: auto;
+    height: 39px !important;
+    padding: 0px 40px !important;
   border-radius: 19px !important;
 }
 
@@ -8409,9 +8423,9 @@ a.btn-theme.active {
   color: #fff;
   background-color: #3e4142;
   font-size: 14px;
-  width: 96px !important;
-  height: 39px !important;
-  padding: 0px !important;
+  width: auto;
+    height: 39px !important;
+    padding: 0px 40px !important;
   border-radius: 19px !important;
 }
 
@@ -11330,12 +11344,26 @@ div.code-toolbar > .toolbar span:hover {
   cursor: no-drop;
 }
 
+/*  */
+.tab-icademy {
+  border-radius: 10px;
+  background-color: white;
+  padding: 15px;
+  border: 2px solid #0091FF;
+  font-size: 15.9px;
+  color: #10538E;
+  font-weight: bold;
+  text-align: center;
+}
+
+
 .kategori {
   border-radius: 10px;
   background-color: white;
   padding: 20px; 
   font-size: 15.9px;
   font-weight: bold;
+  text-align: center;
 }
 
 .kategori-aktif {
@@ -11366,7 +11394,8 @@ div.code-toolbar > .toolbar span:hover {
 }
 
 .title-disabled {
-  color: #C8C8C8 !important
+  color: #C8C8C8 !important;
+  
 }
 
 .forum-filter {
