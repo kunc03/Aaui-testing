@@ -14,3 +14,22 @@ export const dataToDo = [
   {title: 'Judul LIst To DO 2',type : 'System',name: 'Yoan', description: 'With easy access to Broadband and DSL the number of people using the Internet has skyrocket in recent years.', status: false},
 ];
 
+export const headerTabble = [
+  {title : 'Nama Meeting', width: null, status: true},
+  {title : 'Pembicara', width: null, status: true},
+  {title : 'Status', width: null, status: true},
+  {title : 'Waktu', width: null, status: true},
+  {title : 'Tanggal', width: null, status: true},
+  {title : 'Peserta', width: null, status: true},
+  {title : 'Tampilan', width: null, status: true},
+];
+
+export const bodyTabble = [
+  {title : 'Nama Meeting',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Pembicara',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Status',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Waktu',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Tanggal',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Peserta',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Tampilan',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+];
