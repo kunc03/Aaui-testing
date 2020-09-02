@@ -202,7 +202,7 @@ export default class LiveClassAdmin extends Component {
           countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
           countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
           needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
-          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)
+          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
         })
       }
     })
@@ -962,7 +962,7 @@ export default class LiveClassAdmin extends Component {
                           <div className="card" style={{background:'rgb(134 195 92)',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
                             <div className="card-carousel col-sm-8">
                               <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
-                                Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation[0].confirmation}
+                                Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
                               </div>
                               <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
                             </div>
