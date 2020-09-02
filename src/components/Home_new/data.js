@@ -1,5 +1,5 @@
 export const dataEvent = [
-  {title : 'Webinar', total: 6, status: true},{title : 'webinar', total: 6, status: false},{title : 'webinar', total: 6, status: false}
+  {title : 'Meeting', total: 6, status: true},{title : 'Learning', total: 6, status: true},{title : 'Webinar', total: 6, status: false}
 ];
 
 export const dataProjek = [
@@ -10,7 +10,7 @@ export const dataProjek = [
 ];
 
 export const dataToDo = [
-  {title: 'Judul LIst To DO 1',type : 'Personal',name: 'Alvin', description: 'With easy access to Broadband and DSL the number of people using the Internet has skyrocket in recent years', status: true},
-  {title: 'Judul LIst To DO 2',type : 'System',name: 'Yoan', description: 'With easy access to Broadband and DSL the number of people using the Internet has skyrocket in recent years.', status: false},
+  // {title: 'Judul LIst To DO 1',type : 'Personal',name: 'Alvin', description: 'With easy access to Broadband and DSL the number of people using the Internet has skyrocket in recent years', status: true},
+  // {title: 'Judul LIst To DO 2',type : 'System',name: 'Yoan', description: 'With easy access to Broadband and DSL the number of people using the Internet has skyrocket in recent years.', status: false},
 ];
 

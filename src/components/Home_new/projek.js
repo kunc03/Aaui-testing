@@ -19,8 +19,13 @@ class ProjekNew extends Component {
     return (
       <div className="row">
         {
+          lists.length == 0 ?
+            <div className="col-sm-12 mb-1">
+              Tidak ada
+            </div>
+          :
           lists.map((item, i) => (
-            <div className="col-sm-12 mb-1" key={item.course_id}>
+            <div className="col-sm-12 mb-1">
               <Link to="">
                 <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
                   <div className="box-project">
