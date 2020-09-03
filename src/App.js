@@ -16,6 +16,9 @@ import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 import Files from "./components/files/index";
 
+// Dashboard New Home Detail
+import DetailProject from "./components/Home_new/detail_project/index";
+
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
 import UserEdit from "./components/Users/User/Edit";
@@ -195,7 +198,9 @@ export class SuperAdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
+
+        <Route path="/detail-project/:project_id" component={DetailProject} /> 
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -270,7 +275,9 @@ export class AdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
+
+        <Route path="/detail-project/:project_id" component={DetailProject} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -344,7 +351,9 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeNew} />
+
+        <Route path="/detail-project/:project_id" component={DetailProject} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />

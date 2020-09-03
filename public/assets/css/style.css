@@ -95,6 +95,20 @@ label.Option {
   border-radius: .25rem !important;
 }
 
+
+/* INPUT FILE */
+
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 1px 8px 7px 8px;
+  cursor: pointer;
+  background: #f1f1f1;
+}
+
 /* DATEPICKER */
 
 .react-datepicker__input-container > input{
@@ -1124,7 +1138,7 @@ p.text-muted {
   padding: 20px;
 }
 .p-t-20 {
-  padding-top: 20px;
+  padding-top: 20px !important;
 }
 .p-b-20 {
   padding-bottom: 20px;
@@ -7869,7 +7883,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 .table th {
   border-top: 1px solid #eaeaea;
   white-space: nowrap;
-  padding: 1.05rem 0.75rem;
+  padding: 8px 0.75rem;
 }
 .table thead th {
   border-bottom: 1px solid #eaeaea;
@@ -7894,7 +7908,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 
 /* Hover effect */
 .table-hover tbody tr:hover {
-  background-color: rgba(4, 169, 245, 0.05);
+  background-color: rgb(177 177 177 / 5%);
 }
 
 /* Table backgrounds */
@@ -8385,23 +8399,46 @@ a.btn-theme.active {
   border-color: #12b58c;
 }
 
+.btn-icademy-file {
+  color: #c5c5c5;
+  background-color: #F5F5F5;
+  font-size: 14px;
+  width: auto;
+  height: 26px !important;
+  padding: 0px 8px !important;
+  border-radius: 4px !important;
+  margin-bottom: 0px;
+  border: 1px solid #c5c5c5;
+}
+
 .btn-icademy-primary {
   color: #fff;
-  background-color: #0091FF;
+    background-color: #0091FF;
+    font-size: 14px;
+    width: auto;
+    height: 39px !important;
+    padding: 0px 25px !important;
+    border-radius: 19px !important;
+}
+
+.btn-icademy-warning {
+  color: #fff;
+  background-color: #EF843C;
   font-size: 14px;
-  width: 96px !important;
+  width: auto;
   height: 39px !important;
-  padding: 0px !important;
+  padding: 0px 25px !important;
   border-radius: 19px !important;
+  margin-bottom: 0px;
 }
 
 .btn-icademy-danger {
   color: #fff;
   background-color: #ff0052;
   font-size: 14px;
-  width: 96px !important;
-  height: 39px !important;
-  padding: 0px !important;
+  width: auto;
+    height: 39px !important;
+    padding: 0px 25px !important;
   border-radius: 19px !important;
 }
 
@@ -8409,9 +8446,9 @@ a.btn-theme.active {
   color: #fff;
   background-color: #3e4142;
   font-size: 14px;
-  width: 96px !important;
-  height: 39px !important;
-  padding: 0px !important;
+  width: auto;
+    height: 39px !important;
+    padding: 0px 40px !important;
   border-radius: 19px !important;
 }
 
@@ -11330,12 +11367,26 @@ div.code-toolbar > .toolbar span:hover {
   cursor: no-drop;
 }
 
+/*  */
+.tab-icademy {
+  border-radius: 10px;
+  background-color: white;
+  padding: 15px;
+  border: 2px solid #0091FF;
+  font-size: 15.9px;
+  color: #10538E;
+  font-weight: bold;
+  text-align: center;
+}
+
+
 .kategori {
   border-radius: 10px;
   background-color: white;
   padding: 20px; 
   font-size: 15.9px;
   font-weight: bold;
+  text-align: center;
 }
 
 .kategori-aktif {
@@ -11366,7 +11417,8 @@ div.code-toolbar > .toolbar span:hover {
 }
 
 .title-disabled {
-  color: #C8C8C8 !important
+  color: #C8C8C8 !important;
+  
 }
 
 .forum-filter {
