@@ -89,7 +89,7 @@ class HomeNew extends Component {
   }
 
   fetchProject(){
-    API.get(`${API_SERVER}v1/project/${localStorage.getItem('companyID')}`).then(response => {
+    API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${localStorage.getItem('companyID')}`).then(response => {
       this.setState({ project: response.data.result });
     }).catch(function(error) {
       console.log(error);

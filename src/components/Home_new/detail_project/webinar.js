@@ -53,6 +53,11 @@ class WebinarTable extends Component {
                 </thead>
                 <tbody>
                     {
+                        bodyTabble.length == 0 ?
+                        <tr>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
+                        </tr>
+                        :
                         bodyTabble.map((item, i) => {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>

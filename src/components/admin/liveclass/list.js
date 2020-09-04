@@ -458,9 +458,9 @@ export default class LiveClassAdmin extends Component {
     const ClassRooms = ({ list }) => <Row>
       {list.map(item =>
         <div className="col-sm-4" key={item.class_id}>
-            <div className="card">
+            <div className="card card-meeting">
               <Link onClick={this.onClickInfo.bind(this, item.class_id)}>
-              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${item.cover ? item.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
+              <div className="responsive-image-content" style={{backgroundImage:`url(${item.cover ? item.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
               {/* <img
                 className="img-fluid img-kursus radius-top-l-r-5"
                 src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
@@ -469,11 +469,14 @@ export default class LiveClassAdmin extends Component {
               </Link>
               <div className="card-carousel ">
                 <Link onClick={this.onClickInfo.bind(this, item.class_id)}>
-                <div className="title-head f-w-900 f-16">
+                <div className="title-head f-w-900 f-14" style={{color:'#797979', marginBottom:6}}>
                   {item.room_name}
                 </div>
-                <h3 className="f-14">
-                  {item.name}
+                <h3 className="f-12" style={{color:'#797979', marginBottom:0}}>
+                  Moderator : {item.name}
+                </h3>
+                <h3 className="f-12" style={{color:'#797979'}}>
+                  Jenis Meeting : {item.is_private == 1 ? 'Private' : 'Public'}
                 </h3>
                 </Link>
                 {
@@ -489,12 +492,13 @@ export default class LiveClassAdmin extends Component {
                 </small> */}
 
                 <small className="mr-3">
-                  <Link data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>
+                  <Link className="small-button" data-id={item.class_id} data-live={item.is_live} onClick={this.onSubmitLock}>
                     <i className={`fa fa-${item.is_live ? 'lock' : 'lock-open'}`}></i> {item.is_live ? 'LOCK' : 'UNLOCK'}
                   </Link>
                 </small>
                 <small className="mr-3" style={{zIndex:10}}>
                   <Link
+                    className="small-button"
                     data-id={item.class_id}
                     data-cover={item.cover}
                     data-speaker={item.speaker}
@@ -512,17 +516,17 @@ export default class LiveClassAdmin extends Component {
                   </Link>
                 </small>
                 <small className="mr-3">
-                  <Link data-id={item.class_id} onClick={this.onSubmitDelete}>
+                  <Link className="small-button" data-id={item.class_id} onClick={this.onSubmitDelete}>
                     <i className='fa fa-trash'></i> HAPUS
                   </Link>
                 </small><br />
                 {
-                  item.record &&
-                  <small className="mr-3">
-                    <a target='_blank' href='aktivitas'>
-                      <i className='fa fa-compact-disc'></i> REKAMAN
-                    </a>
-                  </small>
+                  // item.record &&
+                  // <small className="mr-3">
+                  //   <a className="small-button" target='_blank' href='aktivitas'>
+                  //     <i className='fa fa-compact-disc'></i> REKAMAN
+                  //   </a>
+                  // </small>
                 }
               </div>
             </div>
@@ -536,55 +540,10 @@ export default class LiveClassAdmin extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-
-                  <Row>
-                        {
-                        levelUser == 'client' && access.course == 0 ?
-                        null
-                        :
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/kursus`}>
-                            <div className="kategori title-disabled">
-                              <img src="/assets/images/component/kursusoff.png" className="img-fluid" />
-                              &nbsp;
-                              Kursus & Materi
-                            </div>
-                          </Link>
-                        </div>
-                        }
-
-                        {
-                        levelUser == 'client' && access.forum == 0 ?
-                        null
-                        :
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={`/forum`}>
-                            <div className="kategori title-disabled">
-                              <img src="/assets/images/component/forumoff.png" className="img-fluid" />
-                              &nbsp;
-                              Forum
-                            </div>
-                          </Link>
-                        </div>
-                        }
-
-                        {
-                        levelUser == 'client' && (access.group_meeting == 0 && access.manage_group_meeting == 0) ?
-                        null
-                        :
-                        <div className="col-md-4 col-xl-4 mb-3">
-                          <Link to={access.manage_group_meeting ? `/meeting` : `/liveclass`}>
-                            <div className="kategori-aktif">
-                              <img src="/assets/images/component/liveon.png" className="img-fluid" />
-                              &nbsp;
-                              Group Meeting
-                            </div>
-                          </Link>
-                        </div>
-                        }
-                  </Row>
-
-                      <div className="col-md-12 col-xl-12" style={{marginBottom: '10px'}}>
+                  <div className="card p-20">
+                    <row>
+                      <h3 className="f-w-bold f-18 fc-blue col-sm-6" style={{float:'left'}}>Group Meeting</h3>
+                      <div className="col-sm-4" style={{marginBottom: '10px', float:'right'}}>
                           <InputGroup className="mb-3" style={{background:'#FFF'}}>
                             <InputGroup.Prepend>
                               <InputGroup.Text id="basic-addon1">
@@ -594,42 +553,40 @@ export default class LiveClassAdmin extends Component {
                             <FormControl
                               style={{background:'#FFF'}}
                               onChange={this.filterMeeting}
-                              placeholder="Filter"
+                              placeholder="Cari Group Meeting..."
                               aria-describedby="basic-addon1"
                             />
-                            <InputGroup.Append style={{cursor: 'pointer'}}>
-                              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
-                            </InputGroup.Append>
                           </InputGroup>
                       </div>
+                    </row>
 
                   <Row>
                     <div className="col-md-12">
-                        <button className="btn btn-ideku" onClick={this.handleCreateMeeting.bind(this)}><i className="fa fa-plus"></i> Buat Group Meeting</button>
-                    </div>
-                  </Row>
-                  <Row>
-                    <div className="col-md-12">
-                      <h3 className="f-20 f-w-800">
-                        Meeting Aktif
-                      </h3>
+                        <button onClick={this.handleCreateMeeting.bind(this)} to="#" className="float-left btn btn-icademy-primary ml-2">
+                          <i className="fa fa-plus"></i> Buat Group Meeting
+                        </button>
                     </div>
                   </Row>
                   <div>
                     {
                       classRoomsActive.length ?
-                        
+                        <div>
+                        <Row>
+                          <div className="col-md-12 mt-4 mb-2">
+                            <h3 className="f-14 f-w-800">
+                              Meeting Aktif
+                            </h3>
+                          </div>
+                        </Row>
                         <ClassRooms list={classRoomsActive} />
-                        
-                        :
-                        <div className="col-md-3 col-xl-3 mb-3">
-                          Tidak ada meeting aktif
                         </div>
+                        :
+                        null
                     }
                   </div>
                   <Row>
-                    <div className="col-md-12">
-                      <h3 className="f-20 f-w-800">
+                    <div className="col-md-12 mt-4 mb-2">
+                      <h3 className="f-14 f-w-800">
                         Meeting Tidak Aktif
                       </h3>
                     </div>
@@ -801,7 +758,7 @@ export default class LiveClassAdmin extends Component {
                           </Form.Text>
                         </Form.Group>
                         {
-                        this.state.private &&
+                        this.state.private ?
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Wajib Konfirmasi Kehadiran
@@ -817,9 +774,10 @@ export default class LiveClassAdmin extends Component {
                             }
                           </Form.Text>
                         </Form.Group>
+                        : null
                         }
                         {
-                        this.state.private &&
+                        this.state.private ?
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Peserta
@@ -861,6 +819,7 @@ export default class LiveClassAdmin extends Component {
                             Pilih peserta untuk private meeting.
                           </Form.Text>
                         </Form.Group>
+                        :null
                         }
 
                         <Form.Group controlId="formJudul">
@@ -988,10 +947,11 @@ export default class LiveClassAdmin extends Component {
                                       Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                     </h3>
                                     {
-                                      this.state.infoClass.is_private &&
+                                      this.state.infoClass.is_private ?
                                       <h3 className="f-14">
                                         Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
                                       </h3>
+                                      : null
                                     }
                                   </div>
                                   {
@@ -1064,6 +1024,7 @@ export default class LiveClassAdmin extends Component {
                         </div>
                     </Modal.Body>
                   </Modal>
+                </div>
                 </div>
               </div>
             </div>

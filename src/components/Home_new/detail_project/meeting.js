@@ -15,13 +15,30 @@ class MeetingTable extends Component {
     this.state = {
       users: [],
       dataUser: [],
+      meeting: []
       
     };
   }
 
+  fetchMeeting(){
+    let levelUser = Storage.get('user').data.level;
+    let userId = Storage.get('user').data.user_id;
+      API.get(`${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${this.props.projectId}`).then(res => {
+        if (res.status === 200) {
+          this.setState({
+            meeting: res.data.result,
+          })
+        }
+      })
+  }
+
+  componentDidMount(){
+      this.fetchMeeting();
+  }
+
   render() {
     const headerTabble = this.props.headerTabble;
-    const bodyTabble = this.props.bodyTabble;
+    const bodyTabble = this.state.meeting;
     return (
             <div className="card p-20">
             <span className="mb-4">
@@ -53,15 +70,30 @@ class MeetingTable extends Component {
                 </thead>
                 <tbody>
                     {
+                        bodyTabble.length == 0 ?
+                        <tr>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
+                        </tr>
+                        :
                         bodyTabble.map((item, i) => {
+                            // let dateStart = new Date(new Date(item.schedule_start).toISOString().slice(0, 16).replace('T', ' '));
+                            let dateStart = new Date(item.schedule_start);
+                            let dateEnd = new Date(item.schedule_end);
+                            let status='';
+                            if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
+                                status='Open'
+                            }
+                            else{
+                                status='Close'
+                            }
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.room_name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center" style={{color: status == 'Open' ? '#FA6400' : '#0091FF'}}>{status}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.waktu_start+' - '+item.waktu_end : '-'}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.tanggal : '-'}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_private == 1 ? item.total_participant : '-'}</td>
                                 <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                 <button className="btn btn-icademy-file" ><i className="fa fa-download fc-skyblue"></i> Download File</button>
                                 </td>

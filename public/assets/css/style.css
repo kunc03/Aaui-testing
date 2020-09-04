@@ -95,6 +95,13 @@ label.Option {
   border-radius: .25rem !important;
 }
 
+.floating-back{
+  position:absolute;
+  top:-25px;
+  left:30px;
+  z-index:1029;
+}
+
 
 /* INPUT FILE */
 
@@ -11624,4 +11631,22 @@ div.code-toolbar > .toolbar span:hover {
   padding: 1px 14px;
   border-radius: 6px;
   font-size: 11px;
+}
+
+.small-button{
+  padding: 4px 15px;
+  color: #797979;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 15px;
+  box-shadow: 0 2px 12px 1px rgba(206,206,206,0.35);
+}
+
+.card-meeting{
+  box-shadow:none;
+  transition:0.2s;
+}
+
+.card-meeting:hover{
+  box-shadow: 0 2px 12px 1px rgba(206,206,206,0.35);
 }

@@ -28,19 +28,22 @@ export const dataToDo = [
 
 export const headerTabble = [
   // {title : 'Nama Meeting', width: null, status: true},
-  {title : 'Pembicara', width: null, status: true},
+  {title : 'Moderator', width: null, status: true},
   {title : 'Status', width: null, status: true},
   {title : 'Waktu', width: null, status: true},
   {title : 'Tanggal', width: null, status: true},
   {title : 'Peserta', width: null, status: true},
-  {title : 'Tampilan', width: null, status: true},
+  {title : 'File Project', width: null, status: true},
 ];
 
 export const bodyTabble = [
-  {title : 'Andi',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
-  {title : 'Josep Sinatupulu',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
-  {title : 'Anggun Srikandi Ayu',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
-  {title : 'Jejep',pembicara: 'Vitoria Hart', status: true, waktu: null, tanggal: null, peserta: null, tampilan: null},
+  {title : 'Andi',pembicara: 'Vitoria Hart', status: 'Close', waktu: '10:00 - 12:00', tanggal: '2020-09-04', peserta: 27, lampiran: null},
+  {title : 'Josep Sinatupulu',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
+  {title : 'Anggun Srikandi Ayu',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
+  {title : 'Jejep',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
+];
+
+export const bodyTabbleWebinar = [
 ];
 
 // export const tasks = [
