@@ -98,7 +98,7 @@ label.Option {
 
 /* INPUT FILE */
 
-input[type="file"] {
+.filesharing > input[type="file"] {
   display: none;
 }
 .custom-file-upload {

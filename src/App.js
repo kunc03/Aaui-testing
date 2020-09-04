@@ -206,7 +206,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
 
-        <Route path="/liveclass" component={LiveClassAdmin} />
+        <Route path="/meeting" component={LiveClassAdmin} />
         <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
@@ -322,7 +322,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
-        <Route path="/liveclass" exact component={LiveClassAdmin} />
+        <Route path="/meeting" exact component={LiveClassAdmin} />
         <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         {/* <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} /> */}
         <Route path="/liveclass-room/:roomid" exact component={LiveStream} />

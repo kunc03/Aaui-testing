@@ -696,7 +696,7 @@ uploadFile = e => {
                 <div className="col-sm-6">
                   <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
                     <h3 className="f-20 f-w-800 fc-blue p-10">
-                      File
+                      File Sharing
                     </h3>
                       
                       { this.state.fileChat.map((item, i)=>{
@@ -713,7 +713,7 @@ uploadFile = e => {
                   </div>
 
                   <div className='card p-20'>
-                    <Row>
+                    <Row className='filesharing'>
                       <Col sm={10}>
                         <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
                         < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
@@ -749,7 +749,7 @@ uploadFile = e => {
 
                 </div>
 
-                <div className="col-sm-6">
+                {/* <div className="col-sm-6">
                   <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
                     <h3 className="f-20 f-w-800 fc-blue p-10">
                       Q&A
@@ -758,7 +758,6 @@ uploadFile = e => {
                       { QandA.map((item, i)=>{
                         return (
                           <div className='box-chat-send-left'>
-                            {/* <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/> */}
                             <p className="fc-muted"> {item.title} <small className="float-right"> {item.date}</small></p>                            
                             <ul className="list-unstyled">
                               <li>Q : {item.nanya}</li>
@@ -795,16 +794,17 @@ uploadFile = e => {
                     </Row>
                   </div>
 
-                </div>
+                </div> */}
                 
 
 
                 {/* PROJECT TIDAK TERKAIT */}
-                {/* <div className="col-sm-6">
-                  <h3 className="f-20 f-w-800">
+                <div className="col-sm-6">
+                  <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
+                  <h3 className="f-20 f-w-800 fc-blue p-10">
                     {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
                   </h3>
-                        <div className="row">
+                        <div className="row" style={{marginLeft:0, marginRight:0}}>
                           {
                             ((levelUser == 'admin' || levelUser == 'superadmin') && this.state.classRooms.folder_id !==0) &&
                             <Button
@@ -826,7 +826,7 @@ uploadFile = e => {
                               </Button>
                             }
                         </div>
-                    <div className='row box-chat'>
+                    <div className='row' style={{marginLeft:0, marginRight:0, height:380, overflowY: 'scroll'}}>
                             {
                               this.state.folderId !== 0 &&
                               this.state.selectFolder &&
@@ -897,7 +897,8 @@ uploadFile = e => {
                               )
                             }
                     </div>
-                </div> */}
+                    </div>
+                </div>
               </div>
             :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}

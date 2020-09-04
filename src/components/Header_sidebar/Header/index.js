@@ -303,7 +303,7 @@ class Header extends Component {
         iconOn: 'kelason.png',
         iconOff: 'kelasoff.png',
         label: 'Group Meeting',
-        link: '/liveclass',
+        link: '/meeting',
       },
       {
         iconOn: 'kelola-kursus-on.png',
@@ -367,7 +367,7 @@ class Header extends Component {
         iconOn: 'kelason.png',
         iconOff: 'kelasoff.png',
         label: 'Group Meeting',
-        link: '/liveclass',
+        link: '/meeting',
       },
       {
         iconOn: 'kelola-kursus-on.png',
