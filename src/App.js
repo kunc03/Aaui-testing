@@ -80,6 +80,11 @@ import PrintCertificate3 from './components/client/certificate/Certificate3'
 import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
 // import ResetPassword from './components/resetPassword';
+
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -164,6 +169,17 @@ export class Main extends React.Component {
         <Loader />
         <Sidebar />
         <Header />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          />
         {workSpaceSwitch}
       </div>
     );

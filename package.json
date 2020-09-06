@@ -46,6 +46,7 @@
     "react-sm-select": "^1.0.9",
     "react-switch": "^5.0.1",
     "react-tagsinput": "^3.19.0",
+    "react-toastify": "^6.0.8",
     "redux": "^4.0.4",
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
