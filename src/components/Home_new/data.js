@@ -33,7 +33,7 @@ export const headerTabble = [
   {title : 'Waktu', width: null, status: true},
   {title : 'Tanggal', width: null, status: true},
   {title : 'Peserta', width: null, status: true},
-  {title : 'File Project', width: null, status: true},
+  // {title : 'File Project', width: null, status: true},
 ];
 
 export const bodyTabble = [

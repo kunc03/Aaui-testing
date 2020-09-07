@@ -100,6 +100,7 @@ label.Option {
   top:-25px;
   left:30px;
   z-index:1029;
+  cursor:pointer;
 }
 
 

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import API, {API_SERVER} from '../../repository/api';
+import API, {API_SERVER, USER_ME} from '../../repository/api';
+import { toast } from "react-toastify";
 
 
 class EventNew extends Component {
@@ -14,17 +15,23 @@ class EventNew extends Component {
     },
   }
 
-  fetchData(){
-    API.get(`${API_SERVER}v1/event/${localStorage.getItem('companyID')}`).then(response => {
-      this.setState({ dataEvent: response.data.result });
-    }).catch(function(error) {
-      console.log(error);
-    });
-  }
+  // fetchData(){
+  //   API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+  //     if (res.status === 200) {
+  //       this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+  //       toast.warning(this.state.companyId)
+  //       API.get(`${API_SERVER}v1/event/${this.state.companyId}`).then(response => {
+  //         this.setState({ dataEvent: response.data.result });
+  //       }).catch(function(error) {
+  //         console.log(error);
+  //       });
+  //     }
+  //   })
+  // }
 
-  componentDidMount(){
-    this.fetchData()
-  }
+  // componentDidMount(){
+  //   this.fetchData()
+  // }
 
   render() {
     const lists = this.props.lists;
@@ -44,7 +51,7 @@ class EventNew extends Component {
       urlMeeting = 'meeting'
     }
     else{
-      urlMeeting = 'liveclass'
+      urlMeeting = 'meeting'
     }
     return (
       <div className="row">

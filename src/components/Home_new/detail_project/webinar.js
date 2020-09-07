@@ -4,6 +4,7 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import Storage from '../../../repository/storage';
+import { toast } from "react-toastify";
 
 
 class WebinarTable extends Component {
@@ -27,13 +28,13 @@ class WebinarTable extends Component {
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
                 <button
-                to='/user-create'
                 className="btn btn-icademy-primary float-right"
                 style={{ padding: "7px 8px !important" }}
+                onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
                 >
                 <i className="fa fa-plus"></i>
                 
-                Add New
+                Tambah
                 </button>
             </span>
             <div className="table-responsive">

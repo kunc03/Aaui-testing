@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 import API, {USER_ME, API_SERVER} from '../../repository/api';
-import { Card, Modal, Col, Row, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
+import { MultiSelect } from 'react-sm-select';
 
 
 class ProjekNew extends Component {
@@ -22,7 +23,10 @@ class ProjekNew extends Component {
     folderName: '',
     alert: '',
     modalDelete: false,
-    modalEdit: false
+    modalEdit: false,
+
+    optionsProjectAdmin: [],
+    valueProjectAdmin: []
   }
   
   onChangeInput = e => {
@@ -37,10 +41,10 @@ class ProjekNew extends Component {
     }
 }
 closeModalProject = e => {
-  this.setState({modalNewFolder:false, alert: ''})
+  this.setState({modalNewFolder:false, alert: '', valueProjectAdmin:[]})
 }
 closeModalEdit = e => {
-  this.setState({modalEdit:false, alert: '', folderName:''})
+  this.setState({modalEdit:false, alert: '', folderName:'', valueProjectAdmin:[]})
 }
 closeModalDelete = e => {
   this.setState({modalDelete:false, deleteProjectName:'', deleteProjectId:'', alert:''})
@@ -49,8 +53,9 @@ closeModalDelete = e => {
     e.preventDefault();
     const formData = {
       name: this.state.folderName,
-      company: localStorage.getItem('companyID'),
-      mother: 0
+      company: this.state.companyId,
+      mother: 0,
+      project_admin: this.state.valueProjectAdmin
     };
   
     API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -59,18 +64,23 @@ closeModalDelete = e => {
           this.setState({alert: res.data.result});
         } else {
           toast.success(`Berhasil menambah project ${this.state.folderName}`)
-          this.setState({modalNewFolder:false, alert: '', folderName:''})
+          this.setState({modalNewFolder:false, alert: '', folderName:'', valueProjectAdmin:[]})
           this.fetchProject();
         }
       }
     })
   }
   fetchProject(){
-    API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${localStorage.getItem('companyID')}`).then(response => {
-      this.setState({ project: response.data.result });
-    }).catch(function(error) {
-      console.log(error);
-    });
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          this.setState({ project: response.data.result });
+        }).catch(function(error) {
+          console.log(error);
+        });
+      }
+    })
   }
 
   dialogDelete(id, name){
@@ -81,11 +91,16 @@ closeModalDelete = e => {
     })
   }
 
-  openModalEdit(id, name){
-    this.setState({
-      editProjectId: id,
-      editProjectName: name,
-      modalEdit: true
+  openModalEdit(id){
+    API.get(`${API_SERVER}v1/project-read/${id}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          editProjectId: id,
+          editProjectName: res.data.result.name,
+          valueProjectAdmin: res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [],
+          modalEdit: true
+        })
+      }
     })
   }
 
@@ -105,41 +120,60 @@ closeModalDelete = e => {
   editProject(){
     let form = {
       name: this.state.editProjectName,
+      project_admin: this.state.valueProjectAdmin
     }
     API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
-          toast.error(`Gagal mengubah nama project ${this.state.editProjectName}`)
+          toast.error(`Gagal mengubah project ${this.state.editProjectName}`)
         } else {
-          toast.success(`Berhasil mengubah nama project ${this.state.editProjectName}`)
-          this.setState({editProjectId:'', editProjectName: '',modalEdit: false})
+          toast.success(`Berhasil mengubah project ${this.state.editProjectName}`)
+          this.setState({editProjectId:'', editProjectName: '',modalEdit: false, valueProjectAdmin:[]})
           this.fetchProject();
         }
       }
     })
   }
 
+  fetchOtherData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          if (this.state.optionsProjectAdmin.length==0 || this.state.optionsProjectAdmin.length==0){
+            API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+              response.data.result.map(item => {
+                this.state.optionsProjectAdmin.push({value: item.user_id, label: item.name});
+              });
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+          }
+      }
+    })
+  }
   componentDidMount(){
     this.fetchProject()
+    this.fetchOtherData()
   }
 
 
   render() {
     let access = Storage.get('access');
-    let accessProjectManager = true;
     let levelUser = Storage.get('user').data.level;
+    let accessProjectManager = levelUser == 'client' ? false : true;
   //  console.log(this.props, 'props evenntttt')
     const lists = this.state.project;
     return (
       <div className="row">
         <div className="col-sm-8">
           <div className="row">
-          <div style={{padding:'10px 20px'}} className="col-sm-4">
+          <div style={{padding:'10px 20px'}}>
             <h3 className="f-w-900 f-18 fc-blue">
               Project
             </h3>
           </div>
-          <div className="col-sm-8">
+          <div>
             {
               accessProjectManager ?
             <button
@@ -159,14 +193,9 @@ closeModalDelete = e => {
         </div>
         <div className="col-sm-4 text-right">
           <p className="m-b-0">
-            {
-              levelUser == 'client' ?
-              null
-              :
-              <Link to={"files"}>
+              <Link to={"project"}>
                 <span className="f-w-600 f-16 fc-skyblue">Lihat Semua</span>
               </Link>
-            }
           </p>
         </div>
       <div className="col-sm-12" style={{marginTop: '10px'}}>
@@ -193,7 +222,7 @@ closeModalDelete = e => {
                 </Link>
                 {
                   accessProjectManager ?
-                  <span class="btn-group dropleft col-sm-1">
+                        <span class="btn-group dropleft col-sm-1">
                           <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i
                               className="fa fa-ellipsis-v"
@@ -201,7 +230,7 @@ closeModalDelete = e => {
                             />
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                            <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id, item.title)}>Ubah Nama</button>
+                            <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Ubah</button>
                             <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Hapus</button>
                           </div>
                         </span>
@@ -246,7 +275,11 @@ closeModalDelete = e => {
                   <Card.Body>
                     <Row>
                         <Col>
-                            <div className="input-group mb-4">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Nama Project
+                            </Form.Label>
+                              <div className="input-group mb-4">
                                 <input
                                 type="text"
                                 name="folderName"
@@ -256,27 +289,48 @@ closeModalDelete = e => {
                                 onChange={this.onChangeInput}
                                 required
                                 />
-                            </div>
-                            <div style={{color:'#F00'}}>{this.state.alert}</div>
+                              </div>
+                            </Form.Group>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Project Admin
+                            </Form.Label>
+                            <MultiSelect
+                              id="moderator"
+                              options={this.state.optionsProjectAdmin}
+                              value={this.state.valueProjectAdmin}
+                              onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
+                              mode="tags"
+                              enableSearch={true}
+                              resetable={true}
+                              valuePlaceholder="Pilih Project Admin"
+                            />
+                            <Form.Text className="text-muted">
+                              Project admin dapat mengelola meeting, webinar, dan file.
+                            </Form.Text>
+                          </Form.Group>
+                        </Col>
+                    </Row>
+                  </Card.Body>
+                  <Modal.Footer>
                       <button
-                        to='/user-create'
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalProject.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
                         className="btn btn-icademy-primary"
-                        style={{ padding: "7px 8px !important", width:'100%' }}
                         onClick={this.saveFolder.bind(this)}
                       >
                         <i className="fa fa-save"></i>
                         Simpan
                       </button>
-                      <button
-                        className="btn btn-icademy-grey"
-                        style={{ padding: "7px 8px !important", width:'100%' }}
-                        onClick={this.closeModalProject.bind(this)}
-                      >
-                        Batal
-                      </button>
-                  </Card.Body>
+                  </Modal.Footer>
                 </Card>
           </Modal.Body>
         </Modal>
@@ -295,18 +349,45 @@ closeModalDelete = e => {
                   <Card.Body>
                     <Row>
                         <Col>
-                            <div className="input-group mb-4">
-                                <input
-                                type="text"
-                                name="editProjectName"
-                                value={this.state.editProjectName}
-                                className="form-control"
-                                placeholder="Nama Project"
-                                onChange={this.onChangeInput}
-                                required
-                                />
-                            </div>
-                            <div style={{color:'#F00'}}>{this.state.alert}</div>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Nama Project
+                            </Form.Label>
+                              <div className="input-group mb-4">
+                                  <input
+                                  type="text"
+                                  name="editProjectName"
+                                  value={this.state.editProjectName}
+                                  className="form-control"
+                                  placeholder="Nama Project"
+                                  onChange={this.onChangeInput}
+                                  required
+                                  />
+                              </div>
+                              <div style={{color:'#F00'}}>{this.state.alert}</div>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Project Admin
+                            </Form.Label>
+                            <MultiSelect
+                              id="moderator"
+                              options={this.state.optionsProjectAdmin}
+                              value={this.state.valueProjectAdmin}
+                              onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
+                              mode="tags"
+                              enableSearch={true}
+                              resetable={true}
+                              valuePlaceholder="Pilih Project Admin"
+                            />
+                            <Form.Text className="text-muted">
+                              Project admin dapat mengelola meeting, webinar, dan file.
+                            </Form.Text>
+                          </Form.Group>
                         </Col>
                     </Row>
                   </Card.Body>
@@ -320,7 +401,7 @@ closeModalDelete = e => {
                         Batal
                       </button>
                       <button
-                        className="btn btn-icademy-primary btn-icademy-red"
+                        className="btn btn-icademy-primary"
                         onClick={this.editProject.bind(this)}
                       >
                         <i className="fa fa-save"></i>

@@ -13,14 +13,40 @@ import GanttChart from './ganttChart';
 export default class User extends Component {
   constructor(props) {
     super(props);
+    this.goBack = this.goBack.bind(this);
 
     // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
       users: [],
       dataUser: [],
+      access_project_admin: false
       
     };
+  }
+  goBack(){
+    this.props.history.goBack();
+  }
+  checkProjectAccess(){
+    API.get(`${API_SERVER}v1/project-access/${this.props.match.params.project_id}/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        let levelUser = Storage.get('user').data.level;
+        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+          this.setState({
+            access_project_admin: true,
+          })
+        }
+        else{
+          this.setState({
+            access_project_admin: false,
+          })
+        }
+      }
+    })
+  }
+
+  componentDidMount(){
+    this.checkProjectAccess()
   }
 
   render() {
@@ -32,17 +58,18 @@ export default class User extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-                  <Link to="/" className="floating-back">
+                  <div className="floating-back">
                     <img
                       src={`newasset/back-button.svg`}
                       alt=""
                       width={90}
+                      onClick={this.goBack}
                     ></img>
-                  </Link>
+                  </div>
                   <div className="row">
                     <div className="col-xl-12">
                       {/* Table Meeting */}
-                      <TableMeetings headerTabble={headerTabble} bodyTabble={bodyTabble} projectId={this.props.match.params.project_id}/>
+                      <TableMeetings access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabble} projectId={this.props.match.params.project_id}/>
                       
                     </div>
                     <div className="col-xl-12">

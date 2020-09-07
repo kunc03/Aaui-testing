@@ -18,6 +18,7 @@ import Files from "./components/files/index";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/Home_new/detail_project/index";
+import Project from "./components/project/index";
 
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
@@ -216,13 +217,14 @@ export class SuperAdminSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
-        <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/detail-project/:project_id" component={DetailProject} />
+        <Route path="/project" component={Project} /> 
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
 
-        <Route path="/meeting" component={LiveClassAdmin} />
+        <Route path="/meeting" exact component={LiveClassAdmin} />
         <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
@@ -294,6 +296,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/project" component={Project} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -370,6 +373,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/project" component={Project} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -385,10 +389,10 @@ export class ClientSwitch extends React.Component {
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
-        <Route path="/liveclass" exact component={LiveClass} />
+        {/* <Route path="/liveclass" exact component={LiveClass} /> */}
         {/* <Route path="/liveclass" component={LiveClass} /> */}
-        <Route path="/meeting" component={LiveClassAdmin} />
-        <Route path="/meeting/information/:roomid" exact component={LiveClass} />
+        <Route path="/meeting" exact component={LiveClassAdmin} />
+        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />

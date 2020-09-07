@@ -88,12 +88,13 @@ class Header extends Component {
               : '/assets/images/user/avatar-1.png',
           },
         });
-
+        console.log('ALVIN', res.data.result)
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
           company_id: res.data.result.company_id,
           user: res.data.result.name,
+          role: res.data.result.grup_name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
             ? res.data.result.avatar
@@ -116,7 +117,7 @@ class Header extends Component {
   }
 
   render() {
-    const { user, level, company, notificationData } = this.state;
+    const { user, role, level, company, notificationData } = this.state;
 
     // console.table(company);
 
@@ -242,7 +243,7 @@ class Header extends Component {
         iconOn: 'kelason.png',
         iconOff: 'kelasoff.png',
         label: 'Group Meeting',
-        link: access.manage_group_meeting ? '/meeting' : '/liveclass',
+        link: '/meeting',
         access: access.manage_group_meeting
           ? 'manage_group_meeting'
           : 'group_meeting',
@@ -553,7 +554,7 @@ class Header extends Component {
                         className="d-block  mt-2 text-c-grey"
                         style={{ textTransform: 'capitalize' }}
                       >
-                        {level}
+                        {role}
                       </small>
                     </h6>
                   </div>
