@@ -65,6 +65,9 @@ class MeetingTable extends Component {
       //multi select peserta
       optionsPeserta: [],
       valuePeserta: [],
+      //multi select group
+      optionsGroup: [],
+      valueGroup: [],
       //Toggle Switch
       private: false,
       scheduled: false,
@@ -115,7 +118,7 @@ class MeetingTable extends Component {
     }
   }
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
   }
 
   closeModalConfirmation = e => {
@@ -190,6 +193,14 @@ class MeetingTable extends Component {
               console.log(error);
             });
           }
+          API.get(`${API_SERVER}v1/branch/company/${this.state.companyId}`).then(res => {
+            if(res.status === 200) {
+              this.setState({ listBranch: res.data.result[0] })
+              res.data.result[0].map(item => {
+                this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+              });
+            }
+          })
       }
     })
   }
@@ -246,6 +257,19 @@ class MeetingTable extends Component {
         })
       }
     })
+  }
+  groupSelect (valueGroup){
+    this.setState({ valueGroup, valuePeserta:[] })
+    for (let i=0; i<valueGroup.length; i++){
+      API.get(`${API_SERVER}v1/user/group/${valueGroup[i]}`).then(res => {
+        if(res.status === 200) {
+          const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number): [];
+          this.setState({valuePeserta: this.state.valuePeserta.concat(participant)})
+          console.log('ALVIN PES', this.state.valuePeserta)
+        }
+      })
+    }
+
   }
   onSubmitForm = e => {
     e.preventDefault();
@@ -704,6 +728,31 @@ class MeetingTable extends Component {
                           </Form.Text>
                         </Form.Group>
                         : null
+                        }
+                        {
+                        this.state.private ?
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Peserta Dari Group
+                          </Form.Label>
+                          <MultiSelect
+                            id="group"
+                            options={this.state.optionsGroup}
+                            value={this.state.valueGroup}
+                            onChange={valueGroup => this.groupSelect(valueGroup)}
+                            mode="tags"
+                            removableTags={true}
+                            hasSelectAll={true}
+                            selectAllLabel="Pilih Semua"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih Peserta"
+                          />
+                          <Form.Text className="text-muted">
+                            Pilih peserta dari group untuk private meeting.
+                          </Form.Text>
+                        </Form.Group>
+                        :null
                         }
                         {
                         this.state.private ?
