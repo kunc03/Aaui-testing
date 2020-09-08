@@ -5,10 +5,10 @@ export const dataEvent = [
 ];
 
 export const dataProjek = [
-  {title : 'Bisnis Projek',webinar: 1, meeting: 6, status: true},
-  {title : 'Marketing Projek',webinar: 0, meeting: 3, status: false},
-  {title : 'Sales Projek',webinar: 8, meeting: 0, status: false},
-  {title : 'Team Projek',webinar: 0, meeting: 6, status: false}
+  {id: 1, title : 'Bisnis Projek', webinar: 1, meeting: 6, status: true, to: '/webinar/detail/1'},
+  {id: 2, title : 'Marketing Projek', webinar: 0, meeting: 3, status: false, to: '/webinar/detail/2'},
+  {id: 3, title : 'Sales Projek', webinar: 8, meeting: 0, status: false, to: '/webinar/detail/3'},
+  {id: 4, title : 'Team Projek', webinar: 0, meeting: 6, status: false, to: '/webinar/detail/4'}
 ];
 
 export const dataToDo = [

@@ -8,6 +8,7 @@ import Lists from './lists';
 export default class Webinar extends Component {
 
 	state = {
+    // webinar: this.props.match.param.webinar,
     project: "Sales Projek",
     projects: ["Bisnis Projek", "Marketing Projek", "Sales Projek"],
     webinars: [
@@ -56,6 +57,7 @@ export default class Webinar extends Component {
 
 	render() {
     console.log('STATE: ', this.state);
+    console.log('STATEP:', this.props.match.params.webinar)
     let { projects, webinars, project } = this.state;
 
 		return (

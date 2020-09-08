@@ -45,6 +45,7 @@ export default class LiveClassAdmin extends Component {
     countTentative: 0,
     countTidakHadir: 0,
     needConfirmation : 0,
+    attendanceConfirmation : '',
     sendingEmail: false,
 
     //single select moderator
@@ -61,6 +62,7 @@ export default class LiveClassAdmin extends Component {
     //Toggle Switch
     private: false,
     scheduled: false,
+    requireConfirmation: false,
     startDate: new Date(),
     endDate: new Date(),
   }
@@ -89,13 +91,16 @@ export default class LiveClassAdmin extends Component {
   toggleSwitch(checked) {
     this.setState({ private:!this.state.private });
   }
+  toggleSwitchRequiredConfirmation(checked) {
+    this.setState({ requireConfirmation:!this.state.requireConfirmation });
+  }
 
   toggleSwitchScheduled(checked) {
     this.setState({ scheduled:!this.state.scheduled });
   }
 
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
   }
 
   closeModalConfirmation = e => {
@@ -129,6 +134,13 @@ export default class LiveClassAdmin extends Component {
     }
   }
 
+  deleteParticipant(id, classId){
+    API.delete(`${API_SERVER}v1/liveclass/participant/delete/${id}`).then(res => {
+      if(res.status === 200) {
+        this.fetchMeetingInfo(classId);
+      }
+    })
+  }
   confirmAttendance(confirmation){
     let form = {
       confirmation: confirmation,
@@ -153,6 +165,7 @@ export default class LiveClassAdmin extends Component {
           message: APPS_SERVER+'redirect/meeting/information/'+this.state.infoClass.class_id,
           messageNonStaff: APPS_SERVER+'meeting/'+this.state.infoClass.class_id
         }
+        this.setState({alertSuccess:true})
         API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
           if(res.status === 200) {
             if(!res.data.error) {
@@ -190,7 +203,8 @@ export default class LiveClassAdmin extends Component {
           countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
           countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
           countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length 
+          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
+          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
         })
       }
     })
@@ -244,6 +258,7 @@ export default class LiveClassAdmin extends Component {
 
     if(this.state.classId) {
       let isPrivate = this.state.private == true ? 1 : 0;
+      let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
       let isScheduled = this.state.scheduled == true ? 1 : 0;
       let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
@@ -252,6 +267,7 @@ export default class LiveClassAdmin extends Component {
         moderator: this.state.valueModerator,
         folder_id: this.state.valueFolder,
         is_private: isPrivate,
+        is_required_confirmation: isRequiredConfirmation,
         is_scheduled: isScheduled,
         schedule_start: startDateJkt,
         schedule_end: endDateJkt,
@@ -265,12 +281,44 @@ export default class LiveClassAdmin extends Component {
             formData.append('cover', this.state.cover);
             await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
           }
-          this.fetchData();
-          this.closeClassModal();
+          if (res.data.result.is_private == 1){
+            this.setState({sendingEmail: true})
+            let start = new Date(res.data.result.schedule_start);
+            let end = new Date(res.data.result.schedule_end);
+            let form = {
+              user: Storage.get('user').data.user,
+              email: [],
+              room_name: res.data.result.room_name,
+              is_private: res.data.result.is_private,
+              is_scheduled: res.data.result.is_scheduled,
+              schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+              schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+              userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
+              //url
+              message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
+              messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
+            }
+            API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+              if(res.status === 200) {
+                if(!res.data.error) {
+                  this.setState({sendingEmail: false})
+                  this.fetchData();
+                  this.closeClassModal();
+                } else {
+                  console.log('RESS GAGAL',res)
+                }
+              }
+            })
+          }
+          else{
+            this.fetchData();
+            this.closeClassModal();
+          }
         }
       })
     } else {
       let isPrivate = this.state.private == true ? 1 : 0;
+      let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
       let isScheduled = this.state.scheduled == true ? 1 : 0;
       let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
@@ -282,6 +330,7 @@ export default class LiveClassAdmin extends Component {
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
         is_private: isPrivate,
+        is_required_confirmation: isRequiredConfirmation,
         is_scheduled: isScheduled,
         schedule_start: startDateJkt,
         schedule_end: endDateJkt,
@@ -353,6 +402,7 @@ export default class LiveClassAdmin extends Component {
     const roomName = e.target.getAttribute('data-roomname');
     const valueModerator = [Number(e.target.getAttribute('data-moderator'))];
     const isprivate = e.target.getAttribute('data-isprivate');
+    const isRequiredConfirmation = e.target.getAttribute('data-isrequiredconfirmation');
     const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
     const isscheduled = e.target.getAttribute('data-isscheduled');
     const schedule_start = new Date(e.target.getAttribute('data-start'));
@@ -369,11 +419,14 @@ export default class LiveClassAdmin extends Component {
       valueModerator: valueModerator,
       valueFolder: valueFolder,
       private: isprivate == 1 ? true : false,
-      valuePeserta: participant,
+      requireConfirmation: isRequiredConfirmation == 1 ? true : false,
+      // valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt
     })
+
+    this.fetchMeetingInfo(classId)
   }
 
   onSubmitLock = e => {
@@ -394,6 +447,7 @@ export default class LiveClassAdmin extends Component {
     let { classRooms, classRoomsActive, isLive } = this.state;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
     let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+
 
     let { filterMeeting } = this.state;
     if(filterMeeting != ""){
@@ -448,7 +502,8 @@ export default class LiveClassAdmin extends Component {
                     data-speaker={item.speaker}
                     data-roomname={item.room_name}
                     data-moderator={item.moderator} 
-                    data-isprivate={item.is_private} 
+                    data-isprivate={item.is_private}
+                    data-isrequiredconfirmation={item.is_required_confirmation}
                     data-participant={item.participant} 
                     data-isscheduled={item.is_scheduled} 
                     data-start={item.schedule_start} 
@@ -466,7 +521,7 @@ export default class LiveClassAdmin extends Component {
                 {
                   item.record &&
                   <small className="mr-3">
-                    <a target='_blank' href={item.record}>
+                    <a target='_blank' href='aktivitas'>
                       <i className='fa fa-compact-disc'></i> REKAMAN
                     </a>
                   </small>
@@ -476,7 +531,6 @@ export default class LiveClassAdmin extends Component {
         </div>
       )}
     </Row>;
-
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -752,7 +806,45 @@ export default class LiveClassAdmin extends Component {
                         this.state.private &&
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
+                            Wajib Konfirmasi Kehadiran
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                           <ToggleSwitch checked={false} onChange={this.toggleSwitchRequiredConfirmation.bind(this)} checked={this.state.requireConfirmation} />
+                          </div>
+                          <Form.Text className="text-muted">
+                            {
+                              this.state.requireConfirmation ? 'Hanya peserta yang konfirmasi hadir yang dapat bergabung ke meeting.'
+                              :
+                              'Semua peserta meeting dapat gabung ke meeting.'
+                            }
+                          </Form.Text>
+                        </Form.Group>
+                        }
+                        {
+                        this.state.private &&
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
                             Peserta
+                          </Form.Label>
+                          <div className="row mt-1" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
+                                      {
+                                        this.state.infoParticipant.map(item=>
+                                          <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
+                                            {item.name}
+                                            <button
+                                              type="button"
+                                              className=""
+                                              style={{background:'none', border:'none', cursor:'pointer', color:'rgb(31 31 31)'}}
+                                              onClick={this.deleteParticipant.bind(this, item.participant_id, item.class_id)}
+                                            >
+                                              X
+                                            </button>
+                                          </div>
+                                        )
+                                      }
+                          </div>
+                          <Form.Label className="f-w-bold">
+                            Tambah Peserta
                           </Form.Label>
                           <MultiSelect
                             id="peserta"
@@ -844,9 +936,8 @@ export default class LiveClassAdmin extends Component {
                       >
                         Informasi Meeting dan Kehadiran
                       </Modal.Title>
-                      
                       {
-                        this.state.needConfirmation >= 1
+                        this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1
                         ?
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                           <div className="card" style={{background:'#dac88c',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
@@ -866,14 +957,28 @@ export default class LiveClassAdmin extends Component {
                             </div>
                           </div>
                         </div>
-                        : null
+                        :
+                        this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1
+                        ?
+                        <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                          <div className="card" style={{background:'rgb(134 195 92)',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
+                            <div className="card-carousel col-sm-8">
+                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                                Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                              </div>
+                              <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                            </div>
+                          </div>
+                        </div>
+                        :
+                        null
                       }
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                             <div className="card">
                               <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
                               
                               <div className="card-carousel">
-                                <div className="title-head f-w-900 f-16">
+                                <div className="title-head f-w-900 f-16 mb-2">
                                   {this.state.infoClass.room_name}
                                 </div>
                                 <div class="row">
@@ -884,6 +989,12 @@ export default class LiveClassAdmin extends Component {
                                     <h3 className="f-14">
                                       Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                     </h3>
+                                    {
+                                      this.state.infoClass.is_private &&
+                                      <h3 className="f-14">
+                                        Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                                      </h3>
+                                    }
                                   </div>
                                   {
                                     this.state.infoClass.is_scheduled ?
@@ -939,7 +1050,7 @@ export default class LiveClassAdmin extends Component {
                               </div>
                             </div>
                             {
-                              this.state.infoClass.is_live ? 
+                              (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ? 
                               <Link target='_blank' to={`/liveclass-room/${this.state.infoClass.class_id}`} onClick={e=> this.closeModalConfirmation()} className="btn btn-sm btn-ideku" style={{width:'100%',padding:'20px 20px'}}>
                                 <i className='fa fa-video'></i> Masuk
                               </Link>

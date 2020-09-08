@@ -359,45 +359,21 @@ class Aktivity extends Component {
     const ClassRooms = ({ list }) => (
       <Row>
         {list.map((item) => (
-          <div className="col-sm-4" key={item.class_id}>
-            <a target="_blank" href={item.record}>
+          <div className="col-sm-12" key={item.class_id}>
               <div className="card">
-                <div
-                  className="responsive-image-content radius-top-l-r-5"
-                  style={{
-                    backgroundImage: `url(${
-                      item.cover
-                        ? item.cover
-                        : '/assets/images/component/meeting-default.jpg'
-                    })`,
-                  }}
-                ></div>
-                {/* <img
-                className="img-fluid img-kursus radius-top-l-r-5"
-                src={item.cover ? item.cover : 'https://cdn.pixabay.com/photo/2013/07/13/11/45/play-158609_640.png'}
-                alt="dashboard-user"
-              /> */}
                 <div className="card-carousel ">
-                  <div className="title-head f-w-900 f-16">
+                  <div className="title-head f-w-900 f-16" style={{marginBottom:20}}>
                     {item.room_name}
                   </div>
-                  <h3 className="f-14">{item.name}</h3>
-                  <medium
-                    className="mr-3"
-                    style={{
-                      position: 'absolute',
-                      top: 20,
-                      left: 20,
-                      background: '#FFF',
-                      borderRadius: '5px',
-                      padding: '5px 10px',
-                    }}
-                  >
-                    <i className="fa fa-compact-disc"></i> REKAMAN
-                  </medium>
+                  {item.record.split(',').map((item) => (
+                    <h3 className="f-14">
+                      <a target="_blank" href={item} style={{}}>
+                        {item}
+                      </a>
+                    </h3>
+                  ))}
                 </div>
               </div>
-            </a>
           </div>
         ))}
       </Row>

@@ -21,6 +21,7 @@ class HomeNew extends Component {
       companyId: '',
     },
     event: [],
+    project: [],
     findCourseInput: "",
     kategoriKursus: [],
     kursusTerbaru: [],
@@ -30,6 +31,8 @@ class HomeNew extends Component {
   componentDidMount() {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
+    this.fetchEvent();
+    this.fetchProject();
   }
 
   fetchDataUser() {
@@ -77,6 +80,22 @@ class HomeNew extends Component {
     })
   }
 
+  fetchEvent(){
+    API.get(`${API_SERVER}v1/event/${localStorage.getItem('companyID')}`).then(response => {
+      this.setState({ event: response.data.result });
+    }).catch(function(error) {
+      console.log(error);
+    });
+  }
+
+  fetchProject(){
+    API.get(`${API_SERVER}v1/project/${localStorage.getItem('companyID')}`).then(response => {
+      this.setState({ project: response.data.result });
+    }).catch(function(error) {
+      console.log(error);
+    });
+  }
+
   findCourse = (e) => {
     e.preventDefault();
     this.setState({findCourseInput : e.target.value});
@@ -86,8 +105,8 @@ class HomeNew extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
 
-    const eventDashboard = dataEvent;
-    const projekDashboard = dataProjek;
+    const eventDashboard = this.state.event;
+    const projekDashboard = this.state.project;
     const toDoDashboard = dataToDo;
 
     var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
@@ -186,78 +205,84 @@ class HomeNew extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  <div className="row">                     
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <h3 className="f-w-900 f-18 fc-blue">
-                                Event
-                              </h3>
+                  <div className="row">      
+                    <div className='col-sm-6' style={{paddingLeft:0, paddingRight:0}}>    
+                      <div className="col-sm-12">
+                        <Card>
+                          <Card.Body>
+                            <div className="row">
+                              <div className="col-sm-6">
+                                <h3 className="f-w-900 f-18 fc-blue">
+                                  Event
+                                </h3>
+                              </div>
+                              <div className="col-sm-6 text-right">
+                                <p className="m-b-0">
+                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                </p>
+                              </div>
                             </div>
-                            <div className="col-sm-6 text-right">
-                              <p className="m-b-0">
-                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                              </p>
+                            <div style={{marginTop: '10px'}}>
+                              <EventNew lists={eventDashboard} />
                             </div>
-                          </div>
-                          <div style={{marginTop: '10px'}}>
-                            <EventNew lists={eventDashboard} />
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <h3 className="f-w-900 f-18 fc-blue">
-                                Projek
-                              </h3>
+                          </Card.Body>
+                        </Card>
+                      </div>                   
+                      <div className="col-sm-12">
+                        <CalenderNew lists={kursusTerbaru} />
+                      </div>
+                    </div>    
+                    <div className="col-sm-6" style={{paddingLeft:0, paddingRight:0}}> 
+                      <div className="col-sm-12">
+                        <Card>
+                          <Card.Body>
+                            <div className="row">
+                              <div className="col-sm-6">
+                                <h3 className="f-w-900 f-18 fc-blue">
+                                  Project
+                                </h3>
+                              </div>
+                              <div className="col-sm-6 text-right">
+                                <p className="m-b-0">
+                                  {
+                                    levelUser == 'client' ?
+                                    null
+                                    :
+                                    <Link to={"files"}>
+                                      <span className="f-w-600 f-16 fc-skyblue">Lihat Semua</span>
+                                    </Link>
+                                  }
+                                </p>
+                              </div>
                             </div>
-                            <div className="col-sm-6 text-right">
-                              <p className="m-b-0">
-                                <span className="f-w-600 f-16 fc-skyblue">Lihat Semua</span>
-                              </p>
+                            <div style={{marginTop: '10px'}}>
+                              <ProjekNew lists={projekDashboard} />
                             </div>
-                          </div>
-                          <div style={{marginTop: '10px'}}>
-                            <ProjekNew lists={projekDashboard} />
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </div>
-                  </div>
-
-                  <div className="row">                     
-                    <div className="col-sm-6">
-                      <CalenderNew lists={kursusTerbaru} />
-                    </div>
-
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <h3 className="f-w-900 f-18 fc-blue">
-                                To Do
-                              </h3>
+                          </Card.Body>
+                        </Card>
+                      </div>      
+                      <div className="col-sm-12">
+                        <Card>
+                          <Card.Body>
+                            <div className="row">
+                              <div className="col-sm-6">
+                                <h3 className="f-w-900 f-18 fc-blue">
+                                  To Do
+                                </h3>
+                              </div>
+                              <div className="col-sm-6 text-right">
+                                <p className="m-b-0">
+                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                </p>
+                              </div>
                             </div>
-                            <div className="col-sm-6 text-right">
-                              <p className="m-b-0">
-                                {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                              </p>
+                            <div style={{marginTop: '10px'}}>
+                              <ListToDoNew lists={toDoDashboard} />
                             </div>
-                          </div>
-                          <div style={{marginTop: '10px'}}>
-                            <ListToDoNew lists={toDoDashboard} />
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </div>
+                          </Card.Body>
+                        </Card>
+                      </div>
+                    </div>  
                   </div>
 
                 </div>

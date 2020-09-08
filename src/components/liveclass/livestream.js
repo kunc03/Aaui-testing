@@ -15,6 +15,7 @@ import 'react-tagsinput/react-tagsinput.css'
 
 import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
+import moment from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
 
 import DatePicker from "react-datepicker";
@@ -25,6 +26,9 @@ import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
 import {isMobile} from 'react-device-detect';
+
+import {QandA} from './data';
+
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
@@ -73,12 +77,19 @@ export default class LiveStream extends Component {
     
     folder: [],
     mom: [],
+    recordedMeeting: [],
     folderName : '',
     selectFolder: false,
     folderId: 0,
     prevFolderId: 0,
     files: [],
     projectName: '',
+    modalNewFolder: false,
+    modalUpload: false,
+    attachmentId: [],
+    folderName : '',
+    uploading: false,
+    alert: '',
 
     //kehadiran
     isModalConfirmation: false,
@@ -107,6 +118,20 @@ fetchMOM(folder){
     })
   }
 }
+fetchRekaman(folder){
+  if (folder == 0){
+    this.setState({recordedMeeting:[]})
+  }
+  else{
+    API.get(`${API_SERVER}v1/files-recorded/${folder}`).then(res => {
+      if(res.status === 200) {
+        this.setState({
+          recordedMeeting : res.data.result
+        })
+      }
+    })
+  }
+}
 fetchFolder(mother){
   API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`).then(res => {
     if (res.status === 200) {
@@ -123,9 +148,6 @@ fetchFile(folder){
   API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
     if (res.status === 200) {
       this.setState({files: res.data.result})
-      if (!this.state.selectFolder){
-        this.setState({projectName: res.data.result[0].name})
-      }
     }
   })
 }
@@ -135,13 +157,14 @@ selectFolder(id, name) {
   this.fetchFolder(id)
   this.fetchFile(id)
   this.fetchMOM(id)
+  this.fetchRekaman(id)
 }
 
 saveFolder = e => {
   e.preventDefault();
   const formData = {
     name: this.state.folderName,
-    company: this.state.company,
+    company: this.state.companyId,
     mother: this.state.folderId
   };
 
@@ -155,6 +178,27 @@ saveFolder = e => {
       }
     }
   })
+}
+
+uploadFile = e => {
+  e.preventDefault();
+  this.setState({uploading: true})
+  for (let i=0; i<=this.state.attachmentId.length-1; i++){
+    let form = new FormData();
+    form.append('folder', this.state.folderId);
+    form.append('file', this.state.attachmentId[i]);
+    API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          this.setState({alert: res.data.result, uploading: false, attachmentId: []});
+        } else {
+          this.setState({modalUpload:false, alert: '', uploading: false, attachmentId: []})
+          this.fetchFolder(this.state.folderId);
+          this.fetchFile(this.state.folderId)
+        }
+      }
+    })
+  }
 }
   tabAktivitas(a,b){
     this.setState({tabIndex: b+1});
@@ -213,6 +257,7 @@ saveFolder = e => {
   }
   fetchMeetingInfo(id){
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
+      
       if (res.status === 200) {
         this.setState({
           infoClass: res.data.result[0],
@@ -228,6 +273,7 @@ saveFolder = e => {
   fetchData() {
     this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
+      console.log(res, 'ini ini inini')
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
  
@@ -271,9 +317,7 @@ saveFolder = e => {
       }
     }).then(res=>{
       if (this.state.classRooms.folder_id !== 0 ){
-        this.fetchFolder(this.state.classRooms.folder_id);
-        this.fetchMOM(this.state.classRooms.folder_id);
-        this.fetchFile(this.state.classRooms.folder_id);
+        this.selectFolder(this.state.classRooms.folder_id)
       }
         API.get(`${API_SERVER}v1/liveclass/file/${this.state.classId}`).then(res => {
           console.log(res, 'ini responseeee');
@@ -370,6 +414,17 @@ saveFolder = e => {
     console.log(element, 'kebawah')
   }
 
+  onChangeInputFile = e => {
+    const target = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+        this.setState({ [name]: e.target.files });
+    } else {
+        this.setState({ [name]: value });
+    }
+}
   onChangeInput = (e) => {
       const name = e.target.name;
       console.log(e.target.files[0], 'attach');
@@ -392,7 +447,7 @@ saveFolder = e => {
     form.append('class_id', this.state.classId);
     form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-
+    console.log('form data',form);
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
       if(res.status === 200) {
         if(!res.data.error){
@@ -583,6 +638,7 @@ saveFolder = e => {
 
     const { classRooms, user } = this.state;
 
+    let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
     
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -599,7 +655,7 @@ saveFolder = e => {
         <Row>
 
           <Col sm={12} style={{marginBottom: '20px'}}>
-            <h3 className="f-20 f-w-800">
+            {/* <h3 className="f-20 f-w-800">
               {classRooms.room_name}
               <Link onClick={this.onClickInvite} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
                 <i className="fa fa-user"></i>Invite People
@@ -612,21 +668,25 @@ saveFolder = e => {
                 :
                 null
               }
-            </h3>
+            </h3> */}
             {
               user.name && classRooms.room_name && this.state.join ?
-              <JitsiMeetComponent 
-                roomName={classRooms.room_name} 
-                roomId={classRooms.class_id} 
-                moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                userId={user.user_id} 
-                userName={user.name} 
-                userEmail={user.email}
-                userAvatar={user.avatar}
-                startMic={this.state.startMic}
-                startCam={this.state.startCam}
-                // jwt={this.state.jwt}
-              />
+                <div className="card p-20">
+                  <h3 className="f-w-bold f-18 fc-blue">{classRooms.room_name}</h3>
+                  <p className="fc-muted mt-1 mb-4">dibuat oleh {user.name}</p>
+                  <JitsiMeetComponent 
+                    roomName={classRooms.room_name} 
+                    roomId={classRooms.class_id} 
+                    moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
+                    userId={user.user_id} 
+                    userName={user.name} 
+                    userEmail={user.email}
+                    userAvatar={user.avatar}
+                    startMic={this.state.startMic}
+                    startCam={this.state.startCam}
+                    // jwt={this.state.jwt}
+                  />
+                </div>
               :
               null
             }
@@ -637,9 +697,9 @@ saveFolder = e => {
         <div className="row">
             {tabs.map((tab, index)=>{
                 return (
-                        <div className="col-xl-6 p-b-20">
+                        <div className="col-sm-3 p-b-20">
                             <Link onClick={this.tabAktivitas.bind(this, tab, index)}>
-                                <div className={this.state.tabIndex === index+1 ? "kategori-aktif" : "kategori title-disabled"}>
+                                <div className={this.state.tabIndex === index+1 ? "tab-icademy" : "kategori title-disabled"}>
                                     {tab.title}
                                 </div>
                             </Link>
@@ -650,17 +710,20 @@ saveFolder = e => {
             {this.state.tabIndex === 1 ?  
               <div className="row col-sm-12">
                 <div className="col-sm-6">
-                  <h3 className="f-20 f-w-800">
-                    File Sharing
-                  </h3>
-                  <div id="scrollin" className='box-chat '>
+                  <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
+                    <h3 className="f-20 f-w-800 fc-blue p-10">
+                      File Sharing
+                    </h3>
                       
                       { this.state.fileChat.map((item, i)=>{
                         return (
                           <div className='box-chat-send-left'>
                             <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                            <p className="m-t-5">File :<a target='_blank' href={item.attachment}> {item.filenameattac}  <i className="fa fa-download" aria-hidden="true"></i></a></p>
-                            <small><Moment format="MMMM Do YYYY, h:mm">{item.created_at}</Moment></small>
+                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
+                            <small >
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
+                            </small>
                             {
                               classRooms.moderator == Storage.get("user").data.user_id &&
                               <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
@@ -670,11 +733,13 @@ saveFolder = e => {
                       })}
                   </div>
 
-                  <div className='box-chat-send p-20'>
-                    <Row>
+                  <div className='card p-20'>
+                    <Row className='filesharing'>
                       <Col sm={10}>
                         <div>
-                          <i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
+                          <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                            <i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
+                          </label>
                           <input
                             type="file"
                             id="attachment"
@@ -685,9 +750,9 @@ saveFolder = e => {
                           
                       </Col>
                       <Col sm={2}>
-                        <Link onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-sm btn-ideku" style={{padding: '5px 10px'}}>
-                          SEND
-                        </Link>
+                        <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                          Submit
+                        </button>
                         {/* <button onClick={this.onBotoomScroll}>coba</button> */}
                       </Col>
 
@@ -695,11 +760,85 @@ saveFolder = e => {
                   </div>
 
                 </div>
+
+                {/* <div className="col-sm-6">
+                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
+                    <h3 className="f-20 f-w-800 fc-blue p-10">
+                      Q&A
+                    </h3>
+                      
+                      { QandA.map((item, i)=>{
+                        return (
+                          <div className='box-chat-send-left'>
+                            <p className="fc-muted"> {item.title} <small className="float-right"> {item.date}</small></p>                            
+                            <ul className="list-unstyled">
+                              <li>Q : {item.nanya}</li>
+                              <li>A : {item.jawab}</li>
+                            </ul>
+                            Balas
+                          </div>
+                        )
+                      })}
+                  </div>
+
+                  <div className='card p-20'>
+                    <Row>
+                      <Col sm={12}>
+                        <textarea className='form-control mb-3' rows={3} placeholder="Silahkan masukan pertanyaan atau jawaban anda.." />
+                      </Col>
+                      <Col sm={10}>
+                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
+                        </label>
+                        <input
+                            type="file"
+                            id="attachment"
+                            name="attachment"
+                            onChange={this.onChangeInput}
+                          />
+                      </Col>
+                      <Col sm={2}>
+                        <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                          Submit
+                        </button>
+                      </Col>
+
+                    </Row>
+                  </div>
+
+                </div> */}
+                
+
+
+                {/* PROJECT TIDAK TERKAIT */}
                 <div className="col-sm-6">
-                  <h3 className="f-20 f-w-800">
-                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+this.state.projectName : 'Project Files : Tidak terkait'}
+                  <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
+                  <h3 className="f-20 f-w-800 fc-blue p-10">
+                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
                   </h3>
-                    <div className='row box-chat'>
+                        <div className="row" style={{marginLeft:0, marginRight:0}}>
+                          {
+                            ((levelUser == 'admin' || levelUser == 'superadmin') && this.state.classRooms.folder_id !==0) &&
+                            <Button
+                                onClick={e=>this.setState({modalNewFolder:true})}
+                                className="btn-block btn-primary"
+                                style={{width:250, margin:5}}
+                            >
+                                <i className="fa fa-plus"></i> &nbsp; Tambah Folder Project
+                            </Button>
+                          }
+                            {
+                              (this.state.selectFolder !== 0 && this.state.classRooms.folder_id !==0) &&
+                              <Button
+                                  onClick={e=>this.setState({modalUpload:true})}
+                                  className="btn-block btn-primary"
+                                  style={{width:150, margin:5}}
+                              >
+                                  <i className="fa fa-upload"></i> &nbsp; Upload File
+                              </Button>
+                            }
+                        </div>
+                    <div className='row' style={{marginLeft:0, marginRight:0, height:380, overflowY: 'scroll'}}>
                             {
                               this.state.folderId !== 0 &&
                               this.state.selectFolder &&
@@ -754,6 +893,22 @@ saveFolder = e => {
                               </div>
                               )
                             }
+                            {
+                              this.state.recordedMeeting.map(item =>
+                                item.record && item.record.split(',').map(item =>
+                                  <div className="folder" onDoubleClick={e=>window.open(item, 'Rekaman Meeting')}>
+                                      <img
+                                      src='assets/images/component/mp4.png'
+                                      className="folder-icon"
+                                      />
+                                      <div className="filename">
+                                        {item.substring(40)}
+                                      </div>
+                                  </div>
+                                )
+                              )
+                            }
+                    </div>
                     </div>
                 </div>
               </div>
@@ -761,13 +916,12 @@ saveFolder = e => {
               <div className="col-sm-12">{/* CHATING SEND FILE */}
                 <div id="scrollin" className="card" style={{padding:10}}>
                   <div className={this.state.editMOM ? 'hidden' : ''}>
-                    <Link
+                    <button
                       to={"#"}
                       onClick={(a)=>{this.setState({editMOM : true})}}
-                      className="btn btn-ideku col-2 float-right f-14"
-                      style={{ padding: "7px 8px !important" }}>
+                      className="btn btn-icademy-primary ml-2 float-right">
                       Add New
-                    </Link>
+                    </button>
                   </div>
                   {!this.state.editMOM 
                   ?
@@ -859,13 +1013,12 @@ saveFolder = e => {
                                   </option>
                                 ))}
                               </select>
-                              <Link
+                              <button
                                 to={"#"}
                                 onClick={this.addSubsToMOM}
-                                className="btn btn-ideku col-2 f-14"
-                                style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                                className="btn btn-icademy-primary ml-2">
                                 Tambahkan ke MOM
-                              </Link>
+                              </button>
                           </div>
                         </Form.Group>
 
@@ -894,13 +1047,13 @@ saveFolder = e => {
                       </div>
                     </div>
                     <div>
-                      <Link
+                      <button
                         to={"#"}
                         onClick={this.addMOM}
-                        className="btn btn-ideku float-right col-2 f-14"
+                        className="btn btn-icademy-primary ml-2 float-right col-2 f-14"
                         style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
                         Simpan
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 }
@@ -1124,6 +1277,94 @@ saveFolder = e => {
                         onClick={this.handleCloseMeeting}
                       >
                         Keluar
+                      </button>
+                  </Card.Body>
+                </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalNewFolder}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Tambah Folder Project
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                        <Col>
+                            <div className="input-group mb-4">
+                                <input
+                                type="text"
+                                name="folderName"
+                                value={this.state.folderName}
+                                className="form-control"
+                                placeholder="Nama Folder Project"
+                                onChange={this.onChangeInputFile}
+                                required
+                                />
+                            </div>
+                            <div style={{color:'#F00'}}>{this.state.alert}</div>
+                        </Col>
+                    </Row>
+                      <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-save"></i>Simpan
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={e=> this.setState({modalNewFolder:false, alert: ''})}
+                      >
+                        Batal
+                      </button>
+                  </Card.Body>
+                </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalUpload}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Upload File
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                        <Col>
+                          <div className="form-group">
+                            <label>Lampiran</label>
+                            <input
+                              accept="all"
+                              name="attachmentId"
+                              onChange={this.onChangeInputFile}
+                              type="file"
+                              multiple
+                              placeholder="media chapter"
+                              className="form-control"
+                            />
+                            <label style={{color:'#000', padding:'5px 10px'}}>{ this.state.attachmentId.length } File</label>
+                            <Form.Text>
+                              Bisa banyak file, pastikan file tidak melebihi 500MB  
+                              {/* dan ukuran file tidak melebihi 20MB. */}
+                            </Form.Text>
+                          </div>
+                          <div style={{color:'#F00'}}>{this.state.alert}</div>
+                        </Col>
+                    </Row>
+                      <Link disabled={this.state.uploading} onClick={this.uploadFile.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
+                        <i className="fa fa-upload"></i>{this.state.uploading ? 'Uploading...' : 'Upload'}
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={e=> this.setState({modalUpload:false})}
+                      >
+                        Batal
                       </button>
                   </Card.Body>
                 </Card>

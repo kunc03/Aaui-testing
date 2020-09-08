@@ -21,7 +21,7 @@ class ProjekNew extends Component {
         {
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1" key={item.course_id}>
-              <Link to="">
+              <Link to={item.to}>
                 <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
                   <div className="box-project">
                     <div className=" f-w-800 f-16 fc-black">

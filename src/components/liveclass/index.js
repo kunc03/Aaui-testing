@@ -21,6 +21,7 @@ export default class LiveClass extends Component {
 		filterMeeting: '',
 		infoClass: [],
 		isModalConfirmation: this.props.match.params.roomid ? true : false,
+    attendanceConfirmation : '',
 	}
 
 	filterMeeting =  (e) => {
@@ -72,7 +73,8 @@ export default class LiveClass extends Component {
 			  countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
 			  countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
 			  countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-			  needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length 
+			  needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
+        attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id) 
 			})
 		  }
 		})
@@ -258,7 +260,7 @@ export default class LiveClass extends Component {
 													{
 													item.record &&
 													<small className="mr-3">
-														<a target='_blank' href={item.record}>
+                            <a target='_blank' href='aktivitas'>
 														<i className='fa fa-compact-disc'></i> REKAMAN
 														</a>
 													</small>
@@ -353,7 +355,7 @@ export default class LiveClass extends Component {
                       </Modal.Title>
                       
                       {
-                        this.state.needConfirmation >= 1
+                        this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1
                         ?
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                           <div className="card" style={{background:'#dac88c',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
@@ -373,6 +375,19 @@ export default class LiveClass extends Component {
                             </div>
                           </div>
                         </div>
+                        :
+                        this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1
+                        ?
+                        <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                          <div className="card" style={{background:'rgb(134 195 92)',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
+                            <div className="card-carousel col-sm-8">
+                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                                Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation[0].confirmation}
+                              </div>
+                              <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                            </div>
+                          </div>
+                        </div>
                         : null
                       }
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
@@ -380,7 +395,7 @@ export default class LiveClass extends Component {
                               <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
                               
                               <div className="card-carousel">
-                                <div className="title-head f-w-900 f-16">
+                                <div className="title-head f-w-900 f-16 mb-2">
                                   {this.state.infoClass.room_name}
                                 </div>
                                 <div class="row">
@@ -391,6 +406,12 @@ export default class LiveClass extends Component {
                                     <h3 className="f-14">
                                       Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                     </h3>
+                                    {
+                                      this.state.infoClass.is_private &&
+                                      <h3 className="f-14">
+                                        Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                                      </h3>
+                                    }
                                   </div>
                                   {
                                     this.state.infoClass.is_scheduled ?
@@ -408,7 +429,7 @@ export default class LiveClass extends Component {
                               </div>
                             </div>
                             {
-                              this.state.infoClass.is_live ? 
+                              (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ?
                               <Link target='_blank' to={`/liveclass-room/${this.state.infoClass.class_id}`} onClick={e=> this.closeModalConfirmation()} className="btn btn-sm btn-ideku" style={{width:'100%',padding:'20px 20px'}}>
                                 <i className='fa fa-video'></i> Masuk
                               </Link>

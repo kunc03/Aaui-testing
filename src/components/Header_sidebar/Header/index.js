@@ -218,12 +218,12 @@ class Header extends Component {
         link: '/aktivitas',
         access: 'activity',
       },
-      {
-        iconOn: 'files-on.png',
-        iconOff: 'files-off.png',
-        label: 'Files',
-        link: '/files',
-      },
+      // {
+      //   iconOn: 'files-on.png',
+      //   iconOff: 'files-off.png',
+      //   label: 'Files',
+      //   link: '/files',
+      // },
       {
         iconOn: 'materion.png',
         iconOff: 'materioff.png',
@@ -303,7 +303,7 @@ class Header extends Component {
         iconOn: 'kelason.png',
         iconOff: 'kelasoff.png',
         label: 'Group Meeting',
-        link: '/liveclass',
+        link: '/meeting',
       },
       {
         iconOn: 'kelola-kursus-on.png',
@@ -367,7 +367,7 @@ class Header extends Component {
         iconOn: 'kelason.png',
         iconOff: 'kelasoff.png',
         label: 'Group Meeting',
-        link: '/liveclass',
+        link: '/meeting',
       },
       {
         iconOn: 'kelola-kursus-on.png',

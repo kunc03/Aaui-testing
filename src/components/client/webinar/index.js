@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
 import { Link, Switch, Route } from 'react-router-dom';
 
 import Webinar from './webinar';
@@ -7,10 +7,12 @@ import WebinarAdd from './add';
 import WebinarLive from './live';
 import WebinarRiwayat from './riwayat';
 import WebinarKuesioner from './kuesioner';
+import WebinarKuesionerAdd from './kuesioneradd';
 
 export default class WebinarClient extends Component {
 
-	state = {}
+	state = {
+  }
 
 	render() {
 		return (
@@ -22,11 +24,13 @@ export default class WebinarClient extends Component {
                 <div className="page-wrapper">
 
                 	<Switch>
-						        <Route path="/webinar" exact component={Webinar} />
+                    <Route path="/webinar" exact component={Webinar} />
+						        <Route path="/webinar/detail/:webinar" component={Webinar} />
                     <Route path="/webinar/add" component={WebinarAdd} />
                     <Route path="/webinar/live" component={WebinarLive} />
                     <Route path="/webinar/riwayat" component={WebinarRiwayat} />
-						        <Route path="/webinar/kuesioner" component={WebinarKuesioner} />
+                    <Route path="/webinar/kuesioner" component={WebinarKuesioner} />
+						        <Route path="/webinar/kuesioner-add" component={WebinarKuesionerAdd} />
 					        </Switch>
 
                 </div>

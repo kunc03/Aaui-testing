@@ -107,25 +107,49 @@ class UserCompany extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xl-2 col-md-12">
+              <div className="col-xl-1 col-md-12">
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
-                    <small className="f-w-600 f-16 text-c-grey-t ">
+                    <small className="f-w-600 f-14 text-c-grey-t ">
+                      User
+                    </small>
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                      {item.user}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-1 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-14 text-c-grey-t ">
+                      Meeting
+                    </small>
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                      {item.meeting}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-1 col-md-12">
+                <div className="row align-items-center justify-content-center">
+                  <div className="col">
+                    <small className="f-w-600 f-14 text-c-grey-t ">
                       Waktu Terbatas
                     </small>
-                    <h5 className="f-w-bold f-20 text-c-purple3">
+                    <h5 className="f-w-bold f-16 text-c-purple3">
                       {item.unlimited ? 'Tidak' : item.validity.toString().substring(0, 10)}
                     </h5>
                   </div>
                 </div>
               </div>
-              <div className="col-xl-2 col-md-12">
+              <div className="col-xl-1 col-md-12">
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
-                    <small className="f-w-600 f-16 text-c-grey-t ">
+                    <small className="f-w-600 f-14 text-c-grey-t ">
                       Status
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-20 text-c-purple3">
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
                       {item.status}
                     </h5>
                   </div>
@@ -134,10 +158,10 @@ class UserCompany extends Component {
               <div className="col-xl-2 col-md-12">
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
-                    <small className="f-w-600 f-16 text-c-grey-t ">
-                      Status
+                    <small className="f-w-600 f-14 text-c-grey-t ">
+                      Jenis
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-20 text-c-purple3">
+                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
                       {item.company_type ? item.company_type : 'Not Set'}
                     </h5>
                   </div>
@@ -192,7 +216,7 @@ class UserCompany extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       <h3 className="f-24 f-w-800 mb-3">
-                        User Management (Company)
+                        Company Management
                       </h3>
                       <a
                         href="#"
