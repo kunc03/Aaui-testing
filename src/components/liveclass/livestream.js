@@ -657,7 +657,7 @@ uploadFile = e => {
               user.name && classRooms.room_name && this.state.join ?
                 <div className="card p-20">
                   <h3 className="f-w-bold f-18 fc-blue">{classRooms.room_name}</h3>
-                  <p className="fc-muted mt-1 mb-4">dibuat oleh {user.name}</p>
+                  {/* <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
                   <JitsiMeetComponent 
                     roomName={classRooms.room_name} 
                     roomId={classRooms.class_id} 
