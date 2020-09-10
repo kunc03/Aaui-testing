@@ -92,7 +92,7 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       {/* Tab */}
-                      <div className="card mb-2" style={{padding: '20px 0px 0px 20px'}}>
+                      <div className="card mb-2" style={{padding: '20px 0px 0px 20px', alignItems:'flex-end'}}>
                           <Tabs defaultActiveKey="Semua" id="uncontrolled-tab-example" onSelect={this.choiceTab.bind(this)}>
                             {titleTabs.map(tab =>{
                               return (
