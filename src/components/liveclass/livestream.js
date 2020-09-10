@@ -656,7 +656,12 @@ uploadFile = e => {
             {
               user.name && classRooms.room_name && this.state.join ?
                 <div className="card p-20">
-                  <h3 className="f-w-bold f-18 fc-blue">{classRooms.room_name}</h3>
+                  <div>
+                  <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+                  <button onClick={this.onClickInvite} className="float-right btn btn btn-icademy-primary">
+                    <i className="fa fa-user"></i>Invite People
+                  </button>
+                  </div>
                   {/* <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
                   <JitsiMeetComponent 
                     roomName={classRooms.room_name} 
@@ -719,6 +724,7 @@ uploadFile = e => {
                         < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
                         </label>
                         <input
+                            className="hidden"
                             type="file"
                             id="attachment"
                             name="attachment"
