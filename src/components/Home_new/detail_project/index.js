@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap';
 
 import Storage from './../../../repository/storage';
-import {headerTabble, bodyTabble, bodyTabbleWebinar, tasks, options} from './../data';
+import {headerTabble, bodyTabble, bodyTabbleWebinar, dataFiles, headerFiles, tasks, options} from './../data';
 
 import TableMeetings from './meeting';
 import TableWebinar from './webinar';
@@ -18,7 +18,7 @@ const titleTabs = [
   {name: 'Semua'},
   {name: 'Meeting'},
   {name: 'Webinar'},
-  {name: 'Gantt Chart'},
+  {name: 'Timeline Chart'},
   {name: 'Files'}
 ]
 
@@ -113,7 +113,7 @@ export default class User extends Component {
                       <GanttChart />
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
-                      <TableFiles headerTabble={headerTabble} bodyTabble={bodyTabble}/>
+                      <TableFiles headerTabble={headerFiles} bodyTabble={dataFiles}/>
                     </div>
                   </div>
                 </div>

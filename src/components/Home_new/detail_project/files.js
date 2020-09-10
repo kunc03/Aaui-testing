@@ -36,7 +36,7 @@ class FilesTable extends Component {
                 <table className="table table-hover">
                 <thead>
                     <tr style={{borderBottom: '1px solid #C7C7C7'}}>
-                    <td>Nama Webinar</td>
+                    <td>Files</td>
                     {
                         headerTabble.map((item, i) => {
                             return (
@@ -44,7 +44,6 @@ class FilesTable extends Component {
                             )
                         })
                     }
-                    <td colSpan="2" align="center">Aksi</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,13 +57,31 @@ class FilesTable extends Component {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/component/folder.png' width="32"/> &nbsp;{item.title}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center"><a href="detail-project/80">Ubah</a></td>
+                                    <img src='assets/images/component/folder.png' width="32"/> &nbsp;{item.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                  <span class="btn-group dropleft col-sm-1">
+                                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <i
+                                        className="fa fa-ellipsis-v"
+                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                      />
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      <button
+                                        style={{cursor:'pointer'}}
+                                        class="dropdown-item"
+                                        type="button"
+                                        onClick={()=>toast.warning('Coming Soon')}
+                                      >
+                                          Ubah
+                                      </button>
+                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}>Hapus</button>
+                                    </div>
+                                  </span>
+                                </td>
                             </tr>
                             )
                         })
