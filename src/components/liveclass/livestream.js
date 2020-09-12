@@ -6,10 +6,11 @@ import {
 } from 'react-bootstrap';
 
 import ToggleSwitch from "react-switch";
+
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-import TagsInput from 'react-tagsinput'
 
+import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 
 

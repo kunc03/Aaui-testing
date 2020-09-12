@@ -95,6 +95,14 @@ label.Option {
   border-radius: .25rem !important;
 }
 
+.floating-back{
+  position:absolute;
+  top:-25px;
+  left:30px;
+  z-index:1029;
+  cursor:pointer;
+}
+
 
 /* INPUT FILE */
 
@@ -284,7 +292,7 @@ p.text-muted {
   margin-bottom: 30px;
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
-  border-radius: 5px;
+  /* border-radius: 5px; */
 }
 .card .card-header {
   background-color: transparent;
@@ -415,7 +423,7 @@ p.text-muted {
   border: none;
 }
 .dropdown-menu.show:before {
-  content: "\63";
+  /* content: "\63"; */
   font-family: "pct";
   position: absolute;
   left: 15px;
@@ -8421,6 +8429,25 @@ a.btn-theme.active {
     border-radius: 19px !important;
 }
 
+.btn-icademy-primary-small{
+  color: #fff;
+    background-color: #0091FF;
+    font-size: 12px;
+    width: auto;
+    padding: 0px 10px !important;
+    border-radius: 19px !important;
+}
+
+.shadowFieldCont{
+  border-bottom:2px dotted rgb(230, 230, 230);
+}
+
+.shadowField{
+  border:none;
+  padding:4px;
+  color:#6c757d;
+}
+
 .btn-icademy-warning {
   color: #fff;
   background-color: #EF843C;
@@ -8449,6 +8476,15 @@ a.btn-theme.active {
   width: auto;
     height: 39px !important;
     padding: 0px 40px !important;
+  border-radius: 19px !important;
+}
+.btn-icademy-grey {
+  color: #000;
+  background-color: #efefef;
+  font-size: 14px;
+  width: auto;
+    height: 39px !important;
+    /* padding: 0px 40px !important; */
   border-radius: 19px !important;
 }
 
@@ -11631,6 +11667,18 @@ div.code-toolbar > .toolbar span:hover {
   padding: 6px 12px;
 }
 
+.biru-bold {
+  color: #0091FF;
+  font-weight: 800;
+}
+
+.line-garis {
+  box-sizing: border-box;
+  height: 1px;
+  width: 27px;
+  border: 3px solid #0091FF;
+}
+
 .box-lampiran {
   padding: 20px;
 }
@@ -11643,4 +11691,40 @@ div.code-toolbar > .toolbar span:hover {
 
 .modal-content {
   border-radius: 0px;
+}
+
+.small-button{
+  padding: 4px 15px;
+  color: #797979;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 15px;
+  box-shadow: 0 2px 12px 1px rgba(206,206,206,0.35);
+}
+
+.card-meeting{
+  box-shadow:none;
+  transition:0.2s;
+}
+
+.card-meeting:hover{
+  box-shadow: 0 2px 12px 1px rgba(206,206,206,0.35);
+}
+
+.modal-icademy{
+  border-radius:0px !important;
+}
+
+.wrap::-webkit-scrollbar {
+  width: 8px;
+  background-color: #F5F5F5;
+}
+
+.wrap::-webkit-scrollbar-track {
+  /* background-color: transparent; */
+}
+
+.wrap::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius:4px;
 }

@@ -30,7 +30,7 @@ class GanttChart extends Component {
         <div className="card p-20">
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Gantt Chart</strong>
-                <button
+                {/* <button
                 to='/user-create'
                 className="btn btn-icademy-primary float-right"
                 style={{ padding: "7px 8px !important" }}
@@ -38,7 +38,7 @@ class GanttChart extends Component {
                 <i className="fa fa-plus"></i>
                 
                 Add New
-                </button>
+                </button> */}
             </span>
             {/* <GanttElastic
                 tasks={tasks}

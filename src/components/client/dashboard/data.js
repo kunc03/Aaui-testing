@@ -1,7 +1,8 @@
 export const dataEvent = [
   {title : 'Meeting', total: 6, status: false, to: "/meeting"},
   {title : 'Learning', total: 6, status: false, to: "/learning"},
-  {title : 'Webinar', total: 6, status: true, to: "/webinar"},
+  // {title : 'Webinar', total: 6, status: true, to: "/webinar"},
+  {title : 'Webinar', total: 6, status: true, to: "/project"},
 ];
 
 export const dataProjek = [

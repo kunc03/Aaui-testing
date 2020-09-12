@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { toast } from "react-toastify";
 
 
 class WebinarTable extends Component {
@@ -22,19 +23,28 @@ class WebinarTable extends Component {
   render() {
     const headerTabble = this.props.headerTabble;
     const bodyTabble = this.props.bodyTabble;
+
     return (
             <div className="card p-20">
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
-                <button
-                to='/user-create'
-                className="btn btn-icademy-primary float-right"
-                style={{ padding: "7px 8px !important" }}
+
+                <Link
+                to={`/webinar/create/${this.props.projectId}`}
+                className="btn btn-v2 btn-primary float-right"
+                // onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
                 >
-                <i className="fa fa-plus"></i>
-                
-                Add New
-                </button>
+                    <i className="fa fa-plus"></i>
+                    Tambah
+                </Link>
+                <Link
+                to={`/webinar/roles/${this.props.projectId}`}
+                className="btn btn-v2 btn-primary float-right mr-2"
+                // onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
+                >
+                    <i className="fa fa-cog"></i>
+                    Roles
+                </Link>
             </span>
             <div className="table-responsive">
                 <table className="table table-hover">
@@ -53,6 +63,11 @@ class WebinarTable extends Component {
                 </thead>
                 <tbody>
                     {
+                        bodyTabble.length == 0 ?
+                        <tr>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
+                        </tr>
+                        :
                         bodyTabble.map((item, i) => {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>

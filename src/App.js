@@ -18,6 +18,7 @@ import Files from "./components/files/index";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/Home_new/detail_project/index";
+import Project from "./components/project/index";
 
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
@@ -85,6 +86,9 @@ import OTP from './components/OTP';
 
 import HomeClient from './components/client/dashboard/index';
 import WebinarClient from './components/client/webinar/index';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -169,6 +173,17 @@ export class Main extends React.Component {
         <Loader />
         <Sidebar />
         <Header />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          />
         {workSpaceSwitch}
       </div>
     );
@@ -205,13 +220,14 @@ export class SuperAdminSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
-        <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/detail-project/:project_id" component={DetailProject} />
+        <Route path="/project" component={Project} /> 
         
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
 
-        <Route path="/meeting" component={LiveClassAdmin} />
+        <Route path="/meeting" exact component={LiveClassAdmin} />
         <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
@@ -285,6 +301,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/informasi" component={InformasiAdmin} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/project" component={Project} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -359,9 +376,11 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={HomeClient} />
-        <Route path="/webinar" component={() => <WebinarClient changeLevel={this.props.changeLevel} /> } />
+        
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
+        <Route path="/project" component={Project} /> 
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -377,10 +396,10 @@ export class ClientSwitch extends React.Component {
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
 
-        <Route path="/liveclass" exact component={LiveClass} />
+        {/* <Route path="/liveclass" exact component={LiveClass} /> */}
         {/* <Route path="/liveclass" component={LiveClass} /> */}
-        <Route path="/meeting" component={LiveClassAdmin} />
-        <Route path="/meeting/information/:roomid" exact component={LiveClass} />
+        <Route path="/meeting" exact component={LiveClassAdmin} />
+        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
         <Route path="/liveclass-room/:roomid" component={LiveStream} />
         
         <Route path="/pengaturan" component={Pengaturan} />

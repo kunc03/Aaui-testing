@@ -30,7 +30,7 @@ class Sidebar extends Component {
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: access.manage_group_meeting ? '/meeting' : '/liveclass', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },

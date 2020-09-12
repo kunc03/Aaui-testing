@@ -6,6 +6,7 @@ import ToggleSwitch from "react-switch";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { MultiSelect } from 'react-sm-select';
 
 class UserEdit extends Component {
 
@@ -31,6 +32,8 @@ class UserEdit extends Component {
     listBranch: [],
     listGrup: [],
     listLevel: [],
+    optionsGroup:[],
+    valueGroup:[],
 
     responseMessage: '', 
   }
@@ -48,7 +51,10 @@ class UserEdit extends Component {
     e.preventDefault();
     let unlimited = this.state.unlimited == false ? '1' : '0'
     let formData = {
-      company_id: this.state.company_id, branch_id: this.state.branch_id, grup_id: this.state.grup_id,
+      company_id: this.state.company_id,
+      // branch_id: this.state.branch_id,
+      group: this.state.valueGroup,
+      grup_id: this.state.grup_id,
       identity: this.state.identity, name: this.state.name, email: this.state.email,
       phone: this.state.phone, address: this.state.address, level: this.state.level,
       status: 'active',
@@ -109,6 +115,7 @@ class UserEdit extends Component {
   }
 
   componentDidMount() {
+    let valueGroup = [];
     API.get(`${API_SERVER}v1/user/${this.state.user_id}`).then(res => {
       if(res.status === 200) {
         let unlimited = res.data.result.unlimited == 0 ? true : false;
@@ -126,15 +133,20 @@ class UserEdit extends Component {
           unlimited: unlimited,
 					validity: new Date(res.data.result.validity),
         });
+        valueGroup = res.data.result.group_id ? res.data.result.group_id.split(',').map(Number) : [];
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
           if(res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
+            res.data.result[0].map(item => {
+              this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+            });
           }
         })
 
         API.get(`${API_SERVER}v1/grup/company/${this.state.user.company_id}`).then(res => {
           if (res.status === 200) {
+            this.setState({valueGroup: valueGroup})
             this.setState({ listGrup: res.data.result })
           }
         })
@@ -169,14 +181,24 @@ class UserEdit extends Component {
                             <div className="form-group">
                               <label className="label-input">Group</label>
                               <Form.Text className="text-danger">Required</Form.Text>
-                              <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
+                              <MultiSelect
+                                id="group"
+                                options={this.state.optionsGroup}
+                                value={this.state.valueGroup}
+                                onChange={valueGroup => this.setState({ valueGroup })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih Group"
+                              />
+                              {/* <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id} selected={(item.branch_id === this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
                                   ))
                                 }
-                              </select>
+                              </select> */}
                             </div>
 
                             <div className="form-group">

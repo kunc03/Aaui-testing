@@ -9,6 +9,9 @@ import WebinarRiwayat from './riwayat';
 import WebinarKuesioner from './kuesioner';
 import WebinarKuesionerAdd from './kuesioneradd';
 
+import WebinarRoles from './roles';
+import WebinarCreate from './create';
+
 export default class WebinarClient extends Component {
 
 	state = {
@@ -30,7 +33,11 @@ export default class WebinarClient extends Component {
                     <Route path="/webinar/live" component={WebinarLive} />
                     <Route path="/webinar/riwayat" component={WebinarRiwayat} />
                     <Route path="/webinar/kuesioner" component={WebinarKuesioner} />
-						        <Route path="/webinar/kuesioner-add" component={WebinarKuesionerAdd} />
+                    <Route path="/webinar/kuesioner-add" component={WebinarKuesionerAdd} />
+                    
+                    <Route path="/webinar/roles/:projectId" component={WebinarRoles} />
+                    <Route path="/webinar/create/:projectId" component={WebinarCreate} />
+
 					        </Switch>
 
                 </div>

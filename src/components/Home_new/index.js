@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, Modal, Col, Row, InputGroup, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -10,6 +10,9 @@ import EventNew from './event';
 import ProjekNew from './projek';
 import CalenderNew from './kalender';
 import ListToDoNew from './listToDo';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -28,11 +31,23 @@ class HomeNew extends Component {
     kursusDiikuti: [],
   }
 
+
+  onChangeInput = e => {
+    const target = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+        this.setState({ [name]: e.target.files });
+    } else {
+        this.setState({ [name]: value });
+    }
+}
+
   componentDidMount() {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
     this.fetchEvent();
-    this.fetchProject();
   }
 
   fetchDataUser() {
@@ -81,19 +96,16 @@ class HomeNew extends Component {
   }
 
   fetchEvent(){
-    API.get(`${API_SERVER}v1/event/${localStorage.getItem('companyID')}`).then(response => {
-      this.setState({ event: response.data.result });
-    }).catch(function(error) {
-      console.log(error);
-    });
-  }
-
-  fetchProject(){
-    API.get(`${API_SERVER}v1/project/${localStorage.getItem('companyID')}`).then(response => {
-      this.setState({ project: response.data.result });
-    }).catch(function(error) {
-      console.log(error);
-    });
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/event/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          this.setState({ event: response.data.result });
+        }).catch(function(error) {
+          console.log(error);
+        });
+      }
+    })
   }
 
   findCourse = (e) => {
@@ -236,28 +248,7 @@ class HomeNew extends Component {
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Project
-                                </h3>
-                              </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {
-                                    levelUser == 'client' ?
-                                    null
-                                    :
-                                    <Link to={"files"}>
-                                      <span className="f-w-600 f-16 fc-skyblue">Lihat Semua</span>
-                                    </Link>
-                                  }
-                                </p>
-                              </div>
-                            </div>
-                            <div style={{marginTop: '10px'}}>
                               <ProjekNew lists={projekDashboard} />
-                            </div>
                           </Card.Body>
                         </Card>
                       </div>      
@@ -290,6 +281,7 @@ class HomeNew extends Component {
             </div>
           </div>
         </div>
+        
       </div>
     );
   }

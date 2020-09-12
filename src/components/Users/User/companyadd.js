@@ -6,6 +6,7 @@ import ToggleSwitch from "react-switch";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { MultiSelect } from 'react-sm-select';
 
 
 class UserAdd extends Component {
@@ -33,6 +34,8 @@ class UserAdd extends Component {
     responseMessage: '',
     responseEmail: '',
     responsePhone: '',
+    optionsGroup:[],
+    valueGroup:[]
   };
 
   handleChangeValidity = date => {
@@ -75,8 +78,10 @@ class UserAdd extends Component {
     let unlimited = this.state.unlimited == false ? '1' : '0'
     const formData = {
       company_id: this.state.company_id,
-      branch_id: this.state.branch_id,
+      // branch_id: this.state.branch_id,
+      branch_id: 0,
       grup_id: this.state.grup_id,
+      group: this.state.valueGroup,
       identity: this.state.identity,
       name: this.state.name,
       email: this.state.email,
@@ -118,6 +123,9 @@ class UserAdd extends Component {
         API.get(`${API_SERVER}v1/branch/company/${this.state.company_id}`).then(res => {
           if(res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
+            res.data.result[0].map(item => {
+              this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+            });
           }
         })
 
@@ -150,14 +158,24 @@ class UserAdd extends Component {
                             <div className="form-group">
                               <label className="label-input">Group</label>
                               <Form.Text className="text-danger">Required</Form.Text>
-                              <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
+                              <MultiSelect
+                                id="group"
+                                options={this.state.optionsGroup}
+                                value={this.state.valueGroup}
+                                onChange={valueGroup => this.setState({ valueGroup })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih Group"
+                              />
+                              {/* <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
                                 <option value="">-- pilih --</option>
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id}>{item.branch_name}</option>
                                   ))
                                 }
-                              </select>
+                              </select> */}
                             </div>
 
                             <div className="form-group">

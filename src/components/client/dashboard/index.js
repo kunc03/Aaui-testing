@@ -22,11 +22,23 @@ class HomeNew extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
+
+    dataProjek: [],
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
+  }
+
+  fetchDataProject(companyId) {
+    let url = `${API_SERVER}v1/project/client/${Storage.get('user').data.user_id}/${companyId}`;
+    API.get(url).then(res => {
+      if(res.data.error) console.log('RES: ', res.data);
+
+      console.log('STATE: ', res.data);
+      this.setState({ dataProjek: res.data.result });
+    })
   }
 
   fetchDataUser() {
@@ -45,6 +57,8 @@ class HomeNew extends Component {
           }
         });
         this.setState({ user: res.data.result});
+
+        this.fetchDataProject(res.data.result.company_id);
       }
     })
   }
@@ -84,7 +98,7 @@ class HomeNew extends Component {
     let levelUser = Storage.get('user').data.level;
 
     const eventDashboard = dataEvent;
-    const projekDashboard = dataProjek;
+    const projekDashboard = this.state.dataProjek;
     const toDoDashboard = dataToDo;
 
     var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
@@ -216,12 +230,18 @@ class HomeNew extends Component {
                             </div>
                             <div className="col-sm-6 text-right">
                               <p className="m-b-0">
-                                <span className="f-w-600 f-16 fc-skyblue">Lihat Semua</span>
+                                <span className="f-w-600 f-16 fc-skyblue">
+                                  <Link to={`/project`}>
+                                    Lihat Semua
+                                  </Link>
+                                </span>
                               </p>
                             </div>
                           </div>
                           <div style={{marginTop: '10px'}}>
-                            <ProjekNew lists={projekDashboard} />
+                            <div className="wrap" style={{maxHeight:'258px', overflowY:'scroll', overflowX:'hidden'}}>
+                              <ProjekNew lists={projekDashboard} />
+                            </div>
                           </div>
                         </Card.Body>
                       </Card>
