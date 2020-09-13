@@ -151,7 +151,7 @@ export default class WebinarRiwayat extends Component {
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to="/webinar" className="btn btn-sm mr-4" style={{
+                  	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
                   		borderRadius: '50px',
                   	}}>
@@ -187,7 +187,7 @@ export default class WebinarRiwayat extends Component {
                   <div className="col-sm-4">
                     <h5>Lampiran</h5>
                     <button onClick={e => this.setState({ isModalDownloadFileWebinar: true }) } className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Download File Webinar</button>
-                    <Link to="/webinar/kuesioner" className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Hasil Kuesioner Peserta</Link>
+                    <Link to={`/webinar/kuesioner/${this.props.match.params.projectId}`} className="btn btn-primary btn-v2"><i className="fa fa-download"></i> Hasil Kuesioner Peserta</Link>
                   </div>
                 </div>
               </div>

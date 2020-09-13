@@ -22,12 +22,8 @@ export default class WebinarCreate extends Component {
     isStep2: false,
 
     folder: [
-      {id: 1, name: 'Folder 1'},
-      {id: 2, name: 'Folder 2'}
     ],
     files: [
-      {location: 'https://google.com', type: 'pdf', name: 'bahan.pdf'},
-      {location: 'https://google.com', type: 'txt', name: 'mom.txt'},
     ],
 
     selectFolder: false,
@@ -37,11 +33,6 @@ export default class WebinarCreate extends Component {
     navigation: ['Home'],
 
     userRoles: [
-      {userId: [], roleId: ''},
-      {userId: [], roleId: ''},
-      {userId: [], roleId: ''},
-      {userId: [], roleId: ''},
-      {userId: [], roleId: ''}
     ],
 
     isModalDokumen: false
@@ -108,8 +99,14 @@ export default class WebinarCreate extends Component {
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/role/${this.state.companyId}/${this.state.projectId}`).then(res => {
       if(res.data.error) toast.warning('Gagal fetch API');
-      
-      this.setState({ roles: res.data.result })
+
+      let createArray = [];
+      for(var i=0; i<res.data.result.length; i++) {
+        createArray.push({userId: [], roleId: res.data.result[i].id});
+      }
+
+      console.log('STATE: ', createArray)
+      this.setState({ roles: res.data.result, userRoles: createArray })
       
       API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
         response.data.result.map(item => {
@@ -136,6 +133,8 @@ export default class WebinarCreate extends Component {
   }
 
 	render() {
+
+    console.log('STATE: ', this.state);
 
     const TabelPembicara = ({items}) => (
       <table className="table table-striped mb-4">
@@ -276,7 +275,7 @@ export default class WebinarCreate extends Component {
 
                       <h4>Pilih Roles</h4>
                       {
-                        this.state.userRoles.map((item,i) => (
+                        this.state.roles.map((item,i) => (
                           <div className="form-group row">
                             <div className="col-sm-6">
                               <label className="bold">Nama</label>
@@ -294,7 +293,7 @@ export default class WebinarCreate extends Component {
                             </div>
                             <div className="col-sm-6">
                               <label className="bold">Role</label>
-                              <select name="roleId" onChange={e => this.handleDynamicInput(e, i)} value={this.state.userRoles[i].roleId} className="form-control">
+                              <select name="roleId" onChange={e => this.handleDynamicInput(e, i)} value={this.state.roles[i].id} className="form-control">
                                 <option value="">Pilih Role User</option>
                                 {
                                   this.state.roles.map(item => (
@@ -386,7 +385,7 @@ export default class WebinarCreate extends Component {
                       }
 
                       {
-                        this.state.folder.length &&
+                        this.state.folder.length != 0 &&
                         <div className="row" style={{background:'#FFF', borderRadius:4, padding:20}}>
                           {
                             this.state.folderId !== 0 &&

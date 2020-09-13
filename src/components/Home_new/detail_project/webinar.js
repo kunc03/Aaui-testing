@@ -16,13 +16,34 @@ class WebinarTable extends Component {
     this.state = {
       users: [],
       dataUser: [],
-      
+      webinars: [],
+      headerWebinars: [
+        {title : 'Moderator', width: null, status: true},
+        {title : 'Status', width: null, status: true},
+        {title : 'Waktu', width: null, status: true},
+        {title : 'Tanggal', width: null, status: true},
+        {title : 'Peserta', width: null, status: true},
+        {title : 'File Project', width: null, status: true},
+      ]
     };
   }
 
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    API.get(`${API_SERVER}v2/webinar/list/${this.props.projectId}`).then(res => {
+        if(res.data.error) toast.warning("Error fetch API");
+
+        console.log('STATE: ', res.data);
+        this.setState({ webinars: res.data.result });
+    })
+  }
+
   render() {
-    const headerTabble = this.props.headerTabble;
-    const bodyTabble = this.props.bodyTabble;
+    const headerTabble = this.state.headerWebinars;
+    const bodyTabble = this.state.webinars;
 
     return (
             <div className="card p-20">
@@ -65,23 +86,28 @@ class WebinarTable extends Component {
                     {
                         bodyTabble.length == 0 ?
                         <tr>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
                         </tr>
                         :
                         bodyTabble.map((item, i) => {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.project_id}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.project_id}</td>
                                 <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
-                                <button className="btn btn-icademy-file" ><i className="fa fa-download fc-skyblue"></i> Download File</button>
+                                    <button className="btn btn-icademy-file" >
+                                        <i className="fa fa-download fc-skyblue"></i> Download File
+                                    </button>
                                 </td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center"><a href="detail-project/80">Ubah</a></td>
-                                <td className="fc-muted f-14 f-w-300 " align="center"><button className="btn btn-icademy-warning">Masuk</button></td>
+                                <td className="fc-muted f-14 f-w-300 " align="center">
+                                    <Link to={`/webinar/create/${item.project_id}`} className="btn mr-2">Ubah</Link>
+                                    <Link to={`/webinar/riwayat/${item.project_id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                    <Link to={`/webinar/live/${item.project_id}`} className="btn btn-v2 btn-warning">Masuk</Link>
+                                </td>
                             </tr>
                             )
                         })

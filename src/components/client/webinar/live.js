@@ -18,16 +18,6 @@ export default class WebinarLive extends Component {
         Aplikasi Video Conference adalah salah satu dari media yang sangat diperlukan, untuk 
         menunjang proses koordinasi secara online tersebut.
       </p>
-      <p>
-        Untuk mengakomodasi proses work from home (WFH), diperlukan media untuk berkoordinasi 
-        di dalam sebuah team secara online, sehingga team work bisa tetap terjaga dengan baik. 
-        Aplikasi Video Conference adalah salah satu dari media yang sangat diperlukan, untuk 
-        menunjang proses koordinasi secara online tersebut.
-        Untuk mengakomodasi proses work from home (WFH), diperlukan media untuk berkoordinasi 
-        di dalam sebuah team secara online, sehingga team work bisa tetap terjaga dengan baik. 
-        Aplikasi Video Conference adalah salah satu dari media yang sangat diperlukan, untuk 
-        menunjang proses koordinasi secara online tersebut.
-      </p>
     `,
 
     lampirans: [
@@ -94,7 +84,7 @@ export default class WebinarLive extends Component {
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to="/webinar" className="btn btn-sm mr-4" style={{
+                  	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
                   		borderRadius: '50px',
                   	}}>

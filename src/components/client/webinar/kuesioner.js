@@ -89,7 +89,7 @@ export default class WebinarKuesioner extends Component {
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to="/webinar/riwayat" className="btn btn-sm mr-4" style={{
+                  	<Link to={`/webinar/riwayat/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
                   		borderRadius: '50px',
                   	}}>

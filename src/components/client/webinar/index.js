@@ -30,13 +30,13 @@ export default class WebinarClient extends Component {
                     <Route path="/webinar" exact component={Webinar} />
 						        <Route path="/webinar/detail/:webinar" component={Webinar} />
                     <Route path="/webinar/add" component={WebinarAdd} />
-                    <Route path="/webinar/live" component={WebinarLive} />
-                    <Route path="/webinar/riwayat" component={WebinarRiwayat} />
-                    <Route path="/webinar/kuesioner" component={WebinarKuesioner} />
                     <Route path="/webinar/kuesioner-add" component={WebinarKuesionerAdd} />
                     
                     <Route path="/webinar/roles/:projectId" component={WebinarRoles} />
                     <Route path="/webinar/create/:projectId" component={WebinarCreate} />
+                    <Route path="/webinar/live/:projectId" component={WebinarLive} />
+                    <Route path="/webinar/riwayat/:projectId" component={WebinarRiwayat} />
+                    <Route path="/webinar/kuesioner/:projectId" component={WebinarKuesioner} />
 
 					        </Switch>
 
