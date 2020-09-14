@@ -107,7 +107,7 @@ export default class User extends Component {
                       <TableMeetings access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabble} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
-                      <TableWebinar headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar}/>
+                      <TableWebinar headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
                       <GanttChart />
