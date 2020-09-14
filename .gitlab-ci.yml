@@ -13,6 +13,7 @@ build:
     - docker rmi -f icademy/app:latest
     - cd /home/ubuntu/ideku-react && sudo git pull origin staging
     - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+    - cd /home/ubuntu/ideku-react && sudo npm run build
     - cd /home/ubuntu/ideku-react && docker build -t icademy/app:latest .
 
 deploy:
