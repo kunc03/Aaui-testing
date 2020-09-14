@@ -673,8 +673,13 @@ uploadFile = e => {
             {
               user.name && classRooms.room_name && this.state.join ?
                 <div className="card p-20">
-                  <h3 className="f-w-bold f-18 fc-blue">{classRooms.room_name}</h3>
-                  <p className="fc-muted mt-1 mb-4">dibuat oleh {user.name}</p>
+                  <div>
+                  <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+                  <button onClick={this.onClickInvite} className="float-right btn btn btn-icademy-primary">
+                    <i className="fa fa-user"></i>Invite People
+                  </button>
+                  </div>
+                  {/* <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
                   <JitsiMeetComponent 
                     roomName={classRooms.room_name} 
                     roomId={classRooms.class_id} 
@@ -737,10 +742,20 @@ uploadFile = e => {
                   <div className='card p-20'>
                     <Row className='filesharing'>
                       <Col sm={10}>
-                        <div>
-                          <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                            <i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
-                          </label>
+                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
+                        </label>
+                        <input
+                            className="hidden"
+                            type="file"
+                            id="attachment"
+                            name="attachment"
+                            onChange={this.onChangeInput}
+                          />
+
+                        {/* FIle Upload Yang Lama */}
+                        {/* <div>
+                          < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
                           <input
                             type="file"
                             id="attachment"

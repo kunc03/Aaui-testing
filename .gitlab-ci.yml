@@ -1,25 +1,30 @@
 stages:
-  - buildstaging
-  - deploystaging
+  - build
+  - deploy
 
-build_staging:
-  stage: buildstaging
+build:
+  stage: build
   only:
     - staging
   tags:
-    - autobuild
+    - development
   script:
-    - echo $HOME
-    - cd $HOME/ideku-react && git pull origin staging
+    - docker rm -f icademy-app
+    - docker rmi -f icademy/app:latest
+    - cd /home/ubuntu/ideku-react && sudo git pull origin staging
+    - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+    - cd /home/ubuntu/ideku-react && sudo npm run build
+    - cd /home/ubuntu/ideku-react && docker build -t icademy/app:latest .
 
-deploy_staging:
-  stage: deploystaging
+deploy:
+  stage: deploy
   only:
     - staging
   tags:
-    - autobuild
+    - development
+  environment:
+    name: "Dev Icademy App"
+    url: https://app.icademy.mooo.com
   script:
-    - echo $HOME
-    - cd $HOME/ideku-react && npm i
-    - cd $HOME/ideku-react && forever list
+    - cd /home/ubuntu/ideku-react && docker run --name icademy-app -dit -p 3000:80 icademy/app:latest
 
