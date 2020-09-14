@@ -105,6 +105,7 @@ export default class Users extends Component {
     let form = {
       active: this.state.userStatusHapus == 'active' ? 'pasive' : 'active'
     }
+    console.log('RES: ', form);
     API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
       if(res.status === 200) {
         this.fetchData();
@@ -196,6 +197,7 @@ export default class Users extends Component {
               role: item.grup_name,
               level: item.level,
               voucher: item.voucher,
+              status: item.status,
               validity: item.validity
             })
           });
@@ -324,7 +326,7 @@ export default class Users extends Component {
                 <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> Atur Voucher</MenuItem>
                 <MenuItem data-id={row.id} onClick={this.onClickModalPassword}><i className="fa fa-key" /> Atur Password</MenuItem>
                 <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Ubah</MenuItem>
-                <MenuItem data-id={row.id} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
+                <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
             </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,

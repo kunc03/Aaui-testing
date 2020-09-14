@@ -58,6 +58,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
+import InformasiAdmin from "./components/admin/informasi";
+
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
@@ -82,6 +84,8 @@ import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
 // import ResetPassword from './components/resetPassword';
 
+import HomeClient from './components/client/dashboard/index';
+import WebinarClient from './components/client/webinar/index';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -136,7 +140,6 @@ export class PublicContent extends React.Component {
     );
   }
 }
-
 
 export class RedirectPage extends React.Component {
   render() {
@@ -295,6 +298,8 @@ export class AdminSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
+        <Route path="/informasi" component={InformasiAdmin} />
+
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
         <Route path="/project" component={Project} /> 
 
@@ -370,7 +375,9 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={Home} />
+        <Route path="/" exact component={HomeClient} />
+        
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
         <Route path="/project" component={Project} /> 

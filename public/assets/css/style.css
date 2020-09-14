@@ -11666,6 +11666,37 @@ div.code-toolbar > .toolbar span:hover {
   font-size: 11px;
 }
 
+.btn-v2 {
+  border-radius: 40px;
+  padding: 6px 12px;
+}
+
+.biru-bold {
+  color: #0091FF;
+  font-weight: 800;
+}
+
+.line-garis {
+  box-sizing: border-box;
+  height: 1px;
+  width: 27px;
+  border: 3px solid #0091FF;
+}
+
+.box-lampiran {
+  padding: 20px;
+}
+
+.link-lampiran {
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.modal-content {
+  border-radius: 0px;
+}
+
 .small-button{
   padding: 4px 15px;
   color: #797979;
