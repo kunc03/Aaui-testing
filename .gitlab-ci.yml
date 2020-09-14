@@ -22,6 +22,9 @@ deploy:
     - staging
   tags:
     - development
+  environment:
+    name: "Dev Icademy App"
+    url: https://app.icademy.mooo.com
   script:
     - cd /home/ubuntu/ideku-react && docker run --name icademy-app -dit -p 3000:80 icademy/app:latest
 
