@@ -209,31 +209,31 @@ closeModalDelete = e => {
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1">
                 <div className="row p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
-                <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-11" : "col-sm-12"}>
+                <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-12"}>
                   <div className="box-project">
                     <div className=" f-w-800 f-16 fc-black">
                       {item.title} 
-                      <span className="float-right">
-                        <span className={item.meeting === 0 ? "project-info-disabled" : "project-info"}>{item.meeting} Meeting</span>
-                        <span className={item.webinar === 0 ? "project-info-disabled" : "project-info"}>{item.webinar} Webinar</span>
-                      </span>
                     </div>
                   </div>
                 </Link>
+                <span className="col-sm-7">
+                  <span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span>
+                  <span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span>
+                </span>
                 {
                   accessProjectManager ?
-                        <span class="btn-group dropleft col-sm-1">
-                          <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i
-                              className="fa fa-ellipsis-v"
-                              style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
-                            />
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                            <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Ubah</button>
-                            <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Hapus</button>
-                          </div>
-                        </span>
+                  <span class="btn-group dropleft col-sm-1">
+                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i
+                        className="fa fa-ellipsis-v"
+                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                      />
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Ubah</button>
+                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Hapus</button>
+                    </div>
+                  </span>
                   :null
                 }
                 </div>

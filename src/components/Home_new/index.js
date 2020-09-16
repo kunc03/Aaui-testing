@@ -218,7 +218,7 @@ class HomeNew extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">      
-                    <div className='col-sm-6' style={{paddingLeft:0, paddingRight:0}}>    
+                    <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>    
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
@@ -244,7 +244,7 @@ class HomeNew extends Component {
                         <CalenderNew lists={kursusTerbaru} />
                       </div>
                     </div>    
-                    <div className="col-sm-6" style={{paddingLeft:0, paddingRight:0}}> 
+                    <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}> 
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
