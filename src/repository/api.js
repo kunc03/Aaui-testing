@@ -18,6 +18,9 @@ export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MO
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.mooo.com";
 
+export const BBB_URL = "https://conference.icademy.id/bigbluebutton/";
+export const BBB_KEY = "pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o";
+
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
 export const USER_ME = `${API_SERVER}v1/auth/me/`;

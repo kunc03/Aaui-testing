@@ -37,6 +37,7 @@
     "react-flickity-component": "^3.4.0",
     "react-gantt-timeline": "^0.4.3",
     "react-html-table-to-excel": "^2.0.0",
+    "react-iframe": "^1.8.0",
     "react-joyride": "^2.2.1",
     "react-loading-overlay": "^1.0.1",
     "react-moment": "^0.9.7",

@@ -22,13 +22,16 @@ import JitsiMeetComponent from './livejitsi';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import API, { API_JITSI, APPS_SERVER, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
+import API, { API_JITSI, APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
 import {isMobile} from 'react-device-detect';
+import Iframe from 'react-iframe';
 
 import {QandA} from './data';
+import { toast } from "react-toastify";
+const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -42,7 +45,7 @@ const tabs =[
   {title : 'MOM' }
 ]
 
-export default class LiveStream extends Component {
+export default class MeetingRoom extends Component {
 	state = {
     classId: this.props.match.params.roomid,
     user: {},
@@ -61,7 +64,7 @@ export default class LiveStream extends Component {
     join: false,
     startMic: localStorage.getItem('startMic') === 'true' ? true : false,
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
-    modalStart: true,
+    modalStart: false,
     tabIndex : 1,
     body: '',
     editMOM : false,
@@ -100,10 +103,15 @@ export default class LiveStream extends Component {
     countTentative: 0,
     countTidakHadir: 0,
     needConfirmation : 0,
+    joinUrl: '',
+    modalEnd: false,
   }
   
   closeModalConfirmation = e => {
     this.setState({ isModalConfirmation: false });
+  }
+  closeModalEnd = e => {
+    this.setState({ modalEnd: false });
   }
 fetchMOM(folder){
   if (folder == 0){
@@ -250,6 +258,15 @@ uploadFile = e => {
     window.onbeforeunload = function() {
       return "Are you sure you want to leave?";
     };
+    // Update kehadiran aktual 
+    let form = {
+        confirmation: 'Hadir',
+    }
+    API.put(`${API_SERVER}v1/liveclass/actualattendance/${this.state.classId}/${Storage.get('user').data.user_id}`, form).then(async res => {
+        if (res.status === 200) {
+          console.log('Kehadiran Aktual : Hadir')
+        }
+      })
   }
   
   onClickInfo(class_id){
@@ -312,6 +329,48 @@ uploadFile = e => {
           classRooms: liveClass.data.result,
           // jwt: token.data.token
         });
+        // BBB JOIN START
+        let api = bbb.api(BBB_URL, BBB_KEY)
+        let http = bbb.http
+
+        // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
+        let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+        http(meetingInfo).then((result) => {
+            if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
+                // Jika belum ada, create room nya.
+                let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
+                    attendeePW: 'peserta',
+                    moderatorPW: 'moderator',
+                    allowModsToUnmuteUsers: true,
+                })
+                http(meetingCreateUrl).then((result) => {
+                    if (result.returncode='SUCCESS'){
+                        // Setelah create, join
+                        let joinUrl = api.administration.join(
+                            this.state.user.name,
+                            this.state.classRooms.class_id,
+                            this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                            {userID: this.state.user.user_id}
+                        )
+                        this.setState({joinUrl: joinUrl})
+                    }
+                    else{
+                    console.log('GAGAL', result)
+                    }
+                })
+            }
+            else{
+                // Jika sudah ada, join
+                let joinUrl = api.administration.join(
+                    this.state.user.name,
+                    this.state.classRooms.class_id,
+                    this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                    {userID: this.state.user.user_id}
+                )
+                this.setState({joinUrl: joinUrl})
+            }
+        })
+        // BBB JOIN END
         if (isMobile){
           window.location.replace(APPS_SERVER+'mobile-meeting/'+this.state.classRooms.room_name+'/no-user')
         }
@@ -363,6 +422,20 @@ uploadFile = e => {
         })
     })
       
+  }
+
+  endMeeting(){
+    // BBB END
+    let api = bbb.api(BBB_URL, BBB_KEY)
+    let http = bbb.http
+
+    let endMeeting = api.administration.end(this.state.classRooms.class_id, 'moderator')
+    http(endMeeting).then((result) => {
+        if (result.returncode == 'SUCCESS'){
+            this.closeModalEnd()
+            toast.success('Mengakhiri meeting untuk semua peserta.')
+        }
+    })
   }
 
 
@@ -671,27 +744,35 @@ uploadFile = e => {
               }
             </h3> */}
             {
-              user.name && classRooms.room_name && this.state.join ?
+              user.name && classRooms.room_name ?
                 <div className="card p-20">
                   <div>
                   <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
-                  <button onClick={this.onClickInvite} className="float-right btn btn btn-icademy-primary">
-                    <i className="fa fa-user"></i>Invite People
+                  {
+                      user.user_id == classRooms.moderator ?
+                      <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
+                        <i className="fa fa-stop-circle"></i>Akhiri Meeting
+                      </button>
+                      :
+                      null
+                  }
+                  <button style={{marginRight:14}} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
+                    <i className="fa fa-user"></i>Undang Peserta
                   </button>
+                  {/* <a target='_blank' href={this.state.joinUrl}>
+                  <button className="float-right btn btn-icademy-primary">
+                    <i className="fa fa-external-link-alt"></i>Buka di Tab Baru
+                  </button>
+                  </a> */}
                   </div>
                   {/* <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
-                  <JitsiMeetComponent 
-                    roomName={classRooms.room_name} 
-                    roomId={classRooms.class_id} 
-                    moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                    userId={user.user_id} 
-                    userName={user.name} 
-                    userEmail={user.email}
-                    userAvatar={user.avatar}
-                    startMic={this.state.startMic}
-                    startCam={this.state.startCam}
-                    // jwt={this.state.jwt}
-                  />
+                  <Iframe url={this.state.joinUrl}
+                    width="100%"
+                    height="600px"
+                    display="initial"
+                    frameBorder="0"
+                    allow="fullscreen *;geolocation *; microphone *; camera *"
+                    position="relative"/>
                 </div>
               :
               null
@@ -752,181 +833,16 @@ uploadFile = e => {
                             name="attachment"
                             onChange={this.onChangeInput}
                           />
-
-                        {/* FIle Upload Yang Lama */}
-                        {/* <div>
-                          < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i>
-                          <input
-                            type="file"
-                            id="attachment"
-                            name="attachment"
-                            onChange={this.onChangeInput}
-                          /><label id="attachment"> &nbsp;{this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }</label>
-                        </div> */}
-                          
-                      </Col>
-                      <Col sm={2}>
-                        <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                          Submit
-                        </button>
-                        {/* <button onClick={this.onBotoomScroll}>coba</button> */}
-                      </Col>
-
+                          </Col>
+                          <Col sm={2}>
+                            <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                              Kirim
+                            </button>
+                            {/* <button onClick={this.onBotoomScroll}>coba</button> */}
+                          </Col>
                     </Row>
                   </div>
-
                 </div>
-
-                {/* <div className="col-sm-6">
-                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
-                    <h3 className="f-20 f-w-800 fc-blue p-10">
-                      Q&A
-                    </h3>
-                      
-                      { QandA.map((item, i)=>{
-                        return (
-                          <div className='box-chat-send-left'>
-                            <p className="fc-muted"> {item.title} <small className="float-right"> {item.date}</small></p>                            
-                            <ul className="list-unstyled">
-                              <li>Q : {item.nanya}</li>
-                              <li>A : {item.jawab}</li>
-                            </ul>
-                            Balas
-                          </div>
-                        )
-                      })}
-                  </div>
-
-                  <div className='card p-20'>
-                    <Row>
-                      <Col sm={12}>
-                        <textarea className='form-control mb-3' rows={3} placeholder="Silahkan masukan pertanyaan atau jawaban anda.." />
-                      </Col>
-                      <Col sm={10}>
-                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
-                        </label>
-                        <input
-                            type="file"
-                            id="attachment"
-                            name="attachment"
-                            onChange={this.onChangeInput}
-                          />
-                      </Col>
-                      <Col sm={2}>
-                        <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                          Submit
-                        </button>
-                      </Col>
-
-                    </Row>
-                  </div>
-
-                </div> */}
-                
-
-
-                {/* PROJECT TIDAK TERKAIT */}
-                {/* <div className="col-sm-6">
-                  <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
-                  <h3 className="f-20 f-w-800 fc-blue p-10">
-                    {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
-                  </h3>
-                        <div className="row" style={{marginLeft:0, marginRight:0}}>
-                          {
-                            ((levelUser == 'admin' || levelUser == 'superadmin') && this.state.classRooms.folder_id !==0) &&
-                            <Button
-                                onClick={e=>this.setState({modalNewFolder:true})}
-                                className="btn-block btn-primary"
-                                style={{width:250, margin:5}}
-                            >
-                                <i className="fa fa-plus"></i> &nbsp; Tambah Folder Project
-                            </Button>
-                          }
-                            {
-                              (this.state.selectFolder !== 0 && this.state.classRooms.folder_id !==0) &&
-                              <Button
-                                  onClick={e=>this.setState({modalUpload:true})}
-                                  className="btn-block btn-primary"
-                                  style={{width:150, margin:5}}
-                              >
-                                  <i className="fa fa-upload"></i> &nbsp; Upload File
-                              </Button>
-                            }
-                        </div>
-                    <div className='row' style={{marginLeft:0, marginRight:0, height:380, overflowY: 'scroll'}}>
-                            {
-                              this.state.folderId !== 0 &&
-                              this.state.selectFolder &&
-                              <div className="folder" onDoubleClick={this.selectFolder.bind(this,this.state.prevFolderId, null)}>
-                                  <img
-                                  src='assets/images/component/folder-back.png'
-                                  className="folder-icon"
-                                  />
-                                  <div className="filename">
-                                      Kembali
-                                  </div>
-                              </div>
-                            }
-                            {this.state.folder.map(item =>
-                            <div className="folder" onDoubleClick={this.selectFolder.bind(this, item.id, item.name)}>
-                                <img
-                                src='assets/images/component/folder.png'
-                                className="folder-icon"
-                                />
-                                <div className="filename">
-                                    {item.name}
-                                </div>
-                            </div>
-                            )}
-                            {
-                              this.state.files.map(item =>
-                              <div className="folder" onDoubleClick={e=>window.open(item.location, 'Downloading files')}>
-                                  <img
-                                  src={
-                                    item.type == 'png' || item.type == 'pdf' || item.type == 'dox' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg'
-                                    ? `assets/images/component/${item.type}.png`
-                                    : 'assets/images/component/file.png'
-                                  }
-                                  className="folder-icon"
-                                  />
-                                  <div className="filename">
-                                    {item.name}
-                                  </div>
-                              </div>
-                              )
-                            }
-                            {
-                              this.state.mom.map(item =>
-                              <div className="folder" onDoubleClick={e=>window.open(`${APPS_SERVER}mom/?id=${item.id}`, 'Downloading files')}>
-                                  <img
-                                  src='assets/images/component/file.png'
-                                  className="folder-icon"
-                                  />
-                                  <div className="filename">
-                                    MOM-{item.title}
-                                  </div>
-                              </div>
-                              )
-                            }
-                            {
-                              this.state.recordedMeeting.map(item =>
-                                item.record && item.record.split(',').map(item =>
-                                  <div className="folder" onDoubleClick={e=>window.open(item, 'Rekaman Meeting')}>
-                                      <img
-                                      src='assets/images/component/mp4.png'
-                                      className="folder-icon"
-                                      />
-                                      <div className="filename">
-                                        {item.substring(40)}
-                                      </div>
-                                  </div>
-                                )
-                              )
-                            }
-                    </div>
-                    </div>
-                </div> */}
               </div>
             :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}
@@ -1200,8 +1116,8 @@ uploadFile = e => {
           onHide={this.handleCloseInvite}
         >
           <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold">
-              Invite People
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+              Undang Peserta
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1263,129 +1179,37 @@ uploadFile = e => {
             </button>
           </Modal.Body>
         </Modal>
+        <Modal
+          show={this.state.modalEnd}
+          onHide={this.closeModalEnd}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalEnd.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.endMeeting.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Akhiri Meeting
+                      </button>
+          </Modal.Footer>
+        </Modal>
 
         
-        <Modal
-          show={this.state.modalStart}
-        >
-          <Modal.Header>
-            <Modal.Title className="text-c-purple3 f-w-bold">
-            {classRooms.room_name}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-                <Card className="cardku">
-                  <Card.Body>
-                    <Row>
-                      <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
-                      <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
-                    </Row>
-                    <Row>
-                      <Col><h4><i className="fa fa-camera"></i> Camera</h4></Col>
-                      <Col><ToggleSwitch onChange={this.toggleSwitchCam.bind(this)} checked={this.state.startCam} /></Col>
-                    </Row>
-                      <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
-                        <i className="fa fa-video"></i>Join Meeting
-                      </Link>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleCloseMeeting}
-                      >
-                        Keluar
-                      </button>
-                  </Card.Body>
-                </Card>
-          </Modal.Body>
-        </Modal>
-        <Modal
-          show={this.state.modalNewFolder}
-        >
-          <Modal.Header>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Tambah Folder Project
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-                <Card className="cardku">
-                  <Card.Body>
-                    <Row>
-                        <Col>
-                            <div className="input-group mb-4">
-                                <input
-                                type="text"
-                                name="folderName"
-                                value={this.state.folderName}
-                                className="form-control"
-                                placeholder="Nama Folder Project"
-                                onChange={this.onChangeInputFile}
-                                required
-                                />
-                            </div>
-                            <div style={{color:'#F00'}}>{this.state.alert}</div>
-                        </Col>
-                    </Row>
-                      <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
-                        <i className="fa fa-save"></i>Simpan
-                      </Link>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={e=> this.setState({modalNewFolder:false, alert: ''})}
-                      >
-                        Batal
-                      </button>
-                  </Card.Body>
-                </Card>
-          </Modal.Body>
-        </Modal>
-        <Modal
-          show={this.state.modalUpload}
-        >
-          <Modal.Header>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Upload File
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-                <Card className="cardku">
-                  <Card.Body>
-                    <Row>
-                        <Col>
-                          <div className="form-group">
-                            <label>Lampiran</label>
-                            <input
-                              accept="all"
-                              name="attachmentId"
-                              onChange={this.onChangeInputFile}
-                              type="file"
-                              multiple
-                              placeholder="media chapter"
-                              className="form-control"
-                            />
-                            <label style={{color:'#000', padding:'5px 10px'}}>{ this.state.attachmentId.length } File</label>
-                            <Form.Text>
-                              Bisa banyak file, pastikan file tidak melebihi 500MB  
-                              {/* dan ukuran file tidak melebihi 20MB. */}
-                            </Form.Text>
-                          </div>
-                          <div style={{color:'#F00'}}>{this.state.alert}</div>
-                        </Col>
-                    </Row>
-                      <Link disabled={this.state.uploading} onClick={this.uploadFile.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{padding: '10px 17px', width:'100%', marginTop:20}}>
-                        <i className="fa fa-upload"></i>{this.state.uploading ? 'Uploading...' : 'Upload'}
-                      </Link>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={e=> this.setState({modalUpload:false})}
-                      >
-                        Batal
-                      </button>
-                  </Card.Body>
-                </Card>
-          </Modal.Body>
-        </Modal>
 			</div>
 			</div>
 			</div>

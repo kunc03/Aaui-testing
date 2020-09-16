@@ -18,7 +18,7 @@ const titleTabs = [
   {name: 'Semua'},
   {name: 'Meeting'},
   {name: 'Webinar'},
-  // {name: 'Timeline Chart'},
+  {name: 'Timeline Chart'},
   {name: 'Files'}
 ]
 
@@ -104,13 +104,13 @@ export default class User extends Component {
                     </div>
                     
                     <div className={this.state.contentMeeting ? "col-xl-12" : "hidden"}>
-                      <TableMeetings access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabble} projectId={this.props.match.params.project_id}/>
+                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
                       <TableWebinar headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
-                      {/* <GanttChart /> */}
+                      <GanttChart />
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
                       <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>

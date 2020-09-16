@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import TableFiles from '../Home_new/detail_project/files';
+import TableMeeting from '../Home_new/detail_project/meeting';
 import { Link } from 'react-router-dom';
 import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
-class Files extends Component {
+class Meeting extends Component {
   constructor(props) {
     super(props);
     this.goBack = this.goBack.bind(this);
@@ -34,7 +34,7 @@ class Files extends Component {
                   </div>
                     <div className="row">
                       <div className="col-xl-12">
-            <TableFiles access_project_admin={access_project_admin} projectId='0'/>
+            <TableMeeting access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0'/>
                         </div>
                         </div>
                         </div>
@@ -47,4 +47,4 @@ class Files extends Component {
   }
 }
 
-export default Files;
+export default Meeting;
