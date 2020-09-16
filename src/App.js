@@ -18,6 +18,8 @@ import Files from "./components/files/index";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/Home_new/detail_project/index";
+import WebinarDetail from "./components/webinar/index";
+
 import Project from "./components/project/index";
 
 import User from "./components/Users/User/index";
@@ -218,6 +220,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
+        <Route path="/webinar/:webinar_id" component={WebinarDetail} />
         <Route path="/project" component={Project} /> 
         
         <Route path="/forum" component={Forum} />
