@@ -827,7 +827,7 @@ uploadFile = e => {
 
 
                 {/* PROJECT TIDAK TERKAIT */}
-                <div className="col-sm-6">
+                {/* <div className="col-sm-6">
                   <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
                   <h3 className="f-20 f-w-800 fc-blue p-10">
                     {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
@@ -926,7 +926,7 @@ uploadFile = e => {
                             }
                     </div>
                     </div>
-                </div>
+                </div> */}
               </div>
             :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}

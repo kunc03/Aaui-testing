@@ -14,7 +14,7 @@ import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
-import Files from "./components/files/index";
+import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/Home_new/detail_project/index";

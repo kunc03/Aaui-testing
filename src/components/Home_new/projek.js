@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
+// const bbb = require('bigbluebutton-js')
 
 
 class ProjekNew extends Component {
@@ -156,6 +157,32 @@ closeModalDelete = e => {
     this.fetchProject()
     this.fetchOtherData()
   }
+
+  // testbbb(){
+  //   toast.warning('test')
+  //   let api = bbb.api(
+  //     'https://conference.icademy.id/bigbluebutton/', 
+  //     'pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o'
+  //   )
+  //   let http = bbb.http
+  //   let meetingCreateUrl = api.administration.create('My Meeting', '1', {
+  //     duration: 2,
+  //     attendeePW: 'secret',
+  //     moderatorPW: 'supersecret',
+  //     allowModsToUnmuteUsers: true,
+  //     // logo: 'https://app.icademy.id/newasset/logo-horizontal.svg'
+  //   })
+  //   http(meetingCreateUrl).then((result) => {
+  //     console.log(result)
+     
+  //     let moderatorUrl = api.administration.join('moderator', '1', 'supersecret')
+  //     let attendeeUrl = api.administration.join('attendee', '1', 'secret')
+  //     console.log(`Moderator link: ${moderatorUrl}\nAttendee link: ${attendeeUrl}`)
+     
+  //     let meetingEndUrl = api.administration.end('1', 'supersecret')
+  //     console.log(`End meeting link: ${meetingEndUrl}`)
+  //   })
+  // }
 
 
   render() {

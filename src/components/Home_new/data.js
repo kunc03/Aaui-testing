@@ -43,9 +43,9 @@ export const bodyTabble = [
   {title : 'Jejep',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
 ];
 export const headerFiles = [
-  {title : 'Date', width: null, status: true},
-  {title : 'By', width: null, status: true},
-  {title : 'Size', width: null, status: true},
+  // {title : 'Date', width: null, status: true},
+  // {title : 'By', width: null, status: true},
+  // {title : 'Size', width: null, status: true},
   {title : '', width: null, status: true},
 ];
 export const dataFiles = [
