@@ -222,6 +222,7 @@ export class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} /> 
@@ -303,6 +304,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/informasi" component={InformasiAdmin} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
         <Route path="/project" component={Project} /> 
@@ -380,7 +382,7 @@ export class ClientSwitch extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/" exact component={HomeClient} />
+        <Route path="/" exact component={Home} />
         
         <Route path="/webinar" component={WebinarClient} />
 

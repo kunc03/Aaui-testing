@@ -7,7 +7,7 @@ import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
-
+import TableFiles from '../../Home_new/detail_project/files';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -166,7 +166,7 @@ export default class WebinarAdd extends Component {
         </thead>
         <tbody>
           {
-            items.map((item,i) => (
+            items.length && items.map((item,i) => (
               <tr key={i}>
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
@@ -301,7 +301,7 @@ export default class WebinarAdd extends Component {
 
                     <div className="form-group row">
                       <div className="col-sm-4">
-                        <label className="bold">Tanggal Webinar</label>
+                        <label className="bold col-sm-12">Tanggal Webinar</label>
                         <DatePicker
                           dateFormat="yyyy-MM-dd"
                           selected={this.state.tanggal}
@@ -309,7 +309,7 @@ export default class WebinarAdd extends Component {
                         />
                       </div>
                       <div className="col-sm-4">
-                        <label className="bold">Jam Mulai</label>
+                        <label className="bold col-sm-12">Jam Mulai</label>
                         <DatePicker
                           selected={this.state.jamMulai}
                           onChange={date => this.setState({ jamMulai: date})}
@@ -321,7 +321,7 @@ export default class WebinarAdd extends Component {
                           />
                       </div>
                       <div className="col-sm-4">
-                        <label className="bold">Jam Selesai</label>
+                        <label className="bold col-sm-12">Jam Selesai</label>
                         <DatePicker
                           selected={this.state.jamSelesai}
                           onChange={date => this.setState({ jamSelesai: date})}
@@ -338,12 +338,12 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Pembicara</label>
                         <div class="input-group">
-                          <input type="text" value={this.state.pembicara} className="form-control" />
-                          <span className="input-group-btn">
+                          <input disabled type="text" value={this.state.pembicara} className="form-control" />
+                          {/* <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPembicara: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
                             </button>
-                          </span>
+                          </span> */}
                         </div>
                       </div>
                       <div className="col-sm-6">
@@ -360,9 +360,13 @@ export default class WebinarAdd extends Component {
                     </div>
 
                     <div className="form-group row">
-                      <div className="col-sm-4">
-                        <label className="bold">Role Dokumen Tree</label>
-                        <a style={{padding: '18px'}} href="#" className="form-control btn-primary"><i className="fa fa-file"></i> Folder Dokumen Tree</a>
+                      <div className="col-sm-12">
+                        <label className="bold">Folder & File</label>
+                        <div className="col-sm-12">
+                          <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
+                            <TableFiles access_project_admin={true} projectId={this.props.match.params.projectId}/>
+                          </div>
+                        </div>
                       </div>
                     </div>
 

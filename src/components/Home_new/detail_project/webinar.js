@@ -19,7 +19,7 @@ class WebinarTable extends Component {
       dataUser: [],
       webinars: [],
       headerWebinars: [
-        {title : 'Pembicara', width: null, status: true},
+        {title : 'Moderator', width: null, status: true},
         {title : 'Status', width: null, status: true},
         {title : 'Waktu', width: null, status: true},
         {title : 'Tanggal', width: null, status: true},
@@ -35,16 +35,19 @@ class WebinarTable extends Component {
 
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/list/${this.props.projectId}`).then(res => {
-        if(res.data.error) toast.warning("Error fetch API");
-
-        console.log('STATE: ', res.data);
-        this.setState({ webinars: res.data.result });
+        if(res.data.error) {
+            // toast.warning("Error fetch API");
+        }
+        else{
+            this.setState({ webinars: res.data.result });
+        }
     })
   }
 
   render() {
     const headerTabble = this.state.headerWebinars;
     const bodyTabble = this.state.webinars;
+    const access_project_admin = this.props.access_project_admin;
 
     const StatusBadge = ({value}) => {
         if(value == 0) {
@@ -67,22 +70,30 @@ class WebinarTable extends Component {
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
 
+                
+                {access_project_admin == true ?
                 <Link
                 to={`/webinar/create/${this.props.projectId}`}
-                className="btn btn-v2 btn-primary float-right"
-                // onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
                 >
+                    <button
+                    className="btn btn-icademy-primary float-right"
+                    style={{ padding: "7px 8px !important", marginLeft:14 }}
+                    >
                     <i className="fa fa-plus"></i>
+                    
                     Tambah
+                    </button>
                 </Link>
-                <Link
+                : null
+                }
+                {/* <Link
                 to={`/webinar/roles/${this.props.projectId}`}
                 className="btn btn-v2 btn-primary float-right mr-2"
                 // onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
                 >
                     <i className="fa fa-cog"></i>
                     Roles
-                </Link>
+                </Link> */}
             </span>
             <div className="table-responsive">
                 <table className="table table-hover">
@@ -110,7 +121,7 @@ class WebinarTable extends Component {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />
                                 </td>

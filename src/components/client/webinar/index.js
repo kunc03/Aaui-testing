@@ -25,7 +25,6 @@ export default class WebinarClient extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-
                 	<Switch>
                     <Route path="/webinar" exact component={Webinar} />
 						        <Route path="/webinar/detail/:webinar" component={Webinar} />
