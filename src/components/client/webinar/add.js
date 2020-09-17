@@ -2,33 +2,74 @@ import React, { Component } from 'react';
 import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import Storage from '../../../repository/storage';
+import { toast } from "react-toastify";
+
+import { MultiSelect } from 'react-sm-select';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 export default class WebinarAdd extends Component {
 
 	state = {
+    webinarId: this.props.match.params.webinarId,
+
     pembicara: [
       {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
       {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
       {nama: 'Smity Jensen', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
     ],
-    peserta: [
-      {nama: 'Alvin Kamal', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
-      {nama: 'Joe Sandy', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
-      {nama: 'Aprillia Sundah', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
-      {nama: 'Dimas Andri Dwi', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
-    ],
-    tamu: [
-      {nama: 'M. Wahyu Izzudin', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
-    ],
+    optionsName: [],
 
-    cari: [
-      {value: 'Ahmad', label: 'Ahmad'},
-      {value: 'Ardi', label: 'Ardi'},
-      {value: 'Ansyah', label: 'Ansyah'},
-    ],
+    // form webinar
+    id: '',
+    gambar: '',
+    judul: '',
+    isi: '',
+    tanggal: '',
+    jamMulai: '',
+    jamSelesai: '',
+    projectId: '',
+    dokumenId: '',
+    peserta: [],
+
+    // form peserta
+    userId: [],
+
+    // form tamu
+    nama: '',
+    email: '',
+    telepon: '',
+    tamu: [],
 
     allChecked: false,
     isModalPembicara: false,
     isModalPeserta: false
+  }
+
+  addTamu = e => {
+    e.preventDefault();
+    if(!this.state.nama && !this.state.email && !this.state.telepon) {
+      toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
+    } else {
+      let form = {
+        nama: this.state.nama,
+        email: this.state.email,
+        telepon: this.state.telepon,
+        status: false,
+        checked: false
+      };
+      this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: ''});
+    }
+
+  }
+
+  removeTamu = e => {
+    let cpTamu = [...this.state.tamu];
+    let filter = cpTamu.filter((item) => item.email != e.target.getAttribute('data-email'));
+    this.setState({ tamu: filter });
   }
 
   handleModal = () => {
@@ -51,7 +92,65 @@ export default class WebinarAdd extends Component {
     this.setState({ pembicara: pem }); 
   }
 
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+      this.setState({
+        id: this.state.webinarId,
+        gambar: res.data.result.gambar,
+        judul: res.data.result.judul,
+        isi: res.data.result.isi,
+        tanggal: res.data.result.tanggal,
+        jamMulai: res.data.result.jam_mulai,
+        jamSelesai: res.data.result.jam_selesai,
+        projectId: res.data.result.projectId,
+        dokumenId: res.data.result.dokumenId,
+        pembicara: res.data.result.pembicara.name
+      })
+    })
+
+    console.log(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`);
+    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      response.data.result.map(item => {
+        this.state.optionsName.push({
+          value: item.user_id, 
+          label: `${item.name} - ${item.email} - ${item.phone}`
+        });
+      });
+    })
+  }
+
+  updateWebinar = e => {
+    e.preventDefault();
+    
+    let dd = new Date(this.state.tanggal);
+    let tanggal = dd.getFullYear()+'-'+('0' + (dd.getMonth()+1)).slice(-2)+'-'+('0' + dd.getDate()).slice(-2);
+    
+    let jamMl = new Date(this.state.jamMulai);
+    let jamMulai = ('0' + jamMl.getHours()).slice(-2)+':'+('0' + jamMl.getMinutes()).slice(-2);
+    
+    let jamSl = new Date(this.state.jamSelesai);
+    let jamSelesai = ('0' + jamSl.getHours()).slice(-2)+':'+('0' + jamSl.getMinutes()).slice(-2);
+    
+    let form = {
+      judul: this.state.judul,
+      isi: this.state.isi,
+      tanggal: tanggal,
+      jamMulai: jamMulai,
+      jamSelesai: jamSelesai,
+      pesertanya: this.state.pesertanya
+    };
+
+    console.log(form);
+  }
+
 	render() {
+
+    console.log('STATE: ', this.state)
 
     const TabelPembicara = ({items}) => (
       <table className="table table-striped mb-4">
@@ -143,7 +242,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.telepon}</td>
                 <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
                 <td>
-                  <i className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i onClick={this.removeTamu} data-email={item.email} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
               </tr>
             ))
@@ -160,13 +259,13 @@ export default class WebinarAdd extends Component {
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to="/webinar" className="btn btn-sm mr-4" style={{
+                  	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
                   		borderRadius: '50px',
                   	}}>
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link>
-                    Buat Webinar
+                    Lengkapi Webinar
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
@@ -181,37 +280,57 @@ export default class WebinarAdd extends Component {
                     <div className="form-group">
                       <label className="bold">Gambar Webinar</label>
                       <div className="row">
-                        <div className="col-sm-4">
-                          <img src="/newasset/imginput.png" width="300px" />
+                        <div className="col-sm-6">
+                          <img className="img-fluid" src={this.state.gambar ? this.state.gambar : `/newasset/imginput.png`} />
                         </div>
                         <div className="col-sm-2">
-                          <input type="file" className="ml-5 btn btn-sm btn-default" />
+                          <input type="file" name="gambar" onChange={e => this.setState({ gambar: e.target.files[0] })} className="ml-5 btn btn-sm btn-default" />
                         </div>
                       </div>
                     </div>
 
                     <div className="form-group">
                       <label className="bold">Judul Webinar</label>
-                      <input type="text" className="form-control" />
+                      <input type="text" className="form-control" name="judul" onChange={e => this.setState({ judul: e.target.value })} value={this.state.judul} />
                     </div>
 
                     <div className="form-group">
                       <label className="bold">Isi Webinar</label>
-                      <textarea rows="6" className="form-control"></textarea>
+                      <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
                     </div>
 
                     <div className="form-group row">
                       <div className="col-sm-4">
                         <label className="bold">Tanggal Webinar</label>
-                        <input type="text" className="form-control" />
+                        <DatePicker
+                          dateFormat="yyyy-MM-dd"
+                          selected={this.state.tanggal}
+                          onChange={e => this.setState({ tanggal: e })}
+                        />
                       </div>
                       <div className="col-sm-4">
                         <label className="bold">Jam Mulai</label>
-                        <input type="text" className="form-control" />
+                        <DatePicker
+                          selected={this.state.jamMulai}
+                          onChange={date => this.setState({ jamMulai: date})}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                          />
                       </div>
                       <div className="col-sm-4">
                         <label className="bold">Jam Selesai</label>
-                        <input type="text" className="form-control" />
+                        <DatePicker
+                          selected={this.state.jamSelesai}
+                          onChange={date => this.setState({ jamSelesai: date})}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                          />
                       </div>
                     </div>
 
@@ -219,7 +338,7 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Pembicara</label>
                         <div class="input-group">
-                          <input type="text" className="form-control" />
+                          <input type="text" value={this.state.pembicara} className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPembicara: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
@@ -230,7 +349,7 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Peserta</label>
                         <div class="input-group">
-                          <input type="text" className="form-control" />
+                          <input value={this.state.peserta.length} type="text" className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPeserta: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
@@ -270,7 +389,7 @@ export default class WebinarAdd extends Component {
                     </div>
 
                     <div className="form-group">
-                      <button className="btn btn-success"><i className="fa fa-save"></i> Simpan</button>
+                      <button onClick={this.updateWebinar} className="btn btn-success"><i className="fa fa-save"></i> Simpan</button>
                     </div>
 
                   </div>
@@ -300,13 +419,6 @@ export default class WebinarAdd extends Component {
                         <i className="fa fa-search"></i> Cari
                       </button>
                     </span>
-                    <datalist id="pembicara">
-                      {
-                        this.state.cari.map(item => (
-                          <option value={item.value} />
-                        ))
-                      }
-                    </datalist>
                   </div>
                 </div>
 
@@ -348,19 +460,22 @@ export default class WebinarAdd extends Component {
                 <div className="form-group">
                   <label>Cari Peserta</label>
                   <div class="input-group">
-                    { <input type="text" list="pembicara" className="form-control" /> }
+                    <MultiSelect
+                        id={`userId`}
+                        options={this.state.optionsName}
+                        value={this.state.userId}
+                        onChange={userId => this.setState({ userId })}
+                        mode="single"
+                        enableSearch={true}
+                        resetable={true}
+                        valuePlaceholder="Silahkan Pilih User"
+                        allSelectedLabel="Silahkan Pilih User"
+                      />
                     <span className="input-group-btn">
                       <button className="btn btn-default">
-                        <i className="fa fa-search"></i> Cari
+                        <i className="fa fa-plus"></i> Tambah
                       </button>
                     </span>
-                    <datalist id="pembicara">
-                      {
-                        this.state.cari.map(item => (
-                          <option value={item.value} />
-                        ))
-                      }
-                    </datalist>
                   </div>
                 </div>
 
@@ -372,18 +487,18 @@ export default class WebinarAdd extends Component {
                 <div className="form-group row">
                   <div className="col-sm-3">
                     <label>Nama</label>
-                    <input type="text" className="form-control" />
+                    <input type="text" name="nama" value={this.state.nama} onChange={e => this.setState({ nama: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-4">
                     <label>Email</label>
-                    <input type="email" className="form-control" />
+                    <input type="email" name="email" value={this.state.email} onChange={e => this.setState({ email: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-3">
                     <label>Telepon</label>
-                    <input type="text" className="form-control" />
+                    <input type="text" name="telepon" value={this.state.telepon} onChange={e => this.setState({ telepon: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-2">
-                    <button className="btn btn-v2 btn-primary" style={{marginTop: '25px'}}><i className="fa fa-plus"></i> Tambah</button>
+                    <button onClick={this.addTamu} className="btn btn-v2 btn-primary" style={{marginTop: '25px'}}><i className="fa fa-plus"></i> Tambah</button>
                   </div>
                 </div>
 

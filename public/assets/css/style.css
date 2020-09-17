@@ -11732,3 +11732,7 @@ div.code-toolbar > .toolbar span:hover {
   background-color: #e5e5e5;
   border-radius:4px;
 }
+
+#userId {
+  width: 84.5%;
+}
