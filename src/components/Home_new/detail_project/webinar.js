@@ -14,11 +14,12 @@ class WebinarTable extends Component {
     // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
+      userId: Storage.get('user').data.user_id,
       users: [],
       dataUser: [],
       webinars: [],
       headerWebinars: [
-        {title : 'Moderator', width: null, status: true},
+        {title : 'Pembicara', width: null, status: true},
         {title : 'Status', width: null, status: true},
         {title : 'Waktu', width: null, status: true},
         {title : 'Tanggal', width: null, status: true},
@@ -44,6 +45,22 @@ class WebinarTable extends Component {
   render() {
     const headerTabble = this.state.headerWebinars;
     const bodyTabble = this.state.webinars;
+
+    const StatusBadge = ({value}) => {
+        if(value == 0) {
+            return (
+                <span class="badge badge-pill badge-warning">Belum Selesai</span>
+            )
+        } else if (value == 1) {
+            return (
+                <span class="badge badge-pill badge-success">Berlangsung</span>
+            )
+        } else if (value == 2) {
+            return (
+                <span class="badge badge-pill badge-primary">Selesai</span>
+            )
+        }
+    }
 
     return (
             <div className="card p-20">
@@ -93,19 +110,27 @@ class WebinarTable extends Component {
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.project_id}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.status}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
+                                    <StatusBadge value={item.status} />
+                                </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.project_id}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length}</td>
                                 <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
                                         <i className="fa fa-download fc-skyblue"></i> Download File
                                     </button>
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
-                                    <Link to={`/webinar/create/${item.project_id}`} className="btn mr-2">Ubah</Link>
-                                    <Link to={`/webinar/riwayat/${item.project_id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                    {
+                                        this.state.userId == item.sekretaris.user_id && 
+                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Lengkapi</Link>
+                                    }
+                                    {
+                                        item.status == 2 && 
+                                        <Link to={`/webinar/riwayat/${item.project_id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                    }
                                     <Link to={`/webinar/live/${item.project_id}`} className="btn btn-v2 btn-warning">Masuk</Link>
                                 </td>
                             </tr>
