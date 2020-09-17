@@ -342,6 +342,7 @@ uploadFile = e => {
                     attendeePW: 'peserta',
                     moderatorPW: 'moderator',
                     allowModsToUnmuteUsers: true,
+                    record: true
                 })
                 http(meetingCreateUrl).then((result) => {
                     if (result.returncode='SUCCESS'){
@@ -801,7 +802,7 @@ uploadFile = e => {
                     <h3 className="f-20 f-w-800 fc-blue p-10">
                       File Sharing
                     </h3>
-                      
+                      <div style={{height:'100%', overflowY:'scroll'}}>
                       { this.state.fileChat.map((item, i)=>{
                         return (
                           <div className='box-chat-send-left'>
@@ -818,6 +819,7 @@ uploadFile = e => {
                           </div>
                         )
                       })}
+                      </div>
                   </div>
 
                   <div className='card p-20'>

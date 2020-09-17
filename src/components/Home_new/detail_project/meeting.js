@@ -359,6 +359,7 @@ class MeetingTable extends Component {
                 attendeePW: 'peserta',
                 moderatorPW: 'moderator',
                 allowModsToUnmuteUsers: true,
+                record: true
               })
               http(meetingCreateUrl).then((result) => {
                 if (result.returncode='SUCCESS'){
@@ -445,6 +446,7 @@ class MeetingTable extends Component {
             attendeePW: 'peserta',
             moderatorPW: 'moderator',
             allowModsToUnmuteUsers: true,
+            record: true
           })
           http(meetingCreateUrl).then((result) => {
             if (result.returncode='SUCCESS'){

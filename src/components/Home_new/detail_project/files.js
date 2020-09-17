@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, APPS_SERVER, USER_ME } from '../../../repository/api';
+import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../../repository/api';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
 
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
+const bbb = require('bigbluebutton-js')
 
 
 class FilesTable extends Component {
@@ -31,7 +32,8 @@ class FilesTable extends Component {
       modalUpload: false,
       isUploading: false,
       isLoading: false,
-      attachmentId:[]
+      attachmentId:[],
+      dataRecordings: []
     };
   }
 
@@ -111,6 +113,7 @@ selectFolder(id, name) {
   this.fetchFile(id)
   this.fetchMOM(id)
   this.fetchRekaman(id)
+  this.fetchRekamanBBB(id)
   this.setState({selectFolder: id == this.props.projectId ? false : true, folderId: id})
   })
 }
@@ -144,10 +147,54 @@ fetchRekaman(folder){
       if(res.status === 200) {
         this.setState({
           recordedMeeting : res.data.result,
-          isLoading: false
         })
       }
     })
+  }
+}
+
+fetchRekamanBBB(folder){
+  let levelUser = Storage.get('user').data.level;
+  let userId = Storage.get('user').data.user_id;
+  if (folder == 0){
+    this.setState({dataRecordings:[], isLoading: false})
+  }
+  else{
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
+      if (res.status === 200) {
+        this.setState({
+          companyId: localStorage.getItem('companyID')
+            ? localStorage.getItem('companyID')
+            : res.data.result.company_id,
+        });
+        API.get(
+          `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${folder}`
+        ).then((res) => {
+          if (res.status === 200) {
+            let data = res.data.result;
+            // BBB GET MEETING RECORD
+            let api = bbb.api(BBB_URL, BBB_KEY)
+            let http = bbb.http
+            data.map((item) => {
+              let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+              http(getRecordingsUrl).then((result) => {
+                if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                  this.state.dataRecordings.push(result.recordings)
+                  this.forceUpdate()
+                }
+                else{
+                  console.log('GAGAL', result)
+                }
+              })
+            })
+            // BBB END
+            this.setState({
+              isLoading: false
+            })
+          }
+        });
+      }
+    });
   }
 }
 
@@ -365,6 +412,65 @@ componentDidMount(){
                                 </td>
                             </tr>
                             )
+                        )
+                        }
+                        {
+                        this.state.dataRecordings.map((item) =>
+                            item.recording.length ? item.recording.map((item) =>
+                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">
+                                    <img src={item.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                  <span class="btn-group dropleft col-sm-1">
+                                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <i
+                                        className="fa fa-ellipsis-v"
+                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                      />
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      <button
+                                        style={{cursor:'pointer'}}
+                                        class="dropdown-item"
+                                        type="button"
+                                        onClick={e=>window.open(item.playback.format.url, 'Rekaman Meeting')}
+                                      >
+                                          Lihat
+                                      </button>
+                                      {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}>Hapus</button> */}
+                                    </div>
+                                  </span>
+                                </td>
+                            </tr>
+                            )
+                            :
+                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">
+                                    <img src={item.recording.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                  <span class="btn-group dropleft col-sm-1">
+                                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <i
+                                        className="fa fa-ellipsis-v"
+                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                      />
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      <button
+                                        style={{cursor:'pointer'}}
+                                        class="dropdown-item"
+                                        type="button"
+                                        onClick={e=>window.open(item.recording.playback.format.url, 'Rekaman Meeting')}
+                                      >
+                                          Lihat
+                                      </button>
+                                      {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}>Hapus</button> */}
+                                    </div>
+                                  </span>
+                                </td>
+                            </tr>
+
+                            
                         )
                         }
                         </tbody>

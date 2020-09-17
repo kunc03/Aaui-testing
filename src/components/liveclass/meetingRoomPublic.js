@@ -145,6 +145,7 @@ handleCloseStart = e => {
                     attendeePW: 'peserta',
                     moderatorPW: 'moderator',
                     allowModsToUnmuteUsers: true,
+                    record: true
                 })
                 http(meetingCreateUrl).then((result) => {
                     if (result.returncode='SUCCESS'){
