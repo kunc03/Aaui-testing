@@ -14,7 +14,7 @@ import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
-import Files from "./components/files/index";
+import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/Home_new/detail_project/index";
@@ -60,6 +60,8 @@ import DetailKursus from "./components/client/detailkursus";
 import UjianKursus from "./components/client/ujiankursus";
 import UjianHasil from "./components/client/ujianhasil";
 
+import InformasiAdmin from "./components/admin/informasi";
+
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
@@ -67,6 +69,9 @@ import LiveClass from "./components/liveclass";
 import LiveStream from "./components/liveclass/livestream";
 import LiveStreamPublic from "./components/liveclass/livestreamPublic";
 import MobileMeeting from "./components/liveclass/mobileMeeting";
+import Meeting from "./components/meeting";
+import MeetingRoom from "./components/liveclass/meetingRoom";
+import MeetingRoomPublic from "./components/liveclass/meetingRoomPublic";
 
 import LiveClassAdmin from "./components/admin/liveclass/list";
 import LiveClassAdminJoin from "./components/admin/liveclass/join";
@@ -84,6 +89,8 @@ import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
 // import ResetPassword from './components/resetPassword';
 
+import HomeClient from './components/client/dashboard/index';
+import WebinarClient from './components/client/webinar/index';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -126,7 +133,7 @@ export class PublicContent extends React.Component {
       <div>
         <Switch>
           <Route path="/" exact component={Login} />
-          <Route path="/meeting/:roomid" exact component={LiveStreamPublic} />
+          <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
           <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/forgot-password' component={ForgotPassword} />
@@ -138,7 +145,6 @@ export class PublicContent extends React.Component {
     );
   }
 }
-
 
 export class RedirectPage extends React.Component {
   render() {
@@ -218,6 +224,7 @@ export class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/webinar/:webinar_id" component={WebinarDetail} />
@@ -227,10 +234,11 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
 
-        <Route path="/meeting" exact component={LiveClassAdmin} />
-        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
+        <Route path="/meeting" exact component={Meeting} />
+        <Route path="/meeting/information/:roomid" exact component={Meeting} />
         <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
-        <Route path="/liveclass-room/:roomid" component={LiveStream} />
+        {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
+        <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
@@ -298,6 +306,9 @@ export class AdminSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
 
+        <Route path="/informasi" component={InformasiAdmin} />
+        <Route path="/webinar" component={WebinarClient} />
+
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
         <Route path="/project" component={Project} /> 
 
@@ -344,10 +355,11 @@ export class AdminSwitch extends React.Component {
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
-        <Route path="/meeting" exact component={LiveClassAdmin} />
-        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
+        <Route path="/meeting" exact component={Meeting} />
+        <Route path="/meeting/information/:roomid" exact component={Meeting} />
         {/* <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} /> */}
-        <Route path="/liveclass-room/:roomid" exact component={LiveStream} />
+        {/* <Route path="/liveclass-room/:roomid" exact component={LiveStream} /> */}
+        <Route path="/meeting-room/:roomid" component={MeetingRoom} />
 
         <Route path="/cabang" exact component={Cabang} />
         <Route path="/company" exact component={Company} />
@@ -374,6 +386,8 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} /> 
         <Route path="/project" component={Project} /> 
@@ -394,9 +408,10 @@ export class ClientSwitch extends React.Component {
 
         {/* <Route path="/liveclass" exact component={LiveClass} /> */}
         {/* <Route path="/liveclass" component={LiveClass} /> */}
-        <Route path="/meeting" exact component={LiveClassAdmin} />
-        <Route path="/meeting/information/:roomid" exact component={LiveClassAdmin} />
-        <Route path="/liveclass-room/:roomid" component={LiveStream} />
+        <Route path="/meeting" exact component={Meeting} />
+        <Route path="/meeting/information/:roomid" exact component={Meeting} />
+        {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
+        <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         
         <Route path="/pengaturan" component={Pengaturan} />
 

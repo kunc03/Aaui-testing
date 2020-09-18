@@ -4,11 +4,11 @@ export default class Storage {
             label,
             JSON.stringify(data)
         );
-    }
+    };
 
     static get = (label) => {
         return JSON.parse(localStorage.getItem(label) || '{"data":""}');
-    }
+    };
 
     static delete = (label) => {
         localStorage.removeItem(label);

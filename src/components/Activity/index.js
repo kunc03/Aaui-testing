@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Card, InputGroup, FormControl, Row } from 'react-bootstrap';
-import API, { USER_ME, API_SERVER } from '../../repository/api';
+import API, { USER_ME, API_SERVER, BBB_KEY, BBB_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import DatePicker from "react-datepicker";
@@ -22,6 +22,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import MomentTZ from 'moment-timezone';
 const localizer = momentLocalizer(moment);
+const bbb = require('bigbluebutton-js')
 let event = [
   // {
   //   id: 0,
@@ -116,6 +117,8 @@ class Aktivity extends Component {
       active: '0',
       audience: '0',
       duration: '00:00:00',
+
+      dataRecordings: [],
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
@@ -200,7 +203,23 @@ class Aktivity extends Component {
         ).then((res) => {
           if (res.status === 200) {
             let data = res.data.result.reverse();
-            this.setState({ classRooms: data.filter((data) => data.record) });
+            // BBB GET MEETING RECORD
+            let api = bbb.api(BBB_URL, BBB_KEY)
+            let http = bbb.http
+            data.map((item) => {
+              let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+              http(getRecordingsUrl).then((result) => {
+                if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                  this.state.dataRecordings.push(result.recordings)
+                  this.forceUpdate()
+                }
+                else{
+                  console.log('GAGAL', result)
+                }
+              })
+            })
+              // BBB END
+            // this.setState({ classRooms: data.filter((data) => data.record) });
           }
         });
       }
@@ -363,15 +382,24 @@ class Aktivity extends Component {
               <div className="card">
                 <div className="card-carousel ">
                   <div className="title-head f-w-900 f-16" style={{marginBottom:20}}>
-                    {item.room_name}
+                    {item.recording.length ? item.recording[0].name: item.recording.name}
                   </div>
-                  {item.record.split(',').map((item) => (
-                    <h3 className="f-14">
-                      <a target="_blank" href={item} style={{}}>
-                        {item}
-                      </a>
-                    </h3>
-                  ))}
+                    <div className="f-14 row">
+                      {
+                        item.recording.length ?
+                        item.recording.map(item =>
+                          <a className="card col-md-4" target="_blank" href={item.playback.format.url} style={{alignItems:'center', justifyContent:'center'}}>
+                            <img src={item.playback.format.preview.images.image[0]}/>
+                            <p>{new Date(item.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
+                          </a>
+                        )
+                        :
+                          <a className="card col-md-4" target="_blank" href={item.recording.playback.format.url} style={{alignItems:'center', justifyContent:'center'}}>
+                            <img src={item.recording.playback.format.preview.images.image[0]}/>
+                            <p>{new Date(item.recording.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
+                          </a>
+                      }
+                    </div>
                 </div>
               </div>
           </div>
@@ -584,8 +612,8 @@ class Aktivity extends Component {
                           style={{ position: 'relative', margin: 20 }}
                         >
                           <div>
-                            {classRooms.length ? (
-                              <ClassRooms list={classRooms} />
+                            {this.state.dataRecordings.length ? (
+                              <ClassRooms list={this.state.dataRecordings} />
                             ) : (
                               <div className="col-md-3 col-xl-3 mb-3">
                                 Tidak ada rekaman meeting

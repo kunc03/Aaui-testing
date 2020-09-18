@@ -42,6 +42,15 @@ export const bodyTabble = [
   {title : 'Anggun Srikandi Ayu',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
   {title : 'Jejep',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
 ];
+export const headerFiles = [
+  // {title : 'Date', width: null, status: true},
+  // {title : 'By', width: null, status: true},
+  // {title : 'Size', width: null, status: true},
+  {title : '', width: null, status: true},
+];
+export const dataFiles = [
+  {name : 'Folder ABC',date: '2020-09-09', by: 'Alvin', size: '13MB'},
+];
 
 export const bodyTabbleWebinar = [
 ];

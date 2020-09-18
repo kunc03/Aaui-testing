@@ -19,7 +19,7 @@ class UserAdd extends Component {
     identity: "",
     name: "",
     email: "",
-    alertEmail: "",
+    alertemail: "",
     phone: "",
     address: "",
     password: "",
@@ -58,7 +58,7 @@ class UserAdd extends Component {
           target.value = ''
           this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
         } else {
-          this.setState({ [name]: value })
+          this.setState({ [name]: value, alertemail: '' })
         }
       })
     } else if(name === 'address') {

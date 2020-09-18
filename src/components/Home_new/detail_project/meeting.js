@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {
   Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image,
@@ -14,8 +14,10 @@ import 'react-sm-select/dist/styles.css';
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
+import {isMobile} from 'react-device-detect';
 
 import Storage from './../../../repository/storage';
+const bbb = require('bigbluebutton-js')
 
 
 class MeetingTable extends Component {
@@ -29,7 +31,7 @@ class MeetingTable extends Component {
       dataUser: [],
       companyId: localStorage.getItem('companyID'),
       meeting: [],
-      isModalConfirmation: false,
+      isModalConfirmation: this.props.informationId ? true : false,
       infoClass: [],
       infoParticipant: [],
       countHadir: 0,
@@ -60,7 +62,7 @@ class MeetingTable extends Component {
 
       //single select folder
       optionsFolder: [],
-      valueFolder: [Number(this.props.projectId)],
+      valueFolder: this.props.projectId != '0' ? [Number(this.props.projectId)] : [],
 
       //multi select peserta
       optionsPeserta: [],
@@ -77,10 +79,40 @@ class MeetingTable extends Component {
 
       deleteMeetingId: '',
       deleteMeetingName: '',
+      filterMeeting:''
     };
   }
 
 
+  filterMeeting =  (e) => {
+    e.preventDefault();
+    this.setState({filterMeeting : e.target.value});
+  }
+
+  testbbb(){
+    let api = bbb.api(
+      'https://conference.icademy.id/bigbluebutton/', 
+      'pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o'
+    )
+    let http = bbb.http
+    let meetingCreateUrl = api.administration.create('My Meeting', '1', {
+      duration: 2,
+      attendeePW: 'secret',
+      moderatorPW: 'supersecret',
+      allowModsToUnmuteUsers: true,
+      // logo: 'https://app.icademy.id/newasset/logo-horizontal.svg'
+    })
+    http(meetingCreateUrl).then((result) => {
+      console.log(result)
+     
+      let moderatorUrl = api.administration.join('moderator', '1', 'supersecret')
+      let attendeeUrl = api.administration.join('attendee', '1', 'secret')
+      console.log(`Moderator link: ${moderatorUrl}\nAttendee link: ${attendeeUrl}`)
+     
+      let meetingEndUrl = api.administration.end('1', 'supersecret')
+      console.log(`End meeting link: ${meetingEndUrl}`)
+    })
+  }
   handleCreateMeeting() {
     this.setState({ isClassModal: true, valueFolder: [Number(this.props.projectId)]});
   };
@@ -159,10 +191,31 @@ class MeetingTable extends Component {
   fetchMeeting(){
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
-      API.get(`${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${this.props.projectId}`).then(res => {
+      API.get(
+        this.props.projectId != 0 ?
+        `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${this.props.projectId}`
+        :
+        `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
+        ).then(res => {
         if (res.status === 200) {
           this.setState({
-            meeting: res.data.result,
+            meeting: res.data.result
+          })
+          this.state.meeting.map((item, i)=> {
+            // CHECK BBB ROOM IS RUNNING
+            let api = bbb.api(BBB_URL, BBB_KEY)
+            let http = bbb.http
+            let checkUrl = api.monitoring.isMeetingRunning(item.class_id)
+            http(checkUrl).then((result) => {
+              if (result.returncode=='SUCCESS'){
+                item.running = result.running
+                this.forceUpdate()
+              }
+              else{
+                console.log('ERROR', result)
+              }
+            })
+            // END CHECK BBB ROOM IS RUNNING
           })
         }
       })
@@ -172,7 +225,9 @@ class MeetingTable extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-          if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
+        
+        this.fetchMeeting();  
+        if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
             API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
               response.data.result.map(item => {
                 this.state.optionsModerator.push({value: item.user_id, label: item.name});
@@ -265,7 +320,6 @@ class MeetingTable extends Component {
         if(res.status === 200) {
           const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number): [];
           this.setState({valuePeserta: this.state.valuePeserta.concat(participant)})
-          console.log('ALVIN PES', this.state.valuePeserta)
         }
       })
     }
@@ -294,6 +348,34 @@ class MeetingTable extends Component {
 
       API.put(`${API_SERVER}v1/liveclass/id/${this.state.classId}`, form).then(async res => {
         if (res.status === 200) {
+          // END BBB START
+          let api = bbb.api(BBB_URL, BBB_KEY)
+          let http = bbb.http
+          let meetingEndUrl = api.administration.end(this.state.classId, 'moderator')
+          http(meetingEndUrl).then((result) => {
+            if (result.returncode='SUCCESS'){
+              // BBB CREATE START
+              let meetingCreateUrl = api.administration.create(this.state.roomName, this.state.classId, {
+                attendeePW: 'peserta',
+                moderatorPW: 'moderator',
+                allowModsToUnmuteUsers: true,
+                record: true
+              })
+              http(meetingCreateUrl).then((result) => {
+                if (result.returncode='SUCCESS'){
+                  console.log('BBB SUCCESS CREATE')
+                }
+                else{
+                  console.log('GAGAL', result)
+                }
+              })
+              // BBB CREATE END
+            }
+            else{
+              console.log('ERROR', result)
+            }
+          })
+          // END BBB END
           if (this.state.cover) {
             let formData = new FormData();
             formData.append('cover', this.state.cover);
@@ -357,7 +439,25 @@ class MeetingTable extends Component {
 
       API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
         if (res.status === 200) {
-          console.log('RESS',res)
+          // BBB CREATE START
+          let api = bbb.api(BBB_URL, BBB_KEY)
+          let http = bbb.http
+          let meetingCreateUrl = api.administration.create(this.state.roomName, res.data.result.class_id, {
+            attendeePW: 'peserta',
+            moderatorPW: 'moderator',
+            allowModsToUnmuteUsers: true,
+            record: true
+          })
+          http(meetingCreateUrl).then((result) => {
+            if (result.returncode='SUCCESS'){
+              console.log('BBB SUCCESS CREATE')
+            }
+            else{
+              console.log('GAGAL', result)
+            }
+          })
+          // BBB CREATE END
+
           if (this.state.cover) {
             let formData = new FormData();
             formData.append('cover', this.state.cover);
@@ -415,6 +515,19 @@ class MeetingTable extends Component {
       if(res.status === 200) {
         this.fetchMeeting();
         this.closeModalDelete();
+        // END BBB START
+        let api = bbb.api(BBB_URL, BBB_KEY)
+        let http = bbb.http
+        let meetingEndUrl = api.administration.end(classId, 'moderator')
+        http(meetingEndUrl).then((result) => {
+          if (result.returncode='SUCCESS'){
+            console.log('Meeting end')
+          }
+          else{
+            console.log('ERROR', result)
+          }
+        })
+        // END BBB END
         toast.success('Berhasil menghapus meeting')
       }
     })
@@ -461,18 +574,39 @@ class MeetingTable extends Component {
     this.fetchMeetingInfo(classId)
   }
   componentDidMount(){
-      this.fetchMeeting();
-      this.fetchOtherData();
+    this.fetchOtherData();
+    if (this.props.informationId){
+      this.fetchMeetingInfo(this.props.informationId)
+      if (isMobile){
+        alert('ini mobile')
+      }
+    }
   }
 
   render() {
-    const headerTabble = this.props.headerTabble;
-    const bodyTabble = this.state.meeting;
+    const headerTabble = [
+      // {title : 'Nama Meeting', width: null, status: true},
+      {title : 'Moderator', width: null, status: true},
+      {title : 'Status', width: null, status: true},
+      {title : 'Waktu', width: null, status: true},
+      {title : 'Tanggal', width: null, status: true},
+      {title : 'Peserta', width: null, status: true},
+      // {title : 'File Project', width: null, status: true},
+    ];
+    let bodyTabble = this.state.meeting;
     const access_project_admin = this.props.access_project_admin;
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
     let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+    let { filterMeeting } = this.state;
+    if(filterMeeting != ""){
+      bodyTabble = bodyTabble.filter(x=>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filterMeeting,"gmi"))
+      )
+    }
     return (
             <div className="card p-20">
             <span className="mb-4">
@@ -480,12 +614,17 @@ class MeetingTable extends Component {
                 {access_project_admin == true ? <button
                 onClick={this.handleCreateMeeting.bind(this)}
                 className="btn btn-icademy-primary float-right"
-                style={{ padding: "7px 8px !important" }}
+                style={{ padding: "7px 8px !important", marginLeft:14 }}
                 >
                 <i className="fa fa-plus"></i>
                 
                 Tambah
                 </button> : null}
+                <input 
+                    type="text"
+                    placeholder="Search"
+                    onChange={this.filterMeeting}
+                    className="form-control float-right col-sm-3"/>
             </span>
             <div className="table-responsive">
                 <table className="table table-hover">
@@ -523,7 +662,7 @@ class MeetingTable extends Component {
                             if (item.is_live == 0){
                               status = 'Terkunci'
                             }
-                            if (item.active_participants > 0){
+                            if (item.running){
                               status = 'Aktif'
                             }
                             return (
@@ -571,7 +710,7 @@ class MeetingTable extends Component {
                                     </div>
                                   </span>
                                 </td>
-                                <td className="fc-muted f-14 f-w-300 " align="center"><button className={`btn btn-icademy-primary btn-icademy-${status == 'Open' ? 'warning' : 'grey'}`} onClick={this.onClickInfo.bind(this, item.class_id)}>{status == 'Open' ? 'Masuk' : 'Informasi'}</button></td>
+                                <td className="fc-muted f-14 f-w-300 " align="center"><button className={`btn btn-icademy-primary btn-icademy-${status == 'Open' || status == 'Aktif' ? 'warning' : 'grey'}`} onClick={this.onClickInfo.bind(this, item.class_id)}>{status == 'Open' || status == 'Aktif' ? 'Masuk' : 'Informasi'}</button></td>
                             </tr>
                             )
                         })
@@ -990,11 +1129,11 @@ class MeetingTable extends Component {
                     <Modal.Footer>
                             {
                               (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ? 
-                              <Link target='_blank' to={`/liveclass-room/${this.state.infoClass.class_id}`} style={{width:'100%'}}>
+                              <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
                                 <button
                                   className="btn btn-icademy-primary"
                                   onClick={e=> this.closeModalConfirmation()}
-                                  style={{width:'100%'}}
+                                  // style={{width:'100%'}}
                                 >
                                   <i className="fa fa-video"></i>
                                   Masuk

@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap';
 
 import Storage from './../../../repository/storage';
-import {headerTabble, bodyTabble, bodyTabbleWebinar, tasks, options} from './../data';
+import {headerTabble, bodyTabble, bodyTabbleWebinar, dataFiles, headerFiles, tasks, options} from './../data';
 
 import TableMeetings from './meeting';
 import TableWebinar from './webinar';
@@ -18,7 +18,7 @@ const titleTabs = [
   {name: 'Semua'},
   {name: 'Meeting'},
   {name: 'Webinar'},
-  {name: 'Gantt Chart'},
+  {name: 'Timeline Chart'},
   {name: 'Files'}
 ]
 
@@ -73,7 +73,7 @@ export default class User extends Component {
   }
 
   render() {
-
+    
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -92,7 +92,7 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       {/* Tab */}
-                      <div className="card mb-2" style={{padding: '20px 0px 0px 20px'}}>
+                      <div className="card mb-2" style={{padding: '20px 0px 0px 20px', alignItems:'flex-end'}}>
                           <Tabs defaultActiveKey="Semua" id="uncontrolled-tab-example" onSelect={this.choiceTab.bind(this)}>
                             {titleTabs.map(tab =>{
                               return (
@@ -104,16 +104,16 @@ export default class User extends Component {
                     </div>
                     
                     <div className={this.state.contentMeeting ? "col-xl-12" : "hidden"}>
-                      <TableMeetings access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabble} projectId={this.props.match.params.project_id}/>
+                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
-                      <TableWebinar headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar}/>
+                      <TableWebinar access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
                       <GanttChart />
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
-                      <TableFiles headerTabble={headerTabble} bodyTabble={bodyTabble}/>
+                      <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                     </div>
                   </div>
                 </div>

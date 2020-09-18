@@ -30,6 +30,7 @@ export default class User extends Component {
       dataUser: [],
       isModalHapus: false,
       userIdHapus: '',
+      userStatusHapus: '',
       isModalPassword: false,
       userIdPassword: '',
       userPassword: '',
@@ -72,15 +73,18 @@ export default class User extends Component {
 
   onClickHapus = e => {
     e.preventDefault();
-    this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id') });
+    this.setState({ isModalHapus: true, userIdHapus: e.target.getAttribute('data-id'), userStatusHapus: e.target.getAttribute('data-status') });
   }
 
   onClickSubmitHapus = e => {
     e.preventDefault();
-    API.delete(`${API_SERVER}v1/user/${this.state.userIdHapus}`).then(res => {
+    let form = {
+      active: this.state.userStatusHapus == 'active' ? 'pasive' : 'active'
+    }
+    API.put(`${API_SERVER}v1/user/active/${this.state.userIdHapus}`, form).then(res => {
       if(res.status === 200) {
         this.fetchData();
-        this.setState({isModalHapus: false, userIdHapus: ''})
+        this.handleModalHapus();
       }
     })
   }
@@ -186,6 +190,7 @@ export default class User extends Component {
               role: item.grup_name,
               level: item.level,
               voucher: item.voucher,
+              status: item.status,
               validity: item.validity
             })
           });
@@ -335,7 +340,7 @@ export default class User extends Component {
                 <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> Atur Voucher</MenuItem>
                 <MenuItem data-id={row.id} onClick={this.onClickModalPassword}><i className="fa fa-key" /> Atur Password</MenuItem>
                 <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Ubah</MenuItem>
-                <MenuItem data-id={row.id} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
+                <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Hapus</MenuItem>
             </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,

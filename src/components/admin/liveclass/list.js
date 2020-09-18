@@ -85,11 +85,13 @@ export default class LiveClassAdmin extends Component {
   handleCreateMeeting() {
     this.setState({ isClassModal: true});
   };
+
   handleChangeDateFrom = date => {
     this.setState({
       startDate: date
     });
   };
+  
   handleChangeDateEnd = date => {
     this.setState({
       endDate: date

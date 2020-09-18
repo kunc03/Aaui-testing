@@ -209,7 +209,7 @@ closeModalDelete = e => {
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1">
                 <div className="row p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
-                <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-12"}>
+                <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
                   <div className="box-project">
                     <div className=" f-w-800 f-16 fc-black">
                       {item.title} 

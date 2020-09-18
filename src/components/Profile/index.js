@@ -116,12 +116,12 @@ class Profile extends Component {
               validity: res.data.result.validity ? res.data.result.validity.toString().substring(0,10) : '0000-00-00',
             }
           });
-          if (this.state.user_data.level==='client'){
-            this.setState({user_data:{
-              ...this.state.user_data,
-              level:'User'
-            }})
-          }
+          // if (this.state.user_data.level==='client'){
+            // this.setState({user_data:{
+              // ...this.state.user_data,
+              // level:'user'
+            // }})
+          // }
         }
       }
     });
@@ -178,7 +178,7 @@ class Profile extends Component {
 
   render() {
     const { user_data, toggle_alert, kursusDiikuti } = this.state;
-
+    console.log('STATE: ', this.state);
     const ListAktivitas = ({ lists }) => {
       if (lists.length !== 0) {
         return (
@@ -365,18 +365,9 @@ class Profile extends Component {
                               <label className="label-input" htmlFor>
                                 Level
                               </label>
-                              <input
-                                disabled
-                                style={{ textTransform: "capitalize" }}
-                                name="levelStatus"
-                                type="text"
-                                className="form-control"
-                                placeholder="Status"
-                                value={
-                                  user_data.level == null ? "" : user_data.level
-                                }
-                                onChange={this.handleChange}
-                              />
+                              <label className="form-control" htmlFor>
+                                {user_data.level === "client" ? "User" : user_data.level}
+                              </label>
                             </div>
                             <button
                               className="btn btn btn-icademy-primary float-right mt-3"

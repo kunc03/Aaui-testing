@@ -6,10 +6,11 @@ import {
 } from 'react-bootstrap';
 
 import ToggleSwitch from "react-switch";
+
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-import TagsInput from 'react-tagsinput'
 
+import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 
 
@@ -241,6 +242,7 @@ uploadFile = e => {
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
+        this.fetchData();
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
     });
@@ -448,9 +450,6 @@ uploadFile = e => {
     form.append('file', this.state.attachment);
     console.log('form data',form);
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
-      console.log(res, 'response');
-      
-      
       if(res.status === 200) {
         if(!res.data.error){
           this.onBotoomScroll();
@@ -458,6 +457,7 @@ uploadFile = e => {
           
           let datas = res.data.result;
           console.log(datas, 'datass')
+
           splitTags =  datas.attachment.split("/")[4];
           datas.filenameattac = splitTags; 
   
@@ -605,6 +605,23 @@ uploadFile = e => {
       editMOM: false
     })
   }
+
+  onClickRemoveChat = e => {
+    e.preventDefault();
+    let form = { attachment: e.target.getAttribute('data-file') };
+    API.post(`${API_SERVER}v1/liveclass/file/remove`, form).then(res => {
+      if(res.status === 200) {
+        this.fetchData();
+        socket.emit('send', {
+          pengirim: this.state.user.user_id,
+          room: this.state.classId,
+          attachment: form.attachment,
+          filenameattac: form.attachment,
+          created_at: new Date()
+        })
+      }
+    })
+  }
   
   onChangeTinyMce = e => {
     this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
@@ -707,11 +724,16 @@ uploadFile = e => {
                       { this.state.fileChat.map((item, i)=>{
                         return (
                           <div className='box-chat-send-left'>
-                            {/* <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/> */}
+                            <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
                             <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
                             <small >
-                                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
-                                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} </small>
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
+                            </small>
+                            {
+                              classRooms.moderator == Storage.get("user").data.user_id &&
+                              <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                            }
                           </div>
                         )
                       })}
@@ -805,7 +827,7 @@ uploadFile = e => {
 
 
                 {/* PROJECT TIDAK TERKAIT */}
-                <div className="col-sm-6">
+                {/* <div className="col-sm-6">
                   <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
                   <h3 className="f-20 f-w-800 fc-blue p-10">
                     {this.state.classRooms.folder_id !==0 ? 'Project Files : '+classRooms.project_name : 'Project Files : Tidak terkait'}
@@ -904,7 +926,7 @@ uploadFile = e => {
                             }
                     </div>
                     </div>
-                </div>
+                </div> */}
               </div>
             :  
               <div className="col-sm-12">{/* CHATING SEND FILE */}
