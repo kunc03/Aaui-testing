@@ -250,10 +250,11 @@ class MeetingTable extends Component {
           }
           API.get(`${API_SERVER}v1/branch/company/${this.state.companyId}`).then(res => {
             if(res.status === 200) {
-              this.setState({ listBranch: res.data.result[0] })
-              res.data.result[0].map(item => {
-                this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
-              });
+              console.log(res, 'sdaaaaaaaaaaaaaaaa')
+              // this.setState({ listBranch: res.data.result[0] })
+              //   res.data.result[0].map(item => {
+              //     this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+              //   });
             }
           })
       }

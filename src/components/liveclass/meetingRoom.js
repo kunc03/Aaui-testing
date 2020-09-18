@@ -105,6 +105,7 @@ export default class MeetingRoom extends Component {
     needConfirmation : 0,
     joinUrl: '',
     modalEnd: false,
+    loadingFileSharing: false
   }
   
   closeModalConfirmation = e => {
@@ -251,7 +252,7 @@ uploadFile = e => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
         this.fetchData();
-        this.setState({ fileChat: [...this.state.fileChat, data] })
+        this.setState({ loadingFileSharing: false, fileChat: [...this.state.fileChat, data] })
       }
     });
     this.fetchData();
@@ -522,7 +523,7 @@ uploadFile = e => {
     form.append('class_id', this.state.classId);
     form.append('pengirim', String(this.state.user.user_id));
     form.append('file', this.state.attachment);
-    console.log('form data',form);
+    this.setState({loadingFileSharing: true})
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
       if(res.status === 200) {
         if(!res.data.error){
@@ -530,7 +531,7 @@ uploadFile = e => {
           let splitTags;
           
           let datas = res.data.result;
-          console.log(datas, 'datass')
+          console.log(datas, 'datass kirim filesssss')
 
           splitTags =  datas.attachment.split("/")[4];
           datas.filenameattac = splitTags; 
@@ -838,7 +839,7 @@ uploadFile = e => {
                           </Col>
                           <Col sm={2}>
                             <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                              Kirim
+                            {this.state.loadingFileSharing ? 'Loading...'  : 'Kirim'}
                             </button>
                             {/* <button onClick={this.onBotoomScroll}>coba</button> */}
                           </Col>
