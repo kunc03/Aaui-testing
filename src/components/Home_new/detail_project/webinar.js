@@ -4,6 +4,7 @@ import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
 
@@ -18,6 +19,7 @@ class WebinarTable extends Component {
       users: [],
       dataUser: [],
       webinars: [],
+      companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
         {title : 'Moderator', width: null, status: true},
         {title : 'Status', width: null, status: true},
@@ -34,7 +36,10 @@ class WebinarTable extends Component {
   }
 
   fetchData() {
-    API.get(`${API_SERVER}v2/webinar/list/${this.props.projectId}`).then(res => {
+    API.get(
+        this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}`
+        : `${API_SERVER}v2/webinar/list-by-company/${this.state.companyId}`
+        ).then(res => {
         if(res.data.error) {
             // toast.warning("Error fetch API");
         }
@@ -73,7 +78,7 @@ class WebinarTable extends Component {
                 
                 {access_project_admin == true ?
                 <Link
-                to={`/webinar/create/${this.props.projectId}`}
+                to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}`}
                 >
                     <button
                     className="btn btn-icademy-primary float-right"
@@ -126,7 +131,7 @@ class WebinarTable extends Component {
                                     <StatusBadge value={item.status} />
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length}</td>
                                 <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
@@ -136,7 +141,11 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         this.state.userId == item.sekretaris.user_id && 
-                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Lengkapi</Link>
+                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Kelola</Link>
+                                    }
+                                    {
+                                        access_project_admin && 
+                                        <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-success mr-2">Ubah</Link>
                                     }
                                     {
                                         item.status == 2 && 

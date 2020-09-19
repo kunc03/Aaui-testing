@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Moment from 'moment-timezone';
 
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
@@ -66,10 +67,21 @@ export default class WebinarAdd extends Component {
 
   }
 
-  removeTamu = e => {
-    let cpTamu = [...this.state.tamu];
-    let filter = cpTamu.filter((item) => item.email != e.target.getAttribute('data-email'));
-    this.setState({ tamu: filter });
+  deleteTamu (id) {
+    // let cpTamu = [...this.state.tamu];
+    // let filter = cpTamu.filter((item) => item.email != e.target.getAttribute('data-email'));
+    // this.setState({ tamu: filter });
+    
+    API.delete(`${API_SERVER}v2/webinar/tamu/${id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Gagal menghapus tamu')
+        } else {
+          toast.success(`Berhasil menghapus tamu`)
+          this.fetchData();
+        }
+      }
+    })
   }
 
   handleModal = () => {
@@ -99,17 +111,22 @@ export default class WebinarAdd extends Component {
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if(res.data.error) toast.warning("Gagal fetch API");
+      const tanggal = new Date(res.data.result.tanggal);
+      const jam_mulai = new Date('2020-09-19 ' + res.data.result.jam_mulai)
+      const jam_selesai = new Date('2020-09-19 ' + res.data.result.jam_selesai)
       this.setState({
         id: this.state.webinarId,
         gambar: res.data.result.gambar,
         judul: res.data.result.judul,
         isi: res.data.result.isi,
-        tanggal: res.data.result.tanggal,
-        jamMulai: res.data.result.jam_mulai,
-        jamSelesai: res.data.result.jam_selesai,
+        tanggal: tanggal,
+        jamMulai: jam_mulai,
+        jamSelesai: jam_selesai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
-        pembicara: res.data.result.pembicara.name
+        pembicara: res.data.result.pembicara.name,
+        peserta: res.data.result.peserta,
+        tamu: res.data.result.tamu
       })
     })
 
@@ -137,15 +154,87 @@ export default class WebinarAdd extends Component {
     let jamSelesai = ('0' + jamSl.getHours()).slice(-2)+':'+('0' + jamSl.getMinutes()).slice(-2);
     
     let form = {
+      id: this.state.webinarId,
       judul: this.state.judul,
       isi: this.state.isi,
       tanggal: tanggal,
-      jamMulai: jamMulai,
-      jamSelesai: jamSelesai,
-      pesertanya: this.state.pesertanya
+      jam_mulai: jamMulai,
+      jam_selesai: jamSelesai,
+      // pesertanya: this.state.pesertanya
     };
+    API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
+      if(res.data.error) 
+        toast.warning("Error fetch API")
+      else
+        if (this.state.gambar) {
+          let formData = new FormData();
+          formData.append('gambar', this.state.gambar);
+          await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
+        }
+        toast.success("Mengubah informasi webinar")
+        this.props.history.goBack();
+    })
 
     console.log(form);
+  }
+
+  addPeserta = e => {
+    e.preventDefault();
+    const formData = {
+      webinarId: this.state.webinarId,
+      userId: this.state.userId.toString(),
+    };
+    formData.userId ?
+    API.post(`${API_SERVER}v2/webinar/peserta`, formData).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Gagal menambah peserta')
+        } else {
+          toast.success(`Berhasil menambah peserta`)
+          this.setState({userId:[]})
+          this.fetchData();
+        }
+      }
+    })
+    :
+    toast.warning('Silahkan pilih peserta terlebih dahulu')
+  }
+
+  deletePeserta (id) {
+    API.delete(`${API_SERVER}v2/webinar/peserta/${id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Gagal menghapus peserta')
+        } else {
+          toast.success(`Berhasil menghapus peserta`)
+          this.fetchData();
+        }
+      }
+    })
+  }
+
+  addTamu = e => {
+    e.preventDefault();
+    const formData = {
+      webinarId: this.state.webinarId,
+      name: this.state.nama,
+      email: this.state.email,
+      phone: this.state.telepon,
+    };
+    formData.email || formData.name || formData.phone ?
+    API.post(`${API_SERVER}v2/webinar/tamu`, formData).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Gagal menambah tamu')
+        } else {
+          toast.success(`Berhasil menambah tamu`)
+          this.setState({nama: '', email:'', telepon:''})
+          this.fetchData();
+        }
+      }
+    })
+    :
+    toast.warning('Silahkan masukkan data tamu terlebih dahulu')
   }
 
 	render() {
@@ -204,12 +293,12 @@ export default class WebinarAdd extends Component {
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
                 </td>
-                <td>{item.nama}</td>
+                <td>{item.name}</td>
                 <td>{item.email}</td>
-                <td>{item.telepon}</td>
+                <td>{item.phone}</td>
                 <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
                 <td>
-                  <i className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
               </tr>
             ))
@@ -237,12 +326,12 @@ export default class WebinarAdd extends Component {
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
                 </td>
-                <td>{item.nama}</td>
+                <td>{item.name}</td>
                 <td>{item.email}</td>
-                <td>{item.telepon}</td>
+                <td>{item.phone}</td>
                 <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
                 <td>
-                  <i onClick={this.removeTamu} data-email={item.email} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
               </tr>
             ))
@@ -281,7 +370,7 @@ export default class WebinarAdd extends Component {
                       <label className="bold">Gambar Webinar</label>
                       <div className="row">
                         <div className="col-sm-6">
-                          <img className="img-fluid" src={this.state.gambar ? this.state.gambar : `/newasset/imginput.png`} />
+                          <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar } />
                         </div>
                         <div className="col-sm-2">
                           <input type="file" name="gambar" onChange={e => this.setState({ gambar: e.target.files[0] })} className="ml-5 btn btn-sm btn-default" />
@@ -315,7 +404,7 @@ export default class WebinarAdd extends Component {
                           onChange={date => this.setState({ jamMulai: date})}
                           showTimeSelect
                           showTimeSelectOnly
-                          timeIntervals={15}
+                          timeIntervals={30}
                           timeCaption="Time"
                           dateFormat="h:mm aa"
                           />
@@ -327,7 +416,7 @@ export default class WebinarAdd extends Component {
                           onChange={date => this.setState({ jamSelesai: date})}
                           showTimeSelect
                           showTimeSelectOnly
-                          timeIntervals={15}
+                          timeIntervals={30}
                           timeCaption="Time"
                           dateFormat="h:mm aa"
                           />
@@ -349,7 +438,7 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Peserta</label>
                         <div class="input-group">
-                          <input value={this.state.peserta.length} type="text" className="form-control" />
+                          <input value={this.state.peserta.length+this.state.tamu.length} type="text" className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPeserta: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
@@ -393,7 +482,7 @@ export default class WebinarAdd extends Component {
                     </div>
 
                     <div className="form-group">
-                      <button onClick={this.updateWebinar} className="btn btn-success"><i className="fa fa-save"></i> Simpan</button>
+                      <button onClick={this.updateWebinar} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
                     </div>
 
                   </div>
@@ -458,6 +547,11 @@ export default class WebinarAdd extends Component {
             onHide={this.handleModal}
             dialogClassName="modal-lg"
           >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                Peserta Webinar
+              </Modal.Title>
+            </Modal.Header>
             <Modal.Body>
               <h5>Peserta</h5>
               <div style={{ marginTop: "20px" }} className="form-group">
@@ -476,7 +570,7 @@ export default class WebinarAdd extends Component {
                         allSelectedLabel="Silahkan Pilih User"
                       />
                     <span className="input-group-btn">
-                      <button className="btn btn-default">
+                      <button className="btn btn-default" onClick={this.addPeserta.bind(this)}>
                         <i className="fa fa-plus"></i> Tambah
                       </button>
                     </span>
@@ -493,7 +587,7 @@ export default class WebinarAdd extends Component {
                     <label>Nama</label>
                     <input type="text" name="nama" value={this.state.nama} onChange={e => this.setState({ nama: e.target.value })} className="form-control" />
                   </div>
-                  <div className="col-sm-4">
+                  <div className="col-sm-3">
                     <label>Email</label>
                     <input type="email" name="email" value={this.state.email} onChange={e => this.setState({ email: e.target.value })} className="form-control" />
                   </div>
@@ -501,8 +595,8 @@ export default class WebinarAdd extends Component {
                     <label>Telepon</label>
                     <input type="text" name="telepon" value={this.state.telepon} onChange={e => this.setState({ telepon: e.target.value })} className="form-control" />
                   </div>
-                  <div className="col-sm-2">
-                    <button onClick={this.addTamu} className="btn btn-v2 btn-primary" style={{marginTop: '25px'}}><i className="fa fa-plus"></i> Tambah</button>
+                  <div className="col-sm-3">
+                    <button onClick={this.addTamu} className="btn btn-default" style={{marginTop: '25px'}}><i className="fa fa-plus"></i> Tambah</button>
                   </div>
                 </div>
 
@@ -511,25 +605,25 @@ export default class WebinarAdd extends Component {
               
               <button
                 type="button"
-                className="btn btn-v2 btn-primary f-w-bold mr-2"
+                className="btn btn-icademy-warning m-2"
               >
                 <i className="fa fa-envelope"></i>
                 Kirim email
               </button>
               <button
                 type="button"
-                className="btn btn-v2 btn-success f-w-bold mr-2"
+                className="btn btn-icademy-primary m-2"
               >
                 <i className="fa fa-save"></i>
                 Simpan
               </button>
-              <button
+              {/* <button
                 type="button"
-                className="btn btn-v2 f-w-bold"
+                className="btn btn-icademy-grey m-2"
                 onClick={this.handleModal}
               >
                 Tutup
-              </button>
+              </button> */}
             </Modal.Body>
           </Modal>
         </div>

@@ -66,7 +66,7 @@ class EventNew extends Component {
               levelUser == 'client' && access.group_meeting == 0 && item.title == 'Meeting' ? 'none' :
               levelUser == 'client' && (access.course == 0 && access.manage_course == 0) && item.title == 'Learning' ? 'none' :
               'block'}}>
-              <Link to={item.title == 'Meeting' ? urlMeeting : item.title == 'Learning' ? urlLearning : ''}>
+              <Link to={item.title == 'Meeting' ? urlMeeting : item.title == 'Learning' ? urlLearning : 'webinars'}>
                 <div className={item.status ? 'border-blue-2 ' : 'box-disabled border-disabled'}>
                   <div className="box-event ">
                     <div className="title-head f-w-900 f-16 fc-skyblue">

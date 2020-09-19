@@ -64,7 +64,7 @@ export default class User extends Component {
     if(item === 'Semua') return this.setState({contentAll: true,contentMeeting: true,contentWebinar: true,contentGanttChart: true,contentFiles: true});
     if(item === 'Meeting') return this.setState({contentAll: false,contentMeeting: true,contentWebinar: false,contentGanttChart: false,contentFiles: false});
     if(item === 'Webinar') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: true,contentGanttChart: false,contentFiles: false});
-    if(item === 'Gantt Chart') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: false,contentGanttChart: true,contentFiles: false});
+    if(item === 'Timeline Chart') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: false,contentGanttChart: true,contentFiles: false});
     if(item === 'Files') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: false,contentGanttChart: false,contentFiles: true});
   }
 
@@ -107,7 +107,7 @@ export default class User extends Component {
                       <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
-                      <TableWebinar access_project_admin={this.state.access_project_admin} headerTabble={headerTabble} bodyTabble={bodyTabbleWebinar} projectId={this.props.match.params.project_id}/>
+                      <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
                       <GanttChart />

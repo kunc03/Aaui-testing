@@ -9,11 +9,11 @@ import { toast } from "react-toastify";
 import TableFiles from '../../Home_new/detail_project/files';
 import { MultiSelect } from 'react-sm-select';
 
-export default class WebinarCreate extends Component {
+export default class WebinarEdit extends Component {
 
 	state = {
     companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
-    projectId: parseInt(this.props.match.params.projectId),
+    webinarId: this.props.match.params.webinar,
 
     optionNames: [],
 
@@ -35,8 +35,8 @@ export default class WebinarCreate extends Component {
     mom: [],
     recordedMeeting: [],
 
-    optionsFolder: [],
-    valuesFolder: this.props.match.params.projectId !== '0' ? [Number(this.props.match.params.projectId)] : [],
+    optionsFolder:[],
+    projectId: [],
 
     //form upload folder
     folderName: "",
@@ -54,6 +54,7 @@ export default class WebinarCreate extends Component {
     modalUpload: false,
     alert: '',
     uploading: false,
+    dataWebinar: []
   }
 
   handleModal = () => {
@@ -83,24 +84,40 @@ export default class WebinarCreate extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.forceUpdate()
+    this.fetchWebinar();
   }
 
   fetchData() {
     API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
       response.data.result.map(item => {
         this.state.optionNames.push({value: item.user_id, label: item.name});
-      });
-      if (this.state.optionsFolder.length==0){
-        API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
-          response.data.result.map(item => {
-            this.state.optionsFolder.push({value: item.id, label: item.name});
+        if (this.state.optionsFolder.length==0){
+          API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
+            response.data.result.map(item => {
+              this.state.optionsFolder.push({value: item.id, label: item.name});
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
           });
+        }
+      });
+    })
+  }
+
+  fetchWebinar(){
+    API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
+        if (res.data.error)
+            toast.warning("Error fetch API")
+        else
+        this.setState({
+            projectId: [Number(res.data.result.project_id)],
+            judul: res.data.result.judul,
+            sekretarisId: [res.data.result.sekretaris.user_id],
+            pembicaraId: [res.data.result.pembicara.user_id],
+            moderatorId: [res.data.result.moderator.user_id],
+            ownerId: [res.data.result.owner.user_id],
         })
-        .catch(function(error) {
-          console.log(error);
-        });
-      }
     })
   }
 
@@ -141,23 +158,24 @@ export default class WebinarCreate extends Component {
   simpanWebinar = e => {
     e.preventDefault();
     let form = {
-      companyId: this.state.companyId,
+      webinarId: this.state.webinarId,
       judul: this.state.judul,
       moderatorId: this.state.moderatorId[0],
       sekretarisId: this.state.sekretarisId[0],
       pembicaraId: this.state.pembicaraId[0],
       ownerId: this.state.ownerId[0],
       projectId: this.state.projectId,
-      dokumenId: this.state.folderId
     }
 
 
-    API.post(`${API_SERVER}v2/webinar/create`, form).then(res => {
-      if(res.data.error) 
+    API.put(`${API_SERVER}v2/webinar/edit`, form).then(res => {
+      if(res.data.error){
         toast.warning("Error fetch API")
-      else
-        toast.success("Berhasil menambah webinar")
+      }
+      else{
+        toast.success("Berhasil merubah webinar")
         this.props.history.goBack();
+      }
     })
   }
 
@@ -199,20 +217,18 @@ export default class WebinarCreate extends Component {
                   <div className="row">
                     <div className="col-sm-12">
                       
-                    <div className="form-group">
+                      <div className="form-group">
                         <label className="bold">Judul Webinar</label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">Judul tidak boleh menggunakan karakter spesial.</small>
                       </div>
-                      {
-                        this.state.projectId == 0 ?
                         <div className="form-group">
                           <label className="bold">Project</label>
                           <MultiSelect
                               id="folder"
                               options={this.state.optionsFolder}
-                              value={this.state.valuesFolder}
-                              onChange={valuesFolder => this.setState({ valuesFolder })}
+                              value={this.state.projectId}
+                              onChange={projectId => this.setState({ projectId })}
                               mode="single"
                               enableSearch={true}
                               resetable={true}
@@ -220,9 +236,6 @@ export default class WebinarCreate extends Component {
                             />
                           <small className="form-text text-muted">Pilih project folder.</small>
                         </div>
-                        :
-                        null
-                      }
 
                       <h4>Pilih Roles</h4>
                       <div className="form-group row">

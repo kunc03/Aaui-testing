@@ -84,6 +84,7 @@ saveFolder = e => {
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
+    console.log('ALVIN', res)
     if(res.status === 200) {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)

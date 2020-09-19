@@ -193,7 +193,7 @@ class MeetingTable extends Component {
     let userId = Storage.get('user').data.user_id;
       API.get(
         this.props.projectId != 0 ?
-        `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${this.props.projectId}`
+        `${API_SERVER}v1/liveclass/project/${this.props.access_project_admin ? 'admin' : levelUser}/${userId}/${this.props.projectId}`
         :
         `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
         ).then(res => {
