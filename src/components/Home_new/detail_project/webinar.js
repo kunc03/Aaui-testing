@@ -19,6 +19,7 @@ class WebinarTable extends Component {
       users: [],
       dataUser: [],
       webinars: [],
+      isLoading: [],
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
         {title : 'Moderator', width: null, status: true},
@@ -36,6 +37,7 @@ class WebinarTable extends Component {
   }
 
   fetchData() {
+    this.setState({isLoading:true})
     API.get(
         this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}`
         : `${API_SERVER}v2/webinar/list-by-company/${this.state.companyId}`
@@ -44,7 +46,7 @@ class WebinarTable extends Component {
             // toast.warning("Error fetch API");
         }
         else{
-            this.setState({ webinars: res.data.result });
+            this.setState({ webinars: res.data.result, isLoading: false });
         }
     })
   }
@@ -119,7 +121,7 @@ class WebinarTable extends Component {
                     {
                         bodyTabble.length == 0 ?
                         <tr>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>{this.state.isLoading ? 'Loading...' : 'Tidak Ada'}</td>
                         </tr>
                         :
                         bodyTabble.map((item, i) => {
