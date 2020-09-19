@@ -50,6 +50,19 @@ class WebinarTable extends Component {
         }
     })
   }
+  updateStatus (id, status) {
+    let form = {
+      id: id,
+      status: status,
+    };
+    API.put(`${API_SERVER}v2/webinar/status`, form).then(async res => {
+      if(res.data.error) 
+        toast.warning("Error fetch API")
+      else
+        toast.success('Webinar dimulai, silahkan gunakan tombol masuk untuk join')
+        this.fetchData()
+    })
+  }
 
   render() {
     const headerTabble = this.state.headerWebinars;
@@ -63,11 +76,15 @@ class WebinarTable extends Component {
             )
         } else if (value == 1) {
             return (
-                <span class="badge badge-pill badge-success">Berlangsung</span>
+                <span class="badge badge-pill badge-primary">Belum Mulai</span>
             )
         } else if (value == 2) {
             return (
-                <span class="badge badge-pill badge-primary">Selesai</span>
+                <span class="badge badge-pill badge-success">Sedang Berlangsung</span>
+            )
+        } else if (value == 3) {
+            return (
+                <span class="badge badge-pill badge-secondary">Selesai</span>
             )
         }
     }
@@ -134,7 +151,7 @@ class WebinarTable extends Component {
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length+item.tamu.length}</td>
                                 <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
                                         <i className="fa fa-download fc-skyblue"></i> Download File
@@ -142,18 +159,25 @@ class WebinarTable extends Component {
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
-                                        this.state.userId == item.sekretaris.user_id && 
-                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Kelola</Link>
+                                        (this.state.userId == item.sekretaris.user_id && item.status != 3) && 
+                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Data</Link>
                                     }
                                     {
-                                        access_project_admin && 
+                                        (access_project_admin && item.status !=3) && 
                                         <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-success mr-2">Ubah</Link>
                                     }
                                     {
-                                        item.status == 2 && 
-                                        <Link to={`/webinar/riwayat/${item.project_id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                        item.status == 3 && 
+                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
-                                    <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-warning">Masuk</Link>
+                                    {
+                                        item.status == 2 &&
+                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-warning">Masuk</Link>
+                                    }
+                                    {
+                                        item.status == 1 &&
+                                        <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
+                                    }
                                 </td>
                             </tr>
                             )

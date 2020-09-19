@@ -111,9 +111,9 @@ export default class WebinarAdd extends Component {
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if(res.data.error) toast.warning("Gagal fetch API");
-      const tanggal = new Date(res.data.result.tanggal);
-      const jam_mulai = new Date('2020-09-19 ' + res.data.result.jam_mulai)
-      const jam_selesai = new Date('2020-09-19 ' + res.data.result.jam_selesai)
+      const tanggal = res.data.result.tanggal ? new Date(res.data.result.tanggal) : '';
+      const jam_mulai = res.data.result.jam_mulai ? new Date('2020-09-19 ' + res.data.result.jam_mulai) : ''
+      const jam_selesai = res.data.result.jam_selesai ? new Date('2020-09-19 ' + res.data.result.jam_selesai) : ''
       this.setState({
         id: this.state.webinarId,
         gambar: res.data.result.gambar,
@@ -126,7 +126,8 @@ export default class WebinarAdd extends Component {
         dokumenId: res.data.result.dokumenId,
         pembicara: res.data.result.pembicara.name,
         peserta: res.data.result.peserta,
-        tamu: res.data.result.tamu
+        tamu: res.data.result.tamu,
+        status: res.data.result.status
       })
     })
 
@@ -160,6 +161,7 @@ export default class WebinarAdd extends Component {
       tanggal: tanggal,
       jam_mulai: jamMulai,
       jam_selesai: jamSelesai,
+      status: this.state.status
       // pesertanya: this.state.pesertanya
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
@@ -176,6 +178,10 @@ export default class WebinarAdd extends Component {
     })
 
     console.log(form);
+  }
+
+  backButton(){
+    this.props.history.goBack();
   }
 
   addPeserta = e => {
@@ -348,13 +354,13 @@ export default class WebinarAdd extends Component {
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
+                  	<Link onClick={this.backButton.bind(this)} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
                   		borderRadius: '50px',
                   	}}>
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link>
-                    Lengkapi Webinar
+                    Data Webinar
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
@@ -613,9 +619,10 @@ export default class WebinarAdd extends Component {
               <button
                 type="button"
                 className="btn btn-icademy-primary m-2"
+                onClick={this.handleModal}
               >
                 <i className="fa fa-save"></i>
-                Simpan
+                Tutup
               </button>
               {/* <button
                 type="button"

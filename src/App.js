@@ -70,6 +70,7 @@ import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
 import MeetingRoom from "./components/liveclass/meetingRoom";
 import MeetingRoomPublic from "./components/liveclass/meetingRoomPublic";
+import WebinarLivePublic from "./components/client/webinar/livePublic";
 import Webinar from "./components/webinar";
 
 import LiveClassAdmin from "./components/admin/liveclass/list";
@@ -133,6 +134,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
+          <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/forgot-password' component={ForgotPassword} />

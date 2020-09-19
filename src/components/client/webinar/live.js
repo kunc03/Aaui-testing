@@ -6,18 +6,21 @@ import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
 import TableFiles from '../../Home_new/detail_project/files';
+import Moment from 'moment-timezone';
 const bbb = require('bigbluebutton-js')
 
 export default class WebinarLive extends Component {
 
 	state = {
-    webinarId:[this.props.match.params.webinarId],
+    webinarId:this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId,
     webinar:[],
     pembucara:'',
     joinUrl:'',
     user: [],
     projectId: '',
     modalEnd: false,
+    isWebinarStartDate: false,
+    access_project_admin: false,
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -34,6 +37,14 @@ export default class WebinarLive extends Component {
     this.setState({ modalEnd: false });
   }
 
+  postLog(webinar_id, peserta_id, type, action){
+    API.post(`${API_SERVER}v2/webinar/log/${webinar_id}/${peserta_id}/${type}/${action}`).then(res => {
+      if(res.data.error) 
+        console.log('Log webinar error')
+      else
+      console.log('Log webinar posted')
+    })
+  }
   fetchWebinar(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
@@ -48,57 +59,200 @@ export default class WebinarLive extends Component {
               webinar: res.data.result,
               pembicara: res.data.result.pembicara.name,
               moderatorId: res.data.result.moderator.user_id,
-              projectId: res.data.result.project_id
+              projectId: res.data.result.project_id,
+              status: res.data.result.status,
+              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
+              jamMulai: res.data.result.jam_mulai,
+              jamSelesai: res.data.result.jam_selesai
             })
-            // BBB JOIN START
-            let api = bbb.api(BBB_URL, BBB_KEY)
-            let http = bbb.http
-    
-            // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
-            let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
-            http(meetingInfo).then((result) => {
-                if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
-                    // Jika belum ada, create room nya.
-                    let meetingCreateUrl = api.administration.create(this.state.webinar.judul, this.state.webinar.id, {
-                        attendeePW: 'peserta',
-                        moderatorPW: 'moderator',
-                        allowModsToUnmuteUsers: true,
-                        record: true
-                    })
-                    http(meetingCreateUrl).then((result) => {
-                        if (result.returncode='SUCCESS'){
-                            // Setelah create, join
-                            let joinUrl = api.administration.join(
-                                this.state.user.name,
-                                this.state.webinar.id,
-                                this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
-                                {userID: this.state.user.user_id}
-                            )
-                            this.setState({joinUrl: joinUrl})
-                        }
-                        else{
-                        console.log('GAGAL', result)
-                        }
-                    })
-                }
-                else{
-                    // Jika sudah ada, join
-                    let joinUrl = api.administration.join(
-                      this.state.user.name,
-                      this.state.webinar.id,
-                      this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
-                      {userID: this.state.user.user_id}
-                    )
-                    this.setState({joinUrl: joinUrl})
-                }
+            let tgl = new Date(res.data.result.tanggal)
+            let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
+            let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
+
+            let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0,2)))
+            let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3,5)))
+            
+            let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
+            this.setState({isWebinarStartDate: isWebinarStartDate})
+
+            if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)){
+              this.updateStatus(this.state.webinar.id, 2)
+              if (this.state.webinar.id == 1){
+                this.fetchWebinar()
+              }
+              // BBB JOIN START
+              let api = bbb.api(BBB_URL, BBB_KEY)
+              let http = bbb.http
+      
+              // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
+              let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
+              http(meetingInfo).then((result) => {
+                  if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
+                      // Jika belum ada, create room nya.
+                      let meetingCreateUrl = api.administration.create(this.state.webinar.judul, this.state.webinar.id, {
+                          attendeePW: 'peserta',
+                          moderatorPW: 'moderator',
+                          allowModsToUnmuteUsers: true,
+                          record: true
+                      })
+                      http(meetingCreateUrl).then((result) => {
+                          if (result.returncode='SUCCESS'){
+                              // Setelah create, join
+                              let joinUrl = api.administration.join(
+                                  this.state.user.name,
+                                  this.state.webinar.id,
+                                  this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                                  {userID: this.state.user.user_id}
+                              )
+                              this.setState({joinUrl: joinUrl})
+                              this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                          }
+                          else{
+                          console.log('GAGAL', result)
+                          }
+                      })
+                  }
+                  else{
+                      // Jika sudah ada, join
+                      let joinUrl = api.administration.join(
+                        this.state.user.name,
+                        this.state.webinar.id,
+                        this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                        {userID: this.state.user.user_id}
+                      )
+                      this.setState({joinUrl: joinUrl})
+                      this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                  }
+              })
+              // BBB JOIN END
+            }
+        })
+      }
+    })
+  }
+  fetchWebinarPublic(){
+    API.get(`${API_SERVER}v2/webinar/tamu/${this.props.voucher}`).then(async res => {
+      if(res.status === 200) {
+        this.setState({
+          user: res.data.result,
+        })
+        API.get(`${API_SERVER}v2/webinar/tamu/one/${this.props.webinarId}`).then(res => {
+            if (res.data.error)
+                toast.warning("Error fetch API")
+            else
+            this.setState({
+              webinar: res.data.result,
+              pembicara: res.data.result.pembicara.name,
+              moderatorId: res.data.result.moderator.user_id,
+              projectId: res.data.result.project_id,
+              status: res.data.result.status,
+              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
+              jamMulai: res.data.result.jam_mulai,
+              jamSelesai: res.data.result.jam_selesai
             })
-            // BBB JOIN END
+            let tgl = new Date(res.data.result.tanggal)
+            let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
+            let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
+
+            let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0,2)))
+            let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3,5)))
+            
+            let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
+            this.setState({isWebinarStartDate: isWebinarStartDate})
+
+            if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)){
+              this.updateStatus(this.state.webinar.id, 2)
+              if (this.state.webinar.id == 1){
+                this.fetchWebinarPublic()
+              }
+              // BBB JOIN START
+              let api = bbb.api(BBB_URL, BBB_KEY)
+              let http = bbb.http
+      
+              // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
+              let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
+              http(meetingInfo).then((result) => {
+                  if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
+                      // Jika belum ada, create room nya.
+                      let meetingCreateUrl = api.administration.create(this.state.webinar.judul, this.state.webinar.id, {
+                          attendeePW: 'peserta',
+                          moderatorPW: 'moderator',
+                          allowModsToUnmuteUsers: true,
+                          record: true
+                      })
+                      http(meetingCreateUrl).then((result) => {
+                          if (result.returncode='SUCCESS'){
+                              // Setelah create, join
+                              let joinUrl = api.administration.join(
+                                  this.state.user.name,
+                                  this.state.webinar.id,
+                                  this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                                  {userID: this.state.user.user_id}
+                              )
+                              this.setState({joinUrl: joinUrl})
+                              this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                          }
+                          else{
+                          console.log('GAGAL', result)
+                          }
+                      })
+                  }
+                  else{
+                      // Jika sudah ada, join
+                      let joinUrl = api.administration.join(
+                        this.state.user.name,
+                        this.state.webinar.id,
+                        this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                        {userID: this.state.user.user_id}
+                      )
+                      this.setState({joinUrl: joinUrl})
+                      this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                  }
+              })
+              // BBB JOIN END
+            }
         })
       }
     })
   }
   componentDidMount(){
-    this.fetchWebinar()
+    if (this.props.webinarId && this.props.voucher){
+      this.fetchWebinarPublic()
+    }
+    else{
+      this.fetchWebinar()
+    }
+    this.checkProjectAccess()
+  }
+  checkProjectAccess(){
+    API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        let levelUser = Storage.get('user').data.level;
+        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+          this.setState({
+            access_project_admin: true,
+          })
+        }
+        else{
+          this.setState({
+            access_project_admin: false,
+          })
+        }
+      }
+    })
+  }
+  updateStatus (id, status) {
+    let form = {
+      id: id,
+      status: status,
+    };
+    API.put(`${API_SERVER}v2/webinar/status`, form).then(async res => {
+      if(res.data.error) 
+        toast.warning("Error fetch API")
+      else
+        status == 3 &&
+        toast.success('Webinar selesai')
+    })
   }
   endMeeting(){
     // BBB END
@@ -110,6 +264,7 @@ export default class WebinarLive extends Component {
         if (result.returncode == 'SUCCESS'){
             this.closeModalEnd()
             toast.success('Mengakhiri webinar untuk semua peserta.')
+            this.updateStatus(this.state.webinar.id, 3)
         }
     })
   }
@@ -117,7 +272,7 @@ export default class WebinarLive extends Component {
 	render() {
     const { webinar, user } = this.state;
     let levelUser = Storage.get('user').data.level;
-    let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+    // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
     let projectId = this.state.projectId;
     const Lampiran = ({items}) => (
       <div className="row">
@@ -181,7 +336,7 @@ export default class WebinarLive extends Component {
                 </div>
                 <div className="col-sm-6 text-right">
                   {
-                      user.user_id == this.state.moderatorId ?
+                      user.user_id == this.state.moderatorId && this.state.status == 2 ?
                       <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>Akhiri Webinar
                       </button>
@@ -196,13 +351,21 @@ export default class WebinarLive extends Component {
               <div style={{marginTop: '10px'}}>
                 <div className="row">
                   <div className="col-sm-12">
-                    <Iframe url={this.state.joinUrl}
-                      width="100%"
-                      height="600px"
-                      display="initial"
-                      frameBorder="0"
-                      allow="fullscreen *;geolocation *; microphone *; camera *"
-                      position="relative"/>
+                    {
+                      this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+                      <Iframe url={this.state.joinUrl}
+                        width="100%"
+                        height="600px"
+                        display="initial"
+                        frameBorder="0"
+                        allow="fullscreen *;geolocation *; microphone *; camera *"
+                        position="relative"/>
+                      :
+                      this.state.status == 3 ?
+                      <h3>Webinar telah berakhir</h3>
+                      :
+                    <h3>Webinar berlangsung pada tanggal {this.state.tanggal} jam {this.state.jamMulai} sampai {this.state.jamSelesai}</h3>
+                    }
 
                     <div className="dekripsi" style={{marginTop: '20px'}}>
                       <h4>Deskripsi</h4>
@@ -216,30 +379,32 @@ export default class WebinarLive extends Component {
             </Card.Body>
           </Card>
         </div>
-
-        <div className="col-sm-6">
-          <Card>
-            <Card.Body>
-              <div className="row">
-                <div className="col-sm-6">
-                  <h3 className="f-w-900 f-18 fc-blue">
-                    Files
-                  </h3>
+        {
+          this.state.projectId != 0 &&
+          <div className="col-sm-6">
+            <Card>
+              <Card.Body>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      Files
+                    </h3>
+                  </div>
+                  <div className="col-sm-6 text-right">
+                    <p className="m-b-0">
+                      { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
+                    </p>
+                  </div>
                 </div>
-                <div className="col-sm-6 text-right">
-                  <p className="m-b-0">
-                    { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
-                  </p>
+                <div style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
+                  {
+                    this.state.projectId && Storage.get('user').data.user_id ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
+                  :null}
                 </div>
-              </div>
-              <div style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
-                {
-                  this.state.projectId ? <TableFiles access_project_admin={access_project_admin} projectId={this.state.projectId}/>
-                :null}
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
+              </Card.Body>
+            </Card>
+          </div>
+        }
 
         <div className="col-sm-6">
           <Card>
@@ -273,7 +438,7 @@ export default class WebinarLive extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
+            <div>Anda yakin akan mengakhiri webinar untuk semua peserta ?</div>
           </Modal.Body>
           <Modal.Footer>
                       <button
@@ -287,7 +452,7 @@ export default class WebinarLive extends Component {
                         onClick={this.endMeeting.bind(this)}
                       >
                         <i className="fa fa-trash"></i>
-                        Akhiri Meeting
+                        Akhiri Webinar
                       </button>
           </Modal.Footer>
         </Modal>

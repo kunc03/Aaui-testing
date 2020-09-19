@@ -117,6 +117,7 @@ export default class WebinarEdit extends Component {
             pembicaraId: [res.data.result.pembicara.user_id],
             moderatorId: [res.data.result.moderator.user_id],
             ownerId: [res.data.result.owner.user_id],
+            status: res.data.result.status
         })
     })
   }
@@ -164,7 +165,7 @@ export default class WebinarEdit extends Component {
       sekretarisId: this.state.sekretarisId[0],
       pembicaraId: this.state.pembicaraId[0],
       ownerId: this.state.ownerId[0],
-      projectId: this.state.projectId,
+      projectId: this.state.projectId
     }
 
 
