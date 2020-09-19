@@ -291,7 +291,6 @@ uploadFile = e => {
   fetchData() {
     this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
-      console.log(res, 'ini ini inini')
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
  

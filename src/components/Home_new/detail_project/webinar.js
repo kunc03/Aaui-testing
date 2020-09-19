@@ -151,7 +151,7 @@ class WebinarTable extends Component {
                                         item.status == 2 && 
                                         <Link to={`/webinar/riwayat/${item.project_id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
-                                    <Link to={`/webinar/live/${item.project_id}`} className="btn btn-v2 btn-warning">Masuk</Link>
+                                    <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-warning">Masuk</Link>
                                 </td>
                             </tr>
                             )
