@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../Home_new/detail_project/files';
+import TableMeetings from '../../Home_new/detail_project/meeting';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -17,6 +18,8 @@ export default class WebinarAdd extends Component {
 	state = {
     webinarId: this.props.match.params.webinarId,
     isSending: false,
+    role:[],
+    access_project_admin: false,
 
     pembicara: [
       {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
@@ -152,11 +155,29 @@ export default class WebinarAdd extends Component {
     })
   }
 
+  checkProjectAccess(projectId){
+    API.get(`${API_SERVER}v1/project-access/${projectId}/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        let levelUser = Storage.get('user').data.level;
+        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+          this.setState({
+            access_project_admin: true,
+          })
+        }
+        else{
+          this.setState({
+            access_project_admin: false,
+          })
+        }
+      }
+    })
+  }
   componentDidMount() {
     this.fetchData();
   }
 
   fetchData() {
+    let userId = Storage.get('user').data.user_id
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if(res.data.error) toast.warning("Gagal fetch API");
       const tanggal = res.data.result.tanggal ? new Date(res.data.result.tanggal) : '';
@@ -177,6 +198,7 @@ export default class WebinarAdd extends Component {
         tamu: res.data.result.tamu,
         status: res.data.result.status
       })
+      this.checkProjectAccess(this.state.projectId)
     })
 
     console.log(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`);
@@ -293,7 +315,7 @@ export default class WebinarAdd extends Component {
 
 	render() {
 
-    console.log('STATE: ', this.state)
+    const role = this.state.role
 
     const TabelPembicara = ({items}) => (
       <table className="table table-striped mb-4">
@@ -419,7 +441,7 @@ export default class WebinarAdd extends Component {
               </div>
               <div style={{marginTop: '10px'}}>
                 <div className="row">
-                  <div className="col-sm-8">
+                  <div className="col-sm-12">
                     <div className="form-group">
                       <label className="bold">Gambar Webinar</label>
                       <div className="row">
@@ -507,13 +529,23 @@ export default class WebinarAdd extends Component {
                         <label className="bold">Folder & File</label>
                         <div className="col-sm-12">
                           <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
-                            <TableFiles access_project_admin={true} projectId={this.props.match.params.projectId}/>
+                            <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} webinarId={this.state.webinarId}/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="form-group row">
+                      <div className="col-sm-12">
+                        <label className="bold">Ruang Meeting</label>
+                        <div className="col-sm-12">
+                          <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
+                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                       <div className="col-sm-8">
                         <label className="bold">Ruangan Webinar</label>
                         <div className="jumbotron text-center">
@@ -533,7 +565,7 @@ export default class WebinarAdd extends Component {
                           <Link to="" className="btn btn-sm btn-warning btn-v2">Masuk</Link>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="form-group">
                       <button onClick={this.updateWebinar} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>

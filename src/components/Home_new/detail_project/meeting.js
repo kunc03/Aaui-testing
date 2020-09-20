@@ -32,6 +32,7 @@ class MeetingTable extends Component {
       companyId: localStorage.getItem('companyID'),
       meeting: [],
       isModalConfirmation: this.props.informationId ? true : false,
+      webinar_id: this.props.webinarId ? this.props.webinarId : 0,
       infoClass: [],
       infoParticipant: [],
       countHadir: 0,
@@ -192,8 +193,11 @@ class MeetingTable extends Component {
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
       API.get(
-        this.props.projectId != 0 ?
+        this.props.projectId != 0 && this.props.webinarId == 0 ?
         `${API_SERVER}v1/liveclass/project/${this.props.access_project_admin ? 'admin' : levelUser}/${userId}/${this.props.projectId}`
+        :
+        this.props.webinarId != 0 && this.props.projectId != 0 ?
+        `${API_SERVER}v1/liveclass/webinar/${this.props.access_project_admin ? 'admin' : levelUser}/${userId}/${this.props.webinarId}`
         :
         `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
         ).then(res => {
@@ -338,6 +342,7 @@ class MeetingTable extends Component {
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
         folder_id: this.state.valueFolder,
+        webinar_id: this.state.webinar_id,
         is_private: isPrivate,
         is_required_confirmation: isRequiredConfirmation,
         is_scheduled: isScheduled,
@@ -426,6 +431,7 @@ class MeetingTable extends Component {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
         folder_id: this.state.valueFolder,
+        webinar_id: this.state.webinar_id,
         speaker: this.state.speaker,
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
@@ -778,25 +784,24 @@ class MeetingTable extends Component {
                           </Form.Text>
                         </Form.Group>
 
-                        
-                        <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Folder Project
-                          </Form.Label>
-                          <MultiSelect
-                            id="folder"
-                            options={this.state.optionsFolder}
-                            value={this.state.valueFolder}
-                            onChange={valueFolder => this.setState({ valueFolder })}
-                            mode="single"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Pilih Folder Project"
-                          />
-                          <Form.Text className="text-muted">
-                            Seluruh MOM akan dikumpulkan dalam 1 folder project pada menu Files.
-                          </Form.Text>
-                        </Form.Group>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Folder Project
+                            </Form.Label>
+                            <MultiSelect
+                              id="folder"
+                              options={this.state.optionsFolder}
+                              value={this.state.valueFolder}
+                              onChange={valueFolder => this.setState({ valueFolder })}
+                              mode="single"
+                              enableSearch={true}
+                              resetable={true}
+                              valuePlaceholder="Pilih Folder Project"
+                            />
+                            <Form.Text className="text-muted">
+                              Seluruh MOM akan dikumpulkan dalam 1 folder project pada menu Files.
+                            </Form.Text>
+                          </Form.Group>
 
                         {/* <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">

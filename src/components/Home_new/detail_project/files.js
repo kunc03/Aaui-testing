@@ -17,6 +17,7 @@ class FilesTable extends Component {
 
     this.state = {
       users: [],
+      role:[],
       dataUser: [],
       selectFolder:false,
       classRooms:[],
@@ -29,16 +30,69 @@ class FilesTable extends Component {
       prevFolderId:0,
       folderName : '',
       modalNewFolder : false,
+      modalEditFolder: false,
       modalUpload: false,
       isUploading: false,
       isLoading: false,
       attachmentId:[],
-      dataRecordings: []
+      dataRecordings: [],
+      editProjectName: '',
+      editProjectId: '',
+      modalDelete: false,
+      deleteProjectName: '',
+      deleteProjectId: '',
+
+      modalDeleteFile: false,
+      deleteFileName: '',
+      deleteFileId: '',
+
+      //access role webinar
+      aSekretaris: true,
+      aModerator: true,
+      aPembicara: true,
+      aOwner: true,
+      aPeserta: true,
     };
   }
 
+  handleCheck (role) {
+    if (role == 'sekretaris'){
+      this.setState({ aSekretaris: !this.state.aSekretaris }); 
+    }
+    else if (role == 'moderator'){
+      this.setState({ aModerator: !this.state.aModerator }); 
+    }
+    else if (role == 'pembicara'){
+      this.setState({ aPembicara: !this.state.aPembicara }); 
+    }
+    else if (role == 'owner'){
+      this.setState({ aOwner: !this.state.aOwner }); 
+    }
+    else if (role == 'peserta'){
+      this.setState({ aPeserta: !this.state.aPeserta }); 
+    }
+  }
   closeModalAdd = e => {
-    this.setState({modalNewFolder:false})
+    this.setState({
+      folderName: '',
+      modalNewFolder:false,
+      aSekretaris: true,
+      aModerator: true,
+      aPembicara: true,
+      aOwner: true,
+      aPeserta: true,
+    })
+  }
+  closeModalEdit = e => {
+    this.setState({
+      editProjectName: '',
+      modalEditFolder:false,
+      aSekretaris: true,
+      aModerator: true,
+      aPembicara: true,
+      aOwner: true,
+      aPeserta: true,
+    })
   }
   closeModalUpload = e => {
     this.setState({modalUpload:false})
@@ -80,7 +134,12 @@ saveFolder = e => {
   const formData = {
     name: this.state.folderName,
     company: this.state.companyId,
-    mother: this.state.folderId
+    mother: this.state.folderId,
+    aSekretaris: this.state.aSekretaris ? 1 : 0,
+    aModerator: this.state.aModerator ? 1 : 0,
+    aPembicara: this.state.aPembicara ? 1 : 0,
+    aOwner: this.state.aOwner ? 1 : 0,
+    aPeserta: this.state.aPeserta ? 1 : 0
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -89,15 +148,82 @@ saveFolder = e => {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)
       } else {
-        this.setState({modalNewFolder:false})
+        this.closeModalAdd()
         this.fetchFolder(this.state.folderId);
         toast.success('Berhasil menambah folder baru')
       }
     }
   })
 }
-  fetchFolder(mother){
-    API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`).then(res => {
+openModalEdit(id){
+  API.get(`${API_SERVER}v1/project-read/${id}`).then(res => {
+    if (res.status === 200) {
+      this.setState({
+        editProjectId: id,
+        editProjectName: res.data.result.name,
+        modalEditFolder: true,
+        aSekretaris: res.data.result.sekretaris,
+        aModerator: res.data.result.moderator,
+        aPembicara: res.data.result.pembicara,
+        aOwner: res.data.result.owner,
+        aPeserta: res.data.result.peserta,
+      })
+    }
+  })
+}
+
+editFolder(){
+  let form = {
+    name: this.state.editProjectName,
+    aSekretaris: this.state.aSekretaris ? 1 : 0,
+    aModerator: this.state.aModerator ? 1 : 0,
+    aPembicara: this.state.aPembicara ? 1 : 0,
+    aOwner: this.state.aOwner ? 1 : 0,
+    aPeserta: this.state.aPeserta ? 1 : 0
+  }
+  API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
+    if(res.status === 200) {
+      if(res.data.error) {
+        toast.error(`Gagal mengubah project ${this.state.editProjectName}`)
+      } else {
+        toast.success(`Berhasil mengubah project ${this.state.editProjectName}`)
+        this.setState({editProjectId:'', editProjectName: ''})
+        this.fetchFolder(this.state.folderId)
+        this.closeModalEdit()
+      }
+    }
+  })
+}
+  async fetchFolder(mother){
+    let userId = Storage.get('user').data.user_id;
+    let form = {}
+    if (this.props.webinarId)
+    {
+      await API.get(`${API_SERVER}v2/webinar/one/${this.props.webinarId}`).then(res => {
+        if(res.data.error) toast.warning("Gagal fetch API");
+        form = {
+          aSekretaris: userId == res.data.result.sekretaris.user_id ? 1 : 0,
+          aModerator: userId == res.data.result.moderator.user_id ? 1 : 0,
+          aPembicara: userId == res.data.result.pembicara.user_id ? 1 : 0,
+          aOwner: userId == res.data.result.owner.user_id ? 1 : 0,
+          aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length ? 1 : 0,
+        }
+      })
+    }
+    else
+    {
+      form = {
+        aSekretaris: 1,
+        aModerator: 1,
+        aPembicara: 1,
+        aOwner: 1,
+        aPeserta: 1
+      }
+    }
+    this.setState({role: form})
+    console.log('ALVIN', this.state.role)
+    
+    API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
       }
@@ -208,6 +334,53 @@ fetchData(){
   })
 }
 
+dialogDelete(id, name){
+  this.setState({
+    deleteProjectId: id,
+    deleteProjectName: name,
+    modalDelete: true
+  })
+}
+dialogDeleteFile(id, name){
+  this.setState({
+    deleteFileId: id,
+    deleteFileName: name,
+    modalDeleteFile: true
+  })
+}
+deleteProject(){
+  API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
+    if(res.status === 200) {
+      if(res.data.error) {
+        toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+      } else {
+        toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+        this.setState({deleteProjectId:'', deleteProjectName: '',modalDelete: false})
+        this.fetchFolder(this.state.folderId);
+      }
+    }
+  })
+}
+deleteFile(){
+  API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
+    if(res.status === 200) {
+      if(res.data.error) {
+        toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+      } else {
+        toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+        this.setState({deleteFileId:'', deleteFileName: '',modalDeleteFile: false})
+        this.fetchFile(this.state.folderId);
+      }
+    }
+  })
+}
+closeModalDelete = e => {
+  this.setState({modalDelete:false, deleteProjectName:'', deleteProjectId:'', alert:''})
+}
+closeModalDeleteFile = e => {
+  this.setState({modalDeleteFile:false, deleteFileName:'', deleteFileId:'', alert:''})
+}
+
 componentDidMount(){
   this.fetchData()
 }
@@ -290,14 +463,21 @@ componentDidMount(){
                               </tr>
                         }
                         {
-                        bodyTabble.map(item =>
-                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                        bodyTabble.map(item =>{
+                          if ((item.sekretaris == 1 && item.sekretaris == this.state.role.aSekretaris) ||
+                          (item.moderator == 1 && item.moderator == this.state.role.aModerator) ||
+                          (item.pembicara == 1 && item.pembicara == this.state.role.aPembicara) ||
+                          (item.owner == 1 && item.owner == this.state.role.aOwner) ||
+                          (item.peserta == 1 && item.peserta == this.state.role.aPeserta)){
+                            return(<tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" style={{cursor:'pointer'}} onClick={this.selectFolder.bind(this, item.id, item.name)}>
                                     <img src='assets/images/component/folder.png' width="32"/> &nbsp;{item.name}</td>
                                 {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                                 {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                                 {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                    {
+                                      access_project_admin ?
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                       <i
@@ -305,22 +485,28 @@ componentDidMount(){
                                         style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
                                       />
                                     </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                                      <button
-                                        style={{cursor:'pointer'}}
-                                        class="dropdown-item"
-                                        type="button"
-                                        onClick={()=>toast.warning('Coming Soon')}
-                                      >
-                                          Ubah
-                                      </button>
-                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}>Hapus</button>
-                                    </div>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                        <button
+                                          style={{cursor:'pointer'}}
+                                          class="dropdown-item"
+                                          type="button"
+                                          onClick={this.openModalEdit.bind(this, item.id)}
+                                        >
+                                            Ubah
+                                        </button>
+                                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.name)}>Hapus</button>
+                                      </div>
                                   </span>
+                                      :
+                                      null
+                                    }
                                 </td>
-                            </tr>
-                            
-                        )
+                            </tr>)
+                            }
+                            else{
+                              return(null)
+                            }
+                          })
                         }
                         {
                         this.state.files.map(item =>
@@ -348,7 +534,12 @@ componentDidMount(){
                                       >
                                           Download
                                       </button>
-                                      {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}>Hapus</button> */}
+                                      {
+                                        access_project_admin ?
+                                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}>Hapus</button>
+                                        :
+                                        null
+                                      }
                                     </div>
                                   </span>
                                 </td>
@@ -479,6 +670,64 @@ componentDidMount(){
                 </table>
             </div>
         <Modal
+          show={this.state.modalDeleteFile}
+          onHide={this.closeModalDeleteFile}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalDeleteFile.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.deleteFile.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Hapus
+                      </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalDelete}
+          onHide={this.closeModalDelete}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan menghapus project <b>{this.state.deleteProjectName}</b> ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalDelete.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.deleteProject.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Hapus
+                      </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={this.state.modalNewFolder}
           onHide={this.closeModalAdd}
           centered
@@ -499,13 +748,49 @@ componentDidMount(){
                                 name="folderName"
                                 value={this.state.folderName}
                                 className="form-control"
-                                placeholder="Nama Folder Project"
+                                placeholder="Nama Folder"
                                 onChange={this.onChangeInput}
                                 required
                                 />
                             </div>
                         </Col>
                     </Row>
+                    {
+                      this.state.folderId != 0 ?
+                      <div>
+                      <Row>
+                          <Col>
+                              <p>Hak akses role pada webinar</p>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aSekretaris} checked={this.state.aSekretaris} onChange={this.handleCheck.bind(this, 'sekretaris')} />
+                            <label>&nbsp; Sekretaris</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aModerator} checked={this.state.aModerator} onChange={this.handleCheck.bind(this, 'moderator')} />
+                            <label>&nbsp; Moderator</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aPembicara} checked={this.state.aPembicara} onChange={this.handleCheck.bind(this, 'pembicara')} />
+                            <label>&nbsp; Pembicara</label>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aOwner} checked={this.state.aOwner} onChange={this.handleCheck.bind(this, 'owner')} />
+                            <label>&nbsp; Owner</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aPeserta} checked={this.state.aPeserta} onChange={this.handleCheck.bind(this, 'peserta')} />
+                            <label>&nbsp; Peserta</label>
+                          </Col>
+                      </Row>
+                      </div>
+                      :
+                      null
+                    }
                   </Card.Body>
                   <Modal.Footer>
                       <button
@@ -517,6 +802,89 @@ componentDidMount(){
                       <button
                         className="btn btn-icademy-primary"
                         onClick={this.saveFolder.bind(this)}
+                      >
+                        <i className="fa fa-save"></i>
+                        Simpan
+                      </button>
+                  </Modal.Footer>
+                </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalEditFolder}
+          onHide={this.closeModalEdit}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Ubah Folder
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                    <Row>
+                        <Col>
+                            <div className="input-group mb-4">
+                                <input
+                                type="text"
+                                name="editProjectName"
+                                value={this.state.editProjectName}
+                                className="form-control"
+                                placeholder="Nama Folder"
+                                onChange={this.onChangeInput}
+                                required
+                                />
+                            </div>
+                        </Col>
+                    </Row>
+                    {
+                      this.state.folderId != 0 ?
+                      <div>
+                      <Row>
+                          <Col>
+                              <p>Hak akses role pada webinar</p>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aSekretaris} checked={this.state.aSekretaris} onChange={this.handleCheck.bind(this, 'sekretaris')} />
+                            <label>&nbsp; Sekretaris</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aModerator} checked={this.state.aModerator} onChange={this.handleCheck.bind(this, 'moderator')} />
+                            <label>&nbsp; Moderator</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aPembicara} checked={this.state.aPembicara} onChange={this.handleCheck.bind(this, 'pembicara')} />
+                            <label>&nbsp; Pembicara</label>
+                          </Col>
+                      </Row>
+                      <Row>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aOwner} checked={this.state.aOwner} onChange={this.handleCheck.bind(this, 'owner')} />
+                            <label>&nbsp; Owner</label>
+                          </Col>
+                          <Col xs='auto'>
+                            <input type="checkbox" value={this.state.aPeserta} checked={this.state.aPeserta} onChange={this.handleCheck.bind(this, 'peserta')} />
+                            <label>&nbsp; Peserta</label>
+                          </Col>
+                      </Row>
+                      </div>
+                      :
+                      null
+                    }
+                  </Card.Body>
+                  <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalEdit.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary"
+                        onClick={this.editFolder.bind(this)}
                       >
                         <i className="fa fa-save"></i>
                         Simpan
