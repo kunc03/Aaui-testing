@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../Home_new/detail_project/files';
 import TableMeetings from '../../Home_new/detail_project/meeting';
+import WebinarKuesionerAdd from './kuesioneradd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -54,7 +55,10 @@ export default class WebinarAdd extends Component {
     allChecked: false,
     allCheckedTamu: false,
     isModalPembicara: false,
-    isModalPeserta: false
+    isModalPeserta: false,
+
+    //kuesioner
+    modalKuesioner: false,
   }
 
   addTamu = e => {
@@ -94,7 +98,8 @@ export default class WebinarAdd extends Component {
   handleModal = () => {
     this.setState({
       isModalPembicara: false,
-      isModalPeserta: false
+      isModalPeserta: false,
+      modalKuesioner: false,
     });
   }
 
@@ -194,6 +199,7 @@ export default class WebinarAdd extends Component {
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         pembicara: res.data.result.pembicara.name,
+        sekretarisId: res.data.result.sekretaris.user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
         status: res.data.result.status
@@ -316,6 +322,7 @@ export default class WebinarAdd extends Component {
 	render() {
 
     const role = this.state.role
+    let levelUser = Storage.get('user').data.level;
 
     const TabelPembicara = ({items}) => (
       <table className="table table-striped mb-4">
@@ -430,10 +437,16 @@ export default class WebinarAdd extends Component {
                   	}}>
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link>
-                    Data Webinar
+                    Detail Webinar
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
+                  <div className="form-group">
+                    {
+                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Buat Kuesioner</button>
+                    }
+                  </div>
                   <p className="m-b-0">
                     {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
                   </p>
@@ -712,6 +725,22 @@ export default class WebinarAdd extends Component {
               >
                 Tutup
               </button> */}
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalKuesioner}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                Kuesioner
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div style={{ marginTop: "20px" }} className="form-group">
+                <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
             </Modal.Body>
           </Modal>
         </div>

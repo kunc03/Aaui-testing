@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import { toast } from "react-toastify";
 
 export default class WebinarKuesionerAdd extends Component {
 
 	state = {
+    update: false,
+    webinarId: this.props.webinarId ? this.props.webinarId : '',
     pertanyaan: [
-      {
-        tanya: 'Bagaimana pendapat Anda tentang pembicara ?', 
-        a: 'Sangat Bagus',
-        b: 'Bagus',
-        c: 'Cukup Bagus',
-      },
+      // {
+      //   tanya: 'Bagaimana pendapat Anda tentang pembicara ?', 
+      //   a: 'Sangat Baik',
+      //   b: 'Cukup Baik',
+      //   c: 'Baik',
+      //   d: 'Tidak Baik',
+      //   e: 'Sangat Tidak Baik'
+      // },
     ],
   }
 
@@ -20,7 +26,9 @@ export default class WebinarKuesionerAdd extends Component {
       tanya: '', 
       a: '',
       b: '',
-      c: ''
+      c: '',
+      d: '',
+      e: ''
     };
     this.setState({
       pertanyaan: [...this.state.pertanyaan, baruPertanyaan]
@@ -42,6 +50,63 @@ export default class WebinarKuesionerAdd extends Component {
     })
   }
 
+  saveKuesioner(){
+    let form = {
+      id: this.state.webinarId,
+      kuesioner: this.state.pertanyaan,
+    };
+    
+    API.post(`${API_SERVER}v2/kuesioner`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error post data')
+        } else {
+          toast.success(`Menyimpan kuesioner`)
+          this.props.closeModal()
+        }
+      }
+    })
+  }
+  updateKuesioner(){
+    let form = {
+      id: this.state.webinarId,
+      kuesioner: this.state.pertanyaan,
+    };
+    
+    API.put(`${API_SERVER}v2/kuesioner`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error post data')
+        } else {
+          toast.success(`Menyimpan kuesioner`)
+          this.props.closeModal()
+        }
+      }
+    })
+  }
+  
+  fetchData(){
+    API.get(`${API_SERVER}v2/kuesioner/${this.state.webinarId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({pertanyaan: res.data.result})
+          if (this.state.pertanyaan.length <= 0){
+            this.setState({update: false})
+          }
+          else{
+            this.setState({update: true})
+          }
+        }
+      }
+    })
+  }
+  
+  componentDidMount(){
+    this.fetchData()
+  }
+
 	render() {
 
     const DaftarPertanyaan = ({items}) => (
@@ -56,7 +121,7 @@ export default class WebinarKuesionerAdd extends Component {
               <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
 
               <div className="jawaban mt-3 ml-4">
-                <label>Tambahkan Jawaban Kuesioner</label>
+                <label>Tambahkan Jawaban</label>
                 <tr>
                   <td>
                     A
@@ -81,6 +146,22 @@ export default class WebinarKuesionerAdd extends Component {
                     <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
                   </td>
                 </tr>
+                <tr>
+                  <td>
+                    D
+                  </td>
+                  <td>
+                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    E
+                  </td>
+                  <td>
+                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
+                  </td>
+                </tr>
               </div>
             </div>
           ))
@@ -91,38 +172,15 @@ export default class WebinarKuesionerAdd extends Component {
 		return (
 			<div className="row">                     
         <div className="col-sm-12">
-          <Card>
-            <Card.Body>
-              <div className="row">
-                <div className="col-sm-6">
-                  <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to="/webinar" className="btn btn-sm mr-4" style={{
-                  		border: '1px solid #e9e9e9',
-                  		borderRadius: '50px',
-                  	}}>
-                  		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
-                		</Link>
-                    Buat Kuesioner
-                  </h3>
-                </div>
-                <div className="col-sm-6 text-right">
-                  <p className="m-b-0">
-                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                  </p>
-                </div>
-              </div>
-
               <div style={{marginTop: '10px'}}>
-                <div className="row">
+                {/* <div className="row">
                   <div className="col-sm-12">
-                    
                     <button className="btn btn-v2 btn-primary"><i className="fa fa-upload"></i> Import from excel</button>
-                
                   </div>
-                </div>
+                </div> */}
 
                 <div className="row mt-4">
-                  <div className="col-sm-8">
+                  <div className="col-sm-12">
 
                     {
                       this.state.pertanyaan.map((item,i) => (
@@ -159,21 +217,41 @@ export default class WebinarKuesionerAdd extends Component {
                                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                D
+                              </td>
+                              <td>
+                                <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                E
+                              </td>
+                              <td>
+                                <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
+                              </td>
+                            </tr>
                           </div>
                         </div>
                       ))
                     }
 
-                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-block btn-primary"><i className="fa fa-plus"></i> Tambah Pertanyaan</button>                    
-                    
-                    <button className="btn btn-v2 btn-block btn-success"><i className="fa fa-save"></i> Simpan Semua Pertanyaan</button>                    
-
+                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>                    
+                  
+                    <button
+                      type="button"
+                      className="btn btn-icademy-primary m-2 float-right"
+                      onClick={this.state.update ? this.updateKuesioner.bind(this) : this.saveKuesioner.bind(this)}
+                    >
+                      <i className="fa fa-save"></i>
+                      Simpan
+                    </button>
                   </div>
                 </div>
                 
               </div>
-            </Card.Body>
-          </Card>
 
         </div>
       </div>

@@ -143,7 +143,7 @@ saveFolder = e => {
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
-    console.log('ALVIN', res)
+    // console.log('ALVIN', res)
     if(res.status === 200) {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)
@@ -221,7 +221,7 @@ editFolder(){
       }
     }
     this.setState({role: form})
-    console.log('ALVIN', this.state.role)
+    console.log('ROLE', this.state.role)
     
     API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
       if (res.status === 200) {

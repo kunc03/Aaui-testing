@@ -25,10 +25,17 @@ export default class WebinarLive extends Component {
     user: [],
     projectId: '',
     modalEnd: false,
+    modalKuesioner: false,
+    modalKuesionerPeserta: false,
+    waitingKuesioner: false,
+    startKuesioner: false,
     isWebinarStartDate: false,
     access_project_admin: false,
     pertanyaan: '',
     qna: [],
+    peserta: [],
+    tamu: [],
+    pertanyaan: [],
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -43,6 +50,15 @@ export default class WebinarLive extends Component {
   }
   closeModalEnd = e => {
     this.setState({ modalEnd: false });
+  }
+  closeModalKuesioner = e => {
+    this.setState({ modalKuesioner: false });
+  }
+  closeModalKuesionerPeserta = e => {
+    this.setState({ modalKuesionerPeserta: false });
+  }
+
+  handleJawab = e => {
   }
 
   postLog(webinar_id, peserta_id, type, action){
@@ -88,6 +104,18 @@ export default class WebinarLive extends Component {
         this.setState({qna: res.data.result})
     })
   }
+
+  fetchKuesioner(){
+    API.get(`${API_SERVER}v2/kuesioner-peserta/${this.state.webinarId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({pertanyaan: res.data.result})
+        }
+      }
+    })
+  }
   fetchWebinar(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
@@ -108,7 +136,9 @@ export default class WebinarLive extends Component {
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
-              jamSelesai: res.data.result.jam_selesai
+              jamSelesai: res.data.result.jam_selesai,
+              peserta: res.data.result.peserta,
+              tamu: res.data.result.tamu
             })
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
@@ -195,7 +225,9 @@ export default class WebinarLive extends Component {
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
-              jamSelesai: res.data.result.jam_selesai
+              jamSelesai: res.data.result.jam_selesai,
+              peserta: res.data.result.peserta,
+              tamu: res.data.result.tamu
             })
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
@@ -264,7 +296,6 @@ export default class WebinarLive extends Component {
   }
   componentDidMount(){
     socket.on("broadcast", data => {
-      console.log(this.state.fileChat, 'socket on')
       if(data.webinar_id == this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher){
           this.fetchWebinarPublic()
@@ -275,6 +306,12 @@ export default class WebinarLive extends Component {
         this.setState({ qna: [data, ...this.state.qna] })
       }
     });
+    socket.on("broadcast", data => {
+      if(data.socketAction == 'sendKuesioner') {
+        this.setState({startKuesioner: true, modalKuesionerPeserta: true})
+        this.fetchKuesioner()
+      }
+    });
     if (this.props.webinarId && this.props.voucher){
       this.fetchWebinarPublic()
     }
@@ -283,6 +320,7 @@ export default class WebinarLive extends Component {
     }
     this.fetchQNA()
     this.checkProjectAccess()
+    console.log('ALVIN S', this.state)
   }
   checkProjectAccess(){
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
@@ -327,6 +365,14 @@ export default class WebinarLive extends Component {
             this.updateStatus(this.state.webinar.id, 3)
         }
     })
+  }
+
+  sendKuesioner(){
+    socket.emit('send', {
+      socketAction: 'sendKuesioner',
+    })
+    toast.success('Kuesioner dikirim ke peserta');
+    this.setState({waitingKuesioner: true})
   }
   
 	render() {
@@ -399,6 +445,22 @@ export default class WebinarLive extends Component {
                       user.user_id == this.state.moderatorId && this.state.status == 2 ?
                       <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>Akhiri Webinar
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                      user.user_id == this.state.sekretarisId ?
+                      <button onClick={()=> this.setState({modalKuesioner: true})} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Kuesioner
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                      (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner ?
+                      <button onClick={()=> this.setState({modalKuesionerPeserta: true})} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Kuesioner
                       </button>
                       :
                       null
@@ -543,6 +605,85 @@ export default class WebinarLive extends Component {
                         <i className="fa fa-trash"></i>
                         Akhiri Webinar
                       </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalKuesioner}
+          onHide={this.closeModalKuesioner}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Kuesioner
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {
+              this.state.waitingKuesioner &&
+              <div>
+                <h4>Menunggu...</h4>
+                <div>Jumlah peserta telah menjawab kuesioner <b>16 / 30</b></div>
+              </div>
+            }
+            {
+              this.state.waitingKuesioner == false &&
+              <div>Kirim kuesioner ke semua peserta sekarang ?</div>
+            }
+          </Modal.Body>
+          <Modal.Footer>
+            {
+              this.state.waitingKuesioner &&
+              <button
+                className="btn btn-icademy-warning"
+              >
+                <i className="fa fa-gift"></i>
+                Acak Doorprize
+              </button>
+            }
+            {
+              this.state.waitingKuesioner == false &&
+              <button
+                className="btn btn-icademy-primary"
+                onClick={this.sendKuesioner.bind(this)}
+              >
+                <i className="fa fa-paper-plane"></i>
+                Kirim Kuesioner
+              </button>
+            }
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalKuesionerPeserta && (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1)}
+          onHide={this.closeModalKuesionerPeserta}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Jawab Kuesioner
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {
+              this.state.pertanyaan.map((item) => (
+                <div className="mb-3">
+                  <p className="f-w-900 fc-blue" style={{lineHeight:'18px'}}>{item.tanya}</p>
+                  {item.a && <span style={{margin:'0px 10px'}}><input name='a' type="checkbox" value={item.a} /> <label for='a'> {item.a}</label></span>}
+                  {item.b && <span style={{margin:'0px 10px'}}><input name='b' type="checkbox" value={item.b} /> <label for='b'> {item.b}</label></span>}
+                  {item.c && <span style={{margin:'0px 10px'}}><input name='c' type="checkbox" value={item.c} /> <label for='c'> {item.c}</label></span>}
+                  {item.d && <span style={{margin:'0px 10px'}}><input name='d' type="checkbox" value={item.d} /> <label for='d'> {item.d}</label></span>}
+                  {item.e && <span style={{margin:'0px 10px'}}><input name='e' type="checkbox" value={item.e} /> <label for='e'> {item.e}</label></span>}
+                </div>
+              ))
+            }
+          </Modal.Body>
+          <Modal.Footer>
+              <button
+                className="btn btn-icademy-primary"
+              >
+                <i className="fa fa-paper-plane"></i>
+                Kirim Jawaban Kuesioner
+              </button>
           </Modal.Footer>
         </Modal>
       </div>
