@@ -16,6 +16,7 @@ export default class WebinarAdd extends Component {
 
 	state = {
     webinarId: this.props.match.params.webinarId,
+    isSending: false,
 
     pembicara: [
       {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
@@ -35,6 +36,8 @@ export default class WebinarAdd extends Component {
     projectId: '',
     dokumenId: '',
     peserta: [],
+    kirimEmailPeserta: [],
+    kirimEmailTamu: [],
 
     // form peserta
     userId: [],
@@ -46,6 +49,7 @@ export default class WebinarAdd extends Component {
     tamu: [],
 
     allChecked: false,
+    allCheckedTamu: false,
     isModalPembicara: false,
     isModalPeserta: false
   }
@@ -93,15 +97,59 @@ export default class WebinarAdd extends Component {
 
   handleAllCheck = e => {
     e.preventDefault();
-    let pem = this.state.pembicara;
+    let pem = this.state.peserta;
     pem.forEach(item => item.checked = e.target.checked);
-    this.setState({ pembicara: pem, allChecked: e.target.checked });
+    this.setState({ peserta: pem, allChecked: e.target.checked });
   }
 
   handleOneCheck = e => {
-    let pem = this.state.pembicara;
+    let pem = this.state.peserta;
     pem.forEach(item => { if (item.email === e.target.value) item.checked = e.target.checked });
-    this.setState({ pembicara: pem }); 
+    this.setState({ peserta: pem }); 
+  }
+  handleAllCheckTamu = e => {
+    e.preventDefault();
+    let pem = this.state.tamu;
+    pem.forEach(item => item.checked = e.target.checked);
+    this.setState({ tamu: pem, allCheckedTamu: e.target.checked });
+  }
+
+  handleOneCheckTamu = e => {
+    let pem = this.state.tamu;
+    pem.forEach(item => { if (item.email === e.target.value) item.checked = e.target.checked });
+    this.setState({ tamu: pem }); 
+  }
+
+  kirimEmail () {
+    this.setState({kirimEmailPeserta: [], kirimEmailTamu: [], isSending: true})
+    this.state.peserta.map(item=>{
+      if (item.checked){
+        this.state.kirimEmailPeserta.push(item.id)
+      }
+    })
+    this.state.tamu.map(item=>{
+      if (item.checked){
+        this.state.kirimEmailTamu.push(item.id)
+      }
+    })
+    let form = {
+      id: this.state.webinarId,
+      pengguna: this.state.kirimEmailPeserta,
+      tamu: this.state.kirimEmailTamu
+    };
+    
+    API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error sending email')
+          this.setState({isSending: false})
+        } else {
+          toast.success(`Berhasil mengirim email undangan`)
+          this.setState({isSending: false})
+          this.fetchData();
+        }
+      }
+    })
   }
 
   componentDidMount() {
@@ -269,7 +317,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.nama}</td>
                 <td>{item.email}</td>
                 <td>{item.telepon}</td>
-                <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
                   <i className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
@@ -302,7 +350,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
                   <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
@@ -317,7 +365,7 @@ export default class WebinarAdd extends Component {
       <table className="table table-striped mb-4">
         <thead>
           <tr>
-            <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
+            <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
             <th>Nama</th>
             <th>Email</th>
             <th>Telepon</th>
@@ -330,12 +378,12 @@ export default class WebinarAdd extends Component {
             items.map((item,i) => (
               <tr key={i}>
                 <td>
-                  <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
+                  <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheckTamu} />
                 </td>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status ? 'Sudah Dikirim' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
                   <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                 </td>
@@ -446,7 +494,7 @@ export default class WebinarAdd extends Component {
                         <div class="input-group">
                           <input value={this.state.peserta.length+this.state.tamu.length} type="text" className="form-control" />
                           <span className="input-group-btn">
-                            <button onClick={e => this.setState({ isModalPeserta: true })} className="btn btn-default">
+                            <button onClick={e => {this.setState({ isModalPeserta: true }); this.fetchData()}} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
                             </button>
                           </span>
@@ -612,9 +660,10 @@ export default class WebinarAdd extends Component {
               <button
                 type="button"
                 className="btn btn-icademy-warning m-2"
+                onClick={this.kirimEmail.bind(this)}
               >
                 <i className="fa fa-envelope"></i>
-                Kirim email
+                {this.state.isSending ? 'Mengirim Undangan...' : 'Kirim Email'}
               </button>
               <button
                 type="button"
