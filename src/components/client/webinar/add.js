@@ -445,7 +445,7 @@ export default class WebinarAdd extends Component {
                     <div className="form-group">
                       <label className="bold">Gambar Webinar</label>
                       <div className="row">
-                        <div className="col-sm-6">
+                        <div className="col-sm-3">
                           <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar } />
                         </div>
                         <div className="col-sm-2">

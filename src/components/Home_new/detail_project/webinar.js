@@ -142,6 +142,7 @@ class WebinarTable extends Component {
                         </tr>
                         :
                         bodyTabble.map((item, i) => {
+                            let levelUser = Storage.get('user').data.level;
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
@@ -159,23 +160,23 @@ class WebinarTable extends Component {
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
-                                        (this.state.userId == item.sekretaris.user_id && item.status != 3) && 
-                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-success mr-2">Data</Link>
+                                        ((this.state.userId == item.sekretaris.user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 
+                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
                                     }
                                     {
                                         (access_project_admin && item.status !=3) && 
-                                        <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-success mr-2">Ubah</Link>
+                                        <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
                                     }
                                     {
-                                        item.status == 3 && 
+                                        ((this.state.userId == item.sekretaris.user_id || this.state.userId == item.owner.user_id) && item.status == 3) && 
                                         <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
                                     {
-                                        item.status == 2 &&
-                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-warning">Masuk</Link>
+                                        ((levelUser != 'client' || this.state.userId == item.moderator.user_id || this.state.userId == item.sekretaris.user_id || this.state.userId == item.pembicara.user_id || this.state.userId == item.owner.user_id || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
+                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
                                     }
                                     {
-                                        item.status == 1 &&
+                                        (this.state.userId == item.moderator.user_id && item.status == 1) &&
                                         <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
                                     }
                                 </td>

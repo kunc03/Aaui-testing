@@ -8346,7 +8346,7 @@ a.btn-theme.active {
 /* Alternate buttons */
 .btn-primary {
   color: #fff;
-  background-color: #527AFF;
+  background-color: #0091ff;
   border-color: #527AFF;
 }
 .btn-primary:hover {
@@ -8388,8 +8388,8 @@ a.btn-theme.active {
 
 .btn-success {
   color: #fff;
-  background-color: #1de9b6;
-  border-color: #1de9b6;
+  background-color: #28a745;
+  border-color: #2c9343;
 }
 .btn-success:hover {
   color: #fff;
@@ -9282,7 +9282,6 @@ a.btn-theme.active {
     font-size: medium;
     /* -webkit-box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.05); */
     /* box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.05); */
-}
 }
 
 /* =======================   Pills ================== */

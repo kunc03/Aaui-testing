@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import { Card, InputGroup, FormControl,Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../../repository/api';
+import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../../repository/api';
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
 import TableFiles from '../../Home_new/detail_project/files';
 import Moment from 'moment-timezone';
+import io from 'socket.io-client';
 const bbb = require('bigbluebutton-js')
+
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect ganihhhhhhh");
+});
 
 export default class WebinarLive extends Component {
 
@@ -21,6 +27,8 @@ export default class WebinarLive extends Component {
     modalEnd: false,
     isWebinarStartDate: false,
     access_project_admin: false,
+    pertanyaan: '',
+    qna: [],
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -45,6 +53,41 @@ export default class WebinarLive extends Component {
       console.log('Log webinar posted')
     })
   }
+  sendQNA(){
+    if (this.state.pertanyaan.length < 10){
+      toast.warning('Pertanyaan minimal 10 karakter')
+    }
+    else{
+      let form = {
+        webinar_id: this.state.webinarId,
+        jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
+        peserta_id: this.state.user.user_id,
+        description: this.state.pertanyaan
+      }
+      API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Error mengirim pertanyaan')
+        else
+          toast.success('Mengirim pertanyaan')
+          this.setState({pertanyaan:''})
+          socket.emit('send', {
+            name: res.data.result.name,
+            webinar_id: res.data.result.webinar_id,
+            email: res.data.result.email,
+            description: res.data.result.description,
+            timestamp: new Date()
+          })
+      })
+    }
+  }
+  fetchQNA(){
+    API.get(`${API_SERVER}v2/webinar/qna/${this.state.webinarId}`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        this.setState({qna: res.data.result})
+    })
+  }
   fetchWebinar(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
@@ -59,6 +102,8 @@ export default class WebinarLive extends Component {
               webinar: res.data.result,
               pembicara: res.data.result.pembicara.name,
               moderatorId: res.data.result.moderator.user_id,
+              sekretarisId: res.data.result.sekretaris.user_id,
+              pembicaraId: res.data.result.pembicara.user_id,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
@@ -77,7 +122,7 @@ export default class WebinarLive extends Component {
 
             if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)){
               this.updateStatus(this.state.webinar.id, 2)
-              if (this.state.webinar.id == 1){
+              if (this.state.webinar.status == 1){
                 this.fetchWebinar()
               }
               // BBB JOIN START
@@ -144,6 +189,8 @@ export default class WebinarLive extends Component {
               webinar: res.data.result,
               pembicara: res.data.result.pembicara.name,
               moderatorId: res.data.result.moderator.user_id,
+              sekretarisId: res.data.result.sekretaris.user_id,
+              pembicaraId: res.data.result.pembicara.user_id,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
@@ -162,7 +209,7 @@ export default class WebinarLive extends Component {
 
             if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)){
               this.updateStatus(this.state.webinar.id, 2)
-              if (this.state.webinar.id == 1){
+              if (this.state.webinar.status == 1){
                 this.fetchWebinarPublic()
               }
               // BBB JOIN START
@@ -216,12 +263,25 @@ export default class WebinarLive extends Component {
     })
   }
   componentDidMount(){
+    socket.on("broadcast", data => {
+      console.log(this.state.fileChat, 'socket on')
+      if(data.webinar_id == this.state.webinarId) {
+        if (this.props.webinarId && this.props.voucher){
+          this.fetchWebinarPublic()
+        }
+        else{
+          this.fetchWebinar()
+        }
+        this.setState({ qna: [data, ...this.state.qna] })
+      }
+    });
     if (this.props.webinarId && this.props.voucher){
       this.fetchWebinarPublic()
     }
     else{
       this.fetchWebinar()
     }
+    this.fetchQNA()
     this.checkProjectAccess()
   }
   checkProjectAccess(){
@@ -301,11 +361,11 @@ export default class WebinarLive extends Component {
               <div className='border-disabled'>
                 <div className="box-lampiran">
                   <div className="">
-                    <span style={{fontWeight: 'bold'}}>{item.dari}</span>
-                    <span className="float-right">{item.datetime}</span> 
+                    <span style={{fontWeight: 'bold'}}>{item.name}</span>
+                    <span className="float-right">{item.jenis_peserta == 'peserta' ? 'Pengguna' : 'Tamu'}</span> 
                     <br/>
                     <p style={{marginBottom: '1px'}}>
-                    {item.pertanyaan}
+                    {item.description}
                     </p>
                   </div>
                 </div>
@@ -387,7 +447,7 @@ export default class WebinarLive extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      Files
+                      Dokumen
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
@@ -396,7 +456,7 @@ export default class WebinarLive extends Component {
                     </p>
                   </div>
                 </div>
-                <div style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
+                <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
                   {
                     this.state.projectId && Storage.get('user').data.user_id ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                   :null}
@@ -405,28 +465,57 @@ export default class WebinarLive extends Component {
             </Card>
           </div>
         }
-
-        <div className="col-sm-6">
-          <Card>
-            <Card.Body>
-              <div className="row">
-                <div className="col-sm-6">
-                  <h3 className="f-w-900 f-18 fc-blue">
-                    Pertanyaan
-                  </h3>
+        {
+          (this.state.user.user_id == this.state.pembicaraId || this.state.user.user_id == this.state.moderatorId || this.state.user.user_id == this.state.sekretarisId) ?
+          <div className="col-sm-6">
+            <Card>
+              <Card.Body>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      Pertanyaan
+                    </h3>
+                  </div>
                 </div>
-                <div className="col-sm-6 text-right">
-                  <p className="m-b-0">
-                    { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
-                  </p>
+                <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
+                  <Pertanyaan items={this.state.qna} />
                 </div>
-              </div>
-              <div style={{marginTop: '10px'}}>
-                <Pertanyaan items={this.state.pertanyaans} />
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
+              </Card.Body>
+            </Card>
+          </div>
+          :
+          <div className="col-sm-6">
+            <Card>
+              <Card.Body>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      Pertanyaan
+                    </h3>
+                  </div>
+                  <div className="col-sm-6 text-right">
+                    <p className="m-b-0">
+                      { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
+                    </p>
+                  </div>
+                </div>
+                <div style={{marginTop: '10px'}}>
+                  {/* <Pertanyaan items={this.state.pertanyaans} /> */}
+                      <div className="form-group">
+                        <textarea placeholder="Saya kurang jelas di point yang..." rows="4" className="form-control" value={this.state.pertanyaan} onChange={e => this.setState({ pertanyaan: e.target.value })} />
+                      </div>
+                        <button
+                          className="btn btn-icademy-primary float-right"
+                          onClick={this.sendQNA.bind(this)}
+                        >
+                          <i className="fa fa-paper-plane"></i>
+                          Kirim
+                        </button>
+                </div>
+              </Card.Body>
+            </Card>
+          </div>
+        }
         <Modal
           show={this.state.modalEnd}
           onHide={this.closeModalEnd}
