@@ -20,6 +20,9 @@ export default class WebinarLive extends Component {
 	state = {
     webinarId:this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId,
     webinar:[],
+    jawabKuesioner:[],
+    pemenangDoorprize:[],
+    modalDoorprize:false,
     pembucara:'',
     joinUrl:'',
     user: [],
@@ -36,6 +39,7 @@ export default class WebinarLive extends Component {
     peserta: [],
     tamu: [],
     pertanyaan: [],
+    jawaban: [],
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -51,6 +55,9 @@ export default class WebinarLive extends Component {
   closeModalEnd = e => {
     this.setState({ modalEnd: false });
   }
+  closeModalDoorprize = e => {
+    this.setState({ modalDoorprize: false });
+  }
   closeModalKuesioner = e => {
     this.setState({ modalKuesioner: false });
   }
@@ -58,9 +65,19 @@ export default class WebinarLive extends Component {
     this.setState({ modalKuesionerPeserta: false });
   }
 
-  handleJawab = e => {
-  }
+  handleJawab = (question_id, option_id) => {
+    let newObj = [...this.state.jawaban]
 
+  }
+  kirimJawabanKuesioner(){
+    socket.emit('send', {
+      socketAction: 'jawabKuesioner',
+      name: this.state.user.name
+    })
+    toast.success('Mengirim jawaban kuesioner webinar')
+    this.closeModalKuesionerPeserta()
+    this.setState({startKuesioner: false})
+  }
   postLog(webinar_id, peserta_id, type, action){
     API.post(`${API_SERVER}v2/webinar/log/${webinar_id}/${peserta_id}/${type}/${action}`).then(res => {
       if(res.data.error) 
@@ -294,6 +311,13 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  acakDoorprize(){
+    const random = Math.floor(Math.random() * this.state.jawabKuesioner.length);
+    socket.emit('send', {
+      socketAction: 'pemenangDoorprize',
+      name: this.state.jawabKuesioner[random]
+    })
+  }
   componentDidMount(){
     socket.on("broadcast", data => {
       if(data.webinar_id == this.state.webinarId) {
@@ -305,11 +329,18 @@ export default class WebinarLive extends Component {
         }
         this.setState({ qna: [data, ...this.state.qna] })
       }
-    });
-    socket.on("broadcast", data => {
+      if(data.socketAction == 'pemenangDoorprize') {
+        this.state.pemenangDoorprize.push(data.name)
+        this.setState({modalDoorprize: true})
+        this.closeModalKuesioner()
+      }
       if(data.socketAction == 'sendKuesioner') {
         this.setState({startKuesioner: true, modalKuesionerPeserta: true})
         this.fetchKuesioner()
+      }
+      if(data.socketAction == 'jawabKuesioner') {
+        this.state.jawabKuesioner.push(data.name)
+        this.forceUpdate()
       }
     });
     if (this.props.webinarId && this.props.voucher){
@@ -622,7 +653,7 @@ export default class WebinarLive extends Component {
               this.state.waitingKuesioner &&
               <div>
                 <h4>Menunggu...</h4>
-                <div>Jumlah peserta telah menjawab kuesioner <b>16 / 30</b></div>
+                <div>Jumlah peserta telah menjawab kuesioner <b>{this.state.jawabKuesioner.length}</b></div>
               </div>
             }
             {
@@ -635,6 +666,7 @@ export default class WebinarLive extends Component {
               this.state.waitingKuesioner &&
               <button
                 className="btn btn-icademy-warning"
+                onClick={this.acakDoorprize.bind(this)}
               >
                 <i className="fa fa-gift"></i>
                 Acak Doorprize
@@ -668,11 +700,11 @@ export default class WebinarLive extends Component {
               this.state.pertanyaan.map((item) => (
                 <div className="mb-3">
                   <p className="f-w-900 fc-blue" style={{lineHeight:'18px'}}>{item.tanya}</p>
-                  {item.a && <span style={{margin:'0px 10px'}}><input name='a' type="checkbox" value={item.a} /> <label for='a'> {item.a}</label></span>}
-                  {item.b && <span style={{margin:'0px 10px'}}><input name='b' type="checkbox" value={item.b} /> <label for='b'> {item.b}</label></span>}
-                  {item.c && <span style={{margin:'0px 10px'}}><input name='c' type="checkbox" value={item.c} /> <label for='c'> {item.c}</label></span>}
-                  {item.d && <span style={{margin:'0px 10px'}}><input name='d' type="checkbox" value={item.d} /> <label for='d'> {item.d}</label></span>}
-                  {item.e && <span style={{margin:'0px 10px'}}><input name='e' type="checkbox" value={item.e} /> <label for='e'> {item.e}</label></span>}
+                  {item.a && <span style={{margin:'0px 10px'}}><input name='a' type="checkbox" value={item.a} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='a'> {item.a[1]}</label></span>}
+                  {item.b && <span style={{margin:'0px 10px'}}><input name='b' type="checkbox" value={item.b} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='b'> {item.b[1]}</label></span>}
+                  {item.c && <span style={{margin:'0px 10px'}}><input name='c' type="checkbox" value={item.c} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='c'> {item.c[1]}</label></span>}
+                  {item.d && <span style={{margin:'0px 10px'}}><input name='d' type="checkbox" value={item.d} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='d'> {item.d[1]}</label></span>}
+                  {item.e && <span style={{margin:'0px 10px'}}><input name='e' type="checkbox" value={item.e} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='e'> {item.e[1]}</label></span>}
                 </div>
               ))
             }
@@ -680,11 +712,33 @@ export default class WebinarLive extends Component {
           <Modal.Footer>
               <button
                 className="btn btn-icademy-primary"
+                onClick={this.kirimJawabanKuesioner.bind(this)}
               >
                 <i className="fa fa-paper-plane"></i>
                 Kirim Jawaban Kuesioner
               </button>
           </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalDoorprize}
+          onHide={this.closeModalDoorprize}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Pemenang Doorprize
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Selamat kepada : <br />
+            {
+              this.state.pemenangDoorprize.length && this.state.pemenangDoorprize.map((item) => (
+                <span>
+                  <h3>{item}</h3>
+                </span>
+              ))
+            }
+          </Modal.Body>
         </Modal>
       </div>
 		);
