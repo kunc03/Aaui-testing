@@ -138,7 +138,7 @@ class WebinarTable extends Component {
                     {
                         bodyTabble.length == 0 ?
                         <tr>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>{this.state.isLoading ? 'Loading...' : 'Tidak Ada'}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
                         </tr>
                         :
                         bodyTabble.map((item, i) => {
