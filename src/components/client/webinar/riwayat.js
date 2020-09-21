@@ -29,15 +29,25 @@ export default class WebinarRiwayat extends Component {
     access_project_admin: false,
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
-    qna: []
+    qna: [],
+    jawabanKuesioner: []
   }
 
   fetchQNA(){
-    API.get(`${API_SERVER}v2/webinar/qna/${this.state.webinarId}`).then(res => {
+    API.get(`${API_SERVER}v2/kuesioner/result/${this.state.webinarId}`).then(res => {
       if (res.data.error)
           toast.warning("Error fetch API")
       else
         this.setState({qna: res.data.result})
+    })
+  }
+  fetchJawabanKuesioner(){
+    API.get(`${API_SERVER}v2/webinar/qna/${this.state.webinarId}`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        this.setState({jawabanKuesioner: res.data.result})
+        console.log('ALVIN',this.state.jawabanKuesioner)
     })
   }
 
@@ -270,7 +280,7 @@ export default class WebinarRiwayat extends Component {
               </div>
               <div style={{marginTop: '10px'}}>
                 <div className="row">
-                  <div className="col-sm-8">
+                  <div className="col-sm-10">
                     <h5>{this.state.judul}</h5>
                     <h6>Pembicara : {this.state.pembicara}</h6>
                     <p>
@@ -279,7 +289,7 @@ export default class WebinarRiwayat extends Component {
                     <h6>{this.state.tanggal}, &nbsp; {this.state.jamMulai} - {this.state.jamSelesai}</h6>
                   </div>
 
-                  <div className="col-sm-4">
+                  <div className="col-sm-2">
                       <button
                         className="btn btn-icademy-primary"
                         onClick={e => this.setState({ isModalDownloadFileWebinar: true }) }
@@ -288,13 +298,13 @@ export default class WebinarRiwayat extends Component {
                         <i className="fa fa-folder"></i>
                         Files
                       </button>
-                    <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
+                    {/* <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
                       <button
                         className="btn btn-icademy-primary"
                       >
                         <i className="fa fa-file"></i>
                         Kuesioner
-                      </button></Link>
+                      </button></Link> */}
                   </div>
                 </div>
               </div>

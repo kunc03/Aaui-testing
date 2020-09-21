@@ -147,7 +147,7 @@ export default class WebinarCreate extends Component {
       sekretarisId: this.state.sekretarisId[0],
       pembicaraId: this.state.pembicaraId[0],
       ownerId: this.state.ownerId[0],
-      projectId: this.state.projectId,
+      projectId: this.state.valuesFolder,
       dokumenId: this.state.folderId
     }
 

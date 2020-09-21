@@ -34,7 +34,7 @@ export default class WebinarLive extends Component {
     startKuesioner: false,
     isWebinarStartDate: false,
     access_project_admin: false,
-    pertanyaan: '',
+    pertanyaanQNA: '',
     qna: [],
     peserta: [],
     tamu: [],
@@ -65,18 +65,51 @@ export default class WebinarLive extends Component {
     this.setState({ modalKuesionerPeserta: false });
   }
 
-  handleJawab = (question_id, option_id) => {
-    let newObj = [...this.state.jawaban]
-
+  findArray(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+    return -1;
+  }
+  handleJawab = e => {
+    const { value, name } = e.target;
+      var array = this.state.jawaban;
+      var index = this.findArray(array, 'questions_id', name);
+      if (index !== -1) {
+        array.splice(index, 1);
+        this.setState({jawaban: array});
+        this.state.jawaban.push({questions_id: name, options_id: value})
+      }
+      else{
+        this.state.jawaban.push({questions_id: name, options_id: value})
+      }
   }
   kirimJawabanKuesioner(){
-    socket.emit('send', {
-      socketAction: 'jawabKuesioner',
-      name: this.state.user.name
-    })
-    toast.success('Mengirim jawaban kuesioner webinar')
-    this.closeModalKuesionerPeserta()
-    this.setState({startKuesioner: false})
+    if (this.state.jawaban.length === this.state.pertanyaan.length){
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        pengguna: this.state.user.type ? 0 : 1,
+        kuesioner: this.state.jawaban
+      }
+      API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Gagal mengirim jawaban kuesioner webinar')
+        else
+          socket.emit('send', {
+            socketAction: 'jawabKuesioner',
+            name: this.state.user.name
+          })
+          toast.success('Mengirim jawaban kuesioner webinar')
+          this.closeModalKuesionerPeserta()
+          this.setState({startKuesioner: false})
+      })
+    }
+    else{
+      toast.warning('Wajib menjawab semua pertanyaan')
+    }
   }
   postLog(webinar_id, peserta_id, type, action){
     API.post(`${API_SERVER}v2/webinar/log/${webinar_id}/${peserta_id}/${type}/${action}`).then(res => {
@@ -87,7 +120,7 @@ export default class WebinarLive extends Component {
     })
   }
   sendQNA(){
-    if (this.state.pertanyaan.length < 10){
+    if (this.state.pertanyaanQNA.length < 10){
       toast.warning('Pertanyaan minimal 10 karakter')
     }
     else{
@@ -95,14 +128,14 @@ export default class WebinarLive extends Component {
         webinar_id: this.state.webinarId,
         jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
         peserta_id: this.state.user.user_id,
-        description: this.state.pertanyaan
+        description: this.state.pertanyaanQNA
       }
       API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
         if(res.data.error) 
           toast.error('Error mengirim pertanyaan')
         else
           toast.success('Mengirim pertanyaan')
-          this.setState({pertanyaan:''})
+          this.setState({pertanyaanQNA:''})
           socket.emit('send', {
             name: res.data.result.name,
             webinar_id: res.data.result.webinar_id,
@@ -595,7 +628,7 @@ export default class WebinarLive extends Component {
                 <div style={{marginTop: '10px'}}>
                   {/* <Pertanyaan items={this.state.pertanyaans} /> */}
                       <div className="form-group">
-                        <textarea placeholder="Saya kurang jelas di point yang..." rows="4" className="form-control" value={this.state.pertanyaan} onChange={e => this.setState({ pertanyaan: e.target.value })} />
+                        <textarea placeholder="Saya kurang jelas di point yang..." rows="4" className="form-control" value={this.state.pertanyaanQNA} onChange={e => this.setState({ pertanyaanQNA: e.target.value })} />
                       </div>
                         <button
                           className="btn btn-icademy-primary float-right"
@@ -700,11 +733,11 @@ export default class WebinarLive extends Component {
               this.state.pertanyaan.map((item) => (
                 <div className="mb-3">
                   <p className="f-w-900 fc-blue" style={{lineHeight:'18px'}}>{item.tanya}</p>
-                  {item.a && <span style={{margin:'0px 10px'}}><input name='a' type="checkbox" value={item.a} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='a'> {item.a[1]}</label></span>}
-                  {item.b && <span style={{margin:'0px 10px'}}><input name='b' type="checkbox" value={item.b} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='b'> {item.b[1]}</label></span>}
-                  {item.c && <span style={{margin:'0px 10px'}}><input name='c' type="checkbox" value={item.c} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='c'> {item.c[1]}</label></span>}
-                  {item.d && <span style={{margin:'0px 10px'}}><input name='d' type="checkbox" value={item.d} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='d'> {item.d[1]}</label></span>}
-                  {item.e && <span style={{margin:'0px 10px'}}><input name='e' type="checkbox" value={item.e} onChange={this.handleJawab(item.question_id, item.a[0])} /> <label for='e'> {item.e[1]}</label></span>}
+                  {item.a && <span style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawab} /> <label for='a'> {item.a[1]}</label></span>}
+                  {item.b && <span style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawab} /> <label for='b'> {item.b[1]}</label></span>}
+                  {item.c && <span style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawab} /> <label for='c'> {item.c[1]}</label></span>}
+                  {item.d && <span style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawab} /> <label for='d'> {item.d[1]}</label></span>}
+                  {item.e && <span style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawab} /> <label for='e'> {item.e[1]}</label></span>}
                 </div>
               ))
             }
