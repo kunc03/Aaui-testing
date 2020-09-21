@@ -30,11 +30,11 @@ export default class WebinarRiwayat extends Component {
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
     qna: [],
-    jawabanKuesioner: []
+    jawabanKuesioner:[]
   }
 
   fetchQNA(){
-    API.get(`${API_SERVER}v2/kuesioner/result/${this.state.webinarId}`).then(res => {
+    API.get(`${API_SERVER}v2/webinar/qna/${this.state.webinarId}`).then(res => {
       if (res.data.error)
           toast.warning("Error fetch API")
       else
@@ -42,12 +42,11 @@ export default class WebinarRiwayat extends Component {
     })
   }
   fetchJawabanKuesioner(){
-    API.get(`${API_SERVER}v2/webinar/qna/${this.state.webinarId}`).then(res => {
+    API.get(`${API_SERVER}v2/kuesioner/result/${this.state.webinarId}`).then(res => {
       if (res.data.error)
           toast.warning("Error fetch API")
       else
         this.setState({jawabanKuesioner: res.data.result})
-        console.log('ALVIN',this.state.jawabanKuesioner)
     })
   }
 
