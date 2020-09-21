@@ -34,7 +34,7 @@ class Meeting extends Component {
                   </div>
                     <div className="row">
                       <div className="col-xl-12">
-            <TableMeeting access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0'/>
+            <TableMeeting allMeeting={true} access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0'/>
                         </div>
                         </div>
                         </div>
