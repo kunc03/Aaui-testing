@@ -9,8 +9,13 @@ build:
   tags:
     - development
   script:
-    - docker rm -f icademy-app
-    - docker rmi -f icademy/app:latest
+    - if [ "$(docker ps -a | grep icademy-app)" ]; then 
+        echo "Container Exists";
+        docker rm -f icademy-app;
+        docker rmi -f icademy/app:latest;
+      else
+        echo "Container Not Found";
+      fi
     - cd /home/ubuntu/ideku-react && sudo git pull origin staging
     - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
     - cd /home/ubuntu/ideku-react && sudo npm run build
@@ -24,7 +29,13 @@ deploy:
     - development
   environment:
     name: "Dev Icademy App"
-    url: https://app.icademy.mooo.com
+    url: https://app.icademy.dev.kelola.co.id
   script:
+    - if [ "$(docker ps -a | grep icademy-app)" ]; then 
+        echo "Container Exists";
+        docker rm -f icademy-app;
+      else
+        echo "Container Not Found";
+      fi
     - cd /home/ubuntu/ideku-react && docker run --name icademy-app -dit -p 3000:80 icademy/app:latest
 
