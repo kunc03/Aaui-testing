@@ -55,7 +55,12 @@ closeModalDelete = e => {
       name: this.state.folderName,
       company: this.state.companyId,
       mother: 0,
-      project_admin: this.state.valueProjectAdmin
+      project_admin: this.state.valueProjectAdmin,
+      aSekretaris : 1,
+      aModerator : 1,
+      aPembicara : 1,
+      aOwner : 1,
+      aPeserta : 1
     };
   
     API.post(`${API_SERVER}v1/folder`, formData).then(res => {
