@@ -216,6 +216,8 @@ export default class WebinarCreate extends Component {
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">Judul tidak boleh menggunakan karakter spesial.</small>
                       </div>
+                      {
+                        this.state.projectId == 0 ?
                         <div className="form-group">
                           <label className="bold">Project</label>
                           <MultiSelect
@@ -230,6 +232,9 @@ export default class WebinarCreate extends Component {
                             />
                           <small className="form-text text-muted">Pilih project folder.</small>
                         </div>
+                        :
+                        null
+                      }
 
                       <h4>Pilih Roles</h4>
                       <div className="form-group row">
