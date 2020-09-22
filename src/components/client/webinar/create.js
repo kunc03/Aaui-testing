@@ -56,6 +56,14 @@ export default class WebinarCreate extends Component {
     uploading: false,
   }
 
+  nextStep(){
+    if (this.state.valuesFolder == '' || this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == ''){
+      toast.warning('Semua field wajib diisi dengan benar')}
+    else{
+      this.setState({isStep1: false, isStep2: true})
+    }
+  }
+
   handleModal = () => {
     this.setState({
       isModalDokumen: false,
@@ -161,6 +169,10 @@ export default class WebinarCreate extends Component {
     })
   }
 
+  goback(){
+    this.props.history.goBack();
+  }
+
 	render() {
 
     console.log('STATE: ', this.state);
@@ -178,7 +190,7 @@ export default class WebinarCreate extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                    	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
+                    	<Link onClick={this.goback.bind(this)} className="btn btn-sm mr-4" style={{
                     		border: '1px solid #e9e9e9',
                     		borderRadius: '50px',
                     	}}>
@@ -204,8 +216,6 @@ export default class WebinarCreate extends Component {
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">Judul tidak boleh menggunakan karakter spesial.</small>
                       </div>
-                      {
-                        this.state.projectId == 0 ?
                         <div className="form-group">
                           <label className="bold">Project</label>
                           <MultiSelect
@@ -220,9 +230,6 @@ export default class WebinarCreate extends Component {
                             />
                           <small className="form-text text-muted">Pilih project folder.</small>
                         </div>
-                        :
-                        null
-                      }
 
                       <h4>Pilih Roles</h4>
                       <div className="form-group row">
@@ -311,7 +318,7 @@ export default class WebinarCreate extends Component {
 
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={e => this.setState({isStep1: false, isStep2: true})} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft:14 }}>
+                      <button onClick={this.nextStep.bind(this)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft:14 }}>
                         <i className="fa fa-file"></i> &nbsp; Atur Folder dan File
                       </button>
                     </div>
