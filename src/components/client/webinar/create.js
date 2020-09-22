@@ -161,6 +161,10 @@ export default class WebinarCreate extends Component {
     })
   }
 
+  goback(){
+    this.props.history.goBack();
+  }
+
 	render() {
 
     console.log('STATE: ', this.state);
@@ -178,7 +182,7 @@ export default class WebinarCreate extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                    	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
+                    	<Link onClick={this.goback.bind(this)} className="btn btn-sm mr-4" style={{
                     		border: '1px solid #e9e9e9',
                     		borderRadius: '50px',
                     	}}>
