@@ -30,7 +30,19 @@ export default class WebinarRiwayat extends Component {
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
     qna: [],
-    jawabanKuesioner:[]
+    jawabanKuesioner:{
+      pertanyaan:[
+        "",
+     ],
+     jawaban:[
+      {
+         nama:"",
+         jawaban:[
+          ""
+         ]
+      }
+     ]
+    }
   }
 
   fetchQNA(){
@@ -84,12 +96,13 @@ export default class WebinarRiwayat extends Component {
         jumlahHadir: pesertaDanTamu.filter((item) => item.status == 2).length,
         jumlahTidakHadir: pesertaDanTamu.filter((item) => item.status != 2).length
       })
+      this.checkProjectAccess()
     })
   }
   componentDidMount(){
     this.fetchData()
     this.fetchQNA()
-    this.checkProjectAccess()
+    this.fetchJawabanKuesioner()
   }
   checkProjectAccess(){
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
@@ -192,6 +205,38 @@ export default class WebinarRiwayat extends Component {
                 <td>{item.jenis_peserta == 'tamu' ? 'Tamu' : 'Peserta'}</td>
                 <td>{item.description}</td>
               </tr>)
+            })
+          }
+        </tbody>
+      </table>
+      </div>
+    );
+    const JawabanKuesioner = ({items}) => (
+      <div className="wrap" style={{marginTop:10, maxHeight:500, overflowY:'scroll', overflowX:'scroll', paddingRight:10}}>
+      <table id="table-kuesioner" className="table table-striped">
+        <thead>
+          <tr>
+            <th>Nama Peserta</th>
+            {
+              items.pertanyaan.map((item) => (
+                <th>{item}</th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            items.jawaban.map((item, i) => {
+              return (
+              <tr>
+                <td>{item.nama}</td>
+                {
+                  item.jawaban.map((item) =>
+                      <td>{item}</td>
+                  )
+                }
+              </tr>
+              )
             })
           }
         </tbody>
@@ -338,6 +383,18 @@ export default class WebinarRiwayat extends Component {
                     sheet="Kehadiran"
                     buttonText="Export Pertanyaan ke Excel"/>
                   <Pertanyaan items={this.state.qna} />
+                </div>
+              </div>
+
+              <div className="row mt-5">
+                <div className="col-sm-12">
+                <ReactHTMLTableToExcel
+                    className="btn btn-icademy-warning"
+                    table="table-kuesioner"
+                    filename={'Jawaban Kuesioner '+this.state.judul}
+                    sheet="Kehadiran"
+                    buttonText="Export Jawaban Kuesioner ke Excel"/>
+                  <JawabanKuesioner items={this.state.jawabanKuesioner} />
                 </div>
               </div>
 
