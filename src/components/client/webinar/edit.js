@@ -93,17 +93,17 @@ export default class WebinarEdit extends Component {
     API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
       response.data.result.map(item => {
         this.state.optionNames.push({value: item.user_id, label: item.name});
-        if (this.state.optionsFolder.length==0){
-          API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
-            response.data.result.map(item => {
-              this.state.optionsFolder.push({value: item.id, label: item.name});
-            });
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-        }
       });
+      if (this.state.optionsFolder.length==0){
+        API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
+          response.data.result.map(item => {
+            this.state.optionsFolder.push({value: item.id, label: item.name});
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      }
     })
   }
 
