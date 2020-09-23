@@ -42,6 +42,7 @@ export default class WebinarAdd extends Component {
     peserta: [],
     kirimEmailPeserta: [],
     kirimEmailTamu: [],
+    userId:'',
 
     // form peserta
     userId: [],
@@ -202,7 +203,8 @@ export default class WebinarAdd extends Component {
         sekretarisId: res.data.result.sekretaris.user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
-        status: res.data.result.status
+        status: res.data.result.status,
+        userId: Storage.get('user').data.user_id
       })
       this.checkProjectAccess(this.state.projectId)
     })
