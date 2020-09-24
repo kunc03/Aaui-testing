@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+
+import TagsInput from 'react-tagsinput'
+import 'react-tagsinput/react-tagsinput.css'
 import {
   Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image,
   InputGroup, FormControl, Modal
@@ -80,10 +83,72 @@ class MeetingTable extends Component {
 
       deleteMeetingId: '',
       deleteMeetingName: '',
-      filterMeeting:''
+      filterMeeting:'',
+      isInvite: false,
+      sendingEmail: false,
+      emailInvite: [],
+      emailResponse: '',
+      //multi select invite
+      optionsInvite: [],
+      valueInvite: [],
+      classRooms: []
     };
   }
+  handleChangeEmail(emailInvite) {
+    this.setState({emailInvite})
+  }
 
+  
+  handleCloseInvite = e =>{
+    this.setState({
+      isInvite: false,
+      emailInvite: [],
+      emailResponse: ""
+    });
+  }
+  onClickInvite (class_id) {
+    this.setState({ isInvite: true });
+    API.get(`${API_SERVER}v1/liveclass/id/${class_id}`).then(res => {
+      this.setState({
+        classRooms: res.data.result
+      });
+    })
+  }
+  onClickSubmitInvite = e => {
+    e.preventDefault();
+    this.setState({sendingEmail: true})
+    let form = {
+      user: Storage.get('user').data.user,
+      email: this.state.emailInvite,
+      room_name: this.state.classRooms.room_name,
+      is_private: this.state.classRooms.is_private,
+      is_scheduled: this.state.classRooms.is_scheduled,
+      schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
+      schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+      userInvite: this.state.valueInvite,
+      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classId,
+      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classId
+    }
+
+    API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+      if(res.status === 200) {
+        if(!res.data.error) {
+          this.setState({
+            isInvite: false,
+            emailInvite: [],
+            valueInvite: [],
+            emailResponse: res.data.result,
+            sendingEmail:false
+          });
+        } else {
+          this.setState({
+            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+          });
+          console.log('RESS GAGAL',res)
+        }
+      }
+    })
+  }
 
   filterMeeting =  (e) => {
     e.preventDefault();
@@ -232,7 +297,19 @@ class MeetingTable extends Component {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         
-        this.fetchMeeting();  
+        this.fetchMeeting(); 
+        
+        //get and push multiselect option
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+          response.data.result.map(item => {
+            this.state.optionsInvite.push({value: item.user_id, label: item.name});
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
             API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
               response.data.result.map(item => {
@@ -697,6 +774,7 @@ class MeetingTable extends Component {
                                       />
                                     </button>:null}
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, item.class_id)}>Undang</button>
                                       <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, item.class_id, item.is_live)}>{item.is_live ? 'Kunci' : 'Buka Kunci'}</button>
                                       <button
                                         style={{cursor:'pointer'}}
@@ -1182,6 +1260,74 @@ class MeetingTable extends Component {
                               Hapus
                             </button>
                 </Modal.Footer>
+              </Modal>
+              <Modal
+                show={this.state.isInvite}
+                onHide={this.handleCloseInvite}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                    Undang Peserta
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="form-vertical">
+                                <Form.Group controlId="formJudul">
+                                <Form.Label className="f-w-bold">
+                                  Invite User
+                                </Form.Label>
+                                <MultiSelect
+                                  id="peserta"
+                                  options={this.state.optionsInvite}
+                                  value={this.state.valueInvite}
+                                  onChange={valueInvite => this.setState({ valueInvite })}
+                                  mode="tags"
+                                  removableTags={true}
+                                  hasSelectAll={true}
+                                  selectAllLabel="Pilih Semua"
+                                  enableSearch={true}
+                                  resetable={true}
+                                  valuePlaceholder="Pilih"
+                                />
+                                <Form.Text className="text-muted">
+                                  Pilih user yang ingin diundang.
+                                </Form.Text>
+                              </Form.Group>
+                    <div className="form-group">
+                      <label style={{ fontWeight: "bold" }}>Email</label>
+                      <TagsInput
+                        value={this.state.emailInvite}
+                        onChange={this.handleChangeEmail.bind(this)}
+                        addOnPaste={true}
+                        inputProps={{placeholder:'Email Peserta'}}
+                      />
+                      <Form.Text>
+                        Masukkan email yang ingin di invite.
+                      </Form.Text>
+                    </div>
+                  </div>
+                  
+                  <Form.Text style={{color:'red'}}>
+                    {this.state.emailResponse}
+                  </Form.Text>
+
+                  <button
+                    style={{ marginTop: "30px" }}
+                    disabled={this.state.sendingEmail}
+                    type="button"
+                    onClick={this.onClickSubmitInvite}
+                    className="btn btn-block btn-ideku f-w-bold"
+                  >
+                    {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-block f-w-bold"
+                    onClick={this.handleCloseInvite}
+                  >
+                    Tidak
+                  </button>
+                </Modal.Body>
               </Modal>
             </div>
                     
