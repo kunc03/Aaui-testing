@@ -344,7 +344,7 @@ class MeetingTable extends Component {
       let form = {
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
-        folder_id: this.state.valueFolder,
+        folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
         webinar_id: this.state.webinar_id,
         is_private: isPrivate,
         is_required_confirmation: isRequiredConfirmation,
@@ -433,7 +433,7 @@ class MeetingTable extends Component {
       let form = {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
-        folder_id: this.state.valueFolder,
+        folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
         webinar_id: this.state.webinar_id,
         speaker: this.state.speaker,
         room_name: this.state.roomName,
@@ -447,6 +447,9 @@ class MeetingTable extends Component {
       }
 
       API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
+        
+        console.log('RES: ', res.data);
+
         if (res.status === 200) {
           // BBB CREATE START
           let api = bbb.api(BBB_URL, BBB_KEY)
