@@ -45,7 +45,7 @@ export default class WebinarAdd extends Component {
     userId:'',
 
     // form peserta
-    userId: [],
+    pesertaId: [],
 
     // form tamu
     nama: '',
@@ -220,8 +220,18 @@ export default class WebinarAdd extends Component {
     })
   }
 
-  updateWebinar = e => {
-    e.preventDefault();
+  showTambahPeserta(){
+    if (this.state.judul == '' || this.state.isi == '' || this.state.tanggal == '' || this.state.jamMulai == '' || this.state.jamSelesai == ''){
+      toast.warning('Silahkan lengkapi data acara terlebih dahulu.')
+    }
+    else{
+      this.updateWebinar()
+      this.fetchData()
+      this.setState({ isModalPeserta: true });
+    }
+  }
+
+  updateWebinar (back) {
     
     let dd = new Date(this.state.tanggal);
     let tanggal = dd.getFullYear()+'-'+('0' + (dd.getMonth()+1)).slice(-2)+'-'+('0' + dd.getDate()).slice(-2);
@@ -251,8 +261,8 @@ export default class WebinarAdd extends Component {
           formData.append('gambar', this.state.gambar);
           await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
         }
-        toast.success("Mengubah informasi webinar")
-        this.props.history.goBack();
+        toast.success("Menyimpan informasi webinar")
+        back && this.props.history.goBack();
     })
 
     console.log(form);
@@ -266,7 +276,7 @@ export default class WebinarAdd extends Component {
     e.preventDefault();
     const formData = {
       webinarId: this.state.webinarId,
-      userId: this.state.userId.toString(),
+      userId: this.state.pesertaId.toString(),
     };
     formData.userId ?
     API.post(`${API_SERVER}v2/webinar/peserta`, formData).then(res => {
@@ -275,7 +285,7 @@ export default class WebinarAdd extends Component {
           toast.error('Gagal menambah peserta')
         } else {
           toast.success(`Berhasil menambah peserta`)
-          this.setState({userId:[]})
+          this.setState({pesertaId:[]})
           this.fetchData();
         }
       }
@@ -531,7 +541,7 @@ export default class WebinarAdd extends Component {
                         <div class="input-group">
                           <input value={this.state.peserta.length+this.state.tamu.length} type="text" className="form-control" />
                           <span className="input-group-btn">
-                            <button onClick={e => {this.setState({ isModalPeserta: true }); this.fetchData()}} className="btn btn-default">
+                            <button onClick={this.showTambahPeserta.bind(this)} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
                             </button>
                           </span>
@@ -583,7 +593,7 @@ export default class WebinarAdd extends Component {
                     </div> */}
 
                     <div className="form-group">
-                      <button onClick={this.updateWebinar} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
+                      <button onClick={this.updateWebinar.bind(this,true)} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
                     </div>
 
                   </div>
@@ -662,8 +672,8 @@ export default class WebinarAdd extends Component {
                     <MultiSelect
                         id={`userId`}
                         options={this.state.optionsName}
-                        value={this.state.userId}
-                        onChange={userId => this.setState({ userId })}
+                        value={this.state.pesertaId}
+                        onChange={pesertaId => this.setState({ pesertaId })}
                         mode="single"
                         enableSearch={true}
                         resetable={true}
