@@ -435,6 +435,11 @@ uploadFile = e => {
         if (result.returncode == 'SUCCESS'){
             this.closeModalEnd()
             toast.success('Mengakhiri meeting untuk semua peserta.')
+            API.delete(`${API_SERVER}v1/liveclass/file/delete/${this.state.classRooms.class_id}`).then(res => {
+              if(res.status === 200) {
+                toast.success('Menghapus semua file sharing.')
+              }
+            })
         }
     })
   }
