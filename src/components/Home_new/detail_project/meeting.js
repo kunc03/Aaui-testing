@@ -126,8 +126,8 @@ class MeetingTable extends Component {
       schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
       schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
       userInvite: this.state.valueInvite,
-      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classId,
-      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classId
+      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classRooms.class_id,
+      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classRooms.class_id
     }
 
     API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
