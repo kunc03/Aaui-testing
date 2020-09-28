@@ -10,16 +10,33 @@ class ListToDoNew extends Component {
       registered: '2019-12-09',
       companyId: '',
     },
+
+    toDoList: this.props.lists,
+    toDo: ''
   }
 
+  handleToDoList = e => {
+    if(e.key === 'Enter') {
+      let push = {
+        course_id: 1,
+        type: "Personal",
+        title: this.state.toDo,
+        name: "ahmad",
+        description: "Deskripsi"
+      };
+      let copy = [...this.state.toDoList];
+      this.setState({ toDoList: copy });
+    }
+  }
 
   render() {
-  //  console.log(this.props, 'props evenntttt')
-    const lists = this.props.lists;
+    console.log('STATE: ', this.state)
+    const lists = this.state.toDoList;
+
     return (
       <div className="row">
         <div className="col-sm-12 mb-1">
-          <input type="text" className="form-control mb-3" placeholder="Tuliskan to do"/>
+          <input value={this.state.toDo} onKeyDown={this.handleToDoList} onChange={e => this.setState({ toDo: e.target.value })} type="text" className="form-control mb-3" placeholder="Tuliskan to do"/>
           <h3 className="f-w-900 f-18 fc-blue">List To Do</h3>
         </div>
         {
