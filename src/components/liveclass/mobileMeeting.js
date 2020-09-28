@@ -21,7 +21,7 @@ export default class LiveStream extends Component {
                     Anda butuh aplikasi ICADEMY untuk dapat join meeting.
                 </div>
                 <div className="col-sm-12" style={{textAlign:'center', marginTop:20}}>
-                    <a style={{backgroundColor:'#2f6fca', color:'#FFF', padding:10}} href={isIOS ? '#IOS' : '#Android'}>Download Aplikasi</a>
+                    <a style={{backgroundColor:'#2f6fca', color:'#FFF', padding:10}} href={isIOS ? 'https://icademy.id/icademy.apk' : 'https://icademy.id/icademy.apk'}>Download Aplikasi</a>
                 </div>
                 <div className="col-sm-12" style={{textAlign:'center', marginTop:20}}>
                     <a style={{padding:10, color:'#2f6fca'}} href={decodeURIComponent(this.props.match.params.url)}>Buka Aplikasi</a>
