@@ -663,9 +663,6 @@ class MeetingTable extends Component {
     this.fetchOtherData();
     if (this.props.informationId){
       this.fetchMeetingInfo(this.props.informationId)
-      if (isMobile){
-        alert('ini mobile')
-      }
     }
   }
 
