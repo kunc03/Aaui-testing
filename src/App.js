@@ -137,7 +137,7 @@ export class PublicContent extends React.Component {
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
-          <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
+          <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
           <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/OTP/:id' component={OTP} />
@@ -239,7 +239,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/meeting" exact component={Meeting} />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
-        <Route path="/mobile-meeting/:roomName/:participantName" exact component={MobileMeeting} />
+        <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />

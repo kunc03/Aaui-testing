@@ -354,6 +354,9 @@ uploadFile = e => {
                             {userID: this.state.user.user_id}
                         )
                         this.setState({joinUrl: joinUrl})
+                        if (isMobile){
+                          window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                        }
                     }
                     else{
                     console.log('GAGAL', result)
@@ -369,12 +372,12 @@ uploadFile = e => {
                     {userID: this.state.user.user_id}
                 )
                 this.setState({joinUrl: joinUrl})
+                if (isMobile){
+                  window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                }
             }
         })
         // BBB JOIN END
-        if (isMobile){
-          window.location.replace(APPS_SERVER+'mobile-meeting/'+this.state.classRooms.room_name+'/no-user')
-        }
       }
     }).then(res=>{
       if (this.state.classRooms.folder_id !== 0 ){

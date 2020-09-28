@@ -24,7 +24,7 @@ export default class LiveStream extends Component {
                     <a style={{backgroundColor:'#2f6fca', color:'#FFF', padding:10}} href={isIOS ? '#IOS' : '#Android'}>Download Aplikasi</a>
                 </div>
                 <div className="col-sm-12" style={{textAlign:'center', marginTop:20}}>
-                    <a style={{padding:10, color:'#2f6fca'}} href={'https://meet.icademy.id/'+this.props.match.params.roomName+'/?name='+this.props.match.params.participantName}>Buka Aplikasi</a>
+                    <a style={{padding:10, color:'#2f6fca'}} href={decodeURIComponent(this.props.match.params.url)}>Buka Aplikasi</a>
                 </div>
             </div>
 		);
