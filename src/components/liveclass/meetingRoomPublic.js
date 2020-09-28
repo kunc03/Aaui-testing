@@ -96,9 +96,9 @@ handleCloseStart = e => {
       }
     });
     this.fetchData();
-    window.onbeforeunload = function() {
-      return "Are you sure you want to leave?";
-    };
+    // window.onbeforeunload = function() {
+    //   return "Are you sure you want to leave?";
+    // };
   }
   
   fetchData() {
@@ -106,9 +106,6 @@ handleCloseStart = e => {
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
         console.log('RESSS', response)
         this.setState({ classRooms: response.data.result })
-        if (isMobile){
-          window.location.replace(APPS_SERVER+'mobile-meeting/'+this.state.classRooms.room_name+'/no-user')
-        }
         API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
           let splitTags;
           let datas = res.data.result;
@@ -160,6 +157,9 @@ handleCloseStart = e => {
                             }
                         )
                         this.setState({joinUrl: joinUrl})
+                        if (isMobile){
+                          window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                        }
                     }
                     else{
                     console.log('GAGAL', result)
@@ -178,6 +178,9 @@ handleCloseStart = e => {
                     }
                 )
                 this.setState({joinUrl: joinUrl})
+                if (isMobile){
+                  window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                }
             }
         })
         // BBB JOIN END

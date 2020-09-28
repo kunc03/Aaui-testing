@@ -6,6 +6,7 @@ import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import LupaPassword from './lupaPassword'
 import { Link } from "react-router-dom";
+import {isMobile} from 'react-device-detect';
 
 const tabs = [
   { title: 'Login' },
@@ -272,7 +273,7 @@ class Login extends Component {
           className="auth-wrapper"
           
         >
-          <div className="auth-content mb-4">
+          <div className="auth-content mb-4" style={{display: isMobile ? 'none' : 'block'}}>
             <div className=" b-r-15">
               <div
                 className=" text-center"
