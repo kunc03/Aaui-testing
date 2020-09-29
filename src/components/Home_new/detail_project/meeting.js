@@ -153,10 +153,9 @@ class MeetingTable extends Component {
               emailResponse: res.data.result,
               sendingEmail:false
             });
+            toast.success("Mengirim email ke peserta.")
           } else {
-            this.setState({
-              emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
-            });
+            toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
             console.log('RESS GAGAL',res)
           }
         }
@@ -1470,11 +1469,6 @@ class MeetingTable extends Component {
                       </Form.Text>
                     </div>
                   </div>
-                  
-                  <Form.Text style={{color:'red'}}>
-                    {this.state.emailResponse}
-                  </Form.Text>
-
                   <button
                     style={{ marginTop: "30px" }}
                     disabled={this.state.sendingEmail}
