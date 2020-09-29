@@ -770,7 +770,7 @@ class MeetingTable extends Component {
     }
     return (
             <div className="card p-20">
-            <span className="mb-4">
+            <span className="">
                 <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
                 {access_project_admin == true ? <button
                 onClick={this.handleCreateMeeting.bind(this)}
@@ -788,11 +788,12 @@ class MeetingTable extends Component {
                     className="form-control float-right col-sm-3"/>
             </span>
             <DataTable
+              title='Meeting'
               style={{marginTop:20}}
               columns={columns}
               data={bodyTabble}
               highlightOnHover
-              defaultSortField="title"
+              // defaultSortField="title"
               pagination
               />
             <div className="table-responsive">
