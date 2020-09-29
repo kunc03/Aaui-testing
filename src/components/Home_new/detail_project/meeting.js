@@ -125,38 +125,43 @@ class MeetingTable extends Component {
   }
   onClickSubmitInvite = e => {
     e.preventDefault();
-    this.setState({sendingEmail: true})
-    let form = {
-      user: Storage.get('user').data.user,
-      email: this.state.emailInvite,
-      room_name: this.state.classRooms.room_name,
-      is_private: this.state.classRooms.is_private,
-      is_scheduled: this.state.classRooms.is_scheduled,
-      schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
-      schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
-      userInvite: this.state.valueInvite,
-      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classRooms.class_id,
-      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classRooms.class_id
+    if (this.state.emailInvite == '' || this.state.userInvite == ''){
+      toast.warning('Silahkan pilih user atau email yang diundang.')
     }
-
-    API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error) {
-          this.setState({
-            isInvite: false,
-            emailInvite: [],
-            valueInvite: [],
-            emailResponse: res.data.result,
-            sendingEmail:false
-          });
-        } else {
-          this.setState({
-            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
-          });
-          console.log('RESS GAGAL',res)
-        }
+    else{
+      this.setState({sendingEmail: true})
+      let form = {
+        user: Storage.get('user').data.user,
+        email: this.state.emailInvite,
+        room_name: this.state.classRooms.room_name,
+        is_private: this.state.classRooms.is_private,
+        is_scheduled: this.state.classRooms.is_scheduled,
+        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+        userInvite: this.state.valueInvite,
+        message: APPS_SERVER+'redirect/meeting/information/'+this.state.classRooms.class_id,
+        messageNonStaff: APPS_SERVER+'meeting/'+this.state.classRooms.class_id
       }
-    })
+  
+      API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+        if(res.status === 200) {
+          if(!res.data.error) {
+            this.setState({
+              isInvite: false,
+              emailInvite: [],
+              valueInvite: [],
+              emailResponse: res.data.result,
+              sendingEmail:false
+            });
+          } else {
+            this.setState({
+              emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+            });
+            console.log('RESS GAGAL',res)
+          }
+        }
+      })
+    }
   }
 
   filterMeeting =  (e) => {
@@ -795,6 +800,7 @@ class MeetingTable extends Component {
                         />
                       </button>:null}
                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Undang</button>
                         <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>
                         <button
                           style={{cursor:'pointer'}}
@@ -1456,6 +1462,7 @@ class MeetingTable extends Component {
                         value={this.state.emailInvite}
                         onChange={this.handleChangeEmail.bind(this)}
                         addOnPaste={true}
+                        addOnBlur={true}
                         inputProps={{placeholder:'Email Peserta'}}
                       />
                       <Form.Text>

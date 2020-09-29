@@ -455,38 +455,43 @@ uploadFile = e => {
 
   onClickSubmitInvite = e => {
     e.preventDefault();
-    this.setState({sendingEmail: true})
-    let form = {
-      user: Storage.get('user').data.user,
-      email: this.state.emailInvite,
-      room_name: this.state.classRooms.room_name,
-      is_private: this.state.classRooms.is_private,
-      is_scheduled: this.state.classRooms.is_scheduled,
-      schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
-      schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
-      userInvite: this.state.valueInvite,
-      message: APPS_SERVER+'redirect/meeting/information/'+this.state.classId,
-      messageNonStaff: APPS_SERVER+'meeting/'+this.state.classId
+    if (this.state.emailInvite == '' || this.state.userInvite == ''){
+      toast.warning('Silahkan pilih user atau email yang diundang.')
     }
-
-    API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error) {
-          this.setState({
-            isInvite: false,
-            emailInvite: [],
-            valueInvite: [],
-            emailResponse: res.data.result,
-            sendingEmail:false
-          });
-        } else {
-          this.setState({
-            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
-          });
-          console.log('RESS GAGAL',res)
-        }
+    else{
+      this.setState({sendingEmail: true})
+      let form = {
+        user: Storage.get('user').data.user,
+        email: this.state.emailInvite,
+        room_name: this.state.classRooms.room_name,
+        is_private: this.state.classRooms.is_private,
+        is_scheduled: this.state.classRooms.is_scheduled,
+        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_end:  new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+        userInvite: this.state.valueInvite,
+        message: APPS_SERVER+'redirect/meeting/information/'+this.state.classId,
+        messageNonStaff: APPS_SERVER+'meeting/'+this.state.classId
       }
-    })
+
+      API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+        if(res.status === 200) {
+          if(!res.data.error) {
+            this.setState({
+              isInvite: false,
+              emailInvite: [],
+              valueInvite: [],
+              emailResponse: res.data.result,
+              sendingEmail:false
+            });
+          } else {
+            this.setState({
+              emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+            });
+            console.log('RESS GAGAL',res)
+          }
+        }
+      })
+    }
   }
 
   onBotoomScroll = (e) => {
@@ -1158,6 +1163,7 @@ uploadFile = e => {
                   value={this.state.emailInvite}
                   onChange={this.handleChange.bind(this)}
                   addOnPaste={true}
+                  addOnBlur={true}
                   inputProps={{placeholder:'Email Peserta'}}
                 />
                 <Form.Text>
