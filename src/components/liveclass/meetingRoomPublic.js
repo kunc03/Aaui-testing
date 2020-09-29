@@ -195,7 +195,7 @@ handleCloseStart = e => {
   
   onClickSubmitInvite = e => {
     e.preventDefault();
-    if (this.state.emailInvite == '' || this.state.userInvite == ''){
+    if (this.state.emailInvite == '' && this.state.userInvite == ''){
       toast.warning('Silahkan pilih user atau email yang diundang.')
     }
     else{
