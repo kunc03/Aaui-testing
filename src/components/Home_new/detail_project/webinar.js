@@ -27,7 +27,7 @@ class WebinarTable extends Component {
         {title : 'Waktu', width: null, status: true},
         {title : 'Tanggal', width: null, status: true},
         {title : 'Peserta', width: null, status: true},
-        {title : 'File Project', width: null, status: true},
+        // {title : 'File Project', width: null, status: true},
       ]
     };
   }
@@ -153,11 +153,11 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length+item.tamu.length}</td>
-                                <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
+                                {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
                                         <i className="fa fa-download fc-skyblue"></i> Download File
                                     </button>
-                                </td>
+                                </td> */}
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         ((this.state.userId == item.sekretaris.user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 

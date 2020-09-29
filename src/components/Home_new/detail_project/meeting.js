@@ -18,6 +18,8 @@ import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import {isMobile} from 'react-device-detect';
+import {Typography} from '@material-ui/core';
+import DataTable from 'react-data-table-component';
 
 import Storage from './../../../repository/storage';
 const bbb = require('bigbluebutton-js')
@@ -91,7 +93,14 @@ class MeetingTable extends Component {
       //multi select invite
       optionsInvite: [],
       valueInvite: [],
-      classRooms: []
+      classRooms: [],
+
+      limit: 10,
+			offset: 0,
+			count: 0,
+			page : 1,
+			value: '10',
+			rowsPerPage: 15,
     };
   }
   handleChangeEmail(emailInvite) {
@@ -269,9 +278,29 @@ class MeetingTable extends Component {
     }
       API.get(apiMeeting).then(res => {
         if (res.status === 200) {
+          // console.log('data meeting', res);
+          for(let item in res.data.result) {
+            // console.log(res.data.result[item], 55151515151)
+            let dateStart = new Date(res.data.result[item].schedule_start);
+            let dateEnd = new Date(res.data.result[item].schedule_end);
+            
+            if ((new Date() >= dateStart && new Date() <= dateEnd) || res.data.result[item].is_scheduled == 0){
+                res.data.result[item].status='Open'
+            }
+            else{
+                res.data.result[item].status='Close'
+            }
+            if (res.data.result[item].is_live == 0){
+              res.data.result[item].status = 'Terkunci'
+            }
+            if (res.data.result[item].running){
+              res.data.result[item].status = 'Aktif'
+            }
+          }
           this.setState({
-            meeting: res.data.result
+            meeting: res.data.result,
           })
+          this.totalPage = res.data.result.length;
           this.state.meeting.map((item, i)=> {
             // CHECK BBB ROOM IS RUNNING
             let api = bbb.api(BBB_URL, BBB_KEY)
@@ -666,6 +695,32 @@ class MeetingTable extends Component {
     }
   }
 
+
+  handlePreviousRowsPage(a, b) {
+    // if( a == 10 && b == 0){
+    //   return console.log('cant previous')
+    // }else{
+    //   var offset = this.state.offset - this.state.limit;
+    //    this.setState({offset: offset });
+    //    this.state.page = this.state.page - 1;
+    //    this.getpaginationtrade.bind(this, this.state.limit, offset)();
+    // }
+ }
+
+  handleNextRowsPerPage(a,b) {
+    // var offset = this.state.offset + this.state.limit;
+
+    // if(offset >= this.data.count){
+    //   return console.log('cant next')
+    // }else{
+
+    //   this.setState({offset: offset });
+    //   this.state.page = this.state.page + 1;
+
+      //this.getpaginationtrade.bind(this, this.state.limit, offset)();
+    //}
+  }
+
   render() {
     const headerTabble = [
       // {title : 'Nama Meeting', width: null, status: true},
@@ -676,7 +731,112 @@ class MeetingTable extends Component {
       {title : 'Peserta', width: null, status: true},
       // {title : 'File Project', width: null, status: true},
     ];
+    const columns = [
+      {
+        name: 'Nama Meeting',
+        selector: 'room_name',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        name: 'Moderator',
+        selector: 'name',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Status',
+        selector: 'status',
+        sortable: true,
+        center: true,
+        cell: row => 
+          <div style={{color: row.status == 'Open' ? '#FA6400': row.status == 'Terkunci' ? '#F00' : row.status == 'Aktif' ? '#1b9a1b' : '#0091FF'}}>
+            {row.status}
+          </div>,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Waktu',
+        // selector: 'status',
+        center: true,
+        cell: row => <div>{row.is_scheduled == 1 ? row.waktu_start+' - '+row.waktu_end : '-'} </div>,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Tanggal',
+        // selector: `${'is_scheduled' == 1 ? 'tanggal' : '-'}`,
+        cell: row => <div>{row.is_scheduled == 1 ? row.tanggal : '-'}</div>,
+        center: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Peserta',
+        // selector: 'total_participant',
+        cell: row => <div>{row.is_private == 1 ? row.total_participant : '-'}</div>,
+        center: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => <span class="btn-group dropleft">
+                      {access_project_admin == true ? <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i
+                          className="fa fa-ellipsis-v"
+                          style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                        />
+                      </button>:null}
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>
+                        <button
+                          style={{cursor:'pointer'}}
+                          class="dropdown-item"
+                          type="button"
+                          onClick={this.onClickEdit}
+                          data-id={row.class_id}
+                          data-cover={row.cover}
+                          data-speaker={row.speaker}
+                          data-roomname={row.room_name}
+                          data-moderator={row.moderator} 
+                          data-isprivate={row.is_private}
+                          data-isrequiredconfirmation={row.is_required_confirmation}
+                          data-participant={row.participant} 
+                          data-isscheduled={row.is_scheduled} 
+                          data-start={row.schedule_start} 
+                          data-end={row.schedule_end} 
+                          data-folder={row.folder_id}
+                        >
+                            Ubah
+                        </button>
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}>Hapus</button>
+                      </div>
+                    </span>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      },
+      {
+        name: 'Aksi',
+        cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Aktif' ? 'warning' : 'grey'}`}
+                    onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Aktif' ? 'Masuk' : 'Informasi'}</button>,
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+    ];
     let bodyTabble = this.state.meeting;
+    console.log(bodyTabble, 'body table meeting')
     const access_project_admin = this.props.access_project_admin;
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;
@@ -692,7 +852,7 @@ class MeetingTable extends Component {
     }
     return (
             <div className="card p-20">
-            <span className="mb-4">
+            <span className="">
                 <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
                 {access_project_admin == true ? <button
                 onClick={this.handleCreateMeeting.bind(this)}
@@ -709,99 +869,102 @@ class MeetingTable extends Component {
                     onChange={this.filterMeeting}
                     className="form-control float-right col-sm-3"/>
             </span>
+            <DataTable
+              style={{marginTop:20}}
+              columns={columns}
+              data={bodyTabble}
+              highlightOnHover
+              // defaultSortField="title"
+              pagination
+              />
             <div className="table-responsive">
-                <table className="table table-hover">
-                <thead>
-                    <tr style={{borderBottom: '1px solid #C7C7C7'}}>
-                    <td>Nama Meeting</td>
-                    {
-                        headerTabble.map((item, i) => {
-                            return (
-                            <td align="center" width={item.width}>{item.title}</td>
-                            )
-                        })
-                    }
-                    <td colSpan="2" align="center">Aksi</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        bodyTabble.length == 0 ?
-                        <tr>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
-                        </tr>
-                        :
-                        bodyTabble.map((item, i) => {
-                            // let dateStart = new Date(new Date(item.schedule_start).toISOString().slice(0, 16).replace('T', ' '));
-                            let dateStart = new Date(item.schedule_start);
-                            let dateEnd = new Date(item.schedule_end);
-                            let status='';
-                            if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
-                                status='Open'
-                            }
-                            else{
-                                status='Close'
-                            }
-                            if (item.is_live == 0){
-                              status = 'Terkunci'
-                            }
-                            if (item.running){
-                              status = 'Aktif'
-                            }
-                            return (
-                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.room_name}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.name}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center" style={{color: status == 'Open' ? '#FA6400': status == 'Terkunci' ? '#F00' : status == 'Aktif' ? '#1b9a1b' : '#0091FF'}}>{status}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.waktu_start+' - '+item.waktu_end : '-'}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.tanggal : '-'}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_private == 1 ? item.total_participant : '-'}</td>
-                                {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
-                                <button className="btn btn-icademy-file" ><i className="fa fa-download fc-skyblue"></i> Download File</button>
-                                </td> */}
-                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                                  <span class="btn-group dropleft col-sm-1">
-                                    {access_project_admin == true ? <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      <i
-                                        className="fa fa-ellipsis-v"
-                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
-                                      />
-                                    </button>:null}
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, item.class_id)}>Undang</button>
-                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, item.class_id, item.is_live)}>{item.is_live ? 'Kunci' : 'Buka Kunci'}</button>
-                                      <button
-                                        style={{cursor:'pointer'}}
-                                        class="dropdown-item"
-                                        type="button"
-                                        onClick={this.onClickEdit}
-                                        data-id={item.class_id}
-                                        data-cover={item.cover}
-                                        data-speaker={item.speaker}
-                                        data-roomname={item.room_name}
-                                        data-moderator={item.moderator} 
-                                        data-isprivate={item.is_private}
-                                        data-isrequiredconfirmation={item.is_required_confirmation}
-                                        data-participant={item.participant} 
-                                        data-isscheduled={item.is_scheduled} 
-                                        data-start={item.schedule_start} 
-                                        data-end={item.schedule_end} 
-                                        data-folder={item.folder_id}
-                                      >
-                                          Ubah
-                                      </button>
-                                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.class_id, item.room_name)}>Hapus</button>
-                                    </div>
-                                  </span>
-                                </td>
-                                <td className="fc-muted f-14 f-w-300 " align="center"><button className={`btn btn-icademy-primary btn-icademy-${status == 'Open' || status == 'Aktif' ? 'warning' : 'grey'}`} onClick={this.onClickInfo.bind(this, item.class_id)}>{status == 'Open' || status == 'Aktif' ? 'Masuk' : 'Informasi'}</button></td>
-                            </tr>
-                            )
-                        })
-                    }
-                </tbody>
-                </table>
-            </div>
+                {/* <table className="table table-hover">
+                  <thead>
+                      <tr style={{borderBottom: '1px solid #C7C7C7'}}>
+                      <td>Nama Meeting</td>
+                      {
+                          headerTabble.map((item, i) => {
+                              return (
+                              <td align="center" width={item.width}>{item.title}</td>
+                              )
+                          })
+                      }
+                      <td colSpan="2" align="center">Aksi</td>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {
+                          bodyTabble.length == 0 ?
+                          <tr>
+                              <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>Tidak ada</td>
+                          </tr>
+                          :
+                          bodyTabble.map((item, i) => {
+                              let dateStart = new Date(item.schedule_start);
+                              let dateEnd = new Date(item.schedule_end);
+                              let status='';
+                              if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
+                                  status='Open'
+                              }
+                              else{
+                                  status='Close'
+                              }
+                              if (item.is_live == 0){
+                                status = 'Terkunci'
+                              }
+                              if (item.running){
+                                status = 'Aktif'
+                              }
+                              return (
+                              <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20">{item.room_name}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.name}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20" align="center" style={{color: status == 'Open' ? '#FA6400': status == 'Terkunci' ? '#F00' : status == 'Aktif' ? '#1b9a1b' : '#0091FF'}}>{status}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.waktu_start+' - '+item.waktu_end : '-'}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_scheduled == 1 ? item.tanggal : '-'}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.is_private == 1 ? item.total_participant : '-'}</td>
+                                  <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                    <span class="btn-group dropleft col-sm-1">
+                                      {access_project_admin == true ? <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i
+                                          className="fa fa-ellipsis-v"
+                                          style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                        />
+                                      </button>:null}
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, item.class_id, item.is_live)}>{item.is_live ? 'Kunci' : 'Buka Kunci'}</button>
+                                        <button
+                                          style={{cursor:'pointer'}}
+                                          class="dropdown-item"
+                                          type="button"
+                                          onClick={this.onClickEdit}
+                                          data-id={item.class_id}
+                                          data-cover={item.cover}
+                                          data-speaker={item.speaker}
+                                          data-roomname={item.room_name}
+                                          data-moderator={item.moderator} 
+                                          data-isprivate={item.is_private}
+                                          data-isrequiredconfirmation={item.is_required_confirmation}
+                                          data-participant={item.participant} 
+                                          data-isscheduled={item.is_scheduled} 
+                                          data-start={item.schedule_start} 
+                                          data-end={item.schedule_end} 
+                                          data-folder={item.folder_id}
+                                        >
+                                            Ubah
+                                        </button>
+                                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.class_id, item.room_name)}>Hapus</button>
+                                      </div>
+                                    </span>
+                                  </td>
+                                  <td className="fc-muted f-14 f-w-300 " align="center"><button className={`btn btn-icademy-primary btn-icademy-${status == 'Open' || status == 'Aktif' ? 'warning' : 'grey'}`} onClick={this.onClickInfo.bind(this, item.class_id)}>{status == 'Open' || status == 'Aktif' ? 'Masuk' : 'Informasi'}</button></td>
+                              </tr>
+                              )
+                          })
+                      }
+                  </tbody>
+                </table> */}
+              </div>
                   <Modal
                     show={this.state.isClassModal}
                     onHide={this.closeClassModal}
@@ -1328,5 +1491,6 @@ class MeetingTable extends Component {
     );
   }
 }
+
 
 export default MeetingTable;
