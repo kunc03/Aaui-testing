@@ -1,36 +1,62 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-
+import API, {API_SERVER, USER_ME} from '../../repository/api';
+import { toast } from "react-toastify";
 
 class ListToDoNew extends Component {
   state = {
-    user: {
-      name: 'Anonymous',
-      registered: '2019-12-09',
-      companyId: '',
-    },
-
+    userId: Storage.get('user').data.user_id,
     toDoList: this.props.lists,
     toDo: ''
   }
 
   handleToDoList = e => {
     if(e.key === 'Enter') {
-      let push = {
-        course_id: 1,
+      let form = {
         type: "Personal",
         title: this.state.toDo,
-        name: "ahmad",
-        description: "Deskripsi"
+        userId: this.state.userId,
+        authorId: this.state.userId,
+        description: ""
       };
-      let copy = [...this.state.toDoList];
-      this.setState({ toDoList: copy });
+      API.post(`${API_SERVER}v2/todo/create`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal create todo");
+        this.fetchData();
+      });
     }
   }
 
+  doneToDo = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    API.put(`${API_SERVER}v2/todo/done/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal update data");
+      this.fetchData();
+    })
+  }
+
+  deleteToDo = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v2/todo/delete/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal hapus data");
+      this.fetchData();
+    })
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    API.get(`${API_SERVER}v2/todo/get/${this.state.userId}`).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+      this.setState({ toDoList: res.data.result, toDo: "" });
+    });
+  }
+
   render() {
-    console.log('STATE: ', this.state)
     const lists = this.state.toDoList;
 
     return (
@@ -39,28 +65,26 @@ class ListToDoNew extends Component {
           <input value={this.state.toDo} onKeyDown={this.handleToDoList} onChange={e => this.setState({ toDo: e.target.value })} type="text" className="form-control mb-3" placeholder="Tuliskan to do"/>
           <h3 className="f-w-900 f-18 fc-blue">List To Do</h3>
         </div>
-        {
-          lists.length == 0 ?
-            <div className="col-sm-12 mb-1">
-              Tidak ada
-            </div>
-          :
-          lists.map((item, i) => (
-            <div className="col-sm-12 mb-1" key={item.course_id}>
-                <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
-                  <div className="box-project">
-                    <div className="box-badge-red">{item.type} </div>
-                    <div className=" f-w-800 f-16 fc-black">
-                      {item.title} <span className="f-w-600 f-12 fc-skyblue"> Diberikan kepada {item.name}</span>
-                    </div>
-                    <p className="text-muted">
-                        {item.description}
-                      </p>
-                  </div>
-                </div>
-            </div>
-          ))
-        }
+        <table className="table">
+          <tbody>
+          {
+            lists.length == 0 ?
+              <div className="col-sm-12 mb-1">
+                Tidak ada
+              </div>
+            :
+            lists.map((item, i) => (
+              <tr key={item.id}>
+                <td className="text-center">
+                  <input checked={item.status == 2 ? true : false} onClick={this.doneToDo} data-id={item.id} style={{ cursor: 'pointer'}} type="checkbox" />
+                </td>
+                <td style={item.status == 2 ? {textDecoration: 'line-through'} : {}}>{item.title}</td>
+                <td className="text-center"><i onClick={this.deleteToDo} data-id={item.id} style={{ cursor: 'pointer'}} className="fa fa-trash"></i></td>
+              </tr>
+            ))
+          }
+          </tbody>
+        </table>
       </div>
     );
   }
