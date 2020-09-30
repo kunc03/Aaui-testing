@@ -789,16 +789,16 @@ class MeetingTable extends Component {
       },
       {
         cell: row => <span class="btn-group dropleft">
-                      {access_project_admin == true ? <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i
                           className="fa fa-ellipsis-v"
                           style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
                         />
-                      </button>:null}
+                      </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                         <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Undang</button>
-                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>
-                        <button
+                        { access_project_admin && <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>}
+                        { access_project_admin && <button
                           style={{cursor:'pointer'}}
                           class="dropdown-item"
                           type="button"
@@ -817,8 +817,8 @@ class MeetingTable extends Component {
                           data-folder={row.folder_id}
                         >
                             Ubah
-                        </button>
-                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}>Hapus</button>
+                        </button>}
+                        {access_project_admin && <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}>Hapus</button>}
                       </div>
                     </span>,
         allowOverflow: true,
