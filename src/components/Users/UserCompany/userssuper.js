@@ -160,7 +160,8 @@ export default class User extends Component {
     e.preventDefault();
     this.setState({
       isModalVoucher: true,
-      userIdVoucher: e.target.getAttribute("data-id")
+      userIdVoucher: e.target.getAttribute("data-id"),
+      voucher: e.target.getAttribute("data-voucher")
     });
   };
 
@@ -584,10 +585,10 @@ export default class User extends Component {
                   <label>Voucher</label>
                   <input
                     type="text"
-                    required
                     placeholder="voucher baru"
                     className="form-control"
                     name="voucher"
+                    value={this.state.voucher}
                     onChange={this.handleChangeInput}
                   />
                   {this.state.notif && (
