@@ -84,6 +84,9 @@ class Pengaturan extends Component {
           confirm8: (res.data.result.confirm_8 !== 1) ? false:true,
           confirm9: (res.data.result.confirm_9 !== 1) ? false:true
         });
+        if (res.data.result.is_new_password===0){
+          document.getElementById("changePass").click()
+        }
       }
     })
   }
@@ -159,6 +162,7 @@ class Pengaturan extends Component {
                                         data-toggle="modal"
                                         data-target="#modalPassword"
                                         type="button"
+                                        id="changePass"
                                       >
                                         Ubah
                                       </button>

@@ -56,7 +56,7 @@ class ModalPassword extends Component {
         this.setState({ passwordBaru: '', ulangiPassword: '', isValidate: false, msgValidate: 'Password tidak sama.' });
       }
     } else{
-      this.setState({ msgValidate: 'Form belum valid'});
+      this.setState({ msgValidate: 'Password lama tidak sesuai'});
     }
   }
 
