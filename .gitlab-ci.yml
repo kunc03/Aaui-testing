@@ -38,5 +38,5 @@ deploy:
       else
         echo "Container Not Found";
       fi
-    - cd /home/ubuntu/ideku-react && docker run --name icademy-app -dit -p 3000:80 icademy/app:latest
+    - cd /home/ubuntu/ideku-react && docker run --name icademy-app --restart=always -dit -p 3000:80 icademy/app:latest
 
