@@ -221,9 +221,9 @@ closeModalDelete = e => {
                     </div>
                   </div>
                 </Link>
-                <span className="col-sm-6">
-                  <span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span>
-                  <span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span>
+                <span className="col-sm-7">
+                  <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
+                  <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
                 </span>
                 {
                   accessProjectManager ?
