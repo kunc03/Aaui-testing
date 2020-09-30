@@ -195,10 +195,10 @@ export default class Users extends Component {
               phone: item.phone,
               group: item.branch_name,
               role: item.grup_name,
-              level: item.level,
+              level: item.level === 'client' ? 'User' : item.level === 'admin' ? 'Admin' : 'Superadmin',
               voucher: item.voucher,
               status: item.status,
-              validity: item.validity
+              validity: item.unlimited === 1 ? 'Unlimited' : item.validity
             })
           });
           this.setState({dataUser : dUser})
