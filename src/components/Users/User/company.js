@@ -116,7 +116,7 @@ export default class User extends Component {
 
   onClickModalVoucher = e => {
     e.preventDefault();
-    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id')});
+    this.setState({isModalVoucher: true, userIdVoucher: e.target.getAttribute('data-id'), voucher: e.target.getAttribute('data-voucher')});
   }
 
   onClickSubmitVoucer = e => {
@@ -512,7 +512,7 @@ export default class User extends Component {
                             <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitVoucer}>
                               <div className="form-group">
                                 <label>Voucher</label>
-                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" onChange={this.handleChangeInput} />
+                                <input type="text" placeholder="voucher baru" className="form-control" value={this.state.voucher} name="voucher" onChange={this.handleChangeInput} />
                                 {this.state.notif && (
                                   <Form.Text className="text-danger">{this.state.notif}</Form.Text>
                                 )}

@@ -284,7 +284,7 @@ class UserEdit extends Component {
                                 }
                               </select>
                             </div>
-                            <div className="form-group">
+                            {/* <div className="form-group">
                               <label className="label-input">Password</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
@@ -294,7 +294,7 @@ class UserEdit extends Component {
                                 placeholder="password"
                                 onChange={this.onChangeInput}
                               />
-                            </div>
+                            </div> */}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
                                 Batasi Waktu
