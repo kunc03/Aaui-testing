@@ -283,29 +283,8 @@ class MeetingTable extends Component {
       API.get(apiMeeting).then(res => {
         if (res.status === 200) {
           // console.log('data meeting', res);
-          for(let item in res.data.result) {
-            // console.log(res.data.result[item], 55151515151)
-            let dateStart = new Date(res.data.result[item].schedule_start);
-            let dateEnd = new Date(res.data.result[item].schedule_end);
-            
-            if ((new Date() >= dateStart && new Date() <= dateEnd) || res.data.result[item].is_scheduled == 0){
-                res.data.result[item].status='Open'
-            }
-            else{
-                res.data.result[item].status='Close'
-            }
-            if (res.data.result[item].is_live == 0){
-              res.data.result[item].status = 'Terkunci'
-            }
-            if (res.data.result[item].running){
-              res.data.result[item].status = 'Aktif'
-            }
-          }
-          this.setState({
-            meeting: res.data.result,
-          })
           this.totalPage = res.data.result.length;
-          this.state.meeting.map((item, i)=> {
+          res.data.result.map((item, i)=> {
             // CHECK BBB ROOM IS RUNNING
             let api = bbb.api(BBB_URL, BBB_KEY)
             let http = bbb.http
@@ -313,6 +292,21 @@ class MeetingTable extends Component {
             http(checkUrl).then((result) => {
               if (result.returncode=='SUCCESS'){
                 item.running = result.running
+                let dateStart = new Date(item.schedule_start);
+                let dateEnd = new Date(item.schedule_end);
+                
+                if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
+                  item.status='Open'
+                }
+                else{
+                  item.status='Close'
+                }
+                if (item.is_live == 0){
+                  item.status = 'Terkunci'
+                }
+                if (item.running){
+                  item.status = 'Aktif'
+                }
                 this.forceUpdate()
               }
               else{
@@ -320,6 +314,9 @@ class MeetingTable extends Component {
               }
             })
             // END CHECK BBB ROOM IS RUNNING
+          })
+          this.setState({
+            meeting: res.data.result,
           })
         }
       })
