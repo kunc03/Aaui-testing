@@ -36,13 +36,17 @@ class ModalPassword extends Component {
   onSubmitForm = e => {
     e.preventDefault();
 
+    let isValidate = false;
     if(this.state.passwordBaru === '' && this.state.ulangiPassword === '') {
       this.setState({ isValidate: false });
+      isValidate = false
+      this.forceUpdate()
     } else {
-      this.setState({ isValidate: true });
+      isValidate = true
+      this.forceUpdate()
     }
     
-    if(this.state.isValidate) {
+    if(isValidate) {
       if(this.state.passwordBaru === this.state.ulangiPassword) {
         this.setState({ msgValidate: 'Password sama'});
         let formData = { password: this.state.passwordBaru };
@@ -127,7 +131,7 @@ class ModalPassword extends Component {
                     className="form-control"
                     disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     onChange={this.handleChangeInput}
-                    placeholder="Ulangi Password Lama Anda"
+                    placeholder="Ulangi Password Baru Anda"
                   />
                 </div>
                 { this.state.msgValidate && 
