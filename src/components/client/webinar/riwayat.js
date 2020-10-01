@@ -17,6 +17,7 @@ export default class WebinarRiwayat extends Component {
     ttd:'',
     signature:'',
     checkAll: false,
+    company_id: '',
     filterPeserta: 'Semua',
     webinarId: this.props.match.params.webinarId,
     pesertaX: [
@@ -87,6 +88,7 @@ export default class WebinarRiwayat extends Component {
       let pesertaDanTamu = peserta.concat(res.data.result.tamu)
       this.setState({
         id: this.state.webinarId,
+        company_id: res.data.result.company_id,
         gambar: res.data.result.gambar,
         judul: res.data.result.judul,
         isi: res.data.result.isi,
@@ -204,6 +206,7 @@ export default class WebinarRiwayat extends Component {
   
       let formData = new FormData();
       formData.append('webinar_id', items[0].webinar_id);
+      formData.append('company_id', this.state.company_id);
       formData.append('judul', this.state.judul);
       formData.append('nama', this.state.nama);
       formData.append('signature', this.state.signature);
