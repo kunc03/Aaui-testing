@@ -45,6 +45,11 @@ class MeetingTable extends Component {
       countTidakHadir: 0,
       needConfirmation : 0,
       attendanceConfirmation : '',
+      tanggal: '',
+      jamMulai: '',
+      jamSelesai: '',
+      keterangan: '',
+      bookingMeetingId : '',
 
       imgPreview: '',
 
@@ -53,6 +58,7 @@ class MeetingTable extends Component {
       roomName: '',
       cover: '',
       isClassModal: false,
+      modalJadwal: false,
       infoClass: [],
       infoParticipant: [],
       countHadir: 0,
@@ -61,6 +67,10 @@ class MeetingTable extends Component {
       needConfirmation : 0,
       attendanceConfirmation : '',
       sendingEmail: false,
+      dataBooking: {
+        room_name: '',
+        booking:[]
+      },
 
       //single select moderator
       optionsModerator: [],
@@ -230,6 +240,9 @@ class MeetingTable extends Component {
   }
   closeClassModal = e => {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
+  }
+  closemodalJadwal = (id) => {
+    this.setState({ modalJadwal: false});
   }
 
   closeModalConfirmation = e => {
@@ -692,6 +705,58 @@ class MeetingTable extends Component {
 
     this.fetchMeetingInfo(classId)
   }
+
+  onClickJadwal(id, room_name){
+    this.setState({modalJadwal: true, bookingMeetingId: id})
+    API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
+      if(res.status === 200) {
+        this.setState({dataBooking:{room_name: room_name, booking: res.data.result}})
+      }
+    })
+  }
+  booking(){
+    if (this.state.bookingMeetingId === '' || this.state.tanggal === '' || this.state.jamMulai === '' || this.state.jamSelesai === ''){
+      toast.warning('Tanggal, jam mulai, dan jam selesai wajib diisi')
+    }
+    else{
+      const tanggal = this.state.tanggal.getFullYear()+'-'+('0' + (this.state.tanggal.getMonth()+1)).slice(-2)+'-'+('0' + this.state.tanggal.getDate()).slice(-2);
+      const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2)+':'+('0' + this.state.jamMulai.getMinutes()).slice(-2);
+      const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2)+':'+('0' + this.state.jamSelesai.getMinutes()).slice(-2);
+      let form = {
+        meeting_id : this.state.bookingMeetingId,
+        tanggal : tanggal,
+        jam_mulai : jamMulai,
+        jam_selesai : jamSelesai,
+        user_id : Storage.get('user').data.user_id,
+        keterangan : this.state.keterangan
+      }
+      API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
+        if(res.status === 200) {
+          if(!res.data.error) {
+            toast.success('Menyimpan booking jadwal meeting')
+            this.setState({tanggal:'', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '', modalJadwal: false})
+            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+          } else {
+            toast.error("Error, gagal booking jadwal meeting")
+          }
+        }
+      })
+    }
+  }
+
+  cancelBooking(id){
+    API.delete(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
+      if(res.status === 200) {
+        if(!res.data.error) {
+          toast.success('Membatalkan booking jadwal meeting')
+          this.onClickJadwal(this.state.bookingMeetingId, this.state.dataBooking.room_name)
+        } else {
+          toast.error("Error, gagal membatalkan booking jadwal meeting")
+        }
+      }
+    })
+  }
+
   componentDidMount(){
     this.fetchOtherData();
     if (this.props.informationId){
@@ -799,6 +864,7 @@ class MeetingTable extends Component {
                         />
                       </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickJadwal.bind(this, row.class_id, row.room_name)}>Jadwal</button>
                         <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Undang</button>
                         { access_project_admin && <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>}
                         { access_project_admin && <button
@@ -970,6 +1036,115 @@ class MeetingTable extends Component {
                   </tbody>
                 </table> */}
               </div>
+                  <Modal
+                    show={this.state.modalJadwal}
+                    onHide={this.closemodalJadwal}
+                    dialogClassName="modal-lg"
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                        Jadwal Ruang Meeting : {this.state.dataBooking.room_name}
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <table className="table table-hover">
+                        <thead>
+                          <tr style={{borderBottom: '1px solid #C7C7C7'}}>
+                            <td>Tanggal</td>
+                            <td>Jam Mulai</td>
+                            <td>Jam Selesai</td>
+                            <td>Oleh</td>
+                            <td>Keterangan</td>
+                            <td></td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {
+                            this.state.dataBooking.booking.length ?
+                            this.state.dataBooking.booking.map((item)=> {
+                              const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth()+1)).slice(-2) + '-' + (new Date().getFullYear()))
+                              return(
+                              <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                                <td>{item.jam_mulai}</td>
+                                <td>{item.jam_selesai}</td>
+                                <td>{item.name}</td>
+                                <td>{item.keterangan ? item.keterangan : '-'}</td>
+                                <td>
+                                  {
+                                    item.user_id === Storage.get('user').data.user_id &&
+                                    <span class="badge badge-pill badge-danger" style={{cursor:'pointer'}} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                  }
+                                </td>
+                              </tr>
+                              )
+                            })
+                            :
+                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                              <td colspan='5'>Tidak ada</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+
+                      <h4 style={{padding:10, marginTop:20, marginBottom:10}}>Booking</h4>
+                      <div className="form-group row">
+                        <div className="col-sm-4">
+                          <label className="bold col-sm-12">Tanggal</label>
+                          <DatePicker
+                            dateFormat="yyyy-MM-dd"
+                            selected={this.state.tanggal}
+                            onChange={e => this.setState({ tanggal: e })}
+                          />
+                        </div>
+                        <div className="col-sm-4">
+                          <label className="bold col-sm-12">Jam Mulai</label>
+                          <DatePicker
+                            selected={this.state.jamMulai}
+                            onChange={date => this.setState({ jamMulai: date})}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            timeCaption="Time"
+                            dateFormat="h:mm aa"
+                            />
+                        </div>
+                        <div className="col-sm-4">
+                          <label className="bold col-sm-12">Jam Selesai</label>
+                          <DatePicker
+                            selected={this.state.jamSelesai}
+                            onChange={date => this.setState({ jamSelesai: date})}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            timeCaption="Time"
+                            dateFormat="h:mm aa"
+                            />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label className="bold col-sm-12">Keterangan (optional)</label>
+                          <textarea rows="4" className="form-control" value={this.state.keterangan} onChange={e => this.setState({ keterangan: e.target.value })} />
+                        </div>
+                      </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closemodalJadwal}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary"
+                        onClick={this.booking.bind(this)}
+                      >
+                        <i className="fa fa-save"></i>
+                          Booking
+                      </button>
+                    </Modal.Footer>
+                  </Modal>
                   <Modal
                     show={this.state.isClassModal}
                     onHide={this.closeClassModal}
