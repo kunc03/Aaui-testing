@@ -190,6 +190,7 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu
             })
+            this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -279,6 +280,7 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu
             })
+            this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -383,8 +385,6 @@ export default class WebinarLive extends Component {
       this.fetchWebinar()
     }
     this.fetchQNA()
-    this.checkProjectAccess()
-    console.log('ALVIN S', this.state)
   }
   checkProjectAccess(){
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
@@ -584,7 +584,7 @@ export default class WebinarLive extends Component {
                 </div>
                 <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
                   {
-                    this.state.projectId && Storage.get('user').data.user_id ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
+                    this.state.projectId && Storage.get('user').data.user_id ? <TableFiles access_project_admin={this.state.access_project_admin} webinarId={this.state.webinarId} projectId={this.state.projectId}/>
                   :null}
                 </div>
               </Card.Body>
