@@ -63,7 +63,7 @@ class ListToDoNew extends Component {
       <div className="row">
         <div className="col-sm-12 mb-1">
           <input value={this.state.toDo} onKeyDown={this.handleToDoList} onChange={e => this.setState({ toDo: e.target.value })} type="text" className="form-control mb-3" placeholder="Tuliskan to do"/>
-          <h3 className="f-w-900 f-18 fc-blue">List To Do</h3>
+          
         </div>
         <table className="table">
           <tbody>

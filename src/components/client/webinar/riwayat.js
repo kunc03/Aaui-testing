@@ -13,6 +13,11 @@ import {Doughnut} from 'react-chartjs-2';
 export default class WebinarRiwayat extends Component {
 
 	state = {
+    nama: '',
+    ttd:'',
+    signature:'',
+    checkAll: false,
+    filterPeserta: 'Semua',
     webinarId: this.props.match.params.webinarId,
     pesertaX: [
       {nama: 'Ahmad', status: 'Selesai', jam_mulai: '08:01', jam_selesai: '09:01', via: 'Voucher', durasi: '1 Jam'},
@@ -26,6 +31,7 @@ export default class WebinarRiwayat extends Component {
     ],
 
     isModalDownloadFileWebinar: false,
+    isModalSertifikat: false,
     access_project_admin: false,
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
@@ -69,7 +75,8 @@ export default class WebinarRiwayat extends Component {
   
   handleModal = () => {
     this.setState({
-      isModalDownloadFileWebinar: false
+      isModalDownloadFileWebinar: false,
+      isModalSertifikat: false
     });
   }
 
@@ -126,50 +133,87 @@ export default class WebinarRiwayat extends Component {
   handleChangeChecked(e, item) {
     item['checked'] = e.target.checked;
   }
+  checkAll(e) {
+    let item = this.state.peserta
+    if (this.state.filterPeserta === 'Hadir'){
+      item = item.filter(item=> item.status === 2)
+    }
+    else if (this.state.filterPeserta === 'Tidak Hadir'){
+      item = item.filter(item=> item.status !== 2)
+    }
+    item.map((item, index)=>{
+      item.checked = e.target.checked;
+    })
+    this.setState({item, checkAll: e.target.checked})
+  }
+
+  filterPeserta(e) {
+    let item = this.state.peserta;
+    this.setState({filterPeserta: e.target.value})
+  }
 
   handleChange = (e) => {
-    if (e.target.files[0].size <= 500000) {
-      this.setState({
-        [e.target.id]: e.target.files[0],
-        [`${e.target.id}_img`]: URL.createObjectURL(e.target.files[0]),
-      });
-    } else {
-      e.target.value = null;
+    if (e.target.files[0]){
+      if (e.target.files[0].size <= 5000000) {
+        this.setState({
+          [e.target.id]: e.target.files[0],
+          [`${e.target.id}_img`]: URL.createObjectURL(e.target.files[0]),
+        });
+      } else {
+        e.target.value = null;
+        toast.warning('File maksimum 5MB')
+      }
     }
   };
 
-  onChangeForm = (e) => {
+  onChangeForm = e => {
     // this.setState({ [e.target.id]: e.target.value }, () => {
     //   let a = this.state;
     //   this.setState(a);
     // });
-    console.log(e.target)
+    const target = e.target;
     const name = e.target.name;
-		const value = e.target.value;
-		this.setState({ [name]: value });
+    const value = e.target.value;
+    this.setState({ [name]: value });
   };
+
+  modalSertifikat(){
+    if (this.state.peserta.filter((item)=> item.checked === true).length > 0){
+      this.setState({isModalSertifikat:true})
+    }
+    else{
+      toast.warning('Silahkan pilih dahulu peserta yang ingin dibuatkan sertifikat')
+    }
+  }
   
-  sertifikat = (items) => {
-    let sertifikat = items.filter(e => {return e.checked}).map(e => {
-      return {
-        webinar_id: e.webinar_id,
-        user_id: e.voucher ? e.voucher : e.user_id,
-        email: e.email,
-        nama: e.name,
-        peserta: e.voucher ? 0 : 1
-      }
-    });
-
-    let formData = new FormData();
-    formData.append('webinar_id', items[0].webinar_id);
-    formData.append('judul', this.state.judul);
-    formData.append('nama', this.state.nama);
-    formData.append('signature', this.state.signature);
-    formData.append('peserta', JSON.stringify(sertifikat));
-
-    API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
-      alert('Sukses menyimpan sertifikat');
-    });
+  sertifikat = () => {
+    if (this.state.nama === '' || (this.state.signature === '' || this.state.signature === null)){
+      toast.warning('Silahkan isi nama dan gambar tanda tangan')
+    }
+    else{
+      let items = this.state.peserta;
+      let sertifikat = items.filter(e => {return e.checked}).map(e => {
+        return {
+          webinar_id: e.webinar_id,
+          user_id: e.voucher ? e.voucher : e.user_id,
+          email: e.email,
+          nama: e.name,
+          peserta: e.voucher ? 0 : 1
+        }
+      });
+  
+      let formData = new FormData();
+      formData.append('webinar_id', items[0].webinar_id);
+      formData.append('judul', this.state.judul);
+      formData.append('nama', this.state.nama);
+      formData.append('signature', this.state.signature);
+      formData.append('peserta', JSON.stringify(sertifikat));
+  
+      API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
+        toast.success('Mengirim sertifikat kepada peserta');
+        this.handleModal();
+      });
+    }
   }
 
 	render() {
@@ -201,54 +245,26 @@ export default class WebinarRiwayat extends Component {
     const handleShow = () => {
       show = true
     };
-    const Peserta = ({items}) => (
+    const Peserta = ({items}) => {
+      if (this.state.filterPeserta==='Hadir'){
+        items = items.filter(item=> item.status===2)
+      }
+      else if (this.state.filterPeserta==='Tidak Hadir'){
+        items = items.filter(item=> item.status!==2)
+      }
+      return(
       <div className="wrap" style={{marginTop:10, maxHeight:500, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
-        {/* <Modal show={show} onHide={() => handleClose()}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header> */}
-        {/* <Modal.Body> */}
-        <Form>
-          <Form.Group controlId="name">
-            <Form.Label className="f-w-bold">
-              Nama
-            </Form.Label>
-            <Form.Control
-              type="text"
-              value={this.state.nama}
-              className="form-control"
-              placeholder="Nama"
-              name='nama'
-              onChange={this.onChangeForm}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group controlId="exampleFormControlFile1">
-            <Form.Label>Image</Form.Label>
-            <input
-              id="signature"
-              accept="image/*"
-              className="btn-default"
-              name="signature"
-              type="file"
-              onChange={this.handleChange}
-            />
-          </Form.Group>
-        </Form>
-        {/* </Modal.Body> */}
-        {/* <Modal.Footer>
-          <Button variant="secondary" onClick={() => handleClose()}>
-            Close
-          </Button> */}
-          <Button variant="primary" onClick={() => this.sertifikat(items)}>
-            Save Changes
-          </Button>
-        {/* </Modal.Footer>
-      </Modal> */}
+      <div className="float-right" style={{width:200}}>
+      <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" onChange={(e)=>this.filterPeserta(e)}>
+        <option value="Semua" selected>Semua</option>
+        <option value="Hadir">Hadir</option>
+        <option value="Tidak Hadir">Tidak Hadir</option>
+      </select>
+      </div>
       <table id="table-peserta" className="table table-striped">
         <thead>
           <tr>
+            <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} />&nbsp;Sertifikat</th>
             <th>Nama Peserta</th>
             <th>Email</th>
             <th>Phone</th>
@@ -256,7 +272,6 @@ export default class WebinarRiwayat extends Component {
             <th>Jam Masuk</th>
             <th>Status</th>
             <th>Durasi</th>
-            <th>Sertifikat</th>
           </tr>
         </thead>
         <tbody>
@@ -270,6 +285,7 @@ export default class WebinarRiwayat extends Component {
               let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
               let durasi = item.jam_mulai ? diffHour + ' Jam ' + diffMin + ' Menit' : '-';
               return (<tr key={i}>
+                <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
@@ -277,17 +293,14 @@ export default class WebinarRiwayat extends Component {
                 <td>{jamMulai}</td>
                 <td>{item.voucher ? 'Tamu' : 'Peserta'}</td>
                 <td>{durasi}</td>
-                <td><input type="checkbox" id={i} value={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td>
               </tr>)
             })
           }
         </tbody>
       </table>
-      <Button variant="primary" onClick={() => handleShow()}>
-        Launch demo modal
-      </Button>
+      <Button className="btn btn-icademy-primary" onClick={this.modalSertifikat.bind(this)}>Buat Sertifikat</Button>
       </div>
-    );
+    )};
 
     const Pertanyaan = ({items}) => (
       <div className="wrap" style={{marginTop:10, maxHeight:500, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
@@ -508,6 +521,51 @@ export default class WebinarRiwayat extends Component {
           </Card>
 
           <ModalDownloadFileWebinar />
+      <Modal
+        show={this.state.isModalSertifikat}
+        onHide={this.handleModal}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Buat Sertifikat
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <Form>
+          <Form.Group controlId="name">
+            <Form.Label className="f-w-bold">
+              Nama Tanda Tangan
+            </Form.Label>
+            <Form.Control
+              type="text"
+              value={this.state.nama}
+              className="form-control"
+              placeholder="Masukkan nama pada tanda tangan"
+              name='nama'
+              onChange={this.onChangeForm.bind(this)}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <label className="bold">Gambar Tanda Tangan</label>
+            <div className="row">
+              <div className="col-sm-3">
+                <img className="img-fluid" src={this.state.signature == '' || this.state.signature == null ? `/newasset/imginput.png` : typeof this.state.signature === 'object' && this.state.signature !== null ? URL.createObjectURL(this.state.signature) : this.state.signature } />
+              </div>
+              <div className="col-sm-6">
+                <input type="file" id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
+              </div>
+            </div>
+          </Form.Group>
+        </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button className="btn btn-icademy-primary" onClick={() => this.sertifikat()}>
+            Kirim Sertifikat
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </div>
       </div>
 		);

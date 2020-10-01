@@ -11736,3 +11736,10 @@ div.code-toolbar > .toolbar span:hover {
   width: 84.5%;
 }
 
+.substring{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: inline-block;
+}
