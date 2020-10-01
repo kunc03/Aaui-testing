@@ -256,9 +256,15 @@ uploadFile = e => {
       }
     });
     this.fetchData();
-    window.onbeforeunload = function() {
-      return "Are you sure you want to leave?";
-    };
+    
+    var links = document.getElementsByTagName('a');
+    var len = links.length;
+
+    for(var i=0; i<len; i++)
+    {
+       links[i].target = "_blank";
+    }
+
     // Update kehadiran aktual 
     let form = {
         confirmation: 'Hadir',
@@ -778,6 +784,7 @@ uploadFile = e => {
                   </a> */}
                   </div>
                   {/* <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
+
                   <Iframe url={this.state.joinUrl}
                     width="100%"
                     height="600px"
@@ -785,6 +792,7 @@ uploadFile = e => {
                     frameBorder="0"
                     allow="fullscreen *;geolocation *; microphone *; camera *"
                     position="relative"/>
+
                 </div>
               :
               null
