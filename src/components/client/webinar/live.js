@@ -40,6 +40,7 @@ export default class WebinarLive extends Component {
     tamu: [],
     pertanyaan: [],
     jawaban: [],
+    companyId: '',
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -178,6 +179,7 @@ export default class WebinarLive extends Component {
             else
             this.setState({
               webinar: res.data.result,
+              companyId: res.data.result.company_id,
               pembicara: res.data.result.pembicara.name,
               moderatorId: res.data.result.moderator.user_id,
               sekretarisId: res.data.result.sekretaris.user_id,
@@ -268,6 +270,7 @@ export default class WebinarLive extends Component {
             else
             this.setState({
               webinar: res.data.result,
+              companyId: res.data.result.company_id,
               pembicara: res.data.result.pembicara.name,
               moderatorId: res.data.result.moderator.user_id,
               sekretarisId: res.data.result.sekretaris.user_id,
@@ -387,21 +390,28 @@ export default class WebinarLive extends Component {
     this.fetchQNA()
   }
   checkProjectAccess(){
-    API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
-      if (res.status === 200) {
-        let levelUser = Storage.get('user').data.level;
-        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
-          this.setState({
-            access_project_admin: true,
-          })
+    if (this.props.voucher){
+      this.setState({
+        access_project_admin: false,
+      })
+    }
+    else{
+      API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
+        if (res.status === 200) {
+          let levelUser = Storage.get('user').data.level;
+          if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+            this.setState({
+              access_project_admin: true,
+            })
+          }
+          else{
+            this.setState({
+              access_project_admin: false,
+            })
+          }
         }
-        else{
-          this.setState({
-            access_project_admin: false,
-          })
-        }
-      }
-    })
+      })
+    }
   }
   updateStatus (id, status) {
     let form = {
@@ -566,7 +576,7 @@ export default class WebinarLive extends Component {
           </Card>
         </div>
         {
-          this.state.projectId != 0 &&
+          (this.state.projectId !== 0 && this.state.status===2) &&
           <div className="col-sm-6">
             <Card>
               <Card.Body>
@@ -583,16 +593,14 @@ export default class WebinarLive extends Component {
                   </div>
                 </div>
                 <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
-                  {
-                    this.state.projectId && Storage.get('user').data.user_id ? <TableFiles access_project_admin={this.state.access_project_admin} webinarId={this.state.webinarId} projectId={this.state.projectId}/>
-                  :null}
+                    <TableFiles voucherTamu={this.state.user.user_id} guest={this.props.voucher ? true : false} access_project_admin={this.state.access_project_admin} webinarId={this.state.webinarId} projectId={this.state.projectId} companyId={this.state.companyId}/>
                 </div>
               </Card.Body>
             </Card>
           </div>
         }
         {
-          (this.state.user.user_id == this.state.pembicaraId || this.state.user.user_id == this.state.moderatorId || this.state.user.user_id == this.state.sekretarisId) ?
+          (this.state.user.user_id == this.state.pembicaraId || this.state.user.user_id == this.state.moderatorId || this.state.user.user_id == this.state.sekretarisId) && this.state.status===2 ?
           <div className="col-sm-6">
             <Card>
               <Card.Body>
@@ -604,12 +612,18 @@ export default class WebinarLive extends Component {
                   </div>
                 </div>
                 <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
-                  <Pertanyaan items={this.state.qna} />
+                  {
+                    this.state.qna.length ?
+                    <Pertanyaan items={this.state.qna} />
+                    :
+                    <p>Tidak ada pertanyaan</p>
+                  }
                 </div>
               </Card.Body>
             </Card>
           </div>
           :
+          (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) && this.state.status===2 ?
           <div className="col-sm-6">
             <Card>
               <Card.Body>
@@ -641,6 +655,8 @@ export default class WebinarLive extends Component {
               </Card.Body>
             </Card>
           </div>
+          :
+          null
         }
         <Modal
           show={this.state.modalEnd}
