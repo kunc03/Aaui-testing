@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Button, Form, Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import { Link } from 'react-router-dom';
 import Moment from 'moment-timezone';
@@ -42,7 +42,8 @@ export default class WebinarRiwayat extends Component {
          ]
       }
      ]
-    }
+    },
+    sertifikat:[]
   }
 
   fetchQNA(){
@@ -121,6 +122,56 @@ export default class WebinarRiwayat extends Component {
       }
     })
   }
+
+  handleChangeChecked(e, item) {
+    item['checked'] = e.target.checked;
+  }
+
+  handleChange = (e) => {
+    if (e.target.files[0].size <= 500000) {
+      this.setState({
+        [e.target.id]: e.target.files[0],
+        [`${e.target.id}_img`]: URL.createObjectURL(e.target.files[0]),
+      });
+    } else {
+      e.target.value = null;
+    }
+  };
+
+  onChangeForm = (e) => {
+    // this.setState({ [e.target.id]: e.target.value }, () => {
+    //   let a = this.state;
+    //   this.setState(a);
+    // });
+    console.log(e.target)
+    const name = e.target.name;
+		const value = e.target.value;
+		this.setState({ [name]: value });
+  };
+  
+  sertifikat = (items) => {
+    let sertifikat = items.filter(e => {return e.checked}).map(e => {
+      return {
+        webinar_id: e.webinar_id,
+        user_id: e.voucher ? e.voucher : e.user_id,
+        email: e.email,
+        nama: e.name,
+        peserta: e.voucher ? 0 : 1
+      }
+    });
+
+    let formData = new FormData();
+    formData.append('webinar_id', items[0].webinar_id);
+    formData.append('judul', this.state.judul);
+    formData.append('nama', this.state.nama);
+    formData.append('signature', this.state.signature);
+    formData.append('peserta', JSON.stringify(sertifikat));
+
+    API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
+      alert('Sukses menyimpan sertifikat');
+    });
+  }
+
 	render() {
 
     // let access_project_admin = this.state.access_project_admin
@@ -143,8 +194,58 @@ export default class WebinarRiwayat extends Component {
       </div>
     );
 
+    let show = false;
+    const handleClose = () => {
+      show = false
+    };
+    const handleShow = () => {
+      show = true
+    };
     const Peserta = ({items}) => (
       <div className="wrap" style={{marginTop:10, maxHeight:500, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
+        {/* <Modal show={show} onHide={() => handleClose()}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal heading</Modal.Title>
+        </Modal.Header> */}
+        {/* <Modal.Body> */}
+        <Form>
+          <Form.Group controlId="name">
+            <Form.Label className="f-w-bold">
+              Nama
+            </Form.Label>
+            <Form.Control
+              type="text"
+              value={this.state.nama}
+              className="form-control"
+              placeholder="Nama"
+              name='nama'
+              onChange={this.onChangeForm}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="exampleFormControlFile1">
+            <Form.Label>Image</Form.Label>
+            <input
+              id="signature"
+              accept="image/*"
+              className="btn-default"
+              name="signature"
+              type="file"
+              onChange={this.handleChange}
+            />
+          </Form.Group>
+        </Form>
+        {/* </Modal.Body> */}
+        {/* <Modal.Footer>
+          <Button variant="secondary" onClick={() => handleClose()}>
+            Close
+          </Button> */}
+          <Button variant="primary" onClick={() => this.sertifikat(items)}>
+            Save Changes
+          </Button>
+        {/* </Modal.Footer>
+      </Modal> */}
       <table id="table-peserta" className="table table-striped">
         <thead>
           <tr>
@@ -155,6 +256,7 @@ export default class WebinarRiwayat extends Component {
             <th>Jam Masuk</th>
             <th>Status</th>
             <th>Durasi</th>
+            <th>Sertifikat</th>
           </tr>
         </thead>
         <tbody>
@@ -167,7 +269,7 @@ export default class WebinarRiwayat extends Component {
               let diffHour = Math.floor((diff % 86400000) / 3600000);
               let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
               let durasi = item.jam_mulai ? diffHour + ' Jam ' + diffMin + ' Menit' : '-';
-              return (<tr>
+              return (<tr key={i}>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
@@ -175,11 +277,15 @@ export default class WebinarRiwayat extends Component {
                 <td>{jamMulai}</td>
                 <td>{item.voucher ? 'Tamu' : 'Peserta'}</td>
                 <td>{durasi}</td>
+                <td><input type="checkbox" id={i} value={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td>
               </tr>)
             })
           }
         </tbody>
       </table>
+      <Button variant="primary" onClick={() => handleShow()}>
+        Launch demo modal
+      </Button>
       </div>
     );
 
@@ -198,7 +304,7 @@ export default class WebinarRiwayat extends Component {
         <tbody>
           {
             items.map((item, i) => {
-              return (<tr>
+              return (<tr key={i}>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
@@ -219,7 +325,7 @@ export default class WebinarRiwayat extends Component {
             <th>Nama Peserta</th>
             {
               items.pertanyaan.map((item) => (
-                <th>{item}</th>
+                <th key={item}>{item}</th>
               ))
             }
           </tr>
@@ -228,11 +334,11 @@ export default class WebinarRiwayat extends Component {
           {
             items.jawaban.map((item, i) => {
               return (
-              <tr>
+              <tr key={i}>
                 <td>{item.nama}</td>
                 {
                   item.jawaban.map((item) =>
-                      <td>{item}</td>
+                      <td key={item}>{item}</td>
                   )
                 }
               </tr>

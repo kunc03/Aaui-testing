@@ -381,6 +381,17 @@ closeModalDeleteFile = e => {
   this.setState({modalDeleteFile:false, deleteFileName:'', deleteFileId:'', alert:''})
 }
 
+filesLogs(e) {
+  let data = {
+    id: e.id,
+    filename: e.name,
+    folder: e.folder_id,
+    url: e.location
+  };
+  API.post(`${API_SERVER}v1/files-logs`, data)
+    .then(res => {console.log(res)});
+}
+
 componentDidMount(){
   this.fetchData()
 }
@@ -530,7 +541,10 @@ componentDidMount(){
                                         style={{cursor:'pointer'}}
                                         class="dropdown-item"
                                         type="button"
-                                        onClick={e=>window.open(item.location, 'Downloading files')}
+                                        onClick={ e => {
+                                          this.filesLogs(item);
+                                          window.open(item.location, 'Downloading files');
+                                        }}
                                       >
                                           Download
                                       </button>
