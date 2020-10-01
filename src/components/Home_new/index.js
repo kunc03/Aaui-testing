@@ -10,6 +10,7 @@ import EventNew from './event';
 import ProjekNew from './projek';
 import CalenderNew from './kalender';
 import ListToDoNew from './listToDo';
+import RecentDocs from './recentDocs';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +30,7 @@ class HomeNew extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
+    recentDocs: []
   }
 
 
@@ -105,6 +107,13 @@ class HomeNew extends Component {
         });
       }
     })
+
+    // recent docs
+    API.get(`${API_SERVER}v1/files-logs`).then(res => {
+      if(!res.data.error) {
+        this.setState({recentDocs: res.data.result});
+      };
+    });
   }
 
   findCourse = (e) => {
@@ -242,6 +251,27 @@ class HomeNew extends Component {
                       <div className="col-sm-12">
                         <CalenderNew lists={kursusTerbaru} />
                       </div>
+                      <div className="col-sm-12">
+                        <Card>
+                          <Card.Body>
+                            <div className="row">
+                              <div className="col-sm-6">
+                                <h3 className="f-w-900 f-18 fc-blue">
+                                  Dokumen Terakhir Diakses
+                                </h3>
+                              </div>
+                              <div className="col-sm-6 text-right">
+                                <p className="m-b-0">
+                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                </p>
+                              </div>
+                            </div>
+                            <div style={{marginTop: '10px'}}>
+                              <RecentDocs lists={this.state.recentDocs} />
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      </div>
                     </div>    
                     <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}> 
                       <div className="col-sm-12">
@@ -257,7 +287,7 @@ class HomeNew extends Component {
                             <div className="row">
                               <div className="col-sm-6">
                                 <h3 className="f-w-900 f-18 fc-blue">
-                                  To Do
+                                  Things To Do
                                 </h3>
                               </div>
                               <div className="col-sm-6 text-right">
@@ -272,6 +302,7 @@ class HomeNew extends Component {
                           </Card.Body>
                         </Card>
                       </div>
+
                     </div>  
                   </div>
 
