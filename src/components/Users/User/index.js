@@ -188,10 +188,10 @@ export default class User extends Component {
               phone: item.phone,
               group: item.branch_name,
               role: item.grup_name,
-              level: item.level,
+              level: item.level === 'client' ? 'User' : item.level === 'admin' ? 'Admin' : 'Superadmin',
               voucher: item.voucher,
               status: item.status,
-              validity: item.validity
+              validity: item.unlimited === 1 ? 'Unlimited' : item.validity
             })
           });
           this.setState({dataUser : dUser})
@@ -371,7 +371,7 @@ export default class User extends Component {
           <td>{item.email}</td>
           <td>{item.voucher}</td>
           <td>{item.phone}</td>
-          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
+          <td>{item.unlimited === 1 ? 'Unlimited' : item.validity}</td>
           <td class="text-center">
             <Link to="#" className="buttonku" title="Setting Voucher">
               <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
@@ -519,7 +519,7 @@ export default class User extends Component {
                             <form style={{ marginTop: '10px'}} onSubmit={this.onClickSubmitVoucer}>
                               <div className="form-group">
                                 <label>Voucher</label>
-                                <input type="text" required placeholder="voucher baru" className="form-control" name="voucher" value={this.state.voucher} onChange={this.handleChangeInput} />
+                                <input type="text" placeholder="voucher baru" className="form-control" name="voucher" value={this.state.voucher} onChange={this.handleChangeInput} />
                                 {this.state.notif && (
                                   <Form.Text className="text-danger">{this.state.notif}</Form.Text>
                                 )}

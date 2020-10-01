@@ -105,7 +105,12 @@ class Login extends Component {
             window.location.href = window.location.origin+this.props.redirectUrl
           }
           else{
-            window.location.href = window.location.origin;
+            if (res.data.result.is_new_password===1){
+              window.location.href = window.location.origin;
+            }
+            else{
+              window.location.href = `${window.location.origin}/pengaturan`;
+            }
           }
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
@@ -153,7 +158,12 @@ class Login extends Component {
             window.location.href = window.location.origin+this.props.redirectUrl
           }
           else{
-            window.location.href = window.location.origin;
+            if (res.data.result.is_new_password===1){
+              window.location.href = window.location.origin;
+            }
+            else{
+              window.location.href = `${window.location.origin}/pengaturan`;
+            }
           }
           
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(

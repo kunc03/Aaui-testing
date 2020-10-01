@@ -283,29 +283,8 @@ class MeetingTable extends Component {
       API.get(apiMeeting).then(res => {
         if (res.status === 200) {
           // console.log('data meeting', res);
-          for(let item in res.data.result) {
-            // console.log(res.data.result[item], 55151515151)
-            let dateStart = new Date(res.data.result[item].schedule_start);
-            let dateEnd = new Date(res.data.result[item].schedule_end);
-            
-            if ((new Date() >= dateStart && new Date() <= dateEnd) || res.data.result[item].is_scheduled == 0){
-                res.data.result[item].status='Open'
-            }
-            else{
-                res.data.result[item].status='Close'
-            }
-            if (res.data.result[item].is_live == 0){
-              res.data.result[item].status = 'Terkunci'
-            }
-            if (res.data.result[item].running){
-              res.data.result[item].status = 'Aktif'
-            }
-          }
-          this.setState({
-            meeting: res.data.result,
-          })
           this.totalPage = res.data.result.length;
-          this.state.meeting.map((item, i)=> {
+          res.data.result.map((item, i)=> {
             // CHECK BBB ROOM IS RUNNING
             let api = bbb.api(BBB_URL, BBB_KEY)
             let http = bbb.http
@@ -313,6 +292,21 @@ class MeetingTable extends Component {
             http(checkUrl).then((result) => {
               if (result.returncode=='SUCCESS'){
                 item.running = result.running
+                let dateStart = new Date(item.schedule_start);
+                let dateEnd = new Date(item.schedule_end);
+                
+                if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
+                  item.status='Open'
+                }
+                else{
+                  item.status='Close'
+                }
+                if (item.is_live == 0){
+                  item.status = 'Terkunci'
+                }
+                if (item.running){
+                  item.status = 'Aktif'
+                }
                 this.forceUpdate()
               }
               else{
@@ -320,6 +314,9 @@ class MeetingTable extends Component {
               }
             })
             // END CHECK BBB ROOM IS RUNNING
+          })
+          this.setState({
+            meeting: res.data.result,
           })
         }
       })
@@ -795,16 +792,16 @@ class MeetingTable extends Component {
       },
       {
         cell: row => <span class="btn-group dropleft">
-                      {access_project_admin == true ? <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i
                           className="fa fa-ellipsis-v"
                           style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
                         />
-                      </button>:null}
+                      </button>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                         <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Undang</button>
-                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>
-                        <button
+                        { access_project_admin && <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Kunci' : 'Buka Kunci'}</button>}
+                        { access_project_admin && <button
                           style={{cursor:'pointer'}}
                           class="dropdown-item"
                           type="button"
@@ -823,8 +820,8 @@ class MeetingTable extends Component {
                           data-folder={row.folder_id}
                         >
                             Ubah
-                        </button>
-                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}>Hapus</button>
+                        </button>}
+                        {access_project_admin && <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}>Hapus</button>}
                       </div>
                     </span>,
         allowOverflow: true,
