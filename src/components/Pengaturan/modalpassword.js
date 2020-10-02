@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
+import { toast } from "react-toastify";
 
 class ModalPassword extends Component {
   state = {
@@ -36,20 +37,26 @@ class ModalPassword extends Component {
   onSubmitForm = e => {
     e.preventDefault();
 
+    let isValidate = false;
     if(this.state.passwordBaru === '' && this.state.ulangiPassword === '') {
       this.setState({ isValidate: false });
+      isValidate = false
+      this.forceUpdate()
     } else {
-      this.setState({ isValidate: true });
+      isValidate = true
+      this.forceUpdate()
     }
     
-    if(this.state.isValidate) {
+    if(isValidate) {
       if(this.state.passwordBaru === this.state.ulangiPassword) {
-        this.setState({ msgValidate: 'Password sama'});
         let formData = { password: this.state.passwordBaru };
         API.put(`${API_SERVER}v1/user/password/${this.state.userId}`, formData).then(res => {
           if(res.status === 200) {
-            localStorage.clear();
-            window.location.href = window.location.origin;
+            this.setState({ msgValidate: 'Password berhasil diubah', passwordLama: '', passwordBaru: '', ulangiPassword: ''});
+            this.forceUpdate()
+            toast.success('Berhasil mengubah password')
+            // localStorage.clear();
+            // window.location.href = window.location.origin;
           }
         })
       } else {
@@ -95,6 +102,7 @@ class ModalPassword extends Component {
                   <input
                     type="password"
                     className="form-control"
+                    value={this.state.passwordLama}
                     onChange={this.handleChangeInput}
                     onKeyUp={this.onKeyUpPasswordLama}
                     name="passwordLama"
@@ -111,6 +119,7 @@ class ModalPassword extends Component {
                   <input
                     type="password"
                     name="passwordBaru"
+                    value={this.state.passwordBaru}
                     className="form-control"
                     disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     onChange={this.handleChangeInput}
@@ -124,10 +133,11 @@ class ModalPassword extends Component {
                   <input
                     type="password"
                     name="ulangiPassword"
+                    value={this.state.ulangiPassword}
                     className="form-control"
                     disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     onChange={this.handleChangeInput}
-                    placeholder="Ulangi Password Lama Anda"
+                    placeholder="Ulangi Password Baru Anda"
                   />
                 </div>
                 { this.state.msgValidate && 

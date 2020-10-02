@@ -199,14 +199,18 @@ editFolder(){
     let form = {}
     if (this.props.webinarId)
     {
-      await API.get(`${API_SERVER}v2/webinar/one/${this.props.webinarId}`).then(res => {
+      let apiUrl = this.props.guest ?
+      `${API_SERVER}v2/webinar/tamu/one/${this.props.webinarId}`
+      :
+      `${API_SERVER}v2/webinar/one/${this.props.webinarId}`
+      await API.get(apiUrl).then(res => {
         if(res.data.error) toast.warning("Gagal fetch API");
         form = {
           aSekretaris: userId == res.data.result.sekretaris.user_id ? 1 : 0,
           aModerator: userId == res.data.result.moderator.user_id ? 1 : 0,
           aPembicara: userId == res.data.result.pembicara.user_id ? 1 : 0,
           aOwner: userId == res.data.result.owner.user_id ? 1 : 0,
-          aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length ? 1 : 0,
+          aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length || res.data.result.tamu.filter((item) => item.voucher == this.props.voucherTamu).length ? 1 : 0,
         }
       })
     }
@@ -221,7 +225,6 @@ editFolder(){
       }
     }
     this.setState({role: form})
-    console.log('ROLE', this.state.role)
     
     API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
       if (res.status === 200) {
@@ -287,13 +290,6 @@ fetchRekamanBBB(folder){
     this.setState({dataRecordings:[], isLoading: false})
   }
   else{
-    API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
-      if (res.status === 200) {
-        this.setState({
-          companyId: localStorage.getItem('companyID')
-            ? localStorage.getItem('companyID')
-            : res.data.result.company_id,
-        });
         API.get(
           `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${folder}`
         ).then((res) => {
@@ -302,36 +298,45 @@ fetchRekamanBBB(folder){
             // BBB GET MEETING RECORD
             let api = bbb.api(BBB_URL, BBB_KEY)
             let http = bbb.http
-            data.map((item) => {
-              let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
-              http(getRecordingsUrl).then((result) => {
-                if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-                  this.state.dataRecordings.push(result.recordings)
-                  this.forceUpdate()
-                }
-                else{
-                  console.log('GAGAL', result)
-                }
+            if (data.length > 0){
+              data.map((item) => {
+                let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+                http(getRecordingsUrl).then((result) => {
+                  if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                    this.state.dataRecordings.push(result.recordings)
+                    this.forceUpdate()
+                  }
+                  else{
+                    console.log('GAGAL', result)
+                  }
+                })
               })
-            })
+            }
+            else{
+              this.setState({dataRecordings:[]})
+              this.forceUpdate()
+            }
             // BBB END
             this.setState({
               isLoading: false
             })
           }
         });
-      }
-    });
   }
 }
 
 fetchData(){
-  API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-    if (res.status === 200) {
-      this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-      this.selectFolder(this.props.projectId)
-    }
-  })
+  if (this.props.companyId){
+    this.setState({companyId: this.props.companyId})
+  }
+  else{
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+      }
+    })
+  }
+  this.selectFolder(this.props.projectId)
 }
 
 dialogDelete(id, name){
@@ -381,6 +386,17 @@ closeModalDeleteFile = e => {
   this.setState({modalDeleteFile:false, deleteFileName:'', deleteFileId:'', alert:''})
 }
 
+filesLogs(e) {
+  let data = {
+    id: e.id,
+    filename: e.name,
+    folder: e.folder_id,
+    url: e.location
+  };
+  API.post(`${API_SERVER}v1/files-logs`, data)
+    .then(res => {console.log(res)});
+}
+
 componentDidMount(){
   this.fetchData()
 }
@@ -425,7 +441,7 @@ componentDidMount(){
                     className="form-control float-right col-sm-3"/> */}
             </span>
             <div className="table-responsive" style={{overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto'}}>
-                <table className="table table-hover">
+                <table className="table table-hover table-responsive">
                 <thead>
                     <tr style={{borderBottom: '1px solid #C7C7C7'}}>
                     <td>Files</td>
@@ -530,7 +546,10 @@ componentDidMount(){
                                         style={{cursor:'pointer'}}
                                         class="dropdown-item"
                                         type="button"
-                                        onClick={e=>window.open(item.location, 'Downloading files')}
+                                        onClick={ e => {
+                                          this.filesLogs(item);
+                                          window.open(item.location, 'Downloading files');
+                                        }}
                                       >
                                           Download
                                       </button>
