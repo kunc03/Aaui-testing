@@ -9181,11 +9181,13 @@ a.btn-theme.active {
 ==========================  **/
 .popover {
   top: 0;
-  left: 0;
-  border: none;
-  -webkit-box-shadow: 0 0 15px #dcdcdc;
-          box-shadow: 0 0 15px #dcdcdc;
-  border-radius: 15px;
+    left: 0;
+    border: none;
+    -webkit-box-shadow: 0 0 15px #dcdcdc;
+    box-shadow: 0 0 15px #dcdcdc78;
+    border-radius: 6px;
+    padding: 10px;
+}
 }
 .popover .arrow::after {
   display: none;

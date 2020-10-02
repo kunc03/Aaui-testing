@@ -1,16 +1,36 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import Toolbar from 'react-big-calendar/lib/Toolbar';
+import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import MomentTZ from 'moment-timezone';
+import {dataKalender} from './data';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
+import {OverlayTrigger} from 'react-bootstrap';
+import {Popover} from 'react-bootstrap';
+
 const localizer = momentLocalizer(moment);
+function Event({ event }) {
+  let popoverClickRootClose = (
+    <Popover id="popover-trigger-click-root-close" style={{ zIndex: 10000 }}>
+       <p>Data Kalender</p>
+      <strong>{event.title}</strong>
+    </Popover>
+  );
 
+  console.log('nah ini dia',event);
+  return (
+    <div>
+      <div>
+        <OverlayTrigger id="help" trigger="click" rootClose container={this} placement="top" overlay={popoverClickRootClose}>
+          <div>{event.title}</div>
+        </OverlayTrigger>
+      </div>
+    </div>
+  );
+}
 
-class EventNew extends Component {
+class KalenderNew extends Component {
   state = {
     user: {
       name: 'Anonymous',
@@ -19,7 +39,7 @@ class EventNew extends Component {
     },
     event: []
   }
-
+  
   fetchUserCalendar() {
     API.get(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`).then(
       (res) => {
@@ -68,16 +88,15 @@ class EventNew extends Component {
   render() {
   //  console.log(this.props, 'props evenntttt')
     const lists = this.props.lists;
-
-
+    
     return (
       <div >
         <div className="card p-10">
         <h3 className="f-w-900 f-18 fc-blue">Kalender</h3>
           <Calendar
             popup
-            events={this.state.event}
-            defaultDate={new Date()}
+            events={dataKalender}
+            // defaultDate={new Date()}
             localizer={localizer}
             style={{ height: 400 }}
             eventPropGetter={(event, start, end, isSelected) => {
@@ -89,6 +108,9 @@ class EventNew extends Component {
               return {};
             }}
             views={['month', 'day']}
+            components={{
+              event: Event
+            }}
           />
 
           <div className="p-l-20">
@@ -103,4 +125,4 @@ class EventNew extends Component {
   }
 }
 
-export default EventNew;
+export default KalenderNew;
