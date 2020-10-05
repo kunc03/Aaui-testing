@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 class Generator {
   constructor() {}
+  
   generateData() {
     let data = [];
     let links = [];
