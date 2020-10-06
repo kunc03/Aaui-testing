@@ -36,13 +36,18 @@ export default class User extends Component {
       contentWebinar : true,
       contentGanttChart : true,
       contentFiles : true,
+
+      projectId: this.props.match.params.project_id,
+      userId: Storage.get('user').data.user_id,
     };
   }
+  
   goBack(){
     this.props.history.goBack();
   }
+
   checkProjectAccess(){
-    API.get(`${API_SERVER}v1/project-access/${this.props.match.params.project_id}/${Storage.get('user').data.user_id}`).then(res => {
+    API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${this.state.userId}`).then(res => {
       if (res.status === 200) {
         let levelUser = Storage.get('user').data.level;
         if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
@@ -73,7 +78,7 @@ export default class User extends Component {
   }
 
   render() {
-    
+
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -104,16 +109,16 @@ export default class User extends Component {
                     </div>
                     
                     <div className={this.state.contentMeeting ? "col-xl-12" : "hidden"}>
-                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
+                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
-                      <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
+                      <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
-                      <GanttChart />
+                      <GanttChart projectId={this.state.projectId} />
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
-                      <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
+                      <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                     </div>
                   </div>
                 </div>
