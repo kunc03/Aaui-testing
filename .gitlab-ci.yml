@@ -1,9 +1,11 @@
 stages:
-  - build
-  - deploy
+  - build_development
+  - deploy_development
+  - build_staging
+  - deploy_staging
 
-build:
-  stage: build
+build_development:
+  stage: build_development
   only:
     - staging
   tags:
@@ -22,8 +24,8 @@ build:
     - cd /home/ubuntu/ideku-react && sudo npm run build
     - cd /home/ubuntu/ideku-react && docker build -t icademy/app:latest .
 
-deploy:
-  stage: deploy
+deploy_development:
+  stage: deploy_development
   only:
     - staging
   tags:
@@ -39,4 +41,27 @@ deploy:
         echo "Container Not Found";
       fi
     - cd /home/ubuntu/ideku-react && docker run --name icademy-app --restart=always -dit -p 3000:80 icademy/app:latest
+
+build_staging:
+  stage: build_staging
+  only:
+    - staging
+  tags:
+    - staging
+  script:
+    - cd /home/ubuntu/ideku-react && git pull origin staging
+    - cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+
+deploy_staging:
+  stage: deploy_staging
+  only:
+    - staging
+  tags:
+    - staging
+  environment:
+    name: "Stg Icademy App"
+    url: https://app.icademy.stg.kelola.co.id
+  script:
+    - cd /home/ubuntu/ideku-react && npm install
+    - cd /home/ubuntu/ideku-react && npm run build
 
