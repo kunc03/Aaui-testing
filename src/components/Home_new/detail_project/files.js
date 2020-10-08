@@ -441,7 +441,7 @@ componentDidMount(){
                     className="form-control float-right col-sm-3"/> */}
             </span>
             <div className="table-responsive" style={{overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto'}}>
-                <table className="table table-hover table-responsive">
+                <table className="table table-hover">
                 <thead>
                     <tr style={{borderBottom: '1px solid #C7C7C7'}}>
                     <td>Files</td>

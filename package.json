@@ -35,6 +35,7 @@
     "react-device-detect": "^1.13.1",
     "react-dom": "^16.12.0",
     "react-flickity-component": "^3.4.0",
+    "react-fullscreen-element": "^1.0.2",
     "react-gantt-timeline": "^0.4.3",
     "react-html-table-to-excel": "^2.0.0",
     "react-iframe": "^1.8.0",

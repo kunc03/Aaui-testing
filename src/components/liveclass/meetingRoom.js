@@ -4,6 +4,7 @@ import {
 	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
+import ReactFullScreenElement from "react-fullscreen-element";
 
 import ToggleSwitch from "react-switch";
 
@@ -47,6 +48,7 @@ const tabs =[
 
 export default class MeetingRoom extends Component {
 	state = {
+    fullscreen: false,
     classId: this.props.match.params.roomid,
     user: {},
     classRooms: {},
@@ -105,7 +107,11 @@ export default class MeetingRoom extends Component {
     needConfirmation : 0,
     joinUrl: '',
     modalEnd: false,
-    loadingFileSharing: false
+    loadingFileSharing: false,
+
+    //modal
+    modalFileSharing: false,
+    modalMOM: false,
   }
   
   closeModalConfirmation = e => {
@@ -113,6 +119,12 @@ export default class MeetingRoom extends Component {
   }
   closeModalEnd = e => {
     this.setState({ modalEnd: false });
+  }
+  closeModalFileSharing = e => {
+    this.setState({ modalFileSharing: false });
+  }
+  closeModalMOM = e => {
+    this.setState({ modalMOM: false });
   }
 fetchMOM(folder){
   if (folder == 0){
@@ -247,7 +259,7 @@ uploadFile = e => {
   }
 
   componentDidMount() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
@@ -296,7 +308,7 @@ uploadFile = e => {
     })
   }
   fetchData() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
@@ -543,7 +555,7 @@ uploadFile = e => {
     API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
       if(res.status === 200) {
         if(!res.data.error){
-          this.onBotoomScroll();
+          // this.onBotoomScroll();
           let splitTags;
           
           let datas = res.data.result;
@@ -719,7 +731,7 @@ uploadFile = e => {
   }
 
   componentDidUpdate() {
-    this.onBotoomScroll();
+    // this.onBotoomScroll();
   }
 
   joinRoom(){
@@ -742,7 +754,11 @@ uploadFile = e => {
 			<div className="pcoded-content" style={{paddingTop: 20}}>
 			<div className="pcoded-inner-content">
 			<div className="main-body">
-			<div className="page-wrapper">
+      <ReactFullScreenElement
+        fullScreen={this.state.fullscreen}
+        allowScrollbar={false}
+      >
+			<div className="page-wrapper" style={{zIndex:1029, height:'100%'}}>
 			
         <Row>
 
@@ -766,6 +782,9 @@ uploadFile = e => {
                 <div className="card p-20">
                   <div>
                   <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+                  <button onClick={()=> window.close()} className="float-right btn btn-icademy-primary btn-icademy-red">
+                    <i className="fa fa-sign-out-alt"></i>Keluar Meeting
+                  </button>
                   {
                       user.user_id == classRooms.moderator ?
                       <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
@@ -776,6 +795,15 @@ uploadFile = e => {
                   }
                   <button style={{marginRight:14}} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
                     <i className="fa fa-user"></i>Undang Peserta
+                  </button>
+                  <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important'}} onClick={()=> this.setState({modalFileSharing: true})} className="float-right btn btn-icademy-primary">
+                    <i className="fa fa-file" style={{marginRight:'0px !important'}}></i>File Sharing
+                  </button>
+                  <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important'}} onClick={()=> this.setState({modalMOM: true})} className="float-right btn btn-icademy-primary">
+                    <i className="fa fa-clipboard-list" style={{marginRight:'0px !important'}}></i>MOM
+                  </button>
+                  <button style={{marginRight:14}} onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning' : 'float-right btn btn-icademy-primary'}>
+                    <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:'0px !important'}}></i>{this.state.fullscreen ? 'Minimize' : 'Maximize'}
                   </button>
                   {/* <a target='_blank' href={this.state.joinUrl}>
                   <button className="float-right btn btn-icademy-primary">
@@ -800,221 +828,6 @@ uploadFile = e => {
           </Col>
 
         </Row>
-
-        <div className="row">
-            {tabs.map((tab, index)=>{
-                return (
-                        <div className="col-sm-3 p-b-20">
-                            <Link onClick={this.tabAktivitas.bind(this, tab, index)}>
-                                <div className={this.state.tabIndex === index+1 ? "tab-icademy" : "kategori title-disabled"}>
-                                    {tab.title}
-                                </div>
-                            </Link>
-                        </div>
-                    )
-            })}
-
-            {this.state.tabIndex === 1 ?  
-              <div className="row col-sm-12">
-                <div className="col-sm-6">
-                  <div id="scrollin" className='card ' style={{height:'492px', marginBottom: '0px'}}>
-                    <h3 className="f-20 f-w-800 fc-blue p-10">
-                      File Sharing
-                    </h3>
-                      <div style={{height:'100%', overflowY:'scroll'}}>
-                      { this.state.fileChat.map((item, i)=>{
-                        return (
-                          <div className='box-chat-send-left'>
-                            <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
-                            <small >
-                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
-                            </small>
-                            {
-                              classRooms.moderator == Storage.get("user").data.user_id &&
-                              <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
-                            }
-                          </div>
-                        )
-                      })}
-                      </div>
-                  </div>
-
-                  <div className='card p-20'>
-                    <Row className='filesharing'>
-                      <Col sm={10}>
-                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
-                        </label>
-                        <input
-                            className="hidden"
-                            type="file"
-                            id="attachment"
-                            name="attachment"
-                            onChange={this.onChangeInput}
-                          />
-                          </Col>
-                          <Col sm={2}>
-                            <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                            {this.state.loadingFileSharing ? 'Loading...'  : 'Kirim'}
-                            </button>
-                            {/* <button onClick={this.onBotoomScroll}>coba</button> */}
-                          </Col>
-                    </Row>
-                  </div>
-                </div>
-              </div>
-            :  
-              <div className="col-sm-12">{/* CHATING SEND FILE */}
-                <div id="scrollin" className="card" style={{padding:10}}>
-                  <div className={this.state.editMOM ? 'hidden' : ''}>
-                    <button
-                      to={"#"}
-                      onClick={(a)=>{this.setState({editMOM : true})}}
-                      className="btn btn-icademy-primary ml-2 float-right">
-                      Add New
-                    </button>
-                  </div>
-                  {!this.state.editMOM 
-                  ?
-                  <div className="card">
-                    <div className="col-sm-12">
-                      {this.state.listMOM.map((item, i) => (
-                              <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
-                                <h3 className="f-18 f-w-bold f-w-800">
-                                    {item.title}
-                                    <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>
-                                      <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
-                                        Export PDF
-                                      </Link>
-                                      <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
-                                        <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
-                                      </Link>
-                                      <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
-                                        <i data-id={item.id} className="fa fa-trash"></i>
-                                      </Link>
-                                    </span>
-                                </h3>
-                                <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
-                              </div>
-                          ))
-                      }
-                    </div>
-                  </div>
-                  
-                  :
-                  <div>
-                    <Link to='#' title="Kembali" onClick={this.backMOM}>
-                        <h4 className="f-20 f-w-800 p-10">
-                          <i className="fa fa-arrow-left"></i> Kembali
-                        </h4>
-                    </Link>
-                    <h4 className="p-10">{classRooms.room_name}</h4>
-                          <Form.Group controlId="formJudul" style={{padding:10}}>
-                          <Form.Label className="f-w-bold">
-                            Judul MOM
-                          </Form.Label>
-                          <div style={{width:'100%'}}>
-                              <input
-                                required
-                                type="text"
-                                name="title"
-                                value={this.state.title}
-                                className="form-control"
-                                placeholder="isi judul MOM..."
-                                onChange={this.onChangeInputMOM}
-                              />
-                            </div>
-                        </Form.Group>
-                          <Form.Group controlId="formJudul" style={{padding:10}}>
-                          <Form.Label className="f-w-bold">
-                            Waktu Meeting
-                          </Form.Label>
-                          <div style={{width:'100%'}}>
-                          <DatePicker
-                            selected={this.state.startDate}
-                            onChange={this.handleChangeDateFrom}
-                            showTimeSelect
-                            dateFormat="yyyy-MM-dd HH:mm"
-                          />
-                          </div>
-                          </Form.Group>
-                          <Form.Group controlId="formJudul" style={{padding:10}}>
-                          <Form.Label className="f-w-bold">
-                            Text Dari Subtitle
-                          </Form.Label>
-                          <div style={{width:'100%'}}>
-                              <select
-                                style={{textTransform: 'capitalize', width: '40%', display:'inline-block'}}
-                                name="subtitle"
-                                className="form-control"
-                                onChange={this.onChangeInputMOM}
-                                required
-                              >
-                                <option value="">Pilih</option>
-                                {dataMOM.map((item, index) => (
-                                  <option
-                                    value={index}
-                                    selected={
-                                      item._id === this.state.selectSubtitle
-                                        ? "selected"
-                                        : ""
-                                    }
-                                  >
-                                    {MomentTZ.tz(item.start_time, 'Asia/Jakarta').format("DD MMMM YYYY, HH:mm") + " - " + MomentTZ.tz(item.end_time, 'Asia/Jakarta').format("HH:mm")}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                to={"#"}
-                                onClick={this.addSubsToMOM}
-                                className="btn btn-icademy-primary ml-2">
-                                Tambahkan ke MOM
-                              </button>
-                          </div>
-                        </Form.Group>
-
-                    <div className="chart-container" style={{ position: "relative", margin:20 }}>
-                      <div className="form-group">
-                        <Editor
-                          apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                          initialValue={this.state.body}
-                          value={this.state.body}
-                          onEditorChange={this.handleEditorChange.bind(this)}
-                          init={{
-                            height: 400,
-                            menubar: true,
-                            plugins: [
-                              "advlist autolink lists link image charmap print preview anchor",
-                              "searchreplace visualblocks code fullscreen",
-                              "insertdatetime media table paste code help wordcount"
-                            ],
-                            toolbar:
-                              "undo redo | formatselect | bold italic backcolor | \
-                              alignleft aligncenter alignright alignjustify | \
-                              bullist numlist outdent indent | removeformat | help"
-                          }}
-                          // onChange={this.onChangeTinyMce}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <button
-                        to={"#"}
-                        onClick={this.addMOM}
-                        className="btn btn-icademy-primary ml-2 float-right col-2 f-14"
-                        style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                        Simpan
-                      </button>
-                    </div>
-                  </div>
-                }
-               </div>
-              </div>
-            }
-          
-        </div>
 
         <Modal
                     show={this.state.isModalConfirmation}
@@ -1226,9 +1039,229 @@ uploadFile = e => {
                       </button>
           </Modal.Footer>
         </Modal>
+        <Modal
+          show={this.state.modalFileSharing}
+          onHide={this.closeModalFileSharing}
+          centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            File Sharing
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            
+          <div>
+                <div className="col-sm-12">
+                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
+                      <div style={{height:'100%', overflowY:'scroll'}}>
+                      { this.state.fileChat.map((item, i)=>{
+                        return (
+                          <div className='box-chat-send-left'>
+                            <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
+                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
+                            <small >
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
+                            </small>
+                            {
+                              classRooms.moderator == Storage.get("user").data.user_id &&
+                              <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                            }
+                          </div>
+                        )
+                      })}
+                      </div>
+                  </div>
 
+                  <div className='card p-20'>
+                    <Row className='filesharing'>
+                      <Col sm={10}>
+                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                        < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile }
+                        </label>
+                        <input
+                            className="hidden"
+                            type="file"
+                            id="attachment"
+                            name="attachment"
+                            onChange={this.onChangeInput}
+                          />
+                          </Col>
+                          <Col sm={2}>
+                            <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                            {this.state.loadingFileSharing ? 'Loading...'  : 'Kirim'}
+                            </button>
+                            {/* <button onClick={this.onBotoomScroll}>coba</button> */}
+                          </Col>
+                    </Row>
+                  </div>
+                </div>
+              </div>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalMOM}
+          onHide={this.closeModalMOM}
+          dialogClassName='modal-lg'
+          centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Minutes Of Meeting
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            
+          <div className="col-sm-12">{/* CHATING SEND FILE */}
+                <div id="scrollin" className="card" style={{padding:10}}>
+                  <div className={this.state.editMOM ? 'hidden' : ''}>
+                    <button
+                      to={"#"}
+                      onClick={(a)=>{this.setState({editMOM : true})}}
+                      className="btn btn-icademy-primary ml-2 float-right">
+                      Add New
+                    </button>
+                  </div>
+                  {!this.state.editMOM 
+                  ?
+                  <div className="card">
+                    <div className="col-sm-12">
+                      {this.state.listMOM.map((item, i) => (
+                              <div className="komentar-item p-15" style={{marginBottom: '15px', borderBottom: "#dedede solid 1px"}}>
+                                <h3 className="f-18 f-w-bold f-w-800">
+                                    {item.title}
+                                    <span className="f-12" style={{float: 'right', fontWeight: 'normal'}}>
+                                      <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
+                                        Export PDF
+                                      </Link>
+                                      <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
+                                        <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
+                                      </Link>
+                                      <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
+                                        <i data-id={item.id} className="fa fa-trash"></i>
+                                      </Link>
+                                    </span>
+                                </h3>
+                                <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
+                              </div>
+                          ))
+                      }
+                    </div>
+                  </div>
+                  
+                  :
+                  <div>
+                    <Link to='#' title="Kembali" onClick={this.backMOM}>
+                        <h4 className="f-20 f-w-800 p-10">
+                          <i className="fa fa-arrow-left"></i> Kembali
+                        </h4>
+                    </Link>
+                    <h4 className="p-10">{classRooms.room_name}</h4>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Judul MOM
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                              <input
+                                required
+                                type="text"
+                                name="title"
+                                value={this.state.title}
+                                className="form-control"
+                                placeholder="isi judul MOM..."
+                                onChange={this.onChangeInputMOM}
+                              />
+                            </div>
+                        </Form.Group>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Waktu Meeting
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                          <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleChangeDateFrom}
+                            showTimeSelect
+                            dateFormat="yyyy-MM-dd HH:mm"
+                          />
+                          </div>
+                          </Form.Group>
+                          <Form.Group controlId="formJudul" style={{padding:10}}>
+                          <Form.Label className="f-w-bold">
+                            Text Dari Subtitle
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                              <select
+                                style={{textTransform: 'capitalize', width: '40%', display:'inline-block'}}
+                                name="subtitle"
+                                className="form-control"
+                                onChange={this.onChangeInputMOM}
+                                required
+                              >
+                                <option value="">Pilih</option>
+                                {dataMOM.map((item, index) => (
+                                  <option
+                                    value={index}
+                                    selected={
+                                      item._id === this.state.selectSubtitle
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    {MomentTZ.tz(item.start_time, 'Asia/Jakarta').format("DD MMMM YYYY, HH:mm") + " - " + MomentTZ.tz(item.end_time, 'Asia/Jakarta').format("HH:mm")}
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                to={"#"}
+                                onClick={this.addSubsToMOM}
+                                className="btn btn-icademy-primary ml-2">
+                                Tambahkan ke MOM
+                              </button>
+                          </div>
+                        </Form.Group>
+
+                    <div className="chart-container" style={{ position: "relative", margin:20 }}>
+                      <div className="form-group">
+                        <Editor
+                          apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                          initialValue={this.state.body}
+                          value={this.state.body}
+                          onEditorChange={this.handleEditorChange.bind(this)}
+                          init={{
+                            height: 400,
+                            menubar: true,
+                            plugins: [
+                              "advlist autolink lists link image charmap print preview anchor",
+                              "searchreplace visualblocks code fullscreen",
+                              "insertdatetime media table paste code help wordcount"
+                            ],
+                            toolbar:
+                              "undo redo | formatselect | bold italic backcolor | \
+                              alignleft aligncenter alignright alignjustify | \
+                              bullist numlist outdent indent | removeformat | help"
+                          }}
+                          // onChange={this.onChangeTinyMce}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <button
+                        to={"#"}
+                        onClick={this.addMOM}
+                        className="btn btn-icademy-primary ml-2 float-right col-2 f-14"
+                        style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                }
+               </div>
+              </div>
+          </Modal.Body>
+        </Modal>
         
 			</div>
+      </ReactFullScreenElement>
 			</div>
 			</div>
 			</div>
