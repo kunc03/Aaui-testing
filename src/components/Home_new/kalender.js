@@ -15,6 +15,7 @@ function Event({ event }) {
     <Popover id="popover-trigger-click-root-close" style={{ zIndex: 10000 }}>
        <p>Data Kalender</p>
       <strong>{event.title}</strong>
+      <button className="btn btn-icademy-primary">Join</button>
     </Popover>
   );
 

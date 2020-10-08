@@ -112,7 +112,7 @@ class GanttChart extends Component {
         (item.end > start && item.end < end)
       );
     });
-    console.log("Calculating ");
+    console.log("Calculating Ghntchart", JSON.stringify(result));
     this.setState({ data: result });
   };
 
