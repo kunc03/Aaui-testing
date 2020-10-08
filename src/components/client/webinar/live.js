@@ -5,7 +5,7 @@ import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../..
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
-import TableFiles from '../../Home_new/detail_project/files';
+import TableFiles from '../../files/_files';
 import Moment from 'moment-timezone';
 import io from 'socket.io-client';
 const bbb = require('bigbluebutton-js')

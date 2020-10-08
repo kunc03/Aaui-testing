@@ -4,7 +4,7 @@ import Storage from '../../repository/storage';
 import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import {dataKalender} from './data';
+import {dataKalender} from '../../modul/data';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import {OverlayTrigger} from 'react-bootstrap';
 import {Popover} from 'react-bootstrap';

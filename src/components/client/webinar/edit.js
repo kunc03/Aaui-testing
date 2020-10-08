@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
-import TableFiles from '../../Home_new/detail_project/files';
+import TableFiles from '../../files/_files';
 import { MultiSelect } from 'react-sm-select';
 
 export default class WebinarEdit extends Component {

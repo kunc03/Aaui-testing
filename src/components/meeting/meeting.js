@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
-import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../repository/api';
+// import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -21,7 +21,7 @@ import {isMobile} from 'react-device-detect';
 import {Typography} from '@material-ui/core';
 import DataTable from 'react-data-table-component';
 
-import Storage from './../../../repository/storage';
+import Storage from '../../repository/storage';
 const bbb = require('bigbluebutton-js')
 
 

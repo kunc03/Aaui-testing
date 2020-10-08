@@ -4,7 +4,7 @@ import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import { Link } from 'react-router-dom';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
-import TableFiles from '../../Home_new/detail_project/files';
+import TableFiles from '../../files/_files';
 import Storage from './../../../repository/storage';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
