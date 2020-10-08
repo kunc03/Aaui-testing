@@ -4,6 +4,7 @@ import {
 	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
 	InputGroup, FormControl, Modal
 } from 'react-bootstrap';
+import ReactFullScreenElement from "react-fullscreen-element";
 
 import ToggleSwitch from "react-switch";
 
@@ -47,6 +48,7 @@ const tabs =[
 
 export default class MeetingRoom extends Component {
 	state = {
+    fullscreen: false,
     classId: this.props.match.params.roomid,
     user: {},
     classRooms: {},
@@ -752,7 +754,11 @@ uploadFile = e => {
 			<div className="pcoded-content" style={{paddingTop: 20}}>
 			<div className="pcoded-inner-content">
 			<div className="main-body">
-			<div className="page-wrapper">
+      <ReactFullScreenElement
+        fullScreen={this.state.fullscreen}
+        allowScrollbar={false}
+      >
+			<div className="page-wrapper" style={{zIndex:1029, height:'100%'}}>
 			
         <Row>
 
@@ -795,6 +801,9 @@ uploadFile = e => {
                   </button>
                   <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important'}} onClick={()=> this.setState({modalMOM: true})} className="float-right btn btn-icademy-primary">
                     <i className="fa fa-clipboard-list" style={{marginRight:'0px !important'}}></i>MOM
+                  </button>
+                  <button style={{marginRight:14}} onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning' : 'float-right btn btn-icademy-primary'}>
+                    <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:'0px !important'}}></i>{this.state.fullscreen ? 'Minimize' : 'Maximize'}
                   </button>
                   {/* <a target='_blank' href={this.state.joinUrl}>
                   <button className="float-right btn btn-icademy-primary">
@@ -1252,6 +1261,7 @@ uploadFile = e => {
         </Modal>
         
 			</div>
+      </ReactFullScreenElement>
 			</div>
 			</div>
 			</div>
