@@ -766,6 +766,9 @@ uploadFile = e => {
                 <div className="card p-20">
                   <div>
                   <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+                  <button onClick={()=> window.close()} className="float-right btn btn-icademy-primary btn-icademy-red">
+                    <i className="fa fa-sign-out-alt"></i>Keluar Meeting
+                  </button>
                   {
                       user.user_id == classRooms.moderator ?
                       <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
