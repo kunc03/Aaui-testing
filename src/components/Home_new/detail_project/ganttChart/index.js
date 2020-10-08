@@ -136,10 +136,6 @@ class GanttChart extends Component {
         (item.end > start && item.end < end)
       );
     });
-<<<<<<< HEAD
-    console.log("Calculating Ghntchart", JSON.stringify(result));
-    this.setState({ data: result });
-=======
     console.log("Calculating ");
     // this.setState({ data: result });
   };
@@ -204,7 +200,6 @@ class GanttChart extends Component {
 
       this.closeClassModal();
     })
->>>>>>> staging
   };
 
   getRandomColor() {
