@@ -86,7 +86,7 @@ class KalenderNew extends Component {
             };
           });
           this.setState({ event: data });
-          console.log('ALVIN',this.state.event)
+          console.log('Data Kalender',this.state.event)
           // this.setState({ calendarItems: res.data.result });
         }
       }
@@ -96,7 +96,6 @@ class KalenderNew extends Component {
     this.fetchUserCalendar();
   }
   render() {
-  //  console.log(this.props, 'props evenntttt')
     const {event} = this.state;
     const lists = this.props.lists;
     
@@ -106,7 +105,7 @@ class KalenderNew extends Component {
         <h3 className="f-w-900 f-18 fc-blue">Kalender</h3>
           <Calendar
             popup
-            events={dataKalender}
+            events={event}
             // defaultDate={new Date()}
             localizer={localizer}
             style={{ height: 400 }}
@@ -123,7 +122,6 @@ class KalenderNew extends Component {
               event: Event
             }}
           />
-
           <div className="p-l-20">
             <span className="p-r-5" style={{ color: '#ffce56' }}>
               <i className="fa fa-square"></i>
