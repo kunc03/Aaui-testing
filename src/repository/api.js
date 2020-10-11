@@ -7,11 +7,11 @@ const APPS_SERVER_DEV = 'http://localhost:3000/';
 const APPS_SERVER_STG = 'https://app.icademy.mooo.com/';
 const APPS_SERVER_PROD = 'https://app.icademy.id/';
 
-const API_SERVER_DEV = 'https://api.icademy.dev.kelola.co.id/';
+const API_SERVER_DEV = 'http://localhost:3200/';
 const API_SERVER_STG = 'https://api.icademy.stg.kelola.co.id/';
 const API_SERVER_PROD = 'https://api.icademy.id/';
 
-export const DEV_MODE = 'development';
+export const DEV_MODE = 'production';
 export const API_SERVER = DEV_MODE === 'development' ? API_SERVER_DEV : DEV_MODE === 'staging' ? API_SERVER_STG : API_SERVER_PROD;
 export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MODE === 'staging' ? APPS_SERVER_STG : APPS_SERVER_PROD;
 
