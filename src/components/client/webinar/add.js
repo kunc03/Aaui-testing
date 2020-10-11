@@ -8,8 +8,8 @@ import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
-import TableFiles from '../../Home_new/detail_project/files';
-import TableMeetings from '../../Home_new/detail_project/meeting';
+import TableFiles from '../../files/_files';
+import TableMeetings from '../../meeting/meeting';
 import WebinarKuesionerAdd from './kuesioneradd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

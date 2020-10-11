@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../../repository/api';
-import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../repository/api';
+// import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
 
-import Storage from '../../../repository/storage';
+import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
 

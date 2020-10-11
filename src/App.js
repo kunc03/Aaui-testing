@@ -17,7 +17,7 @@ import Profile from "./components/Profile/index";
 import Files from "./components/files/files";
 
 // Dashboard New Home Detail
-import DetailProject from "./components/Home_new/detail_project/index";
+import DetailProject from "./components/detail_project/index";
 import WebinarDetail from "./components/webinar/index";
 
 import Project from "./components/project/index";

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TableMeeting from '../Home_new/detail_project/meeting';
+import TableMeeting from './meeting';
 import { Link } from 'react-router-dom';
 import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER, APPS_SERVER} from '../../repository/api';
