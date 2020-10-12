@@ -11,6 +11,7 @@ build_development:
   tags:
     - development
   script:
+    - cd /home/ubuntu/ideku-react && sudo git stash
     - if [ "$(docker ps -a | grep icademy-app)" ]; then 
         echo "Container Exists";
         docker rm -f icademy-app;
@@ -49,8 +50,9 @@ build_staging:
   tags:
     - staging
   script:
-    - cd /home/ubuntu/ideku-react && git pull origin staging
-    - cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+    - cd /home/ubuntu/ideku-react && sudo git stash
+    - cd /home/ubuntu/ideku-react && sudo git pull origin staging
+    - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
 
 deploy_staging:
   stage: deploy_staging
