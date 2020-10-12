@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
-import TableFiles from '../../Home_new/detail_project/files';
+import TableFiles from '../../files/_files';
 import { MultiSelect } from 'react-sm-select';
 
 export default class WebinarEdit extends Component {
@@ -115,10 +115,10 @@ export default class WebinarEdit extends Component {
         this.setState({
             projectId: [Number(res.data.result.project_id)],
             judul: res.data.result.judul,
-            sekretarisId: [res.data.result.sekretaris.user_id],
-            pembicaraId: [res.data.result.pembicara.user_id],
-            moderatorId: [res.data.result.moderator.user_id],
-            ownerId: [res.data.result.owner.user_id],
+            sekretarisId: [res.data.result.sekretaris[0].user_id],
+            pembicaraId: [res.data.result.pembicara[0].user_id],
+            moderatorId: [res.data.result.moderator[0].user_id],
+            ownerId: [res.data.result.owner[0].user_id],
             status: res.data.result.status
         })
     })

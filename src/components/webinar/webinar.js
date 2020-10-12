@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+// import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
-import Storage from '../../../repository/storage';
+import API, { API_SERVER, USER_ME } from '../../repository/api';
+import Storage from '../../repository/storage';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
@@ -160,7 +160,7 @@ class WebinarTable extends Component {
                                 </td> */}
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
-                                        ((this.state.userId == item.sekretaris.user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 
+                                        ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 
                                         <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
                                     }
                                     {
@@ -168,15 +168,15 @@ class WebinarTable extends Component {
                                         <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
                                     }
                                     {
-                                        ((this.state.userId == item.sekretaris.user_id || this.state.userId == item.owner.user_id) && item.status == 3) && 
+                                        ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner[0].user_id) && item.status == 3) && 
                                         <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
                                     {
-                                        ((levelUser != 'client' || this.state.userId == item.moderator.user_id || this.state.userId == item.sekretaris.user_id || this.state.userId == item.pembicara.user_id || this.state.userId == item.owner.user_id || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
+                                        ((levelUser != 'client' || this.state.userId == item.moderator[0].user_id || this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.pembicara[0].user_id || this.state.userId == item.owner[0].user_id || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
                                         <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
                                     }
                                     {
-                                        (this.state.userId == item.moderator.user_id && item.status == 1) &&
+                                        (this.state.userId == item.moderator[0].user_id && item.status == 1) &&
                                         <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
                                     }
                                 </td>

@@ -5,7 +5,7 @@ import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../..
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
-import TableFiles from '../../Home_new/detail_project/files';
+import TableFiles from '../../files/_files';
 import Moment from 'moment-timezone';
 import io from 'socket.io-client';
 const bbb = require('bigbluebutton-js')
@@ -271,10 +271,10 @@ export default class WebinarLive extends Component {
             this.setState({
               webinar: res.data.result,
               companyId: res.data.result.company_id,
-              pembicara: res.data.result.pembicara.name,
-              moderatorId: res.data.result.moderator.user_id,
-              sekretarisId: res.data.result.sekretaris.user_id,
-              pembicaraId: res.data.result.pembicara.user_id,
+              pembicara: res.data.result.pembicara[0].name,
+              moderatorId: res.data.result.moderator[0].user_id,
+              sekretarisId: res.data.result.sekretaris[0].user_id,
+              pembicaraId: res.data.result.pembicara[0].user_id,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),

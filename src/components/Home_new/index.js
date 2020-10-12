@@ -5,10 +5,10 @@ import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 
-import {dataEvent, dataProjek, dataToDo} from './data';
+import {dataEvent, dataProjek, dataToDo} from '../../modul/data';
 import EventNew from './event';
 import ProjekNew from './projek';
-import CalenderNew from './kalender';
+import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
 
