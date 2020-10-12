@@ -8,6 +8,8 @@ import ReactDOM from "react-dom";
 
 import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
+import { MultiSelect } from 'react-sm-select';
+import 'react-sm-select/dist/styles.css';
 
 import Generator from "./Generator";
 import TimeLine from "react-gantt-timeline";
@@ -102,6 +104,9 @@ class GanttChart extends Component {
     this.data = result.data;
 
     this.state = {
+      optionsAssigne: [],
+      valueAssigne: [],
+
       projectId: this.props.projectId,
       userId: Storage.get('user').data.user_id,
 
@@ -111,11 +116,22 @@ class GanttChart extends Component {
       
       isModalTodo: false,
       task: "",
+      description: "",
       start: new Date(),
       end: new Date(),
+      status: "",
+      assigne: [],
+      subtasks: [],
+      attachments: [],
+
+      max: 100,
+      val: 0,
+
+      statusTask: ["Open","In Progress","Done","Closed"],
 
       isModalDetail: false,
       taskId: "",
+      file: "",
       taskDetail: {}
     };
   }
@@ -123,7 +139,8 @@ class GanttChart extends Component {
   closeClassModal = e => {
     this.setState({ 
       isModalTodo: false, task: "", start: new Date(), end: new Date(),
-      isModalDetail: false, taskId: "", taskDetail: {}
+      isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
+      valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: []
     });
   };
 
@@ -141,12 +158,7 @@ class GanttChart extends Component {
   };
 
   onSelectItem = e => {
-    console.log('STATE4: ', e);
-    API.get(`${API_SERVER}v2/task/id/${e.id}`).then(res => {
-      if(res.data.error) toast.warning("Gagal fetch API");
-
-      this.setState({ isModalDetail: true, taskId: e.id, taskDetail: res.data.result });
-    })
+    this.fetchDetailTask(e.id);
   };
 
   onUpdateTask = (e, f) => {
@@ -202,6 +214,179 @@ class GanttChart extends Component {
     })
   };
 
+  removeAttachment = e => {
+    e.preventDefault();
+    let taskId = e.target.getAttribute('data-taskid');
+    let id = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v2/task/attachments/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal hapus attachment");
+
+      this.fetchDetailTask(taskId);
+    })
+  }
+
+  saveAssigne = e => {
+    this.setState({ valueAssigne: e });
+
+    API.delete(`${API_SERVER}v2/task/delete-all/${this.state.taskId}`).then(res => {
+      if(res.data.error) toast.warning("Gagal menghapus assigne");
+
+      for(var i=0; i<e.length; i++) {
+        API.post(`${API_SERVER}v2/task/assigne`, {taskId: this.state.taskId, userId: e[i]});
+      }
+    })
+  }
+
+  // START ATTACHMENT
+  addAttachment = e => {
+    e.preventDefault();
+    let cp = [...this.state.attachments];
+    cp.push({file: ""});
+    this.setState({ attachments: cp });
+  }
+
+  saveAttachment = e => {
+    e.preventDefault();
+    let form = new FormData();
+    for(var i=0; i<this.state.file.length; i++) {
+      form.append('files', this.state.file[i]);
+    }
+    form.append('taskId', this.state.taskId);
+
+    API.post(`${API_SERVER}v2/task/attachments`, form).then(res => {
+      if(res.data.error) toast.warning("Gagal simpan attachment");
+
+      this.fetchDetailTask(this.state.taskId);
+    })
+  }
+
+  deleteAttachment = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v2/task/attachments/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal menghapus attachment");
+
+      this.fetchDetailTask(this.state.taskId);
+    })
+  }
+  // END ATTACHMENT  
+
+  // START SUBTASK
+  addSubtask = e => {
+    e.preventDefault();
+    let cp = [...this.state.subtasks];
+    cp.push({title: ""});
+    this.setState({ subtasks: cp });
+  }
+
+  saveSubtask = e => {
+    e.preventDefault();
+    if(e.key === "Enter") {
+      let form = {
+        taskId: this.state.taskId,
+        title: e.target.value
+      };
+      API.post(`${API_SERVER}v2/task/subtask`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal create subtask");
+
+        this.fetchDetailTask(form.taskId);
+      });
+    }
+  }
+
+  deleteSubtask = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v2/task/subtask/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal hapus subtask");
+
+      this.fetchDetailTask(this.state.taskId);
+    })
+  }
+
+  doneSubtask = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    let status = e.target.getAttribute('data-status');
+    let form = {
+      title: e.target.getAttribute('data-title'),
+      status: status == 1 ? 2 : 1
+    };
+
+    API.put(`${API_SERVER}v2/task/subtask/${id}`, form).then(res => {
+      if(res.data.error) toast.warning("Gagal update data");
+
+      this.fetchDetailTask(this.state.taskId);
+    })
+  }
+  // END SUBTASK
+
+  simpanStatusTask = e => {
+    e.preventDefault();
+    this.setState({ status: e.target.value });
+    this.updateTaskById(e);
+  }
+
+  simpanDeskripsi = e => {
+    e.preventDefault();
+    if(e.key === "Enter" && e.shiftKey) {
+      this.updateTaskById(e);
+    }
+  }
+
+  updateTaskById(e) {
+    let form = {
+      name: this.state.taskDetail.name,
+      start: this.convertDateToMysql(this.state.start),
+      end: this.convertDateToMysql(this.state.end)
+    };
+
+    if(e.target.name == 'description') {
+      form.description = e.target.value;
+    } else {
+      form.description = this.state.description;
+    }
+
+    if(e.target.name == 'status') {
+      form.status = e.target.value;
+    } else {
+      form.status = this.state.status;
+    }
+
+    API.put(`${API_SERVER}v2/task/update/${this.state.taskId}`, form).then(res => {
+      if(res.data.error) toast.warning("Gagal update task");
+
+      toast.success("Task berhasil di update");
+      this.fetchDetailTask(this.state.taskId);
+    })
+  }
+
+  fetchDetailTask(id) {
+    API.get(`${API_SERVER}v2/task/id/${id}`).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+
+      let assignePush = [];
+      res.data.result.assigne.map(item => assignePush.push(item.user_id))
+
+      this.setState({ 
+        isModalDetail: true, 
+        taskId: id, 
+        description: res.data.result.description, 
+        start: this.convertDateToMysql(res.data.result.start, true),
+        end: this.convertDateToMysql(res.data.result.end, true),
+        status: res.data.result.status,
+        assigne: assignePush,
+        valueAssigne: assignePush,
+        subtasks: res.data.result.subtasks,
+        attachments: res.data.result.attachments,
+        taskDetail: res.data.result,
+
+        max: res.data.result.subtasks.length,
+        val: res.data.result.subtasks.filter(item => item.status == 2).length
+      });
+    })
+  }
+
   getRandomColor() {
     var letters = "0123456789ABCDEF";
     var color = "#";
@@ -240,13 +425,16 @@ class GanttChart extends Component {
 
       this.setState({ data: res.data.result, links: [] })
     })
+
+    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      response.data.result.map(item => {
+        this.state.optionsAssigne.push({value: item.user_id, label: item.name});
+      });
+    })
   }
 
   render() {
   
-    // console.log('STATE2: ', this.state.data);
-    // console.log('STATE3: ', this.state.links);
-    
     return (
         <div className="card p-20">
             <span className="mb-4">
@@ -313,27 +501,47 @@ class GanttChart extends Component {
               onHide={this.closeClassModal}>
               
               <Modal.Header closeButton>
-                <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                  <button style={{padding: '4px 6px'}} className="btn btn-sm btn-primary">Dikerjakan</button>
-
-                  <i style={{border: '1px solid #e9e9e9', padding: '3px', margin: '3px 6px', borderRadius: '4px'}} className="fa fa-check"></i>
-                  <i style={{border: '1px solid #e9e9e9', padding: '3px', margin: '0px 3px 0px 24px', borderRadius: '4px'}} className="fa fa-users"></i>
+                <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
+                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary">{this.state.status ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
+
+                <div style={{width: '80%'}}>
+                  <MultiSelect
+                    id="assigne"
+                    options={this.state.optionsAssigne}
+                    value={this.state.valueAssigne}
+                    onChange={this.saveAssigne}
+                    mode="tags"
+                    removableTags={true}
+                    hasSelectAll={true}
+                    selectAllLabel="Pilih Semua"
+                    enableSearch={true}
+                    resetable={true}
+                    valuePlaceholder="Assign User"
+                    />
+                </div>
               </Modal.Header>
 
               <Modal.Body>
                 <h3>{this.state.taskDetail.name}</h3>
-                <textarea rows="4" value="Deskripsi task" className="form-control mb-3" />
+               
+                <textarea rows="4" defaultValue={""} 
+                  name="description"
+                  value={this.state.description} 
+                  onChange={e => this.setState({ description: e.target.value })} 
+                  onKeyUp={this.simpanDeskripsi} className="form-control mb-3" />
 
-                <form className="form-vertical">
+                <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span>
+
+                <form className="form-vertical mt-4">
                   <div className="form-group row">
                     <div className="col-sm-6">
                       <label htmlFor="startdate">Start Date</label>
-                      <input type="date" className="form-control" value={this.convertDateToMysql(this.state.taskDetail.start, true)} />
+                      <input type="date" className="form-control" value={this.state.start} />
                     </div>
                     <div className="col-sm-6">
                       <label htmlFor="enddate">End Date</label>
-                      <input type="date" className="form-control" value={this.convertDateToMysql(this.state.taskDetail.end, true)} />
+                      <input type="date" className="form-control" value={this.state.end} />
                     </div>
                   </div>
                 </form>
@@ -341,13 +549,22 @@ class GanttChart extends Component {
                 <table className="table table-bordered">
                   <tbody>
                     <tr>
-                      <td width="120px">Departemen</td>
-                      <td>Operations</td>
+                      <td width="120px">Status</td>
+                      <td>
+                        <select name="status" style={{ width: "100%" }} onChange={this.simpanStatusTask} value={this.state.status}>
+                          <option value="" disabled selected>status task</option>
+                          {
+                            this.state.statusTask.map(item => (
+                              <option value={item}>{item}</option>
+                            ))
+                          }
+                        </select>
+                      </td>
                     </tr>
                     <tr>
                       <td width="120px">Progress</td>
                       <td>
-                        <progress style={{width: '100%'}} id="file" value="32" max="100">32%</progress>
+                        <progress style={{width: '100%'}} id="file" value={this.state.val} max={this.state.max}>{this.state.val}</progress>
                       </td>
                     </tr>
                     <tr>
@@ -358,22 +575,35 @@ class GanttChart extends Component {
                   </tbody>
                 </table>
 
-                <h4>To Do</h4>
-                <h6>Subtask</h6>
+                <h4>Subtasks</h4>
                 <table className="table">
                   <tbody>
-                    <tr>
-                      <td width="40px">
-                        <input type="checkbox" />
-                      </td>
-                      <td>Task 1</td>
-                      <td width="40px">
-                        <i className="fa fa-trash"></i>
-                      </td>
-                    </tr>
+                    {
+                      this.state.subtasks.map((item, i) => (
+                        <tr key={item.id}>
+                          <td width="40px">
+                            <input 
+                              checked={item.status == 2 ? true : false} 
+                              onClick={this.doneSubtask} 
+                              data-id={item.id} 
+                              data-title={item.title} 
+                              data-status={item.status} 
+                              style={{ cursor: 'pointer'}} type="checkbox" />
+                          </td>
+                          <td style={item.status == 2 ? {textDecoration: 'line-through'} : {}}>
+                          {
+                            item.title ? item.title : <input onKeyUp={this.saveSubtask} type="text" className="form-control" />
+                          }
+                          </td>
+                          <td width="40px">
+                            <i style={{cursor: 'pointer'}} onClick={this.deleteSubtask} data-id={item.id} className="fa fa-trash"></i>
+                          </td>
+                        </tr>
+                      )) 
+                    }
                     <tr>
                       <td colSpan="3">
-                        <span style={{cursor: 'pointer'}} className="float-right">+ add checklist</span>
+                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add checklist</span>
                       </td>
                     </tr>
                   </tbody>
@@ -381,20 +611,30 @@ class GanttChart extends Component {
 
                 <h4>Attachments</h4>
                 <table className="table">
-                  <tbody>
-                    <tr>
-                      <td width="40px">
-                        <input type="checkbox" />
-                      </td>
-                      <td>Task 1</td>
-                      <td width="80px">
-                        <i className="fa fa-trash mr-3"></i>
-                        <i className="fa fa-download"></i>
-                      </td>
-                    </tr>
+                  <tbody id="tblAttachments">
+                    {
+                      this.state.attachments.map((item, i) => (
+                        <tr key={item.id}>
+                          <td width="40px">{i+1}</td>
+                          <td>
+                          {
+                            item.file ? item.file.split('/')[item.file.split('/').length-1] : 
+                            <div className="form-group">
+                              <input multiple type="file" onChange={e => this.setState({ file: e.target.files })} />
+                              <i onClick={this.saveAttachment} className="fa fa-save float-right" style={{cursor: 'pointer'}}></i>
+                            </div>
+                          }
+                          </td>
+                          <td width="80px">
+                            <a href={item.file} target="_blank"><i className="fa fa-download mr-3"></i></a>
+                            <i onClick={this.removeAttachment} data-taskid={this.state.taskDetail.id} data-id={item.id} className="fa fa-trash"></i>
+                          </td>
+                        </tr>
+                      ))
+                    }
                     <tr>
                       <td colSpan="3">
-                        <span style={{cursor: 'pointer'}} className="float-right">+ add attachment</span>
+                        <span onClick={this.addAttachment} style={{cursor: 'pointer'}} className="float-right">+ add attachment</span>
                       </td>
                     </tr>
                   </tbody>
