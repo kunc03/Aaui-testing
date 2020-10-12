@@ -251,6 +251,7 @@ class MeetingTable extends Component {
   
   fetchMeetingInfo(id){
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
+      console.log(res.data.result, 'prop informationId');
       if (res.status === 200) {
         this.setState({
           infoClass: res.data.result[0],
@@ -765,6 +766,7 @@ class MeetingTable extends Component {
 
   componentDidMount(){
     this.fetchOtherData();
+    
     if (this.props.informationId){
       this.fetchMeetingInfo(this.props.informationId)
     }
@@ -913,7 +915,7 @@ class MeetingTable extends Component {
       },
     ];
     let bodyTabble = this.state.meeting;
-    console.log(bodyTabble, 'body table meeting')
+    // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
 		let access = Storage.get('access');
 		let levelUser = Storage.get('user').data.level;

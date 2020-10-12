@@ -8,37 +8,8 @@ import {dataKalender} from '../../modul/data';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import {OverlayTrigger, Modal} from 'react-bootstrap';
 import {Popover} from 'react-bootstrap';
-
+import Event from './_itemModal';
 const localizer = momentLocalizer(moment);
-function Event({ event }) {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  
-  return (
-    <div>
-      <div>
-    {/* console.log('nah ini dia',event); */}
-      <span onClick={handleShow}>{event.title}</span>
-      </div>
-      <Modal show={show} onHide={handleClose} dialogClassName="modal-lg">
-        <Modal.Header closeButton>
-          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Masuk Meeting
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <button className="btn btn-icademy-primary" onClick={handleClose}>
-            <i className="fa fa-video"></i>
-            Masuk
-          </button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
-}
 
 class KalenderNew extends Component {
   state = {
@@ -86,7 +57,7 @@ class KalenderNew extends Component {
             };
           });
           this.setState({ event: data });
-          console.log('Data Kalender',this.state.event)
+          console.log('Data Kalender',this.state.event);
           // this.setState({ calendarItems: res.data.result });
         }
       }
@@ -98,7 +69,6 @@ class KalenderNew extends Component {
   render() {
     const {event} = this.state;
     const lists = this.props.lists;
-    
     return (
       <div >
         <div className="card p-10">
@@ -112,18 +82,16 @@ class KalenderNew extends Component {
             eventPropGetter={(event, start, end, isSelected) => {
               if (event.bgColor) {
                 return {
-                  style: { backgroundColor: '#ffce56' },
+                  style: { backgroundColor: '#0091FF' },
                 };
               }
               return {};
             }}
             views={['month', 'day']}
-            components={{
-              event: Event
-            }}
+            components={{ event: Event }}
           />
           <div className="p-l-20">
-            <span className="p-r-5" style={{ color: '#ffce56' }}>
+            <span className="p-r-5" style={{ color: '#0091FF' }}>
               <i className="fa fa-square"></i>
             </span>
             Group Meeting
@@ -131,7 +99,10 @@ class KalenderNew extends Component {
         </div>
       </div>
     );
+
+    
   }
 }
+
 
 export default KalenderNew;
