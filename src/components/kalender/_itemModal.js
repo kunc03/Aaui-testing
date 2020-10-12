@@ -86,22 +86,25 @@ class Event extends Component {
       }
     })
   }
+  fetchMeetingInfo(id){
+    API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
+      if (res.status === 200) {
+          this.setState({
+              infoClass: res.data.result[0],
+              infoParticipant: res.data.result[1],
+              countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
+              countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
+              countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
+              needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
+              attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
+          })
+      }
+    })
+  }
 
   componentDidMount() {
     if (this.props.event.type === 3){
-      API.get(`${API_SERVER}v1/liveclass/meeting-info/${this.props.event.activity_id}`).then(res => {
-          if (res.status === 200) {
-              this.setState({
-                  infoClass: res.data.result[0],
-                  infoParticipant: res.data.result[1],
-                  countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
-                  countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
-                  countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-                  needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
-                  attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
-              })
-          }
-        })
+      this.fetchMeetingInfo(this.props.event.activity_id);
     }
   }
   
