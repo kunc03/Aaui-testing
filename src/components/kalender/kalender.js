@@ -8,54 +8,8 @@ import {dataKalender} from '../../modul/data';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import {OverlayTrigger, Modal} from 'react-bootstrap';
 import {Popover} from 'react-bootstrap';
+import Event from './_itemModal';
 const localizer = momentLocalizer(moment);
-
-
-function Event({ event }) {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  let levelUser = Storage.get('user').data.level;
-  let access = Storage.get('access');
-  
-  API.get(`${API_SERVER}v1/liveclass/meeting-info/183`).then(res => {
-    if (res.status === 200) {
-      const infoClass = res.data.result[0];
-      const infoParticipant = res.data.result[1];
-      const countHadir = res.data.result[1].filter((item) => item.confirmation == 'Hadir').length;
-      const countTidakHadir = res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length;
-      const countTentative = res.data.result[1].filter((item) => item.confirmation == '').length ;
-      const needConfirmation = res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length ;
-      const attendanceConfirmation = res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null;
-
-    }
-  })
-  console.log(access, 'prop informationId');
-  console.log('nah ini dia',event);
-  return (
-    <div>
-      <div>
-      <span onClick={handleShow}>{event.title}</span>
-      </div>
-      <Modal show={show} onHide={handleClose} dialogClassName="modal-lg">
-        <Modal.Header closeButton>
-          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Masuk Meeting
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        
-        </Modal.Body>
-        <Modal.Footer>
-          <button className="btn btn-icademy-primary" onClick={handleClose}>
-            <i className="fa fa-video"></i>
-            Masuk
-          </button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
-}
 
 class KalenderNew extends Component {
   state = {
@@ -115,7 +69,6 @@ class KalenderNew extends Component {
   render() {
     const {event} = this.state;
     const lists = this.props.lists;
-    
     return (
       <div >
         <div className="card p-10">
@@ -135,9 +88,7 @@ class KalenderNew extends Component {
               return {};
             }}
             views={['month', 'day']}
-            components={{
-              event: Event
-            }}
+            components={{ event: Event }}
           />
           <div className="p-l-20">
             <span className="p-r-5" style={{ color: '#ffce56' }}>
@@ -148,7 +99,10 @@ class KalenderNew extends Component {
         </div>
       </div>
     );
+
+    
   }
 }
+
 
 export default KalenderNew;
