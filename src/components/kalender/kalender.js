@@ -8,18 +8,33 @@ import {dataKalender} from '../../modul/data';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import {OverlayTrigger, Modal} from 'react-bootstrap';
 import {Popover} from 'react-bootstrap';
-
 const localizer = momentLocalizer(moment);
+
+
 function Event({ event }) {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  let levelUser = Storage.get('user').data.level;
+  let access = Storage.get('access');
   
+  API.get(`${API_SERVER}v1/liveclass/meeting-info/183`).then(res => {
+    if (res.status === 200) {
+      const infoClass = res.data.result[0];
+      const infoParticipant = res.data.result[1];
+      const countHadir = res.data.result[1].filter((item) => item.confirmation == 'Hadir').length;
+      const countTidakHadir = res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length;
+      const countTentative = res.data.result[1].filter((item) => item.confirmation == '').length ;
+      const needConfirmation = res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length ;
+      const attendanceConfirmation = res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null;
+
+    }
+  })
+  console.log(access, 'prop informationId');
+  console.log('nah ini dia',event);
   return (
     <div>
       <div>
-    {/* console.log('nah ini dia',event); */}
       <span onClick={handleShow}>{event.title}</span>
       </div>
       <Modal show={show} onHide={handleClose} dialogClassName="modal-lg">
@@ -28,7 +43,9 @@ function Event({ event }) {
             Masuk Meeting
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+        <Modal.Body>
+        
+        </Modal.Body>
         <Modal.Footer>
           <button className="btn btn-icademy-primary" onClick={handleClose}>
             <i className="fa fa-video"></i>
@@ -86,7 +103,7 @@ class KalenderNew extends Component {
             };
           });
           this.setState({ event: data });
-          console.log('Data Kalender',this.state.event)
+          console.log('Data Kalender',this.state.event);
           // this.setState({ calendarItems: res.data.result });
         }
       }
