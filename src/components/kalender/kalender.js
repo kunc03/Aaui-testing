@@ -9,6 +9,7 @@ import API, {USER_ME, API_SERVER} from '../../repository/api';
 import {OverlayTrigger, Modal} from 'react-bootstrap';
 import {Popover} from 'react-bootstrap';
 import Event from './_itemModal';
+import ReactFullScreenElement from "react-fullscreen-element";
 const localizer = momentLocalizer(moment);
 
 class KalenderNew extends Component {
@@ -18,7 +19,8 @@ class KalenderNew extends Component {
       registered: '2019-12-09',
       companyId: '',
     },
-    event: []
+    event: [],
+    fullscreen:false,
   }
   
   fetchUserCalendar() {
@@ -29,13 +31,18 @@ class KalenderNew extends Component {
             let start = new Date(elem.string_start);
             let end = new Date(elem.string_end);
             return {
+              activity_id: elem.activity_id,
+              type: elem.type,
               id: elem.id,
               title:
                 elem.type === 1
-                  ? 'Ujian ' + elem.description
+                  ? elem.description
                   : elem.type === 2
-                  ? 'Forum ' + elem.description
-                  : 'Meeting ' + elem.description,
+                  ? elem.description
+                  :
+                  elem.type === 3
+                  ? elem.description
+                  : elem.description,
               start: new Date(
                 start.getFullYear(),
                 start.getMonth(),
@@ -69,10 +76,23 @@ class KalenderNew extends Component {
   render() {
     const {event} = this.state;
     const lists = this.props.lists;
+    // const ColoredDateCellWrapper = ({ children }) =>
+    // React.cloneElement(React.Children.only(children), {
+    //   style: {
+    //     backgroundColor: 'lightblue',
+    //   },
+    // })
     return (
       <div >
+      <ReactFullScreenElement
+        fullScreen={this.state.fullscreen}
+        allowScrollbar={false}
+      >
         <div className="card p-10">
         <h3 className="f-w-900 f-18 fc-blue">Kalender</h3>
+        <div style={{position:'absolute', top:10, right:this.state.fullscreen ? 30 : 10}}>
+        <i onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:'0px !important', fontSize:'20px', cursor:'pointer'}}></i>
+        </div>
           <Calendar
             popup
             events={event}
@@ -82,21 +102,26 @@ class KalenderNew extends Component {
             eventPropGetter={(event, start, end, isSelected) => {
               if (event.bgColor) {
                 return {
-                  style: { backgroundColor: '#0091FF' },
+                  style: { backgroundColor: event.type === 3 ? '#0091FF' : '#e2890d' },
                 };
               }
               return {};
             }}
-            views={['month', 'day']}
+            views={['month', 'week', 'day', 'agenda']}
             components={{ event: Event }}
           />
-          <div className="p-l-20">
+          <div className="p-l-20 m-t-10">
             <span className="p-r-5" style={{ color: '#0091FF' }}>
               <i className="fa fa-square"></i>
             </span>
             Group Meeting
+            <span className="p-r-5" style={{ color: '#e2890d', marginLeft:10 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Webinar
           </div>
         </div>
+        </ReactFullScreenElement>
       </div>
     );
 

@@ -199,7 +199,7 @@ export default class WebinarAdd extends Component {
         jamSelesai: jam_selesai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
-        pembicara: res.data.result.pembicara.name,
+        pembicara: res.data.result.pembicara[0].name,
         sekretarisId: res.data.result.sekretaris.user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
