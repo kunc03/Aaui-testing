@@ -82,7 +82,7 @@ class KalenderNew extends Component {
             eventPropGetter={(event, start, end, isSelected) => {
               if (event.bgColor) {
                 return {
-                  style: { backgroundColor: '#ffce56' },
+                  style: { backgroundColor: '#0091FF' },
                 };
               }
               return {};
@@ -91,7 +91,7 @@ class KalenderNew extends Component {
             components={{ event: Event }}
           />
           <div className="p-l-20">
-            <span className="p-r-5" style={{ color: '#ffce56' }}>
+            <span className="p-r-5" style={{ color: '#0091FF' }}>
               <i className="fa fa-square"></i>
             </span>
             Group Meeting
