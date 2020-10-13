@@ -64,6 +64,6 @@ deploy_staging:
     name: "Stg Icademy App"
     url: https://app.icademy.stg.kelola.co.id
   script:
-    - cd /home/ubuntu/ideku-react && npm install
-    - cd /home/ubuntu/ideku-react && CI=false npm run build
+    - cd /home/ubuntu/ideku-react && sudo npm install
+    - cd /home/ubuntu/ideku-react && CI=false sudo npm run build
 
