@@ -6,6 +6,9 @@ import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
+import {
+  Modal
+} from 'react-bootstrap';
 
 
 class WebinarTable extends Component {
@@ -20,6 +23,8 @@ class WebinarTable extends Component {
       dataUser: [],
       webinars: [],
       isLoading: [],
+      deleteWebinarId:'',
+      modalDelete:false,
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
         {title : 'Moderator', width: null, status: true},
@@ -61,6 +66,25 @@ class WebinarTable extends Component {
       else
         toast.success('Webinar dimulai, silahkan gunakan tombol masuk untuk join')
         this.fetchData()
+    })
+  }
+  deleteWebinar () {
+    API.delete(`${API_SERVER}v2/webinar/unpublish/${this.state.deleteWebinarId}`).then(async res => {
+      if(res.data.error) 
+        toast.warning("Error fetch API")
+      else
+        toast.success('Menghapus webinar')
+        this.closeModalDelete()
+        this.fetchData()
+    })
+  }
+  closeModalDelete = e => {
+    this.setState({modalDelete:false, deleteWebinarId:''})
+  }
+  dialogDelete(id){
+    this.setState({
+      deleteWebinarId: id,
+      modalDelete: true
     })
   }
 
@@ -160,6 +184,10 @@ class WebinarTable extends Component {
                                 </td> */}
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
+                                        access_project_admin && 
+                                        <Link onClick={this.dialogDelete.bind(this, item.id)} className="btn btn-v2 btn-primary mr-2" style={{backgroundColor:'#9f4040', border:'none', color:'#FFF'}}>Hapus</Link>
+                                    }
+                                    {
                                         ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 
                                         <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
                                     }
@@ -188,6 +216,35 @@ class WebinarTable extends Component {
                 </tbody>
                 </table>
             </div>
+              <Modal
+                show={this.state.modalDelete}
+                onHide={this.closeModalDelete}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                  Konfirmasi
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div>Anda yakin akan menghapus webinar ini ?</div>
+                </Modal.Body>
+                <Modal.Footer>
+                            <button
+                              className="btn btm-icademy-primary btn-icademy-grey"
+                              onClick={this.closeModalDelete.bind(this)}
+                            >
+                              Batal
+                            </button>
+                            <button
+                              className="btn btn-icademy-primary btn-icademy-red"
+                              onClick={this.deleteWebinar.bind(this, this.state.deleteWebinarId)}
+                            >
+                              <i className="fa fa-trash"></i>
+                              Hapus
+                            </button>
+                </Modal.Footer>
+              </Modal>
             </div>
                     
     );
