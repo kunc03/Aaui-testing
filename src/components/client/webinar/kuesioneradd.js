@@ -206,7 +206,7 @@ export default class WebinarKuesionerAdd extends Component {
 									<div className="form-group row">
 										<div className="col-sm-3">
 											<label>Template Excel</label>
-											<a href={`${API_SERVER}public/attachment/template.xlsx`} target="_blank" className="btn btn-primary">Download</a>
+											<a href={`${API_SERVER}attachment/template.xlsx`} target="_blank" className="btn btn-primary">Download</a>
 										</div>
 										<div className="col-sm-6">
 											<label>Import Excel</label>
