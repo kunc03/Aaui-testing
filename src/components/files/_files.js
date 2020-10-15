@@ -328,15 +328,16 @@ fetchRekamanBBB(folder){
 fetchData(){
   if (this.props.companyId){
     this.setState({companyId: this.props.companyId})
+    this.selectFolder(this.props.projectId)
   }
   else{
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        this.selectFolder(this.props.projectId)
       }
     })
   }
-  this.selectFolder(this.props.projectId)
 }
 
 dialogDelete(id, name){
