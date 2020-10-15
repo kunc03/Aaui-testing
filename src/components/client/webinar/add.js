@@ -83,7 +83,7 @@ export default class WebinarAdd extends Component {
     // let cpTamu = [...this.state.tamu];
     // let filter = cpTamu.filter((item) => item.email != e.target.getAttribute('data-email'));
     // this.setState({ tamu: filter });
-    
+
     API.delete(`${API_SERVER}v2/webinar/tamu/${id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -114,7 +114,7 @@ export default class WebinarAdd extends Component {
   handleOneCheck = e => {
     let pem = this.state.peserta;
     pem.forEach(item => { if (item.email === e.target.value) item.checked = e.target.checked });
-    this.setState({ peserta: pem }); 
+    this.setState({ peserta: pem });
   }
   handleAllCheckTamu = e => {
     e.preventDefault();
@@ -126,7 +126,7 @@ export default class WebinarAdd extends Component {
   handleOneCheckTamu = e => {
     let pem = this.state.tamu;
     pem.forEach(item => { if (item.email === e.target.value) item.checked = e.target.checked });
-    this.setState({ tamu: pem }); 
+    this.setState({ tamu: pem });
   }
 
   kirimEmail () {
@@ -146,7 +146,7 @@ export default class WebinarAdd extends Component {
       pengguna: this.state.kirimEmailPeserta,
       tamu: this.state.kirimEmailTamu
     };
-    
+
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -213,7 +213,7 @@ export default class WebinarAdd extends Component {
     API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
       response.data.result.map(item => {
         this.state.optionsName.push({
-          value: item.user_id, 
+          value: item.user_id,
           label: `${item.name} - ${item.email} - ${item.phone}`
         });
       });
@@ -232,16 +232,16 @@ export default class WebinarAdd extends Component {
   }
 
   updateWebinar (back) {
-    
+
     let dd = new Date(this.state.tanggal);
     let tanggal = dd.getFullYear()+'-'+('0' + (dd.getMonth()+1)).slice(-2)+'-'+('0' + dd.getDate()).slice(-2);
-    
+
     let jamMl = new Date(this.state.jamMulai);
     let jamMulai = ('0' + jamMl.getHours()).slice(-2)+':'+('0' + jamMl.getMinutes()).slice(-2);
-    
+
     let jamSl = new Date(this.state.jamSelesai);
     let jamSelesai = ('0' + jamSl.getHours()).slice(-2)+':'+('0' + jamSl.getMinutes()).slice(-2);
-    
+
     let form = {
       id: this.state.webinarId,
       judul: this.state.judul,
@@ -253,7 +253,7 @@ export default class WebinarAdd extends Component {
       // pesertanya: this.state.pesertanya
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
-      if(res.data.error) 
+      if(res.data.error)
         toast.warning("Error fetch API")
       else
         if (this.state.gambar) {
@@ -436,7 +436,7 @@ export default class WebinarAdd extends Component {
     );
 
 		return (
-			<div className="row">                     
+			<div className="row">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
@@ -598,7 +598,7 @@ export default class WebinarAdd extends Component {
 
                   </div>
                 </div>
-                
+
               </div>
             </Card.Body>
           </Card>
@@ -628,7 +628,7 @@ export default class WebinarAdd extends Component {
 
                 <TabelPembicara items={this.state.pembicara} />
               </div>
-              
+
               <button
                 type="button"
                 className="btn btn-v2 btn-primary f-w-bold mr-2"
@@ -713,7 +713,7 @@ export default class WebinarAdd extends Component {
 
                 <TabelTamu items={this.state.tamu} />
               </div>
-              
+
               <button
                 type="button"
                 className="btn btn-icademy-warning m-2"
@@ -750,7 +750,7 @@ export default class WebinarAdd extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div style={{ marginTop: "20px" }} className="form-group">
+							<div className="form-group">
                 <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>

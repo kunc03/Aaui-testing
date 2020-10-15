@@ -11,7 +11,7 @@ export default class WebinarKuesionerAdd extends Component {
     webinarId: this.props.webinarId ? this.props.webinarId : '',
     pertanyaan: [
       // {
-      //   tanya: 'Bagaimana pendapat Anda tentang pembicara ?', 
+      //   tanya: 'Bagaimana pendapat Anda tentang pembicara ?',
       //   a: 'Sangat Baik',
       //   b: 'Cukup Baik',
       //   c: 'Baik',
@@ -19,11 +19,14 @@ export default class WebinarKuesionerAdd extends Component {
       //   e: 'Sangat Tidak Baik'
       // },
     ],
+
+		formFile: null,
+		loading: false,
   }
 
   onClickTambahPertanyaan = () => {
     let baruPertanyaan = {
-      tanya: '', 
+      tanya: '',
       a: '',
       b: '',
       c: '',
@@ -44,10 +47,17 @@ export default class WebinarKuesionerAdd extends Component {
   }
 
   onClickHapusPertanyaan = (e) => {
-    let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(e.target.getAttribute('data-index')));
-    this.setState({
-      pertanyaan: kurangi
-    })
+		let dataIndex = e.target.getAttribute('data-id');
+		let dataID = e.target.getAttribute('data-index');
+		API.delete(`${API_SERVER}v2/kuesioner/pertanyaan/${dataIndex}`).then(res => {
+			if(res.data.error) toast.warning("Gagal menghapus data");
+
+			toast.success("Data kuesioner terhapus")
+			let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
+			this.setState({
+				pertanyaan: kurangi
+			})
+		})
   }
 
   saveKuesioner(){
@@ -55,7 +65,7 @@ export default class WebinarKuesionerAdd extends Component {
       id: this.state.webinarId,
       kuesioner: this.state.pertanyaan,
     };
-    
+
     API.post(`${API_SERVER}v2/kuesioner`, form).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -67,12 +77,13 @@ export default class WebinarKuesionerAdd extends Component {
       }
     })
   }
-  updateKuesioner(){
+
+	updateKuesioner(){
     let form = {
       id: this.state.webinarId,
       kuesioner: this.state.pertanyaan,
     };
-    
+
     API.put(`${API_SERVER}v2/kuesioner`, form).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -84,7 +95,7 @@ export default class WebinarKuesionerAdd extends Component {
       }
     })
   }
-  
+
   fetchData(){
     API.get(`${API_SERVER}v2/kuesioner/${this.state.webinarId}`).then(res => {
       if(res.status === 200) {
@@ -102,12 +113,30 @@ export default class WebinarKuesionerAdd extends Component {
       }
     })
   }
-  
+
   componentDidMount(){
     this.fetchData()
   }
 
+	submitImport = e => {
+		e.preventDefault();
+		this.setState({ loading: true });
+		let form = new FormData();
+		form.append('webinarId', this.state.webinarId);
+		form.append('excel', this.state.formFile);
+
+		API.post(`${API_SERVER}v2/kuesioner/import`, form).then(res => {
+			if(res.data.error) toast.warning("Error import data");
+
+			toast.success("Berhasil import kuesioner")
+			this.setState({ loading: false })
+			this.fetchData();
+		})
+	}
+
 	render() {
+
+		console.log('STATE: ', this.state);
 
     const DaftarPertanyaan = ({items}) => (
       <div>
@@ -170,14 +199,26 @@ export default class WebinarKuesionerAdd extends Component {
     );
 
 		return (
-			<div className="row">                     
+			<div className="row">
         <div className="col-sm-12">
               <div style={{marginTop: '10px'}}>
-                {/* <div className="row">
-                  <div className="col-sm-12">
-                    <button className="btn btn-v2 btn-primary"><i className="fa fa-upload"></i> Import from excel</button>
-                  </div>
-                </div> */}
+								<form onSubmit={this.submitImport} role="form" className="form-vertical">
+									<div className="form-group row">
+										<div className="col-sm-3">
+											<label>Template Excel</label>
+											<a href="#" className="btn btn-primary">Download</a>
+										</div>
+										<div className="col-sm-6">
+											<label>Import Excel</label>
+											<input required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+										</div>
+										<div className="col-sm-3">
+											<button style={{marginTop: '22px'}} className="btn btn-primary" type="submit">
+												<i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
+											</button>
+										</div>
+									</div>
+								</form>
 
                 <div className="row mt-4">
                   <div className="col-sm-12">
@@ -187,7 +228,7 @@ export default class WebinarKuesionerAdd extends Component {
                         <div className="form-group">
                           <label>Pertanyaan {i+1}</label>
                           <span className="float-right">
-                            <i data-index={i} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                            <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
                           </span>
                           <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
 
@@ -238,8 +279,8 @@ export default class WebinarKuesionerAdd extends Component {
                       ))
                     }
 
-                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>                    
-                  
+                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
+
                     <button
                       type="button"
                       className="btn btn-icademy-primary m-2 float-right"
@@ -250,7 +291,7 @@ export default class WebinarKuesionerAdd extends Component {
                     </button>
                   </div>
                 </div>
-                
+
               </div>
 
         </div>
