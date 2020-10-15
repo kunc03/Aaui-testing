@@ -7,7 +7,7 @@ const APPS_SERVER_DEV = 'http://localhost:3000/';
 const APPS_SERVER_STG = 'https://app.icademy.mooo.com/';
 const APPS_SERVER_PROD = 'https://app.icademy.id/';
 
-const API_SERVER_DEV = 'https://api.icademy.dev.kelola.co.id/';
+const API_SERVER_DEV = 'http://localhost:3200/';
 const API_SERVER_STG = 'https://api.icademy.stg.kelola.co.id/';
 const API_SERVER_PROD = 'https://api.icademy.id/';
 
@@ -97,4 +97,3 @@ export default class API {
     return axios.delete(endpoint, config);
   };
 }
-
