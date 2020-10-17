@@ -40,7 +40,8 @@ class EventNew extends Component {
 
     let urlLearning = ''
     if ((levelUser !== 'superadmin' && access.manage_course == 1) || (levelUser === 'superadmin')){
-      urlLearning = 'kursus-materi'
+      // urlLearning = 'kursus-materi'
+      urlLearning = 'learning'
     }
     else{
       urlLearning = 'kursus'
@@ -62,7 +63,7 @@ class EventNew extends Component {
             </div>
           :
           lists.map((item, i) => (
-            <div className="col-sm-12 mb-3" key={item.course_id} style={{display: 
+            <div className="col-sm-12 mb-3" key={item.course_id} style={{display:
               levelUser == 'client' && access.group_meeting == 0 && item.title == 'Meeting' ? 'none' :
               levelUser == 'client' && (access.course == 0 && access.manage_course == 0) && item.title == 'Learning' ? 'none' :
               'block'}}>

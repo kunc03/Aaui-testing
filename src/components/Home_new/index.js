@@ -15,7 +15,8 @@ import RecentDocs from './recentDocs';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
+import { connect } from 'react-redux';
+import { initUser } from '../../actions/user_action';
 
 class HomeNew extends Component {
   state = {
@@ -47,6 +48,7 @@ class HomeNew extends Component {
 }
 
   componentDidMount() {
+    this.props.initUser();
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
     this.fetchEvent();
@@ -55,19 +57,21 @@ class HomeNew extends Component {
   fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if(res.status === 200) {
+
         this.fetchDataKategoriKursus(
           localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id
         );
         this.fetchDataKursusTerbaru(
           localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id
         );
-        
+
         Object.keys(res.data.result).map((key, index) => {
           if(key === 'registered') {
             return res.data.result[key] = res.data.result[key].toString().substring(0,10);
           }
         });
-        this.setState({ user: res.data.result});
+
+        this.setState({ user: res.data.result });
       }
     })
   }
@@ -85,7 +89,7 @@ class HomeNew extends Component {
       if(res.status === 200) {
         this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }).slice(0,3) })
       }
-    }) 
+    })
   }
 
   fetchDataKursusDiikuti() {
@@ -129,8 +133,11 @@ class HomeNew extends Component {
     const projekDashboard = this.state.project;
     const toDoDashboard = dataToDo;
 
+    console.log('PROPS: ', this.props.user)
+    console.log('PROPS: ', Storage.get('user').data)
+
     var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
-    if(findCourseInput != ""){      
+    if(findCourseInput != ""){
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
         .map(y=>
           y.filter(x=>
@@ -162,7 +169,7 @@ class HomeNew extends Component {
             <div>
               <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url('https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640')`}}></div>
             </div>
-            
+
           );
         }
       }
@@ -179,7 +186,7 @@ class HomeNew extends Component {
                   <Link to={(['admin','superadmin'].includes(Storage.get('user').data.level)) ? `/chapter/${item.course_id}`:`/detail-kursus/${item.course_id}`}>
                     <div className="card">
                       <CheckMedia media={item.thumbnail ? item.thumbnail : item.image} />
-                      
+
                       <div className="card-carousel ">
                         <div className="title-head f-w-900 f-16">
                           {item.title}
@@ -194,7 +201,7 @@ class HomeNew extends Component {
           </div>
         );
       } else {
-        return findCourseInput 
+        return findCourseInput
         ? (
           <div className="col-sm-12">
             <Card>
@@ -203,7 +210,7 @@ class HomeNew extends Component {
               </Card.Body>
             </Card>
           </div>
-        ) 
+        )
         : (
           <div className="col-sm-12">
             <Card>
@@ -225,8 +232,8 @@ class HomeNew extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  <div className="row">      
-                    <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>    
+                  <div className="row">
+                    <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
@@ -247,7 +254,7 @@ class HomeNew extends Component {
                             </div>
                           </Card.Body>
                         </Card>
-                      </div>                   
+                      </div>
                       <div className="col-sm-12">
                         <CalenderNew lists={kursusTerbaru} />
                       </div>
@@ -272,15 +279,15 @@ class HomeNew extends Component {
                           </Card.Body>
                         </Card>
                       </div>
-                    </div>    
-                    <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}> 
+                    </div>
+                    <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}>
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
                               <ProjekNew lists={projekDashboard} />
                           </Card.Body>
                         </Card>
-                      </div>      
+                      </div>
                       <div className="col-sm-12">
                         <Card>
                           <Card.Body>
@@ -303,7 +310,7 @@ class HomeNew extends Component {
                         </Card>
                       </div>
 
-                    </div>  
+                    </div>
                   </div>
 
                 </div>
@@ -311,10 +318,18 @@ class HomeNew extends Component {
             </div>
           </div>
         </div>
-        
+
       </div>
     );
   }
 }
 
-export default HomeNew;
+const mapStateToProps = state => {
+  return state.user;
+}
+
+const mapDispatchToProps = dispatch => ({
+  initUser: () => dispatch(initUser())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeNew);
