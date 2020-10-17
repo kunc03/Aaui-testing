@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api'; 
+import API, { API_SERVER } from './repository/api';
 import Storage from './repository/storage';
 
 import Header from "./components/Header_sidebar/Header";
@@ -93,6 +93,8 @@ import OTP from './components/OTP';
 
 import HomeClient from './components/client/dashboard/index';
 import WebinarClient from './components/client/webinar/index';
+
+import LearningAdmin from './components/learning/index';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -219,7 +221,7 @@ export class Logout extends React.Component {
   onClickLogout(e) {
     e.preventDefault();
   }
-  
+
   componentDidMount() {
     const user_id = Storage.get('user').data.user_id;
     API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
@@ -239,11 +241,12 @@ export class SuperAdminSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/webinar" component={WebinarClient} />
+        <Route path="/learning" component={LearningAdmin} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
-        <Route path="/project" component={Project} /> 
-        
+        <Route path="/project" component={Project} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -254,7 +257,7 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
-        
+
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
         <Route path="/files" component={Files} />
@@ -286,13 +289,13 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/user" component={User} />
         <Route path="/user-create" component={UserAdd} />
         <Route path="/user-edit/:user_id" component={UserEdit} />
-        
+
         {/* <Route path="/user-create" component={UserCompanyAdd} />
         <Route path="/user-edit/:user_id" exact component={UserCompanyEdit} /> */}
-        
+
         {/* <Route path="/user-access" component={UserAccess} /> */}
         <Route path="/user-company/:company_id" component={UserCompany} />
-        
+
         <Route path="/cabang" component={Cabang} />
         <Route path="/company" component={Company} />
         <Route path="/company-detail/:company_id" component={CompanyDetail} />
@@ -324,14 +327,14 @@ export class AdminSwitch extends React.Component {
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
 
-        <Route path="/detail-project/:project_id" component={DetailProject} /> 
-        <Route path="/project" component={Project} /> 
+        <Route path="/detail-project/:project_id" component={DetailProject} />
+        <Route path="/project" component={Project} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
-        
+
         <Route path="/pengaturan" exact component={Pengaturan} />
 
         <Route path="/profile" exact component={Profile} />
@@ -383,7 +386,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/grup" exact component={Grup} />
 
         <Route path="/filemanager" exact component={FilePicker} />
-        
+
         <Route path='/certificate-admin' component={CertificateAdmin} />
         <Route path='/certificate-create' component={CertificateCreate} />
 
@@ -403,22 +406,22 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
-        
+
         <Route path="/webinar" component={WebinarClient} />
 
-        <Route path="/detail-project/:project_id" component={DetailProject} /> 
-        <Route path="/project" component={Project} /> 
+        <Route path="/detail-project/:project_id" component={DetailProject} />
+        <Route path="/project" component={Project} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
-        
+
         <Route path="/aktivitas" component={Activity} />
-        
+
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
-        
+
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
@@ -431,7 +434,7 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
-        
+
         <Route path="/pengaturan" component={Pengaturan} />
 
         <Route path="/kursus" component={Kursus} />
@@ -443,7 +446,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
-        
+
         <Route path="/logout" component={Logout} />
       </Switch>
     );
