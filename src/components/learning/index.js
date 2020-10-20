@@ -7,12 +7,7 @@ import DaftarPelajaran from '../daftar_pelajaran/index';
 import Personalia from '../personalia/index';
 import RuanganMengajar from '../ruangan_mengajar/index';
 import JadwalMengajar from '../jadwal_mengajar/index';
-
-const Evaluasi = () => {
-  return (
-    <h2>Evaluasi</h2>
-  );
-}
+import Evaluasi from '../evaluasi/index';
 
 const Laporan = () => {
   return (
@@ -63,6 +58,7 @@ export default class LearningAdmin extends Component {
                               activeClassName='active'
                               className={`nav-link`}
                               to={`/learning${item.link}`}>
+                                <img src="/newasset/webinar.svg" className="mr-2"/>
                                 {item.name}
                             </NavLink>
                           </li>
