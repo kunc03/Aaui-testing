@@ -71,7 +71,11 @@ class EventNew extends Component {
                 <div className={item.status ? 'border-blue-2 ' : 'box-disabled border-disabled'}>
                   <div className="box-event ">
                     <div className="title-head f-w-900 f-16 fc-skyblue">
-                      {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
+                    <img
+                      src={item.status ? `${item.title === 'Meeting' ? 'newasset/video-conference.svg' : item.title === 'Learning' ? 'newasset/book 2.svg' : 'newasset/webinar.svg'}` : ''}
+                      alt=""
+                      width={22} 
+                    ></img> &nbsp; {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
                     </div>
                   </div>
                 </div>
