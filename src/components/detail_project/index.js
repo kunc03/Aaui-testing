@@ -28,6 +28,7 @@ export default class User extends Component {
     this.goBack = this.goBack.bind(this);
 
     this.state = {
+      projectName: '',
       users: [],
       dataUser: [],
       access_project_admin: false,
@@ -64,6 +65,14 @@ export default class User extends Component {
     })
   }
 
+  getProject(){
+    API.get(`${API_SERVER}v1/project-read/${this.state.projectId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({projectName: res.data.result.name})
+      }
+    })
+  }
+
   choiceTab(item){
     console.log(item,'tabbb wooiii')
     if(item === 'Semua') return this.setState({contentAll: true,contentMeeting: true,contentWebinar: true,contentGanttChart: true,contentFiles: true});
@@ -75,6 +84,7 @@ export default class User extends Component {
 
   componentDidMount(){
     this.checkProjectAccess()
+    this.getProject()
   }
 
   render() {
@@ -98,6 +108,9 @@ export default class User extends Component {
                     <div className="col-xl-12">
                       {/* Tab */}
                       <div className="card mb-2" style={{padding: '20px 0px 0px 20px', alignItems:'flex-end'}}>
+                          <div style={{position:'absolute', left : 20}}>
+                            <h4>{this.state.projectName}</h4>
+                          </div>
                           <Tabs defaultActiveKey="Semua" id="uncontrolled-tab-example" onSelect={this.choiceTab.bind(this)}>
                             {titleTabs.map(tab =>{
                               return (

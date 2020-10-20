@@ -53,7 +53,7 @@ const config = {
   // Style Untuk Title Header
   taskList: {
     title: {
-      label: "Nama",
+      label: "Task",
       style: {
         backgroundColor: "white",
         color: "black"
@@ -67,12 +67,11 @@ const config = {
     },
     verticalSeparator: {
       style: {
-        backgroundColor: "red",
-        display:'none'
+        backgroundColor: "#FFF"
       },
       grip: {
         style: {
-          backgroundColor: "red"
+          backgroundColor: "#cfcfcd"
         }
       }
     }
@@ -92,6 +91,7 @@ const config = {
       showLabel: true,
       style: {
         borderRadius: 60,
+        padding:'0px 5px'
       }
     }
   }
@@ -120,6 +120,7 @@ class GanttChart extends Component {
       start: new Date(),
       end: new Date(),
       status: "",
+      color: '',
       assigne: [],
       subtasks: [],
       attachments: [],
@@ -142,6 +143,7 @@ class GanttChart extends Component {
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
       valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: []
     });
+    this.fetchData()
   };
 
   onHorizonChange = (start, end) => {
@@ -206,7 +208,7 @@ class GanttChart extends Component {
       if(res.data.error) toast.warning("Gagal membuat task");
 
       let copyState = [...this.state.data];
-      res.data.result.color = this.getRandomColor();
+      res.data.result.color = '#bbbbbb';
       copyState.push(res.data.result);
       this.setState({ data: copyState });
 
@@ -380,6 +382,11 @@ class GanttChart extends Component {
         subtasks: res.data.result.subtasks,
         attachments: res.data.result.attachments,
         taskDetail: res.data.result,
+        color: res.data.result.status === null ? '#bbbbbb' :
+              res.data.result.status === 'Open' ? '#000000' :
+              res.data.result.status === 'In Progress' ? '#F7B500' :
+              res.data.result.status === 'Done' ? '#6DD400' :
+              '#32C5FF',
 
         max: res.data.result.subtasks.length,
         val: res.data.result.subtasks.filter(item => item.status == 2).length
@@ -420,7 +427,22 @@ class GanttChart extends Component {
       if(res.data.error) toast.warning("Gagal fetch API");
 
       for(var i=0; i<res.data.result.length; i++) {
-        res.data.result[i].color = this.getRandomColor();
+        // res.data.result[i].color = this.getRandomColor();
+        if (res.data.result[i].status === null) {
+          res.data.result[i].color = '#bbbbbb'
+        }
+        else if (res.data.result[i].status === 'Open') {
+          res.data.result[i].color = '#000000'
+        }
+        else if (res.data.result[i].status === 'In Progress') {
+          res.data.result[i].color = '#F7B500'
+        }
+        else if (res.data.result[i].status === 'Done') {
+          res.data.result[i].color = '#6DD400'
+        }
+        else if (res.data.result[i].status === 'Closed') {
+          res.data.result[i].color = '#32C5FF'
+        }
       }
 
       this.setState({ data: res.data.result, links: [] })
@@ -438,7 +460,7 @@ class GanttChart extends Component {
     return (
         <div className="card p-20">
             <span className="mb-4">
-                <strong className="f-w-bold f-18 fc-skyblue ">Gantt Chart</strong>
+                <strong className="f-w-bold f-18 fc-skyblue ">Timeline Chart</strong>
                 <button
                   onClick={() => this.setState({ isModalTodo: true })}
                   className="btn btn-sm btn-icademy-primary float-right"
@@ -502,7 +524,7 @@ class GanttChart extends Component {
               
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
-                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary">{this.state.status ? this.state.status : "Status Task"}</button>
+                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
 
                 <div style={{width: '80%'}}>
@@ -527,7 +549,8 @@ class GanttChart extends Component {
                
                 <textarea rows="4" defaultValue={""} 
                   name="description"
-                  value={this.state.description} 
+                  value={this.state.description !== 'null' ? this.state.description : ''} 
+                  placeholder="Isi deskripsi task..."
                   onChange={e => this.setState({ description: e.target.value })} 
                   onKeyUp={this.simpanDeskripsi} className="form-control mb-3" />
 

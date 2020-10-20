@@ -564,7 +564,7 @@ export default class WebinarAdd extends Component {
                         <label className="bold">Ruang Meeting</label>
                         <div className="col-sm-12">
                           <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
-                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.project_id}/>
+                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId}/>
                           </div>
                         </div>
                       </div>
