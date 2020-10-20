@@ -326,6 +326,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
+        <Route path="/learning" component={LearningAdmin} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
