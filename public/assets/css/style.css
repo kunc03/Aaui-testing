@@ -1047,19 +1047,19 @@ p.text-muted {
 }
 
 .p-5 {
-  padding: 5px;
+  padding: 5px !important;
 }
 .p-t-5 {
-  padding-top: 5px;
+  padding-top: 5px !important;
 }
 .p-b-5 {
-  padding-bottom: 5px;
+  padding-bottom: 5px !important;
 }
 .p-l-5 {
-  padding-left: 5px;
+  padding-left: 5px !important;
 }
 .p-r-5 {
-  padding-right: 5px;
+  padding-right: 5px !important;
 }
 
 .m-5 {
@@ -1085,13 +1085,13 @@ p.text-muted {
   padding-top: 10px !important;
 }
 .p-b-10 {
-  padding-bottom: 10px;
+  padding-bottom: 10px !important;
 }
 .p-l-10 {
-  padding-left: 10px;
+  padding-left: 10px !important;
 }
 .p-r-10 {
-  padding-right: 10px;
+  padding-right: 10px !important;
 }
 
 .m-10 {
@@ -11369,6 +11369,13 @@ div.code-toolbar > .toolbar span:hover {
   color: white;
 }
 
+.widget-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 411px;
+}
+
 .card-options {
   cursor: pointer;
   margin: 8px;
@@ -11623,7 +11630,7 @@ div.code-toolbar > .toolbar span:hover {
 
 /* Boxed */
 .box-event {
-  padding: 25px 15px;
+  padding: 28px 15px;
 }
 
 .box-project {

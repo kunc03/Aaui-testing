@@ -205,7 +205,7 @@ closeModalDelete = e => {
           <b className="f-24 f-w-800">  . . . </b>
         </div>
       <div className="col-sm-12" style={{marginTop: '10px'}}>
-      <div className="wrap" style={{maxHeight:'420px', overflowY:'scroll', overflowX:'hidden'}}>
+      <div className="wrap" style={{height:'305px', overflowY:'scroll', overflowX:'hidden'}}>
         {
           lists.length == 0 ?
             <div className="col-sm-12 mb-1">
@@ -214,7 +214,7 @@ closeModalDelete = e => {
           :
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1">
-                <div className="row p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
+                <div className="row p-10 p-t-15 p-b-15" style={{borderBottom: '1px solid #E6E6E6'}}>
                 <Link to={`/detail-project/${item.id}`} className={accessProjectManager ? "col-sm-8" : "col-sm-8"}>
                   <div className="box-project">
                     <div className=" f-w-800 f-16 fc-black">

@@ -250,7 +250,7 @@ class HomeNew extends Component {
                                 </p>
                               </div>
                             </div>
-                            <div style={{marginTop: '10px'}}>
+                            <div style={{marginTop: '35px'}}>
                               <EventNew lists={eventDashboard} />
                             </div>
                           </Card.Body>
@@ -308,6 +308,18 @@ class HomeNew extends Component {
                               <ListToDoNew lists={toDoDashboard} />
                             </div>
                           </Card.Body>
+                        </Card>
+                      </div>
+
+                      <div className="col-sm-12">
+                        <Card style={{backgroundColor: '#F3F3F3'}}>
+                          
+                            <div className="widget-center">
+                              <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
+                              
+                              <p style={{marginTop: '55px'}}>Tambah Widget</p>
+                            </div>
+                          
                         </Card>
                       </div>
 

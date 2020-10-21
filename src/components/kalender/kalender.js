@@ -107,7 +107,7 @@ class KalenderNew extends Component {
               }
               return {};
             }}
-            views={['month', 'week', 'day', 'agenda']}
+            views={['month']}
             components={{ event: Event }}
           />
           <div className="p-l-20 m-t-10">
