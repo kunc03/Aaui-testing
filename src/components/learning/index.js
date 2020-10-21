@@ -4,24 +4,9 @@ import { NavLink, Link, Switch, Route } from 'react-router-dom';
 
 import Registrasi from '../registrasi/index';
 import DaftarPelajaran from '../daftar_pelajaran/index';
-
-const RuanganMengajar = () => {
-  return (
-    <h2>RuanganMengajar</h2>
-  );
-}
-
-const JadwalMengajar = () => {
-  return (
-    <h2>JadwalMengajar</h2>
-  );
-}
-
-const Personalia = () => {
-  return (
-    <h2>Personalian</h2>
-  );
-}
+import Personalia from '../personalia/index';
+import RuanganMengajar from '../ruangan_mengajar/index';
+import JadwalMengajar from '../jadwal_mengajar/index';
 
 const Evaluasi = () => {
   return (

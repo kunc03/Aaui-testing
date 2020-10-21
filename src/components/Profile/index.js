@@ -9,16 +9,21 @@ class Profile extends Component {
     user_data: {
       user_id: Storage.get("user").data.user_id,
       company_id: "",
-      branch_id: "",
       grup_id: "",
-      level: "",
-      status: "",
-      email: "",
-
-      name: "",
       identity: "",
-      address: "",
+      name: "",
+      email: "",
       phone: "",
+      address: "",
+      level: "",
+
+      //unlimited: '',
+      //validity: '',
+      status: "",
+
+      branch_id: "",
+      group: [],
+
       avatar: "",
       tempAvatar: ""
     },
@@ -105,6 +110,7 @@ class Profile extends Component {
               company_id: res.data.result.company_id,
               branch_id: res.data.result.branch_id,
               grup_id: res.data.result.grup_id,
+              group: res.data.result.group,
               level: res.data.result.level,
               status: res.data.result.status,
               email: res.data.result.email,
@@ -233,7 +239,7 @@ class Profile extends Component {
                               src={this.state.user_data.avatar}
                               className="rounded-circle img-profile mb-4"
                             />
-                            
+
                             <button
                               onClick={this.onClickModalAvatar}
                               className="btn btn-icademy-primary mb-2 ml-3"
