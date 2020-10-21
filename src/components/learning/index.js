@@ -4,10 +4,14 @@ import { NavLink, Link, Switch, Route } from 'react-router-dom';
 
 import Registrasi from '../registrasi/index';
 import DaftarPelajaran from '../daftar_pelajaran/index';
+
 import Personalia from '../personalia/index';
+import PersonaliaDetail from '../personalia/detail';
+
 import RuanganMengajar from '../ruangan_mengajar/index';
 import JadwalMengajar from '../jadwal_mengajar/index';
 import Evaluasi from '../evaluasi/index';
+import EvaluasiDetail from '../evaluasi/detail';
 
 const Laporan = () => {
   return (
@@ -20,10 +24,15 @@ const titleTabs = [
   {name: 'Daftar Pelajaran', link: '/daftar-pelajaran', component: DaftarPelajaran},
   {name: 'Ruangan Mengajar', link: '/ruangan-mengajar', component: RuanganMengajar},
   {name: 'Jadwal Mengajar', link: '/jadwal-mengajar', component: JadwalMengajar},
-  {name: 'Personalia', link: '/personalian', component: Personalia},
+  {name: 'Personalia', link: '/personalia', component: Personalia},
   {name: 'Evaluasi', link: '/evaluasi', component: Evaluasi},
   {name: 'Laporan', link: '/laporan', component: Laporan},
 ]
+
+const switchTambahan = [
+  {name: 'Detail Evaluasi', link: '/evaluasi-detail/:id', component: EvaluasiDetail},
+  {name: 'Detail Murid', link: '/personalia-detail/:id', component: PersonaliaDetail},
+];
 
 export default class LearningAdmin extends Component {
 
@@ -73,6 +82,12 @@ export default class LearningAdmin extends Component {
                     <Route path="/learning" exact component={Registrasi} />
                     {
                       titleTabs.map(item => (
+                        <Route path={`/learning${item.link}`} component={item.component} />
+                      ))
+                    }
+
+                    {
+                      switchTambahan.map(item => (
                         <Route path={`/learning${item.link}`} component={item.component} />
                       ))
                     }

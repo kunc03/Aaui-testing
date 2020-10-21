@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 
 import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
 
+import API, { API_SERVER } from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class RuanganMengajar extends React.Component {
 
@@ -15,7 +17,10 @@ class RuanganMengajar extends React.Component {
 
     isModalTambah: false,
 
-    dataRuangan: []
+    dataRuangan: [],
+
+    dataPengajar: [],
+    dataFolder: [],
   }
 
   saveRuangan = e => {
@@ -57,6 +62,15 @@ class RuanganMengajar extends React.Component {
       {id: 1, nama_ruangan: "Nama 3", folder: "Semester 1", pengajar: "Pengajar 3"},
     ];
     this.setState({ dataRuangan: listKelas })
+    this.fetchPengajar();
+  }
+
+  fetchPengajar() {
+    API.get(`${API_SERVER}v2/guru/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch pengajar");
+
+      this.setState({ dataPengajar: res.data.result })
+    })
   }
 
   render() {
@@ -120,10 +134,12 @@ class RuanganMengajar extends React.Component {
                 <div className="col-sm-6">
                   <label>Pengajar</label>
                   <select value={this.state.pengajar} onChange={e => this.setState({ pengajar: e.target.value })} required className="form-control">
-                    <option value="">Pilih pengajar</option>
-                    <option value="Ahmad">Ahmad</option>
-                    <option value="Ardi">Ardi</option>
-                    <option value="Ansyah">Ansyah</option>
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataPengajar.map(item => (
+                        <option value={item.id}>{item.nama}</option>
+                      ))
+                    }
                   </select>
                 </div>
                 <div className="col-sm-6">

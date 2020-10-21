@@ -169,7 +169,7 @@ class Evaluasi extends React.Component {
                         <td>{item.tanggal}</td>
                         <td>{item.penerima}</td>
                         <td className="text-center">
-                          <Link to={`#`} className="btn btn-sm btn-v2 btn-primary"><i className="fa fa-search"></i> Lihat Detail</Link>
+                          <Link to={`/learning/evaluasi-detail/${item.id}`} className="btn btn-sm btn-v2 btn-primary"><i className="fa fa-search"></i> Lihat Detail</Link>
                         </td>
 
                       </tr>
@@ -199,7 +199,7 @@ class Evaluasi extends React.Component {
               </div>
               <div className="form-group">
                 <label>Deskripsi</label>
-                <textarea value={this.state.deskripsi} onChange={e => this.setState({ deskripsi: e.target.value })} rows="5" required type="text" className="form-control" placeholder="Enter deskripsi" />
+                <textarea value={this.state.deskripsi} onChange={e => this.setState({ deskripsi: e.target.value })} rows="3" required type="text" className="form-control" placeholder="Enter deskripsi" />
               </div>
               <div className="form-group">
                 <label>Penerima</label><br/>
