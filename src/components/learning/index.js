@@ -13,12 +13,7 @@ import JadwalMengajar from '../jadwal_mengajar/index';
 import Evaluasi from '../evaluasi/index';
 import EvaluasiDetail from '../evaluasi/detail';
 import Folder from './folder';
-
-const Laporan = () => {
-  return (
-    <h2>Laporan</h2>
-  );
-}
+import Laporan from '../laporan/index';
 
 const titleTabs = [
   {name: 'Registrasi', link: '/registrasi', component: Registrasi},
