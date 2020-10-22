@@ -11749,3 +11749,7 @@ div.code-toolbar > .toolbar span:hover {
   z-index: 1029 !important;
   background: #FFF !important;
 }
+
+.timeLine-side-main{
+  min-width: 400px !important;
+}
