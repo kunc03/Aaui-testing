@@ -478,6 +478,7 @@ class GanttChart extends Component {
                   onHorizonChange={this.onHorizonChange}
                   onSelectItem={this.onSelectItem}
                   onUpdateTask={this.onUpdateTask}
+                  mode='month'
                 />
               </div>
             </div>
