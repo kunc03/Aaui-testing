@@ -41,6 +41,7 @@ export default class WebinarLive extends Component {
     pertanyaan: [],
     jawaban: [],
     companyId: '',
+    qnaPeserta: '',
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -144,6 +145,7 @@ export default class WebinarLive extends Component {
             description: res.data.result.description,
             timestamp: new Date()
           })
+          this.fetchQNAByUser()
       })
     }
   }
@@ -153,6 +155,15 @@ export default class WebinarLive extends Component {
           toast.warning("Error fetch API")
       else
         this.setState({qna: res.data.result})
+    })
+  }
+
+  fetchQNAByUser(){
+    API.get(`${API_SERVER}v2/webinar/qna-peserta/${this.state.webinarId}/${this.state.user.user_id}`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        this.setState({qnaPeserta: res.data.result})
     })
   }
 
@@ -192,6 +203,7 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu
             })
+            this.fetchQNAByUser()
             this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
@@ -283,6 +295,7 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu
             })
+            this.fetchQNAByUser()
             this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
@@ -625,12 +638,34 @@ export default class WebinarLive extends Component {
           :
           (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) && this.state.status===2 ?
           <div className="col-sm-6">
+          <div className="col-sm-12">
             <Card>
               <Card.Body>
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      Pertanyaan
+                      Pertanyaan Anda
+                    </h3>
+                  </div>
+                </div>
+                <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll', overflowX:'hidden', paddingRight:10}}>
+                  {
+                    this.state.qnaPeserta.length ?
+                    <Pertanyaan items={this.state.qnaPeserta} />
+                    :
+                    <p>Tidak ada pertanyaan</p>
+                  }
+                </div>
+              </Card.Body>
+            </Card>
+          </div>
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      Kirim Pertanyaan
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
@@ -654,6 +689,7 @@ export default class WebinarLive extends Component {
                 </div>
               </Card.Body>
             </Card>
+          </div>
           </div>
           :
           null
