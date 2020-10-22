@@ -12,6 +12,7 @@ import RuanganMengajar from '../ruangan_mengajar/index';
 import JadwalMengajar from '../jadwal_mengajar/index';
 import Evaluasi from '../evaluasi/index';
 import EvaluasiDetail from '../evaluasi/detail';
+import Folder from './folder';
 
 const Laporan = () => {
   return (
@@ -32,6 +33,7 @@ const titleTabs = [
 const switchTambahan = [
   {name: 'Detail Evaluasi', link: '/evaluasi-detail/:id', component: EvaluasiDetail},
   {name: 'Detail Murid', link: '/personalia-detail/:id', component: PersonaliaDetail},
+  {name: 'Folder', link: '/folder', component: Folder},
 ];
 
 export default class LearningAdmin extends Component {
