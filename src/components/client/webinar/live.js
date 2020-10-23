@@ -7,6 +7,7 @@ import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
 import TableFiles from '../../files/_files';
 import Moment from 'moment-timezone';
+import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 const bbb = require('bigbluebutton-js')
 
@@ -18,6 +19,16 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
 	state = {
+    waktuPretest: 0,
+    waktuPosttest: 0,
+    pretest: [],
+    posttest: [],
+    pretestTerjawab: false,
+    posttestTerjawab: false,
+    jawabanPretest: [],
+    jawabanPosttest: [],
+    enablePretest: false,
+    enablePosttest: false,
     webinarId:this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId,
     webinar:[],
     jawabKuesioner:[],
@@ -87,6 +98,105 @@ export default class WebinarLive extends Component {
       else{
         this.state.jawaban.push({questions_id: name, options_id: value})
       }
+  }
+  handleJawabPretest = e => {
+    const { value, name } = e.target;
+      var array = this.state.jawabanPretest;
+      var index = this.findArray(array, 'questions_id', name);
+      if (index !== -1) {
+        array.splice(index, 1);
+        this.setState({jawabanPretest: array});
+        this.state.jawabanPretest.push({questions_id: name, options_id: value})
+      }
+      else{
+        this.state.jawabanPretest.push({questions_id: name, options_id: value})
+      }
+  }
+  handleJawabPosttest = e => {
+    const { value, name } = e.target;
+      var array = this.state.jawabanPosttest;
+      var index = this.findArray(array, 'questions_id', name);
+      if (index !== -1) {
+        array.splice(index, 1);
+        this.setState({jawabanPosttest: array});
+        this.state.jawabanPosttest.push({questions_id: name, options_id: value})
+      }
+      else{
+        this.state.jawabanPosttest.push({questions_id: name, options_id: value})
+      }
+  }
+  kirimJawabanPosttest(){
+    if (this.state.jawabanPosttest.length === this.state.posttest.length){
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        pengguna: this.state.user.type ? 0 : 1,
+        webinar_test: this.state.jawabanPosttest
+      }
+      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Gagal mengirim jawaban post test webinar')
+        else
+          toast.success('Mengirim jawaban post test webinar')
+          this.fetchWebinar()
+          this.fetchPostTest()
+      })
+    }
+    else{
+      toast.warning('Wajib menjawab semua pertanyaan')
+    }
+  }
+  kirimJawabanPretest(){
+    if (this.state.jawabanPretest.length === this.state.pretest.length){
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        pengguna: this.state.user.type ? 0 : 1,
+        webinar_test: this.state.jawabanPretest
+      }
+      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Gagal mengirim jawaban pre test webinar')
+        else
+          toast.success('Mengirim jawaban pre test webinar')
+          this.fetchPreTest()
+      })
+    }
+    else{
+      toast.warning('Wajib menjawab semua pertanyaan')
+    }
+  }
+  waktuPretestHabis(){
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        pengguna: this.state.user.type ? 0 : 1,
+        webinar_test: this.state.jawabanPretest
+      }
+      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Gagal mengirim jawaban pre test webinar')
+        else
+          toast.warning('Waktu habis')
+          toast.success('Mengirim jawaban pre test webinar')
+          this.fetchPreTest()
+      })
+  }
+  waktuPosttestHabis(){
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        pengguna: this.state.user.type ? 0 : 1,
+        webinar_test: this.state.jawabanPosttest
+      }
+      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+        if(res.data.error) 
+          toast.error('Gagal mengirim jawaban post test webinar')
+        else
+        toast.warning('Waktu habis')
+          toast.success('Mengirim jawaban post test webinar')
+          this.fetchPostTest()
+      })
   }
   kirimJawabanKuesioner(){
     if (this.state.jawaban.length === this.state.pertanyaan.length){
@@ -184,6 +294,8 @@ export default class WebinarLive extends Component {
         this.setState({
           user: res.data.result,
         })
+        this.fetchPreTest()
+        this.fetchPostTest()
         API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
             if (res.data.error)
                 toast.warning("Error fetch API")
@@ -276,6 +388,8 @@ export default class WebinarLive extends Component {
         this.setState({
           user: res.data.result,
         })
+        this.fetchPreTest()
+        this.fetchPostTest()
         API.get(`${API_SERVER}v2/webinar/tamu/one/${this.props.webinarId}`).then(res => {
             if (res.data.error)
                 toast.warning("Error fetch API")
@@ -369,6 +483,28 @@ export default class WebinarLive extends Component {
       name: this.state.jawabKuesioner[random]
     })
   }
+  fetchPreTest(){
+    API.get(`${API_SERVER}v2/webinar-test-peserta/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({pretestTerjawab: res.data.terjawab, enablePretest: res.data.enable, pretest:res.data.result, waktuPretest: res.data.waktu})
+        }
+      }
+    })
+  }
+  fetchPostTest(){
+    API.get(`${API_SERVER}v2/webinar-test-peserta/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({posttestTerjawab: res.data.terjawab, enablePosttest: res.data.enable, posttest:res.data.result, waktuPosttest: res.data.waktu})
+        }
+      }
+    })
+  }
   componentDidMount(){
     socket.on("broadcast", data => {
       if(data.webinar_id == this.state.webinarId) {
@@ -392,6 +528,15 @@ export default class WebinarLive extends Component {
       if(data.socketAction == 'jawabKuesioner') {
         this.state.jawabKuesioner.push(data.name)
         this.forceUpdate()
+      }
+      if(data.socketAction == 'fetchPostTest') {
+        if (this.props.webinarId && this.props.voucher){
+          this.fetchWebinarPublic()
+        }
+        else{
+          this.fetchWebinar()
+        }
+        this.fetchPostTest()
       }
     });
     if (this.props.webinarId && this.props.voucher){
@@ -450,6 +595,9 @@ export default class WebinarLive extends Component {
             this.closeModalEnd()
             toast.success('Mengakhiri webinar untuk semua peserta.')
             this.updateStatus(this.state.webinar.id, 3)
+            socket.emit('send', {
+              socketAction: 'fetchPostTest',
+            })
         }
     })
   }
@@ -557,34 +705,128 @@ export default class WebinarLive extends Component {
                   </p>
                 </div>
               </div>
-              <div style={{marginTop: '10px'}}>
-                <div className="row">
-                  <div className="col-sm-12">
-                    {
-                      this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
-                      <Iframe url={this.state.joinUrl}
-                        width="100%"
-                        height="600px"
-                        display="initial"
-                        frameBorder="0"
-                        allow="fullscreen *;geolocation *; microphone *; camera *"
-                        position="relative"/>
-                      :
-                      this.state.status == 3 ?
-                      <h3>Webinar telah berakhir</h3>
-                      :
-                    <h3>Webinar berlangsung pada tanggal {this.state.tanggal} jam {this.state.jamMulai} sampai {this.state.jamSelesai}</h3>
-                    }
-
-                    <div className="dekripsi" style={{marginTop: '20px'}}>
-                      <h4>Deskripsi</h4>
-                      <div dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
-                    </div>
+              {
+                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) ?
+                <div>
+                  <h4>Silahkan jawab pre test untuk lanjut mengikuti webinar</h4>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <Timer
+                      initialTime={this.state.waktuPretest*60000}
+                      direction="backward"
+                      checkpoints={[
+                        {
+                          time: 0,
+                          callback: this.waktuPretestHabis.bind(this),
+                        }
+                      ]}
+                  >
+                      {() => (
+                          <React.Fragment>
+                              Batas Waktu <Timer.Hours />:
+                              <Timer.Minutes />:
+                              <Timer.Seconds />
+                          </React.Fragment>
+                      )}
+                  </Timer>
                   </div>
-
+                  {
+                  this.state.pretest.map((item, index) => (
+                    <div className="mb-3">
+                      <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.tanya}</p>
+                      {item.a && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
+                      {item.b && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
+                      {item.c && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
+                      {item.d && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPretest} /> <label for='d'> {item.d[1]}</label></div>}
+                      {item.e && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPretest} /> <label for='e'> {item.e[1]}</label></div>}
+                    </div>
+                  ))
+                  }
+                  <button
+                    className="btn btn-icademy-primary"
+                    onClick={this.kirimJawabanPretest.bind(this)}
+                  >
+                    <i className="fa fa-paper-plane"></i>
+                    Kirim Jawaban Pre Test
+                  </button>
                 </div>
-                
-              </div>
+                :
+                <div style={{marginTop: '10px'}}>
+                  <div className="row">
+                    <div className="col-sm-12">
+                      {
+                        this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+                        <Iframe url={this.state.joinUrl}
+                          width="100%"
+                          height="600px"
+                          display="initial"
+                          frameBorder="0"
+                          allow="fullscreen *;geolocation *; microphone *; camera *"
+                          position="relative"/>
+                        :
+                        this.state.status == 3 ?
+                        <h3>Webinar telah berakhir</h3>
+                        :
+                      <h3>Webinar berlangsung pada tanggal {this.state.tanggal} jam {this.state.jamMulai} sampai {this.state.jamSelesai}</h3>
+                      }
+                      {
+                        this.state.status !== 3 &&
+                        <div className="dekripsi" style={{marginTop: '20px'}}>
+                          <h4>Deskripsi</h4>
+                          <div dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                        </div>
+                      }
+                {
+                this.state.status == 3 && this.state.enablePosttest && this.state.posttestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) &&
+                <div>
+                  <h4>Silahkan jawab post test</h4>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <Timer
+                      initialTime={this.state.waktuPosttest*60000}
+                      direction="backward"
+                      checkpoints={[
+                        {
+                          time: 0,
+                          callback: this.waktuPosttestHabis.bind(this),
+                        }
+                      ]}
+                  >
+                      {() => (
+                          <React.Fragment>
+                              Batas Waktu <Timer.Hours />:
+                              <Timer.Minutes />:
+                              <Timer.Seconds />
+                          </React.Fragment>
+                      )}
+                  </Timer>
+                  </div>
+                  {
+                  this.state.posttest.map((item, index) => (
+                    <div className="mb-3">
+                      <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.tanya}</p>
+                      {item.a && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPosttest} /> <label for='a'> {item.a[1]}</label></div>}
+                      {item.b && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPosttest} /> <label for='b'> {item.b[1]}</label></div>}
+                      {item.c && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPosttest} /> <label for='c'> {item.c[1]}</label></div>}
+                      {item.d && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPosttest} /> <label for='d'> {item.d[1]}</label></div>}
+                      {item.e && <div style={{margin:'0px 10px'}}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPosttest} /> <label for='e'> {item.e[1]}</label></div>}
+                    </div>
+                  ))
+                  }
+                  <button
+                    className="btn btn-icademy-primary"
+                    onClick={this.kirimJawabanPosttest.bind(this)}
+                  >
+                    <i className="fa fa-paper-plane"></i>
+                    Kirim Jawaban Pre Test
+                  </button>
+                </div>
+                }
+                    </div>
+  
+                  </div>
+                  
+                </div>
+              }
+              
             </Card.Body>
           </Card>
         </div>

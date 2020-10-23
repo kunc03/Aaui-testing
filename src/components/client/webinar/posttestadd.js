@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 export default class WebinarPosttestAdd extends Component {
 
 	state = {
+    waktu: 0,
     update: false,
     webinarId: this.props.webinarId ? this.props.webinarId : '',
     pertanyaan: [
@@ -59,7 +60,7 @@ export default class WebinarPosttestAdd extends Component {
 		API.delete(`${API_SERVER}v2/webinar-test/pertanyaan/${dataIndex}`).then(res => {
 			if(res.data.error) toast.warning("Gagal menghapus data");
 
-			toast.success("Pertanyaan Pre Test terhapus")
+			toast.success("Pertanyaan Post test terhapus")
 			let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
 			this.setState({
 				pertanyaan: kurangi
@@ -71,7 +72,8 @@ export default class WebinarPosttestAdd extends Component {
     let form = {
       id: this.state.webinarId,
       webinar_test: this.state.pertanyaan,
-      jenis: 1
+      jenis: 1,
+      waktu: this.state.waktu
     };
 
     console.log('ALVIN FORM PRETEST', form)
@@ -80,7 +82,7 @@ export default class WebinarPosttestAdd extends Component {
         if(res.data.error) {
           toast.error('Error post data')
         } else {
-          toast.success(`Menyimpan Pre Test`)
+          toast.success(`Menyimpan Post test`)
           this.props.closeModal()
         }
       }
@@ -91,7 +93,8 @@ export default class WebinarPosttestAdd extends Component {
     let form = {
       id: this.state.webinarId,
       webinar_test: this.state.pertanyaan,
-      jenis: 1
+      jenis: 1,
+      waktu: this.state.waktu
     };
 
     API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -99,7 +102,7 @@ export default class WebinarPosttestAdd extends Component {
         if(res.data.error) {
           toast.error('Error post data')
         } else {
-          toast.success(`Menyimpan Pre Test`)
+          toast.success(`Menyimpan Post test`)
           this.props.closeModal()
         }
       }
@@ -112,7 +115,7 @@ export default class WebinarPosttestAdd extends Component {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({pertanyaan: res.data.result})
+          this.setState({pertanyaan: res.data.result, waktu: res.data.waktu})
           if (this.state.pertanyaan.length <= 0){
             this.setState({update: false})
           }
@@ -232,6 +235,10 @@ export default class WebinarPosttestAdd extends Component {
 
                 <div className="row mt-4">
                   <div className="col-sm-12">
+                    <div className="form-group">
+                      <label className="bold">Waktu Mengerjakan (Menit)</label>
+                      <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
+                    </div>
 
                     {
                       this.state.pertanyaan.map((item,i) => (
@@ -243,7 +250,7 @@ export default class WebinarPosttestAdd extends Component {
                           <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
 
                           <div className="jawaban mt-3 ml-4">
-                            <label>Tambahkan Jawaban Pre Test</label>
+                            <label>Tambahkan Jawaban Post test</label>
                             <tr>
                               <td>
                                 <input name={i} checked={item.jawab === 'a' ? true : false} type="radio" value="a" onChange={e => this.handleJawaban(e, i)}  /> A

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 export default class WebinarPretestAdd extends Component {
 
 	state = {
+    waktu: 0,
     update: false,
     webinarId: this.props.webinarId ? this.props.webinarId : '',
     pertanyaan: [
@@ -71,7 +72,8 @@ export default class WebinarPretestAdd extends Component {
     let form = {
       id: this.state.webinarId,
       webinar_test: this.state.pertanyaan,
-      jenis: 0
+      jenis: 0,
+      waktu: this.state.waktu
     };
 
     console.log('ALVIN FORM PRETEST', form)
@@ -91,7 +93,8 @@ export default class WebinarPretestAdd extends Component {
     let form = {
       id: this.state.webinarId,
       webinar_test: this.state.pertanyaan,
-      jenis: 0
+      jenis: 0,
+      waktu: this.state.waktu
     };
 
     API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -112,7 +115,7 @@ export default class WebinarPretestAdd extends Component {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({pertanyaan: res.data.result})
+          this.setState({pertanyaan: res.data.result, waktu: res.data.waktu})
           if (this.state.pertanyaan.length <= 0){
             this.setState({update: false})
           }
@@ -232,6 +235,10 @@ export default class WebinarPretestAdd extends Component {
 
                 <div className="row mt-4">
                   <div className="col-sm-12">
+                    <div className="form-group">
+                      <label className="bold">Waktu Mengerjakan (Menit)</label>
+                      <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
+                    </div>
 
                     {
                       this.state.pertanyaan.map((item,i) => (

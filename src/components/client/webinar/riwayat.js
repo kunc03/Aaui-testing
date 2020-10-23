@@ -69,6 +69,14 @@ export default class WebinarRiwayat extends Component {
         this.setState({jawabanKuesioner: res.data.result})
     })
   }
+  fetchJawabanPretest(){
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/0`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        console.log('ALVIN PRETEST', res.data.result)
+    })
+  }
 
   backButton(){
     this.props.history.goBack();
@@ -113,6 +121,7 @@ export default class WebinarRiwayat extends Component {
     this.fetchData()
     this.fetchQNA()
     this.fetchJawabanKuesioner()
+    this.fetchJawabanPretest()
   }
   checkProjectAccess(){
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
