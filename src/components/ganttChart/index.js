@@ -56,18 +56,20 @@ const config = {
       label: "Task",
       style: {
         backgroundColor: "white",
-        color: "black"
+        color: "black",
       }
     },
     task: {
       style: {
         backgroundColor: "white",
-        color: "black"
+        color: "black",
+        fontSize: 11
       }
     },
     verticalSeparator: {
       style: {
-        backgroundColor: "#FFF"
+        backgroundColor: "#FFF",
+        display:'none'
       },
       grip: {
         style: {
@@ -91,7 +93,9 @@ const config = {
       showLabel: true,
       style: {
         borderRadius: 60,
-        padding:'0px 5px'
+        padding:'0px 5px',
+        lineHeight:'25px',
+        fontSize: 11
       }
     }
   }
@@ -443,6 +447,10 @@ class GanttChart extends Component {
         else if (res.data.result[i].status === 'Closed') {
           res.data.result[i].color = '#32C5FF'
         }
+        
+        // if (new Date(res.data.result[i].end) <= new Date()){
+        //   res.data.result[i].border = '1px solid #F00'
+        // }
       }
 
       this.setState({ data: res.data.result, links: [] })
@@ -472,12 +480,14 @@ class GanttChart extends Component {
             <div className="app-container">
               <div className="time-line-container">
                 <TimeLine
+                  itemheight={30}
                   data={this.state.data}
                   links={this.state.links}
                   config={config}
                   onHorizonChange={this.onHorizonChange}
                   onSelectItem={this.onSelectItem}
                   onUpdateTask={this.onUpdateTask}
+                  mode='month'
                 />
               </div>
             </div>

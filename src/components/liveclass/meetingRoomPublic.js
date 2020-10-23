@@ -139,7 +139,7 @@ handleCloseStart = e => {
         http(meetingInfo).then((result) => {
             if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
                 // Jika belum ada, create room nya.
-                let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
+                let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.is_class_id, {
                     attendeePW: 'peserta',
                     moderatorPW: 'moderator',
                     allowModsToUnmuteUsers: true,
@@ -151,7 +151,7 @@ handleCloseStart = e => {
                         let joinUrl = api.administration.join(
                             this.state.user.name,
                             this.state.classRooms.class_id,
-                            this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                            this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                             {
                                 userID: this.state.user.user_id,
                                 guest: true
@@ -172,7 +172,7 @@ handleCloseStart = e => {
                 let joinUrl = api.administration.join(
                     this.state.user.name,
                     this.state.classRooms.class_id,
-                    this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                    this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
                     {
                         userID: this.state.user.user_id,
                         guest: true

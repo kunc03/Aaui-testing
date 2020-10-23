@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 
+import API, {API_SERVER} from '../../repository/api';
+import Storage from '../../repository/storage';
+
 class Registasi extends React.Component {
 
   state = {
@@ -11,28 +14,47 @@ class Registasi extends React.Component {
     kurikulum: "",
     tahunAjaran: "",
 
+    listSemester: [],
     listKelas: []
   }
 
   saveKelas = e => {
     e.preventDefault();
-    let form = {
-      namaKelas: this.state.namaKelas,
-      semester: this.state.semester,
-      kurikulum: this.state.kurikulum,
-      tahunAjaran: this.state.tahunAjaran
-    };
 
     if(this.state.idKelas) {
       // action for update
       console.log('update')
+      let form = {
+        kelasNama: this.state.namaKelas,
+        semesterId: this.state.semester,
+        kurikulum: this.state.kurikulum,
+        tahunAjaran: this.state.tahunAjaran
+      }
+
+      API.put(`${API_SERVER}v2/kelas/update/${this.state.idKelas}`, form).then(res => {
+        if(res.data.error) toast.warning("Error create kelas");
+
+        toast.success("Update data kelas");
+        this.fetchKelas();
+      })
 
     } else {
       // action for insert
       console.log('insert')
-      let copy = [...this.state.listKelas];
-      copy.push({id: copy.length+1, nama_kelas: form.namaKelas, semester: form.semester, kurikulum: form.kurikulum, tahun_ajaran: form.tahunAjaran})
-      this.setState({ listKelas: copy })
+      let form = {
+        companyId: Storage.get('user').data.company_id,
+        kelasNama: this.state.namaKelas,
+        semesterId: this.state.semester,
+        kurikulum: this.state.kurikulum,
+        tahunAjaran: this.state.tahunAjaran
+      }
+
+      API.post(`${API_SERVER}v2/kelas/create`, form).then(res => {
+        if(res.data.error) toast.warning("Error create kelas");
+
+        toast.success("Create data kelas");
+        this.fetchKelas();
+      })
     }
 
     this.clearForm();
@@ -42,13 +64,17 @@ class Registasi extends React.Component {
   selectKelas = e => {
     e.preventDefault();
     let idKelas = e.target.getAttribute('data-id');
-    let getKelas = this.state.listKelas.filter(item => item.id == parseInt(idKelas));
-    this.setState({
-      idKelas: idKelas,
-      namaKelas: getKelas[0].nama_kelas,
-      semester: getKelas[0].semester,
-      kurikulum: getKelas[0].kurikulum,
-      tahunAjaran: getKelas[0].tahun_ajaran
+    API.get(`${API_SERVER}v2/kelas/one/${idKelas}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch data kelas");
+      let getKelas = res.data.result;
+
+      this.setState({
+        idKelas: idKelas,
+        namaKelas: getKelas.kelas_nama,
+        semester: getKelas.semester_id,
+        kurikulum: getKelas.kurikulum,
+        tahunAjaran: getKelas.tahun_ajaran
+      })
     })
   }
 
@@ -63,12 +89,24 @@ class Registasi extends React.Component {
   }
 
   componentDidMount() {
-    let listKelas = [
-      {id: 1, nama_kelas: "Nama 1", semester: "Semester 1", kurikulum: "Kurikulum 1", tahun_ajaran: "2015/2016"},
-      {id: 2, nama_kelas: "Nama 2", semester: "Semester 2", kurikulum: "Kurikulum 2", tahun_ajaran: "2015/2016"},
-      {id: 3, nama_kelas: "Nama 3", semester: "Semester 3", kurikulum: "Kurikulum 3", tahun_ajaran: "2016/2017"},
-    ];
-    this.setState({ listKelas })
+    this.fetchKelas();
+    this.fetchSemester();
+  }
+
+  fetchSemester() {
+    API.get(`${API_SERVER}v1/semester/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch data semester");
+
+      this.setState({ listSemester: res.data.result })
+    })
+  }
+
+  fetchKelas() {
+    API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch data semester");
+
+      this.setState({ listKelas: res.data.result })
+    })
   }
 
   render() {
@@ -81,7 +119,7 @@ class Registasi extends React.Component {
               <div className="list-group list-group-flush">
                 {
                   this.state.listKelas.map((item, i) => (
-                    <Link onClick={this.selectKelas} data-id={item.id} key={i} className="list-group-item list-group-item-action">{item.nama_kelas}</Link>
+                    <Link onClick={this.selectKelas} data-id={item.kelas_id} key={i} className="list-group-item list-group-item-action">{item.kelas_nama}</Link>
                   ))
                 }
               </div>
@@ -101,7 +139,14 @@ class Registasi extends React.Component {
                   </div>
                   <div className="col">
                     <label>Semester</label>
-                    <input required value={this.state.semester} onChange={e => this.setState({ semester: e.target.value })} type="text" className="form-control" placeholder="Enter semester" name="semester" />
+                    <select required value={this.state.semester} onChange={e => this.setState({ semester: e.target.value })} className="form-control" name="semester">
+                      <option value="" disabled selected>Pilih semester</option>
+                      {
+                        this.state.listSemester.map((item,i) => (
+                          <option value={item.semester_id}>{item.semester_name}</option>
+                        ))
+                      }
+                    </select>
                   </div>
                 </div>
                 <div className="row mb-3">

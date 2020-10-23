@@ -87,6 +87,7 @@ class MeetingTable extends Component {
       optionsGroup: [],
       valueGroup: [],
       //Toggle Switch
+      akses: false,
       private: false,
       scheduled: false,
       requireConfirmation: false,
@@ -216,6 +217,9 @@ class MeetingTable extends Component {
     });
   };
 
+  toggleSwitchAkses(checked) {
+    this.setState({ akses:!this.state.akses });
+  }
   toggleSwitch(checked) {
     this.setState({ private:!this.state.private });
   }
@@ -454,14 +458,15 @@ class MeetingTable extends Component {
 
   }
   onSubmitForm = e => {
+    console.log('ALVIN MEET', this.state.valueFolder)
     e.preventDefault();
-    if (this.state.roomName === '' || this.state.valueModerator == '' || this.state.valueFolder == '')
+    if (this.state.roomName === '' || this.state.valueFolder == 0)
     {
       toast.warning('Judul meeting, moderator, dan folder project wajib diisi')
     }else{
-      console.log('ALVIN', this.state.valueModerator)
       if(this.state.classId) {
         let isPrivate = this.state.private == true ? 1 : 0;
+        let isAkses = this.state.akses == true ? 1 : 0;
         let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
         let isScheduled = this.state.scheduled == true ? 1 : 0;
         let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
@@ -472,6 +477,7 @@ class MeetingTable extends Component {
           folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
           webinar_id: this.state.webinar_id,
           is_private: isPrivate,
+          is_akses: isAkses,
           is_required_confirmation: isRequiredConfirmation,
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
@@ -551,6 +557,7 @@ class MeetingTable extends Component {
         })
       } else {
         let isPrivate = this.state.private == true ? 1 : 0;
+        let isAkses = this.state.akses == true ? 1 : 0;
         let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
         let isScheduled = this.state.scheduled == true ? 1 : 0;
         let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
@@ -564,6 +571,7 @@ class MeetingTable extends Component {
           room_name: this.state.roomName,
           moderator: this.state.valueModerator,
           is_private: isPrivate,
+          is_akses: isAkses,
           is_required_confirmation: isRequiredConfirmation,
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
@@ -1248,7 +1256,23 @@ class MeetingTable extends Component {
                             Nama pengisi kelas atau speaker.
                           </Form.Text>
                         </Form.Group> */}
-
+                        
+                        <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Pembatasan Akses
+                          </Form.Label>
+                          <div style={{width:'100%'}}>
+                           <ToggleSwitch checked={false} onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
+                          </div>
+                          <Form.Text className="text-muted">
+                            {
+                              this.state.akses ? 'Meeting diatur oleh 1 moderator'
+                              :
+                              'Meeting room bersifat bebas'
+                            }
+                          </Form.Text>
+                        </Form.Group>
+                        {this.state.akses &&
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Moderator
@@ -1267,6 +1291,7 @@ class MeetingTable extends Component {
                             Pengisi kelas, moderator, atau speaker.
                           </Form.Text>
                         </Form.Group>
+                        }
 
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">

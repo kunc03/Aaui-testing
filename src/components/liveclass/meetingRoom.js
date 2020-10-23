@@ -368,7 +368,7 @@ uploadFile = e => {
                         let joinUrl = api.administration.join(
                             this.state.user.name,
                             this.state.classRooms.class_id,
-                            this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                            this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                             {userID: this.state.user.user_id}
                         )
                         this.setState({joinUrl: joinUrl})
@@ -386,7 +386,7 @@ uploadFile = e => {
                 let joinUrl = api.administration.join(
                     this.state.user.name,
                     this.state.classRooms.class_id,
-                    this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                    this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                     {userID: this.state.user.user_id}
                 )
                 this.setState({joinUrl: joinUrl})

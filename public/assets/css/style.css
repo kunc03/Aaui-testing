@@ -11756,3 +11756,33 @@ div.code-toolbar > .toolbar span:hover {
   z-index: 1029 !important;
   background: #FFF !important;
 }
+
+.timeLine-side-main{
+  min-width: 400px !important;
+}
+
+.rbc-month-view{
+  border:none !important;
+}
+
+.rbc-header{
+  border-bottom: 1px dashed #D7D7D7 !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  padding: 9px 3px !important;
+}
+.rbc-header + .rbc-header{
+  border-left: 1px dashed #D7D7D7 !important;
+}
+
+.rbc-day-bg + .rbc-day-bg{
+  border-left: 1px dashed #D7D7D7 !important;
+}
+.rbc-month-row + .rbc-month-row{
+  border-top: 1px dashed #D7D7D7 !important;
+}
+
+.rbc-toolbar button{
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+}
