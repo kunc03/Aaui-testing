@@ -335,10 +335,48 @@ class GanttChart extends Component {
 
   simpanDeskripsi = e => {
     e.preventDefault();
-    if(e.key === "Enter" && e.shiftKey) {
+    // if(e.key === "Enter" && e.shiftKey) {
       this.updateTaskById(e);
+    // }
+  }
+  changeDate = e => {
+    if (e.target.name === 'start'){
+      this.setState({ start: e.target.value }, function () {
+        this.simpanDate();
+      })
+    }
+    else{
+      this.setState({ end: e.target.value }, function () {
+        this.simpanDate();
+      })
     }
   }
+  simpanDate = e => {
+    let form = {};
+
+      // update start & end date
+      form = {
+        start: this.convertDateToMysql(this.state.start, true), 
+        end: this.convertDateToMysql(this.state.end, true)
+      };
+
+    API.put(`${API_SERVER}v2/task/update/${this.state.taskId}`, form).then(res => {
+      if(res.data.error) toast.warning("Gagal update task");
+      
+      let copyState = [...this.state.data];
+      copyState.map((item, i) => {
+        if(item.id === this.state.taskId) {
+          item.name = res.data.result.name;
+          item.start = res.data.result.start;
+          item.end = res.data.result.end;
+        }
+      });
+      toast.success("Task berhasil di update");
+
+      this.setState({ data: copyState });
+
+    });
+  };
 
   updateTaskById(e) {
     let form = {
@@ -562,19 +600,19 @@ class GanttChart extends Component {
                   value={this.state.description !== 'null' ? this.state.description : ''} 
                   placeholder="Isi deskripsi task..."
                   onChange={e => this.setState({ description: e.target.value })} 
-                  onKeyUp={this.simpanDeskripsi} className="form-control mb-3" />
+                  onBlur={this.simpanDeskripsi} className="form-control mb-3" />
 
-                <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span>
+                {/* <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span> */}
 
                 <form className="form-vertical mt-4">
                   <div className="form-group row">
                     <div className="col-sm-6">
                       <label htmlFor="startdate">Start Date</label>
-                      <input type="date" className="form-control" value={this.state.start} />
+                      <input type="date" name="start" onChange={this.changeDate} className="form-control" value={this.state.start} />
                     </div>
                     <div className="col-sm-6">
                       <label htmlFor="enddate">End Date</label>
-                      <input type="date" className="form-control" value={this.state.end} />
+                      <input type="date" name="end" onChange={this.changeDate} className="form-control" value={this.state.end} />
                     </div>
                   </div>
                 </form>
@@ -600,15 +638,16 @@ class GanttChart extends Component {
                         <progress style={{width: '100%'}} id="file" value={this.state.val} max={this.state.max}>{this.state.val}</progress>
                       </td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td colSpan="2">
                         <span style={{cursor: 'pointer'}} className="float-right">+ add or edit fields</span>
                       </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
 
                 <h4>Subtasks</h4>
+                <span className="mb-4">Gunakan <code>Enter</code> untuk menyimpan perubahan.</span>
                 <table className="table">
                   <tbody>
                     {
@@ -636,7 +675,7 @@ class GanttChart extends Component {
                     }
                     <tr>
                       <td colSpan="3">
-                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add checklist</span>
+                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add subtask</span>
                       </td>
                     </tr>
                   </tbody>

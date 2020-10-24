@@ -11,6 +11,8 @@ import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../files/_files';
 import TableMeetings from '../../meeting/meeting';
 import WebinarKuesionerAdd from './kuesioneradd';
+import WebinarPretestAdd from './pretestadd';
+import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -60,6 +62,8 @@ export default class WebinarAdd extends Component {
 
     //kuesioner
     modalKuesioner: false,
+    modalPretest: false,
+    modalPosttest: false,
   }
 
   addTamu = e => {
@@ -101,6 +105,8 @@ export default class WebinarAdd extends Component {
       isModalPembicara: false,
       isModalPeserta: false,
       modalKuesioner: false,
+      modalPretest: false,
+      modalPosttest: false,
     });
   }
 
@@ -200,7 +206,7 @@ export default class WebinarAdd extends Component {
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         pembicara: res.data.result.pembicara[0].name,
-        sekretarisId: res.data.result.sekretaris.user_id,
+        sekretarisId: res.data.result.sekretaris[0].user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
         status: res.data.result.status,
@@ -456,7 +462,15 @@ export default class WebinarAdd extends Component {
                   <div className="form-group">
                     {
                       (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
-                      <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Buat Kuesioner</button>
+                      <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
+                    }
+                    {
+                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      <button onClick={()=>this.setState({modalPosttest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Post Test</button>
+                    }
+                    {
+                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      <button onClick={()=>this.setState({modalPretest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                   </div>
                   <p className="m-b-0">
@@ -752,6 +766,38 @@ export default class WebinarAdd extends Component {
             <Modal.Body>
 							<div className="form-group">
                 <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalPretest}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                Pre Test
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+							<div className="form-group">
+                <WebinarPretestAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalPosttest}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                Post Test
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+							<div className="form-group">
+                <WebinarPosttestAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
           </Modal>
