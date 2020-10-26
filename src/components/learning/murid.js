@@ -4,22 +4,14 @@ import { NavLink, Link, Switch, Route } from 'react-router-dom';
 
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Tugas from '../tugas/index';
-
-import Personalia from '../personalia/index';
-import PersonaliaDetail from '../personalia/detail';
-
-import RuanganMengajar from '../ruangan_mengajar/index';
-import JadwalMengajar from '../jadwal_mengajar/index';
-import Evaluasi from '../evaluasi/index';
-import EvaluasiDetail from '../evaluasi/detail';
-import Folder from './folder';
-import Laporan from '../laporan/index';
+import Latihan from '../tugas/latihan';
+import Ujian from '../tugas/ujian';
 
 const titleTabs = [
   {name: 'Mata Pelajaran', link: '/mata-pelajaran', component: MataPelajaran},
   {name: 'Tugas', link: '/tugas', component: Tugas},
-  {name: 'Latihan', link: '/latihan', component: RuanganMengajar},
-  {name: 'Ujian', link: '/ujian', component: JadwalMengajar},
+  {name: 'Latihan', link: '/latihan', component: Latihan},
+  {name: 'Ujian', link: '/ujian', component: Ujian},
 ]
 
 const switchTambahan = [
