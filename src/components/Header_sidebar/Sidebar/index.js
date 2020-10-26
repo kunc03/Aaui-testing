@@ -26,15 +26,34 @@ class Sidebar extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let menuClients = {
-      submenu : [
-        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
-        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
-        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
-        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
-      ],
+      murid: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Mata Pelajaran', link: '/murid/mata-pelajaran' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Tugas', link: '/murid/tugas' },
+          { iconOn: 'ujianoff.svg', iconOff: 'ujianoff.svg', label: 'Ujian', link: '/murid/ujian' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan/Rapor', link: '/murid/rapor' },
+          { iconOn: 'liveclasswebinaroff.svg', iconOff: 'liveclasswebinaroff.svg', label: 'Liveclass/Webinar', link: '/murid/liveclass' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
+      guru: {
+        submenu: [
+        ]
+      },
+
+      other: {
+        submenu : [
+          // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+          { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
+          { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Kelola Kursus', link: '/kursus-materi', access: 'manage_course' },
+          { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Sertifikat', link: '/certificate' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ],
+      },
+
       menuAtas : [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
@@ -95,7 +114,7 @@ class Sidebar extends Component {
     };
 
     const { menuAktif } = this.state;
-  
+
     let menuContent = [];
     let menuAtas = [];
     let menuBawah = [];
@@ -108,7 +127,7 @@ class Sidebar extends Component {
       menuAtas = menuAdmins.menuAtas;
       menuBawah = menuAdmins.menuBawah;
     } else {
-      menuContent = menuClients.submenu;
+      menuContent = menuClients.murid.submenu;
       menuAtas = menuClients.menuAtas;
       menuBawah = menuClients.menuBawah;
     }
@@ -125,9 +144,9 @@ class Sidebar extends Component {
                     />
                 {/* <span className="b-title">IDEKU</span> */}
               </Link>
-              
+
                 {/* <a style={{cursor:'pointer'}} className="mobile-menu" id="mobile-collapse" ><span /></a> */}
-              
+
             </div>
 
             {/* scroll-div */}
@@ -154,7 +173,7 @@ class Sidebar extends Component {
                       </div>
                       </Tooltip>
                 </li>
-                
+
                 {
                   menuAtas.map((item, i) => {
                     if(item.access == undefined || access[item.access]) {
@@ -190,7 +209,7 @@ class Sidebar extends Component {
                       return (
                         <li data-username="Sample Page"
                             className={`nav-item mt-4 `}
-                            style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
+                            style={this.state.sideMenu ? {width:59} : {marginTop:25}}
                           >
                             <Tooltip title={item.label} arrow placement="right">
                             <Link to={item.link} className="nav-link"
@@ -212,7 +231,7 @@ class Sidebar extends Component {
                 }
                 {/* <li data-username="Sample Page"
                   className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}  
+                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}
                 >
                   <Link to="/logout" className="nav-link"
                     style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
@@ -231,7 +250,7 @@ class Sidebar extends Component {
             </div>
           </div>
 
-          <div className="custom-side-bar"> 
+          <div className="custom-side-bar">
             <h4 className="p-20 mt-5" style={{borderBottom: '1px solid #E6E6E6'}}><strong> Menu </strong></h4>
             <div>
                 {
@@ -245,8 +264,8 @@ class Sidebar extends Component {
                               style={{marginRight:15}}
                               alt=""
                               height={15}
-                            ></img> 
-                              {item.label} 
+                            ></img>
+                              {item.label}
                           </div>
                         </Link>
                       )
@@ -256,7 +275,7 @@ class Sidebar extends Component {
               </div>
 
 
-            
+
           </div>
         </nav>
     );
