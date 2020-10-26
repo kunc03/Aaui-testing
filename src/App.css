@@ -120,7 +120,7 @@ a {
     margin: 10px;
     /* border-radius: 10px; */
     border-bottom: 0.5px solid #ddd;
-    
+
 }
 
 
@@ -193,6 +193,10 @@ a {
 input[type=file]{
   /* width:90px; */
   color:transparent;
+}
+
+.modal-xlg {
+  max-width: 1200px !important;
 }
 
 

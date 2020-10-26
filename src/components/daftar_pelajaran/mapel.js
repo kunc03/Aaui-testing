@@ -95,7 +95,7 @@ class MataPelajaran extends React.Component {
                               <td style={{verticalAlign: 'middle'}}>{row.nama_pengajar}</td>
                               <td style={{verticalAlign: 'middle'}}>{row.pembelajaran}</td>
                               <td style={{verticalAlign: 'middle'}}>
-                                <button onClick={e => this.setState({ isModalBuka: true })} className="btn btn-v2 btn-primary">
+                                <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
                                   <i className="fa fa-paper-plane"></i> Buka
                                 </button>
                               </td>
@@ -127,8 +127,6 @@ class MataPelajaran extends React.Component {
         <Modal
           show={this.state.isModalBuka}
           onHide={() => this.clearForm()}
-          dialogClassName="modal-lg"
-          style="max-width: 1200px"
         >
           <Modal.Body>
             <h4>Perhatian</h4>
@@ -141,8 +139,7 @@ class MataPelajaran extends React.Component {
         <Modal
           show={this.state.isModalSilabus}
           onHide={() => this.clearForm()}
-          dialogClassName="modal-lg"
-          style="max-width: 1200px"
+          dialogClassName="modal-xlg"
         >
           <Modal.Header closeButton>
             <form className="form-inline">
