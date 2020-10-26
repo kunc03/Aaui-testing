@@ -3,6 +3,7 @@ import { Modal, Card, InputGroup, FormControl,	Tab, Tabs } from 'react-bootstrap
 import { NavLink, Link, Switch, Route } from 'react-router-dom';
 
 import MataPelajaran from '../daftar_pelajaran/mapel';
+import Tugas from '../tugas/index';
 
 import Personalia from '../personalia/index';
 import PersonaliaDetail from '../personalia/detail';
@@ -16,7 +17,7 @@ import Laporan from '../laporan/index';
 
 const titleTabs = [
   {name: 'Mata Pelajaran', link: '/mata-pelajaran', component: MataPelajaran},
-  {name: 'Tugas', link: '/tugas', component: Evaluasi},
+  {name: 'Tugas', link: '/tugas', component: Tugas},
   {name: 'Latihan', link: '/latihan', component: RuanganMengajar},
   {name: 'Ujian', link: '/ujian', component: JadwalMengajar},
 ]
