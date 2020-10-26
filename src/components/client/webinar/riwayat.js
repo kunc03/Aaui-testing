@@ -13,6 +13,7 @@ import {Doughnut} from 'react-chartjs-2';
 export default class WebinarRiwayat extends Component {
 
 	state = {
+    hasilTest: [],
     nama: '',
     ttd:'',
     signature:'',
@@ -69,6 +70,14 @@ export default class WebinarRiwayat extends Component {
         this.setState({jawabanKuesioner: res.data.result})
     })
   }
+  fetchJawabanTest(){
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        this.setState({hasilTest: res.data.result})
+    })
+  }
 
   backButton(){
     this.props.history.goBack();
@@ -113,6 +122,7 @@ export default class WebinarRiwayat extends Component {
     this.fetchData()
     this.fetchQNA()
     this.fetchJawabanKuesioner()
+    this.fetchJawabanTest()
   }
   checkProjectAccess(){
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
@@ -365,6 +375,35 @@ export default class WebinarRiwayat extends Component {
       </table>
       </div>
     );
+    const HasilTest = ({items, peserta}) => (
+      <div className="wrap" style={{marginTop:10, maxHeight:500, overflowY:'scroll', overflowX:'scroll', paddingRight:10}}>
+      <table id="table-test" className="table table-striped">
+        <thead>
+          <tr>
+            <th>Nama Peserta</th>
+            <th>Nilai Pre Test</th>
+            <th>Nilai Post Test</th>
+            <th>Selisih</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            Object.keys(items).map(function(key, index) {
+              let userId = items[key].user_id;
+              let name = peserta.filter((item) => item.user_id == userId || item.voucher == userId);
+              return(
+                <tr>
+                  <td>{name.length && name[0].name}</td>
+                  <td>{items[key].pretest}</td>
+                  <td>{items[key].posttest}</td>
+                  <td>{items[key].selisih}</td>
+                </tr>)
+            })
+          }
+        </tbody>
+      </table>
+      </div>
+    );
 
     const dataSelesai = {
       labels: [
@@ -517,6 +556,18 @@ export default class WebinarRiwayat extends Component {
                     sheet="Kehadiran"
                     buttonText="Export Jawaban Kuesioner ke Excel"/>
                   <JawabanKuesioner items={this.state.jawabanKuesioner} />
+                </div>
+              </div>
+
+              <div className="row mt-5">
+                <div className="col-sm-12">
+                <ReactHTMLTableToExcel
+                    className="btn btn-icademy-warning"
+                    table="table-test"
+                    filename={'Hasil Test '+this.state.judul}
+                    sheet="Kehadiran"
+                    buttonText="Export Hasil Test ke Excel"/>
+                  <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
                 </div>
               </div>
 
