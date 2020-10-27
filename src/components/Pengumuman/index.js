@@ -31,15 +31,15 @@ class Pengumumans extends Component {
                   </div>
                     <div className="row">
                       <div className="col-xl-12">
-            <TablePengumuman allMeeting={true} access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0'/>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
+                        <TablePengumuman />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     )
   }
 }
