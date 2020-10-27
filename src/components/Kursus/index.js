@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
-import Flickity from 'react-flickity-component';
 
 class Kursus extends Component {
   state = {
@@ -72,7 +71,7 @@ class Kursus extends Component {
   render() {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
-    var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
+    var { kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
     if(findCourseInput != ""){      
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
         .map(y=>
@@ -174,52 +173,52 @@ class Kursus extends Component {
       }
     };
 
-    const ListKursusBaru = ({lists}) => {
-      if(lists.length !== 0) {
-        return (
-          <div className="row">
-            {
-              lists.map((item, i) => (
-                <div className="col-sm-12" key={item.course_id}>
-                  <Link to={(['admin','superadmin'].includes(Storage.get('user').data.level)) ? `/chapter/${item.course_id}`:`/detail-kursus/${item.course_id}`}>
-                    <div className="card">
-                      <CheckMedia media={item.image} />
+    // const ListKursusBaru = ({lists}) => {
+    //   if(lists.length !== 0) {
+    //     return (
+    //       <div className="row">
+    //         {
+    //           lists.map((item, i) => (
+    //             <div className="col-sm-12" key={item.course_id}>
+    //               <Link to={(['admin','superadmin'].includes(Storage.get('user').data.level)) ? `/chapter/${item.course_id}`:`/detail-kursus/${item.course_id}`}>
+    //                 <div className="card">
+    //                   <CheckMedia media={item.image} />
                       
-                      <div className="card-carousel ">
-                        <div className="title-head f-w-900 f-16">
-                          {item.title}
-                        </div>
-                        <small className="mr-3">{item.count_chapter} Chapter</small>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              ))
-            }
-          </div>
-        );
-      } else {
-        return findCourseInput 
-        ? (
-          <div className="col-sm-12">
-            <Card>
-              <Card.Body>
-                <h3 className="f-w-900 f-20">Tidak ditemukan kursus &quot;{findCourseInput}&quot;</h3>
-              </Card.Body>
-            </Card>
-          </div>
-        ) 
-        : (
-          <div className="col-sm-12">
-            <Card>
-              <Card.Body>
-                <h3 className="f-w-900 f-20">Memuat halaman...</h3>
-              </Card.Body>
-            </Card>
-          </div>
-        );
-      }
-    };
+    //                   <div className="card-carousel ">
+    //                     <div className="title-head f-w-900 f-16">
+    //                       {item.title}
+    //                     </div>
+    //                     <small className="mr-3">{item.count_chapter} Chapter</small>
+    //                   </div>
+    //                 </div>
+    //               </Link>
+    //             </div>
+    //           ))
+    //         }
+    //       </div>
+    //     );
+    //   } else {
+    //     return findCourseInput 
+    //     ? (
+    //       <div className="col-sm-12">
+    //         <Card>
+    //           <Card.Body>
+    //             <h3 className="f-w-900 f-20">Tidak ditemukan kursus &quot;{findCourseInput}&quot;</h3>
+    //           </Card.Body>
+    //         </Card>
+    //       </div>
+    //     ) 
+    //     : (
+    //       <div className="col-sm-12">
+    //         <Card>
+    //           <Card.Body>
+    //             <h3 className="f-w-900 f-20">Memuat halaman...</h3>
+    //           </Card.Body>
+    //         </Card>
+    //       </div>
+    //     );
+    //   }
+    // };
 
     const ListKursusDiikuti = ({lists}) => {
       if(lists.length !== 0) {
@@ -296,31 +295,31 @@ class Kursus extends Component {
       }
     };
 
-    const ListAktivitas = ({ lists }) => {
-      if (lists.length !== 0) {
-        return (
-          <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
-            {lists.map((item, i) => (
-              <div key={item.course_id}>
-                <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
-                  {item.course.title}
-                  <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
-                </li>
-                <table style={{ width: "100%" }}>
-                  <ListChapters lists={item.chapters} />
-                </table>
-              </div>
-            ))}
-          </ol>
-        );
-      } else {
-        return (
-          <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
-            Belum ada aktivitas.
-          </h3>
-        );
-      }
-    };
+    // const ListAktivitas = ({ lists }) => {
+    //   if (lists.length !== 0) {
+    //     return (
+    //       <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
+    //         {lists.map((item, i) => (
+    //           <div key={item.course_id}>
+    //             <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
+    //               {item.course.title}
+    //               <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
+    //             </li>
+    //             <table style={{ width: "100%" }}>
+    //               <ListChapters lists={item.chapters} />
+    //             </table>
+    //           </div>
+    //         ))}
+    //       </ol>
+    //     );
+    //   } else {
+    //     return (
+    //       <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
+    //         Belum ada aktivitas.
+    //       </h3>
+    //     );
+    //   }
+    // };
 
     const ListChapters = ({lists}) => (
       <tbody>

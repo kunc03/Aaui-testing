@@ -4,7 +4,6 @@ import moment from 'moment-timezone';
 import BG from './images/BG.png';
 import Icademy from './images/Icademy.png';
 import Star from './images/Star.png';
-import Group1 from './images/Group1.png';
 import API, { API_SERVER } from '../../../../repository/api';
 import Storage from '../../../../repository/storage';
 

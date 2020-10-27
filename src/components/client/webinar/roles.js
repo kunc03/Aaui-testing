@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import Storage from '../../../repository/storage';
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import API, { API_SERVER } from '../../../repository/api';
 
 export default class WebinarRoles extends Component {
 

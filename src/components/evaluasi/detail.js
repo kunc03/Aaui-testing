@@ -1,14 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { toast } from "react-toastify";
 
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
-
-import API, {API_SERVER} from '../../repository/api';
-import Storage from '../../repository/storage';
-
-const hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
-const jam = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+// const hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+// const jam = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
 
 class EvaluasiDetail extends React.Component {
   state = {

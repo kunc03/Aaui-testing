@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { 
 	Tab, Tabs
 } from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
-import {headerTabble, bodyTabble, bodyTabbleWebinar, dataFiles, headerFiles, tasks, options} from '../../modul/data';
 
 import TableMeetings from '../meeting/meeting';
 import TableWebinar from '../webinar/webinar';

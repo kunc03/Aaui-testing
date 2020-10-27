@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { toast } from "react-toastify";
 
 import Murid from './murid';
 import Guru from './guru';

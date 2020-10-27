@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import { Link, Switch, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { 
-	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
-	InputGroup, FormControl, Modal
+	Form, Col, Row, Modal
 } from 'react-bootstrap';
 import ReactFullScreenElement from "react-fullscreen-element";
-
-import ToggleSwitch from "react-switch";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
@@ -14,23 +11,19 @@ import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 
-
-import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
 import moment from 'moment-timezone';
-import JitsiMeetComponent from './livejitsi';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import API, { API_JITSI, APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
 import {isMobile} from 'react-device-detect';
 import Iframe from 'react-iframe';
 
-import {QandA} from './data';
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
 
@@ -38,13 +31,6 @@ const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
 });
-
-const axios = require('axios');
-
-const tabs =[
-  {title : 'File Sharing' },
-  {title : 'MOM' }
-]
 
 export default class MeetingRoom extends Component {
 	state = {
@@ -93,7 +79,6 @@ export default class MeetingRoom extends Component {
     modalNewFolder: false,
     modalUpload: false,
     attachmentId: [],
-    folderName : '',
     uploading: false,
     alert: '',
 
@@ -519,7 +504,7 @@ uploadFile = e => {
   }
 
   onChangeInputFile = e => {
-    const target = e.target;
+    // const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
 
@@ -742,7 +727,7 @@ uploadFile = e => {
 
     const { classRooms, user } = this.state;
 
-    let levelUser = Storage.get('user').data.level;
+    // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
     
     let infoDateStart = new Date(this.state.infoClass.schedule_start);

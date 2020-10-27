@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import API, {API_SERVER, USER_ME} from '../../repository/api';
+import API, {API_SERVER} from '../../repository/api';
 import { toast } from "react-toastify";
 
 class ListToDoNew extends Component {

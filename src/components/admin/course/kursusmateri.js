@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import ReactPlayer from 'react-player';
 import Moment from "react-moment";
 
 export default class KursusMateri extends Component {

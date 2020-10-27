@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../../repository/api';
 import Storage from '../../../repository/storage';
 
-import {dataEvent, dataProjek, dataToDo} from './data';
+import {dataEvent, dataToDo} from './data';
 import EventNew from './event';
 import ProjekNew from './projek';
 import CalenderNew from './kalender';
@@ -94,14 +94,11 @@ class HomeNew extends Component {
   }
 
   render() {
-    let access = Storage.get('access');
-    let levelUser = Storage.get('user').data.level;
-
     const eventDashboard = dataEvent;
     const projekDashboard = this.state.dataProjek;
     const toDoDashboard = dataToDo;
 
-    var { user, kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
+    var { kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
     if(findCourseInput != ""){      
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
         .map(y=>

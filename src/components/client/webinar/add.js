@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Moment from 'moment-timezone';
 
-import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
@@ -189,7 +188,6 @@ export default class WebinarAdd extends Component {
   }
 
   fetchData() {
-    let userId = Storage.get('user').data.user_id
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if(res.data.error) toast.warning("Gagal fetch API");
       const tanggal = res.data.result.tanggal ? new Date(res.data.result.tanggal) : '';
@@ -339,7 +337,7 @@ export default class WebinarAdd extends Component {
 
 	render() {
 
-    const role = this.state.role
+    // const role = this.state.role
     let levelUser = Storage.get('user').data.level;
 
     const TabelPembicara = ({items}) => (

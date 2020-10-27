@@ -1,11 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { toast } from "react-toastify";
-
-import API, {API_SERVER} from '../../repository/api';
-import Storage from '../../repository/storage';
-
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
 
 class Latihan extends React.Component {
 
