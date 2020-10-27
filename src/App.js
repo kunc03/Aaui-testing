@@ -95,6 +95,7 @@ import HomeClient from './components/client/dashboard/index';
 import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
+import LearningMurid from './components/learning/murid';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -407,6 +408,8 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+
+        <Route path="/murid" component={LearningMurid} />
 
         <Route path="/webinar" component={WebinarClient} />
 
