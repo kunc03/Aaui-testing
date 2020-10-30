@@ -53,26 +53,27 @@ const config = {
   // Style Untuk Title Header
   taskList: {
     title: {
-      label: "Nama",
+      label: "Task",
       style: {
         backgroundColor: "white",
-        color: "black"
+        color: "black",
       }
     },
     task: {
       style: {
         backgroundColor: "white",
-        color: "black"
+        color: "black",
+        fontSize: 11
       }
     },
     verticalSeparator: {
       style: {
-        backgroundColor: "red",
+        backgroundColor: "#FFF",
         display:'none'
       },
       grip: {
         style: {
-          backgroundColor: "red"
+          backgroundColor: "#cfcfcd"
         }
       }
     }
@@ -92,6 +93,9 @@ const config = {
       showLabel: true,
       style: {
         borderRadius: 60,
+        padding:'0px 5px',
+        lineHeight:'25px',
+        fontSize: 11
       }
     }
   }
@@ -120,6 +124,7 @@ class GanttChart extends Component {
       start: new Date(),
       end: new Date(),
       status: "",
+      color: '',
       assigne: [],
       subtasks: [],
       attachments: [],
@@ -142,6 +147,7 @@ class GanttChart extends Component {
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
       valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: []
     });
+    this.fetchData()
   };
 
   onHorizonChange = (start, end) => {
@@ -206,7 +212,7 @@ class GanttChart extends Component {
       if(res.data.error) toast.warning("Gagal membuat task");
 
       let copyState = [...this.state.data];
-      res.data.result.color = this.getRandomColor();
+      res.data.result.color = '#bbbbbb';
       copyState.push(res.data.result);
       this.setState({ data: copyState });
 
@@ -329,10 +335,48 @@ class GanttChart extends Component {
 
   simpanDeskripsi = e => {
     e.preventDefault();
-    if(e.key === "Enter" && e.shiftKey) {
+    // if(e.key === "Enter" && e.shiftKey) {
       this.updateTaskById(e);
+    // }
+  }
+  changeDate = e => {
+    if (e.target.name === 'start'){
+      this.setState({ start: e.target.value }, function () {
+        this.simpanDate();
+      })
+    }
+    else{
+      this.setState({ end: e.target.value }, function () {
+        this.simpanDate();
+      })
     }
   }
+  simpanDate = e => {
+    let form = {};
+
+      // update start & end date
+      form = {
+        start: this.convertDateToMysql(this.state.start, true), 
+        end: this.convertDateToMysql(this.state.end, true)
+      };
+
+    API.put(`${API_SERVER}v2/task/update/${this.state.taskId}`, form).then(res => {
+      if(res.data.error) toast.warning("Gagal update task");
+      
+      let copyState = [...this.state.data];
+      copyState.map((item, i) => {
+        if(item.id === this.state.taskId) {
+          item.name = res.data.result.name;
+          item.start = res.data.result.start;
+          item.end = res.data.result.end;
+        }
+      });
+      toast.success("Task berhasil di update");
+
+      this.setState({ data: copyState });
+
+    });
+  };
 
   updateTaskById(e) {
     let form = {
@@ -380,6 +424,11 @@ class GanttChart extends Component {
         subtasks: res.data.result.subtasks,
         attachments: res.data.result.attachments,
         taskDetail: res.data.result,
+        color: res.data.result.status === null ? '#bbbbbb' :
+              res.data.result.status === 'Open' ? '#000000' :
+              res.data.result.status === 'In Progress' ? '#F7B500' :
+              res.data.result.status === 'Done' ? '#6DD400' :
+              '#32C5FF',
 
         max: res.data.result.subtasks.length,
         val: res.data.result.subtasks.filter(item => item.status == 2).length
@@ -420,7 +469,26 @@ class GanttChart extends Component {
       if(res.data.error) toast.warning("Gagal fetch API");
 
       for(var i=0; i<res.data.result.length; i++) {
-        res.data.result[i].color = this.getRandomColor();
+        // res.data.result[i].color = this.getRandomColor();
+        if (res.data.result[i].status === null) {
+          res.data.result[i].color = '#bbbbbb'
+        }
+        else if (res.data.result[i].status === 'Open') {
+          res.data.result[i].color = '#000000'
+        }
+        else if (res.data.result[i].status === 'In Progress') {
+          res.data.result[i].color = '#F7B500'
+        }
+        else if (res.data.result[i].status === 'Done') {
+          res.data.result[i].color = '#6DD400'
+        }
+        else if (res.data.result[i].status === 'Closed') {
+          res.data.result[i].color = '#32C5FF'
+        }
+        
+        // if (new Date(res.data.result[i].end) <= new Date()){
+        //   res.data.result[i].border = '1px solid #F00'
+        // }
       }
 
       this.setState({ data: res.data.result, links: [] })
@@ -438,7 +506,7 @@ class GanttChart extends Component {
     return (
         <div className="card p-20">
             <span className="mb-4">
-                <strong className="f-w-bold f-18 fc-skyblue ">Gantt Chart</strong>
+                <strong className="f-w-bold f-18 fc-skyblue ">Timeline Chart</strong>
                 <button
                   onClick={() => this.setState({ isModalTodo: true })}
                   className="btn btn-sm btn-icademy-primary float-right"
@@ -450,12 +518,14 @@ class GanttChart extends Component {
             <div className="app-container">
               <div className="time-line-container">
                 <TimeLine
+                  itemheight={30}
                   data={this.state.data}
                   links={this.state.links}
                   config={config}
                   onHorizonChange={this.onHorizonChange}
                   onSelectItem={this.onSelectItem}
                   onUpdateTask={this.onUpdateTask}
+                  mode='month'
                 />
               </div>
             </div>
@@ -502,7 +572,7 @@ class GanttChart extends Component {
               
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
-                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary">{this.state.status ? this.state.status : "Status Task"}</button>
+                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
 
                 <div style={{width: '80%'}}>
@@ -527,21 +597,22 @@ class GanttChart extends Component {
                
                 <textarea rows="4" defaultValue={""} 
                   name="description"
-                  value={this.state.description} 
+                  value={this.state.description !== 'null' ? this.state.description : ''} 
+                  placeholder="Isi deskripsi task..."
                   onChange={e => this.setState({ description: e.target.value })} 
-                  onKeyUp={this.simpanDeskripsi} className="form-control mb-3" />
+                  onBlur={this.simpanDeskripsi} className="form-control mb-3" />
 
-                <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span>
+                {/* <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span> */}
 
                 <form className="form-vertical mt-4">
                   <div className="form-group row">
                     <div className="col-sm-6">
                       <label htmlFor="startdate">Start Date</label>
-                      <input type="date" className="form-control" value={this.state.start} />
+                      <input type="date" name="start" onChange={this.changeDate} className="form-control" value={this.state.start} />
                     </div>
                     <div className="col-sm-6">
                       <label htmlFor="enddate">End Date</label>
-                      <input type="date" className="form-control" value={this.state.end} />
+                      <input type="date" name="end" onChange={this.changeDate} className="form-control" value={this.state.end} />
                     </div>
                   </div>
                 </form>
@@ -567,15 +638,16 @@ class GanttChart extends Component {
                         <progress style={{width: '100%'}} id="file" value={this.state.val} max={this.state.max}>{this.state.val}</progress>
                       </td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td colSpan="2">
                         <span style={{cursor: 'pointer'}} className="float-right">+ add or edit fields</span>
                       </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
 
                 <h4>Subtasks</h4>
+                <span className="mb-4">Gunakan <code>Enter</code> untuk menyimpan perubahan.</span>
                 <table className="table">
                   <tbody>
                     {
@@ -603,7 +675,7 @@ class GanttChart extends Component {
                     }
                     <tr>
                       <td colSpan="3">
-                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add checklist</span>
+                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add subtask</span>
                       </td>
                     </tr>
                   </tbody>

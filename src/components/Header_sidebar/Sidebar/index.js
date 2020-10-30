@@ -56,6 +56,7 @@ class Sidebar extends Component {
 
       menuAtas : [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [
@@ -80,6 +81,7 @@ class Sidebar extends Component {
       ],
       menuAtas : [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [
@@ -104,6 +106,7 @@ class Sidebar extends Component {
       ],
       menuAtas : [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
       menuBawah : [

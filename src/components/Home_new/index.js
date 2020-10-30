@@ -105,6 +105,7 @@ class HomeNew extends Component {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/event/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          console.log(response.data.result, 'resulttttttttt');
           this.setState({ event: response.data.result });
         }).catch(function(error) {
           console.log(error);
@@ -249,7 +250,7 @@ class HomeNew extends Component {
                                 </p>
                               </div>
                             </div>
-                            <div style={{marginTop: '10px'}}>
+                            <div style={{marginTop: '35px'}}>
                               <EventNew lists={eventDashboard} />
                             </div>
                           </Card.Body>
@@ -307,6 +308,18 @@ class HomeNew extends Component {
                               <ListToDoNew lists={toDoDashboard} />
                             </div>
                           </Card.Body>
+                        </Card>
+                      </div>
+
+                      <div className="col-sm-12">
+                        <Card style={{backgroundColor: '#F3F3F3'}}>
+                          
+                            <div className="widget-center">
+                              <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
+                              
+                              <p style={{marginTop: '55px'}}>Tambah Widget</p>
+                            </div>
+                          
                         </Card>
                       </div>
 
