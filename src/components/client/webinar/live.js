@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, InputGroup, FormControl,Modal } from 'react-bootstrap';
+import { Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../../repository/api';
 import { toast } from "react-toastify";
@@ -611,28 +611,28 @@ export default class WebinarLive extends Component {
   }
   
 	render() {
-    const { webinar, user } = this.state;
-    let levelUser = Storage.get('user').data.level;
+    const { /* webinar, */ user } = this.state;
+    // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
-    let projectId = this.state.projectId;
-    const Lampiran = ({items}) => (
-      <div className="row">
-        {
-          items.map((item, i) => (
-            <div className="col-sm-12 mb-3" key={item.id}>
-              <div className='border-disabled'>
-                <div className="box-lampiran">
-                  <div className="title-head f-w-900 f-16 fc-skyblue">
-                    {item.nama} 
-                    <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    );
+    // let projectId = this.state.projectId;
+    // const Lampiran = ({items}) => (
+    //   <div className="row">
+    //     {
+    //       items.map((item, i) => (
+    //         <div className="col-sm-12 mb-3" key={item.id}>
+    //           <div className='border-disabled'>
+    //             <div className="box-lampiran">
+    //               <div className="title-head f-w-900 f-16 fc-skyblue">
+    //                 {item.nama} 
+    //                 <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
+    //               </div>
+    //             </div>
+    //           </div>
+    //         </div>
+    //       ))
+    //     }
+    //   </div>
+    // );
 
     const Pertanyaan = ({items}) => (
       <div className="row">

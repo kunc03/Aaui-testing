@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 
-import API, { API_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";

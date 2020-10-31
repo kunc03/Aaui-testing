@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form, Card, InputGroup, FormControl } from 'react-bootstrap';
-import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import { Modal, Button, Form, Card } from 'react-bootstrap';
+import API, { API_SERVER } from '../../../repository/api';
 import { Link } from 'react-router-dom';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
@@ -104,7 +104,7 @@ export default class WebinarRiwayat extends Component {
         tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD MMMM YYYY"),
         jamMulai: res.data.result.jam_mulai,
         jamSelesai: res.data.result.jam_selesai,
-        projectId: res.data.result.projectId,
+        // projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         pembicara: res.data.result.pembicara.name,
         status: res.data.result.status,
@@ -160,7 +160,6 @@ export default class WebinarRiwayat extends Component {
   }
 
   filterPeserta(e) {
-    let item = this.state.peserta;
     this.setState({filterPeserta: e.target.value})
   }
 
@@ -183,7 +182,6 @@ export default class WebinarRiwayat extends Component {
     //   let a = this.state;
     //   this.setState(a);
     // });
-    const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
     this.setState({ [name]: value });
@@ -232,32 +230,32 @@ export default class WebinarRiwayat extends Component {
 	render() {
 
     // let access_project_admin = this.state.access_project_admin
-    const Lampiran = ({items}) => (
-      <div className="row">
-        {
-          items.map((item, i) => (
-            <div className="col-sm-12 mb-3" key={item.id}>
-              <div className='border-disabled'>
-                <div className="box-lampiran">
-                  <div className="title-head f-w-900 f-16 fc-skyblue">
-                    {item.nama} 
-                    <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    );
+    // const Lampiran = ({items}) => (
+    //   <div className="row">
+    //     {
+    //       items.map((item, i) => (
+    //         <div className="col-sm-12 mb-3" key={item.id}>
+    //           <div className='border-disabled'>
+    //             <div className="box-lampiran">
+    //               <div className="title-head f-w-900 f-16 fc-skyblue">
+    //                 {item.nama} 
+    //                 <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
+    //               </div>
+    //             </div>
+    //           </div>
+    //         </div>
+    //       ))
+    //     }
+    //   </div>
+    // );
 
-    let show = false;
-    const handleClose = () => {
-      show = false
-    };
-    const handleShow = () => {
-      show = true
-    };
+    // let show = false;
+    // const handleClose = () => {
+    //   show = false
+    // };
+    // const handleShow = () => {
+    //   show = true
+    // };
     const Peserta = ({items}) => {
       if (this.state.filterPeserta==='Hadir'){
         items = items.filter(item=> item.status===2)

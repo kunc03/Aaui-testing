@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import { Modal, Card, InputGroup, FormControl, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 import TableFiles from '../../files/_files';
@@ -177,7 +176,7 @@ export default class WebinarCreate extends Component {
 
     console.log('STATE: ', this.state);
 
-    let levelUser = 'admin';
+    // let levelUser = 'admin';
 
 		return (
 			<div className="row">

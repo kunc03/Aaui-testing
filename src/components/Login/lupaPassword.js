@@ -1,17 +1,11 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router-dom'
-import {Alert, Row} from 'react-bootstrap';
-import axios from 'axios';
-import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
-import Storage from '../../repository/storage';
-
-import { Link } from "react-router-dom";
+import API, {API_SERVER} from '../../repository/api';
 
 
 class ForgotPassword extends Component {
-  constructor(props) {
-    super(props);
-  }
+//   constructor(props) {
+//     super(props);
+//   }
 
   state = {
     email: '',
@@ -26,7 +20,6 @@ class ForgotPassword extends Component {
     showNewPass : false,
     showResetSuccess : false,
     showResetFailed : false,
-    email: "",
     loading: false,
     idUser: null,
     otp: '',
@@ -41,8 +34,7 @@ class ForgotPassword extends Component {
 
 
 toMMSS = (duration) => {
-    var milliseconds = parseInt((duration % 1000) / 100),
-        seconds = parseInt((duration / 1000) % 60),
+    var seconds = parseInt((duration / 1000) % 60),
         minutes = parseInt((duration / (1000 * 60)) % 60),
         hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
@@ -150,7 +142,7 @@ toMMSS = (duration) => {
   }
 
   render() {
-    const { toggle_alert, isVoucher,showResendPass, showNewPass, showResetSuccess, showResetFailed } = this.state;
+    const { showResendPass, showNewPass, showResetSuccess, showResetFailed } = this.state;
     const { minutes, seconds } = this.state
     return (
       <div style={{background:"#fff", margin: 0}}>

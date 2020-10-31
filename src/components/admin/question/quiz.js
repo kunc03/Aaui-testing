@@ -1,13 +1,8 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Accordion, Card, Button } from "react-bootstrap";
+import { Modal, Accordion, Card } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import {FieldImport} from '../../../modul';
-import {
-  _attach,
-  _data
-} from './_quiz';
 
 export default class QuestionQuiz extends Component {
 

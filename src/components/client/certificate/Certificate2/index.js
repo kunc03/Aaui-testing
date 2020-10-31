@@ -3,7 +3,6 @@ import { Button } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import BG from './images/BG.png';
 import Icademy from './images/Icademy.png';
-import Logo from './images/Logo.png';
 import Icon from './images/Icon.png';
 import API, { API_SERVER } from '../../../../repository/api';
 import Storage from '../../../../repository/storage';

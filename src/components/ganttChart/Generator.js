@@ -1,20 +1,17 @@
 import ObjectHelper from "./ObjectHelper";
-import $ from 'jquery';
 
 
-class Generator {
-  constructor() {}
-  
+class Generator {  
   generateData() {
     let data = [];
     let links = [];
-    let now = new Date();
-    let nowId = this.addRecord(now, 0, data);
+    // let now = new Date();
+    // let nowId = this.addRecord(now, 0, data);
 
     let test = new Date();
     test.setDate(test.getDate() + 3);
     test.setHours(0, 0, 0, 0);
-    let tomorrowId = this.addRecord(test, 1, data);
+    // let tomorrowId = this.addRecord(test, 1, data);
     // this.addLink(nowId,tomorrowId,links)
 
     for (let i = 1; i < 1000; i++) {

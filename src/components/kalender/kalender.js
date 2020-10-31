@@ -1,13 +1,9 @@
-import React, { Component,useState } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
 import Storage from '../../repository/storage';
-import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import {dataKalender} from '../../modul/data';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
-import {OverlayTrigger, Modal} from 'react-bootstrap';
-import {Popover} from 'react-bootstrap';
+import API, {API_SERVER} from '../../repository/api';
 import Event from './_itemModal';
 import ReactFullScreenElement from "react-fullscreen-element";
 const localizer = momentLocalizer(moment);
@@ -75,7 +71,7 @@ class KalenderNew extends Component {
   }
   render() {
     const {event} = this.state;
-    const lists = this.props.lists;
+    // const lists = this.props.lists;
     // const ColoredDateCellWrapper = ({ children }) =>
     // React.cloneElement(React.Children.only(children), {
     //   style: {

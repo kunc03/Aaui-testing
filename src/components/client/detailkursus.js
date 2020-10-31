@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Card, Accordion, Badge } from "react-bootstrap";
+import { Modal, Form, Card } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactPlayer from 'react-player';

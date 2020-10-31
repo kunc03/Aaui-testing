@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
+import API, { API_SERVER } from '../../repository/api';
+import Storage from '../../repository/storage';
 
 class RuanganMengajar extends React.Component {
 
@@ -15,7 +17,10 @@ class RuanganMengajar extends React.Component {
 
     isModalTambah: false,
 
-    dataRuangan: []
+    dataRuangan: [],
+
+    dataPengajar: [],
+    dataFolder: [],
   }
 
   saveRuangan = e => {
@@ -23,20 +28,64 @@ class RuanganMengajar extends React.Component {
 
     if(this.state.idRuangan) {
 
+      let form = {
+        nama_ruangan: this.state.namaRuangan,
+        folder: this.state.folder,
+        pengajar: this.state.pengajar,
+      };
+
+      API.put(`${API_SERVER}v2/ruangan-mengajar/${this.state.idRuangan}`, form).then(res => {
+        if(res.data.error) toast.warning("Error create ruangan")
+
+        toast.success("Ruangan berhasil diupdate")
+        this.fetchRuangan();
+      })
+
     } else {
 
       let form = {
-        idRuangan: this.state.dataRuangan.length+1,
-        namaRuangan: this.state.namaRuangan,
+        nama_ruangan: this.state.namaRuangan,
         folder: this.state.folder,
-        pengajar: this.state.pengajar
+        pengajar: this.state.pengajar,
+        created_by: Storage.get('user').data.user_id,
+        company_id: Storage.get('user').data.company_id,
       };
 
-      let cp = [...this.state.dataRuangan];
-      cp.push({id: form.idRuangan, nama_ruangan: form.namaRuangan, folder: form.folder, pengajar: form.pengajar});
-      this.setState({ dataRuangan: cp });
-      this.clearForm();
+      API.post(`${API_SERVER}v2/ruangan-mengajar`, form).then(res => {
+        if(res.data.error) toast.warning("Error create ruangan")
+
+        toast.success("Ruangan berhasil disimpan")
+        this.fetchRuangan();
+      })
+
     }
+
+    this.clearForm();
+  }
+
+  deleteRuangan = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v2/ruangan-mengajar/${e.target.getAttribute('data-id')}`).then(res => {
+      if(res.data.error) toast.warning("Error hapus ruangan");
+      this.fetchRuangan();
+    })
+  }
+
+  selectRuangan = e => {
+    e.preventDefault()
+    let id = e.target.getAttribute('data-id')
+    API.get(`${API_SERVER}v2/ruangan-mengajar/${id}`).then(res => {
+      if(res.data.error) toast.warning("Error get ruangan")
+
+      this.setState({
+        idRuangan: id,
+        namaRuangan: res.data.result[0].nama_ruangan,
+        folder: res.data.result[0].folder,
+        pengajar: res.data.result[0].pengajar,
+
+        isModalTambah: true
+      })
+    })
   }
 
   clearForm() {
@@ -51,12 +100,46 @@ class RuanganMengajar extends React.Component {
   }
 
   componentDidMount() {
-    let listKelas = [
-      {id: 1, nama_ruangan: "Nama 1", folder: "Semester 1", pengajar: "Pengajar 1"},
-      {id: 1, nama_ruangan: "Nama 2", folder: "Semester 1", pengajar: "Pengajar 2"},
-      {id: 1, nama_ruangan: "Nama 3", folder: "Semester 1", pengajar: "Pengajar 3"},
-    ];
-    this.setState({ dataRuangan: listKelas })
+    this.fetchRuangan();
+    this.fetchPengajar();
+    this.fetchFolder();
+  }
+
+  fetchRuangan() {
+    API.get(`${API_SERVER}v2/ruangan-mengajar/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch ruangan")
+
+      this.setState({ dataRuangan: res.data.result })
+    })
+  }
+
+  fetchPengajar() {
+    API.get(`${API_SERVER}v2/guru/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch pengajar");
+
+      this.setState({ dataPengajar: res.data.result })
+    })
+  }
+
+  fetchFolder() {
+    API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.result.length) {
+        let role = {
+          aSekretaris: 1,
+          aModerator: 1,
+          aPembicara: 1,
+          aOwner: 1,
+          aPeserta: 1
+        }
+        API.get(`${API_SERVER}v1/folder/${Storage.get('user').data.company_id}/${res.data.result[0].id}`, role).then(res => {
+          if (res.data.error) toast.warning("Error fetch folder")
+
+          this.setState({dataFolder: res.data.result})
+        })
+      } else {
+        toast.warning("Buat project terlebih dahulu")
+      }
+    })
   }
 
   render() {
@@ -71,6 +154,10 @@ class RuanganMengajar extends React.Component {
                 <i className="fa fa-plus"></i>
                 Tambah Ruangan Mengajar
               </button>
+              <Link to={`/learning/folder`} className="btn btn-v2 btn-primary float-right mr-3">
+                <i className="fa fa-cogs"></i>
+                Manage Folder
+              </Link>
             </div>
             <div className="card-body">
               <table className="table table-striped">
@@ -91,7 +178,10 @@ class RuanganMengajar extends React.Component {
                         <td>{item.nama_ruangan}</td>
                         <td>{item.folder}</td>
                         <td>{item.pengajar}</td>
-                        <td className="text-center"><i className="fa fa-ellipsis-v"></i></td>
+                        <td className="text-center">
+                          <i style={{cursor: 'pointer'}} onClick={this.selectRuangan} data-id={item.id} className="fa fa-edit"></i>
+                          <i style={{cursor: 'pointer'}} onClick={this.deleteRuangan} data-id={item.id} className="fa fa-trash ml-2"></i>
+                        </td>
                       </tr>
                     ))
                   }
@@ -120,18 +210,23 @@ class RuanganMengajar extends React.Component {
                 <div className="col-sm-6">
                   <label>Pengajar</label>
                   <select value={this.state.pengajar} onChange={e => this.setState({ pengajar: e.target.value })} required className="form-control">
-                    <option value="">Pilih pengajar</option>
-                    <option value="Ahmad">Ahmad</option>
-                    <option value="Ardi">Ardi</option>
-                    <option value="Ansyah">Ansyah</option>
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataPengajar.map(item => (
+                        <option value={item.id}>{item.nama}</option>
+                      ))
+                    }
                   </select>
                 </div>
                 <div className="col-sm-6">
                   <label>Folder</label>
                   <select value={this.state.folder} onChange={e => this.setState({ folder: e.target.value })} required className="form-control">
                     <option value="">Pilih folder</option>
-                    <option value="Semester 1">Semester 1</option>
-                    <option value="Semester 2">Semester 2</option>
+                    {
+                      this.state.dataFolder.map(item => (
+                        <option value={item.id}>{item.name}</option>
+                      ))
+                    }
                   </select>
                 </div>
               </div>

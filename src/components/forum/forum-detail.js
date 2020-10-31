@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import API, { FORUM, API_SERVER, USER_ME } from "../../repository/api";
+import API, { FORUM, API_SERVER } from "../../repository/api";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl } from "react-bootstrap";
+import { Modal, Form, Card, Row, Col } from "react-bootstrap";
 import {
-    _getDetailForumList,
-    _komentarPost,
-    _addStarForum,
-    _deleteStarForum
+    _getDetailForumList
 } from './_forum';
 import Storage from '../../repository/storage';
 import Moment from "react-moment";
@@ -40,7 +37,6 @@ export default class ForumDetail extends Component {
         await _getDetailForumList.bind(this, this.props.match.params.forum_id)();
         await API.get(`${FORUM}/id/${this.props.match.params.forum_id}/${this.state.user_id}`).then(res => {
 
-            let aray = [];
             let splitTags;
             let komen = res.data.result[0];
             for(let a in komen.komentar){

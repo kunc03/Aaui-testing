@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Card, InputGroup, FormControl, Row } from 'react-bootstrap';
+import { Form, Row } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER, BBB_KEY, BBB_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -13,66 +13,43 @@ import "react-datepicker/dist/react-datepicker.css";
 import RiwayatKursus from './riwayatkursus';
 import RiwayatForum from './riwayatforum';
 import RiwayatLiveClass from './riwayatliveclass';
-import { Doughnut, Bar, Line, Pie, Radar } from 'react-chartjs-2';
+import { Bar, Line, Pie, Radar } from 'react-chartjs-2';
 import { dataBar, dataUser, dataRadar, dataPie } from './data';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import Toolbar from 'react-big-calendar/lib/Toolbar';
+// import Toolbar from 'react-big-calendar/lib/Toolbar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import MomentTZ from 'moment-timezone';
 const localizer = momentLocalizer(moment);
 const bbb = require('bigbluebutton-js')
-let event = [
-  // {
-  //   id: 0,
-  //   title: 'Today',
-  //   start: new Date(),
-  //   end: new Date(),
-  //   bgColor: 'red'
-  // },
-  // {
-  //   id: 2,
-  //   title: 'Ujian',
-  //   start: moment(moment()).add(3, 'days'),
-  //   end: moment(moment()).add(3, 'days'),
-  //   bgColor: 'purple'
-  // },
-  // {
-  //   id: 3,
-  //   title: 'Group',
-  //   start: moment(moment()).add(4, 'days'),
-  //   end: moment(moment()).add(4, 'days'),
-  //   bgColor: 'cyan'
-  // }
-];
 
-class CustomToolbar extends Toolbar {
-  render() {
-    return (
-      <div className="rbc-toolbar">
-        <span className="rbc-btn-group">
-          <button type="button" onClick={() => this.navigate('PREV')}>
-            {'<'}
-          </button>
-          <button type="button" onClick={() => this.navigate('TODAY')}>
-            today
-          </button>
-          <button type="button" onClick={() => this.navigate('NEXT')}>
-            {'>'}
-          </button>
-        </span>
-        <span className="rbc-toolbar-label">{this.props.label}</span>
-      </div>
-    );
-  }
+// class CustomToolbar extends Toolbar {
+//   render() {
+//     return (
+//       <div className="rbc-toolbar">
+//         <span className="rbc-btn-group">
+//           <button type="button" onClick={() => this.navigate('PREV')}>
+//             {'<'}
+//           </button>
+//           <button type="button" onClick={() => this.navigate('TODAY')}>
+//             today
+//           </button>
+//           <button type="button" onClick={() => this.navigate('NEXT')}>
+//             {'>'}
+//           </button>
+//         </span>
+//         <span className="rbc-toolbar-label">{this.props.label}</span>
+//       </div>
+//     );
+//   }
 
-  navigate = (action) => {
-    console.log(action);
+//   navigate = (action) => {
+//     console.log(action);
 
-    this.props.onNavigate(action);
-  };
-}
+//     this.props.onNavigate(action);
+//   };
+// }
 
 const tabs = [
   { title: 'Riwayat Kursus' },
@@ -374,7 +351,6 @@ class Aktivity extends Component {
   }
 
   render() {
-    let { classRooms } = this.state;
     const ClassRooms = ({ list }) => (
       <Row>
         {list.map((item) => (
@@ -407,20 +383,20 @@ class Aktivity extends Component {
       </Row>
     );
 
-    const data = {
-      labels: ['Kursus', 'Forum', 'Meeting'],
-      datasets: [
-        {
-          data: [
-            this.state.chartData.total_enroll_course,
-            this.state.chartData.total_reply_forum,
-            this.state.chartData.total_meeting,
-          ],
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-        },
-      ],
-    };
+    // const data = {
+    //   labels: ['Kursus', 'Forum', 'Meeting'],
+    //   datasets: [
+    //     {
+    //       data: [
+    //         this.state.chartData.total_enroll_course,
+    //         this.state.chartData.total_reply_forum,
+    //         this.state.chartData.total_meeting,
+    //       ],
+    //       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+    //       hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+    //     },
+    //   ],
+    // };
 
     console.log('user: ', this.state.user);
     var { recentClass, recentCourse, recentForum, recentLogin } = this.state;

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
-import {Alert, Modal, Form, Card} from 'react-bootstrap';
+import {Alert, Modal, Form} from 'react-bootstrap';
 import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -183,43 +182,43 @@ class Profile extends Component {
   };
 
   render() {
-    const { user_data, toggle_alert, kursusDiikuti } = this.state;
+    const { user_data, toggle_alert } = this.state;
     console.log('STATE: ', this.state);
-    const ListAktivitas = ({ lists }) => {
-      if (lists.length !== 0) {
-        return (
-          <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
-            {lists.map((item, i) => (
-              <div key={item.course_id}>
-                <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
-                  {item.course.title}
-                  <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
-                </li>
-                <table style={{ width: "100%" }}>
-                  <ListChapters lists={item.chapters} />
-                </table>
-              </div>
-            ))}
-          </ol>
-        );
-      } else {
-        return (
-          <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
-            Belum ada aktivitas.
-          </h3>
-        );
-      }
-    };
+    // const ListAktivitas = ({ lists }) => {
+    //   if (lists.length !== 0) {
+    //     return (
+    //       <ol className="p-l-40 p-t-30 p-r-40 p-b-30 ">
+    //         {lists.map((item, i) => (
+    //           <div key={item.course_id}>
+    //             <li className="f-16 f-w-800 text-c-black" style={{margin: '5px 0'}}>
+    //               {item.course.title}
+    //               <Link to={`/detail-kursus/${item.course_id}`} style={{float: 'right'}}>Lihat</Link>
+    //             </li>
+    //             <table style={{ width: "100%" }}>
+    //               <ListChapters lists={item.chapters} />
+    //             </table>
+    //           </div>
+    //         ))}
+    //       </ol>
+    //     );
+    //   } else {
+    //     return (
+    //       <h3 className="f-w-900 f-20" style={{ margin: "30px" }}>
+    //         Belum ada aktivitas.
+    //       </h3>
+    //     );
+    //   }
+    // };
 
-    const ListChapters = ({ lists }) => (
-      <tbody>
-        {lists.map((item, i) => (
-          <tr key={item.chapter_id}>
-            <th className>{item.chapter_title}</th>
-          </tr>
-        ))}
-      </tbody>
-    );
+    // const ListChapters = ({ lists }) => (
+    //   <tbody>
+    //     {lists.map((item, i) => (
+    //       <tr key={item.chapter_id}>
+    //         <th className>{item.chapter_title}</th>
+    //       </tr>
+    //     ))}
+    //   </tbody>
+    // );
 
     return (
       <div className="pcoded-main-container">

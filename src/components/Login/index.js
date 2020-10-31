@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router-dom'
-import {Alert, Row} from 'react-bootstrap';
+import {Alert} from 'react-bootstrap';
 import axios from 'axios';
 import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
@@ -15,9 +14,9 @@ const tabs = [
 
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   state = {
     email: '',
@@ -321,6 +320,7 @@ class Login extends Component {
                     return (
                       <div className={this.state.showPass ? 'hidden' : 'col-md-6 mb-4'}>
                         <Link
+                          key={index}
                           onClick={this.tabLogin.bind(this, tab, index)}
                         >
                           <div

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../../repository/api';
+import API, { API_SERVER } from '../../../repository/api';
 import { toast } from "react-toastify";
 
 export default class WebinarKuesionerAdd extends Component {
@@ -138,65 +136,65 @@ export default class WebinarKuesionerAdd extends Component {
 
 		console.log('STATE: ', this.state);
 
-    const DaftarPertanyaan = ({items}) => (
-      <div>
-        {
-          items.map((item,i) => (
-            <div className="form-group">
-              <label>Pertanyaan {i+1}</label>
-              <span className="float-right">
-                <i data-index={i} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
-              </span>
-              <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
+    // const DaftarPertanyaan = ({items}) => (
+    //   <div>
+    //     {
+    //       items.map((item,i) => (
+    //         <div className="form-group">
+    //           <label>Pertanyaan {i+1}</label>
+    //           <span className="float-right">
+    //             <i data-index={i} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+    //           </span>
+    //           <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
 
-              <div className="jawaban mt-3 ml-4">
-                <label>Tambahkan Jawaban</label>
-                <tr>
-                  <td>
-                    A
-                  </td>
-                  <td>
-                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.a} className="form-control" style={{width: '460px'}} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    B
-                  </td>
-                  <td>
-                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{width: '460px'}} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    C
-                  </td>
-                  <td>
-                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    D
-                  </td>
-                  <td>
-                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    E
-                  </td>
-                  <td>
-                    <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
-                  </td>
-                </tr>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    );
+    //           <div className="jawaban mt-3 ml-4">
+    //             <label>Tambahkan Jawaban</label>
+    //             <tr>
+    //               <td>
+    //                 A
+    //               </td>
+    //               <td>
+    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.a} className="form-control" style={{width: '460px'}} />
+    //               </td>
+    //             </tr>
+    //             <tr>
+    //               <td>
+    //                 B
+    //               </td>
+    //               <td>
+    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{width: '460px'}} />
+    //               </td>
+    //             </tr>
+    //             <tr>
+    //               <td>
+    //                 C
+    //               </td>
+    //               <td>
+    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
+    //               </td>
+    //             </tr>
+    //             <tr>
+    //               <td>
+    //                 D
+    //               </td>
+    //               <td>
+    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
+    //               </td>
+    //             </tr>
+    //             <tr>
+    //               <td>
+    //                 E
+    //               </td>
+    //               <td>
+    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
+    //               </td>
+    //             </tr>
+    //           </div>
+    //         </div>
+    //       ))
+    //     }
+    //   </div>
+    // );
 
 		return (
 			<div className="row">

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 import API, {USER_ME, API_SERVER} from '../../repository/api';
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
+import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 
 
@@ -30,7 +30,6 @@ class ProjekNew extends Component {
   }
   
   onChangeInput = e => {
-    const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
 
@@ -164,7 +163,7 @@ closeModalDelete = e => {
 
 
   render() {
-    let access = Storage.get('access');
+    // let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser == 'client' ? false : true;
   //  console.log(this.props, 'props evenntttt')

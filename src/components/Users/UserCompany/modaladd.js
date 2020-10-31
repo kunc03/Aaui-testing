@@ -41,7 +41,6 @@ class ModalAdd extends Component {
   onClickSimpan = e => {
     e.preventDefault();
     const { triggerUpdate } = this.props;
-    let dateNow = new Date();
 
     if(this.state.nama && this.state.logo && this.state.tipe) {
       let unlimited = this.state.unlimited == false ? '1' : '0'
@@ -89,7 +88,7 @@ class ModalAdd extends Component {
   }
 
   render() {
-    const statusCompany = ['active','nonactive'];
+    // const statusCompany = ['active','nonactive'];
     return (
       <div
         id="modalAdd"

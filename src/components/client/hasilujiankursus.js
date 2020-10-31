@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Card, Button } from "react-bootstrap";
-import API, { API_SERVER, USER_ME } from '../../repository/api';
-import Storage from '../../repository/storage';
-
-import Countdown from 'react-countdown-now';
+import { Modal, Card, Button } from "react-bootstrap";
 
 export default class HasilUjianKursus extends Component {
 

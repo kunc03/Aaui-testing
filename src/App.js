@@ -18,7 +18,7 @@ import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/detail_project/index";
-import WebinarDetail from "./components/webinar/index";
+// import WebinarDetail from "./components/webinar/index";
 
 import Project from "./components/project/index";
 
@@ -29,7 +29,7 @@ import UserEdit from "./components/Users/User/Edit";
 import UserCompany from "./components/Users/User/company";
 import UserCompanyAdd from "./components/Users/User/companyadd";
 import UserCompanyEdit from "./components/Users/User/companyedit";
-import UserAccess from "./components/Users/Access/index";
+// import UserAccess from "./components/Users/Access/index";
 
 import KursusMateri from "./components/admin/course/kursusmateri";
 import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
@@ -65,9 +65,9 @@ import InformasiAdmin from "./components/admin/informasi";
 import Forum from "./components/forum/forum";
 import ForumDetail from "./components/forum/forum-detail";
 
-import LiveClass from "./components/liveclass";
-import LiveStream from "./components/liveclass/livestream";
-import LiveStreamPublic from "./components/liveclass/livestreamPublic";
+// import LiveClass from "./components/liveclass";
+// import LiveStream from "./components/liveclass/livestream";
+// import LiveStreamPublic from "./components/liveclass/livestreamPublic";
 import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
 import MeetingRoom from "./components/liveclass/meetingRoom";
@@ -75,8 +75,8 @@ import MeetingRoomPublic from "./components/liveclass/meetingRoomPublic";
 import WebinarLivePublic from "./components/client/webinar/livePublic";
 import Webinar from "./components/webinar";
 
-import LiveClassAdmin from "./components/admin/liveclass/list";
-import LiveClassAdminJoin from "./components/admin/liveclass/join";
+// import LiveClassAdmin from "./components/admin/liveclass/list";
+// import LiveClassAdminJoin from "./components/admin/liveclass/join";
 
 import Kursus from "./components/Kursus";
 
@@ -91,10 +91,11 @@ import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
 // import ResetPassword from './components/resetPassword';
 
-import HomeClient from './components/client/dashboard/index';
+// import HomeClient from './components/client/dashboard/index';
 import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
+import LearningMurid from './components/learning/murid';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -326,6 +327,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
+        <Route path="/learning" component={LearningAdmin} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
@@ -406,6 +408,8 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+
+        <Route path="/murid" component={LearningMurid} />
 
         <Route path="/webinar" component={WebinarClient} />
 

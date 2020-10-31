@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import API, {API_SERVER, USER_ME} from '../../repository/api';
-import { toast } from "react-toastify";
 
 
 class EventNew extends Component {

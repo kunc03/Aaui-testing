@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import API, { API_SERVER } from "../../repository/api";
 
 class OTP extends Component {
     constructor(props) {
@@ -40,8 +39,7 @@ class OTP extends Component {
         // return minutes + ":" + seconds;
 
         // ms to mmhh
-        var milliseconds = parseInt((duration % 1000) / 100),
-            seconds = parseInt((duration / 1000) % 60),
+        var seconds = parseInt((duration / 1000) % 60),
             minutes = parseInt((duration / (1000 * 60)) % 60),
             hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 

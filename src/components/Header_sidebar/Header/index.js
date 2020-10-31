@@ -117,91 +117,91 @@ class Header extends Component {
   }
 
   render() {
-    const { user, role, level, company, notificationData } = this.state;
+    const { user, role, level, company/* , notificationData */ } = this.state;
 
     // console.table(company);
 
-    let NotifBody = ({ list }) => {
-      let unread = Object.values(list).filter((x) => x.isread == '0');
-      let unclick = Object.values(list).filter((x) => x.isread == '2');
+    // let NotifBody = ({ list }) => {
+    //   let unread = Object.values(list).filter((x) => x.isread == '0');
+    //   let unclick = Object.values(list).filter((x) => x.isread == '2');
 
-      console.log(unread, unclick);
-      return (
-        <ul className="noti-body" style={{maxHeight:400, overflowY:'scroll', overflowX:'hidden'}}>
-          {unread.length ? (
-            <li className="n-title">{/* <p className="m-b-0">NEW</p> */}</li>
-          ) : null}
+    //   console.log(unread, unclick);
+    //   return (
+    //     <ul className="noti-body" style={{maxHeight:400, overflowY:'scroll', overflowX:'hidden'}}>
+    //       {unread.length ? (
+    //         <li className="n-title">{/* <p className="m-b-0">NEW</p> */}</li>
+    //       ) : null}
 
-          {unread.map((item) => (
-            <li className="notification" onClick={() => this.goTo(item.id)}>
-              <div className="media">
-                {/* <img
-                  className="img-radius"
-                  src="assets/images/user/avatar-1.png"
-                  alt="Generic placeholder image"
-                /> */}
-                <div className="media-body">
-                  <p>
-                    {/* <strong>John Doe</strong> */}
-                    <span className="n-time text-muted">
-                      <i className="icon feather icon-clock m-r-10" />
-                      {moment(item.created_at)
-                        .tz('Asia/Jakarta')
-                        .format('DD MMMM YYYY')}
-                    </span>
-                  </p>
-                  <p>
-                    {/* {item.type === 1
-                      ? 'Course'
-                      : item.type === 2
-                      ? 'Forum'
-                      : 'Meeting'}{' '} */}
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            </li>
-          ))}
+    //       {unread.map((item) => (
+    //         <li className="notification" onClick={() => this.goTo(item.id)}>
+    //           <div className="media">
+    //             {/* <img
+    //               className="img-radius"
+    //               src="assets/images/user/avatar-1.png"
+    //               alt="Generic placeholder image"
+    //             /> */}
+    //             <div className="media-body">
+    //               <p>
+    //                 {/* <strong>John Doe</strong> */}
+    //                 <span className="n-time text-muted">
+    //                   <i className="icon feather icon-clock m-r-10" />
+    //                   {moment(item.created_at)
+    //                     .tz('Asia/Jakarta')
+    //                     .format('DD MMMM YYYY')}
+    //                 </span>
+    //               </p>
+    //               <p>
+    //                 {/* {item.type === 1
+    //                   ? 'Course'
+    //                   : item.type === 2
+    //                   ? 'Forum'
+    //                   : 'Meeting'}{' '} */}
+    //                 {item.description}
+    //               </p>
+    //             </div>
+    //           </div>
+    //         </li>
+    //       ))}
 
-          {unclick.length ? (
-            <li className="n-title">
-              <p className="m-b-0">EARLIER</p>
-            </li>
-          ) : null}
+    //       {unclick.length ? (
+    //         <li className="n-title">
+    //           <p className="m-b-0">EARLIER</p>
+    //         </li>
+    //       ) : null}
 
-          {unclick.map((item) => (
-            <li className="notification" onClick={() => this.goTo(item.id)}>
-              <div className="media">
-                <img
-                  className="img-radius"
-                  src="assets/images/user/avatar-1.jpg"
-                  alt="Generic placeholder image"
-                />
-                <div className="media-body">
-                  <p>
-                    <strong>John Doe</strong>
-                    <span className="n-time text-muted">
-                      <i className="icon feather icon-clock m-r-10" />
-                      {moment(item.created_at)
-                        .tz('Asia/Jakarta')
-                        .format('DD MMMM YYYY')}
-                    </span>
-                  </p>
-                  <p>
-                    {item.type === 1
-                      ? 'Course'
-                      : item.type === 2
-                      ? 'Forum'
-                      : 'Meeting'}{' '}
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      );
-    };
+    //       {unclick.map((item) => (
+    //         <li className="notification" onClick={() => this.goTo(item.id)}>
+    //           <div className="media">
+    //             <img
+    //               className="img-radius"
+    //               src="assets/images/user/avatar-1.jpg"
+    //               alt="Generic placeholder image"
+    //             />
+    //             <div className="media-body">
+    //               <p>
+    //                 <strong>John Doe</strong>
+    //                 <span className="n-time text-muted">
+    //                   <i className="icon feather icon-clock m-r-10" />
+    //                   {moment(item.created_at)
+    //                     .tz('Asia/Jakarta')
+    //                     .format('DD MMMM YYYY')}
+    //                 </span>
+    //               </p>
+    //               <p>
+    //                 {item.type === 1
+    //                   ? 'Course'
+    //                   : item.type === 2
+    //                   ? 'Forum'
+    //                   : 'Meeting'}{' '}
+    //                 {item.description}
+    //               </p>
+    //             </div>
+    //           </div>
+    //         </li>
+    //       ))}
+    //     </ul>
+    //   );
+    // };
 
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;

@@ -1,13 +1,90 @@
 import React from 'react';
-import { API_SERVER } from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
+import Storage from '../../repository/storage';
+
+import { toast } from "react-toastify";
+import { Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 class Guru extends React.Component {
 
   state = {
-    dataGuru: []
+    noInduk: '',
+    nama: '',
+    tempatLahir: '',
+    tanggalLahir: '',
+    jenisKelamin: '',
+
+    action: "tambah",
+
+    isModalTambah: false,
+
+    dataMurid: []
+  }
+
+  saveMurid = e => {
+    e.preventDefault()
+    if(this.state.action === "tambah") {
+      // action for create
+      let form = {
+        companyId: Storage.get('user').data.company_id,
+        nama: this.state.nama, noInduk: this.state.noInduk, tempatLahir: this.state.tempatLahir,
+        tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin
+      };
+      API.post(`${API_SERVER}v2/guru/create`, form).then(res => {
+        if(res.data.error) toast.warning("Error create guru");
+
+        toast.success("Guru baru berhasil disimpan")
+        this.fetchMurid();
+      })
+    } else {
+      // action for update
+    }
+
+    this.clearForm();
+  }
+
+  deleteMurid = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v2/guru/one/${e.target.getAttribute('data-id')}`).then(res => {
+      if(res.data.error) toast.warning("Error hapus murid")
+
+      this.fetchMurid();
+    })
+  }
+
+  clearForm() {
+    this.setState({
+      noInduk: '',
+      nama: '',
+      tempatLahir: '',
+      tanggalLahir: '',
+      jenisKelamin: '',
+
+      action: "tambah",
+    })
+  }
+
+  closeModal() {
+    this.setState({
+      isModalTambah: false,
+    })
+  }
+
+  componentDidMount() {
+    this.fetchMurid();
+  }
+
+  fetchMurid() {
+    API.get(`${API_SERVER}v2/guru/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.error) toast.warning("Error fetch murid");
+
+      this.setState({ dataMurid: res.data.result })
+    })
   }
 
   render() {
+
     return (
       <>
         <div className="col-sm-12">
@@ -35,7 +112,13 @@ class Guru extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-header">Daftar Guru Sekolah</div>
+            <div className="card-header">
+              Daftar Guru Sekolah
+              <button onClick={() => this.setState({ isModalTambah: true})} className="btn btn-v2 btn-primary float-right">
+                <i className="fa fa-plus"></i>
+                Tambah Guru
+              </button>
+            </div>
             <div className="card-body">
 
               <table className="table table-striped">
@@ -52,7 +135,7 @@ class Guru extends React.Component {
                 </thead>
                 <tbody>
                   {
-                    this.state.dataGuru.map((item, i) => (
+                    this.state.dataMurid.map((item, i) => (
                       <tr>
                         <td>{i+1}</td>
                         <td>{item.nama}</td>
@@ -61,13 +144,72 @@ class Guru extends React.Component {
                         <td>{item.tanggal_lahir}</td>
                         <td>{item.jenis_kelamin}</td>
                         <td>
-                          <i className="fa fa-ellipsis-v"></i>
+                          <Link to={`/learning/personalia-detail/guru-${item.no_induk}`}>
+                            <i className="fa fa-search"></i>
+                          </Link>
+                          <i style={{cursor: 'pointer'}} onClick={this.deleteMurid} data-id={item.id} className="fa fa-trash ml-2"></i>
                         </td>
                       </tr>
                     ))
                   }
                 </tbody>
               </table>
+
+              <Modal
+                show={this.state.isModalTambah}
+                onHide={() => this.closeModal()}
+                dialogClassName="modal-lg"
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                    Tambah Guru
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <form onSubmit={this.saveMurid}>
+                    <div className="form-group row">
+                      <div className="col-sm-6">
+                        <label>Nama Guru</label>
+                        <input value={this.state.nama} onChange={e => this.setState({ nama: e.target.value })} required type="text" className="form-control" placeholder="Enter" />
+                      </div>
+                      <div className="col-sm-6">
+                        <label>No Induk</label>
+                        <input value={this.state.noInduk} onChange={e => this.setState({ noInduk: e.target.value })} required type="text" className="form-control" placeholder="Enter" />
+                      </div>
+                    </div>
+                    <div className="form-group row">
+                      <div className="col-sm-6">
+                        <label>Tempat Lahir</label>
+                        <input value={this.state.tempatLahir} onChange={e => this.setState({ tempatLahir: e.target.value })} required type="text" className="form-control" placeholder="Enter" />
+                      </div>
+                      <div className="col-sm-6">
+                        <label>Tanggal Lahir</label>
+                        <input value={this.state.tanggalLahir} onChange={e => this.setState({ tanggalLahir: e.target.value })} required type="date" className="form-control" placeholder="Enter" />
+                      </div>
+                    </div>
+                    <div className="form-group row">
+                      <div className="col-sm-3">
+                        <label>Jenis Kelamin</label>
+                        <select value={this.state.jenisKelamin} onChange={e => this.setState({ jenisKelamin: e.target.value })} required className="form-control" placeholder="Enter">
+                          <option value="" disabled selected>Pilih</option>
+                          <option value="Laki-laki">Laki-laki</option>
+                          <option value="Perempuan">Perempuan</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group row">
+                      <div className="col-sm-12">
+                        <button type="submit" className="btn btn-v2 btn-success">
+                          <i className="fa fa-save"></i> Simpan
+                        </button>
+                        <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary ml-2">
+                          <i className="fa fa-history"></i> Reset
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </Modal.Body>
+              </Modal>
 
             </div>
           </div>

@@ -9,7 +9,7 @@ import Users from './users';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { MultiSelect } from 'react-sm-select';
+// import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -377,7 +377,7 @@ export default class CompanyDetail extends Component {
 
   onClickUbah = e => {
   	const tipe = e.target.getAttribute('data-type');
-  	const action = e.target.getAttribute('data-action');
+  	// const action = e.target.getAttribute('data-action');
   	const idNya = e.target.getAttribute('data-id');
   	if(tipe === 'cabang') {
   		this.setState({ isModalCabang: true, namacabang: e.target.getAttribute('data-nama'), actioncabang: `action_${idNya}`});
@@ -518,7 +518,7 @@ export default class CompanyDetail extends Component {
 	  }
 
 	render() {
-		const { cabang, grup, user, access } = this.state;
+		const { cabang, grup, access } = this.state;
 		const statusCompany = ['active', 'nonactive'];
 		let validityCompany = '';
 		if(this.state.validity !== '') { validityCompany = new Date(this.state.validity); }

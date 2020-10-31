@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import TableWebinar from './webinar';
-import { Link } from 'react-router-dom';
-import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
-import API, {USER_ME, USER, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Meeting extends Component {

@@ -1,6 +1,4 @@
-import React, { Component } from "react";
-import {Alert, Modal, Form} from 'react-bootstrap';
-import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
+import API, {FORUM, USER_ME} from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactDOM from 'react-dom';
 

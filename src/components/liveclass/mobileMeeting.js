@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {isIOS, isAndroid} from 'react-device-detect';
+import {isIOS} from 'react-device-detect';
 
 export default class LiveStream extends Component {
 	state = {
