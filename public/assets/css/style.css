@@ -11634,7 +11634,7 @@ div.code-toolbar > .toolbar span:hover {
   background: transparent;
     padding: 6px 18px;
     border: 1px solid #0895ff;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     border-radius: 6px;
     margin-left: 6px;
@@ -11645,7 +11645,7 @@ div.code-toolbar > .toolbar span:hover {
   background: #f7f7f7;
     padding: 6px 18px;
     border: 1px solid #ebebeb;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     border-radius: 6px;
     margin-left: 6px;
