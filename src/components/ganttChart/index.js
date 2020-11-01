@@ -122,6 +122,7 @@ class GanttChart extends Component {
       start: new Date(),
       end: new Date(),
       status: "",
+      islock: 0,
       color: '',
       assigne: [],
       subtasks: [],
@@ -182,16 +183,21 @@ class GanttChart extends Component {
     API.put(`${API_SERVER}v2/task/update/${e.id}`, form).then(res => {
       if(res.data.error) toast.warning("Gagal update task");
       
-      let copyState = [...this.state.data];
-      copyState.map((item, i) => {
-        if(item.id === e.id) {
-          item.name = res.data.result.name;
-          item.start = res.data.result.start;
-          item.end = res.data.result.end;
-        }
-      });
-
-      this.setState({ data: copyState });
+      if (res.data.result==='locked'){
+        toast.error('Tidak dapat mengubah task karena task terkunci')
+      }
+      else{
+        let copyState = [...this.state.data];
+        copyState.map((item, i) => {
+          if(item.id === e.id) {
+            item.name = res.data.result.name;
+            item.start = res.data.result.start;
+            item.end = res.data.result.end;
+          }
+        });
+  
+        this.setState({ data: copyState });
+      }
 
     });
   };
@@ -403,6 +409,12 @@ class GanttChart extends Component {
     })
   }
 
+  lockTask(id, lock) {
+    API.put(`${API_SERVER}v2/task/lock/${id}`, {lock}).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+      this.fetchDetailTask(id)
+    })
+  }
   fetchDetailTask(id) {
     API.get(`${API_SERVER}v2/task/id/${id}`).then(res => {
       if(res.data.error) toast.warning("Gagal fetch API");
@@ -417,6 +429,7 @@ class GanttChart extends Component {
         start: this.convertDateToMysql(res.data.result.start, true),
         end: this.convertDateToMysql(res.data.result.end, true),
         status: res.data.result.status,
+        islock: res.data.result.is_lock,
         assigne: assignePush,
         valueAssigne: assignePush,
         subtasks: res.data.result.subtasks,
@@ -570,6 +583,9 @@ class GanttChart extends Component {
               
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
+                  <button disabled={this.props.access_project_admin ? false : true} onClick={this.lockTask.bind(this, this.state.taskId, this.state.islock ? 0 : 1)} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.islock ? '#d13939' : '#9b9b9b'}}><i className={this.state.islock ? 'fa fa-lock' : 'fa fa-lock-open'}></i> {this.state.islock ? 'Locked' : "Unlocked"}</button>
+                </Modal.Title>
+                <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
                   <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
 
@@ -593,7 +609,8 @@ class GanttChart extends Component {
               <Modal.Body>
                 <h3>{this.state.taskDetail.name}</h3>
                
-                <textarea rows="4" defaultValue={""} 
+                <textarea rows="4" defaultValue={""}
+                  disabled={this.state.islock ? true : false} 
                   name="description"
                   value={this.state.description !== 'null' ? this.state.description : ''} 
                   placeholder="Isi deskripsi task..."
@@ -606,11 +623,11 @@ class GanttChart extends Component {
                   <div className="form-group row">
                     <div className="col-sm-6">
                       <label htmlFor="startdate">Start Date</label>
-                      <input type="date" name="start" onChange={this.changeDate} className="form-control" value={this.state.start} />
+                      <input type="date" disabled={this.state.islock ? true : false}  name="start" onChange={this.changeDate} className="form-control" value={this.state.start} />
                     </div>
                     <div className="col-sm-6">
                       <label htmlFor="enddate">End Date</label>
-                      <input type="date" name="end" onChange={this.changeDate} className="form-control" value={this.state.end} />
+                      <input type="date" disabled={this.state.islock ? true : false}  name="end" onChange={this.changeDate} className="form-control" value={this.state.end} />
                     </div>
                   </div>
                 </form>
@@ -620,7 +637,7 @@ class GanttChart extends Component {
                     <tr>
                       <td width="120px">Status</td>
                       <td>
-                        <select name="status" style={{ width: "100%" }} onChange={this.simpanStatusTask} value={this.state.status}>
+                        <select name="status" disabled={this.state.islock ? true : false}  style={{ width: "100%" }} onChange={this.simpanStatusTask} value={this.state.status}>
                           <option value="" disabled selected>status task</option>
                           {
                             this.state.statusTask.map(item => (
@@ -673,7 +690,7 @@ class GanttChart extends Component {
                     }
                     <tr>
                       <td colSpan="3">
-                        <span onClick={this.addSubtask} style={{cursor: 'pointer'}} className="float-right">+ add subtask</span>
+                        <span onClick={this.addSubtask} style={{cursor: 'pointer', display: this.state.islock ? 'none' : 'block'}} className="float-right">+ add subtask</span>
                       </td>
                     </tr>
                   </tbody>
@@ -704,7 +721,7 @@ class GanttChart extends Component {
                     }
                     <tr>
                       <td colSpan="3">
-                        <span onClick={this.addAttachment} style={{cursor: 'pointer'}} className="float-right">+ add attachment</span>
+                        <span onClick={this.addAttachment} style={{cursor: 'pointer', display: this.state.islock ? 'none' : 'block'}} className="float-right">+ add attachment</span>
                       </td>
                     </tr>
                   </tbody>
