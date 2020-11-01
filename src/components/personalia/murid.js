@@ -14,6 +14,7 @@ class Murid extends React.Component {
     tempatLahir: '',
     tanggalLahir: '',
     jenisKelamin: '',
+    email: '',
 
     action: "tambah",
 
@@ -29,7 +30,7 @@ class Murid extends React.Component {
       let form = {
         companyId: Storage.get('user').data.company_id,
         nama: this.state.nama, noInduk: this.state.noInduk, tempatLahir: this.state.tempatLahir,
-        tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin
+        tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin, email: this.state.email
       };
       API.post(`${API_SERVER}v2/murid/create`, form).then(res => {
         if(res.data.error) toast.warning("Error create murid");
@@ -60,6 +61,7 @@ class Murid extends React.Component {
       tempatLahir: '',
       tanggalLahir: '',
       jenisKelamin: '',
+      email: '',
 
       action: "tambah",
     })
@@ -195,6 +197,10 @@ class Murid extends React.Component {
                           <option value="Laki-laki">Laki-laki</option>
                           <option value="Perempuan">Perempuan</option>
                         </select>
+                      </div>
+                      <div className="col-sm-6">
+                        <label>Email</label>
+                        <input value={this.state.email} onChange={e => this.setState({ email: e.target.value })} required type="email" className="form-control" placeholder="Enter" />
                       </div>
                     </div>
                     <div className="form-group row">

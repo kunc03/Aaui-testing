@@ -361,6 +361,9 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/kursus" component={Kursus} />
 
+        <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/notification" component={Notification} />
+
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
@@ -422,6 +425,9 @@ export class ClientSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
 
         <Route path="/aktivitas" component={Activity} />
+
+        <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/notification" component={Notification} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
