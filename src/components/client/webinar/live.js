@@ -23,6 +23,10 @@ export default class WebinarLive extends Component {
     waktuPosttest: 0,
     pretest: [],
     posttest: [],
+    resultPretest:[],
+    resultPosttest:[],
+    modalResultPretest: false,
+    modalResultPosttest: false,
     pretestTerjawab: false,
     posttestTerjawab: false,
     jawabanPretest: [],
@@ -73,6 +77,9 @@ export default class WebinarLive extends Component {
   }
   closeModalKuesioner = e => {
     this.setState({ modalKuesioner: false });
+  }
+  closeModalResult = e => {
+    this.setState({ modalResultPretest: false, modalResultPosttest: false });
   }
   closeModalKuesionerPeserta = e => {
     this.setState({ modalKuesionerPeserta: false });
@@ -138,8 +145,14 @@ export default class WebinarLive extends Component {
           toast.error('Gagal mengirim jawaban post test webinar')
         else
           toast.success('Mengirim jawaban post test webinar')
-          this.fetchWebinar()
+          if (this.props.webinarId && this.props.voucher){
+            this.fetchWebinarPublic()
+          }
+          else{
+            this.fetchWebinar()
+          }
           this.fetchPostTest()
+          this.fetchResultPosttest();
       })
     }
     else{
@@ -160,6 +173,7 @@ export default class WebinarLive extends Component {
         else
           toast.success('Mengirim jawaban pre test webinar')
           this.fetchPreTest()
+          this.fetchResultPretest();
       })
     }
     else{
@@ -481,6 +495,28 @@ export default class WebinarLive extends Component {
     socket.emit('send', {
       socketAction: 'pemenangDoorprize',
       name: this.state.jawabKuesioner[random]
+    })
+  }
+  fetchResultPretest(){
+    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({resultPretest: res.data.result, modalResultPretest: true})
+        }
+      }
+    })
+  }
+  fetchResultPosttest(){
+    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({resultPosttest: res.data.result, modalResultPosttest: true})
+        }
+      }
     })
   }
   fetchPreTest(){
@@ -1065,6 +1101,64 @@ export default class WebinarLive extends Component {
                 </span>
               ))
             }
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalResultPretest}
+          onHide={this.closeModalResult}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Hasil Pre Test
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Nilai : {this.state.resultPretest.nilai}</div>
+            <div>Jawaban Benar : {this.state.resultPretest.benar}</div>
+            <div>Jawaban Salah : {this.state.resultPretest.salah}</div>
+            {
+                  this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
+                    <div className="mb-3 mt-3">
+                      <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
+                      {
+                        item.options.map(items => (
+                          <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
+                        ))
+                         }
+                    </div>
+                  ))
+                  }
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalResultPosttest}
+          onHide={this.closeModalResult}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Hasil Post Test
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Nilai : {this.state.resultPosttest.nilai}</div>
+            <div>Jawaban Benar : {this.state.resultPosttest.benar}</div>
+            <div>Jawaban Salah : {this.state.resultPosttest.salah}</div>
+            {
+                  this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
+                    <div className="mb-3 mt-3">
+                      <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
+                      {
+                        item.options.map(items => (
+                          <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
+                        ))
+                         }
+                    </div>
+                  ))
+                  }
           </Modal.Body>
         </Modal>
       </div>
