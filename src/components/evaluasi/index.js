@@ -1,17 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from "react-toastify";
 
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
-import API, {API_SERVER} from '../../repository/api';
-import Storage from '../../repository/storage';
-
-const hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
-const jam = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+import {API_SERVER} from '../../repository/api';
 
 class Evaluasi extends React.Component {
-
   state = {
     idEvaluasi: "",
     judul: "",
@@ -64,7 +58,6 @@ class Evaluasi extends React.Component {
   }
 
   onClickHapusPertanyaan = (e) => {
-		let dataIndex = e.target.getAttribute('data-id');
 		let dataID = e.target.getAttribute('data-index');
 		let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
 		this.setState({

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl,	Tab, Tabs } from 'react-bootstrap';
-import { NavLink, Link, Switch, Route } from 'react-router-dom';
+import { NavLink, Switch, Route } from 'react-router-dom';
 
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Tugas from '../tugas/index';

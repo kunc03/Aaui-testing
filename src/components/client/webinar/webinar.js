@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Storage from '../../../repository/storage';
 
 import Lists from './lists';
 

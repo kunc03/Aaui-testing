@@ -1,18 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Modal, Form } from "react-bootstrap";
-import { Card, InputGroup, FormControl } from 'react-bootstrap';
+import { InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from "react-moment";
 import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
-  DropdownToggle,
-  DropdownMenu,
-  DropdownMenuWrapper,
-  MenuItem,
-  DropdownButton
+  MenuItem
 } from '@trendmicro/react-dropdown';
 
 // Be sure to include styles at some point, probably during your bootstraping
@@ -77,7 +72,6 @@ export default class Users extends Component {
   }
   
   handleChangeInput = e => {
-    const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
 
@@ -342,46 +336,46 @@ export default class Users extends Component {
         ).match(new RegExp(filterUser,"gmi"))
       )
     }
-    let sorting = this.sortData;
+    // let sorting = this.sortData;
 
-    const Item = ({ item, nomor }) => {
-      return (
-        <tr>
-          <td>{nomor}</td>
-          <td>{item.name}</td>
-          <td>{item.identity}</td>
-          <td>{item.branch_name}</td>
-          <td>{item.grup_name}</td>
-          <td style={{textTransform: 'capitalize'}}>{item.level === 'client' ? 'User' : item.level}</td>
-          <td>{item.voucher}</td>
-          <td>{item.email}</td>
-          <td>{item.phone}</td>
-          <td>{item.unlimited ? 'Tidak' : item.validity}</td>
-          <td class="text-center">
-            <Link to="#" className="buttonku" title="Setting Voucher">
-              <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
-            </Link>
-            <Link to="#" className="buttonku" title="Ubah Password">
-              <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
-            </Link>
-            <Link to={`/user-company-edit/${item.user_id}`} className="buttonku" title="Edit">
-              <i className="fa fa-edit"></i>
-            </Link>
-            <Link to="#" className="buttonku" title="Hapus">
-              <i data-id={item.user_id} data-status={item.status} onClick={this.onClickHapus} className="fa fa-trash"></i>
-            </Link>
-          </td>
-        </tr>
-      );
-    };
+    // const Item = ({ item, nomor }) => {
+    //   return (
+    //     <tr>
+    //       <td>{nomor}</td>
+    //       <td>{item.name}</td>
+    //       <td>{item.identity}</td>
+    //       <td>{item.branch_name}</td>
+    //       <td>{item.grup_name}</td>
+    //       <td style={{textTransform: 'capitalize'}}>{item.level === 'client' ? 'User' : item.level}</td>
+    //       <td>{item.voucher}</td>
+    //       <td>{item.email}</td>
+    //       <td>{item.phone}</td>
+    //       <td>{item.unlimited ? 'Tidak' : item.validity}</td>
+    //       <td class="text-center">
+    //         <Link to="#" className="buttonku" title="Setting Voucher">
+    //           <i data-id={item.user_id} onClick={this.onClickModalVoucher} className="fa fa-tag"></i>
+    //         </Link>
+    //         <Link to="#" className="buttonku" title="Ubah Password">
+    //           <i data-id={item.user_id} onClick={this.onClickModalPassword} className="fa fa-key"></i>
+    //         </Link>
+    //         <Link to={`/user-company-edit/${item.user_id}`} className="buttonku" title="Edit">
+    //           <i className="fa fa-edit"></i>
+    //         </Link>
+    //         <Link to="#" className="buttonku" title="Hapus">
+    //           <i data-id={item.user_id} data-status={item.status} onClick={this.onClickHapus} className="fa fa-trash"></i>
+    //         </Link>
+    //       </td>
+    //     </tr>
+    //   );
+    // };
 
-    const Lists = ({ lists }) => (
-      <tbody>
-        {lists.map((list, i) => (
-          <Item key={list.user_id} item={list} nomor={i+1} />
-        ))}
-      </tbody>
-    );
+    // const Lists = ({ lists }) => (
+    //   <tbody>
+    //     {lists.map((list, i) => (
+    //       <Item key={list.user_id} item={list} nomor={i+1} />
+    //     ))}
+    //   </tbody>
+    // );
 
     return (
       <div>

@@ -6,8 +6,7 @@ import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../r
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import {
-  Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image,
-  InputGroup, FormControl, Modal
+  Form, FormControl, Modal
 } from 'react-bootstrap';
 import { toast } from "react-toastify";
 
@@ -17,8 +16,6 @@ import 'react-sm-select/dist/styles.css';
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
-import {isMobile} from 'react-device-detect';
-import {Typography} from '@material-ui/core';
 import DataTable from 'react-data-table-component';
 
 import Storage from '../../repository/storage';
@@ -59,13 +56,6 @@ class MeetingTable extends Component {
       cover: '',
       isClassModal: false,
       modalJadwal: false,
-      infoClass: [],
-      infoParticipant: [],
-      countHadir: 0,
-      countTentative: 0,
-      countTidakHadir: 0,
-      needConfirmation : 0,
-      attendanceConfirmation : '',
       sendingEmail: false,
       dataBooking: {
         room_name: '',
@@ -98,7 +88,6 @@ class MeetingTable extends Component {
       deleteMeetingName: '',
       filterMeeting:'',
       isInvite: false,
-      sendingEmail: false,
       emailInvite: [],
       emailResponse: '',
       //multi select invite
@@ -231,7 +220,7 @@ class MeetingTable extends Component {
     this.setState({ scheduled:!this.state.scheduled });
   }
   handleChange = e => {
-    const name = e.target.name;
+    // const name = e.target.name;
     if (e.target.files[0].size <= 500000) {
       this.setState({
         cover: e.target.files[0],
@@ -695,7 +684,7 @@ class MeetingTable extends Component {
     const valueModerator = [Number(e.target.getAttribute('data-moderator'))];
     const isprivate = e.target.getAttribute('data-isprivate');
     const isRequiredConfirmation = e.target.getAttribute('data-isrequiredconfirmation');
-    const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
+    // const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
     const isscheduled = e.target.getAttribute('data-isscheduled');
     const schedule_start = new Date(e.target.getAttribute('data-start'));
     const schedule_end = new Date(e.target.getAttribute('data-end'));
@@ -807,15 +796,15 @@ class MeetingTable extends Component {
   }
 
   render() {
-    const headerTabble = [
-      // {title : 'Nama Meeting', width: null, status: true},
-      {title : 'Moderator', width: null, status: true},
-      {title : 'Status', width: null, status: true},
-      {title : 'Waktu', width: null, status: true},
-      {title : 'Tanggal', width: null, status: true},
-      {title : 'Peserta', width: null, status: true},
-      // {title : 'File Project', width: null, status: true},
-    ];
+    // const headerTabble = [
+    //   // {title : 'Nama Meeting', width: null, status: true},
+    //   {title : 'Moderator', width: null, status: true},
+    //   {title : 'Status', width: null, status: true},
+    //   {title : 'Waktu', width: null, status: true},
+    //   {title : 'Tanggal', width: null, status: true},
+    //   {title : 'Peserta', width: null, status: true},
+    //   // {title : 'File Project', width: null, status: true},
+    // ];
     const columns = [
       {
         name: 'Nama Meeting',

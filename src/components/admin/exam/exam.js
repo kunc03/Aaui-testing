@@ -224,8 +224,8 @@ export default class QuizList extends Component {
 	}
 
 	render() {
-		const { courseId, exam } = this.state;
-		const statusCompany = ["0", "1"];
+		const { /* courseId, */ exam } = this.state;
+		// const statusCompany = ["0", "1"];
 
 		const YesNo = ({value}) => {
 			if(value === 1) {
@@ -378,7 +378,7 @@ export default class QuizList extends Component {
 			}
 		};
 
-		const startDate = new Date();
+		// const startDate = new Date();
 
 		return (
 	<LoadingOverlay

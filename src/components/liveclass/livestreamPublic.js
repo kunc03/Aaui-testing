@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import { Link, Switch, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { 
-	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
-	InputGroup, FormControl, Modal
+	Form, Card, Col, Row, Modal
 } from 'react-bootstrap';
 
 import ToggleSwitch from "react-switch";
-import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
 
@@ -16,7 +14,7 @@ import Moment from 'react-moment';
 import MomentTZ from 'moment-timezone';
 import JitsiMeetComponent from './livejitsi';
 
-import API, { API_JITSI,APPS_SERVER, API_SERVER, USER_ME, API_SOCKET } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import {isMobile} from 'react-device-detect';

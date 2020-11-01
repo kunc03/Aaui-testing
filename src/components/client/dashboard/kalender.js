@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Storage from '../../../repository/storage';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import Toolbar from 'react-big-calendar/lib/Toolbar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import MomentTZ from 'moment-timezone';
 const localizer = momentLocalizer(moment);
 
 
@@ -21,7 +17,7 @@ class EventNew extends Component {
 
   render() {
   //  console.log(this.props, 'props evenntttt')
-    const lists = this.props.lists;
+    // const lists = this.props.lists;
 
 
     return (

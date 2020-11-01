@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
-import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
+import {Modal, Form, Card, Row, Col} from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
@@ -119,7 +118,7 @@ class FilesTable extends Component {
     }
   }
   onChangeInput = e => {
-    const target = e.target;
+    // const target = e.target;
     const name = e.target.name;
     const value = e.target.value;
 
@@ -412,8 +411,8 @@ componentDidMount(){
     ];
     const bodyTabble = this.state.folder;
     const access_project_admin = this.props.access_project_admin;
-		let access = Storage.get('access');
-		let levelUser = Storage.get('user').data.level;
+		// let access = Storage.get('access');
+		// let levelUser = Storage.get('user').data.level;
     return (
             <div className="card p-20">
             <span className="mb-4">

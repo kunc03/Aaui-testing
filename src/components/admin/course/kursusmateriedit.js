@@ -186,7 +186,7 @@ export default class KursusMateriEdit extends Component {
   }
 
 	render() {
-    const { courseId, kategori, course } = this.state;
+    const { /* courseId, */ kategori, course } = this.state;
     console.log('course: ', course)
 
 		return (

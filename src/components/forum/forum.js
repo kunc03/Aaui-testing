@@ -4,12 +4,9 @@ import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl
 import {
 	_postLIstAllForum,
 	_addforum, 
-  _handleKeyPress,
-  _postStarForum,
-  _deleteStarForum,
-  _addStarForum
+  _handleKeyPress
 } from './_forum';
-import API, {FORUM, API_SERVER, USER_ME} from '../../repository/api';
+import API, {FORUM} from '../../repository/api';
 import Storage from '../../repository/storage';
 import Moment from 'react-moment';
 
@@ -134,7 +131,7 @@ export default class Forum extends Component {
 	render() {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
-    var { forumlist, findForumInput, listTags, forumListStar } = this.state;
+    var { forumlist, findForumInput, listTags } = this.state;
     
     if(findForumInput != ""){
 

@@ -1,9 +1,8 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { FileManager, FileNavigator } from "@opuscapita/react-filemanager";
 import connectorNodeV1 from "@opuscapita/react-filemanager-connector-node-v1";
 
-import API, { API_SERVER, API_SOCKET } from "../../../repository/api";
+import { API_SERVER, API_SOCKET } from "../../../repository/api";
 import Storage from '../../../repository/storage';
 
 import io from 'socket.io-client';

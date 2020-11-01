@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Link, Switch, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { 
-	Form, Card, CardGroup, Col, Row, ButtonGroup, Button, Image, 
-	InputGroup, FormControl, Modal
+	Row, InputGroup, FormControl, Modal
 } from 'react-bootstrap';
 
 import API, { API_SERVER, USER_ME, APPS_SERVER } from '../../repository/api';

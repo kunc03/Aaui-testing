@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import Webinar from './webinar';
 import WebinarAdd from './add';

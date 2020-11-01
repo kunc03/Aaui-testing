@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
-import {Alert, Modal, Form, Card, Button, Row, Col} from 'react-bootstrap';
-import API, {USER_ME, USER, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 
@@ -63,13 +61,13 @@ class Notification extends Component {
 
   render() {
     const {notificationData} = this.state;
-    const dataNotif = [
-        {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
-        {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
-        {pengirim : 'Bobi Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
-        {pengirim : 'Putri Mengomentari Postingan Anda', date : '02:05PM 22/02/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
-        {pengirim : 'Doni Mengomentari Postingan Anda', date : '02:05PM 01/12/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '}
-    ]
+    // const dataNotif = [
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Bobi Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Putri Mengomentari Postingan Anda', date : '02:05PM 22/02/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '02:05PM 01/12/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '}
+    // ]
     console.log('data notifikasi cui', notificationData)
     return (
       <div className="pcoded-main-container">

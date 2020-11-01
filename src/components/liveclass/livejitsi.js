@@ -1,6 +1,5 @@
 import React, {useState, useEffect } from 'react';
-import API, { API_JITSI, API_SERVER, API_SOCKET } from '../../repository/api';
-import { CenturyView } from 'react-calendar';
+import API, { API_JITSI, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 function JitsiMeetComponent(props) {

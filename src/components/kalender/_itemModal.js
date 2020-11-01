@@ -1,15 +1,10 @@
 
-import React, { Component,useState } from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment';
-import {dataKalender} from '../../modul/data';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
-import {OverlayTrigger, Modal} from 'react-bootstrap';
-import {Popover} from 'react-bootstrap';
-const localizer = momentLocalizer(moment);
+import API, {API_SERVER, APPS_SERVER} from '../../repository/api';
+import {Modal} from 'react-bootstrap';
 
 class Event extends Component {
   state = {

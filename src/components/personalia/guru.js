@@ -3,7 +3,7 @@ import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { toast } from "react-toastify";
-import { Card, Modal, Col, Row, InputGroup, Form } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 class Guru extends React.Component {

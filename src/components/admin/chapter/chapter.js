@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Modal, Form, Card, Button, Row, Col, ListGroup, InputGroup, FormControl, Badge, Accordion } from "react-bootstrap";
+import { Modal, Form, Card, FormControl, Badge } from "react-bootstrap";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
@@ -16,8 +16,6 @@ import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
 import Moment from 'moment-timezone';
-
-import ToggleSwitch from "react-switch";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

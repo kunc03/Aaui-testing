@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl,	Tab, Tabs } from 'react-bootstrap';
-import { NavLink, Link, Switch, Route } from 'react-router-dom';
+import { NavLink, Switch, Route } from 'react-router-dom';
 
 import Registrasi from '../registrasi/index';
 import DaftarPelajaran from '../daftar_pelajaran/index';
@@ -79,13 +78,13 @@ export default class LearningAdmin extends Component {
                     <Route path="/learning" exact component={Registrasi} />
                     {
                       titleTabs.map(item => (
-                        <Route path={`/learning${item.link}`} component={item.component} />
+                        <Route key={item.link} path={`/learning${item.link}`} component={item.component} />
                       ))
                     }
 
                     {
                       switchTambahan.map(item => (
-                        <Route path={`/learning${item.link}`} component={item.component} />
+                        <Route key={item.link} path={`/learning${item.link}`} component={item.component} />
                       ))
                     }
 					        </Switch>

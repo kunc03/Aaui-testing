@@ -180,16 +180,16 @@ export default class QuizList extends Component {
 	}
 
 	render() {
-		const { courseId, quiz } = this.state;
-		const statusCompany = ["0", "1"];
+		const { /* courseId, */ quiz } = this.state;
+		// const statusCompany = ["0", "1"];
 
-		const YesNo = ({value}) => {
-			if(value === 1) {
-				return (<>Ya</>);
-			} else {
-				return (<>Tidak</>);
-			}
-		};
+		// const YesNo = ({value}) => {
+		// 	if(value === 1) {
+		// 		return (<>Ya</>);
+		// 	} else {
+		// 		return (<>Tidak</>);
+		// 	}
+		// };
 
 		const Lists = ({lists}) => {
 			if(lists.length !== 0) {

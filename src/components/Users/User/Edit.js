@@ -6,11 +6,8 @@ import { Form } from 'react-bootstrap';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-
-import axios from "axios";
 
 class UserEdit extends Component {
   state = {

@@ -65,7 +65,7 @@ class UserCompany extends Component {
 
   render() {
     let { grup } = this.state;
-    let statusCompany = ['active', 'nonactive'];
+    // let statusCompany = ['active', 'nonactive'];
 
     let linkCompany = '';
     if(Storage.get('user').data.level === 'superadmin') {

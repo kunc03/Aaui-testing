@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import API, { API_SERVER } from "../../repository/api";
-import { Redirect } from "react-router-dom";
 
 class ForgotPassword extends Component {
     constructor(props) {

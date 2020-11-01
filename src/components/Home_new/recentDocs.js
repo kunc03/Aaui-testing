@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import Moment from 'moment-timezone';
-import { Link } from "react-router-dom";
-import Storage from '../../repository/storage';
 
 
 class ListToDoNew extends Component {

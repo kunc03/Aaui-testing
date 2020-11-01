@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 export default class WebinarKuesioner extends Component {
