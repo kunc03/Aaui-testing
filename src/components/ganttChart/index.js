@@ -610,7 +610,6 @@ class GanttChart extends Component {
                 <h3>{this.state.taskDetail.name}</h3>
                
                 <textarea rows="4" defaultValue={""}
-                  disabled={this.state.islock ? true : false} 
                   name="description"
                   value={this.state.description !== 'null' ? this.state.description : ''} 
                   placeholder="Isi deskripsi task..."
@@ -637,7 +636,7 @@ class GanttChart extends Component {
                     <tr>
                       <td width="120px">Status</td>
                       <td>
-                        <select name="status" disabled={this.state.islock ? true : false}  style={{ width: "100%" }} onChange={this.simpanStatusTask} value={this.state.status}>
+                        <select name="status" style={{ width: "100%" }} onChange={this.simpanStatusTask} value={this.state.status}>
                           <option value="" disabled selected>status task</option>
                           {
                             this.state.statusTask.map(item => (
