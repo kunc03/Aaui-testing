@@ -25,6 +25,9 @@ class Sidebar extends Component {
   render() {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
+
+    console.log('Storage: ', Storage.get('user'));
+
     let menuClients = {
       murid: {
         submenu: [
@@ -39,6 +42,12 @@ class Sidebar extends Component {
 
       guru: {
         submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Personalia', link: '/guru/mata-pelajaran' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Kursus', link: '/guru/tugas' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Ujian', link: '/guru/tugas' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Informasi Kelas', link: '/guru/tugas' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'KPI Guru', link: '/guru/tugas' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
 
@@ -130,7 +139,9 @@ class Sidebar extends Component {
       menuAtas = menuAdmins.menuAtas;
       menuBawah = menuAdmins.menuBawah;
     } else {
-      menuContent = menuClients.murid.submenu;
+      let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
+      menuContent = menuClients[subMenuClient].submenu;
+      // menuAtas = menuClients.guru.submenu;
       menuAtas = menuClients.menuAtas;
       menuBawah = menuClients.menuBawah;
     }
