@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
+import ToggleSwitch from "react-switch";
 
 
 class ProjekNew extends Component {
@@ -24,9 +25,11 @@ class ProjekNew extends Component {
     alert: '',
     modalDelete: false,
     modalEdit: false,
+    limited: false,
 
     optionsProjectAdmin: [],
-    valueProjectAdmin: []
+    valueProjectAdmin: [],
+    valueUser: []
   }
   
   onChangeInput = e => {
@@ -39,11 +42,16 @@ class ProjekNew extends Component {
         this.setState({ [name]: value });
     }
 }
+
+toggleSwitch(checked) {
+  this.setState({ limited:!this.state.limited });
+}
+
 closeModalProject = e => {
-  this.setState({modalNewFolder:false, alert: '', valueProjectAdmin:[]})
+  this.setState({modalNewFolder:false, alert: '', valueProjectAdmin:[], limited:false, valueUser:[]})
 }
 closeModalEdit = e => {
-  this.setState({modalEdit:false, alert: '', folderName:'', valueProjectAdmin:[]})
+  this.setState({modalEdit:false, alert: '', folderName:'', valueProjectAdmin:[], valueProjectAdmin:[], limited:false, valueUser:[]})
 }
 closeModalDelete = e => {
   this.setState({modalDelete:false, deleteProjectName:'', deleteProjectId:'', alert:''})
@@ -55,6 +63,8 @@ closeModalDelete = e => {
       company: this.state.companyId,
       mother: 0,
       project_admin: this.state.valueProjectAdmin,
+      is_limit: this.state.limited ? 1 : 0,
+      user: this.state.valueUser,
       aSekretaris : 1,
       aModerator : 1,
       aPembicara : 1,
@@ -68,7 +78,7 @@ closeModalDelete = e => {
           this.setState({alert: res.data.result});
         } else {
           toast.success(`Berhasil menambah project ${this.state.folderName}`)
-          this.setState({modalNewFolder:false, alert: '', folderName:'', valueProjectAdmin:[]})
+          this.setState({modalNewFolder:false, alert: '', folderName:'', valueProjectAdmin:[], valueUser:[], limited:false})
           this.fetchProject();
         }
       }
@@ -102,6 +112,8 @@ closeModalDelete = e => {
           editProjectId: id,
           editProjectName: res.data.result.name,
           valueProjectAdmin: res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [],
+          valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
+          limited: res.data.result.is_limit === 0 ? false : true,
           modalEdit: true
         })
       }
@@ -124,7 +136,9 @@ closeModalDelete = e => {
   editProject(){
     let form = {
       name: this.state.editProjectName,
-      project_admin: this.state.valueProjectAdmin
+      project_admin: this.state.valueProjectAdmin,
+      is_limit: this.state.limited ? 1 : 0,
+      user: this.state.valueUser
     }
     API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
       if(res.status === 200) {
@@ -132,7 +146,7 @@ closeModalDelete = e => {
           toast.error(`Gagal mengubah project ${this.state.editProjectName}`)
         } else {
           toast.success(`Berhasil mengubah project ${this.state.editProjectName}`)
-          this.setState({editProjectId:'', editProjectName: '',modalEdit: false, valueProjectAdmin:[]})
+          this.setState({editProjectId:'', editProjectName: '',modalEdit: false, valueProjectAdmin:[], valueUser:[], limited:false})
           this.fetchProject();
         }
       }
@@ -317,6 +331,39 @@ closeModalDelete = e => {
                               Project admin dapat mengelola meeting, webinar, dan file.
                             </Form.Text>
                           </Form.Group>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit Users
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
+                                :
+                                'Project bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                          {
+                            this.state.limited &&
+                          <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            Users
+                          </Form.Label>
+                          <MultiSelect
+                            id="user"
+                            options={this.state.optionsProjectAdmin}
+                            value={this.state.valueUser}
+                            onChange={valueUser => this.setState({ valueUser })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Select User"
+                          />
+                        </Form.Group>
+                          }
                         </Col>
                     </Row>
                   </Card.Body>
@@ -392,6 +439,39 @@ closeModalDelete = e => {
                               Project admin dapat mengelola meeting, webinar, dan file.
                             </Form.Text>
                           </Form.Group>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
+                                :
+                                'Project bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                          {
+                            this.state.limited &&
+                          <Form.Group controlId="formJudul">
+                          <Form.Label className="f-w-bold">
+                            User
+                          </Form.Label>
+                          <MultiSelect
+                            id="user"
+                            options={this.state.optionsProjectAdmin}
+                            value={this.state.valueUser}
+                            onChange={valueUser => this.setState({ valueUser })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Select User"
+                          />
+                          </Form.Group>
+                          }
                         </Col>
                     </Row>
                   </Card.Body>
