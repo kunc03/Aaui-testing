@@ -88,7 +88,7 @@ const config = {
 
     // Style Untuk Task 
     task: {
-      showLabel: true,
+      showLabel: false,
       style: {
         borderRadius: 60,
         padding:'0px 5px',
