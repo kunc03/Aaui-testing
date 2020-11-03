@@ -215,6 +215,7 @@ export default class WebinarAdd extends Component {
 
     console.log(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`);
     API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      this.setState({optionsName: []})
       response.data.result.map(item => {
         this.state.optionsName.push({
           value: item.user_id,
