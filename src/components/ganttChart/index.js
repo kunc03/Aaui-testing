@@ -586,7 +586,7 @@ class GanttChart extends Component {
                   <button disabled={this.props.access_project_admin ? false : true} onClick={this.lockTask.bind(this, this.state.taskId, this.state.islock ? 0 : 1)} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.islock ? '#d13939' : '#9b9b9b'}}><i className={this.state.islock ? 'fa fa-lock' : 'fa fa-lock-open'}></i> {this.state.islock ? 'Locked' : "Unlocked"}</button>
                 </Modal.Title>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
-                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status ? this.state.status : "Status Task"}</button>
+                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status && this.state.status !== 'null' ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
 
                 <div style={{width: '80%'}}>
