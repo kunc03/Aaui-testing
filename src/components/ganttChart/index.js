@@ -134,17 +134,28 @@ class GanttChart extends Component {
       statusTask: ["Open","In Progress","Done","Closed"],
 
       isModalDetail: false,
+      modalDeleteTask: false,
       taskId: "",
       file: "",
       taskDetail: {}
     };
   }
 
+  modalDeleteTask(){
+    this.setState({modalDeleteTask: true})
+  }
+
+  closeModalDelete = e => {
+    this.setState({ 
+      modalDeleteTask: false,
+    });
+  };
+
   closeClassModal = e => {
     this.setState({ 
       isModalTodo: false, task: "", start: new Date(), end: new Date(),
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
-      valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: []
+      valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: [],
     });
     this.fetchData()
   };
@@ -165,6 +176,20 @@ class GanttChart extends Component {
   onSelectItem = e => {
     this.fetchDetailTask(e.id);
   };
+
+  deleteTask(){
+    API.delete(`${API_SERVER}v2/task/delete/${this.state.taskId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error(`Gagal menghapus task`)
+        } else {
+          toast.success(`Berhasil menghapus task`)
+          this.closeModalDelete()
+          this.closeClassModal()
+        }
+      }
+    })
+  }
 
   onUpdateTask = (e, f) => {
     let form = {};
@@ -727,8 +752,49 @@ class GanttChart extends Component {
                 </table>
 
               </Modal.Body>
+              <Modal.Footer>
+                {
+                  this.props.access_project_admin &&
+                  <button
+                          className="btn btn-icademy-primary btn-icademy-red"
+                          onClick={this.modalDeleteTask.bind(this)}
+                        >
+                          <i className="fa fa-trash"></i>
+                          Hapus
+                  </button>
+                }
+              </Modal.Footer>
             </Modal>
-
+            
+        <Modal
+          show={this.state.modalDeleteTask}
+          onHide={this.closeModalDelete}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi Hapus Task
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan menghapus task ini ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalDelete.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.deleteTask.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Hapus
+                      </button>
+          </Modal.Footer>
+        </Modal>
         </div>
                     
     );
