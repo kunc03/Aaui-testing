@@ -323,6 +323,7 @@ closeModalDelete = e => {
                               value={this.state.valueProjectAdmin}
                               onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
                               mode="tags"
+                              required
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Pilih Project Admin"
