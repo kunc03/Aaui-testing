@@ -222,7 +222,7 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
         if(res.data.error) 
-          toast.error('Gagal mengirim jawaban kuesioner webinar')
+          toast.error('Sudah pernah mengirim jawaban kuesioner pada webinar ini')
         else
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
@@ -327,8 +327,11 @@ export default class WebinarLive extends Component {
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
-              tamu: res.data.result.tamu
+              tamu: res.data.result.tamu,
+              waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
             })
+            res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
@@ -421,8 +424,11 @@ export default class WebinarLive extends Component {
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
-              tamu: res.data.result.tamu
+              tamu: res.data.result.tamu,
+              waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
             })
+            res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
             let tgl = new Date(res.data.result.tanggal)
@@ -492,6 +498,8 @@ export default class WebinarLive extends Component {
   }
   acakDoorprize(){
     const random = Math.floor(Math.random() * this.state.jawabKuesioner.length);
+    console.log('ALVIN SENDER', this.state.jawabKuesioner)
+    console.log('ALVIN WIN', this.state.jawabKuesioner[random])
     socket.emit('send', {
       socketAction: 'pemenangDoorprize',
       name: this.state.jawabKuesioner[random]
@@ -541,7 +549,19 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  fetchKuesionerSender(){
+    API.get(`${API_SERVER}v2/kuesioner/sender/${this.state.webinarId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({jawabKuesioner: res.data.result})
+        }
+      }
+    })
+  }
   componentDidMount(){
+    this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if(data.webinar_id == this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher){
@@ -562,7 +582,7 @@ export default class WebinarLive extends Component {
         this.fetchKuesioner()
       }
       if(data.socketAction == 'jawabKuesioner') {
-        this.state.jawabKuesioner.push(data.name)
+        this.fetchKuesionerSender()
         this.forceUpdate()
       }
       if(data.socketAction == 'fetchPostTest') {
@@ -639,11 +659,16 @@ export default class WebinarLive extends Component {
   }
 
   sendKuesioner(){
-    socket.emit('send', {
-      socketAction: 'sendKuesioner',
+    
+    API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendKuesioner',
+        })
+        toast.success('Kuesioner dikirim ke peserta');
+        this.setState({waitingKuesioner: true})
+      }
     })
-    toast.success('Kuesioner dikirim ke peserta');
-    this.setState({waitingKuesioner: true})
   }
   
 	render() {
@@ -723,7 +748,7 @@ export default class WebinarLive extends Component {
                   {
                       user.user_id == this.state.sekretarisId ?
                       <button onClick={()=> this.setState({modalKuesioner: true})} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Kuesioner
+                        <i className="fa fa-clipboard-list"></i>Kuesioner & Doorprize
                       </button>
                       :
                       null
