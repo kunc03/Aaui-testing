@@ -42,8 +42,8 @@ class Sidebar extends Component {
 
       guru: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Personalia', link: '/guru/mata-pelajaran' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Kursus', link: '/guru/tugas' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Personalia', link: '/guru/personalia' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Kursus', link: '/guru/kursus' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Ujian', link: '/guru/tugas' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Informasi Kelas', link: '/guru/tugas' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'KPI Guru', link: '/guru/tugas' },
