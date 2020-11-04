@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, API_SOCKET } from '../../../repository/api';
 import Tooltip from '@material-ui/core/Tooltip';
 
-class Sidebar extends Component {
+import SocketContext from '../../../socket';
+
+class SidebarClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,6 +26,13 @@ class Sidebar extends Component {
     this.setState({ menuAktif: window.location.pathname })
 
     this.fetchNotif()
+
+    this.props.socket.on('broadcast', data => {
+      console.log('broadcast sidebar ', data)
+      if(data.companyId == Storage.get('user').data.company_id) {
+        this.fetchNotif()
+      }
+    })
   }
 
   fetchNotif() {
@@ -313,5 +322,11 @@ class Sidebar extends Component {
     );
   }
 }
+
+const Sidebar = props => (
+  <SocketContext.Consumer>
+    { socket => <SidebarClass {...props} socket={socket} /> }
+  </SocketContext.Consumer>
+)
 
 export default Sidebar;
