@@ -5,7 +5,16 @@ import Storage from '../../repository/storage';
 import {
    Modal, FormControl, Form
 } from 'react-bootstrap';
-import API, { API_SERVER } from '../../repository/api';
+import API, { API_SERVER, API_SOCKET } from '../../repository/api';
+
+import { toast } from 'react-toastify';
+import moment from 'moment-timezone';
+
+import io from 'socket.io-client';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  console.log("Something new");
+});
 
 class PengumumanTable extends Component {
   constructor(props) {
@@ -17,7 +26,16 @@ class PengumumanTable extends Component {
       delete: {
         modal: false,
         id: ''
-      }
+      },
+
+      companyId: Storage.get('user').data.company_id,
+      judul: '',
+      isi: '',
+      penerima: [],
+
+      roles: [],
+
+      level: Storage.get('user').data.level
     };
   }
 
@@ -37,41 +55,108 @@ class PengumumanTable extends Component {
     this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') }});
   }
 
-  
+  fetchPengumuman() {
+    let url = null;
+    if(this.state.level === "admin" || this.state.level === "superadmin") {
+      url = `${API_SERVER}v1/pengumuman/company/${this.state.companyId}`;
+    } else {
+      url = `${API_SERVER}v1/pengumuman/role/${Storage.get('user').data.grup_id}`;
+    }
 
-  onClickDelete = e => {
-    e.preventDefault();
-    let linkURL = `${API_SERVER}v1/company/${this.state.delete.id}`;
-    API.delete(linkURL).then(res => {
-      console.log(res.data);
-      this.setState({ 
-        grup: this.state.grup.filter(item => { return item.company_id != this.state.delete.id}),
-        delete: { modal: false, id: ''}
-      });
-    }).catch(err => {
-      console.log(err);
-    });
-  }
-
-  componentDidMount() {
-    let link = `${API_SERVER}v1/company`;
-    API.get(link).then(response => {
-      this.setState({ grup: response.data.result });
+    API.get(url).then(response => {
+      console.log('RES: ', response.data)
+      this.setState({ grup: response.data.result.reverse() });
     }).catch(function(error) {
       console.log(error);
     });
+  }
+
+  fetchRole() {
+    API.get(`${API_SERVER}v1/grup/company/${this.state.companyId}`).then(res => {
+      if(res.data.error) {
+        toast.warning("Error, fetch data role")
+      }
+      res.data.result.map(item => item.isChecked = false);
+      this.setState({ roles: res.data.result })
+    })
+  }
+
+  onClickDelete = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v1/pengumuman/delete/${e.target.getAttribute('data-id')}`).then(res => {
+      if(res.data.error) toast.danger("Gagal hapus pengumuman");
+
+      this.fetchPengumuman();
+    })
+  }
+
+  componentDidMount() {
+    this.fetchPengumuman();
+    this.fetchRole();
+
+    socket.on('broadcast', data => {
+      if(data.companyId == Storage.get('user').data.company_id) {
+        this.fetchPengumuman();
+      }
+    })
+  }
+
+  closeClassModal = e => {
+    this.setState({ isCreateModal: false, judul: '', isi: '', penerima: []});
+    this.fetchRole();
+  }
+
+  onSubmitForm = e => {
+    e.preventDefault();
+    let form = {
+      companyId: this.state.companyId,
+      title: this.state.judul,
+      isi: this.state.isi,
+      penerima: this.state.penerima.toString()
+    }
+
+    API.post(`${API_SERVER}v1/pengumuman/create`, form).then(res => {
+      if(res.data.error) {
+        toast.warning("Gagal fetch pengumuman")
+      }
+
+      socket.emit('send', {companyId: Storage.get('user').data.company_id})
+
+      this.fetchPengumuman();
+    })
+  }
+
+  handleCheckBox = e => {
+    let value = e.target.value;
+    let checked = e.target.checked;
+
+    let copyRoles = [...this.state.roles];
+    let dataPenerima = [...this.state.penerima];
+
+    copyRoles.forEach(item => {
+      if(parseInt(item.grup_id) == parseInt(value)) {
+        item.isChecked = checked;
+        if(checked) {
+          dataPenerima.push(value);
+        }
+        else {
+          let cc = dataPenerima.filter(e => e != value)
+          dataPenerima = cc;
+        }
+
+      }
+    })
+    this.setState({ roles: copyRoles, penerima: dataPenerima })
   }
 
   createModalPengumuman() {
     this.setState({ isCreateModal: true});
   };
 
-  closeClassModal = e => {
-    this.setState({ isCreateModal: false});
-  }
-
   render() {
-    let { grup } = this.state;
+    console.log('state: ', this.state);
+
+    let { grup, roles } = this.state;
     let statusCompany = ['active', 'nonactive'];
 
     let linkCompany = '';
@@ -90,49 +175,47 @@ class PengumumanTable extends Component {
           >
             <div className="row d-flex align-items-center">
               <div className="col-sm-1">
-                    <input type="checkbox"/> &nbsp; &nbsp; 
+                    <input type="checkbox"/> &nbsp; &nbsp;
                     <img
                       src='newasset/flag-active.svg'
                     />
               </div>
               <div className="col-sm-2">
                     <small className="f-w-600 f-16 text-c-grey2 ">
-                      Ethel Bharet
+                      <ul>
+                      {item.penerima.map(item => (
+                        <li>{item.grup_name}</li>
+                      ))}
+                      </ul>
                     </small>
-                    <Link to={`${linkCompany}/${item.company_id}`}>
-                    </Link>
               </div>
               <div className="col-sm-3">
                     <small className="f-w-600 f-14 text-c-grey2 ">
-                    PERHATIAN! Untuk semua Guru! - 
+                    {item.title}
                     </small>
               </div>
               <div className="col-sm-3">
                     <small className="f-w-600 f-14 text-c-grey-t ">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt...
+                    {item.isi}
                     </small>
               </div>
               <div className="col-sm-2 text-right">
-              10:47 AM &nbsp; 11/24/2020 &nbsp;
+              {moment(item.created_at).tz('Asia/Jakarta').format('hh:mm A')} &nbsp;
+              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}
               </div>
               <div className="col-sm-1 text-right">
-                <p className="m-b-0">
-                
-                  <a
-                    href="#"
-                    title="Delete"
-                    data-toggle="modal"
-                    data-target="#modalDelete"
-                  >
-                    <img
-                      src='assets/images/component/Delete-1.png'
-                      className="img-icon-delete"
-                      data-id={item.company_id}
-                      onClick={this.isToggleDelete}
-                      alt="Delete"
-                    />
-                  </a>
-                </p>
+                {
+                  <i style={{cursor: 'pointer'}} className="fa fa-search mr-2"></i>
+                }
+                {
+                  (this.state.level === "admin" || this.state.level === "superadmin") &&
+                  <i
+                  style={{cursor: 'pointer'}}
+                  className="fa fa-trash"
+                  data-id={item.id_pengumuman}
+                  onClick={this.onClickDelete}
+                  ></i>
+                }
               </div>
             </div>
           </div>
@@ -143,14 +226,13 @@ class PengumumanTable extends Component {
     const Lists = ({ lists }) => (
       <ul className="list-cabang">
         {lists.map(list => (
-          <Item key={list.company_id} item={list} />
+          <Item key={list.pengumuman_id} item={list} />
         ))}
       </ul>
     );
 
     return (
-      
-      
+
         <div className="row">
           <div className="col-sm-12">
             <h3 className="f-24 fc-skyblue f-w-800 mb-3">
@@ -159,16 +241,19 @@ class PengumumanTable extends Component {
           </div>
 
           <div className="col-sm-12 mb-3 mt-2">
-            
-              <button
-                  className="btn btn-icademy-primary"
-                  style={{ padding: "7px 8px !important", marginLeft:14 }}
-                  onClick={this.createModalPengumuman.bind(this)}
-                  >
-                  <i className="fa fa-plus"></i>
-                  
-                  Buat Pengumuman
-              </button>
+
+              {
+                (this.state.level === "admin" || this.state.level === "superadmin") &&
+                <button
+                className="btn btn-icademy-primary"
+                style={{ padding: "7px 8px !important", marginLeft:14 }}
+                onClick={this.createModalPengumuman.bind(this)}
+                >
+                <i className="fa fa-plus"></i>
+
+                Buat Pengumuman
+                </button>
+              }
 
               <button className="btn btn-transparent"> Belum di baca </button>
               <button className="btn btn-transparent-disabled"> Belum dibaca </button>
@@ -176,10 +261,10 @@ class PengumumanTable extends Component {
               <button className="btn btn-transparent-disabled"> Flagging </button>
 
 
-              <span className="float-right">5 Pesan Belum dibaca</span>
-            
+              <span className="float-right">{this.state.grup.length} Pengumuman</span>
+
           </div>
-          
+
           <div className="col-sm-12">
             <div style={{ overflowX: "auto" }}>
               <Lists lists={grup} />
@@ -204,6 +289,9 @@ class PengumumanTable extends Component {
                   </Form.Label>
                   <FormControl
                     type="text"
+                    name="judul"
+                    required
+                    onChange={e => this.setState({ [e.target.name]: e.target.value })}
                     placeholder="Tulis Judul Disini"
                   />
                 </Form.Group>
@@ -212,35 +300,34 @@ class PengumumanTable extends Component {
                   <Form.Label className="f-w-bold">
                     isi Pengumuman
                   </Form.Label>
-                  <textarea class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
+                  <textarea
+                    className="form-control" id="exampleFormControlTextarea1" rows="8"
+                    name="isi"
+                    required
+                    onChange={e => this.setState({ [e.target.name]: e.target.value })} />
                 </Form.Group>
 
                 <Form.Group controlId="formisi">
                   <Form.Label className="fc-skyblue f-w-bold">
                     Penerima
                   </Form.Label><br/>
-                  <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
-                    <label className="form-check-label" for="inlineCheckbox1">Principal</label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2" />
-                    <label className="form-check-label" for="inlineCheckbox2">Guru</label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
-                    <label className="form-check-label" for="inlineCheckbox1">Parents</label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2" />
-                    <label className="form-check-label" for="inlineCheckbox2">Murid</label>
-                  </div>
+
+                  {
+                    this.state.roles.map(item => (
+                      <div className="form-check form-check-inline" key={item.grup_id}>
+                        <input checked={item.isChecked} className="form-check-input" type="checkbox" onChange={this.handleCheckBox} value={item.grup_id} />
+                        <label className="form-check-label" for="inlineCheckbox1">{item.grup_name}</label>
+                      </div>
+                    ))
+                  }
+
+
                 </Form.Group>
               </Form>
-              
+
             </Modal.Body>
             <Modal.Footer>
-              
+
               <button
                 className="btn project-info"
                 onClick={this.onSubmitForm}
@@ -252,8 +339,8 @@ class PengumumanTable extends Component {
           </Modal>
 
         </div>
-      
-    
+
+
     );
   }
 }
