@@ -11,6 +11,7 @@ import 'react-sm-select/dist/styles.css';
 
 import Generator from "./Generator";
 import TimeLine from "react-gantt-timeline";
+import { GithubPicker } from 'react-color'
 import "./styles.css";
 
 const config = {
@@ -137,9 +138,28 @@ class GanttChart extends Component {
       modalDeleteTask: false,
       taskId: "",
       file: "",
-      taskDetail: {}
+      taskDetail: {},
+      tagInput: false,
+      displayColorPicker: false,
+      colorPick: '#CCC',
+      tags:[],
+      tags_label: 'Untagged',
+      tags_color: '#CCC'
     };
   }
+
+  pickColor = () => {
+    this.setState({ displayColorPicker: !this.state.displayColorPicker })
+  };
+  closePickColor = () => {
+    this.setState({ displayColorPicker: false })
+  };
+
+  changeColor = (color) => {
+    this.setState({ colorPick: color.hex })
+    this.closePickColor()
+  };
+
 
   modalDeleteTask(){
     this.setState({modalDeleteTask: true})
@@ -156,6 +176,7 @@ class GanttChart extends Component {
       isModalTodo: false, task: "", start: new Date(), end: new Date(),
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
       valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: [],
+      tagInput: false
     });
     this.fetchData()
   };
@@ -329,6 +350,40 @@ class GanttChart extends Component {
     }
   }
 
+  fetchTags(){
+    API.get(`${API_SERVER}v2/project/tags/${this.state.projectId}`).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+      this.setState({tags: res.data.result})
+    })
+  }
+  
+  saveTags = e => {
+    e.preventDefault();
+    if(e.key === "Enter") {
+      let form = {
+        project_id: this.state.projectId,
+        color: this.state.colorPick,
+        label: e.target.value
+      }
+      API.post(`${API_SERVER}v2/project/tags/`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal fetch API");
+        this.fetchTags()
+      })
+    }
+  }
+  
+  setTags(tags_id){
+      let form = {
+        tags_id: tags_id,
+        task_id: this.state.taskId
+      }
+      API.put(`${API_SERVER}v2/project/set-tags/`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal fetch API");
+        this.fetchDetailTask(this.state.taskId)
+        this.setState({tagInput: false})
+      })
+  }
+
   deleteSubtask = e => {
     e.preventDefault();
     let id = e.target.getAttribute('data-id');
@@ -467,8 +522,11 @@ class GanttChart extends Component {
               '#32C5FF',
 
         max: res.data.result.subtasks.length,
-        val: res.data.result.subtasks.filter(item => item.status == 2).length
+        val: res.data.result.subtasks.filter(item => item.status == 2).length,
+        tags_color: res.data.result.tags_color ? res.data.result.tags_color : '#CCC',
+        tags_label: res.data.result.tags_label ? res.data.result.tags_label : 'Untagged'
       });
+      this.fetchTags()
     })
   }
 
@@ -521,7 +579,9 @@ class GanttChart extends Component {
         else if (res.data.result[i].status === 'Closed') {
           res.data.result[i].color = '#32C5FF'
         }
-        
+
+        // res.data.result[i].color = res.data.result[i].tags_color ? res.data.result[i].tags_color : res.data.result[i].color;
+
         // if (new Date(res.data.result[i].end) <= new Date()){
         //   res.data.result[i].border = '1px solid #F00'
         // }
@@ -531,6 +591,7 @@ class GanttChart extends Component {
     })
 
     API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      this.setState({optionsAssigne: []})
       response.data.result.map(item => {
         this.state.optionsAssigne.push({value: item.user_id, label: item.name});
       });
@@ -641,6 +702,36 @@ class GanttChart extends Component {
                   onChange={e => this.setState({ description: e.target.value })} 
                   onBlur={this.simpanDeskripsi} className="form-control mb-3" />
 
+                <div>
+                  <button onClick={()=> this.setState({tagInput: !this.state.tagInput})} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.tags_color}}>{this.state.tags_label}</button>
+                  {
+                    this.state.tagInput &&
+                    <div className='tags-wraper'>
+                      {
+                        this.state.tags && this.state.tags.map(item=>
+                          <div className='tags-row' onClick={this.setTags.bind(this, item.id)}>
+                            <div className='tags-color' style={{backgroundColor: item.color}}></div>
+                            <div className='tags-label'>{item.label}</div>
+                          </div>
+                        )
+                      }
+                      <div className='tags-row'>
+                        <div>
+                        <div className='tags-color' onClick={this.pickColor} style={{backgroundColor: this.state.colorPick}}></div>
+                        { this.state.displayColorPicker ?
+                        <div className='color-popover'>
+                          <div className='color-cover' onClick={ this.closePickColor }/>
+                          <GithubPicker color={this.state.colorPick} onChange={ this.changeColor } />
+                        </div> : null
+                        }
+                        </div>
+                        <div className='tags-label'>
+                          <input type="text" className='tags-input' name='newTags' placeholder="Add new" onKeyUp={this.saveTags} />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
                 {/* <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span> */}
 
                 <form className="form-vertical mt-4">
