@@ -24,14 +24,7 @@ class InformasiKelas extends Component {
               <div className="pcoded-inner-content">
                 <div className="main-body">
                   <div className="page-wrapper">
-                  <div className="floating-back">
-                    <img
-                      src={`newasset/back-button.svg`}
-                      alt=""
-                      width={90}
-                      onClick={this.goBack}
-                    ></img>
-                  </div>
+                  
                     <div className="row">
                       <div className="col-xl-12">
                         <StatisKelas />
