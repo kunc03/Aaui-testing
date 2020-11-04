@@ -31,7 +31,7 @@ class ProjekNew extends Component {
     valueProjectAdmin: [],
     valueUser: []
   }
-  
+
   onChangeInput = e => {
     const name = e.target.name;
     const value = e.target.value;
@@ -71,7 +71,7 @@ closeModalDelete = e => {
       aOwner : 1,
       aPeserta : 1
     };
-  
+
     API.post(`${API_SERVER}v1/folder`, formData).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -191,7 +191,7 @@ closeModalDelete = e => {
               Projek
             </h3>
           </div>
-          {/* <div>
+          <div>
             {
               accessProjectManager ?
             <button
@@ -200,13 +200,13 @@ closeModalDelete = e => {
             onClick={e=>this.setState({modalNewFolder:true})}
             >
             <i className="fa fa-plus"></i>
-            
+
             Tambah
             </button>
             :
             null
             }
-          </div> */}
+          </div>
           </div>
         </div>
         <div className="col-sm-4 text-right">
@@ -228,19 +228,19 @@ closeModalDelete = e => {
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1">
                 <div className="row p-10 p-t-15 p-b-15" style={{borderBottom: '1px solid #E6E6E6'}}>
-                <Link to={`/detail-project/${item.id}`} className={accessProjectManager ? "col-sm-8" : "col-sm-8"}>
+                <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
                   <div className="box-project">
                     <div className=" f-w-800 f-16 fc-black">
-                      {item.title} 
+                      {item.title}
                     </div>
                   </div>
                 </Link>
-                <span className="col-sm-4">
-                  <Link to={`/detail-project/${item.id}`}><span className="skyblue float-right">{item.meeting} Ruang Meeting</span></Link>
-                  {/* <Link to={`/detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
-                  <Link to={`/detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link> */}
+                <span className="col-sm-7">
+                  <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
+                  <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
                 </span>
-                {/* {
+
+                {
                   accessProjectManager ?
                   <span class="btn-group dropleft col-sm-1">
                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -255,7 +255,8 @@ closeModalDelete = e => {
                     </div>
                   </span>
                   :null
-                } */}
+                }
+
                 </div>
             </div>
           ))

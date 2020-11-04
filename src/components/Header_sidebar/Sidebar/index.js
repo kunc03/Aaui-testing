@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
+import API, { API_SERVER } from '../../../repository/api';
 import Tooltip from '@material-ui/core/Tooltip';
 
 class Sidebar extends Component {
@@ -10,6 +11,8 @@ class Sidebar extends Component {
       menuAktif: '/',
       sideMenu: true,
       sideMenuCollapse:false,
+
+      notifUnread: 0,
     }
   }
 
@@ -19,8 +22,17 @@ class Sidebar extends Component {
 // }
   componentDidMount() {
     this.setState({ menuAktif: window.location.pathname })
+
+    this.fetchNotif()
   }
 
+  fetchNotif() {
+    API.get(`${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log('Gagal fetch unread')
+
+      this.setState({ notifUnread: res.data.result.length });
+    })
+  }
 
   render() {
     let access = Storage.get('access');
@@ -64,7 +76,7 @@ class Sidebar extends Component {
       },
 
       menuAtas : [
-        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true  },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
@@ -89,7 +101,7 @@ class Sidebar extends Component {
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
-        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true  },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
@@ -114,7 +126,7 @@ class Sidebar extends Component {
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas : [
-        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification' },
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Pengumuman', link: '/pengumuman' },
         { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Aktivitas', link: '/aktivitas' },
       ],
@@ -140,8 +152,11 @@ class Sidebar extends Component {
       menuBawah = menuAdmins.menuBawah;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
-      menuContent = menuClients[subMenuClient].submenu;
-      // menuAtas = menuClients.guru.submenu;
+      if(subMenuClient === "guru" || subMenuClient === "murid") {
+        menuContent = menuClients[subMenuClient].submenu;
+      } else {
+        menuContent = menuClients.other.submenu;
+      }
       menuAtas = menuClients.menuAtas;
       menuBawah = menuClients.menuBawah;
     }
@@ -192,23 +207,26 @@ class Sidebar extends Component {
                   menuAtas.map((item, i) => {
                     if(item.access == undefined || access[item.access]) {
                       return (
-                <li data-username="Sample Page"
-                    className={`nav-item`}
-                    style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
-                      <Tooltip title={item.label} arrow placement="right">
-                      <Link className="nav-link" to={item.link}
-                        style={this.state.sideMenu ? {marginTop:35, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
-                      >
-                        <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                          <img
-                            src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
-                            alt=""
-                            width={25}
-                          ></img>
-                        </span>
-                      </Link>
-                      </Tooltip>
-                </li>
+                        <li data-username="Sample Page"
+                          className={`nav-item`}
+                          style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                            <Tooltip title={item.label} arrow placement="right">
+                            <Link className="nav-link" to={item.link}
+                              style={this.state.sideMenu ? {marginTop:35, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
+                            >
+                              <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
+                                <img
+                                  src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                                  alt=""
+                                  width={25}
+                                ></img>
+                              </span>
+                              {
+                                item.hasOwnProperty('isBadge') ? <span className="badge-notif" style={this.state.notifUnread > 9 ? {padding: '1px 3px'} : {padding: '1px 6px'} }>{this.state.notifUnread}</span> : ''
+                              }
+                            </Link>
+                            </Tooltip>
+                        </li>
                       )
                     }
                   })
