@@ -1,6 +1,12 @@
 import React, { Component } from "react";
-import TablePengumuman from './pengumuman';
 import Storage from '../../repository/storage';
+
+import MataPelajaran from './mataPelajaran';
+import LesonTerbaikTerburuk from './lesonTerbaikTerburuk';
+import Jadwals from './jadwal';
+import Kategoris from "./kategori";
+import PemblajaranUser from "./pemblajaranUser";
+
 
 class GuruKursus extends Component {
   constructor(props) {
@@ -31,7 +37,19 @@ class GuruKursus extends Component {
                   </div>
                     <div className="row">
                       <div className="col-xl-12">
-                        <TablePengumuman />
+                        <MataPelajaran />
+                      </div>
+                      <div className="col-xl-12">
+                        <LesonTerbaikTerburuk />
+                      </div>
+                      <div className="col-xl-12">
+                        <Jadwals />
+                      </div>
+                      <div className="col-xl-12">
+                        <Kategoris />
+                      </div>
+                      <div className="col-xl-12">
+                        <PemblajaranUser />
                       </div>
                     </div>
                   </div>
