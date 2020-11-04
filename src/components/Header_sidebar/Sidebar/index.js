@@ -42,11 +42,11 @@ class Sidebar extends Component {
 
       guru: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Personalia', link: '/guru/personalia' },
-          { iconOn: 'matapelajaranon.svg', iconOff: 'matapelajaranon.svg', label: 'Kursus', link: '/guru/kursus' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Ujian', link: '/guru/tugas' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Informasi Kelas', link: '/guru/tugas' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'KPI Guru', link: '/guru/tugas' },
+          { iconOn: 'people-on.svg', iconOff: 'people.svg', label: 'Personalia', link: '/guru/personalia' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Kursus', link: '/guru/kursus' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Ujian', link: '/guru/ujian' },
+          { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Informasi Kelas', link: '/guru/informasi-kelas' },
+          { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'KPI Guru', link: '/guru/kpi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },

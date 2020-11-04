@@ -101,6 +101,10 @@ import LearningMurid from './components/learning/murid';
 // ======= IMPORT COMPONENT GURU ======== //
 import GuruPersonalia from './components/guruPersonalia/index';
 import GuruKurusus from './components/guruKursus/index';
+import GuruUjian from './components/guruUjian/index';
+import InformasiKelas from './components/guruInformasiKelas/index';
+import GuruKPI from './components/guruKPI/index';
+
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -470,6 +474,10 @@ export class ClientSwitch extends React.Component {
          {/* ROUTE GURU */}
          <Route path='/guru/personalia' component={GuruPersonalia} />
          <Route path='/guru/kursus' component={GuruKurusus} />
+         <Route path='/guru/ujian' component={GuruUjian} />
+         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
+         <Route path='/guru/kpi' component={GuruKPI} />
+         
 
         <Route path="/logout" component={Logout} />
       </Switch>
