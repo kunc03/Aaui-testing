@@ -467,7 +467,7 @@ export default class WebinarLive extends Component {
                               let joinUrl = api.administration.join(
                                   this.state.user.name,
                                   this.state.webinar.id,
-                                  this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                                  this.state.webinar.moderator[0].user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
                                   {userID: this.state.user.user_id}
                               )
                               this.setState({joinUrl: joinUrl})
