@@ -245,6 +245,15 @@ class GanttChartClass extends Component {
 
       for(var i=0; i<e.length; i++) {
         API.post(`${API_SERVER}v2/task/assigne`, {taskId: this.state.taskId, userId: e[i]});
+
+        let notif = {
+          user_id: e[i],
+          activity_id: this.state.projectId,
+          type: 5,
+          desc: `${Storage.get('user').data.user} menugaskan Anda pada task "${this.state.taskDetail.name}"`,
+          dest: `${APPS_SERVER}detail-project/${this.state.projectId}`
+        }
+        API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
       }
     })
   }
@@ -423,7 +432,7 @@ class GanttChartClass extends Component {
       let notif = {
         user_id: this.state.optionsAssigne[i].value,
         activity_id: this.state.projectId,
-        type: 6,
+        type: 5,
         desc: `${Storage.get('user').data.user} memindahkan status "${stateAwal}" ke "${stateBerubah}" pada task "${namaTask}"`,
         dest: `${APPS_SERVER}detail-project/${this.state.projectId}`
       }

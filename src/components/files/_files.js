@@ -4,11 +4,11 @@ import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../r
 import {Modal, Form, Card, Row, Col} from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
+import SocketContext from '../../socket';
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
 
-
-class FilesTable extends Component {
+class FilesTableClass extends Component {
   constructor(props) {
     super(props);
 
@@ -56,19 +56,19 @@ class FilesTable extends Component {
 
   handleCheck (role) {
     if (role == 'sekretaris'){
-      this.setState({ aSekretaris: !this.state.aSekretaris }); 
+      this.setState({ aSekretaris: !this.state.aSekretaris });
     }
     else if (role == 'moderator'){
-      this.setState({ aModerator: !this.state.aModerator }); 
+      this.setState({ aModerator: !this.state.aModerator });
     }
     else if (role == 'pembicara'){
-      this.setState({ aPembicara: !this.state.aPembicara }); 
+      this.setState({ aPembicara: !this.state.aPembicara });
     }
     else if (role == 'owner'){
-      this.setState({ aOwner: !this.state.aOwner }); 
+      this.setState({ aOwner: !this.state.aOwner });
     }
     else if (role == 'peserta'){
-      this.setState({ aPeserta: !this.state.aPeserta }); 
+      this.setState({ aPeserta: !this.state.aPeserta });
     }
   }
   closeModalAdd = e => {
@@ -96,27 +96,50 @@ class FilesTable extends Component {
   closeModalUpload = e => {
     this.setState({modalUpload:false})
   }
-  uploadFile = e => {
+  uploadFile = async e => {
     e.preventDefault();
     this.setState({uploading: true})
+
     for (let i=0; i<=this.state.attachmentId.length-1; i++){
       let form = new FormData();
       form.append('folder', this.state.folderId);
       form.append('file', this.state.attachmentId[i]);
-      API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
+      await API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
         if(res.status === 200) {
           if(res.data.error) {
             this.setState({uploading: false, attachmentId: []});
             toast.error('Error : '+res.data.result)
-          } else {
-            this.setState({modalUpload:false, uploading: false, attachmentId: []})
-            this.fetchFile(this.state.folderId)
-            toast.success('Berhasil upload file')
           }
+          // else {
+          //   toast.success('Berhasil upload file')
+          // }
         }
       })
     }
+
+    let msg = `${Storage.get('user').data.user} berhasil menambahkan ${this.state.attachmentId.length} file`;
+    this.sendNotifToAll(msg);
+
+    this.setState({modalUpload:false, uploading: false, attachmentId: []})
+    this.fetchFile(this.state.folderId)
   }
+
+  sendNotifToAll(msg) {
+    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      response.data.result.map(item => {
+        let notif = {
+          user_id: item.user_id,
+          type: 6,
+          activity_id: this.state.folderId,
+          desc: msg,
+          dest: `${APPS_SERVER}detail-project/${this.state.prevFolderId ? this.state.folderId : this.state.prevFolderId}`
+        }
+        API.post(`${API_SERVER}v1/notification/broadcast`, notif);
+      });
+    })
+    this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
+  }
+
   onChangeInput = e => {
     // const target = e.target;
     const name = e.target.name;
@@ -147,6 +170,9 @@ saveFolder = e => {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)
       } else {
+        let msg = `${Storage.get('user').data.user} berhasil menambakan folder baru dengan nama "${formData.name}"`;
+        this.sendNotifToAll(msg);
+
         this.closeModalAdd()
         this.fetchFolder(this.state.folderId);
         toast.success('Berhasil menambah folder baru')
@@ -181,10 +207,14 @@ editFolder(){
     aPeserta: this.state.aPeserta ? 1 : 0
   }
   API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
+    console.log(res.data)
     if(res.status === 200) {
       if(res.data.error) {
         toast.error(`Gagal mengubah project ${this.state.editProjectName}`)
       } else {
+        let msg = `${Storage.get('user').data.user} mengubah nama project ${this.state.editProjectName}`;
+        this.sendNotifToAll(msg);
+
         toast.success(`Berhasil mengubah project ${this.state.editProjectName}`)
         this.setState({editProjectId:'', editProjectName: ''})
         this.fetchFolder(this.state.folderId)
@@ -224,7 +254,7 @@ editFolder(){
       }
     }
     this.setState({role: form})
-    
+
     API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
@@ -360,6 +390,9 @@ deleteProject(){
       if(res.data.error) {
         toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
       } else {
+        let msg = `${Storage.get('user').data.user} menghapus project ${this.state.deleteProjectName}`;
+        this.sendNotifToAll(msg);
+
         toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
         this.setState({deleteProjectId:'', deleteProjectName: '',modalDelete: false})
         this.fetchFolder(this.state.folderId);
@@ -373,6 +406,9 @@ deleteFile(){
       if(res.data.error) {
         toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
       } else {
+        let msg = `${Storage.get('user').data.user} menghapus file`;
+        this.sendNotifToAll(msg);
+
         toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
         this.setState({deleteFileId:'', deleteFileName: '',modalDeleteFile: false})
         this.fetchFile(this.state.folderId);
@@ -413,6 +449,8 @@ componentDidMount(){
     const access_project_admin = this.props.access_project_admin;
 		// let access = Storage.get('access');
 		// let levelUser = Storage.get('user').data.level;
+
+    console.log('state: ', this.state)
     return (
             <div className="card p-20">
             <span className="mb-4">
@@ -423,7 +461,7 @@ componentDidMount(){
                 style={{ padding: "7px 8px !important", marginLeft:14 }}
                 >
                 <i className="fa fa-upload"></i>
-                
+
                 Upload
                 </button>
 
@@ -433,10 +471,10 @@ componentDidMount(){
                 style={{ padding: "7px 8px !important" }}
                 >
                 <i className="fa fa-plus"></i>
-                
+
                 Folder
                 </button> : null}
-                {/* <input 
+                {/* <input
                     type="text"
                     placeholder="Search"
                     className="form-control float-right col-sm-3"/> */}
@@ -682,7 +720,7 @@ componentDidMount(){
                                 </td>
                             </tr>
 
-                            
+
                         )
                         }
                         </tbody>
@@ -941,7 +979,7 @@ componentDidMount(){
                             />
                             <label style={{color:'#000', padding:'5px 10px'}}>{ this.state.attachmentId.length } File</label>
                             <Form.Text>
-                              Bisa banyak file, pastikan file tidak melebihi 500MB  
+                              Bisa banyak file, pastikan file tidak melebihi 500MB
                               {/* dan ukuran file tidak melebihi 20MB. */}
                             </Form.Text>
                           </div>
@@ -967,9 +1005,17 @@ componentDidMount(){
                   </Modal.Footer>
         </Modal>
             </div>
-                    
+
     );
   }
 }
+
+const FilesTable = props => (
+  <SocketContext.Consumer>
+    {
+      socket => <FilesTableClass {...props} socket={socket} />
+    }
+  </SocketContext.Consumer>
+)
 
 export default FilesTable;
