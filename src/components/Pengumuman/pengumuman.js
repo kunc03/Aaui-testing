@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
+import SocketContext from '../../socket';
 import {
    Modal, FormControl, Form
 } from 'react-bootstrap';
@@ -10,13 +11,7 @@ import API, { API_SERVER, API_SOCKET } from '../../repository/api';
 import { toast } from 'react-toastify';
 import moment from 'moment-timezone';
 
-import io from 'socket.io-client';
-const socket = io(`${API_SOCKET}`);
-socket.on("connect", () => {
-  console.log("Load Pengumuman");
-});
-
-class PengumumanTable extends Component {
+class PengumumanTableClass extends Component {
   constructor(props) {
     super(props);
 
@@ -94,7 +89,7 @@ class PengumumanTable extends Component {
     this.fetchPengumuman();
     this.fetchRole();
 
-    socket.on('broadcast', data => {
+    this.props.socket.on('broadcast', data => {
       if(data.companyId == Storage.get('user').data.company_id) {
         this.fetchPengumuman();
       }
@@ -120,7 +115,7 @@ class PengumumanTable extends Component {
         toast.warning("Gagal fetch pengumuman")
       }
 
-      socket.emit('send', {companyId: Storage.get('user').data.company_id})
+      this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
 
       this.fetchPengumuman();
     })
@@ -344,5 +339,11 @@ class PengumumanTable extends Component {
     );
   }
 }
+
+const PengumumanTable = props => (
+  <SocketContext.Consumer>
+    {socket => <PengumumanTableClass {...props} socket={socket} />}
+  </SocketContext.Consumer>
+)
 
 export default PengumumanTable;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import SocketContext from '../../socket';
@@ -11,6 +11,10 @@ class NotificationClass extends Component {
 
   componentDidMount() {
     this.fetchNotif();
+
+    this.props.socket.on('broadcast', data => {
+      this.fetchNotif()
+    })
   }
 
   deleteNotif = e => {
@@ -97,7 +101,7 @@ class NotificationClass extends Component {
                                               {item.description}
                                             </p>
 
-                                            <a href={item.destination} className="btn btn-v2 btn-primary mb-3">Cek Sekarang</a>
+                                            <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary mb-3">Cek Sekarang</a>
                                             <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{cursor: 'pointer'}}></i>
                                         </span>
 
