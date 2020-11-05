@@ -13,7 +13,7 @@ import moment from 'moment-timezone';
 import io from 'socket.io-client';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
-  console.log("Something new");
+  console.log("Load Pengumuman");
 });
 
 class PengumumanTable extends Component {

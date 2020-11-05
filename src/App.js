@@ -114,7 +114,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SocketContext from './socket';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
-  console.log("Something new");
+  console.log("Loading App");
 });
 
 export default class App extends React.Component {
@@ -332,7 +332,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path='/print-certificate3' component={PrintCertificate3} />
 
 
-       
+
 
         <Route path="/logout" component={Logout} />
       </Switch>
@@ -485,7 +485,7 @@ export class ClientSwitch extends React.Component {
          <Route path='/guru/ujian' component={GuruUjian} />
          <Route path='/guru/informasi-kelas' component={InformasiKelas} />
          <Route path='/guru/kpi' component={GuruKPI} />
-         
+
 
         <Route path="/logout" component={Logout} />
       </Switch>
