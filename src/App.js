@@ -100,6 +100,14 @@ import WebinarClient from './components/client/webinar/index';
 import LearningAdmin from './components/learning/index';
 import LearningMurid from './components/learning/murid';
 
+// ======= IMPORT COMPONENT GURU ======== //
+import GuruPersonalia from './components/guruPersonalia/index';
+import GuruKurusus from './components/guruKursus/index';
+import GuruUjian from './components/guruUjian/index';
+import InformasiKelas from './components/guruInformasiKelas/index';
+import GuruKPI from './components/guruKPI/index';
+
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -323,6 +331,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
 
+
+       
+
         <Route path="/logout" component={Logout} />
       </Switch>
     );
@@ -466,6 +477,15 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
+
+
+         {/* ROUTE GURU */}
+         <Route path='/guru/personalia' component={GuruPersonalia} />
+         <Route path='/guru/kursus' component={GuruKurusus} />
+         <Route path='/guru/ujian' component={GuruUjian} />
+         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
+         <Route path='/guru/kpi' component={GuruKPI} />
+         
 
         <Route path="/logout" component={Logout} />
       </Switch>

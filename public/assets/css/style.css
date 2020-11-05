@@ -284,6 +284,84 @@ p.text-muted {
   font-size: 13px;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.card-cell-grey {
+  padding: 13px;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #FAFAFA;
+  background-clip: border-box;
+}
+.card-cell-darkgrey {
+  padding: 13px;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #F5F5F5;
+  background-clip: border-box;
+}
+.card-cell-blue {
+  padding: 13px;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #0091FF;
+  background-clip: border-box;
+}
+.card-cell-red {
+  padding: 13px;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color:#FF6384;
+  background-clip: border-box;
+}
+.card-cell-green {
+  padding: 13px;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color:#44D7B6;
+  background-clip: border-box;
+}
+
+.card-table {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #F5F5F5;
+  background-clip: border-box;
+  margin: 8px;
+}
+
 .card {
   border-radius: 0;
   -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
