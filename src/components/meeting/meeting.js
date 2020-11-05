@@ -338,7 +338,9 @@ class MeetingTable extends Component {
         
         //get and push multiselect option
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+        let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+        let sqlFromProject = `${API_SERVER}v2/project/user/${this.props.projectId}`;
+        API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
           response.data.result.map(item => {
             this.state.optionsInvite.push({value: item.user_id, label: item.name});
           });
@@ -348,7 +350,7 @@ class MeetingTable extends Component {
         });
 
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
-            API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+            API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
               response.data.result.map(item => {
                 this.state.optionsModerator.push({value: item.user_id, label: item.name});
                 this.state.optionsPeserta.push({value: item.user_id, label: item.name});
@@ -359,9 +361,9 @@ class MeetingTable extends Component {
             });
           }
           if (this.state.optionsFolder.length==0){
-            API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
+            API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
               response.data.result.map(item => {
-                this.state.optionsFolder.push({value: item.id, label: item.name});
+                this.state.optionsFolder.push({value: item.id, label: item.title});
               });
             })
             .catch(function(error) {
@@ -683,6 +685,7 @@ class MeetingTable extends Component {
     const roomName = e.target.getAttribute('data-roomname');
     const valueModerator = [Number(e.target.getAttribute('data-moderator'))];
     const isprivate = e.target.getAttribute('data-isprivate');
+    const isakses = e.target.getAttribute('data-isakses');
     const isRequiredConfirmation = e.target.getAttribute('data-isrequiredconfirmation');
     // const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
     const isscheduled = e.target.getAttribute('data-isscheduled');
@@ -704,7 +707,8 @@ class MeetingTable extends Component {
       // valuePeserta: participant,
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
-      endDate: schedule_end_jkt
+      endDate: schedule_end_jkt,
+      akses: isakses
     })
 
     this.fetchMeetingInfo(classId)
@@ -883,6 +887,7 @@ class MeetingTable extends Component {
                           data-roomname={row.room_name}
                           data-moderator={row.moderator} 
                           data-isprivate={row.is_private}
+                          data-isakses={row.is_akses}
                           data-isrequiredconfirmation={row.is_required_confirmation}
                           data-participant={row.participant} 
                           data-isscheduled={row.is_scheduled} 
@@ -1251,7 +1256,7 @@ class MeetingTable extends Component {
                             Pembatasan Akses
                           </Form.Label>
                           <div style={{width:'100%'}}>
-                           <ToggleSwitch checked={false} onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
+                           <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                           </div>
                           <Form.Text className="text-muted">
                             {

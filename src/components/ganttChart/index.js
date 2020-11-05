@@ -8,8 +8,6 @@ import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-
-import Generator from "./Generator";
 import TimeLine from "react-gantt-timeline";
 import { GithubPicker } from 'react-color'
 import "./styles.css";
@@ -103,7 +101,10 @@ const config = {
 class GanttChart extends Component {
   constructor(props) {
     super(props);
-    let result = Generator.generateData();
+    let result = {
+      data: [],
+      links: []
+    };
     this.data = result.data;
 
     this.state = {
@@ -590,7 +591,7 @@ class GanttChart extends Component {
       this.setState({ data: res.data.result, links: [] })
     })
 
-    API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}`).then(response => {
+    API.get(`${API_SERVER}v2/project/user/${this.state.projectId}`).then(response => {
       this.setState({optionsAssigne: []})
       response.data.result.map(item => {
         this.state.optionsAssigne.push({value: item.user_id, label: item.name});

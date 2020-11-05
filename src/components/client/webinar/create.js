@@ -94,7 +94,9 @@ export default class WebinarCreate extends Component {
   }
 
   fetchData() {
-    API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+    let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+    let sqlFromProject = `${API_SERVER}v2/project/user/${this.state.projectId}`;
+    API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
       response.data.result.map(item => {
         this.state.optionNames.push({value: item.user_id, label: item.name});
       });
