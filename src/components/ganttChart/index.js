@@ -590,7 +590,7 @@ class GanttChart extends Component {
       this.setState({ data: res.data.result, links: [] })
     })
 
-    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+    API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}`).then(response => {
       this.setState({optionsAssigne: []})
       response.data.result.map(item => {
         this.state.optionsAssigne.push({value: item.user_id, label: item.name});
