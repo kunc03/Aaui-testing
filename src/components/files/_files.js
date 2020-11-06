@@ -5,6 +5,8 @@ import {Modal, Form, Card, Row, Col} from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
+import { MultiSelect } from 'react-sm-select';
+import ToggleSwitch from "react-switch";
 const bbb = require('bigbluebutton-js')
 
 
@@ -51,7 +53,14 @@ class FilesTable extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      optionsUser: [],
+      valueUser: [],
+      limited: false
     };
+  }
+
+  toggleSwitch(checked) {
+    this.setState({ limited:!this.state.limited });
   }
 
   handleCheck (role) {
@@ -80,6 +89,8 @@ class FilesTable extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      limited: false,
+      valueUser: []
     })
   }
   closeModalEdit = e => {
@@ -91,6 +102,8 @@ class FilesTable extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      limited: false,
+      valueUser: []
     })
   }
   closeModalUpload = e => {
@@ -138,7 +151,9 @@ saveFolder = e => {
     aModerator: this.state.aModerator ? 1 : 0,
     aPembicara: this.state.aPembicara ? 1 : 0,
     aOwner: this.state.aOwner ? 1 : 0,
-    aPeserta: this.state.aPeserta ? 1 : 0
+    aPeserta: this.state.aPeserta ? 1 : 0,
+    is_limit: this.state.limited ? 1 : 0,
+    user: this.state.valueUser
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -166,6 +181,8 @@ openModalEdit(id){
         aPembicara: res.data.result.pembicara,
         aOwner: res.data.result.owner,
         aPeserta: res.data.result.peserta,
+        valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
+        limited: res.data.result.is_limit === 0 ? false : true
       })
     }
   })
@@ -178,7 +195,9 @@ editFolder(){
     aModerator: this.state.aModerator ? 1 : 0,
     aPembicara: this.state.aPembicara ? 1 : 0,
     aOwner: this.state.aOwner ? 1 : 0,
-    aPeserta: this.state.aPeserta ? 1 : 0
+    aPeserta: this.state.aPeserta ? 1 : 0,
+    is_limit: this.state.limited ? 1 : 0,
+    user: this.state.valueUser
   }
   API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
     if(res.status === 200) {
@@ -225,7 +244,7 @@ editFolder(){
     }
     this.setState({role: form})
     
-    API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
+    API.get(`${API_SERVER}v1/folder-by-user/${this.state.companyId}/${mother}/${Storage.get('user').data.user_id}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
         console.log('ALVIN RES PROJECT', this.state.folder)
@@ -338,6 +357,12 @@ fetchData(){
       }
     })
   }
+  API.get(`${API_SERVER}v2/project/user/${this.props.projectId}`).then(response => {
+    this.setState({optionsUser: []})
+    response.data.result.map(item => {
+      this.state.optionsUser.push({value: item.user_id, label: item.name});
+    });
+  })
 }
 
 dialogDelete(id, name){
@@ -807,6 +832,45 @@ componentDidMount(){
                             <label>&nbsp; Peserta</label>
                           </Col>
                       </Row>
+                      <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit Users
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses folder.'
+                                :
+                                'Folder bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      {
+                        this.state.limited &&
+                        <Row>
+                          <Col>
+                              <MultiSelect
+                                id="user"
+                                options={this.state.optionsUser}
+                                value={this.state.valueUser}
+                                onChange={valueUser => this.setState({ valueUser })}
+                                mode="tags"
+                                required
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih User"
+                                hasSelectAll={true}
+                                selectAllLabel="Select All"
+                              />
+                          </Col>
+                        </Row>
+                      }
                       </div>
                       :
                       null
@@ -890,6 +954,45 @@ componentDidMount(){
                             <label>&nbsp; Peserta</label>
                           </Col>
                       </Row>
+                      <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit Users
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses folder.'
+                                :
+                                'Folder bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      {
+                        this.state.limited &&
+                        <Row>
+                          <Col>
+                              <MultiSelect
+                                id="user"
+                                options={this.state.optionsUser}
+                                value={this.state.valueUser}
+                                onChange={valueUser => this.setState({ valueUser })}
+                                mode="tags"
+                                required
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih User"
+                                hasSelectAll={true}
+                                selectAllLabel="Select All"
+                              />
+                          </Col>
+                        </Row>
+                      }
                       </div>
                       :
                       null

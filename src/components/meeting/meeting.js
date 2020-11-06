@@ -523,7 +523,7 @@ class MeetingTable extends Component {
                 is_scheduled: res.data.result.is_scheduled,
                 schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
                 schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
-                userInvite: this.state.valueModerator ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
                 messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
@@ -611,7 +611,7 @@ class MeetingTable extends Component {
                 is_scheduled: res.data.result.is_scheduled,
                 schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
                 schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
-                userInvite: this.state.valueModerator ? this.state.valuePeserta.concat(this.state.valueModerator) : tjis.state.valuePeserta,
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
                 messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
