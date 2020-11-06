@@ -193,7 +193,7 @@ class MeetingTable extends Component {
     })
   }
   handleCreateMeeting() {
-    this.setState({ isClassModal: true, valueFolder: [Number(this.props.projectId)]});
+    this.setState({ isClassModal: true, infoParticipant: [], valueFolder: [Number(this.props.projectId)]});
   };
   handleChangeDateFrom = date => {
     this.setState({
@@ -232,7 +232,7 @@ class MeetingTable extends Component {
     }
   }
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoClass: [], private:false, requireConfirmation:false, akses:false, infoParticipant:[], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
     this.setState({ modalJadwal: false});
@@ -252,7 +252,7 @@ class MeetingTable extends Component {
           countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
           countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
           countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
+          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length, 
           attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
         })
       }
@@ -1354,7 +1354,7 @@ class MeetingTable extends Component {
                           </Form.Label>
                           <div className="row mt-1" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
                                       {
-                                        this.state.infoParticipant.map(item=>
+                                        this.state.infoParticipant && this.state.infoParticipant.map(item=>
                                           <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
                                             {item.name}
                                             <button

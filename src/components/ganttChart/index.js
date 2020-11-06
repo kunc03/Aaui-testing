@@ -465,9 +465,7 @@ class GanttChart extends Component {
 
   updateTaskById(e) {
     let form = {
-      name: this.state.taskDetail.name,
-      start: this.convertDateToMysql(this.state.start),
-      end: this.convertDateToMysql(this.state.end)
+      name: this.state.taskDetail.name
     };
 
     if(e.target.name == 'description') {
