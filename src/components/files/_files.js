@@ -263,6 +263,7 @@ selectFolder(id, name) {
   this.fetchMOM(id)
   this.fetchRekaman(id)
   this.fetchRekamanBBB(id)
+  this.fetchRekamanBBBWebinar(id)
   this.setState({selectFolder: id == this.props.projectId ? false : true, folderId: id})
   })
 }
@@ -320,6 +321,49 @@ fetchRekamanBBB(folder){
             if (data.length > 0){
               data.map((item) => {
                 let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+                http(getRecordingsUrl).then((result) => {
+                  if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                    this.state.dataRecordings.push(result.recordings)
+                    this.forceUpdate()
+                  }
+                  else{
+                    console.log('GAGAL', result)
+                  }
+                })
+              })
+            }
+            else{
+              this.setState({dataRecordings:[]})
+              this.forceUpdate()
+            }
+            // BBB END
+            this.setState({
+              isLoading: false
+            })
+          }
+        });
+  }
+}
+
+fetchRekamanBBBWebinar(folder){
+  let levelUser = Storage.get('user').data.level;
+  let userId = Storage.get('user').data.user_id;
+  if (folder == 0){
+    this.setState({dataRecordings:[], isLoading: false})
+  }
+  else{
+        API.get(
+          `${API_SERVER}v2/webinar/list/${folder}`
+        ).then((res) => {
+          if (res.status === 200) {
+            let data = res.data.result;
+            // BBB GET MEETING RECORD
+            let api = bbb.api(BBB_URL, BBB_KEY)
+            let http = bbb.http
+            console.log('ALVIN', data)
+            if (data !== "Tidak ada webinar yang tersedia"){
+              data.map((item) => {
+                let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id})
                 http(getRecordingsUrl).then((result) => {
                   if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
                     this.state.dataRecordings.push(result.recordings)
