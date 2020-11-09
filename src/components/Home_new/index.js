@@ -11,6 +11,7 @@ import ProjekNew from './projek';
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
+import JadwalHariIni from './jadwalHariIni';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -129,8 +130,9 @@ class HomeNew extends Component {
     const projekDashboard = this.state.project;
     const toDoDashboard = dataToDo;
 
-    console.log('PROPS: ', this.props.user)
-    console.log('PROPS: ', Storage.get('user').data)
+    let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
+    console.log(levelUser);
 
     var { kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
     if(findCourseInput != ""){
@@ -228,98 +230,155 @@ class HomeNew extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  <div className="row">
-                    <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Event
-                                </h3>
-                              </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
-                              </div>
-                            </div>
-                            <div style={{marginTop: '35px'}}>
-                              <EventNew lists={eventDashboard} />
-                            </div>
-                          </Card.Body>
-                        </Card>
+                  {/* DASHBOARD CLIENT ===  levelUser */}
+                  {levelUser === 'client' ? 
+                    <div className="row">
+                      <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
+                        <div className="col-sm-12">
+                            <Card>
+                              <Card.Body>
+                                <div className="row">
+                                  <div className="col-sm-6">
+                                    <h3 className="f-w-900 f-18 fc-blue">
+                                      Things To Do
+                                    </h3>
+                                  </div>
+                                  <div className="col-sm-6 text-right">
+                                    <p className="m-b-0">
+                                      {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div style={{marginTop: '10px'}}>
+                                  <JadwalHariIni  />
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </div>
+
+                          <div className="col-sm-12">
+                            <Card>
+                              <Card.Body>
+                                <div className="row">
+                                  <div className="col-sm-6">
+                                    <h3 className="f-w-900 f-18 fc-blue">
+                                      Things To Do
+                                    </h3>
+                                  </div>
+                                  <div className="col-sm-6 text-right">
+                                    <p className="m-b-0">
+                                      {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div style={{marginTop: '10px'}}>
+                                  <ListToDoNew lists={toDoDashboard} />
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </div>
                       </div>
+                      
                       <div className="col-sm-12">
                         <CalenderNew lists={kursusTerbaru} />
                       </div>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Dokumen Terakhir Diakses
-                                </h3>
+                    </div>
+                  : 
+                    <div className="row">
+                      <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Event
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
+                              <div style={{marginTop: '35px'}}>
+                                <EventNew lists={eventDashboard} />
                               </div>
-                            </div>
-                            <div style={{marginTop: '10px'}}>
-                              <RecentDocs lists={this.state.recentDocs} />
-                            </div>
-                          </Card.Body>
-                        </Card>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <CalenderNew lists={kursusTerbaru} />
+                        </div>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Dokumen Terakhir Diakses
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{marginTop: '10px'}}>
+                                <RecentDocs lists={this.state.recentDocs} />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                                <ProjekNew lists={projekDashboard} />
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Things To Do
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{marginTop: '10px'}}>
+                                <ListToDoNew lists={toDoDashboard} />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+
+                        <div className="col-sm-12">
+                          <Card style={{backgroundColor: '#F3F3F3'}}>
+                            
+                              <div className="widget-center">
+                                <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
+                                
+                                <p style={{marginTop: '55px'}}>Tambah Widget</p>
+                              </div>
+                            
+                          </Card>
+                        </div>
+
                       </div>
                     </div>
-                    <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                              <ProjekNew lists={projekDashboard} />
-                          </Card.Body>
-                        </Card>
-                      </div>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Things To Do
-                                </h3>
-                              </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
-                              </div>
-                            </div>
-                            <div style={{marginTop: '10px'}}>
-                              <ListToDoNew lists={toDoDashboard} />
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </div>
 
-                      <div className="col-sm-12">
-                        <Card style={{backgroundColor: '#F3F3F3'}}>
-                          
-                            <div className="widget-center">
-                              <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
-                              
-                              <p style={{marginTop: '55px'}}>Tambah Widget</p>
-                            </div>
-                          
-                        </Card>
-                      </div>
-
-                    </div>
-                  </div>
+                  }
+                  
 
                 </div>
               </div>
