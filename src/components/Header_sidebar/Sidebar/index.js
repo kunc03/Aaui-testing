@@ -231,7 +231,8 @@ class SidebarClass extends Component {
                                 ></img>
                               </span>
                               {
-                                item.hasOwnProperty('isBadge') ? <span className="badge-notif" style={this.state.notifUnread > 9 ? {padding: '1px 3px'} : {padding: '1px 6px'} }>{this.state.notifUnread}</span> : ''
+                                // item.hasOwnProperty('isBadge') ? <span className="badge-notif" style={this.state.notifUnread > 9 ? {padding: '1px 3px'} : {padding: '1px 6px'} }>{this.state.notifUnread}</span> : ''
+                                (this.state.notifUnread && item.hasOwnProperty('isBadge')) ? <span className="badge-notif" style={this.state.notifUnread > 9 ? {padding: '1px 3px'} : {padding: '1px 6px'} }>{this.state.notifUnread}</span> : ''
                               }
                             </Link>
                             </Tooltip>
