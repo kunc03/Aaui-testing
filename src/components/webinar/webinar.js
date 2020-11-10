@@ -193,7 +193,7 @@ class WebinarTable extends Component {
                                     }
                                     {
                                         (access_project_admin && item.status !=3) && 
-                                        <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
+                                        <Link to={`/webinar/edit/${this.props.projectId}/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
                                     }
                                     {
                                         ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner[0].user_id) && item.status == 3) && 

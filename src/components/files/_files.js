@@ -244,7 +244,7 @@ editFolder(){
     }
     this.setState({role: form})
     
-    API.get(`${API_SERVER}v1/folder-by-user/${this.state.companyId}/${mother}/${Storage.get('user').data.user_id}`, this.state.role).then(res => {
+    API.get(`${API_SERVER}v1/folder-by-user/${this.state.companyId}/${mother}/${Storage.get('user').data.user_id}/${this.props.guest ? 1 : 0}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
         console.log('ALVIN RES PROJECT', this.state.folder)
@@ -486,15 +486,18 @@ componentDidMount(){
             <div className="card p-20">
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
-                <button
-                onClick={e=>this.setState({modalUpload:true})}
-                className="btn btn-icademy-primary float-right"
-                style={{ padding: "7px 8px !important", marginLeft:14 }}
-                >
-                <i className="fa fa-upload"></i>
-                
-                Upload
-                </button>
+                {
+                  this.props.guest === false &&
+                  <button
+                  onClick={e=>this.setState({modalUpload:true})}
+                  className="btn btn-icademy-primary float-right"
+                  style={{ padding: "7px 8px !important", marginLeft:14 }}
+                  >
+                  <i className="fa fa-upload"></i>
+                  
+                  Upload
+                  </button>
+                }
 
                 {access_project_admin == true ? <button
                 onClick={e=>this.setState({modalNewFolder:true})}

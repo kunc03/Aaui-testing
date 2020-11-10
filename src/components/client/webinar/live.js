@@ -483,7 +483,7 @@ export default class WebinarLive extends Component {
                       let joinUrl = api.administration.join(
                         this.state.user.name,
                         this.state.webinar.id,
-                        this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                        this.state.webinar.moderator[0].user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
                         {userID: this.state.user.user_id}
                       )
                       this.setState({joinUrl: joinUrl})
@@ -769,7 +769,7 @@ export default class WebinarLive extends Component {
               {
                 this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) ?
                 <div>
-                  <h4>Silahkan jawab pre test untuk lanjut mengikuti webinar</h4>
+                  <h4>Sebelum memasuki Webinar, mohon menjawab pertanyaan yang ada di bawah ini sesuai dengan waktu yang telah ditentukan ({this.state.waktuPretest} menit).<br/> Jika sudah selesai menjawab pertanyaan, silakan klik "Kirim Jawaban Pre Test".<br/> Pengerjaan soal melebihi waktu yang telah ditentukan akan mengakibatkan pre test otomatis tertutup dan langsung memasuki ruang Webinar</h4>
                   <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
                   <Timer
                       initialTime={this.state.waktuPretest*60000}
