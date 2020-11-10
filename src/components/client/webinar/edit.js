@@ -254,7 +254,7 @@ export default class WebinarEdit extends Component {
                               options={this.state.optionNames}
                               value={this.state.sekretarisId}
                               onChange={sekretarisId => this.setState({ sekretarisId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
