@@ -12,12 +12,6 @@ import TableWebinar from '../webinar/webinar';
 import GanttChart from '../ganttChart/index';
 import TableFiles from '../files/_files';
 import Gantt from '../Gantt';
-const data = {
-  data: [
-      { id: 1, text: 'Task #1', start_date: '29-10-2020', duration: 3, progress: 0.6 },
-      { id: 2, text: 'Task #2', start_date: '1-11-2020', duration: 3, progress: 0.4 }
-  ]
-};
 
 const titleTabs = [
   {name: 'Semua'},
@@ -139,10 +133,10 @@ export default class User extends Component {
                       <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
-                      <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} />
-                      {/* <div className="gantt-container">
-                      <Gantt tasks={data}/>
-                      </div> */}
+                      {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
+                      <div className="gantt-container">
+                      <Gantt projectId={this.state.projectId}/>
+                      </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
                       <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
