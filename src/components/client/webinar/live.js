@@ -174,6 +174,7 @@ export default class WebinarLive extends Component {
           toast.success('Mengirim jawaban pre test webinar')
           this.fetchPreTest()
           this.fetchResultPretest();
+          this.openModalPretest();
       })
     }
     else{
@@ -334,6 +335,7 @@ export default class WebinarLive extends Component {
             res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
+            this.fetchResultPretest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -431,6 +433,7 @@ export default class WebinarLive extends Component {
             res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
+            this.fetchResultPretest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -506,18 +509,21 @@ export default class WebinarLive extends Component {
     })
   }
   fetchResultPretest(){
-    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPretest: res.data.result, modalResultPretest: true})
+          this.setState({resultPretest: res.data.result})
         }
       }
     })
   }
+  openModalPretest(){
+    this.setState({modalResultPretest: true})
+  }
   fetchResultPosttest(){
-    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
@@ -761,6 +767,14 @@ export default class WebinarLive extends Component {
                       :
                       null
                   }
+                  {
+                      this.state.resultPretest.nilai != null ?
+                      <button onClick={this.openModalPretest.bind(this)} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Hasil Pre Test
+                      </button>
+                      :
+                      null
+                  }
                   <p className="m-b-0">
                     { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
                   </p>
@@ -770,7 +784,7 @@ export default class WebinarLive extends Component {
                 this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) ?
                 <div>
                   <h4>Sebelum memasuki Webinar, mohon menjawab pertanyaan yang ada di bawah ini sesuai dengan waktu yang telah ditentukan ({this.state.waktuPretest} menit).<br/> Jika sudah selesai menjawab pertanyaan, silakan klik "Kirim Jawaban Pre Test".<br/> Pengerjaan soal melebihi waktu yang telah ditentukan akan mengakibatkan pre test otomatis tertutup dan langsung memasuki ruang Webinar</h4>
-                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
                   <Timer
                       initialTime={this.state.waktuPretest*60000}
                       direction="backward"
@@ -840,7 +854,7 @@ export default class WebinarLive extends Component {
                 this.state.status == 3 && this.state.enablePosttest && this.state.posttestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) &&
                 <div>
                   <h4>Silahkan jawab post test</h4>
-                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
                   <Timer
                       initialTime={this.state.waktuPosttest*60000}
                       direction="backward"

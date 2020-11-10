@@ -55,13 +55,6 @@ html, body, #root,#root div:only-child, .gantt-container {
 }
 
 
-.gantt_grid_scale .gantt_grid_head_cell,
-.gantt_task .gantt_task_scale .gantt_scale_cell {
-    font-weight: bold;
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.7);
-}
-
 .resource_marker{
     text-align: center;
 }
@@ -95,3 +88,64 @@ html, body, #root,#root div:only-child, .gantt-container {
     margin: 0 3px;
     font-weight: bold;
 }
+
+.closed {
+    border: none;
+    color: #ffffff;
+    background: #c0c0c0;
+}
+
+.closed .gantt_task_progress {
+    background: #b8b8b8;
+}
+
+.progress {
+    border: none;
+    color: #ffffff;
+    background: #ff7800;
+}
+
+.progress .gantt_task_progress {
+    background: #cf6c16;
+}
+
+.done {
+    border: none;
+    color: #ffffff;
+    background: #67cb48;
+}
+
+.done .gantt_task_progress {
+    background: #4eaa33;
+}
+
+.open {
+    border: none;
+    color: #ffffff;
+    background: #3185ED;
+}
+
+.open .gantt_task_progress {
+    background: #2870c9;
+}
+
+.gantt_task_line.gantt_project{
+    border:none !important;
+    border-radius:12px;
+    background: #a6de96 !important;
+}
+.gantt_task_line.gantt_project .gantt_task_progress{
+    background: #87c477 !important;
+}
+
+.gantt_task_line{
+    border-radius:12px;
+}
+
+.gantt-multiselect{
+    margin: 0 20px;
+    width:80%;
+  }
+  .chosen-container{
+  	min-width:220px !important;
+  }
