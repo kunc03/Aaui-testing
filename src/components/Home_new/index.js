@@ -12,6 +12,8 @@ import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
 import JadwalHariIni from './jadwalHariIni';
+import PengumumanTerbaru from './pengumumanTerbaru';
+import TugasYangDikerjakan from './tugasYangDikerjakan';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -235,26 +237,26 @@ class HomeNew extends Component {
                     <div className="row">
                       <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
                         <div className="col-sm-12">
-                            <Card>
-                              <Card.Body>
-                                <div className="row">
-                                  <div className="col-sm-6">
-                                    <h3 className="f-w-900 f-18 fc-blue">
-                                      Things To Do
-                                    </h3>
-                                  </div>
-                                  <div className="col-sm-6 text-right">
-                                    <p className="m-b-0">
-                                      {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                    </p>
-                                  </div>
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Jadwal Hari Ini
+                                  </h3>
                                 </div>
-                                <div style={{marginTop: '10px'}}>
-                                  <JadwalHariIni  />
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <span className="f-w-600 f-16">Lihat Semua</span>
+                                  </p>
                                 </div>
-                              </Card.Body>
-                            </Card>
-                          </div>
+                              </div>
+                              <div style={{marginTop: '10px'}}>
+                                <JadwalHariIni  />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
 
                           <div className="col-sm-12">
                             <Card>
@@ -262,17 +264,63 @@ class HomeNew extends Component {
                                 <div className="row">
                                   <div className="col-sm-6">
                                     <h3 className="f-w-900 f-18 fc-blue">
-                                      Things To Do
+                                      Pengumuman Terbaru
                                     </h3>
                                   </div>
                                   <div className="col-sm-6 text-right">
                                     <p className="m-b-0">
-                                      {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                      <span className="f-w-600 f-16">Lihat Semua</span>
                                     </p>
                                   </div>
                                 </div>
                                 <div style={{marginTop: '10px'}}>
-                                  <ListToDoNew lists={toDoDashboard} />
+                                  <PengumumanTerbaru/>
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </div>
+                      </div>
+
+                      <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Tugas Yang Di kerjakan
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <span className="f-w-600 f-16">Lihat Semua</span>
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{marginTop: '10px'}}>
+                                <TugasYangDikerjakan  />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+
+                          <div className="col-sm-12">
+                            <Card>
+                              <Card.Body>
+                                <div className="row">
+                                  <div className="col-sm-6">
+                                    <h3 className="f-w-900 f-18 fc-blue">
+                                      Ujian Yang Akan Datang
+                                    </h3>
+                                  </div>
+                                  <div className="col-sm-6 text-right">
+                                    <p className="m-b-0">
+                                      <span className="f-w-600 f-16">Lihat Semua</span>
+                                    </p>
+                                  </div>
+                                </div>
+                                <div style={{marginTop: '10px'}}>
+                                  <PengumumanTerbaru/>
                                 </div>
                               </Card.Body>
                             </Card>
@@ -284,6 +332,8 @@ class HomeNew extends Component {
                       </div>
                     </div>
                   : 
+
+                  // ======= DASHBOARD ADMIN ======
                     <div className="row">
                       <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
                         <div className="col-sm-12">
