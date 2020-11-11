@@ -107,6 +107,9 @@ import GuruUjian from './components/guruUjian/index';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
 
+// ======= IMPORT COMPONENT MURID ======== //
+import MuridLaporanRapor from './components/muridLaporanRapor/index';
+
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -435,7 +438,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/murid" component={LearningMurid} />
 
-        <Route path="/webinar" component={WebinarClient} />
+        
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
@@ -486,6 +489,10 @@ export class ClientSwitch extends React.Component {
          <Route path='/guru/informasi-kelas' component={InformasiKelas} />
          <Route path='/guru/kpi' component={GuruKPI} />
 
+
+         {/* ROUTE MURID */}
+         <Route path='/rapor' component={MuridLaporanRapor} />
+         <Route path="/webinar-murid" component={Webinar} />
 
         <Route path="/logout" component={Logout} />
       </Switch>
