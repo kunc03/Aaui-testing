@@ -362,6 +362,22 @@ p.text-muted {
   margin: 8px;
 }
 
+.responsive-card-400 {
+  height: 411px;
+  overflow-y: scroll; /* Add the ability to scroll */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.responsive-card-400::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.responsive-card-400 {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .card {
   border-radius: 0;
   -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
@@ -7969,7 +7985,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 .table th {
   border-top: 1px solid #eaeaea;
   /* white-space: nowrap; */
-  padding: 8px 0.75rem;
+  padding: 15px 0.75rem;
 }
 .table thead th {
   border-bottom: 1px solid #eaeaea;
@@ -11775,7 +11791,8 @@ div.code-toolbar > .toolbar span:hover {
 
 .btn-v2 {
   border-radius: 40px;
-  padding: 6px 12px;
+    padding: 7px 21px;
+    margin-bottom: 0px;
 }
 
 .biru-bold {

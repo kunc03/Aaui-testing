@@ -13,9 +13,9 @@ class TugasYangDikerjakan extends Component {
     toDo: '',
     header: [
       {title : 'Mata Pelajaran', width: null, status: true},
-      {title : 'Topik', width: null, status: true},
-      {title : 'Waktu', width: null, status: true},
-      {title : 'Sesi', width: null, status: true},
+      {title : 'Batas waktu pengumpulan', width: null, status: true},
+      {title : 'jumlah terkumpul', width: null, status: true},
+      
     ]
   }
 
@@ -36,17 +36,17 @@ class TugasYangDikerjakan extends Component {
     return (
       <div className="row">
         <div className="table-responsive">
-          <table className="table table-hover">
+          <table className="table table-hover" style={{whiteSpace: 'nowrap'}}>
             <thead>
                 <tr style={{borderBottom: '1px solid #C7C7C7'}}>
                 {
                     headerTabble.map((item, i) => {
                         return (
-                        <td align="center" width={item.width}>{item.title}</td>
+                        <td align="center" width={item.width}><b>{item.title}</b></td>
                         )
                     })
                 }
-                <td colSpan="2" align="center">Aksi</td>
+                <td colSpan="2" align="center"><b>Aksi</b></td>
                 </tr>
             </thead>
             <tbody>
@@ -63,9 +63,7 @@ class TugasYangDikerjakan extends Component {
                             <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
                             <td className="fc-muted f-14 f-w-300 p-t-20" align="center">Andre</td>
                             <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
-                            <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
+                            <td className="fc-muted f-14 f-w-300" align="center">
                                 <button className="btn btn-icademy-file" >
                                     <i className="fa fa-download fc-skyblue"></i> Download File
                                 </button>

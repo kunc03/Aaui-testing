@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
 import API, {API_SERVER} from '../../repository/api';
+import { Link } from "react-router-dom";
 
 import { bodyTabble} from '../../modul/data';
 import Moment from 'moment-timezone';
@@ -14,8 +15,6 @@ class PengumumanTerbaru extends Component {
     header: [
       {title : 'Mata Pelajaran', width: null, status: true},
       {title : 'Topik', width: null, status: true},
-      {title : 'Waktu', width: null, status: true},
-      {title : 'Sesi', width: null, status: true},
     ]
   }
 
@@ -37,18 +36,6 @@ class PengumumanTerbaru extends Component {
       <div className="row">
         <div className="table-responsive">
           <table className="table table-hover">
-            <thead>
-                <tr style={{borderBottom: '1px solid #C7C7C7'}}>
-                {
-                    headerTabble.map((item, i) => {
-                        return (
-                        <td align="center" width={item.width}>{item.title}</td>
-                        )
-                    })
-                }
-                <td colSpan="2" align="center">Aksi</td>
-                </tr>
-            </thead>
             <tbody>
                 {
                     bodyTabble.length == 0 ?
@@ -60,16 +47,11 @@ class PengumumanTerbaru extends Component {
                         let levelUser = Storage.get('user').data.level;
                         return (
                         <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">Andre</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
-                            <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
-                                <button className="btn btn-icademy-file" >
-                                    <i className="fa fa-download fc-skyblue"></i> Download File
-                                </button>
-                            </td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20"><b>{item.title}</b></td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
+                              <Link to={""}>
+                                <span className=" f-12 fc-skyblue float-right">Lihat</span>
+                              </Link></td>
                         </tr>
                         )
                     })

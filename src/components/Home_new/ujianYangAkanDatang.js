@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
 import API, {API_SERVER} from '../../repository/api';
+import { Link } from "react-router-dom";
 
 import { bodyTabble} from '../../modul/data';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
-class JadwalHariIni extends Component {
+class UjianYangAkanDatang extends Component {
   state = {
     userId: Storage.get('user').data.user_id,
     toDoList: this.props.lists,
@@ -65,9 +66,9 @@ class JadwalHariIni extends Component {
                             <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
                             <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
                             <td className="fc-muted f-14 f-w-300" align="center">
-                                <button className="btn btn-v2 btn-primary" >
-                                    Di Buka
-                                </button>
+                            <Link to={""}>
+                                <span className=" f-12 fc-skyblue float-right">Lihat</span>
+                              </Link>
                             </td>
                         </tr>
                         )
@@ -82,4 +83,4 @@ class JadwalHariIni extends Component {
   }
 }
 
-export default JadwalHariIni;
+export default UjianYangAkanDatang;

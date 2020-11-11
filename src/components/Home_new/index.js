@@ -14,6 +14,7 @@ import RecentDocs from './recentDocs';
 import JadwalHariIni from './jadwalHariIni';
 import PengumumanTerbaru from './pengumumanTerbaru';
 import TugasYangDikerjakan from './tugasYangDikerjakan';
+import UjianYangAkanDatang from './ujianYangAkanDatang';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -238,7 +239,7 @@ class HomeNew extends Component {
                       <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
                         <div className="col-sm-12">
                           <Card>
-                            <Card.Body>
+                            <Card.Body className="responsive-card-400 ">
                               <div className="row">
                                 <div className="col-sm-6">
                                   <h3 className="f-w-900 f-18 fc-blue">
@@ -247,7 +248,9 @@ class HomeNew extends Component {
                                 </div>
                                 <div className="col-sm-6 text-right">
                                   <p className="m-b-0">
-                                    <span className="f-w-600 f-16">Lihat Semua</span>
+                                    <Link to={""}>
+                                          <span className=" f-12 fc-skyblue">Lihat Semua</span>
+                                      </Link>
                                   </p>
                                 </div>
                               </div>
@@ -260,17 +263,12 @@ class HomeNew extends Component {
 
                           <div className="col-sm-12">
                             <Card>
-                              <Card.Body>
+                              <Card.Body className="responsive-card-400 ">
                                 <div className="row">
                                   <div className="col-sm-6">
                                     <h3 className="f-w-900 f-18 fc-blue">
                                       Pengumuman Terbaru
                                     </h3>
-                                  </div>
-                                  <div className="col-sm-6 text-right">
-                                    <p className="m-b-0">
-                                      <span className="f-w-600 f-16">Lihat Semua</span>
-                                    </p>
                                   </div>
                                 </div>
                                 <div style={{marginTop: '10px'}}>
@@ -284,7 +282,7 @@ class HomeNew extends Component {
                       <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
                         <div className="col-sm-12">
                           <Card>
-                            <Card.Body>
+                            <Card.Body className="responsive-card-400 ">
                               <div className="row">
                                 <div className="col-sm-6">
                                   <h3 className="f-w-900 f-18 fc-blue">
@@ -293,7 +291,9 @@ class HomeNew extends Component {
                                 </div>
                                 <div className="col-sm-6 text-right">
                                   <p className="m-b-0">
-                                    <span className="f-w-600 f-16">Lihat Semua</span>
+                                    <Link to={""}>
+                                        <span className=" f-12 fc-skyblue">Lihat Semua</span>
+                                    </Link>
                                   </p>
                                 </div>
                               </div>
@@ -306,7 +306,7 @@ class HomeNew extends Component {
 
                           <div className="col-sm-12">
                             <Card>
-                              <Card.Body>
+                              <Card.Body className="responsive-card-400 ">
                                 <div className="row">
                                   <div className="col-sm-6">
                                     <h3 className="f-w-900 f-18 fc-blue">
@@ -315,12 +315,14 @@ class HomeNew extends Component {
                                   </div>
                                   <div className="col-sm-6 text-right">
                                     <p className="m-b-0">
-                                      <span className="f-w-600 f-16">Lihat Semua</span>
+                                      <Link to={""}>
+                                        <span className=" f-12 fc-skyblue">Lihat Semua</span>
+                                      </Link>
                                     </p>
                                   </div>
                                 </div>
                                 <div style={{marginTop: '10px'}}>
-                                  <PengumumanTerbaru/>
+                                  <UjianYangAkanDatang/>
                                 </div>
                               </Card.Body>
                             </Card>
