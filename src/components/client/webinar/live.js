@@ -227,6 +227,7 @@ export default class WebinarLive extends Component {
         else
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
+            webinar_id: this.state.webinarId,
             name: this.state.user.name
           })
           toast.success('Mengirim jawaban kuesioner webinar')
@@ -505,6 +506,7 @@ export default class WebinarLive extends Component {
     console.log('ALVIN WIN', this.state.jawabKuesioner[random])
     socket.emit('send', {
       socketAction: 'pemenangDoorprize',
+      webinar_id: this.state.webinarId,
       name: this.state.jawabKuesioner[random]
     })
   }
@@ -578,20 +580,20 @@ export default class WebinarLive extends Component {
         }
         this.setState({ qna: [data, ...this.state.qna] })
       }
-      if(data.socketAction == 'pemenangDoorprize') {
+      if(data.socketAction == 'pemenangDoorprize' && data.webinar_id===this.state.webinarId) {
         this.state.pemenangDoorprize.push(data.name)
         this.setState({modalDoorprize: true})
         this.closeModalKuesioner()
       }
-      if(data.socketAction == 'sendKuesioner') {
+      if(data.socketAction == 'sendKuesioner' && data.webinar_id===this.state.webinarId) {
         this.setState({startKuesioner: true, modalKuesionerPeserta: true})
         this.fetchKuesioner()
       }
-      if(data.socketAction == 'jawabKuesioner') {
+      if(data.socketAction == 'jawabKuesioner' && data.webinar_id===this.state.webinarId) {
         this.fetchKuesionerSender()
         this.forceUpdate()
       }
-      if(data.socketAction == 'fetchPostTest') {
+      if(data.socketAction == 'fetchPostTest' && data.webinar_id===this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher){
           this.fetchWebinarPublic()
         }
@@ -659,6 +661,7 @@ export default class WebinarLive extends Component {
             this.updateStatus(this.state.webinar.id, 3)
             socket.emit('send', {
               socketAction: 'fetchPostTest',
+              webinar_id: this.state.webinarId
             })
         }
     })
@@ -670,6 +673,7 @@ export default class WebinarLive extends Component {
       if (res.status === 200) {
         socket.emit('send', {
           socketAction: 'sendKuesioner',
+          webinar_id: this.state.webinarId
         })
         toast.success('Kuesioner dikirim ke peserta');
         this.setState({waitingKuesioner: true})
