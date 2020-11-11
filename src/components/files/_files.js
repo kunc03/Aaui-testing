@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIST } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {Modal, Form, Card, Row, Col} from 'react-bootstrap';
 
@@ -157,7 +157,6 @@ saveFolder = e => {
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
-    // console.log('ALVIN', res)
     if(res.status === 200) {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)
@@ -247,7 +246,6 @@ editFolder(){
     API.get(`${API_SERVER}v1/folder-by-user/${this.state.companyId}/${mother}/${Storage.get('user').data.user_id}/${this.props.guest ? 1 : 0}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
-        console.log('ALVIN RES PROJECT', this.state.folder)
       }
     })
     API.get(`${API_SERVER}v1/folder/back/${this.state.companyId}/${mother}`).then(res => {
@@ -320,20 +318,24 @@ fetchRekamanBBB(folder){
             let http = bbb.http
             if (data.length > 0){
               data.map((item) => {
-                let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
-                http(getRecordingsUrl).then((result) => {
-                  if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-                    this.state.dataRecordings.push(result.recordings)
-                    this.forceUpdate()
-                  }
-                  else{
-                    console.log('GAGAL', result)
-                  }
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else{
+                      console.log('GAGAL', result)
+                    }
+                  })
                 })
               })
             }
             else{
-              this.setState({dataRecordings:[]})
+              this.setState({dataRecordings:this.state.dataRecordings})
               this.forceUpdate()
             }
             // BBB END
@@ -358,25 +360,26 @@ fetchRekamanBBBWebinar(folder){
           if (res.status === 200) {
             let data = res.data.result;
             // BBB GET MEETING RECORD
-            let api = bbb.api(BBB_URL, BBB_KEY)
-            let http = bbb.http
-            console.log('ALVIN', data)
             if (data !== "Tidak ada webinar yang tersedia"){
               data.map((item) => {
-                let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id})
-                http(getRecordingsUrl).then((result) => {
-                  if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-                    this.state.dataRecordings.push(result.recordings)
-                    this.forceUpdate()
-                  }
-                  else{
-                    console.log('GAGAL', result)
-                  }
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id})
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else{
+                      console.log('GAGAL', result)
+                    }
+                  })
                 })
               })
             }
             else{
-              this.setState({dataRecordings:[]})
+              this.setState({dataRecordings:this.state.dataRecordings})
               this.forceUpdate()
             }
             // BBB END
@@ -703,7 +706,7 @@ componentDidMount(){
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src={item.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -730,7 +733,7 @@ componentDidMount(){
                             :
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src={item.recording.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
