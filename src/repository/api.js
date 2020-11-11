@@ -11,21 +11,20 @@ const API_SERVER_DEV = 'http://localhost:3200/';
 const API_SERVER_STG = 'https://api.icademy.stg.kelola.co.id/';
 const API_SERVER_PROD = 'https://api.icademy.id/';
 
-export const DEV_MODE = 'production';
+export const DEV_MODE = 'development';
 export const API_SERVER = DEV_MODE === 'development' ? API_SERVER_DEV : DEV_MODE === 'staging' ? API_SERVER_STG : API_SERVER_PROD;
 export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MODE === 'staging' ? APPS_SERVER_STG : APPS_SERVER_PROD;
-
-export const BBB_SERVER_LIST = [
-  {server: 'https://bbb1.kelola.co.id/bigbluebutton/', key: '2598039cc17413a1abc6add14e6f7699'},
-  {server: 'https://bbb2.kelola.co.id/bigbluebutton/', key: '021b44070c456191aa66a669d29cb4ee'},
-  {server: 'https://conference.icademy.id/bigbluebutton/', key: 'pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o'}
-]
 
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.dev.kelola.co.id";
 
 export const BBB_URL = "https://bbb.kelola.co.id/bigbluebutton/";
 export const BBB_KEY = "19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d";
+
+export const BBB_SERVER_LIST = [
+  {server: 'https://bbb.kelola.co.id/bigbluebutton/', key: '19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d'},
+  {server: 'https://conference.icademy.id/bigbluebutton/', key: 'pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o'}
+]
 
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
