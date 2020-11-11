@@ -16,7 +16,7 @@ export const API_SERVER = DEV_MODE === 'development' ? API_SERVER_DEV : DEV_MODE
 export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MODE === 'staging' ? APPS_SERVER_STG : APPS_SERVER_PROD;
 
 export const API_JITSI = 'meet.icademy.id';
-export const API_SOCKET = "https://socket.icademy.id";
+export const API_SOCKET = "https://socket.icademy.dev.kelola.co.id";
 
 export const BBB_URL = "https://bbb.kelola.co.id/bigbluebutton/";
 export const BBB_KEY = "19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d";
