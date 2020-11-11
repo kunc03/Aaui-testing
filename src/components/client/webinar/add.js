@@ -212,9 +212,8 @@ export default class WebinarAdd extends Component {
       })
       this.checkProjectAccess(this.state.projectId)
     })
-
-    console.log(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`);
-    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+    
+    API.get(`${API_SERVER}v2/project/user/${this.props.match.params.projectId}`).then(response => {
       this.setState({optionsName: []})
       response.data.result.map(item => {
         this.state.optionsName.push({
