@@ -294,6 +294,7 @@ export default class WebinarLive extends Component {
   }
 
   fetchKuesioner(){
+    this.setState({jawaban: []})
     API.get(`${API_SERVER}v2/kuesioner-peserta/${this.state.webinarId}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
