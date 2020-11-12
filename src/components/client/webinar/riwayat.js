@@ -51,7 +51,14 @@ export default class WebinarRiwayat extends Component {
       }
      ]
     },
-    sertifikat:[]
+    sertifikat:[],
+    companyLogo: '',
+    cert_logo: '',
+    cert_title:'CERTIFICATE OF COMPLETION',
+    cert_subtitle:'THIS CERTIFICATE IS PROUDLY PRESENTED TO',
+    cert_description:'FOR SUCCESSFULLY COMPLETING ALL CONTENTS ON WEBINAR',
+    cert_topic:'',
+    cert_sign_name:''
   }
 
   fetchQNA(){
@@ -60,6 +67,14 @@ export default class WebinarRiwayat extends Component {
           toast.warning("Error fetch API")
       else
         this.setState({qna: res.data.result})
+    })
+  }
+  fetchCompanyInfo(){
+    API.get(`${API_SERVER}v1/company/${this.state.company_id}`).then(res => {
+      if (res.data.error)
+          toast.warning("Error fetch API")
+      else
+        this.setState({companyLogo: res.data.result.logo})
     })
   }
   fetchJawabanKuesioner(){
@@ -100,6 +115,7 @@ export default class WebinarRiwayat extends Component {
         company_id: res.data.result.company_id,
         gambar: res.data.result.gambar,
         judul: res.data.result.judul,
+        cert_topic: res.data.result.judul,
         isi: res.data.result.isi,
         tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD MMMM YYYY"),
         jamMulai: res.data.result.jam_mulai,
@@ -176,6 +192,12 @@ export default class WebinarRiwayat extends Component {
       }
     }
   };
+  handleChangeText = (e) => {
+    this.setState({ [e.target.name]: e.target.value }, () => {
+      let a = this.state;
+      this.setState(a);
+    });
+  };
 
   onChangeForm = e => {
     // this.setState({ [e.target.id]: e.target.value }, () => {
@@ -189,7 +211,8 @@ export default class WebinarRiwayat extends Component {
 
   modalSertifikat(){
     if (this.state.peserta.filter((item)=> item.checked === true).length > 0){
-      this.setState({isModalSertifikat:true})
+      this.fetchCompanyInfo();
+      this.setState({isModalSertifikat:true});
     }
     else{
       toast.warning('Silahkan pilih dahulu peserta yang ingin dibuatkan sertifikat')
@@ -197,7 +220,7 @@ export default class WebinarRiwayat extends Component {
   }
   
   sertifikat = () => {
-    if (this.state.nama === '' || (this.state.signature === '' || this.state.signature === null)){
+    if (this.state.cert_sign_name === '' || (this.state.signature === '' || this.state.signature === null)){
       toast.warning('Silahkan isi nama dan gambar tanda tangan')
     }
     else{
@@ -215,14 +238,19 @@ export default class WebinarRiwayat extends Component {
       let formData = new FormData();
       formData.append('webinar_id', items[0].webinar_id);
       formData.append('company_id', this.state.company_id);
-      formData.append('judul', this.state.judul);
-      formData.append('nama', this.state.nama);
+      formData.append('cert_title', this.state.cert_title);
+      formData.append('cert_subtitle', this.state.cert_subtitle);
+      formData.append('cert_description', this.state.cert_description);
+      formData.append('cert_topic', this.state.cert_topic);
+      formData.append('cert_logo', this.state.cert_logo);
       formData.append('signature', this.state.signature);
+      formData.append('cert_sign_name', this.state.cert_sign_name);
       formData.append('peserta', JSON.stringify(sertifikat));
   
       API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
         toast.success('Mengirim sertifikat kepada peserta');
         this.handleModal();
+        console.log('ALVIN SERT', formData)
       });
     }
   }
@@ -296,7 +324,7 @@ export default class WebinarRiwayat extends Component {
               let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
               let durasi = item.jam_mulai ? diffHour + ' Jam ' + diffMin + ' Menit' : '-';
               return (<tr key={i}>
-                <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td>
+                <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat && 'Terkirim'}</td>
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
@@ -576,6 +604,7 @@ export default class WebinarRiwayat extends Component {
       <Modal
         show={this.state.isModalSertifikat}
         onHide={this.handleModal}
+        size="lg"
       >
         <Modal.Header closeButton>
           <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
@@ -584,33 +613,40 @@ export default class WebinarRiwayat extends Component {
         </Modal.Header>
         <Modal.Body>
         <Form>
-          <Form.Group controlId="name">
-            <Form.Label className="f-w-bold">
-              Nama Tanda Tangan
-            </Form.Label>
-            <Form.Control
-              type="text"
-              value={this.state.nama}
-              className="form-control"
-              placeholder="Masukkan nama pada tanda tangan"
-              name='nama'
-              onChange={this.onChangeForm.bind(this)}
-              required
-            />
-          </Form.Group>
-
           <Form.Group>
-            <label className="bold">Gambar Tanda Tangan</label>
-            <div className="row">
-              <div className="col-sm-3">
-                <img className="img-fluid" src={this.state.signature == '' || this.state.signature == null ? `/newasset/imginput.png` : typeof this.state.signature === 'object' && this.state.signature !== null ? URL.createObjectURL(this.state.signature) : this.state.signature } />
-              </div>
-              <div className="col-sm-6">
-                <input type="file" id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
-              </div>
+          <div style={{width:'750px', padding:'10px', textAlign:'center', border: '3px solid #787878', fontSize:'25px'}}>
+            <div style={{width:'724px', padding:'10px', textAlign:'center', border: '1px solid #787878'}}><br/>
+                    
+                  <label for='cert_logo' style={{display:'block'}}>
+                    <img style={{height:'50px', cursor:'pointer'}} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo } />
+                  </label>
+                  <input type="file" style={{display:'none', cursor:'pointer'}} id="cert_logo" name="cert_logo" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
+                <span style={{fontSize:'20px', fontWeight:'bold'}}>
+                  <input type='text' name='cert_title' onChange={this.handleChangeText} style={{width:'80%', border:'none', borderBottom:'1px dashed #CCC', textAlign:'center', fontWeight:'bold'}} value={this.state.cert_title} />
+                </span>
+                <br/><br/>
+                <span style={{fontSize:'15px'}}>
+                  <input type='text' onChange={this.handleChangeText} name='cert_subtitle' style={{width:'80%', border:'none', borderBottom:'1px dashed #CCC', textAlign:'center'}} value={this.state.cert_subtitle} />
+                </span>
+                <br/><br/>
+                <span style={{fontSize:'20px'}}><b>[Name]</b></span><br/><br/>
+                <span style={{fontSize:'15px'}}>
+                  <input type='text' onChange={this.handleChangeText} name='cert_description' style={{width:'80%', border:'none', borderBottom:'1px dashed #CCC', textAlign:'center'}} value={this.state.cert_description} />
+                </span> <br/><br/>
+                <span style={{fontSize:'18px'}}><b><input type='text' onChange={this.handleChangeText} name='cert_topic' style={{width:'80%', border:'none', borderBottom:'1px dashed #CCC', textAlign:'center'}} value={this.state.cert_topic} /></b></span> <br/><br/>
+                <span style={{fontSize:'10px'}}>{this.state.tanggal}</span><br/>
+                  <label for='signature' style={{display:'block', cursor:'pointer'}}>
+                    <img style={{height:'80px'}} src={this.state.signature == '' || this.state.signature == null ? `/newasset/imginput.png` : typeof this.state.signature === 'object' && this.state.signature !== null ? URL.createObjectURL(this.state.signature) : this.state.signature } />
+                  </label>
+                  <input type="file" style={{display:'none', cursor:'pointer'}} id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
+                <span style={{fontSize:'12px'}}>
+                <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{width:'80%', border:'none', borderBottom:'1px dashed #CCC', textAlign:'center'}} placeholder='Nama Tanda Tangan' value={this.state.cert_sign_name} />
+                </span>
             </div>
+          </div>
           </Form.Group>
         </Form>
+          
         </Modal.Body>
         <Modal.Footer>
           <Button className="btn btn-icademy-primary" onClick={() => this.sertifikat()}>
