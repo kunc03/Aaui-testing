@@ -214,7 +214,7 @@ export default class WebinarLive extends Component {
       })
   }
   kirimJawabanKuesioner(){
-    if (this.state.jawaban.length === this.state.pertanyaan.length){
+    if (this.state.jawaban.length >= this.state.pertanyaan.length){
       let form = {
         id: this.state.webinarId,
         user_id: this.state.user.user_id,
