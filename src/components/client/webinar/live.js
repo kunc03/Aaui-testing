@@ -896,7 +896,7 @@ export default class WebinarLive extends Component {
                     onClick={this.kirimJawabanPosttest.bind(this)}
                   >
                     <i className="fa fa-paper-plane"></i>
-                    Kirim Jawaban Pre Test
+                    Kirim Jawaban Post Test
                   </button>
                 </div>
                 }
