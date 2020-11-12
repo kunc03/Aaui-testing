@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { 
 	Tab, Tabs
@@ -102,12 +102,13 @@ export default class User extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="floating-back">
-                    <img
-                      src={`newasset/back-button.svg`}
-                      alt=""
-                      width={90}
-                      onClick={this.goBack}
-                    ></img>
+                    <a href={APPS_SERVER}>
+                      <img
+                        src={`newasset/back-button.svg`}
+                        alt=""
+                        width={90}
+                      ></img>
+                    </a>
                   </div>
                   <div className="row">
                     <div className="col-xl-12">
