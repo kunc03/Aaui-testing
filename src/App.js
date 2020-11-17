@@ -2,8 +2,10 @@ import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER, API_SOCKET } from './repository/api';
 import Storage from './repository/storage';
+
+import io from 'socket.io-client';
 
 import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
@@ -12,6 +14,7 @@ import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
+import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 import Files from "./components/files/files";
@@ -97,8 +100,22 @@ import WebinarClient from './components/client/webinar/index';
 import LearningAdmin from './components/learning/index';
 import LearningMurid from './components/learning/murid';
 
+// ======= IMPORT COMPONENT GURU ======== //
+import GuruPersonalia from './components/guruPersonalia/index';
+import GuruKurusus from './components/guruKursus/index';
+import GuruUjian from './components/guruUjian/index';
+import InformasiKelas from './components/guruInformasiKelas/index';
+import GuruKPI from './components/guruKPI/index';
+
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import SocketContext from './socket';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  console.log("Loading App");
+});
 
 export default class App extends React.Component {
   constructor(props) {
@@ -191,7 +208,7 @@ export class Main extends React.Component {
     }
 
     return (
-      <div>
+      <SocketContext.Provider value={socket}>
         <Loader />
         <Sidebar />
         <Header />
@@ -207,28 +224,28 @@ export class Main extends React.Component {
           pauseOnHover
           />
         {workSpaceSwitch}
-      </div>
+      </SocketContext.Provider>
     );
   }
 }
 
 export class Logout extends React.Component {
   constructor(props) {
-    super(props);
+      super(props);
 
-    this.onClickLogout = this.onClickLogout.bind(this);
+      this.onClickLogout = this.onClickLogout.bind(this);
   }
 
   onClickLogout(e) {
-    e.preventDefault();
+      e.preventDefault();
   }
 
   componentDidMount() {
-    const user_id = Storage.get('user').data.user_id;
-    API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
-      localStorage.clear();
-      window.location.href = window.location.origin;
-  });
+      const user_id = Storage.get('user').data.user_id;
+      API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
+        localStorage.clear();
+        window.location.href = window.location.origin;
+    });
   }
 
   render() {
@@ -263,6 +280,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/profile" component={Profile} />
         <Route path="/files" component={Files} />
         <Route path="/notification" component={Notification} />
+        <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
@@ -313,6 +331,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
 
+
+
+
         <Route path="/logout" component={Logout} />
       </Switch>
     );
@@ -358,6 +379,9 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
 
         <Route path="/kursus" component={Kursus} />
+
+        <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/notification" component={Notification} />
 
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
@@ -421,6 +445,9 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/aktivitas" component={Activity} />
 
+        <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/notification" component={Notification} />
+
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
@@ -450,6 +477,15 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
+
+
+         {/* ROUTE GURU */}
+         <Route path='/guru/personalia' component={GuruPersonalia} />
+         <Route path='/guru/kursus' component={GuruKurusus} />
+         <Route path='/guru/ujian' component={GuruUjian} />
+         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
+         <Route path='/guru/kpi' component={GuruKPI} />
+
 
         <Route path="/logout" component={Logout} />
       </Switch>

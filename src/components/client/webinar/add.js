@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
@@ -14,10 +14,13 @@ import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment-timezone';
+import SocketContext from '../../../socket';
 
-export default class WebinarAdd extends Component {
+class WebinarAddClass extends Component {
 
 	state = {
+		oldJamMulai: new Date(),
     webinarId: this.props.match.params.webinarId,
     isSending: false,
     role:[],
@@ -167,6 +170,17 @@ export default class WebinarAdd extends Component {
         }
       }
     })
+
+		// send notification
+		let sendNotif = {
+			type: 7,
+			peserta: form.pengguna,
+			description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
+			destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
+		};
+		API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
+			this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
+		})
   }
 
   checkProjectAccess(projectId){
@@ -204,6 +218,7 @@ export default class WebinarAdd extends Component {
         tanggal: tanggal,
         jamMulai: jam_mulai,
         jamSelesai: jam_selesai,
+				oldJamMulai: jam_mulai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         peserta: res.data.result.peserta,
@@ -268,9 +283,25 @@ export default class WebinarAdd extends Component {
           formData.append('gambar', this.state.gambar);
           await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
         }
+
         toast.success("Menyimpan informasi webinar")
         back && this.props.history.goBack();
     })
+
+		// send notification
+		let oldJamMul = moment(this.state.oldJamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
+		let jamMul = moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
+		if(oldJamMul != jamMul) {
+			let sendNotif = {
+				type: 7,
+				peserta: this.state.peserta.map(item => item.id),
+				description: `Training "${this.state.judul}" pada tanggal ${oldJamMul} diubah ke tanggal ${jamMul}`,
+				destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
+			};
+			API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
+				this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
+			})
+		}
 
     console.log(form);
   }
@@ -341,6 +372,8 @@ export default class WebinarAdd extends Component {
 	render() {
 
     // const role = this.state.role
+		console.log('state: ', this.state);
+
     let levelUser = Storage.get('user').data.level;
 
     const TabelPembicara = ({items}) => (
@@ -807,3 +840,11 @@ export default class WebinarAdd extends Component {
 		);
 	}
 }
+
+const WebinarAdd = props => (
+	<SocketContext.Consumer>
+		{ socket => <WebinarAddClass {...props} socket={socket} /> }
+	</SocketContext.Consumer>
+)
+
+export default WebinarAdd;
