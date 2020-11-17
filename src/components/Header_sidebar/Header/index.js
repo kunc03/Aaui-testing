@@ -8,8 +8,8 @@ import moment from 'moment-timezone';
 
 class Header extends Component {
   state = {
-    user: 'Loading...',
-    level: 'Loading...',
+    user: 'Anonymous',
+    level: 'Member',
     avatar: '/assets/images/user/avatar-1.png',
     notificationData: [],
 
@@ -79,21 +79,16 @@ class Header extends Component {
           data: {
             logo: res.data.result.logo,
             company_id: res.data.result.company_id,
-            company_type: res.data.result.company_type,
-
             user_id: res.data.result.user_id,
-            user: res.data.result.name,
-
-            grup_id: res.data.result.grup_id,
-            grup_name: res.data.result.grup_name,
-
             email: res.data.result.email,
+            user: res.data.result.name,
             level: res.data.result.level,
-            avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png',
+            avatar: res.data.result.avatar
+              ? res.data.result.avatar
+              : '/assets/images/user/avatar-1.png',
           },
         });
         console.log('ALVIN', res.data.result)
-
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
@@ -550,7 +545,7 @@ class Header extends Component {
                     alt="Media"
                     className="img-radius"
                     style={{ width: 40, height: 40 }}
-                    src={this.state.avatar ? this.state.avatar : '/assets/images/user/avatar-1.png'}
+                    src={this.state.avatar}
                   />
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
@@ -566,11 +561,11 @@ class Header extends Component {
                 </div>
               </Link>
             </li>
-
+            
           </ul>
 
           <ul className="navbar-nav ml-auto">
-
+            
             <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
             {/* <li>
               <div className="dropdown">
@@ -601,7 +596,7 @@ class Header extends Component {
               </div>
             </li> */}
           </ul>
-
+          
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               <div className="media">
@@ -609,15 +604,15 @@ class Header extends Component {
                   alt="Media"
                   style={{ height: 26 }}
                   src={
-                    this.state.logo
-                      ? this.state.logo
-                      : '/assets/images/user/avatar-1.png'
+                    localStorage.getItem('logo')
+                      ? localStorage.getItem('logo')
+                      : this.state.logo
                   }
                 />
               </div>
             </li>
           </ul>
-
+          
 
           {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
@@ -728,7 +723,7 @@ class Header extends Component {
 
                                 <span style={{color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right'}}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null }</span>
                               </p>
-
+                              
                               {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p

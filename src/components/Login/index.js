@@ -80,19 +80,16 @@ class Login extends Component {
         if(!res.data.error) {
 
           let form = {
-            user_id : res.data.result.user_id,
-            description : res.data.result.email,
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
             title : 'voucher login'
           }
 
-          Storage.set('user', {data: {
-            user_id: res.data.result.user_id,
-            email: res.data.result.email,
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
+            email: res.data.result.email, 
             level: res.data.result.level,
-            grup_id: res.data.result.grup_id,
-            grup_name: res.data.result.grup_name,
           }});
-
           Storage.set('access', {
             activity: res.data.result.activity,
             course: res.data.result.course,
@@ -101,7 +98,6 @@ class Login extends Component {
             group_meeting: res.data.result.group_meeting,
             manage_group_meeting: res.data.result.manage_group_meeting
           });
-          
           Storage.set('token', {data: res.data.result.token});
 
           if (this.props.redirectUrl){
@@ -120,7 +116,7 @@ class Login extends Component {
               console.log(arguments)
             }
           );
-
+          
         } else {
           if (res.data.result.status=='expired'){
             this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
@@ -147,16 +143,14 @@ class Login extends Component {
         if(!res.data.error){
 
           let form = {
-            user_id : res.data.result.user_id,
-            description : res.data.result.email,
+            user_id : res.data.result.user_id, 
+            description : res.data.result.email, 
             title : 'regular login'
           }
-          Storage.set('user', {data: {
-            user_id: res.data.result.user_id,
+          Storage.set('user', {data: { 
+            user_id: res.data.result.user_id, 
             email: res.data.result.email,
             level: res.data.result.level,
-            grup_id: res.data.result.grup_id,
-            grup_name: res.data.result.grup_name,
           }});
           Storage.set('token', {data:res.data.result.token});
           if (this.props.redirectUrl){
@@ -170,7 +164,7 @@ class Login extends Component {
               window.location.href = `${window.location.origin}/pengaturan`;
             }
           }
-
+          
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function(){
             }
@@ -286,7 +280,7 @@ class Login extends Component {
         </header>
         <div
           className="auth-wrapper"
-
+          
         >
           <div className="auth-content mb-4" style={{display: isMobile ? 'none' : 'block'}}>
             <div className=" b-r-15">
@@ -307,7 +301,7 @@ class Login extends Component {
                 <p className="mb-0 mt-1">
                     We are ready to connect you with others
                 </p>
-
+                
               </div>
             </div>
           </div>
@@ -319,7 +313,7 @@ class Login extends Component {
               >
                 <div className="row ">
                   <span className={!this.state.showPass ? 'hidden' : ''} style={{color: '#00478C', paddingLeft: 15, cursor: 'pointer'}}
-                        onClick={this.backToLogin.bind(this)}>
+                        onClick={this.backToLogin.bind(this)}> 
                     <i className="fa fa-arrow-left fa-2x"></i>
                   </span>
                   {tabs.map((tab, index) => {
@@ -365,7 +359,7 @@ class Login extends Component {
           </div>
         </div>
         <div className="footer-info">
-          <div className="row ">
+          <div className="row ">      
             <div className="col-md-6"></div>
             <div className="col-md-3 mt-5">
               Gedung Total, Lantai 10.

@@ -32,7 +32,7 @@ export default class CompanyDetail extends Component {
 		tempLogo: '',
 
 		menukiri: 'group',
-
+		
 		cabang: [],
 		grup: [],
 		user: [],
@@ -44,7 +44,7 @@ export default class CompanyDetail extends Component {
 		  group_meeting: 0,
 		  manage_group_meeting: 0
 		},
-
+		
 		isModalCabang: false,
 		namacabang: '',
 		actioncabang: 'add',
@@ -52,14 +52,14 @@ export default class CompanyDetail extends Component {
 		isModalSemester: false,
 		namasemester: "",
 		actionsemester: "add",
-
+		
 		isModalGrup: false,
 		namagrup: '',
 		actiongrup: 'add',
 
 		isNotifikasi: false,
 		isiNotifikasi: '',
-
+		
 		isKonfirmasi: false,
 		jenisKonfirmasi: '',
 		idKonfirmasi: '',
@@ -105,7 +105,7 @@ export default class CompanyDetail extends Component {
   		company_id: this.state.companyId,
   		semester_name: this.state.namasemester
 		}
-
+		
 		if(formData.semester_name) {
 			if(this.state.actionsemester === 'add') {
 				// action for insert
@@ -143,7 +143,7 @@ export default class CompanyDetail extends Component {
 			}
 		}
   }
-
+	
 	changeFormatDate = (value) => {
 		let dt = new Date(value)
 		return `${dt.getFullYear().toString().padStart(4, '0')}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')} ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
@@ -169,7 +169,7 @@ export default class CompanyDetail extends Component {
   }
 
     onClickUpdate = e => {
-
+    
     let unlimited = this.state.unlimited == false ? '1' : '0'
   	let formData = {
   		company_id: this.state.companyId,
@@ -199,7 +199,7 @@ export default class CompanyDetail extends Component {
   			}
   		})
 		}
-
+		
 		this.setState({
       isNotifikasi: true,
       isiNotifikasi: "Informasi company berhasil di ubah."
@@ -209,7 +209,7 @@ export default class CompanyDetail extends Component {
 
   onClickModal = e => {
     const tipe = e.target.getAttribute('data-type');
-
+    
   	if(tipe === 'cabang') {
       this.setState({ isModalCabang: true });
   	} else if(tipe === 'semester') {
@@ -272,11 +272,11 @@ export default class CompanyDetail extends Component {
 	  }
 		}
 	}
-
+	
   handleCloseCabang = e => {
 		this.setState({ isModalCabang: false, namacabang: '', actioncabang: 'add' });
   }
-
+	
 	/* crud grup */
 
   onClickTambahGrup = e => {
@@ -333,7 +333,7 @@ export default class CompanyDetail extends Component {
 	}
 
 	/* end crud grup */
-
+	
 	openKonfirmasi = e => {
 		this.setState({ isKonfirmasi: true, jenisKonfirmasi: e.target.getAttribute('data-type'), idKonfirmasi: e.target.getAttribute('data-id') })
 	}
@@ -359,7 +359,7 @@ export default class CompanyDetail extends Component {
 	  			this.setState({
 	  				cabang: this.state.cabang.filter(item => { return item.branch_id != idNya })
 					})
-					this.closeKonfirmasi();
+					this.closeKonfirmasi();					
   			} else if(tipe === 'semester') {
   				this.setState({
 	  				semester: this.state.semester.filter(item => { return item.semester_id != idNya })
@@ -381,7 +381,7 @@ export default class CompanyDetail extends Component {
   	const idNya = e.target.getAttribute('data-id');
   	if(tipe === 'cabang') {
   		this.setState({ isModalCabang: true, namacabang: e.target.getAttribute('data-nama'), actioncabang: `action_${idNya}`});
-  	} else {
+  	} else {  		
 		const parsing = JSON.parse(e.target.getAttribute('data-access'));
 		let access = this.state.access;
 		access['activity'] = parsing.activity;
@@ -390,10 +390,10 @@ export default class CompanyDetail extends Component {
 		access['forum'] = parsing.forum;
 		access['group_meeting'] = parsing.group_meeting;
 		access['manage_group_meeting'] = parsing.manage_group_meeting;
-
-			this.setState({
-		  isModalGrup: true,
-		  namagrup: e.target.getAttribute('data-nama'),
+		
+			this.setState({ 
+		  isModalGrup: true, 
+		  namagrup: e.target.getAttribute('data-nama'), 
 		  actiongrup: `action_${idNya}`
 		});
 		this.setState(access);
@@ -442,11 +442,11 @@ export default class CompanyDetail extends Component {
 				let linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
 				API.get(linkURL).then(res => {
 					if(res.status === 200) {
-						this.setState({
-							tipe: res.data.result.company_type,
-							grade: res.data.result.company_grade == null ? [] : res.data.result.company_grade.split(','),
-							nama: res.data.result.company_name,
-							status: res.data.result.status,
+						this.setState({ 
+							tipe: res.data.result.company_type, 
+							grade: res.data.result.company_grade == null ? [] : res.data.result.company_grade.split(','), 
+							nama: res.data.result.company_name, 
+							status: res.data.result.status, 
 							validity: res.data.result.validity.substring(0,10),
 							logo: res.data.result.logo,
 							unlimited: res.data.result.unlimited
@@ -463,7 +463,6 @@ export default class CompanyDetail extends Component {
 
 						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 						API.get(linkURLCabang).then(res => {
-							console.log('CABANG: ', res.data)
 							if(res.status === 200) {
 								this.setState({ cabang: res.data.result[0] })
 							}
@@ -511,10 +510,10 @@ export default class CompanyDetail extends Component {
 	handleChangeAccess = e => {
 		  const name = e.target.name;
 		  const checked = e.target.checked;
-
+  
 	  let access = this.state.access;
 	  access[name] = checked ? 1 : 0;
-
+	  
 	  this.setState(access);
 	  }
 
@@ -525,7 +524,7 @@ export default class CompanyDetail extends Component {
 		if(this.state.validity !== '') { validityCompany = new Date(this.state.validity); }
 
 		const ListCabang = ({items}) => {
-			if(items.length == 0) {
+			if(items.length === 0) {
 				return (
 					<div>
 						<Card className="cardku" >
@@ -540,7 +539,7 @@ export default class CompanyDetail extends Component {
 			} else {
 				return (
 					<div>
-					{
+					{	
 						items.map((item, i) => (
 							<Card className="cardku" key={item.branch_id}>
 		          	<Card.Body>
@@ -581,7 +580,7 @@ export default class CompanyDetail extends Component {
 			} else {
 				return (
 					<div>
-					{
+					{	
 						items.map((item,i) => (
 							<Card className="cardku" key={item.grup_id}>
 		          	<Card.Body>
@@ -622,7 +621,7 @@ export default class CompanyDetail extends Component {
 			} else {
 				return (
 					<div>
-					{
+					{	
 						items.map((item, i) => (
 							<Card className="cardku" key={item.semester_id}>
 		          	<Card.Body>
@@ -768,8 +767,8 @@ export default class CompanyDetail extends Component {
                               <ul className="list-group list-group-flush" style={{fontWeight: 'bold'}}>
                                 <li onClick={this.onClickMenuKiri} menu="group" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'group' ? 'back-active' : ''}`}>{this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</li>
                                 <li onClick={this.onClickMenuKiri} menu="role" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
-
-                              	{this.state.tipe == 'pendidikan' &&
+                              
+                              	{this.state.tipe == 'pendidikan' &&  
                               		<div style={{marginTop: '1px'}}>
 		                                <li onClick={this.onClickMenuKiri} menu="grade" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'grade' ? 'back-active' : ''}`}>Grade</li>
 		                                <li onClick={this.onClickMenuKiri} menu="semester" style={{cursor: 'pointer'}} className={`list-group-item ${this.state.menukiri == 'semester' ? 'back-active' : ''}`}>Semester</li>
@@ -777,10 +776,10 @@ export default class CompanyDetail extends Component {
                               	}
                               </ul>
                             </Col>
-
+                            
                             <Col md={10}>
-
-                              {this.state.menukiri == 'group' &&
+                              
+                              {this.state.menukiri == 'group' && 
                                 <div id="gorup">
                                   <h3 className="f-24 f-w-800 mb-3">
                                     {this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}
@@ -837,7 +836,7 @@ export default class CompanyDetail extends Component {
                                 </div>
                               }
 
-                              {this.state.menukiri == 'role' &&
+                              {this.state.menukiri == 'role' && 
                                 <div id="role">
                                   <h3 className="f-24 f-w-800 mb-3">
                                     Role
@@ -923,9 +922,9 @@ export default class CompanyDetail extends Component {
                                 </div>
                               }
 
-                              {this.state.tipe == 'pendidikan' &&
+                              {this.state.tipe == 'pendidikan' &&  
                               	<div>
-		                              {this.state.menukiri == 'grade' &&
+		                              {this.state.menukiri == 'grade' && 
 		                                <div id="grade">
 		                                  <h3 className="f-24 f-w-800 mb-3">
 		                                    Grade
@@ -950,7 +949,7 @@ export default class CompanyDetail extends Component {
 		                                </div>
 		                              }
 
-		                              {this.state.menukiri == 'semester' &&
+		                              {this.state.menukiri == 'semester' && 
 		                                <div id="semester">
 		                                  <h3 className="f-24 f-w-800 mb-3">
 		                                    Semester

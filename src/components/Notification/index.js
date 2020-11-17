@@ -1,115 +1,74 @@
 import React, { Component } from "react";
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
-import SocketContext from '../../socket';
 
-class NotificationClass extends Component {
+
+class Notification extends Component {
   state = {
     notificationData : [],
+      
   };
 
-  componentDidMount() {
-    this.fetchNotif();
+  async componentDidMount() {
+    await API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
+      if (res.status === 200) {
+        console.log('res company', res);
+        if (res.data.error) {
+          localStorage.clear();
+          window.location.reload();
+        }
 
-    this.props.socket.on('broadcast', data => {
-      this.fetchNotif()
-    })
-  }
+        Storage.set('user', {
+          data: {
+            logo: res.data.result.logo,
+            company_id: res.data.result.company_id,
+            user_id: res.data.result.user_id,
+            email: res.data.result.email,
+            user: res.data.result.name,
+            level: res.data.result.level,
+            avatar: res.data.result.avatar
+              ? res.data.result.avatar
+              : '/assets/images/user/avatar-1.png',
+          },
+        });
 
-  deleteNotif = e => {
-    e.preventDefault();
-    API.delete(`${API_SERVER}v1/notification/id/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) console.log(`Error delete`)
+        this.setState({
+          logo: res.data.result.logo,
+          myCompanyName: res.data.result.company_name,
+          company_id: res.data.result.company_id,
+          user: res.data.result.name,
+          level: res.data.result.level,
+          avatar: res.data.result.avatar
+            ? res.data.result.avatar
+            : '/assets/images/user/avatar-1.png',
+        });
 
-      this.fetchNotif();
-    })
-  }
-
-  deleteAllNotif = e => {
-    e.preventDefault();
-    let temp = [];
-    this.state.notificationData.filter(item => {
-      if(item.tag == 1) {
-        temp.push(item.id)
+        if (this.state.level === 'client') {
+          this.setState({ level: 'User' });
+        }
       }
     });
-    API.delete(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, {notifIds: temp}).then(res => {
-      if(res.data.error) console.log(`Error delete`)
 
-      this.fetchNotif();
-    })
-  }
-
-  readAllNotif = e => {
-    e.preventDefault();
-    let temp = [];
-    this.state.notificationData.filter(item => {
-      if(item.tag == 1 && item.isread == 0) {
-        temp.push(item.id)
-      }
-    });
-    API.put(`${API_SERVER}v1/notification/read/all`, {userId: Storage.get('user').data.user_id, notifIds: temp}).then(res => {
-      if(res.data.error) console.log('Error update')
-
-      this.props.socket.emit('send',{companyId: Storage.get('user').data.company_id})
-      this.fetchNotif();
-    })
-  }
-
-  deleteAllReminder = e => {
-    e.preventDefault();
-    let temp = [];
-    this.state.notificationData.filter(item => {
-      if(item.tag == 2) {
-        temp.push(item.id)
-      }
-    });
-    API.delete(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, {notifIds: temp}).then(res => {
-      if(res.data.error) console.log(`Error delete`)
-
-      this.fetchNotif();
-    })
-  }
-
-  readAllReminder = e => {
-    e.preventDefault();
-    let temp = [];
-    this.state.notificationData.filter(item => {
-      if(item.tag == 2 && item.isread == 0) {
-        temp.push(item.id)
-      }
-    });
-    API.put(`${API_SERVER}v1/notification/read/all`, {userId: Storage.get('user').data.user_id, notifIds: temp}).then(res => {
-      if(res.data.error) console.log('Error update')
-
-      this.props.socket.emit('send',{companyId: Storage.get('user').data.company_id})
-      this.fetchNotif();
-    })
-  }
-
-  fetchNotif() {
     API.get(
-      `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`
+      `${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`
     ).then((res) => {
       this.setState({ notificationData: res.data.result });
     });
-  }
 
-  readNotif(id) {
-    API.put(`${API_SERVER}v1/notification/read`,{id}).then(res => {
-      if(res.data.error) console.log('Gagal read')
-
-      this.props.socket.emit('send',{companyId: Storage.get('user').data.company_id})
-      this.fetchNotif();
-    })
+    // this.fetchCompany();
   }
 
   render() {
     const {notificationData} = this.state;
-    const dataNotif = notificationData.filter(item => item.tag == 1);
-    const dataRemind = notificationData.filter(item => item.tag == 2);
-
+    // const dataNotif = [
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Bobi Mengomentari Postingan Anda', date : '5 Menit yang lalu', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Putri Mengomentari Postingan Anda', date : '02:05PM 22/02/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '},
+    //     {pengirim : 'Doni Mengomentari Postingan Anda', date : '02:05PM 01/12/2020', pesan: 'Hai bro lalul kska oe fak skjdfhd kakskdjhf aklsldf kdkh ka lskdfk al lskdfj '}
+    // ]
+    console.log('data notifikasi cui', notificationData)
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -118,110 +77,46 @@ class NotificationClass extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
-                    <div className="col-sm-6">
+                    <div className="col-sm-8">
                         <div className="row">
-                            <h4 className="fc-blue mb-2">
-                              <b> Notification </b>
-                              <button onClick={this.deleteAllNotif} className="btn btn-transparent ml-4"> Hapus semua</button>
-                              <button onClick={this.readAllNotif} className="btn btn-transparent ml-2"> Baca semua</button>
-                            </h4>
+                            <h4 className="fc-blue"><b> Notification </b></h4>
                         </div>
-
-                        <div style={{margin: '10px 10px 10px 0'}}>
-                        {dataNotif.length === 0 ?
+                        
+                        {notificationData.length === 0 ?
                             <span style={{ width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
-                                <b className="fc-blue ">Tidak ada notifikasi saat ini ...</b>
+                                <b className="fc-blue ">Tidak ada notifikasi saat ini ...</b> 
                             </span>
                         :
-                          <span>
+                            <span>
                             {
-                                dataNotif.map((item, i) => {
+                                notificationData.map((item, i) => {
                                     return (
-                                      <div onClick={() => this.readNotif(item.id)} className="row" key={item.id} style={{background:'#FFF', borderRadius:4, padding:'12px', margin: '10px 10px 10px -15px'}}>
-
-                                        <span style={{width: '-webkit-fill-available'}}>
-                                          {
-                                            item.isread == 0 &&
-                                            <span style={{margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red'}}>new</span>
-                                          }
-                                            <b className="fc-blue ">
-                                            {item.type == 1 ? "Course" : item.type == 2 ? "Forum" : item.type == 3 ? "Meeting" :
-                                              item.type == 4 ? "Pengumuman" : item.type == 5 ? "Task" : item.type == 6 ? "Files" :
-                                              item.type == 7 ? "Training" : "Notifikasi"}
-                                            </b>
-                                            &nbsp; &nbsp;
-                                            <small>
-                                              {moment.utc(item.created_at).format('HH:mm')} &nbsp;
-                                              {moment.utc(item.created_at).format('DD/MM/YYYY')}
-                                            </small>
-                                            <p className="fc-muted mt-1">
-                                              {item.description}
-                                            </p>
-
-                                            <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
-                                            <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{cursor: 'pointer'}}></i>
+                                      <div className="row" style={{background:'#FFF', borderRadius:4, padding:20}}>
+                                        <span style={{borderBottom: '1px solid #dcdcdc', width: '-webkit-fill-available'}}>
+                                            <b className="fc-blue ">Meeting</b> &nbsp; &nbsp; 
+                                            <small >
+                                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} &nbsp; 
+                                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}</small>
+                                            <p className="fc-muted mt-1 mb-4">  {item.description.length < 74
+                                                                                ? `${item.description}`
+                                                                                : `${item.description.substring(0, 75)}...`}</p>
                                         </span>
-
+                                        
                                       </div>
+                                        // DAMIIII DATA NOTIFICATION
+                                        // <span style={{borderBottom: '1.5px solid #dcdcdc', width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
+                                        //     <b className="fc-blue ">{item.pengirim}</b> &nbsp; &nbsp; <small>{item.date}</small>
+                                        //     <p className="fc-muted mt-1 mb-4">  {item.pesan.length < 74
+                                        //                                         ? `${item.pesan}`
+                                        //                                         : `${item.pesan.substring(0, 75)}...`}</p>
+                                        // </span>
                                     )
                                 })
                             }
                             </span>
                         }
-                        </div>
-                    </div>
-
-                    <div className='col-sm-6'>
-                      <div className="row">
-                          <h4 className="fc-blue mb-2">
-                            <b> Reminder </b>
-                            <button onClick={this.deleteAllReminder} className="btn btn-transparent ml-4"> Hapus semua</button>
-                            <button onClick={this.readAllReminder} className="btn btn-transparent ml-2"> Baca semua</button>
-                          </h4>
-                      </div>
-
-                      <div style={{margin: '10px 10px 10px 0'}}>
-                      {dataRemind.length === 0 ?
-                          <span style={{ width: '-webkit-fill-available', marginTop: '15px', padding:20}}>
-                              <b className="fc-blue ">Tidak ada reminder saat ini ...</b>
-                          </span>
-                      :
-                        <span>
-                          {
-                              dataRemind.map((item, i) => {
-                                  return (
-                                    <div onClick={() => this.readNotif(item.id)} className="row" key={item.id} style={{background:'#FFF', borderRadius:4, padding:'12px', margin: '10px 10px 10px -15px'}}>
-
-                                      <span style={{width: '-webkit-fill-available'}}>
-                                        {
-                                          item.isread == 0 &&
-                                          <span style={{margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red'}}>new</span>
-                                        }
-                                          <b className="fc-blue ">
-                                          {item.type == 1 ? "Course" : item.type == 2 ? "Forum" : item.type == 3 ? "Meeting" :
-                                            item.type == 4 ? "Pengumuman" : item.type == 5 ? "Task" : item.type == 6 ? "Files" :
-                                            item.type == 7 ? "Training" : "Notifikasi"}
-                                          </b>
-                                          &nbsp; &nbsp;
-                                          <small>
-                                            {moment.utc(item.created_at).format('HH:mm')} &nbsp;
-                                            {moment.utc(item.created_at).format('DD/MM/YYYY')}
-                                          </small>
-                                          <p className="fc-muted mt-1">
-                                            {item.description}
-                                          </p>
-
-                                          <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
-                                          <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{cursor: 'pointer'}}></i>
-                                      </span>
-
-                                    </div>
-                                  )
-                              })
-                          }
-                          </span>
-                      }
-                      </div>
+                        
+                        
                     </div>
                   </div>
                 </div>
@@ -229,17 +124,12 @@ class NotificationClass extends Component {
             </div>
           </div>
         </div>
+        
 
       </div>
-
+      
     );
   }
 }
-
-const Notification = props => (
-  <SocketContext.Consumer>
-    {socket => <NotificationClass {...props} socket={socket} />}
-  </SocketContext.Consumer>
-)
 
 export default Notification;

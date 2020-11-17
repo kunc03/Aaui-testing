@@ -101,16 +101,13 @@ class MeetingTable extends Component {
 			page : 1,
 			value: '10',
 			rowsPerPage: 15,
-
-      oldStartDate: new Date(),
-      oldEndDate: new Date(),
     };
   }
   handleChangeEmail(emailInvite) {
     this.setState({emailInvite})
   }
 
-
+  
   handleCloseInvite = e =>{
     this.setState({
       isInvite: false,
@@ -145,7 +142,7 @@ class MeetingTable extends Component {
         message: APPS_SERVER+'redirect/meeting/information/'+this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER+'meeting/'+this.state.classRooms.class_id
       }
-
+  
       API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
         if(res.status === 200) {
           if(!res.data.error) {
@@ -173,7 +170,7 @@ class MeetingTable extends Component {
 
   testbbb(){
     let api = bbb.api(
-      'https://conference.icademy.id/bigbluebutton/',
+      'https://conference.icademy.id/bigbluebutton/', 
       'pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o'
     )
     let http = bbb.http
@@ -186,11 +183,11 @@ class MeetingTable extends Component {
     })
     http(meetingCreateUrl).then((result) => {
       console.log(result)
-
+     
       let moderatorUrl = api.administration.join('moderator', '1', 'supersecret')
       let attendeeUrl = api.administration.join('attendee', '1', 'secret')
       console.log(`Moderator link: ${moderatorUrl}\nAttendee link: ${attendeeUrl}`)
-
+     
       let meetingEndUrl = api.administration.end('1', 'supersecret')
       console.log(`End meeting link: ${meetingEndUrl}`)
     })
@@ -244,7 +241,7 @@ class MeetingTable extends Component {
   closeModalConfirmation = e => {
     this.setState({ isModalConfirmation: false });
   }
-
+  
   fetchMeetingInfo(id){
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
       console.log(res.data.result, 'prop informationId');
@@ -304,7 +301,7 @@ class MeetingTable extends Component {
                 item.running = result.running
                 let dateStart = new Date(item.schedule_start);
                 let dateEnd = new Date(item.schedule_end);
-
+                
                 if ((new Date() >= dateStart && new Date() <= dateEnd) || item.is_scheduled == 0){
                   item.status='Open'
                 }
@@ -336,9 +333,9 @@ class MeetingTable extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-
-        this.fetchMeeting();
-
+        
+        this.fetchMeeting(); 
+        
         //get and push multiselect option
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
@@ -454,7 +451,8 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     console.log('ALVIN MEET', this.state.valueFolder)
     e.preventDefault();
-    if (this.state.roomName === '' || this.state.valueFolder == 0){
+    if (this.state.roomName === '' || this.state.valueFolder == 0)
+    {
       toast.warning('Judul meeting, moderator, dan folder project wajib diisi')
     }else{
       if(this.state.classId) {
@@ -477,23 +475,7 @@ class MeetingTable extends Component {
           schedule_end: endDateJkt,
           peserta: this.state.valuePeserta
         }
-
-        if((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
-          let userNotif = this.state.valuePeserta.concat(this.state.infoParticipant.map(item => item.user_id));
-          for(var i=0; i<userNotif.length; i++) {
-            console.log('User: ', userNotif[i])
-            // send notif
-            let notif = {
-              user_id: userNotif[i],
-              activity_id: this.state.valueFolder[0],
-              type: 3,
-              desc: `Meeting "${form.room_name}" pada tanggal ${this.state.oldStartDate} diubah ke tanggal ${startDateJkt}`,
-              dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
-            }
-            API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
-          }
-        }
-
+  
         API.put(`${API_SERVER}v1/liveclass/id/${this.state.classId}`, form).then(async res => {
           if (res.status === 200) {
             // END BBB START
@@ -587,11 +569,11 @@ class MeetingTable extends Component {
           schedule_end: endDateJkt,
           peserta: this.state.valuePeserta
         }
-
+  
         API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
-
+          
           console.log('RES: ', res.data);
-
+  
           if (res.status === 200) {
             // BBB CREATE START
             let api = bbb.api(BBB_URL, BBB_KEY)
@@ -611,7 +593,7 @@ class MeetingTable extends Component {
               }
             })
             // BBB CREATE END
-
+  
             if (this.state.cover) {
               let formData = new FormData();
               formData.append('cover', this.state.cover);
@@ -645,19 +627,6 @@ class MeetingTable extends Component {
                   }
                 }
               })
-
-              let userNotif = this.state.valuePeserta;
-              for(var i=0; i<userNotif.length; i++) {
-                // send notif
-                let notif = {
-                  user_id: userNotif[i],
-                  activity_id: this.state.valueFolder[0],
-                  type: 3,
-                  desc: `Silahkan konfirmasi undangan Anda pada meeting "${res.data.result.room_name}"`,
-                  dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
-                }
-                API.post(`${API_SERVER}v1/notification/broadcast`, notif);
-              }
             }
             else{
               this.fetchMeeting();
@@ -798,7 +767,7 @@ class MeetingTable extends Component {
 
   componentDidMount(){
     this.fetchOtherData();
-
+    
     if (this.props.informationId){
       this.fetchMeetingInfo(this.props.informationId)
     }
@@ -860,7 +829,7 @@ class MeetingTable extends Component {
         selector: 'status',
         sortable: true,
         center: true,
-        cell: row =>
+        cell: row => 
           <div style={{color: row.status == 'Open' ? '#FA6400': row.status == 'Terkunci' ? '#F00' : row.status == 'Aktif' ? '#1b9a1b' : '#0091FF'}}>
             {row.status}
           </div>,
@@ -916,14 +885,14 @@ class MeetingTable extends Component {
                           data-cover={row.cover}
                           data-speaker={row.speaker}
                           data-roomname={row.room_name}
-                          data-moderator={row.moderator}
+                          data-moderator={row.moderator} 
                           data-isprivate={row.is_private}
                           data-isakses={row.is_akses}
                           data-isrequiredconfirmation={row.is_required_confirmation}
-                          data-participant={row.participant}
-                          data-isscheduled={row.is_scheduled}
-                          data-start={row.schedule_start}
-                          data-end={row.schedule_end}
+                          data-participant={row.participant} 
+                          data-isscheduled={row.is_scheduled} 
+                          data-start={row.schedule_start} 
+                          data-end={row.schedule_end} 
                           data-folder={row.folder_id}
                         >
                             Ubah
@@ -972,10 +941,10 @@ class MeetingTable extends Component {
                 style={{ padding: "7px 8px !important", marginLeft:14 }}
                 >
                 <i className="fa fa-plus"></i>
-
+                
                 Tambah
                 </button> : null}
-                <input
+                <input 
                     type="text"
                     placeholder="Search"
                     onChange={this.filterMeeting}
@@ -1054,13 +1023,13 @@ class MeetingTable extends Component {
                                           data-cover={item.cover}
                                           data-speaker={item.speaker}
                                           data-roomname={item.room_name}
-                                          data-moderator={item.moderator}
+                                          data-moderator={item.moderator} 
                                           data-isprivate={item.is_private}
                                           data-isrequiredconfirmation={item.is_required_confirmation}
-                                          data-participant={item.participant}
-                                          data-isscheduled={item.is_scheduled}
-                                          data-start={item.schedule_start}
-                                          data-end={item.schedule_end}
+                                          data-participant={item.participant} 
+                                          data-isscheduled={item.is_scheduled} 
+                                          data-start={item.schedule_start} 
+                                          data-end={item.schedule_end} 
                                           data-folder={item.folder_id}
                                         >
                                             Ubah
@@ -1281,7 +1250,7 @@ class MeetingTable extends Component {
                             Nama pengisi kelas atau speaker.
                           </Form.Text>
                         </Form.Group> */}
-
+                        
                         <Form.Group controlId="formJudul">
                           <Form.Label className="f-w-bold">
                             Pembatasan Akses
@@ -1534,7 +1503,7 @@ class MeetingTable extends Component {
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                             <div className="card">
                               <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
-
+                              
                               <div className="card-carousel">
                                 <div className="title-head f-w-900 f-16 mb-2">
                                   {this.state.infoClass.room_name}
@@ -1612,7 +1581,7 @@ class MeetingTable extends Component {
                     </Modal.Body>
                     <Modal.Footer>
                             {
-                              (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ?
+                              (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ? 
                               <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
                                 <button
                                   className="btn btn-icademy-primary"
@@ -1721,7 +1690,7 @@ class MeetingTable extends Component {
                 </Modal.Body>
               </Modal>
             </div>
-
+                    
     );
   }
 }
