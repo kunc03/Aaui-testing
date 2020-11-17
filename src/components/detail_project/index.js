@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { 
 	Tab, Tabs
@@ -12,12 +12,6 @@ import TableWebinar from '../webinar/webinar';
 import GanttChart from '../ganttChart/index';
 import TableFiles from '../files/_files';
 import Gantt from '../Gantt';
-const data = {
-  data: [
-      { id: 1, text: 'Task #1', start_date: '29-10-2020', duration: 3, progress: 0.6 },
-      { id: 2, text: 'Task #2', start_date: '1-11-2020', duration: 3, progress: 0.4 }
-  ]
-};
 
 const titleTabs = [
   {name: 'Semua'},
@@ -108,12 +102,13 @@ export default class User extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="floating-back">
-                    <img
-                      src={`newasset/back-button.svg`}
-                      alt=""
-                      width={90}
-                      onClick={this.goBack}
-                    ></img>
+                    <a href={APPS_SERVER}>
+                      <img
+                        src={`newasset/back-button.svg`}
+                        alt=""
+                        width={90}
+                      ></img>
+                    </a>
                   </div>
                   <div className="row">
                     <div className="col-xl-12">
@@ -139,10 +134,10 @@ export default class User extends Component {
                       <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
-                      <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} />
-                      {/* <div className="gantt-container">
-                      <Gantt tasks={data}/>
-                      </div> */}
+                      {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
+                      <div className="gantt-container">
+                      <Gantt projectId={this.state.projectId}/>
+                      </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
                       <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>

@@ -134,9 +134,10 @@ export default class WebinarPretestAdd extends Component {
 		this.setState({ loading: true });
 		let form = new FormData();
 		form.append('webinarId', this.state.webinarId);
+		form.append('jenis', 0);
 		form.append('excel', this.state.formFile);
 
-		API.post(`${API_SERVER}v2/kuesioner/import`, form).then(res => {
+		API.post(`${API_SERVER}v2/webinar-test/import`, form).then(res => {
 			if(res.data.error) toast.warning("Error import data");
 
 			toast.success("Berhasil import kuesioner")
@@ -213,11 +214,11 @@ export default class WebinarPretestAdd extends Component {
 			<div className="row">
         <div className="col-sm-12">
               <div style={{marginTop: '10px'}}>
-								{/* <form onSubmit={this.submitImport} role="form" className="form-vertical">
+								<form onSubmit={this.submitImport} role="form" className="form-vertical">
 									<div className="form-group row">
 										<div className="col-sm-3">
 											<label>Template Excel</label>
-											<a href={`${API_SERVER}attachment/template.xlsx`} target="_blank" className="btn btn-primary">Download</a>
+											<a href={`${API_SERVER}attachment/template-test.xlsx`} target="_blank" className="btn btn-primary">Download</a>
 										</div>
 										<div className="col-sm-6">
 											<label>Import Excel</label>
@@ -229,7 +230,7 @@ export default class WebinarPretestAdd extends Component {
 											</button>
 										</div>
 									</div>
-								</form> */}
+								</form>
 
                 <div className="row mt-4">
                   <div className="col-sm-12">
