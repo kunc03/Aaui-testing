@@ -58,7 +58,10 @@ export default class WebinarRiwayat extends Component {
     cert_subtitle:'THIS CERTIFICATE IS PROUDLY PRESENTED TO',
     cert_description:'FOR SUCCESSFULLY COMPLETING ALL CONTENTS ON WEBINAR',
     cert_topic:'',
-    cert_sign_name:''
+    cert_sign_name:'',
+
+    //role webinar
+    pembicara: []
   }
 
   fetchQNA(){
@@ -122,7 +125,6 @@ export default class WebinarRiwayat extends Component {
         jamSelesai: res.data.result.jam_selesai,
         // projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
-        pembicara: res.data.result.pembicara.name,
         status: res.data.result.status,
         peserta: pesertaDanTamu,
         jumlahTamu: res.data.result.tamu.length,
@@ -131,6 +133,8 @@ export default class WebinarRiwayat extends Component {
         jumlahHadir: pesertaDanTamu.filter((item) => item.status == 2).length,
         jumlahTidakHadir: pesertaDanTamu.filter((item) => item.status != 2).length
       })
+      this.setState({pembicara: []})
+      res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
       this.checkProjectAccess()
     })
   }
@@ -513,7 +517,7 @@ export default class WebinarRiwayat extends Component {
                 <div className="row">
                   <div className="col-sm-10">
                     <h5>{this.state.judul}</h5>
-                    <h6>Pembicara : {this.state.pembicara}</h6>
+                    <h6>Pembicara : {this.state.pembicara.toString()}</h6>
                     <p>
                      {this.state.isi}
                     </p>

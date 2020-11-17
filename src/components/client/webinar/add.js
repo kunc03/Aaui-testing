@@ -24,9 +24,9 @@ export default class WebinarAdd extends Component {
     access_project_admin: false,
 
     pembicara: [
-      {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
-      {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
-      {nama: 'Smity Jensen', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
+      // {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
+      // {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
+      // {nama: 'Smity Jensen', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
     ],
     optionsName: [],
 
@@ -63,6 +63,9 @@ export default class WebinarAdd extends Component {
     modalKuesioner: false,
     modalPretest: false,
     modalPosttest: false,
+
+    //role
+    sekretarisId: [],
   }
 
   addTamu = e => {
@@ -203,13 +206,13 @@ export default class WebinarAdd extends Component {
         jamSelesai: jam_selesai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
-        pembicara: res.data.result.pembicara[0].name,
-        sekretarisId: res.data.result.sekretaris[0].user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
         status: res.data.result.status,
-        userId: Storage.get('user').data.user_id
+        userId: Storage.get('user').data.user_id,
+        sekretarisId: res.data.result.sekretaris
       })
+      res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)
     })
     
@@ -459,15 +462,15 @@ export default class WebinarAdd extends Component {
                 <div className="col-sm-6 text-right">
                   <div className="form-group">
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
                     }
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalPosttest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Post Test</button>
                     }
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalPretest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                   </div>
@@ -540,7 +543,7 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Pembicara</label>
                         <div class="input-group">
-                          <input disabled type="text" value={this.state.pembicara} className="form-control" />
+                          <input disabled type="text" value={this.state.pembicara.toString()} className="form-control" />
                           {/* <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPembicara: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah
