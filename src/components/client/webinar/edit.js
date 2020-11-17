@@ -116,11 +116,21 @@ export default class WebinarEdit extends Component {
         this.setState({
             projectId: [Number(res.data.result.project_id)],
             judul: res.data.result.judul,
-            sekretarisId: [res.data.result.sekretaris[0].user_id],
-            pembicaraId: [res.data.result.pembicara[0].user_id],
-            moderatorId: [res.data.result.moderator[0].user_id],
-            ownerId: [res.data.result.owner[0].user_id],
             status: res.data.result.status
+        })
+        let tempSekretaris=[];
+        let tempPembicara=[];
+        let tempModerator=[];
+        let tempOwner=[];
+        res.data.result.sekretaris.map( item => tempSekretaris.push(item.user_id))
+        res.data.result.pembicara.map( item => tempPembicara.push(item.user_id))
+        res.data.result.moderator.map( item => tempModerator.push(item.user_id))
+        res.data.result.owner.map( item => tempOwner.push(item.user_id))
+        this.setState({
+          sekretarisId: tempSekretaris,
+          pembicaraId: tempPembicara,
+          moderatorId: tempModerator,
+          ownerId: tempOwner
         })
     })
   }
@@ -164,10 +174,10 @@ export default class WebinarEdit extends Component {
     let form = {
       webinarId: this.state.webinarId,
       judul: this.state.judul,
-      moderatorId: this.state.moderatorId[0],
-      sekretarisId: this.state.sekretarisId[0],
-      pembicaraId: this.state.pembicaraId[0],
-      ownerId: this.state.ownerId[0],
+      moderatorId: this.state.moderatorId,
+      sekretarisId: this.state.sekretarisId,
+      pembicaraId: this.state.pembicaraId,
+      ownerId: this.state.ownerId,
       projectId: this.state.projectId
     }
 
@@ -254,7 +264,7 @@ export default class WebinarEdit extends Component {
                               options={this.state.optionNames}
                               value={this.state.sekretarisId}
                               onChange={sekretarisId => this.setState({ sekretarisId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -275,7 +285,7 @@ export default class WebinarEdit extends Component {
                               options={this.state.optionNames}
                               value={this.state.moderatorId}
                               onChange={moderatorId => this.setState({ moderatorId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -296,7 +306,7 @@ export default class WebinarEdit extends Component {
                               options={this.state.optionNames}
                               value={this.state.pembicaraId}
                               onChange={pembicaraId => this.setState({ pembicaraId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -317,7 +327,7 @@ export default class WebinarEdit extends Component {
                               options={this.state.optionNames}
                               value={this.state.ownerId}
                               onChange={ownerId => this.setState({ ownerId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
