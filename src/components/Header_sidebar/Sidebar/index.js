@@ -54,9 +54,9 @@ class SidebarClass extends Component {
         submenu: [
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Mata Pelajaran', link: '/murid/mata-pelajaran' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Tugas', link: '/murid/tugas' },
-          { iconOn: 'ujianon.svg', iconOff: 'ujianoff.svg', label: 'Ujian', link: '/murid/ujian' },
+          { iconOn: 'info-on.svg', iconOff: 'ujianoff.svg', label: 'Ujian', link: '/murid/ujian' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan/Rapor', link: '/rapor' },
-          { iconOn: 'liveclasswebinaron.svg', iconOff: 'liveclasswebinaroff.svg', label: 'Liveclass/Webinar', link: '/webinar-murid' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'liveclasswebinaroff.svg', label: 'Liveclass/Webinar', link: '/webinar-murid' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
