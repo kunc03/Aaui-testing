@@ -92,7 +92,7 @@ class NotificationClass extends Component {
     API.get(
       `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`
     ).then((res) => {
-      this.setState({ notificationData: res.data.result });
+      this.setState({ notificationData: res.data.result[0] });
     });
   }
 
@@ -105,8 +105,20 @@ class NotificationClass extends Component {
     })
   }
 
+  konfirmasiHadir(id) {
+    console.log(`INI GW KLIK KONFRIMASI`)
+    console.log(`${API_SERVER}v1/ptc-room/konfirmasi/${id}/${Storage.get('user').data.user_id}`);
+    API.put(`${API_SERVER}v1/ptc-room/konfirmasi/${id}/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log('Error: ', res.data.error);
+
+      this.props.socket.emit('send',{companyId: Storage.get('user').data.company_id})
+      this.fetchNotif();
+    })
+  }
+
   render() {
     const {notificationData} = this.state;
+
     const dataNotif = notificationData.filter(item => item.tag == 1);
     const dataRemind = notificationData.filter(item => item.tag == 2);
 
@@ -147,7 +159,7 @@ class NotificationClass extends Component {
                                             <b className="fc-blue ">
                                             {item.type == 1 ? "Course" : item.type == 2 ? "Forum" : item.type == 3 ? "Meeting" :
                                               item.type == 4 ? "Pengumuman" : item.type == 5 ? "Task" : item.type == 6 ? "Files" :
-                                              item.type == 7 ? "Training" : "Notifikasi"}
+                                              item.type == 7 ? "Training" : item.type == 8 ? "PTC" : "Notifikasi"}
                                             </b>
                                             &nbsp; &nbsp;
                                             <small>
@@ -158,7 +170,13 @@ class NotificationClass extends Component {
                                               {item.description}
                                             </p>
 
-                                            <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
+                                            {
+                                              item.destination &&
+                                              <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
+                                            }
+                                            {
+                                              item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
+                                            }
                                             <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{cursor: 'pointer'}}></i>
                                         </span>
 

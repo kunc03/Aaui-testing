@@ -39,7 +39,7 @@ class SidebarClass extends Component {
     API.get(`${API_SERVER}v1/notification/unread/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) console.log('Gagal fetch unread')
 
-      this.setState({ notifUnread: res.data.result.length });
+      this.setState({ notifUnread: res.data.result[0].length });
     })
   }
 
@@ -91,6 +91,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -116,6 +117,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -141,6 +143,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -196,7 +199,7 @@ class SidebarClass extends Component {
 
                 <li id="mobile-collapse" data-username="Sample Page"
                     className={`nav-item`}
-                    style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                    style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:12, cursor: 'pointer'}}  >
                       <Tooltip title="Menu" arrow placement="right">
                       <div className="nav-link"
                         style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
@@ -218,10 +221,10 @@ class SidebarClass extends Component {
                       return (
                         <li data-username="Sample Page"
                           className={`nav-item`}
-                          style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:25, cursor: 'pointer'}}  >
+                          style={this.state.sideMenu ? {width:59, cursor: 'pointer'} : {marginTop:12, cursor: 'pointer'}}  >
                             <Tooltip title={item.label} arrow placement="right">
                             <Link className="nav-link" to={item.link}
-                              style={this.state.sideMenu ? {marginTop:35, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
+                              style={this.state.sideMenu ? {marginTop:18, padding:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'auto' } : {padding:"7px 20px"}}
                             >
                               <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
                                 <img
@@ -250,7 +253,7 @@ class SidebarClass extends Component {
                     if(item.access == undefined || access[item.access]) {
                       return (
                         <li data-username="Sample Page"
-                            className={`nav-item mt-4 `}
+                            className={`nav-item `}
                             style={this.state.sideMenu ? {width:59} : {marginTop:25}}
                           >
                             <Tooltip title={item.label} arrow placement="right">

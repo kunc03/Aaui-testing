@@ -39,7 +39,7 @@ class EventNew extends Component {
     let urlLearning = ''
     if ((levelUser !== 'superadmin' && access.manage_course == 1) || (levelUser === 'superadmin')){
       // urlLearning = 'kursus-materi'
-      urlLearning = 'learning'
+      urlLearning = (levelUser === "client" && Storage.get('user').data.grup_name.toLowerCase() === "guru") ? 'kursus-new' : 'learning'
     }
     else{
       urlLearning = 'kursus'
@@ -72,7 +72,7 @@ class EventNew extends Component {
                     <img
                       src={item.status ? `${item.title === 'Meeting' ? 'newasset/video-conference.svg' : item.title === 'Learning' ? 'newasset/book 2.svg' : 'newasset/webinar.svg'}` : ''}
                       alt=""
-                      width={22} 
+                      width={22}
                     ></img> &nbsp; {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
                     </div>
                   </div>

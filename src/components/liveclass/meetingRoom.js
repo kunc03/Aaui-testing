@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { 
+import {
 	Form, Col, Row, Modal
 } from 'react-bootstrap';
 import ReactFullScreenElement from "react-fullscreen-element";
@@ -40,7 +40,7 @@ export default class MeetingRoom extends Component {
     classRooms: {},
     fileChat : [],
     attachment: '',
-    isNotifikasi: false, 
+    isNotifikasi: false,
 		isiNotifikasi:'',
     isInvite: false,
     emailInvite: [],
@@ -66,7 +66,7 @@ export default class MeetingRoom extends Component {
     selectSubtitle: '',
     subtitle: '',
     sendingEmail: false,
-    
+
     folder: [],
     mom: [],
     recordedMeeting: [],
@@ -98,7 +98,7 @@ export default class MeetingRoom extends Component {
     modalFileSharing: false,
     modalMOM: false,
   }
-  
+
   closeModalConfirmation = e => {
     this.setState({ isModalConfirmation: false });
   }
@@ -253,7 +253,7 @@ uploadFile = e => {
       }
     });
     this.fetchData();
-    
+
     var links = document.getElementsByTagName('a');
     var len = links.length;
 
@@ -262,7 +262,7 @@ uploadFile = e => {
        links[i].target = "_blank";
     }
 
-    // Update kehadiran aktual 
+    // Update kehadiran aktual
     let form = {
         confirmation: 'Hadir',
     }
@@ -272,14 +272,14 @@ uploadFile = e => {
         }
       })
   }
-  
+
   onClickInfo(class_id){
     this.setState({isModalConfirmation: true})
     this.fetchMeetingInfo(class_id)
   }
   fetchMeetingInfo(id){
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
-      
+
       if (res.status === 200) {
         this.setState({
           infoClass: res.data.result[0],
@@ -287,7 +287,7 @@ uploadFile = e => {
           countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
           countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
           countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length 
+          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length
         })
       }
     })
@@ -297,7 +297,7 @@ uploadFile = e => {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if(res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
- 
+
         var data = liveClass.data.result
         /*mark api get new history course*/
         let form = {
@@ -326,7 +326,7 @@ uploadFile = e => {
         // let url = `https://api.icademy.id/token?room=${data.room_name}&name=${res.data.result.name}&moderator=${liveClass.data.result.moderator == Storage.get("user").data.user_id}&email=${res.data.result.email}&avatar=${res.data.result.avatar}&id=${res.data.result.user_id}`;
 
         // let token = await axios.get(url);
-        
+
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
@@ -338,7 +338,9 @@ uploadFile = e => {
 
         // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
         let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+				console.log('meetingInfo: ', meetingInfo)
         http(meetingInfo).then((result) => {
+					console.log('result: ', result)
             if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
                 // Jika belum ada, create room nya.
                 let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
@@ -348,6 +350,7 @@ uploadFile = e => {
                     record: true
                 })
                 http(meetingCreateUrl).then((result) => {
+									console.log('createMeeting: ',result);
                     if (result.returncode='SUCCESS'){
                         // Setelah create, join
                         let joinUrl = api.administration.join(
@@ -356,6 +359,7 @@ uploadFile = e => {
                             this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                             {userID: this.state.user.user_id}
                         )
+												console.log('joinUrl: ', joinUrl)
                         this.setState({joinUrl: joinUrl})
                         if (isMobile){
                           window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
@@ -374,6 +378,8 @@ uploadFile = e => {
                     this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                     {userID: this.state.user.user_id}
                 )
+
+								console.log('joinUrl: ', joinUrl);
                 this.setState({joinUrl: joinUrl})
                 if (isMobile){
                   window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
@@ -392,7 +398,7 @@ uploadFile = e => {
           let datas = res.data.result;
           for(let a in datas){
             splitTags =  datas[a].attachment.split("/")[4];
-            datas[a].filenameattac = splitTags; 
+            datas[a].filenameattac = splitTags;
           }
           if(res.status === 200) {
             this.setState({
@@ -415,20 +421,20 @@ uploadFile = e => {
                     this.setState({
                       listSubtitle : publishSubsSelect
                     })
-                    
+
                   }
-            
+
                 })
-                
+
               }
-        
+
             })
-            
+
           }
-    
+
         })
     })
-      
+
   }
 
   endMeeting(){
@@ -542,13 +548,13 @@ uploadFile = e => {
         if(!res.data.error){
           // this.onBotoomScroll();
           let splitTags;
-          
+
           let datas = res.data.result;
           console.log(datas, 'datass kirim filesssss')
 
           splitTags =  datas.attachment.split("/")[4];
-          datas.filenameattac = splitTags; 
-  
+          datas.filenameattac = splitTags;
+
           //this.setState({ fileChat: [...this.state.fileChat, res.data.result], attachment : datas.attachment,  nameFile : null });
           socket.emit('send', {
             pengirim: this.state.user.user_id,
@@ -577,7 +583,7 @@ uploadFile = e => {
 
     this.setState({ [name]: value })
   }
-  
+
   addSubsToMOM = e => {
     e.preventDefault();
     if (this.state.subtitle == ''){
@@ -605,7 +611,7 @@ uploadFile = e => {
         time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       }
       console.log('MOM DATA', form)
-  
+
       API.put(`${API_SERVER}v1/liveclass/mom/${this.state.momid}`, form).then(res => {
         if(res.status === 200) {
           if(!res.data.error) {
@@ -631,7 +637,7 @@ uploadFile = e => {
         time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       }
       console.log('MOM DATA', form)
-  
+
       API.post(`${API_SERVER}v1/liveclass/mom`, form).then(res => {
         if(res.status === 200) {
           if(!res.data.error) {
@@ -650,7 +656,7 @@ uploadFile = e => {
       })
     }
   }
-  
+
   onClickEditMOM = e => {
     e.preventDefault();
     const momid = e.target.getAttribute('data-id');
@@ -666,7 +672,7 @@ uploadFile = e => {
     })
     console.log('MOM DATA STATE', this.state.title)
   }
-  
+
   exportMOM = e => {
     e.preventDefault();
     const momid = e.target.getAttribute('data-id');
@@ -710,7 +716,7 @@ uploadFile = e => {
       }
     })
   }
-  
+
   onChangeTinyMce = e => {
     this.setState({ body: e.target.getContent().replace(/'/g, "\\'") })
   }
@@ -729,10 +735,10 @@ uploadFile = e => {
 
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
-    
+
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
     let infoDateEnd = new Date(this.state.infoClass.schedule_end);
-    
+
 		return(
 			<div className="pcoded-main-container">
 			<div className="pcoded-wrapper">
@@ -744,7 +750,7 @@ uploadFile = e => {
         allowScrollbar={false}
       >
 			<div className="page-wrapper" style={{zIndex:1029, height:'100%'}}>
-			
+
         <Row>
 
           <Col sm={12} style={{marginBottom: '20px'}}>
@@ -826,7 +832,7 @@ uploadFile = e => {
                       >
                         Informasi Meeting dan Kehadiran
                       </Modal.Title>
-                      
+
                       {
                         this.state.needConfirmation >= 1
                         ?
@@ -853,7 +859,7 @@ uploadFile = e => {
                         <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                             <div className="card">
                               <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
-                              
+
                               <div className="card-carousel">
                                 <div className="title-head f-w-900 f-16">
                                   {this.state.infoClass.room_name}
@@ -1034,7 +1040,7 @@ uploadFile = e => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            
+
           <div>
                 <div className="col-sm-12">
                   <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
@@ -1043,10 +1049,10 @@ uploadFile = e => {
                         return (
                           <div className='box-chat-send-left'>
                             <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
+                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
                             <small >
-                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
                             </small>
                             {
                               classRooms.moderator == Storage.get("user").data.user_id &&
@@ -1095,7 +1101,7 @@ uploadFile = e => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            
+
           <div className="col-sm-12">{/* CHATING SEND FILE */}
                 <div id="scrollin" className="card" style={{padding:10}}>
                   <div className={this.state.editMOM ? 'hidden' : ''}>
@@ -1106,7 +1112,7 @@ uploadFile = e => {
                       Add New
                     </button>
                   </div>
-                  {!this.state.editMOM 
+                  {!this.state.editMOM
                   ?
                   <div className="card">
                     <div className="col-sm-12">
@@ -1132,7 +1138,7 @@ uploadFile = e => {
                       }
                     </div>
                   </div>
-                  
+
                   :
                   <div>
                     <Link to='#' title="Kembali" onClick={this.backMOM}>
@@ -1244,7 +1250,7 @@ uploadFile = e => {
               </div>
           </Modal.Body>
         </Modal>
-        
+
 			</div>
       </ReactFullScreenElement>
 			</div>

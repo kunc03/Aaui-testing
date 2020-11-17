@@ -98,6 +98,7 @@ import OTP from './components/OTP';
 import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
+import LearningGuru from './components/learning/guru';
 import LearningMurid from './components/learning/murid';
 
 // ======= IMPORT COMPONENT GURU ======== //
@@ -107,6 +108,8 @@ import GuruUjian from './components/guruUjian/index';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
 
+import Ptc from './components/ptc/index';
+import KursusNew from './components/learning/kursus';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -265,6 +268,8 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
 
+        <Route path="/ptc" component={Ptc} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -353,6 +358,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
 
+        <Route path="/ptc" component={Ptc} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -434,11 +441,15 @@ export class ClientSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/murid" component={LearningMurid} />
+        <Route path="/guru" component={LearningGuru} />
 
         <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+
+        <Route path="/ptc" component={Ptc} />
+        <Route path="/kursus-new" component={KursusNew} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
