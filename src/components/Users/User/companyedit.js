@@ -138,9 +138,11 @@ class UserEdit extends Component {
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
           if(res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
+            let tempGroup=[];
             res.data.result[0].map(item => {
-              this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+              tempGroup.push({value: item.branch_id, label: item.branch_name});
             });
+            this.setState({optionsGroup: tempGroup})
           }
         })
 
