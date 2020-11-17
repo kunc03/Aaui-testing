@@ -188,23 +188,23 @@ class WebinarTable extends Component {
                                         <Link onClick={this.dialogDelete.bind(this, item.id)} className="btn btn-v2 btn-primary mr-2" style={{backgroundColor:'#9f4040', border:'none', color:'#FFF'}}>Hapus</Link>
                                     }
                                     {
-                                        ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner.user_id) && item.status != 3) && 
+                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) && 
                                         <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
                                     }
                                     {
                                         (access_project_admin && item.status !=3) && 
-                                        <Link to={`/webinar/edit/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
+                                        <Link to={`/webinar/edit/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
                                     }
                                     {
-                                        ((this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.owner[0].user_id) && item.status == 3) && 
+                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) && 
                                         <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
                                     {
-                                        ((levelUser != 'client' || this.state.userId == item.moderator[0].user_id || this.state.userId == item.sekretaris[0].user_id || this.state.userId == item.pembicara[0].user_id || this.state.userId == item.owner[0].user_id || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
+                                        ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
                                         <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
                                     }
                                     {
-                                        (this.state.userId == item.moderator[0].user_id && item.status == 1) &&
+                                        (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
                                         <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
                                     }
                                 </td>

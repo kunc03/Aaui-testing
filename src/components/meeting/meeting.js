@@ -196,7 +196,7 @@ class MeetingTable extends Component {
     })
   }
   handleCreateMeeting() {
-    this.setState({ isClassModal: true, valueFolder: [Number(this.props.projectId)]});
+    this.setState({ isClassModal: true, infoParticipant: [], valueFolder: [Number(this.props.projectId)]});
   };
   handleChangeDateFrom = date => {
     this.setState({
@@ -235,7 +235,7 @@ class MeetingTable extends Component {
     }
   }
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoParticipant: [], infoClass: [], private:false, requireConfirmation:false, scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup:[], valueModerator:[], valuePeserta:[], valueFolder:[], infoClass: [], private:false, requireConfirmation:false, akses:false, infoParticipant:[], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
     this.setState({ modalJadwal: false});
@@ -255,7 +255,7 @@ class MeetingTable extends Component {
           countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
           countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
           countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length,
+          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length, 
           attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
         })
       }
@@ -341,7 +341,9 @@ class MeetingTable extends Component {
 
         //get and push multiselect option
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
+        let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+        let sqlFromProject = `${API_SERVER}v2/project/user/${this.props.projectId}`;
+        API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
           response.data.result.map(item => {
             this.state.optionsInvite.push({value: item.user_id, label: item.name});
           });
@@ -351,7 +353,7 @@ class MeetingTable extends Component {
         });
 
         if (this.state.optionsModerator.length==0 || this.state.optionsPeserta.length==0){
-            API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+            API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
               response.data.result.map(item => {
                 this.state.optionsModerator.push({value: item.user_id, label: item.name});
                 this.state.optionsPeserta.push({value: item.user_id, label: item.name});
@@ -362,9 +364,9 @@ class MeetingTable extends Component {
             });
           }
           if (this.state.optionsFolder.length==0){
-            API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
+            API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
               response.data.result.map(item => {
-                this.state.optionsFolder.push({value: item.id, label: item.name});
+                this.state.optionsFolder.push({value: item.id, label: item.title});
               });
             })
             .catch(function(error) {
@@ -539,7 +541,7 @@ class MeetingTable extends Component {
                 is_scheduled: res.data.result.is_scheduled,
                 schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
                 schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
-                userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
                 messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
@@ -627,7 +629,7 @@ class MeetingTable extends Component {
                 is_scheduled: res.data.result.is_scheduled,
                 schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
                 schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
-                userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER+'redirect/meeting/information/'+res.data.result.class_id,
                 messageNonStaff: APPS_SERVER+'meeting/'+res.data.result.room_name
@@ -714,6 +716,7 @@ class MeetingTable extends Component {
     const roomName = e.target.getAttribute('data-roomname');
     const valueModerator = [Number(e.target.getAttribute('data-moderator'))];
     const isprivate = e.target.getAttribute('data-isprivate');
+    const isakses = e.target.getAttribute('data-isakses');
     const isRequiredConfirmation = e.target.getAttribute('data-isrequiredconfirmation');
     // const participant = e.target.getAttribute('data-participant') ? e.target.getAttribute('data-participant').split(',').map(Number): [];
     const isscheduled = e.target.getAttribute('data-isscheduled');
@@ -736,9 +739,7 @@ class MeetingTable extends Component {
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt,
-
-      oldStartDate: Moment.tz(schedule_start_jkt, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-      oldEndDate: Moment.tz(schedule_end_jkt, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      akses: isakses
     })
 
     this.fetchMeetingInfo(classId)
@@ -917,6 +918,7 @@ class MeetingTable extends Component {
                           data-roomname={row.room_name}
                           data-moderator={row.moderator}
                           data-isprivate={row.is_private}
+                          data-isakses={row.is_akses}
                           data-isrequiredconfirmation={row.is_required_confirmation}
                           data-participant={row.participant}
                           data-isscheduled={row.is_scheduled}
@@ -1285,7 +1287,7 @@ class MeetingTable extends Component {
                             Pembatasan Akses
                           </Form.Label>
                           <div style={{width:'100%'}}>
-                           <ToggleSwitch checked={false} onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
+                           <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                           </div>
                           <Form.Text className="text-muted">
                             {
@@ -1383,7 +1385,7 @@ class MeetingTable extends Component {
                           </Form.Label>
                           <div className="row mt-1" style={{flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row', padding:'0px 15px'}}>
                                       {
-                                        this.state.infoParticipant.map(item=>
+                                        this.state.infoParticipant && this.state.infoParticipant.map(item=>
                                           <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
                                             {item.name}
                                             <button

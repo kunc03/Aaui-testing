@@ -27,9 +27,9 @@ class WebinarAddClass extends Component {
     access_project_admin: false,
 
     pembicara: [
-      {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
-      {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
-      {nama: 'Smity Jensen', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
+      // {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
+      // {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
+      // {nama: 'Smity Jensen', email: 'smity.jensen@gmail.com', telepon: '089123876345', status: true, checked: false},
     ],
     optionsName: [],
 
@@ -66,6 +66,9 @@ class WebinarAddClass extends Component {
     modalKuesioner: false,
     modalPretest: false,
     modalPosttest: false,
+
+    //role
+    sekretarisId: [],
   }
 
   addTamu = e => {
@@ -218,18 +221,18 @@ class WebinarAddClass extends Component {
 				oldJamMulai: jam_mulai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
-        pembicara: res.data.result.pembicara[0].name,
-        sekretarisId: res.data.result.sekretaris[0].user_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
         status: res.data.result.status,
-        userId: Storage.get('user').data.user_id
+        userId: Storage.get('user').data.user_id,
+        sekretarisId: res.data.result.sekretaris
       })
+      res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)
     })
-
-    console.log(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`);
-    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+    
+    API.get(`${API_SERVER}v2/project/user/${this.props.match.params.projectId}`).then(response => {
+      this.setState({optionsName: []})
       response.data.result.map(item => {
         this.state.optionsName.push({
           value: item.user_id,
@@ -492,15 +495,15 @@ class WebinarAddClass extends Component {
                 <div className="col-sm-6 text-right">
                   <div className="form-group">
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
                     }
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalPosttest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Post Test</button>
                     }
                     {
-                      (levelUser !='client' || this.state.userId == this.state.sekretarisId) &&
+                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={()=>this.setState({modalPretest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                   </div>
@@ -573,7 +576,7 @@ class WebinarAddClass extends Component {
                       <div className="col-sm-6">
                         <label className="bold">Pembicara</label>
                         <div class="input-group">
-                          <input disabled type="text" value={this.state.pembicara} className="form-control" />
+                          <input disabled type="text" value={this.state.pembicara.toString()} className="form-control" />
                           {/* <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPembicara: true })} className="btn btn-default">
                               <i className="fa fa-plus"></i> Tambah

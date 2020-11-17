@@ -25,11 +25,14 @@ class ProjekNew extends Component {
     alert: '',
     modalDelete: false,
     modalEdit: false,
+    modalSharing: false,
     limited: false,
 
     optionsProjectAdmin: [],
     valueProjectAdmin: [],
-    valueUser: []
+    valueUser: [],
+    share: [],
+    projectShareId: ''
   }
 
   onChangeInput = e => {
@@ -52,6 +55,9 @@ closeModalProject = e => {
 }
 closeModalEdit = e => {
   this.setState({modalEdit:false, alert: '', folderName:'', valueProjectAdmin:[], valueProjectAdmin:[], limited:false, valueUser:[]})
+}
+closeModalSharing = e => {
+  this.setState({modalSharing:false, projectShareId: ''})
 }
 closeModalDelete = e => {
   this.setState({modalDelete:false, deleteProjectName:'', deleteProjectId:'', alert:''})
@@ -118,6 +124,56 @@ closeModalDelete = e => {
         })
       }
     })
+  }
+  fetchShare(id){
+    API.get(`${API_SERVER}v2/project/share/${id}`).then(res => {
+      if (res.status === 200) {
+        if(res.data.error) {
+          toast.error(`Gagal fetch data share`)
+        } else {
+          this.setState({
+            share: res.data.result,
+          })
+        }
+      }
+    })
+  }
+  share(){
+    let form = {
+      project_id: this.state.projectShareId,
+      email: this.state.email
+    }
+    API.post(`${API_SERVER}v2/project/share`, form).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error(`Gagal share project ${this.state.editProjectName}`)
+        } else {
+          if (res.data.result==='success'){
+            this.setState({email:''})
+            this.fetchShare(this.state.projectShareId)
+            toast.success(`Sharing project to ${form.email}`)
+          }
+          else{
+            toast.warning(`Email ${form.email} not registered in ICADEMY`)
+          }
+        }
+      }
+    })
+  }
+  deleteShare(id){
+    API.delete(`${API_SERVER}v2/project/share/${id}`).then(res => {
+      if (res.status === 200) {
+        if(res.data.error) {
+          toast.error(`Gagal delete data share`)
+        } else {
+          this.fetchShare(this.state.projectShareId)
+        }
+      }
+    })
+  }
+  openModalSharing(id){
+    this.setState({modalSharing: true, projectShareId: id})
+    this.fetchShare(id)
   }
 
   deleteProject(){
@@ -233,6 +289,7 @@ closeModalDelete = e => {
                     <div className=" f-w-800 f-16 fc-black">
                       {item.title}
                     </div>
+                      { item.share_from && <span class="badge badge-pill badge-secondary" style={{fontSize:8, backgroundColor:'#007bff'}}>{item.share_from}</span>}
                   </div>
                 </Link>
                 <span className="col-sm-7">
@@ -250,8 +307,9 @@ closeModalDelete = e => {
                       />
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Ubah</button>
-                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Hapus</button>
+                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
+                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
+                      <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
                     </div>
                   </span>
                   :null
@@ -288,7 +346,7 @@ closeModalDelete = e => {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Tambah Project
+            Create Project
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -298,7 +356,7 @@ closeModalDelete = e => {
                         <Col>
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Nama Project
+                              Project Name
                             </Form.Label>
                               <div className="input-group mb-4">
                                 <input
@@ -326,6 +384,7 @@ closeModalDelete = e => {
                               value={this.state.valueProjectAdmin}
                               onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
                               mode="tags"
+                              required
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Pilih Project Admin"
@@ -375,14 +434,14 @@ closeModalDelete = e => {
                         className="btn btm-icademy-primary btn-icademy-grey"
                         onClick={this.closeModalProject.bind(this)}
                       >
-                        Batal
+                        Close
                       </button>
                       <button
                         className="btn btn-icademy-primary"
                         onClick={this.saveFolder.bind(this)}
                       >
                         <i className="fa fa-save"></i>
-                        Simpan
+                        Save
                       </button>
                   </Modal.Footer>
                 </Card>
@@ -395,7 +454,7 @@ closeModalDelete = e => {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Ubah Nama Project
+            Edit Project
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -405,7 +464,7 @@ closeModalDelete = e => {
                         <Col>
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Nama Project
+                              Project Name
                             </Form.Label>
                               <div className="input-group mb-4">
                                   <input
@@ -485,14 +544,14 @@ closeModalDelete = e => {
                         className="btn btm-icademy-primary btn-icademy-grey"
                         onClick={this.closeModalEdit.bind(this)}
                       >
-                        Batal
+                        Close
                       </button>
                       <button
                         className="btn btn-icademy-primary"
                         onClick={this.editProject.bind(this)}
                       >
                         <i className="fa fa-save"></i>
-                        Simpan
+                        Save
                       </button>
           </Modal.Footer>
         </Modal>
@@ -514,16 +573,95 @@ closeModalDelete = e => {
                         className="btn btm-icademy-primary btn-icademy-grey"
                         onClick={this.closeModalDelete.bind(this)}
                       >
-                        Batal
+                        Cancel
                       </button>
                       <button
                         className="btn btn-icademy-primary btn-icademy-red"
                         onClick={this.deleteProject.bind(this)}
                       >
                         <i className="fa fa-trash"></i>
-                        Hapus
+                        Delete
                       </button>
           </Modal.Footer>
+        </Modal>
+        <Modal
+          dialogClassName="modal-lg"
+          show={this.state.modalSharing}
+          onHide={this.closeModalSharing}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Sharing
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                <Card className="cardku">
+                  <Card.Body>
+                        <Row>
+                          <Col>
+                            <div class="row">
+                              <div className="col-sm-8">
+                              <Form.Label className="f-w-bold">
+                                Email
+                              </Form.Label>
+                                <input
+                                  type="email"
+                                  required
+                                  name="email"
+                                  value={this.state.email}
+                                  className="form-control"
+                                  placeholder="emailtujuan@domain.com"
+                                  onChange={this.onChangeInput}
+                                />
+                              <Form.Text className="text-muted">
+                                Email tujuan harus terdaftar sebagai user ICADEMY
+                              </Form.Text>
+                              </div>
+                              <div className="col-sm-4">
+                                <button
+                                  className="btn btn-icademy-primary"
+                                  style={{marginTop:25}}
+                                  onClick={this.share.bind(this)}
+                                >
+                                  <i className="fa fa-share-alt"></i>
+                                  Share
+                                </button>
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Email</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.share.length > 0 ? this.state.share.map(item=>
+                                    <tr>
+                                      <td>{item.name}</td>
+                                      <td>{item.email}</td>
+                                      <td><i onClick={this.deleteShare.bind(this, item.id)} style={{ cursor: 'pointer'}} className="fa fa-trash"></i></td>
+                                    </tr>
+                                  )
+                                  :
+                                  <tr>
+                                    <td colspan='3'>No data sharing</td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </Col>
+                        </Row>
+                  </Card.Body>
+                </Card>
+          </Modal.Body>
         </Modal>
       </div>
     );

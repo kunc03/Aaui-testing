@@ -1,70 +1,158 @@
 import React, { Component } from 'react';
 import { gantt } from 'dhtmlx-gantt';
-import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
+// import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
+import API, { API_SERVER } from '../../repository/api';
  
 export default class Gantt extends Component {
-    componentDidMount() {
-        
+    constructor(props) {
+      super(props);
+  
+      this.state = {
+        users:[]
+        // tasks: {
+        //     tasks : [],
+        //     links : []
+        // }
+      };
+    }
+
+    renderGantt(){
+        var editors = {
+            text: {type: "text", map_to: "text"},
+            start_date: {type: "date", map_to: "start_date", min: new Date(2020, 1, 1), max: new Date(2030, 30, 12)},
+		    owner: {type: "select", map_to: "owner_id", options:gantt.serverList("people")}
+        };
+        function byId(list, id) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].key == id)
+                    return list[i].label || "";
+            }
+            return "";
+        }
+        // gantt.templates.leftside_text=function(start,end,task){
+        //     return byId(gantt.serverList('people'), task.owner_id);
+        // };
+        gantt.templates.rightside_text=function(start,end,task){
+            return task.text;
+        };
+        gantt.templates.task_text=function(start,end,task){
+            return "";
+        };
+        gantt.templates.progress_text=function(start,end,task){
+            return Math.round(task.progress*100)+"%";
+        };
         gantt.config.columns = [
-            {name: "text", tree: true, width: "*", min_width: 120, resize: true},
-            {name: "owner", align: "center", width: 75, label: "Owner", template: function (task) {
-                if (task.type == gantt.config.types.project) {
-                    return "";
-                }
+            {name: "text", tree: true, width: "*", min_width: 120, editor: editors.text, resize: true},
+            // {name: "start_date", label: "Start", width:80, align: "center", editor: editors.start_date, resize: true},
+            {name: "owner", width: 80, align: "center", label: "Assignee", editor: editors.owner, template: function (item) {
+                    return byId(gantt.serverList('people'), item.owner_id)}},
+            // {name: "owner", align: "center", width: 75, label: "Owner", template: function (task) {
+            //     if (task.type == gantt.config.types.project) {
+            //         return "";
+            //     }
     
-                var result = "";
-                var store = gantt.getDatastore("resource");
-                var owners = task[gantt.config.resource_property];
+            //     var result = "";
+            //     var store = gantt.getDatastore("resource");
+            //     var owners = task[gantt.config.resource_property];
     
-                if (!owners || !owners.length) {
-                    return "Unassigned";
-                }
+            //     if (!owners || !owners.length) {
+            //         return "Unassigned";
+            //     }
     
-                if(owners.length == 1){
-                    return store.getItem(owners[0]).text;
-                }
+            //     if(owners.length == 1){
+            //         return store.getItem(owners[0]).text;
+            //     }
     
-                owners.forEach(function(ownerId) {
-                    var owner = store.getItem(ownerId);
-                    if (!owner)
-                        return;
-                    result += "<div class='owner-label' title='" + owner.text + "'>" + owner.text.substr(0, 1) + "</div>";
+            //     owners.forEach(function(ownerId) {
+            //         var owner = store.getItem(ownerId);
+            //         if (!owner)
+            //             return;
+            //         result += "<div class='owner-label' title='" + owner.text + "'>" + owner.text.substr(0, 1) + "</div>";
     
-                });
+            //     });
     
-                return result;
-                }, resize: true
-            },
+            //     return result;
+            //     }, resize: true
+            // },
             {name: "add", width: 44}
         ];
         
-        
-        gantt.config.keep_grid_width = false;
-        gantt.config.grid_resize = true;
+	gantt.attachEvent("onTaskCreated", function(task){
+		if(task.type == gantt.config.types.placeholder){
+			task.text = "Create a new task";
+		}
+		return true;
+	});
+
+	gantt.ext.inlineEditors.attachEvent("onSave", function(state){
+		var col = state.columnName;
+		if(gantt.autoSchedule && (col == "start_date" || col == "end_date" || col == "duration")){
+			gantt.autoSchedule();
+		}
+    });
+    
+	gantt.plugins({
+		multiselect: true,
+		auto_scheduling: true,
+		quick_info: true,
+		keyboard_navigation: true
+    });
+
+    gantt.templates.task_class  = function(start, end, task){
+        switch (task.status){
+            case "Open":
+                return "open";
+                break;
+            case "In Progress":
+                return "progress";
+                break;
+            case "Done":
+                return "done";
+                break;
+            case "Closed":
+                return "closed";
+                break;
+            default:
+                return "open"
+        }
+    };
+    gantt.config.scroll_size = 12;
+    gantt.config.min_grid_column_width = 200;
+	gantt.config.sort = true;  
+	gantt.config.keyboard_navigation_cells = true;
+	gantt.config.auto_scheduling = true;
+	gantt.config.auto_scheduling_strict = true;
+	gantt.config.show_unscheduled = true;
+	gantt.config.placeholder_task = true;
+	gantt.config.auto_types = true;
+	gantt.config.row_height = 30;
         gantt.config.min_column_width = 40;
         gantt.config.smart_scales = false;
         gantt.config.scale_height = 90;
-        gantt.locale.labels.section_owner = "Owner";
+        gantt.locale.labels.section_owner = "Assignee";
+        gantt.locale.labels.section_description = "Task";
+        gantt.locale.labels.section_detail = "Description";
         gantt.locale.labels.section_period = "Time period";
-        gantt.locale.labels.section_progress = "Status";
+        gantt.locale.labels.section_status = "Status";
         gantt.config.resource_store = "resource";
         gantt.config.resource_property = "owner_id";
         gantt.config.order_branch = true;
         gantt.config.open_tree_initially = true;
         gantt.config.lightbox.sections = [
             {name: "description", height: 38, map_to: "text", type: "textarea", focus: true},
-            // {name:"owner",height:38, type:"multiselect", options:gantt.serverList("people"), map_to:"owner_id", unassigned_value:0 },
-            {name: "owner", height: 22, map_to: "owner_id", type: "select", options: gantt.serverList("people")},
+            {name: "detail", height: 100, map_to: "description", type: "textarea"},
+            {name: "owner", height: 38, map_to: "owner_id", type: "select", options: gantt.serverList("people"), unassigned_value:0},
             {
-                name: "progress", height: 38, map_to: "progress", type: "select", options: [
-                    {key: "0", label: "Open"},
-                    {key: "1", label: "In Progress"},
-                    {key: "2", label: "Done"},
-                    {key: "3", label: "Closed"}
+                name: "status", height: 38, map_to: "status", type: "select", options: [
+                    {key: "Open", label: "Open"},
+                    {key: "In Progress", label: "In Progress"},
+                    {key: "Done", label: "Done"},
+                    {key: "Closed", label: "Closed"}
                 ]
             },
-            {name: "period", type: "time", map_to: "auto"}
+            {name: "period", type: "duration", map_to: "auto"}
         ];
         var weekScaleTemplate = function (date) {
             var dateToStr = gantt.date.date_to_str("%d %M");
@@ -92,7 +180,7 @@ export default class Gantt extends Component {
             var tooltips = gantt.ext.tooltips;
             tooltips.tooltip.setViewport(gantt.$task_data);
         });
-        const { tasks } = this.props;
+        const { tasks } = this.state;
         // today
         
         var dateToStr = gantt.date.date_to_str(gantt.config.task_date);
@@ -113,20 +201,8 @@ export default class Gantt extends Component {
 			item.open = true;
 			return item;
 		}
-	});
-
-	resourcesStore.parse([
-		{id: 1, text: "QA", parent:null},
-		{id: 2, text: "Development", parent:null},
-		{id: 3, text: "Sales", parent:null},
-		{id: 4, text: "Other", parent:null},
-		{id: 5, text: "Unassigned", parent:4},
-		{id: 6, text: "John", parent:1},
-		{id: 7, text: "Mike", parent:2},
-		{id: 8, text: "Anna", parent:2},
-		{id: 9, text: "Bill", parent:3},
-		{id: 10, text: "Floe", parent:3}
-	]);
+    });
+    
 	resourcesStore.attachEvent("onParse", function(){
 		var people = [];
 		resourcesStore.eachItem(function(res){
@@ -140,8 +216,25 @@ export default class Gantt extends Component {
 		gantt.updateCollection("people", people);
 	});
 
+    API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
+        if(res.data.error) console.log('Gagal fetch data user di project');
+        this.setState({users: res.data.result}, () => {
+            resourcesStore.parse(this.state.users);
+        })
+    })
+
         gantt.init(this.ganttContainer);
-        gantt.parse(tasks);
+        gantt.load(`${API_SERVER}v2/gantt/${this.props.projectId}`)
+        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId}/`);
+        dp.init(gantt);
+        dp.setTransactionMode("REST");
+
+        
+		gantt.sort("start_date", true);
+    }
+
+    componentDidMount() {
+        this.renderGantt();
     }
 
     render() {

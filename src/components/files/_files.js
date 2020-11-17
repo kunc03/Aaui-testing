@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIST } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {Modal, Form, Card, Row, Col} from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
 import SocketContext from '../../socket';
 import { toast } from "react-toastify";
+import { MultiSelect } from 'react-sm-select';
+import ToggleSwitch from "react-switch";
 const bbb = require('bigbluebutton-js')
 
 class FilesTableClass extends Component {
@@ -51,7 +53,14 @@ class FilesTableClass extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      optionsUser: [],
+      valueUser: [],
+      limited: false
     };
+  }
+
+  toggleSwitch(checked) {
+    this.setState({ limited:!this.state.limited });
   }
 
   handleCheck (role) {
@@ -80,6 +89,8 @@ class FilesTableClass extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      limited: false,
+      valueUser: []
     })
   }
   closeModalEdit = e => {
@@ -91,6 +102,8 @@ class FilesTableClass extends Component {
       aPembicara: true,
       aOwner: true,
       aPeserta: true,
+      limited: false,
+      valueUser: []
     })
   }
   closeModalUpload = e => {
@@ -161,11 +174,12 @@ saveFolder = e => {
     aModerator: this.state.aModerator ? 1 : 0,
     aPembicara: this.state.aPembicara ? 1 : 0,
     aOwner: this.state.aOwner ? 1 : 0,
-    aPeserta: this.state.aPeserta ? 1 : 0
+    aPeserta: this.state.aPeserta ? 1 : 0,
+    is_limit: this.state.limited ? 1 : 0,
+    user: this.state.valueUser
   };
 
   API.post(`${API_SERVER}v1/folder`, formData).then(res => {
-    // console.log('ALVIN', res)
     if(res.status === 200) {
       if(res.data.error) {
         toast.error('Error : '+res.data.result)
@@ -192,6 +206,8 @@ openModalEdit(id){
         aPembicara: res.data.result.pembicara,
         aOwner: res.data.result.owner,
         aPeserta: res.data.result.peserta,
+        valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
+        limited: res.data.result.is_limit === 0 ? false : true
       })
     }
   })
@@ -204,7 +220,9 @@ editFolder(){
     aModerator: this.state.aModerator ? 1 : 0,
     aPembicara: this.state.aPembicara ? 1 : 0,
     aOwner: this.state.aOwner ? 1 : 0,
-    aPeserta: this.state.aPeserta ? 1 : 0
+    aPeserta: this.state.aPeserta ? 1 : 0,
+    is_limit: this.state.limited ? 1 : 0,
+    user: this.state.valueUser
   }
   API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
     console.log(res.data)
@@ -254,11 +272,10 @@ editFolder(){
       }
     }
     this.setState({role: form})
-
-    API.get(`${API_SERVER}v1/folder/${this.state.companyId}/${mother}`, this.state.role).then(res => {
+    
+    API.get(`${API_SERVER}v1/folder-by-user/${this.state.companyId}/${mother}/${Storage.get('user').data.user_id}/${this.props.guest ? 1 : 0}`, this.state.role).then(res => {
       if (res.status === 200) {
         this.setState({folder: res.data.result})
-        console.log('ALVIN RES PROJECT', this.state.folder)
       }
     })
     API.get(`${API_SERVER}v1/folder/back/${this.state.companyId}/${mother}`).then(res => {
@@ -274,6 +291,7 @@ selectFolder(id, name) {
   this.fetchMOM(id)
   this.fetchRekaman(id)
   this.fetchRekamanBBB(id)
+  this.fetchRekamanBBBWebinar(id)
   this.setState({selectFolder: id == this.props.projectId ? false : true, folderId: id})
   })
 }
@@ -330,20 +348,68 @@ fetchRekamanBBB(folder){
             let http = bbb.http
             if (data.length > 0){
               data.map((item) => {
-                let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
-                http(getRecordingsUrl).then((result) => {
-                  if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-                    this.state.dataRecordings.push(result.recordings)
-                    this.forceUpdate()
-                  }
-                  else{
-                    console.log('GAGAL', result)
-                  }
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else{
+                      console.log('GAGAL', result)
+                    }
+                  })
                 })
               })
             }
             else{
-              this.setState({dataRecordings:[]})
+              this.setState({dataRecordings:this.state.dataRecordings})
+              this.forceUpdate()
+            }
+            // BBB END
+            this.setState({
+              isLoading: false
+            })
+          }
+        });
+  }
+}
+
+fetchRekamanBBBWebinar(folder){
+  let levelUser = Storage.get('user').data.level;
+  let userId = Storage.get('user').data.user_id;
+  if (folder == 0){
+    this.setState({dataRecordings:[], isLoading: false})
+  }
+  else{
+        API.get(
+          `${API_SERVER}v2/webinar/list/${folder}`
+        ).then((res) => {
+          if (res.status === 200) {
+            let data = res.data.result;
+            // BBB GET MEETING RECORD
+            if (data !== "Tidak ada webinar yang tersedia"){
+              data.map((item) => {
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id})
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else{
+                      console.log('GAGAL', result)
+                    }
+                  })
+                })
+              })
+            }
+            else{
+              this.setState({dataRecordings:this.state.dataRecordings})
               this.forceUpdate()
             }
             // BBB END
@@ -368,6 +434,12 @@ fetchData(){
       }
     })
   }
+  API.get(`${API_SERVER}v2/project/user/${this.props.projectId}`).then(response => {
+    this.setState({optionsUser: []})
+    response.data.result.map(item => {
+      this.state.optionsUser.push({value: item.user_id, label: item.name});
+    });
+  })
 }
 
 dialogDelete(id, name){
@@ -455,15 +527,18 @@ componentDidMount(){
             <div className="card p-20">
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
-                <button
-                onClick={e=>this.setState({modalUpload:true})}
-                className="btn btn-icademy-primary float-right"
-                style={{ padding: "7px 8px !important", marginLeft:14 }}
-                >
-                <i className="fa fa-upload"></i>
-
-                Upload
-                </button>
+                {
+                  this.props.guest === false &&
+                  <button
+                  onClick={e=>this.setState({modalUpload:true})}
+                  className="btn btn-icademy-primary float-right"
+                  style={{ padding: "7px 8px !important", marginLeft:14 }}
+                  >
+                  <i className="fa fa-upload"></i>
+                  
+                  Upload
+                  </button>
+                }
 
                 {access_project_admin == true ? <button
                 onClick={e=>this.setState({modalNewFolder:true})}
@@ -669,7 +744,7 @@ componentDidMount(){
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src={item.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -696,7 +771,7 @@ componentDidMount(){
                             :
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src={item.recording.playback.format.preview.images.image[0]} width="32"/> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -845,6 +920,45 @@ componentDidMount(){
                             <label>&nbsp; Peserta</label>
                           </Col>
                       </Row>
+                      <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit Users
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses folder.'
+                                :
+                                'Folder bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      {
+                        this.state.limited &&
+                        <Row>
+                          <Col>
+                              <MultiSelect
+                                id="user"
+                                options={this.state.optionsUser}
+                                value={this.state.valueUser}
+                                onChange={valueUser => this.setState({ valueUser })}
+                                mode="tags"
+                                required
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih User"
+                                hasSelectAll={true}
+                                selectAllLabel="Select All"
+                              />
+                          </Col>
+                        </Row>
+                      }
                       </div>
                       :
                       null
@@ -928,6 +1042,45 @@ componentDidMount(){
                             <label>&nbsp; Peserta</label>
                           </Col>
                       </Row>
+                      <Row>
+                        <Col>
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              Limit Users
+                            </Form.Label>
+                            <div style={{width:'100%'}}>
+                            <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+                            </div>
+                            <Form.Text className="text-muted">
+                              {
+                                this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses folder.'
+                                :
+                                'Folder bersifat terbuka. Semua user dapat mengakses.'
+                              }
+                            </Form.Text>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      {
+                        this.state.limited &&
+                        <Row>
+                          <Col>
+                              <MultiSelect
+                                id="user"
+                                options={this.state.optionsUser}
+                                value={this.state.valueUser}
+                                onChange={valueUser => this.setState({ valueUser })}
+                                mode="tags"
+                                required
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih User"
+                                hasSelectAll={true}
+                                selectAllLabel="Select All"
+                              />
+                          </Col>
+                        </Row>
+                      }
                       </div>
                       :
                       null
