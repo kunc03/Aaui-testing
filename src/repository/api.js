@@ -18,8 +18,8 @@ export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MO
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.dev.kelola.co.id";
 
-export const BBB_URL = "https://bbb1.kelola.co.id/bigbluebutton/";
-export const BBB_KEY = "2598039cc17413a1abc6add14e6f7699";
+export const BBB_URL = "https://conference.icademy.id/bigbluebutton/";
+export const BBB_KEY = "pzHkONB47UvPNFQU2fUXPsifV3HHp4ISgBt9W1C0o";
 
 export const BBB_SERVER_LIST = [
   {server: 'https://bbb.kelola.co.id/bigbluebutton/', key: '19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d'},

@@ -354,6 +354,7 @@ fetchRekamanBBBWebinar(folder){
     this.setState({dataRecordings:[], isLoading: false})
   }
   else{
+    this.setState({dataRecordings:[]})
         API.get(
           `${API_SERVER}v2/webinar/list/${folder}`
         ).then((res) => {
