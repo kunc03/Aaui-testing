@@ -245,12 +245,7 @@ export default class Gantt extends Component {
 		gantt.updateCollection("people", people);
 	});
 
-    API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
-        if(res.data.error) console.log('Gagal fetch data user di project');
-        this.setState({users: res.data.result}, () => {
-            resourcesStore.parse(this.state.users);
-        })
-    })
+    resourcesStore.parse(this.state.users);
 
         gantt.init(this.ganttContainer);
         gantt.load(`${API_SERVER}v2/gantt/${this.props.projectId}`)
@@ -275,8 +270,13 @@ export default class Gantt extends Component {
         })
     }
     componentDidMount() {
-        this.renderGantt();
-        this.countTaskStatus();
+        API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
+            if(res.data.error) console.log('Gagal fetch data user di project');
+            this.setState({users: res.data.result}, () => {
+                this.renderGantt();
+                this.countTaskStatus();
+            })
+        })
     }
 
     render() {
