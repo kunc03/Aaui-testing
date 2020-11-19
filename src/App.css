@@ -164,7 +164,7 @@ a {
 
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-  background-color: #bf337b;
+  background-color: #0079dc;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -213,4 +213,13 @@ input[type=file]{
   right: 8px;
   background-color: #fa3e3e;
   border-radius: 50%;
+}
+
+.header-kartu {
+  color: #0091FF;
+  font-family: Lato;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 22px;
 }

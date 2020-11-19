@@ -94,7 +94,9 @@ export default class WebinarCreate extends Component {
   }
 
   fetchData() {
-    API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+    let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
+    let sqlFromProject = `${API_SERVER}v2/project/user/${this.state.projectId}`;
+    API.get(this.props.match.params.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
       response.data.result.map(item => {
         this.state.optionNames.push({value: item.user_id, label: item.name});
       });
@@ -150,10 +152,10 @@ export default class WebinarCreate extends Component {
     let form = {
       companyId: this.state.companyId,
       judul: this.state.judul,
-      moderatorId: this.state.moderatorId[0],
-      sekretarisId: this.state.sekretarisId[0],
-      pembicaraId: this.state.pembicaraId[0],
-      ownerId: this.state.ownerId[0],
+      moderatorId: this.state.moderatorId,
+      sekretarisId: this.state.sekretarisId,
+      pembicaraId: this.state.pembicaraId,
+      ownerId: this.state.ownerId,
       projectId: this.state.valuesFolder,
       dokumenId: this.state.folderId
     }
@@ -248,7 +250,7 @@ export default class WebinarCreate extends Component {
                               options={this.state.optionNames}
                               value={this.state.sekretarisId}
                               onChange={sekretarisId => this.setState({ sekretarisId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -269,7 +271,7 @@ export default class WebinarCreate extends Component {
                               options={this.state.optionNames}
                               value={this.state.moderatorId}
                               onChange={moderatorId => this.setState({ moderatorId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -290,7 +292,7 @@ export default class WebinarCreate extends Component {
                               options={this.state.optionNames}
                               value={this.state.pembicaraId}
                               onChange={pembicaraId => this.setState({ pembicaraId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"
@@ -311,7 +313,7 @@ export default class WebinarCreate extends Component {
                               options={this.state.optionNames}
                               value={this.state.ownerId}
                               onChange={ownerId => this.setState({ ownerId })}
-                              mode="single"
+                              mode="tags"
                               enableSearch={true}
                               resetable={true}
                               valuePlaceholder="Silahkan Pilih User"

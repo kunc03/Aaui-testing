@@ -8,9 +8,8 @@ import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-
-import Generator from "./Generator";
 import TimeLine from "react-gantt-timeline";
+import { GithubPicker } from 'react-color'
 import "./styles.css";
 
 import SocketContext from '../../socket';
@@ -104,7 +103,10 @@ const config = {
 class GanttChartClass extends Component {
   constructor(props) {
     super(props);
-    let result = Generator.generateData();
+    let result = {
+      data: [],
+      links: []
+    };
     this.data = result.data;
 
     this.state = {
@@ -136,17 +138,48 @@ class GanttChartClass extends Component {
       statusTask: ["Open","In Progress","Done","Closed"],
 
       isModalDetail: false,
+      modalDeleteTask: false,
       taskId: "",
       file: "",
-      taskDetail: {}
+      taskDetail: {},
+      tagInput: false,
+      displayColorPicker: false,
+      colorPick: '#CCC',
+      tags:[],
+      tags_label: 'Untagged',
+      tags_color: '#CCC'
     };
   }
+
+  pickColor = () => {
+    this.setState({ displayColorPicker: !this.state.displayColorPicker })
+  };
+  closePickColor = () => {
+    this.setState({ displayColorPicker: false })
+  };
+
+  changeColor = (color) => {
+    this.setState({ colorPick: color.hex })
+    this.closePickColor()
+  };
+
+
+  modalDeleteTask(){
+    this.setState({modalDeleteTask: true})
+  }
+
+  closeModalDelete = e => {
+    this.setState({ 
+      modalDeleteTask: false,
+    });
+  };
 
   closeClassModal = e => {
     this.setState({
       isModalTodo: false, task: "", start: new Date(), end: new Date(),
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
-      valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: []
+      valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: [],
+      tagInput: false
     });
     this.fetchData()
   };
@@ -167,6 +200,20 @@ class GanttChartClass extends Component {
   onSelectItem = e => {
     this.fetchDetailTask(e.id);
   };
+
+  deleteTask(){
+    API.delete(`${API_SERVER}v2/task/delete/${this.state.taskId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error(`Gagal menghapus task`)
+        } else {
+          toast.success(`Berhasil menghapus task`)
+          this.closeModalDelete()
+          this.closeClassModal()
+        }
+      }
+    })
+  }
 
   onUpdateTask = (e, f) => {
     let form = {};
@@ -315,6 +362,40 @@ class GanttChartClass extends Component {
     }
   }
 
+  fetchTags(){
+    API.get(`${API_SERVER}v2/project/tags/${this.state.projectId}`).then(res => {
+      if(res.data.error) toast.warning("Gagal fetch API");
+      this.setState({tags: res.data.result})
+    })
+  }
+  
+  saveTags = e => {
+    e.preventDefault();
+    if(e.key === "Enter") {
+      let form = {
+        project_id: this.state.projectId,
+        color: this.state.colorPick,
+        label: e.target.value
+      }
+      API.post(`${API_SERVER}v2/project/tags/`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal fetch API");
+        this.fetchTags()
+      })
+    }
+  }
+  
+  setTags(tags_id){
+      let form = {
+        tags_id: tags_id,
+        task_id: this.state.taskId
+      }
+      API.put(`${API_SERVER}v2/project/set-tags/`, form).then(res => {
+        if(res.data.error) toast.warning("Gagal fetch API");
+        this.fetchDetailTask(this.state.taskId)
+        this.setState({tagInput: false})
+      })
+  }
+
   deleteSubtask = e => {
     e.preventDefault();
     let id = e.target.getAttribute('data-id');
@@ -395,9 +476,7 @@ class GanttChartClass extends Component {
 
   updateTaskById(e) {
     let form = {
-      name: this.state.taskDetail.name,
-      start: this.convertDateToMysql(this.state.start),
-      end: this.convertDateToMysql(this.state.end)
+      name: this.state.taskDetail.name
     };
 
     if(e.target.name == 'description') {
@@ -473,8 +552,11 @@ class GanttChartClass extends Component {
               '#32C5FF',
 
         max: res.data.result.subtasks.length,
-        val: res.data.result.subtasks.filter(item => item.status == 2).length
+        val: res.data.result.subtasks.filter(item => item.status == 2).length,
+        tags_color: res.data.result.tags_color ? res.data.result.tags_color : '#CCC',
+        tags_label: res.data.result.tags_label ? res.data.result.tags_label : 'Untagged'
       });
+      this.fetchTags()
     })
   }
 
@@ -528,6 +610,8 @@ class GanttChartClass extends Component {
           res.data.result[i].color = '#32C5FF'
         }
 
+        // res.data.result[i].color = res.data.result[i].tags_color ? res.data.result[i].tags_color : res.data.result[i].color;
+
         // if (new Date(res.data.result[i].end) <= new Date()){
         //   res.data.result[i].border = '1px solid #F00'
         // }
@@ -536,7 +620,8 @@ class GanttChartClass extends Component {
       this.setState({ data: res.data.result, links: [] })
     })
 
-    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+    API.get(`${API_SERVER}v2/project/user/${this.state.projectId}`).then(response => {
+      this.setState({optionsAssigne: []})
       response.data.result.map(item => {
         this.state.optionsAssigne.push({value: item.user_id, label: item.name});
       });
@@ -617,7 +702,7 @@ class GanttChartClass extends Component {
                   <button disabled={this.props.access_project_admin ? false : true} onClick={this.lockTask.bind(this, this.state.taskId, this.state.islock ? 0 : 1)} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.islock ? '#d13939' : '#9b9b9b'}}><i className={this.state.islock ? 'fa fa-lock' : 'fa fa-lock-open'}></i> {this.state.islock ? 'Locked' : "Unlocked"}</button>
                 </Modal.Title>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
-                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status ? this.state.status : "Status Task"}</button>
+                  <button style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.color}}>{this.state.status && this.state.status !== 'null' ? this.state.status : "Status Task"}</button>
                 </Modal.Title>
 
                 <div style={{width: '80%'}}>
@@ -647,6 +732,36 @@ class GanttChartClass extends Component {
                   onChange={e => this.setState({ description: e.target.value })}
                   onBlur={this.simpanDeskripsi} className="form-control mb-3" />
 
+                <div>
+                  <button onClick={()=> this.setState({tagInput: !this.state.tagInput})} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.tags_color}}>{this.state.tags_label}</button>
+                  {
+                    this.state.tagInput &&
+                    <div className='tags-wraper'>
+                      {
+                        this.state.tags && this.state.tags.map(item=>
+                          <div className='tags-row' onClick={this.setTags.bind(this, item.id)}>
+                            <div className='tags-color' style={{backgroundColor: item.color}}></div>
+                            <div className='tags-label'>{item.label}</div>
+                          </div>
+                        )
+                      }
+                      <div className='tags-row'>
+                        <div>
+                        <div className='tags-color' onClick={this.pickColor} style={{backgroundColor: this.state.colorPick}}></div>
+                        { this.state.displayColorPicker ?
+                        <div className='color-popover'>
+                          <div className='color-cover' onClick={ this.closePickColor }/>
+                          <GithubPicker color={this.state.colorPick} onChange={ this.changeColor } />
+                        </div> : null
+                        }
+                        </div>
+                        <div className='tags-label'>
+                          <input type="text" className='tags-input' name='newTags' placeholder="Add new" onKeyUp={this.saveTags} />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
                 {/* <span className="mb-4">Gunakan <code>Shift + Enter</code> untuk menyimpan perubahan.</span> */}
 
                 <form className="form-vertical mt-4">
@@ -758,8 +873,49 @@ class GanttChartClass extends Component {
                 </table>
 
               </Modal.Body>
+              <Modal.Footer>
+                {
+                  this.props.access_project_admin &&
+                  <button
+                          className="btn btn-icademy-primary btn-icademy-red"
+                          onClick={this.modalDeleteTask.bind(this)}
+                        >
+                          <i className="fa fa-trash"></i>
+                          Hapus
+                  </button>
+                }
+              </Modal.Footer>
             </Modal>
-
+            
+        <Modal
+          show={this.state.modalDeleteTask}
+          onHide={this.closeModalDelete}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi Hapus Task
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan menghapus task ini ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalDelete.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.deleteTask.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Hapus
+                      </button>
+          </Modal.Footer>
+        </Modal>
         </div>
 
     );

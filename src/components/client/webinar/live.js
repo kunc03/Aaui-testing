@@ -58,6 +58,12 @@ export default class WebinarLive extends Component {
     companyId: '',
     qnaPeserta: '',
 
+    //webinar role
+    pembicara: [],
+    sekretarisId: [],
+    moderatorId: [],
+    pembicaraId: [],
+
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
       {id: 2, nama: 'file-presentasi.pdf', url: 'https://google.com'},
@@ -174,6 +180,7 @@ export default class WebinarLive extends Component {
           toast.success('Mengirim jawaban pre test webinar')
           this.fetchPreTest()
           this.fetchResultPretest();
+          this.openModalPretest();
       })
     }
     else{
@@ -194,6 +201,8 @@ export default class WebinarLive extends Component {
           toast.warning('Waktu habis')
           toast.success('Mengirim jawaban pre test webinar')
           this.fetchPreTest()
+          this.fetchResultPretest();
+          this.openModalPretest();
       })
   }
   waktuPosttestHabis(){
@@ -213,7 +222,7 @@ export default class WebinarLive extends Component {
       })
   }
   kirimJawabanKuesioner(){
-    if (this.state.jawaban.length === this.state.pertanyaan.length){
+    if (this.state.jawaban.length >= this.state.pertanyaan.length){
       let form = {
         id: this.state.webinarId,
         user_id: this.state.user.user_id,
@@ -222,10 +231,11 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
         if(res.data.error) 
-          toast.error('Gagal mengirim jawaban kuesioner webinar')
+          toast.error('Sudah pernah mengirim jawaban kuesioner pada webinar ini')
         else
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
+            webinar_id: this.state.webinarId,
             name: this.state.user.name
           })
           toast.success('Mengirim jawaban kuesioner webinar')
@@ -292,6 +302,7 @@ export default class WebinarLive extends Component {
   }
 
   fetchKuesioner(){
+    this.setState({jawaban: []})
     API.get(`${API_SERVER}v2/kuesioner-peserta/${this.state.webinarId}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
@@ -317,20 +328,25 @@ export default class WebinarLive extends Component {
             this.setState({
               webinar: res.data.result,
               companyId: res.data.result.company_id,
-              pembicara: res.data.result.pembicara[0].name,
-              moderatorId: res.data.result.moderator[0].user_id,
-              sekretarisId: res.data.result.sekretaris[0].user_id,
-              pembicaraId: res.data.result.pembicara[0].user_id,
+              moderatorId: res.data.result.moderator,
+              sekretarisId: res.data.result.sekretaris,
+              pembicaraId: res.data.result.pembicara,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
-              tamu: res.data.result.tamu
+              tamu: res.data.result.tamu,
+              waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
             })
+            this.setState({pembicara: []})
+            res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
+            res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
+            this.fetchResultPretest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -367,7 +383,7 @@ export default class WebinarLive extends Component {
                               let joinUrl = api.administration.join(
                                   this.state.user.name,
                                   this.state.webinar.id,
-                                  this.state.webinar.moderator[0].user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                                   {userID: this.state.user.user_id}
                               )
                               this.setState({joinUrl: joinUrl})
@@ -383,7 +399,7 @@ export default class WebinarLive extends Component {
                       let joinUrl = api.administration.join(
                         this.state.user.name,
                         this.state.webinar.id,
-                        this.state.webinar.moderator[0].user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                        this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                         {userID: this.state.user.user_id}
                       )
                       this.setState({joinUrl: joinUrl})
@@ -411,20 +427,25 @@ export default class WebinarLive extends Component {
             this.setState({
               webinar: res.data.result,
               companyId: res.data.result.company_id,
-              pembicara: res.data.result.pembicara[0].name,
-              moderatorId: res.data.result.moderator[0].user_id,
-              sekretarisId: res.data.result.sekretaris[0].user_id,
-              pembicaraId: res.data.result.pembicara[0].user_id,
+              moderatorId: res.data.result.moderator,
+              sekretarisId: res.data.result.sekretaris,
+              pembicaraId: res.data.result.pembicara,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
-              tamu: res.data.result.tamu
+              tamu: res.data.result.tamu,
+              waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
             })
+            this.setState({pembicara: []})
+            res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
+            res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
             this.fetchQNAByUser()
             this.checkProjectAccess()
+            this.fetchResultPretest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -461,7 +482,7 @@ export default class WebinarLive extends Component {
                               let joinUrl = api.administration.join(
                                   this.state.user.name,
                                   this.state.webinar.id,
-                                  this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                                   {userID: this.state.user.user_id}
                               )
                               this.setState({joinUrl: joinUrl})
@@ -477,7 +498,7 @@ export default class WebinarLive extends Component {
                       let joinUrl = api.administration.join(
                         this.state.user.name,
                         this.state.webinar.id,
-                        this.state.webinar.moderator.user_id == Storage.get("user").data.user_id ? 'moderator' : 'peserta',
+                        this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                         {userID: this.state.user.user_id}
                       )
                       this.setState({joinUrl: joinUrl})
@@ -492,24 +513,30 @@ export default class WebinarLive extends Component {
   }
   acakDoorprize(){
     const random = Math.floor(Math.random() * this.state.jawabKuesioner.length);
+    console.log('ALVIN SENDER', this.state.jawabKuesioner)
+    console.log('ALVIN WIN', this.state.jawabKuesioner[random])
     socket.emit('send', {
       socketAction: 'pemenangDoorprize',
+      webinar_id: this.state.webinarId,
       name: this.state.jawabKuesioner[random]
     })
   }
   fetchResultPretest(){
-    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPretest: res.data.result, modalResultPretest: true})
+          this.setState({resultPretest: res.data.result})
         }
       }
     })
   }
+  openModalPretest(){
+    this.setState({modalResultPretest: true})
+  }
   fetchResultPosttest(){
-    API.get(`${API_SERVER}v2//webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
@@ -541,7 +568,19 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  fetchKuesionerSender(){
+    API.get(`${API_SERVER}v2/kuesioner/sender/${this.state.webinarId}`).then(res => {
+      if(res.status === 200) {
+        if(res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({jawabKuesioner: res.data.result})
+        }
+      }
+    })
+  }
   componentDidMount(){
+    this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if(data.webinar_id == this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher){
@@ -552,20 +591,20 @@ export default class WebinarLive extends Component {
         }
         this.setState({ qna: [data, ...this.state.qna] })
       }
-      if(data.socketAction == 'pemenangDoorprize') {
+      if(data.socketAction == 'pemenangDoorprize' && data.webinar_id===this.state.webinarId) {
         this.state.pemenangDoorprize.push(data.name)
         this.setState({modalDoorprize: true})
         this.closeModalKuesioner()
       }
-      if(data.socketAction == 'sendKuesioner') {
+      if(data.socketAction == 'sendKuesioner' && data.webinar_id===this.state.webinarId) {
         this.setState({startKuesioner: true, modalKuesionerPeserta: true})
         this.fetchKuesioner()
       }
-      if(data.socketAction == 'jawabKuesioner') {
-        this.state.jawabKuesioner.push(data.name)
+      if(data.socketAction == 'jawabKuesioner' && data.webinar_id===this.state.webinarId) {
+        this.fetchKuesionerSender()
         this.forceUpdate()
       }
-      if(data.socketAction == 'fetchPostTest') {
+      if(data.socketAction == 'fetchPostTest' && data.webinar_id===this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher){
           this.fetchWebinarPublic()
         }
@@ -633,17 +672,24 @@ export default class WebinarLive extends Component {
             this.updateStatus(this.state.webinar.id, 3)
             socket.emit('send', {
               socketAction: 'fetchPostTest',
+              webinar_id: this.state.webinarId
             })
         }
     })
   }
 
   sendKuesioner(){
-    socket.emit('send', {
-      socketAction: 'sendKuesioner',
+    
+    API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendKuesioner',
+          webinar_id: this.state.webinarId
+        })
+        toast.success('Kuesioner dikirim ke peserta');
+        this.setState({waitingKuesioner: true})
+      }
     })
-    toast.success('Kuesioner dikirim ke peserta');
-    this.setState({waitingKuesioner: true})
   }
   
 	render() {
@@ -708,12 +754,12 @@ export default class WebinarLive extends Component {
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link> */}
                     {this.state.webinar.judul}
-                    <p>Pembicara : {this.state.pembicara}</p>
+                    <p>Pembicara : {this.state.pembicara.toString()}</p>
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
                   {
-                      user.user_id == this.state.moderatorId && this.state.status == 2 ?
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.status == 2 ?
                       <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>Akhiri Webinar
                       </button>
@@ -721,9 +767,9 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                      user.user_id == this.state.sekretarisId ?
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={()=> this.setState({modalKuesioner: true})} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Kuesioner
+                        <i className="fa fa-clipboard-list"></i>Kuesioner & Doorprize
                       </button>
                       :
                       null
@@ -736,16 +782,24 @@ export default class WebinarLive extends Component {
                       :
                       null
                   }
+                  {
+                      this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >=1 ?
+                      <button onClick={this.openModalPretest.bind(this)} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Hasil Pre Test
+                      </button>
+                      :
+                      null
+                  }
                   <p className="m-b-0">
                     { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
                   </p>
                 </div>
               </div>
               {
-                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) ?
+                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                 <div>
-                  <h4>Silahkan jawab pre test untuk lanjut mengikuti webinar</h4>
-                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <h4>Sebelum memasuki Webinar, mohon menjawab pertanyaan yang ada di bawah ini sesuai dengan waktu yang telah ditentukan ({this.state.waktuPretest} menit).<br/> Jika sudah selesai menjawab pertanyaan, silakan klik "Kirim Jawaban Pre Test".<br/> Pengerjaan soal melebihi waktu yang telah ditentukan akan mengakibatkan pre test otomatis tertutup dan langsung memasuki ruang Webinar<br/></h4>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
                   <Timer
                       initialTime={this.state.waktuPretest*60000}
                       direction="backward"
@@ -812,10 +866,10 @@ export default class WebinarLive extends Component {
                         </div>
                       }
                 {
-                this.state.status == 3 && this.state.enablePosttest && this.state.posttestTerjawab === false && (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) &&
+                this.state.status == 3 && this.state.enablePosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                 <div>
                   <h4>Silahkan jawab post test</h4>
-                  <div className="fc-blue" style={{position:'absolute', right:20, top:20, fontSize:'18px', fontWeight:'bold'}}>
+                  <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
                   <Timer
                       initialTime={this.state.waktuPosttest*60000}
                       direction="backward"
@@ -852,7 +906,7 @@ export default class WebinarLive extends Component {
                     onClick={this.kirimJawabanPosttest.bind(this)}
                   >
                     <i className="fa fa-paper-plane"></i>
-                    Kirim Jawaban Pre Test
+                    Kirim Jawaban Post Test
                   </button>
                 </div>
                 }
@@ -891,7 +945,7 @@ export default class WebinarLive extends Component {
           </div>
         }
         {
-          (this.state.user.user_id == this.state.pembicaraId || this.state.user.user_id == this.state.moderatorId || this.state.user.user_id == this.state.sekretarisId) && this.state.status===2 ?
+          (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1) && this.state.status===2 ?
           <div className="col-sm-6">
             <Card>
               <Card.Body>
@@ -914,7 +968,7 @@ export default class WebinarLive extends Component {
             </Card>
           </div>
           :
-          (this.state.user.user_id !== this.state.pembicaraId || this.state.user.user_id !== this.state.moderatorId || this.state.user.user_id !== this.state.sekretarisId) && this.state.status===2 ?
+          (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) && this.state.status===2 ?
           <div className="col-sm-6">
           <div className="col-sm-12">
             <Card>
