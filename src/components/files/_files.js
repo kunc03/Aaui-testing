@@ -491,7 +491,7 @@ componentDidMount(){
             <span className="mb-4">
                 <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
                 {
-                  this.props.guest === false || !this.props.guest &&
+                  this.props.guest && this.props.guest === false || !this.props.guest &&
                   <button
                   onClick={e=>this.setState({modalUpload:true})}
                   className="btn btn-icademy-primary float-right"

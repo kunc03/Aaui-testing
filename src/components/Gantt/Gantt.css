@@ -132,10 +132,10 @@ html, body, #root,#root div:only-child, .gantt-container {
 .gantt_task_line.gantt_project{
     border:none !important;
     border-radius:12px;
-    background: #a6de96 !important;
+    background: #f0e66e !important;
 }
 .gantt_task_line.gantt_project .gantt_task_progress{
-    background: #87c477 !important;
+    background: #e3d95b !important;
 }
 
 .gantt_task_line{
@@ -148,4 +148,12 @@ html, body, #root,#root div:only-child, .gantt-container {
   }
   .chosen-container{
   	min-width:220px !important;
+  }
+  
+  .gantt_cal_light{
+      width:600px !important;
+  }
+
+  .time-line-container{
+      height:750px !important;
   }

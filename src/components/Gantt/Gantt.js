@@ -10,7 +10,11 @@ export default class Gantt extends Component {
       super(props);
   
       this.state = {
-        users:[]
+        users:[],
+        countOpen: 0,
+        countProgress: 0,
+        countDone: 0,
+        countClosed: 0
         // tasks: {
         //     tasks : [],
         //     links : []
@@ -118,6 +122,8 @@ export default class Gantt extends Component {
                 return "open"
         }
     };
+    
+    gantt.config.initial_scroll = false
     gantt.config.scroll_size = 12;
     gantt.config.min_grid_column_width = 200;
 	gantt.config.sort = true;  
@@ -152,8 +158,11 @@ export default class Gantt extends Component {
                     {key: "Closed", label: "Closed"}
                 ]
             },
-            {name: "period", type: "duration", map_to: "auto"}
+            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]}
         ];
+        gantt.templates.time_picker = function(date){
+            return gantt.date.date_to_str(gantt.config.time_picker)(date);
+        };
         var weekScaleTemplate = function (date) {
             var dateToStr = gantt.date.date_to_str("%d %M");
             var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
@@ -171,6 +180,52 @@ export default class Gantt extends Component {
             {unit: "day", step:1, format: "%d", css:daysStyle }
         ];
     
+	var hourToStr = gantt.date.date_to_str("%H:%i");
+	var hourRangeFormat = function(step){
+		return function(date){
+			var intervalEnd = new Date(gantt.date.add(date, step, "hour") - 1)
+			return hourToStr(date) + " - " + hourToStr(intervalEnd);
+		};
+	};
+	var zoomConfig = {
+		minColumnWidth: 40,
+        maxColumnWidth: 100,
+        activeLevelIndex: 1,
+		levels: [
+			[
+				{ unit: "year", format: "%Y", step: 1},
+				{ unit: "month", format: "%M", step: 1}
+			],
+            [
+                {unit: "month", step: 1, format: "%F, %Y"},
+                {unit: "week", step: 1, format: weekScaleTemplate},
+                {unit: "day", step:1, format: "%d", css:daysStyle }
+            ],
+			[
+				{ unit: "month", format: "%M %Y", step: 1},
+				{ unit: "day", format: "%d", step: 1}
+			],
+			[
+				{ unit: "day", format: "%d %M", step: 1},
+				{ unit: "hour", format: hourRangeFormat(12), step: 12}
+			],
+			[
+				{unit: "day", format: "%d %M",step: 1},
+				{unit: "hour",format: hourRangeFormat(6),step: 6}
+			],
+			[
+				{ unit: "day", format: "%d %M", step: 1 },
+				{ unit: "hour", format: "%H:%i", step: 1}
+			]
+		],
+		useKey: "ctrlKey",
+		trigger: "wheel",
+		element: function(){
+			return gantt.$root.querySelector(".gantt_task");
+		}
+	}
+
+	gantt.ext.zoom.init(zoomConfig);
         
         gantt.plugins({
             tooltip: true,
@@ -231,10 +286,23 @@ export default class Gantt extends Component {
 
         
 		gantt.sort("start_date", true);
+        gantt.showDate(new Date())
     }
 
+    countTaskStatus(){
+        API.get(`${API_SERVER}v2/gantt/${this.props.projectId}`).then(res => {
+            if(res.data.error) console.log('Gagal fetch data task di project');
+            this.setState({
+              countOpen: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '' || item.type === null) && (item.status === 'Open' || item.status === '' || item.status === null)).length,
+              countProgress: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '') && item.status === 'In Progress').length,
+              countDone: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '') && item.status === 'Done').length,
+              countClosed: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '') && item.status === 'Closed').length,
+            })
+        })
+    }
     componentDidMount() {
         this.renderGantt();
+        this.countTaskStatus();
     }
 
     render() {
@@ -242,6 +310,28 @@ export default class Gantt extends Component {
         <div className="card p-20">
         <div className="app-container">
           <div className="time-line-container">
+          <div className="m-t-10 m-b-10" style={{alignSelf:'flex-start'}}>
+            <span className="p-r-5" style={{ color: '#f0e66e' }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Main Task
+            <span className="p-r-5" style={{ color: '#3185ED', marginLeft:15 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Open ({this.state.countOpen})
+            <span className="p-r-5" style={{ color: '#ff7800', marginLeft:15 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            In Progress ({this.state.countProgress})
+            <span className="p-r-5" style={{ color: '#67cb48', marginLeft:15 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Done ({this.state.countDone})
+            <span className="p-r-5" style={{ color: '#c0c0c0', marginLeft:15 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Closed ({this.state.countClosed})
+          </div>
            <div
                 ref={ (input) => { this.ganttContainer = input } }
                 style={ { width: '100%', height: '100%' } }
