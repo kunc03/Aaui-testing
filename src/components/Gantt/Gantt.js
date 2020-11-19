@@ -49,37 +49,11 @@ export default class Gantt extends Component {
         };
         gantt.config.columns = [
             {name: "text", tree: true, width: "*", min_width: 120, editor: editors.text, resize: true},
-            // {name: "start_date", label: "Start", width:80, align: "center", editor: editors.start_date, resize: true},
-            {name: "owner", width: 80, align: "center", label: "Assignee", editor: editors.owner, template: function (item) {
-                    return byId(gantt.serverList('people'), item.owner_id)}},
-            // {name: "owner", align: "center", width: 75, label: "Owner", template: function (task) {
-            //     if (task.type == gantt.config.types.project) {
-            //         return "";
-            //     }
-    
-            //     var result = "";
-            //     var store = gantt.getDatastore("resource");
-            //     var owners = task[gantt.config.resource_property];
-    
-            //     if (!owners || !owners.length) {
-            //         return "Unassigned";
-            //     }
-    
-            //     if(owners.length == 1){
-            //         return store.getItem(owners[0]).text;
-            //     }
-    
-            //     owners.forEach(function(ownerId) {
-            //         var owner = store.getItem(ownerId);
-            //         if (!owner)
-            //             return;
-            //         result += "<div class='owner-label' title='" + owner.text + "'>" + owner.text.substr(0, 1) + "</div>";
-    
-            //     });
-    
-            //     return result;
-            //     }, resize: true
-            // },
+            {name: "owner", width: 60, align: "center", label: "Assignee", editor: editors.owner, template: function (item) {
+                    if (!item.owner_id)
+                        return;
+                    var result = "<div class='owner-label' title='" + byId(gantt.serverList('people'), item.owner_id) + "'>" + byId(gantt.serverList('people'), item.owner_id).substr(0, 1) + "</div>";
+                    return result}},
             {name: "add", width: 44}
         ];
         
