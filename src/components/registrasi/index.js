@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 
-import API, {API_SERVER} from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Registasi extends React.Component {
@@ -21,7 +21,7 @@ class Registasi extends React.Component {
   saveKelas = e => {
     e.preventDefault();
 
-    if(this.state.idKelas) {
+    if (this.state.idKelas) {
       // action for update
       console.log('update')
       let form = {
@@ -32,7 +32,7 @@ class Registasi extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/kelas/update/${this.state.idKelas}`, form).then(res => {
-        if(res.data.error) toast.warning("Error create kelas");
+        if (res.data.error) toast.warning("Error create kelas");
 
         toast.success("Update data kelas");
         this.fetchKelas();
@@ -50,7 +50,7 @@ class Registasi extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/kelas/create`, form).then(res => {
-        if(res.data.error) toast.warning("Error create kelas");
+        if (res.data.error) toast.warning("Error create kelas");
 
         toast.success("Create data kelas");
         this.fetchKelas();
@@ -65,7 +65,7 @@ class Registasi extends React.Component {
     e.preventDefault();
     let idKelas = e.target.getAttribute('data-id');
     API.get(`${API_SERVER}v2/kelas/one/${idKelas}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
       let getKelas = res.data.result;
 
       this.setState({
@@ -95,7 +95,7 @@ class Registasi extends React.Component {
 
   fetchSemester() {
     API.get(`${API_SERVER}v1/semester/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data semester");
+      if (res.data.error) toast.warning("Error fetch data semester");
 
       this.setState({ listSemester: res.data.result })
     })
@@ -103,7 +103,7 @@ class Registasi extends React.Component {
 
   fetchKelas() {
     API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data semester");
+      if (res.data.error) toast.warning("Error fetch data semester");
 
       this.setState({ listKelas: res.data.result })
     })
@@ -115,7 +115,7 @@ class Registasi extends React.Component {
         <div className="col-sm-3">
           <div className="card">
             <div className="card-header">Kelas</div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
                 {
                   this.state.listKelas.map((item, i) => (
@@ -134,15 +134,15 @@ class Registasi extends React.Component {
               <form onSubmit={this.saveKelas}>
                 <div className="row mb-3">
                   <div className="col">
-                    <label>Nama Kelas</label>
-                    <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter nama kelas" name="namaKelas" />
+                    <label>Class Name</label>
+                    <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter Class Name" name="namaKelas" />
                   </div>
                   <div className="col">
                     <label>Semester</label>
                     <select required value={this.state.semester} onChange={e => this.setState({ semester: e.target.value })} className="form-control" name="semester">
                       <option value="" disabled selected>Pilih semester</option>
                       {
-                        this.state.listSemester.map((item,i) => (
+                        this.state.listSemester.map((item, i) => (
                           <option value={item.semester_id}>{item.semester_name}</option>
                         ))
                       }
@@ -155,8 +155,8 @@ class Registasi extends React.Component {
                     <input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter kurikulum" name="kurikulum" />
                   </div>
                   <div className="col">
-                    <label>Tahun Ajaran</label>
-                    <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} type="text" className="form-control" placeholder="Enter tahun ajaran" name="tahunAjaran" />
+                    <label>Academic Year</label>
+                    <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} type="text" className="form-control" placeholder="Enter Enter Academic Year" name="tahunAjaran" />
                   </div>
                 </div>
                 <div className="row">

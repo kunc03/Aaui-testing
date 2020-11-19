@@ -5,8 +5,8 @@ import { Modal } from 'react-bootstrap';
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
-const hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
-const jam = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+const hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+const jam = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
 class JadwalMengajar extends React.Component {
 
@@ -34,13 +34,13 @@ class JadwalMengajar extends React.Component {
   saveRuangan = e => {
     e.preventDefault();
 
-    if(this.state.idRuangan) {
+    if (this.state.idRuangan) {
 
     } else {
 
       let cp = [...this.state.dataJadwal];
       cp.push({
-        id: this.state.dataJadwal.length+1,
+        id: this.state.dataJadwal.length + 1,
         nama_pelajaran: this.state.namaPelajaran,
         kelas_jadwal: this.state.kelasJadwal,
         hari_jadwal: this.state.hariJadwal,
@@ -72,7 +72,7 @@ class JadwalMengajar extends React.Component {
     e.preventDefault();
     let companyId = Storage.get('user').data.company_id;
 
-    if(this.state.idJadwal) {
+    if (this.state.idJadwal) {
 
       let form = {
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
@@ -85,7 +85,7 @@ class JadwalMengajar extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/jadwal-mengajar/${this.state.idJadwal}`, form).then(res => {
-        if(res.data.error) toast.warning("Error update jadwal")
+        if (res.data.error) toast.warning("Error update jadwal")
 
         this.fetchJadwal(companyId)
       })
@@ -103,7 +103,7 @@ class JadwalMengajar extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/jadwal-mengajar`, form).then(res => {
-        if(res.data.error) toast.warning("Error menyimpan jadwal")
+        if (res.data.error) toast.warning("Error menyimpan jadwal")
 
         this.fetchJadwal(companyId)
       })
@@ -115,7 +115,7 @@ class JadwalMengajar extends React.Component {
   deleteJadwal = e => {
     e.preventDefault()
     API.delete(`${API_SERVER}v2/jadwal-mengajar/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning("Error hapus jadwal")
+      if (res.data.error) toast.warning("Error hapus jadwal")
 
       this.fetchJadwal(Storage.get('user').data.company_id)
     })
@@ -125,7 +125,7 @@ class JadwalMengajar extends React.Component {
     e.preventDefault();
     let id = e.target.getAttribute('data-id');
     API.get(`${API_SERVER}v2/jadwal-mengajar/${id}`).then(res => {
-      if(res.data.error) toast.warning("Error get one jadwal")
+      if (res.data.error) toast.warning("Error get one jadwal")
 
       this.setState({
         idJadwal: id,
@@ -172,7 +172,7 @@ class JadwalMengajar extends React.Component {
 
   fetchJadwal(companyId) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/company/${companyId}`).then(res => {
-      if(res.data.error) toast.warning("Error get jadwal")
+      if (res.data.error) toast.warning("Error get jadwal")
 
       this.setState({ dataJadwal: res.data.result })
     })
@@ -180,41 +180,41 @@ class JadwalMengajar extends React.Component {
 
   fetchPelajaran(companyId) {
     API.get(`${API_SERVER}v2/pelajaran/company/${companyId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch pelajaran")
+      if (res.data.error) toast.warning("Error fetch pelajaran")
       this.setState({ dataPelajaran: res.data.result })
     })
     API.get(`${API_SERVER}v2/kelas/company/${companyId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch kelas")
+      if (res.data.error) toast.warning("Error fetch kelas")
       this.setState({ dataKelas: res.data.result })
     })
   }
 
   fetchRuangan(companyId) {
     API.get(`${API_SERVER}v2/ruangan-mengajar/company/${companyId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch ruangan")
+      if (res.data.error) toast.warning("Error fetch ruangan")
       this.setState({ dataRuangan: res.data.result })
     })
     API.get(`${API_SERVER}v2/guru/company/${companyId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch guru")
+      if (res.data.error) toast.warning("Error fetch guru")
       this.setState({ dataGuru: res.data.result })
     })
   }
 
   render() {
 
-    const StatusJadwal = ({item}) => {
-      if(
+    const StatusJadwal = ({ item }) => {
+      if (
         (typeof item.hari === "string") &&
         (typeof item.jam_mulai === "string") &&
         (typeof item.jam_selesai === "string")
       ) {
         return (
-          <span style={{padding: '8px'}} class="badge badge-pill badge-success">Sudah Diatur</span>
+          <span style={{ padding: '8px' }} class="badge badge-pill badge-success">Sudah Diatur</span>
         )
       }
       else {
         return (
-          <span style={{padding: '8px'}} class="badge badge-pill badge-warning">Belum Diatur</span>
+          <span style={{ padding: '8px' }} class="badge badge-pill badge-warning">Belum Diatur</span>
         )
       }
       // else {
@@ -228,10 +228,10 @@ class JadwalMengajar extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              Jadwal Mengajar
-              <button onClick={() => this.setState({ isModalTambah: true})} className="btn btn-v2 btn-primary float-right">
+              Teaching Schedule
+              <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
                 <i className="fa fa-plus"></i>
-                Tambah Ruangan Mengajar
+                Add Teaching Room
               </button>
             </div>
             <div className="card-body">
@@ -248,12 +248,12 @@ class JadwalMengajar extends React.Component {
                   {
                     this.state.dataJadwal.map((item, i) => (
                       <tr>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama_pelajaran}</td>
                         <td><StatusJadwal item={item} /></td>
                         <td className="text-center">
-                          <i style={{cursor: 'pointer'}} onClick={this.selectJadwal} data-id={item.jadwal_id} className="fa fa-edit"></i>
-                          <i style={{cursor: 'pointer'}} onClick={this.deleteJadwal} data-id={item.jadwal_id} className="fa fa-trash ml-2"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.selectJadwal} data-id={item.jadwal_id} className="fa fa-edit"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.deleteJadwal} data-id={item.jadwal_id} className="fa fa-trash ml-2"></i>
                         </td>
                       </tr>
                     ))
@@ -270,8 +270,8 @@ class JadwalMengajar extends React.Component {
           dialogClassName="modal-lg"
         >
           <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-              Tambah Jadwal Mengajar
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Tambah Teaching Schedule
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -282,7 +282,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.namaPelajaran} onChange={this.selectPelajaran} required className="form-control">
                     <option value="">Pilih</option>
                     {
-                      this.state.dataPelajaran.map((item,i) => (
+                      this.state.dataPelajaran.map((item, i) => (
                         <option value={`${item.pelajaran_id}_${item.kelas_id}`}>{item.nama_pelajaran}</option>
                       ))
                     }
@@ -293,7 +293,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value })} disabled className="form-control">
                     <option value="">Pilih</option>
                     {
-                      this.state.dataKelas.map((item,i) => (
+                      this.state.dataKelas.map((item, i) => (
                         <option value={item.kelas_id}>{item.kelas_nama}</option>
                       ))
                     }
@@ -307,7 +307,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.ruanganJadwal} onChange={this.selectRuangan} required className="form-control">
                     <option value="">Pilih</option>
                     {
-                      this.state.dataRuangan.map((item,i) => (
+                      this.state.dataRuangan.map((item, i) => (
                         <option value={`${item.id}_${item.pengajar_id}`}>{item.nama_ruangan}</option>
                       ))
                     }
@@ -318,7 +318,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.namaPengajar} onChange={e => this.setState({ namaPengajar: e.target.value })} disabled className="form-control">
                     <option value="">Pilih</option>
                     {
-                      this.state.dataGuru.map((item,i) => (
+                      this.state.dataGuru.map((item, i) => (
                         <option value={item.id}>{item.nama}</option>
                       ))
                     }
@@ -332,7 +332,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.hariJadwal} onChange={e => this.setState({ hariJadwal: e.target.value })} required className="form-control">
                     <option value="">Pilih</option>
                     {
-                      hari.map((item,i) => (
+                      hari.map((item, i) => (
                         <option value={item}>{item}</option>
                       ))
                     }
@@ -343,7 +343,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.jamMulai} onChange={e => this.setState({ jamMulai: e.target.value })} required className="form-control">
                     <option value="">Pilih</option>
                     {
-                      jam.map((item,i) => (
+                      jam.map((item, i) => (
                         <option value={item}>{item}</option>
                       ))
                     }
@@ -354,7 +354,7 @@ class JadwalMengajar extends React.Component {
                   <select value={this.state.jamSelesai} onChange={e => this.setState({ jamSelesai: e.target.value })} required className="form-control">
                     <option value="">Pilih</option>
                     {
-                      jam.map((item,i) => (
+                      jam.map((item, i) => (
                         <option value={item}>{item}</option>
                       ))
                     }

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
-import API, {API_SERVER} from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 
-import { bodyTabble} from '../../modul/data';
+import { bodyTabble } from '../../modul/data';
 import Moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
@@ -12,10 +12,10 @@ class JadwalHariIni extends Component {
     toDoList: this.props.lists,
     toDo: '',
     header: [
-      {title : 'Mata Pelajaran', width: null, status: true},
-      {title : 'Topik', width: null, status: true},
-      {title : 'Waktu', width: null, status: true},
-      {title : 'Sesi', width: null, status: true},
+      { title: 'Subjects', width: null, status: true },
+      { title: 'Topik', width: null, status: true },
+      { title: 'Waktu', width: null, status: true },
+      { title: 'Sesi', width: null, status: true },
     ]
   }
 
@@ -25,7 +25,7 @@ class JadwalHariIni extends Component {
 
   fetchData() {
     API.get(`${API_SERVER}v2/todo/get/${this.state.userId}`).then(res => {
-      if(res.data.error) toast.warning("Gagal fetch API");
+      if (res.data.error) toast.warning("Gagal fetch API");
       this.setState({ toDoList: res.data.result, toDo: "" });
     });
   }
@@ -38,42 +38,42 @@ class JadwalHariIni extends Component {
         <div className="table-responsive">
           <table className="table table-hover">
             <thead>
-                <tr style={{borderBottom: '1px solid #C7C7C7'}}>
+              <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                 {
-                    headerTabble.map((item, i) => {
-                        return (
-                        <td align="center" width={item.width}><b>{item.title}</b></td>
-                        )
-                    })
+                  headerTabble.map((item, i) => {
+                    return (
+                      <td align="center" width={item.width}><b>{item.title}</b></td>
+                    )
+                  })
                 }
                 <td colSpan="2" align="center"><b>Aksi</b></td>
-                </tr>
+              </tr>
             </thead>
             <tbody>
-                {
-                    bodyTabble.length == 0 ?
-                    <tr>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
-                    </tr>
-                    :
-                    bodyTabble.map((item, i) => {
-                        let levelUser = Storage.get('user').data.level;
-                        return (
-                        <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">Andre</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
-                            <td className="fc-muted f-14 f-w-300" align="center">
-                                <button className="btn btn-v2 btn-primary" >
-                                    Di Buka
+              {
+                bodyTabble.length == 0 ?
+                  <tr>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                  </tr>
+                  :
+                  bodyTabble.map((item, i) => {
+                    let levelUser = Storage.get('user').data.level;
+                    return (
+                      <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                        <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
+                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">Andre</td>
+                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
+                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
+                        <td className="fc-muted f-14 f-w-300" align="center">
+                          <button className="btn btn-v2 btn-primary" >
+                            Di Buka
                                 </button>
-                            </td>
-                        </tr>
-                        )
-                    })
-                }
-                
+                        </td>
+                      </tr>
+                    )
+                  })
+              }
+
             </tbody>
           </table>
         </div>

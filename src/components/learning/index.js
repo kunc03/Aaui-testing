@@ -15,31 +15,31 @@ import Folder from './folder';
 import Laporan from '../laporan/index';
 
 const titleTabs = [
-  {name: 'Registrasi', link: '/registrasi', component: Registrasi},
-  {name: 'Daftar Pelajaran', link: '/daftar-pelajaran', component: DaftarPelajaran},
-  {name: 'Ruangan Mengajar', link: '/ruangan-mengajar', component: RuanganMengajar},
-  {name: 'Jadwal Mengajar', link: '/jadwal-mengajar', component: JadwalMengajar},
-  {name: 'Personalia', link: '/personalia', component: Personalia},
-  {name: 'Evaluasi', link: '/evaluasi', component: Evaluasi},
-  {name: 'Laporan', link: '/laporan', component: Laporan},
+  { name: 'Registration', link: '/registrasi', component: Registrasi },
+  { name: 'List of Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran },
+  { name: 'Teaching Room', link: '/ruangan-mengajar', component: RuanganMengajar },
+  { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
+  { name: 'Personnel', link: '/personalia', component: Personalia },
+  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
+  { name: 'Report', link: '/laporan', component: Laporan },
 ]
 
 const switchTambahan = [
-  {name: 'Detail Evaluasi', link: '/evaluasi-detail/:id', component: EvaluasiDetail},
-  {name: 'Detail Murid', link: '/personalia-detail/:id', component: PersonaliaDetail},
-  {name: 'Folder', link: '/folder', component: Folder},
+  { name: 'Evaluation Details', link: '/evaluasi-detail/:id', component: EvaluasiDetail },
+  { name: 'Student Details', link: '/personalia-detail/:id', component: PersonaliaDetail },
+  { name: 'Folder', link: '/folder', component: Folder },
 ];
 
 export default class LearningAdmin extends Component {
 
-	state = {
+  state = {
   }
 
-	render() {
-		return (
-			<div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
+  render() {
+    return (
+      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{padding: '40px 40px 0 40px'}}>
+          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
@@ -55,20 +55,20 @@ export default class LearningAdmin extends Component {
                   <div className="row">
                     <div className="col-xl-12">
 
-                      <ul style={{paddingBottom: '0px'}} className="nav nav-pills">
-                      {
-                        titleTabs.map((item,i) => (
-                          <li key={i} className={`nav-item`}>
-                            <NavLink style={{borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px'}}
-                              activeClassName='active'
-                              className={`nav-link`}
-                              to={`/learning${item.link}`}>
-                                <img src="/newasset/webinar.svg" className="mr-2"/>
+                      <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
+                        {
+                          titleTabs.map((item, i) => (
+                            <li key={i} className={`nav-item`}>
+                              <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                activeClassName='active'
+                                className={`nav-link`}
+                                to={`/learning${item.link}`}>
+                                <img src="/newasset/webinar.svg" className="mr-2" />
                                 {item.name}
-                            </NavLink>
-                          </li>
-                        ))
-                      }
+                              </NavLink>
+                            </li>
+                          ))
+                        }
                       </ul>
 
                     </div>
@@ -87,7 +87,7 @@ export default class LearningAdmin extends Component {
                         <Route key={item.link} path={`/learning${item.link}`} component={item.component} />
                       ))
                     }
-					        </Switch>
+                  </Switch>
 
                 </div>
               </div>
@@ -95,7 +95,7 @@ export default class LearningAdmin extends Component {
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 
 }

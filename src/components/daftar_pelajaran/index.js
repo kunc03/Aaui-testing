@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from "react-toastify";
 
-import API, {API_SERVER} from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class DaftarPelajaran extends React.Component {
@@ -20,7 +20,7 @@ class DaftarPelajaran extends React.Component {
   savePelajaran = e => {
     e.preventDefault();
 
-    if(this.state.idPelajaran) {
+    if (this.state.idPelajaran) {
       // action for update
       console.log('update')
       let form = {
@@ -30,7 +30,7 @@ class DaftarPelajaran extends React.Component {
         kodePelajaran: this.state.kodePelajaran
       }
       API.put(`${API_SERVER}v2/pelajaran/update/${this.state.idPelajaran}`, form).then(res => {
-        if(res.data.error) toast.warning("Error create pelajaran")
+        if (res.data.error) toast.warning("Error create pelajaran")
 
         this.fetchPelajaran();
       })
@@ -46,7 +46,7 @@ class DaftarPelajaran extends React.Component {
         kodePelajaran: this.state.kodePelajaran
       }
       API.post(`${API_SERVER}v2/pelajaran/create`, form).then(res => {
-        if(res.data.error) toast.warning("Error create pelajaran")
+        if (res.data.error) toast.warning("Error create pelajaran")
 
         this.fetchPelajaran();
       })
@@ -60,7 +60,7 @@ class DaftarPelajaran extends React.Component {
     e.preventDefault();
     let idKelas = e.target.getAttribute('data-id');
     API.get(`${API_SERVER}v2/pelajaran/one/${idKelas}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
       let getKelas = res.data.result;
 
       this.setState({
@@ -90,7 +90,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchKelas() {
     API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
 
       this.setState({ listKelas: res.data.result })
     })
@@ -98,7 +98,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchPelajaran() {
     API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
 
       this.setState({ listPelajaran: res.data.result })
     })
@@ -110,7 +110,7 @@ class DaftarPelajaran extends React.Component {
         <div className="col-sm-8">
           <div className="card">
             <div className="card-header">Pelajaran</div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <table className="table table-striped">
                 <thead>
                   <tr>
@@ -126,12 +126,12 @@ class DaftarPelajaran extends React.Component {
                   {
                     this.state.listPelajaran.map((item, i) => (
                       <tr key={i}>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama_pelajaran}</td>
                         <td>{item.kategori}</td>
                         <td>{item.kode_pelajaran}</td>
                         <td>{item.kelas}</td>
-                        <td className="text-center"><i style={{cursor: 'pointer'}} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit"></i></td>
+                        <td className="text-center"><i style={{ cursor: 'pointer' }} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit"></i></td>
                       </tr>
                     ))
                   }
@@ -148,7 +148,7 @@ class DaftarPelajaran extends React.Component {
               <form onSubmit={this.savePelajaran}>
                 <div className="form-group">
                   <label>Nama Pelajaran</label>
-                  <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter nama kelas" name="namaKelas" />
+                  <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter Class Name" name="namaKelas" />
                 </div>
                 <div className="form-group">
                   <label>Kategori</label>
@@ -167,7 +167,7 @@ class DaftarPelajaran extends React.Component {
                   <select required value={this.state.kelas} onChange={e => this.setState({ kelas: e.target.value })} className="form-control" name="semester">
                     <option value="" disabled selected>Pilih kelas</option>
                     {
-                      this.state.listKelas.map((item,i) => (
+                      this.state.listKelas.map((item, i) => (
                         <option value={item.kelas_id}>{item.kelas_nama}</option>
                       ))
                     }

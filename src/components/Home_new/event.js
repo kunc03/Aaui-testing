@@ -37,19 +37,19 @@ class EventNew extends Component {
     let levelUser = Storage.get('user').data.level;
 
     let urlLearning = ''
-    if ((levelUser !== 'superadmin' && access.manage_course == 1) || (levelUser === 'superadmin')){
+    if ((levelUser !== 'superadmin' && access.manage_course == 1) || (levelUser === 'superadmin')) {
       // urlLearning = 'kursus-materi'
       urlLearning = (levelUser === "client" && Storage.get('user').data.grup_name.toLowerCase() === "guru") ? 'kursus-new' : 'learning'
     }
-    else{
-      urlLearning = 'kursus'
+    else {
+      urlLearning = 'Courses'
     }
 
     let urlMeeting = ''
-    if ((levelUser !== 'superadmin' && access.manage_group_meeting == 1) || (levelUser === 'superadmin')){
+    if ((levelUser !== 'superadmin' && access.manage_group_meeting == 1) || (levelUser === 'superadmin')) {
       urlMeeting = 'meeting'
     }
-    else{
+    else {
       urlMeeting = 'meeting'
     }
     return (
@@ -59,27 +59,29 @@ class EventNew extends Component {
             <div className="col-sm-12 mb-1">
               Tidak ada
             </div>
-          :
-          lists.map((item, i) => (
-            <div className="col-sm-12 mb-3" key={item.course_id} style={{display:
-              levelUser == 'client' && access.group_meeting == 0 && item.title == 'Meeting' ? 'none' :
-              levelUser == 'client' && (access.course == 0 && access.manage_course == 0) && item.title == 'Learning' ? 'none' :
-              'block'}}>
-              <Link to={item.title == 'Meeting' ? urlMeeting : item.title == 'Learning' ? urlLearning : 'webinars'}>
-                <div className={item.status ? 'border-blue-2 ' : 'box-disabled border-disabled'}>
-                  <div className="box-event ">
-                    <div className="title-head f-w-900 f-16 fc-skyblue">
-                    <img
-                      src={item.status ? `${item.title === 'Meeting' ? 'newasset/video-conference.svg' : item.title === 'Learning' ? 'newasset/book 2.svg' : 'newasset/webinar.svg'}` : ''}
-                      alt=""
-                      width={22}
-                    ></img> &nbsp; {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
+            :
+            lists.map((item, i) => (
+              <div className="col-sm-12 mb-3" key={item.course_id} style={{
+                display:
+                  levelUser == 'client' && access.group_meeting == 0 && item.title == 'Meeting' ? 'none' :
+                    levelUser == 'client' && (access.course == 0 && access.manage_course == 0) && item.title == 'Learning' ? 'none' :
+                      'block'
+              }}>
+                <Link to={item.title == 'Meeting' ? urlMeeting : item.title == 'Learning' ? urlLearning : 'webinars'}>
+                  <div className={item.status ? 'border-blue-2 ' : 'box-disabled border-disabled'}>
+                    <div className="box-event ">
+                      <div className="title-head f-w-900 f-16 fc-skyblue">
+                        <img
+                          src={item.status ? `${item.title === 'Meeting' ? 'newasset/video-conference.svg' : item.title === 'Learning' ? 'newasset/book 2.svg' : 'newasset/webinar.svg'}` : ''}
+                          alt=""
+                          width={22}
+                        ></img> &nbsp; {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </div>
-          ))
+                </Link>
+              </div>
+            ))
         }
       </div>
     );
