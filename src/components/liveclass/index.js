@@ -274,14 +274,14 @@ export default class LiveClass extends Component {
 
                         :
                         <div className="col-md-3 col-xl-3 mb-3">
-                          Tidak ada meeting aktif
+                          There are no active meetings
                         </div>
                     }
                   </div>
                   <Row>
                     <div className="col-md-12">
                       <h3 className="f-20 f-w-800">
-                        Meeting Tidak Aktif
+                        Inactive Meeting
                       </h3>
                     </div>
                   </Row>
@@ -335,7 +335,7 @@ export default class LiveClass extends Component {
                         </Row>
                         :
                         <div className="col-md-3 col-xl-3 mb-3">
-                          Tidak ada meeting aktif
+                          There are no active meetings
 								</div>
                     }
                   </div>
@@ -350,7 +350,7 @@ export default class LiveClass extends Component {
                         className="text-c-purple3 f-w-bold f-21"
                         style={{ marginBottom: "30px" }}
                       >
-                        Informasi Meeting dan Kehadiran
+                        Meeting and Attendance Information
                       </Modal.Title>
 
                       {

@@ -10,11 +10,11 @@ export default class QuestionExam extends Component {
     companyId: '',
     courseId: this.props.match.params.exam_id.split('.')[1],
     examId: this.props.match.params.exam_id.split('.')[0],
-    isLoading:true,
+    isLoading: true,
 
     question: [],
-    questionChecked:[],
-    cekAll : false,
+    questionChecked: [],
+    cekAll: false,
 
     isModalDelete: false,
     questionId: '',
@@ -29,22 +29,22 @@ export default class QuestionExam extends Component {
   onClickDelete = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.handleClose();
         this.fetchData();
       }
     })
   }
-  
-	bulkDelete = e => {
-		e.preventDefault();
-		API.delete(`${API_SERVER}v1/question/bulk/${this.state.questionChecked.join()}`).then(res => {
-			if(res.status === 200) {
+
+  bulkDelete = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v1/question/bulk/${this.state.questionChecked.join()}`).then(res => {
+      if (res.status === 200) {
         this.fetchData();
-        console.log('RESSS',res)
-			}
-		})
-	}
+        console.log('RESSS', res)
+      }
+    })
+  }
 
   handleClose = e => {
     this.setState({ isModalDelete: false, questionId: '' });
@@ -52,13 +52,13 @@ export default class QuestionExam extends Component {
 
   fetchData() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             console.log(res.data.result)
-            this.setState({ question: res.data.result, isLoading:false })
+            this.setState({ question: res.data.result, isLoading: false })
           }
         })
       }
@@ -72,18 +72,18 @@ export default class QuestionExam extends Component {
   onChangeCheckbox(e) {
     //console.log(document.getElementById("ceked").checked,'cek semuaa');
     let value = document.getElementById("ceked").checked;
-    
-    for(let a in this.state.question){
+
+    for (let a in this.state.question) {
       //return console.log(this.state.question[a])
-      if (value){
+      if (value) {
         this.state.question[a].check = true;
-        this.setState({question: this.state.question});
+        this.setState({ question: this.state.question });
         var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
         if (index !== -1) this.state.questionChecked.splice(index, 1);
         this.state.questionChecked.push(this.state.question[a].question_id);
       } else {
         this.state.question[a].check = false;
-        this.setState({question: this.state.question});
+        this.setState({ question: this.state.question });
         var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
         if (index !== -1) this.state.questionChecked.splice(index, 1);
       }
@@ -95,15 +95,15 @@ export default class QuestionExam extends Component {
     let value = document.getElementById(checkboxId).checked;
     console.log(value);
 
-    for(let a in this.state.question){
+    for (let a in this.state.question) {
       //console.log(this.state.question[a].question_id, checkboxId);
-      if(value) {
-        if(this.state.question[a].question_id === checkboxId){
+      if (value) {
+        if (this.state.question[a].question_id === checkboxId) {
           this.state.question[a].check = true;
           this.state.questionChecked.push(this.state.question[a].question_id);
         }
-      }else{
-        if(this.state.question[a].question_id === checkboxId){
+      } else {
+        if (this.state.question[a].question_id === checkboxId) {
           this.state.question[a].check = false;
           var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
           if (index !== -1) this.state.questionChecked.splice(index, 1);
@@ -117,22 +117,22 @@ export default class QuestionExam extends Component {
   };
 
   render() {
-    const {question} = this.state;
+    const { question } = this.state;
 
-    const QuestionList = ({lists}) => {
-      if(lists.length !== 0) {
+    const QuestionList = ({ lists }) => {
+      if (lists.length !== 0) {
         return (
           <Accordion>
             {
               lists.map((item, i) => (
-                <Card style={{marginBottom: '10px'}} key={item.question_id}>
+                <Card style={{ marginBottom: '10px' }} key={item.question_id}>
                   <Accordion.Toggle as={Card.Header} variant="link" eventKey={item.question_id}>
                     <div className="row">
                       <div className="col-sm-1">
-                          <label class="container">
-                            <input type="checkbox" id={item.question_id} onChange={this.handleChecked} checked={item.check}/>
-                            <span class="checkmark"></span>
-                          </label>
+                        <label class="container">
+                          <input type="checkbox" id={item.question_id} onChange={this.handleChecked} checked={item.check} />
+                          <span class="checkmark"></span>
+                        </label>
                       </div>
                       <div className="col-sm-1">
                         <h3 className="f-w-bold f-20 text-c-purple3">{item.number}</h3>
@@ -177,10 +177,10 @@ export default class QuestionExam extends Component {
                       <div className="row align-items-center justify-content-center">
                         <div className="col">
                           <small className="f-w-600 f-16 text-c-grey-t ">
-                            { this.state.isLoading ? 'Loading...' : 'Tidak ada pertanyaan'}
+                            {this.state.isLoading ? 'Loading...' : 'There is no question'}
                           </small>
                           <h5 className="f-w-bold f-20 text-c-purple3">
-                            { this.state.isLoading ? 'Sedang memuat data soal...' : 'Silahkan buat pertanyaan Anda'}
+                            {this.state.isLoading ? 'Currently loading question data...' : 'Please make your inquiry'}
                           </h5>
                         </div>
                       </div>
@@ -218,20 +218,20 @@ export default class QuestionExam extends Component {
                             style={{ paddingLeft: "8px" }}
                           ></i>
                         </Link>
-                        &nbsp;Pertanyaan Ujian
+                        &nbsp;Exam Questions
                       </h3>
 
                     </div>
                     <div className="col-sm-6">
-                      <div style={{padding: '10px',margin: '10px 0px 0px 15px'}}>
-                        <label class="container"> &nbsp; <small>Pilih Semua</small>
-                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this)} value={false}/>
+                      <div style={{ padding: '10px', margin: '10px 0px 0px 15px' }}>
+                        <label class="container"> &nbsp; <small>Choose all</small>
+                          <input id="ceked" type="checkbox" onChange={this.onChangeCheckbox.bind(this)} value={false} />
                           <span class="checkmark"></span>
                         </label>
                       </div>
                     </div>
                     <div className="col-sm-6">
-                    
+
                       <a
                         href={`/question-exam-create/${this.state.examId}.${this.state.courseId}`}
                         className="btn btn-ideku f-14 float-right mb-3"
@@ -245,8 +245,8 @@ export default class QuestionExam extends Component {
                           className="button-img"
                           alt=""
                         />
-                        Tambah Baru
-                      </a>  
+                        Add New
+                      </a>
                       <a
                         href='javascript:'
                         onClick={this.bulkDelete}
@@ -257,7 +257,7 @@ export default class QuestionExam extends Component {
                         }}
                       >
                         Bulk Delete
-                      </a>  
+                      </a>
                     </div>
 
                     <div className="col-xl-12">

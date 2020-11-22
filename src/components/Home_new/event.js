@@ -57,7 +57,7 @@ class EventNew extends Component {
         {
           lists.length == 0 ?
             <div className="col-sm-12 mb-1">
-              Tidak ada
+              There is no
             </div>
             :
             lists.map((item, i) => (

@@ -25,7 +25,7 @@ class Guru extends React.Component {
 
   saveMurid = e => {
     e.preventDefault()
-    if(this.state.action === "tambah") {
+    if (this.state.action === "tambah") {
       // action for create
       let form = {
         companyId: Storage.get('user').data.company_id,
@@ -33,7 +33,7 @@ class Guru extends React.Component {
         tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin, email: this.state.email
       };
       API.post(`${API_SERVER}v2/guru/create`, form).then(res => {
-        if(res.data.error) toast.warning("Error create guru");
+        if (res.data.error) toast.warning("Error create guru");
 
         toast.success("Guru baru berhasil disimpan")
         this.fetchMurid();
@@ -48,7 +48,7 @@ class Guru extends React.Component {
   deleteMurid = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/guru/one/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning("Error hapus murid")
+      if (res.data.error) toast.warning("Error hapus murid")
 
       this.fetchMurid();
     })
@@ -79,7 +79,7 @@ class Guru extends React.Component {
 
   fetchMurid() {
     API.get(`${API_SERVER}v2/guru/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
+      if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ dataMurid: res.data.result })
     })
@@ -92,11 +92,11 @@ class Guru extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">Import Data Guru</div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <form>
-                <div className="form-group row" style={{padding: '20px'}}>
+                <div className="form-group row" style={{ padding: '20px' }}>
                   <div className="col-sm-3">
-                    <label>Template Excel</label><br/>
+                    <label>Template Excel</label><br />
                     <a href={`${API_SERVER}attachments/template-upload.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
                   </div>
                   <div className="col-sm-6">
@@ -104,7 +104,7 @@ class Guru extends React.Component {
                     <input className="form-control" type="file" />
                   </div>
                   <div className="col-sm-3">
-                    <button style={{marginTop: '28px'}} className="btn btn-v2 btn-success" type="submit">Upload File</button>
+                    <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Upload File</button>
                   </div>
                 </div>
               </form>
@@ -115,10 +115,10 @@ class Guru extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              Daftar Guru Sekolah
-              <button onClick={() => this.setState({ isModalTambah: true})} className="btn btn-v2 btn-primary float-right">
+              List of School Teachers
+              <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
                 <i className="fa fa-plus"></i>
-                Tambah Guru
+                Add Teacher
               </button>
             </div>
             <div className="card-body">
@@ -127,19 +127,19 @@ class Guru extends React.Component {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama</th>
+                    <th> Name </th>
                     <th>No. Induk</th>
-                    <th>Tempat Lahir</th>
-                    <th>Tanggal Lahir</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Aksi</th>
+                    <th> Place of Birth </th>
+                    <th> Date of Birth</th>
+                    <th> Gender</th>
+                    <th> Action </th>
                   </tr>
                 </thead>
                 <tbody>
                   {
                     this.state.dataMurid.map((item, i) => (
                       <tr>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama}</td>
                         <td>{item.no_induk}</td>
                         <td>{item.tempat_lahir}</td>
@@ -149,7 +149,7 @@ class Guru extends React.Component {
                           <Link to={`/learning/personalia-detail/guru-${item.no_induk}`}>
                             <i className="fa fa-search"></i>
                           </Link>
-                          <i style={{cursor: 'pointer'}} onClick={this.deleteMurid} data-id={item.id} className="fa fa-trash ml-2"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.deleteMurid} data-id={item.id} className="fa fa-trash ml-2"></i>
                         </td>
                       </tr>
                     ))
@@ -163,8 +163,8 @@ class Guru extends React.Component {
                 dialogClassName="modal-lg"
               >
                 <Modal.Header closeButton>
-                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                    Tambah Guru
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Add Teacher
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -181,17 +181,17 @@ class Guru extends React.Component {
                     </div>
                     <div className="form-group row">
                       <div className="col-sm-6">
-                        <label>Tempat Lahir</label>
+                        <label> Place of Birth </label>
                         <input value={this.state.tempatLahir} onChange={e => this.setState({ tempatLahir: e.target.value })} required type="text" className="form-control" placeholder="Enter" />
                       </div>
                       <div className="col-sm-6">
-                        <label>Tanggal Lahir</label>
+                        <label> Date of Birth</label>
                         <input value={this.state.tanggalLahir} onChange={e => this.setState({ tanggalLahir: e.target.value })} required type="date" className="form-control" placeholder="Enter" />
                       </div>
                     </div>
                     <div className="form-group row">
                       <div className="col-sm-3">
-                        <label>Jenis Kelamin</label>
+                        <label> Gender</label>
                         <select value={this.state.jenisKelamin} onChange={e => this.setState({ jenisKelamin: e.target.value })} required className="form-control" placeholder="Enter">
                           <option value="" disabled selected>Pilih</option>
                           <option value="Laki-laki">Laki-laki</option>

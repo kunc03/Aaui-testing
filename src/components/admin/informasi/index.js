@@ -19,7 +19,7 @@ class InformasiAdmin extends Component {
     files: '',
 
     isModalRemove: false,
-    
+
     isNotifikasi: false,
     isiNotifikasi: ''
   }
@@ -29,13 +29,13 @@ class InformasiAdmin extends Component {
     const value = target.value;
     const name = target.name;
 
-    if(name === 'files') {
+    if (name === 'files') {
       if (target.files[0].size >= 0) {
         this.setState({ [name]: target.files });
       } else {
         target.value = null;
         this.handleCloseModal()
-        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'The file does not match the format, please check again.' })
       }
     } else {
       this.setState({ [name]: value });
@@ -47,15 +47,15 @@ class InformasiAdmin extends Component {
   }
 
   closeModal = e => {
-    this.setState({ 
-      isModalAdd: false, 
+    this.setState({
+      isModalAdd: false,
       informasiId: '',
-      judul: '', 
-      deskripsi: '', 
-      files: '', 
-      isModalRemove: false, 
+      judul: '',
+      deskripsi: '',
+      files: '',
+      isModalRemove: false,
       isNotifikasi: false,
-      isiNotifikasi: '' 
+      isiNotifikasi: ''
     });
   }
 
@@ -66,10 +66,10 @@ class InformasiAdmin extends Component {
   openModalEdit = e => {
     let informasiId = e.target.getAttribute('data-id');
     API.get(`${API_SERVER}v1/informasi/${informasiId}`).then(res => {
-      if(res.status === 200) {
-        this.setState({ 
+      if (res.status === 200) {
+        this.setState({
           isModalAdd: true,
-          informasiId: informasiId, 
+          informasiId: informasiId,
           company_id: res.data.result[0].company_id,
           judul: res.data.result[0].informasi_judul,
           deskripsi: res.data.result[0].informasi_deskripsi
@@ -88,7 +88,7 @@ class InformasiAdmin extends Component {
 
   fetchData() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/informasi/company/${res.data.result.company_id}`).then(res => {
@@ -104,7 +104,7 @@ class InformasiAdmin extends Component {
   onClickSubmitHapus = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/informasi/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.status === 200){
+      if (res.status === 200) {
         this.closeModal();
         this.fetchData();
       }
@@ -114,7 +114,7 @@ class InformasiAdmin extends Component {
   onClickSubmitSave = e => {
     e.preventDefault();
 
-    if(this.state.informasiId == "") {
+    if (this.state.informasiId == "") {
       // ACTION SAVE
       let form = {
         judul: this.state.judul,
@@ -123,7 +123,7 @@ class InformasiAdmin extends Component {
       };
 
       API.post(`${API_SERVER}v1/informasi`, form).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           console.log('STATE: ', res.data)
           if (this.state.files.length != 0) {
             let formData = new FormData();
@@ -153,7 +153,7 @@ class InformasiAdmin extends Component {
       };
 
       API.put(`${API_SERVER}v1/informasi/${this.state.informasiId}`, form).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           if (this.state.files.length != 0) {
             let formData = new FormData();
             for (let i = 0; i < this.state.files.length; i++) {
@@ -168,7 +168,7 @@ class InformasiAdmin extends Component {
             });
 
           }
-         
+
           this.fetchData();
           this.closeModal();
         }
@@ -181,10 +181,10 @@ class InformasiAdmin extends Component {
 
     console.log('STATE: ', this.state);
 
-    const Attachments = ({lists}) => {
+    const Attachments = ({ lists }) => {
       let pecahFile = lists.split(',');
-      if(pecahFile.length > 0) {
-        if(pecahFile[0] == "null") {
+      if (pecahFile.length > 0) {
+        if (pecahFile[0] == "null") {
           return (
             <div>No File</div>
           );
@@ -193,7 +193,7 @@ class InformasiAdmin extends Component {
             <div class="list-group">
               {
                 pecahFile.map((item, i) => (
-                  <a key={item} href={item} target="_blank" className="list-group-item list-group-item-action">File {i+1}</a>
+                  <a key={item} href={item} target="_blank" className="list-group-item list-group-item-action">File {i + 1}</a>
                 ))
               }
             </div>
@@ -206,36 +206,36 @@ class InformasiAdmin extends Component {
       }
     }
 
-    const ListKursus = ({lists}) => {
-      if(lists.length === 0) {
+    const ListKursus = ({ lists }) => {
+      if (lists.length === 0) {
         return (
           <tbody>
             <tr>
-              <td colSpan={5}>Tidak ada data</td>
+              <td colSpan={5}>No data available</td>
             </tr>
           </tbody>
         );
       } else {
         return (
           <tbody>
-          {
-            lists.map((item, i) => (
-              <tr key={item.informasi_id}>
-                <td>{i+1}</td>
-                <td>{item.informasi_judul}</td>
-                <td><Attachments lists={item.informasi_files} /></td>
-                <td><Moment format="DD/MM/YYYY">{item.created_at}</Moment></td>
-                <td>
-                  <Link to="#" className="buttonku ml-2" title="Edit">
-                    <i onClick={this.openModalEdit} data-id={item.informasi_id} className="fa fa-edit"></i>
-                  </Link>
-                  <Link to="#" className="buttonku ml-2" title="Hapus">
-                    <i onClick={this.openModalRemove} data-id={item.informasi_id} className="fa fa-trash"></i>
-                  </Link>
-                </td>
-              </tr>
-            ))
-          }
+            {
+              lists.map((item, i) => (
+                <tr key={item.informasi_id}>
+                  <td>{i + 1}</td>
+                  <td>{item.informasi_judul}</td>
+                  <td><Attachments lists={item.informasi_files} /></td>
+                  <td><Moment format="DD/MM/YYYY">{item.created_at}</Moment></td>
+                  <td>
+                    <Link to="#" className="buttonku ml-2" title="Edit">
+                      <i onClick={this.openModalEdit} data-id={item.informasi_id} className="fa fa-edit"></i>
+                    </Link>
+                    <Link to="#" className="buttonku ml-2" title="Hapus">
+                      <i onClick={this.openModalRemove} data-id={item.informasi_id} className="fa fa-trash"></i>
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            }
           </tbody>
         );
       }
@@ -250,14 +250,14 @@ class InformasiAdmin extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Informasi</h3>
+                      <h3 className="f-24 f-w-800">Information</h3>
 
                       <div style={{ overflowX: "auto" }}>
                         <table className="table-curved" style={{ width: "100%" }}>
                           <thead>
                             <tr>
                               <th className="text-center">NO</th>
-                              <th>Judul</th>
+                              <th> Title </th>
                               <th>Files</th>
                               <th>Created At</th>
                               <th className="text-center">
@@ -277,7 +277,7 @@ class InformasiAdmin extends Component {
                           </thead>
 
                           <ListKursus lists={this.state.informasi} />
-                          
+
                         </table>
                       </div>
 
@@ -291,11 +291,11 @@ class InformasiAdmin extends Component {
 
         <Modal show={this.state.isModalAdd} onHide={this.closeModal}>
           <Modal.Body>
-            <Modal.Title style={{marginBottom: '20px'}} className="text-c-purple3 f-w-bold">Form Data</Modal.Title>
-            
+            <Modal.Title style={{ marginBottom: '20px' }} className="text-c-purple3 f-w-bold">Form Data</Modal.Title>
+
             <form className="form-vertical">
               <div className="form-group">
-                <input type="text" onChange={this.onChangeInput} className="form-control" name="judul" value={this.state.judul} placeholder="Judul Informasi" />
+                <input type="text" onChange={this.onChangeInput} className="form-control" name="judul" value={this.state.judul} placeholder="Title Information" />
               </div>
               <div className="form-group">
                 <Editor
@@ -323,8 +323,8 @@ class InformasiAdmin extends Component {
                 <span>Bisa lebih dari satu file.</span>
               </div>
             </form>
-            
-            <button style={{ marginTop: '30px'}} type="button"
+
+            <button style={{ marginTop: '30px' }} type="button"
               onClick={this.onClickSubmitSave}
               className="btn btn-block btn-ideku f-w-bold">
               Simpan
@@ -339,19 +339,19 @@ class InformasiAdmin extends Component {
 
         <Modal show={this.state.isModalRemove} onHide={this.closeModal}>
           <Modal.Body>
-            <Modal.Title className="text-c-purple3 f-w-bold">Hapus Informasi</Modal.Title>
-            <p className="f-w-bold">Apakah Anda yakin untuk menghapus informasi ini ?</p>
-            
-            <button style={{ marginTop: '50px'}} type="button"
+            <Modal.Title className="text-c-purple3 f-w-bold">Delete Information</Modal.Title>
+            <p className="f-w-bold"> Are you sure you want to delete this information ?</p>
+
+            <button style={{ marginTop: '50px' }} type="button"
               data-id={this.state.informasiId}
               onClick={this.onClickSubmitHapus}
               className="btn btn-block btn-ideku f-w-bold">
-              Hapus
+              Delete
             </button>
             <button type="button"
               className="btn btn-block f-w-bold"
               onClick={this.closeModal}>
-              Tidak
+              No
             </button>
           </Modal.Body>
         </Modal>
@@ -362,7 +362,7 @@ class InformasiAdmin extends Component {
         >
           <Modal.Body>
             <Modal.Title className="text-c-purple3 f-w-bold">
-              Notifikasi
+              Notification
             </Modal.Title>
 
             <p style={{ color: "black", margin: "20px 0px" }}>
@@ -374,11 +374,11 @@ class InformasiAdmin extends Component {
               className="btn btn-block f-w-bold"
               onClick={this.closeModal}
             >
-              Mengerti
+              Understand
             </button>
           </Modal.Body>
         </Modal>
-      
+
       </div>
     );
   }

@@ -143,7 +143,7 @@ export default class LiveClassAdmin extends Component {
       });
     } else {
       e.target.value = null;
-      this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+      this.setState({ isNotifikasi: true, isiNotifikasi: 'The file does not match the format, please check again.' })
     }
   }
 
@@ -548,12 +548,12 @@ export default class LiveClassAdmin extends Component {
                         data-end={item.schedule_end}
                         data-folder={item.folder_id}
                         onClick={this.onClickEdit}>
-                        <i className='fa fa-edit'></i> UBAH
+                        <i className='fa fa-edit'></i> EDIT
                   </Link>
                     </small>
                     <small className="mr-3">
                       <Link className="small-button" data-id={item.class_id} onClick={this.onSubmitDelete}>
-                        <i className='fa fa-trash'></i> HAPUS
+                        <i className='fa fa-trash'></i> DELETE
                   </Link>
                     </small><br />
                   </div>
@@ -649,7 +649,7 @@ export default class LiveClassAdmin extends Component {
 
                           :
                           <div className="col-md-3 col-xl-3 mb-3">
-                            Tidak ada meeting
+                            There is no meeting
                         </div>
                       }
                     </div>
@@ -687,7 +687,7 @@ export default class LiveClassAdmin extends Component {
                           className="text-c-purple3 f-w-bold f-21"
                           style={{ marginBottom: "30px" }}
                         >
-                          {this.state.classId ? 'Ubah Group Meeting' : 'Membuat Group Meeting'}
+                          {this.state.classId ? 'Change Group Meeting' : 'Create Group Meeting'}
                         </Modal.Title>
 
                         <Form>
@@ -734,7 +734,7 @@ export default class LiveClassAdmin extends Component {
                               }
                             />
                             <Form.Text className="text-muted">
-                              Judul tidak boleh menggunakan karakter spesial
+                              The title cannot use special characters
                           </Form.Text>
                           </Form.Group>
 
@@ -751,10 +751,10 @@ export default class LiveClassAdmin extends Component {
                               mode="single"
                               enableSearch={true}
                               resetable={true}
-                              valuePlaceholder="Pilih Folder Project"
+                              valuePlaceholder="Select Folder Project"
                             />
                             <Form.Text className="text-muted">
-                              Seluruh MOM akan dikumpulkan dalam 1 folder project pada menu Files.
+                              All MOM will be collected in 1 project folder on the Files menu.
                           </Form.Text>
                           </Form.Group>
 
@@ -790,7 +790,7 @@ export default class LiveClassAdmin extends Component {
                               valuePlaceholder="Pilih Moderator"
                             />
                             <Form.Text className="text-muted">
-                              Pengisi kelas, moderator, atau speaker.
+                              Class performers, moderators, or speakers.
                           </Form.Text>
                           </Form.Group>
 
@@ -803,9 +803,9 @@ export default class LiveClassAdmin extends Component {
                             </div>
                             <Form.Text className="text-muted">
                               {
-                                this.state.private ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa bergabung pada meeting.'
+                                this.state.private ? 'Only people registered as participants can join the meeting.'
                                   :
-                                  'Meeting room bersifat terbuka. Semua user dapat bergabung.'
+                                  'The meeting room is open. All users can join.'
                               }
                             </Form.Text>
                           </Form.Group>
@@ -813,16 +813,16 @@ export default class LiveClassAdmin extends Component {
                             this.state.private ?
                               <Form.Group controlId="formJudul">
                                 <Form.Label className="f-w-bold">
-                                  Wajib Konfirmasi Kehadiran
+                                  Required Confirmation of Attendance
                           </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <ToggleSwitch checked={false} onChange={this.toggleSwitchRequiredConfirmation.bind(this)} checked={this.state.requireConfirmation} />
                                 </div>
                                 <Form.Text className="text-muted">
                                   {
-                                    this.state.requireConfirmation ? 'Hanya peserta yang konfirmasi hadir yang dapat bergabung ke meeting.'
+                                    this.state.requireConfirmation ? 'Only participants who confirm attendance can join the meeting.'
                                       :
-                                      'Semua peserta meeting dapat gabung ke meeting.'
+                                      'All meeting participants can join the meeting.'
                                   }
                                 </Form.Text>
                               </Form.Group>
@@ -832,7 +832,7 @@ export default class LiveClassAdmin extends Component {
                             this.state.private ?
                               <Form.Group controlId="formJudul">
                                 <Form.Label className="f-w-bold">
-                                  Peserta Dari Group
+                                  Participants from the Group
                           </Form.Label>
                                 <MultiSelect
                                   id="group"
@@ -842,13 +842,13 @@ export default class LiveClassAdmin extends Component {
                                   mode="tags"
                                   removableTags={true}
                                   hasSelectAll={true}
-                                  selectAllLabel="Pilih Semua"
+                                  selectAllLabel="Choose all"
                                   enableSearch={true}
                                   resetable={true}
-                                  valuePlaceholder="Pilih Peserta"
+                                  valuePlaceholder="Select Participants "
                                 />
                                 <Form.Text className="text-muted">
-                                  Pilih peserta dari group untuk private meeting.
+                                  Select participants from the group for the private meeting.
                           </Form.Text>
                               </Form.Group>
                               : null
@@ -857,12 +857,12 @@ export default class LiveClassAdmin extends Component {
                             this.state.private ?
                               <Form.Group controlId="formJudul">
                                 <Form.Label className="f-w-bold">
-                                  Peserta
+                                  Participants
                           </Form.Label>
                                 <div className="row mt-1" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                   {
                                     this.state.infoParticipant.map(item =>
-                                      <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
+                                      <div className={item.confirmation === 'Hadir' ? 'attendees attend' : item.confirmation === 'Tidak Hadir' ? 'absent attendees' : 'tentative participants'}>
                                         {item.name}
                                         <button
                                           type="button"
@@ -877,7 +877,7 @@ export default class LiveClassAdmin extends Component {
                                   }
                                 </div>
                                 <Form.Label className="f-w-bold">
-                                  Tambah Peserta
+                                  Add Participants
                           </Form.Label>
                                 <MultiSelect
                                   id="peserta"
@@ -887,13 +887,13 @@ export default class LiveClassAdmin extends Component {
                                   mode="tags"
                                   removableTags={true}
                                   hasSelectAll={true}
-                                  selectAllLabel="Pilih Semua"
+                                  selectAllLabel="Choose all"
                                   enableSearch={true}
                                   resetable={true}
-                                  valuePlaceholder="Pilih Peserta"
+                                  valuePlaceholder="Select Participants"
                                 />
                                 <Form.Text className="text-muted">
-                                  Pilih peserta untuk private meeting.
+                                  Select participants for private meetings.
                           </Form.Text>
                               </Form.Group>
                               : null
@@ -908,9 +908,9 @@ export default class LiveClassAdmin extends Component {
                             </div>
                             <Form.Text className="text-muted">
                               {
-                                this.state.scheduled ? 'Meeting terjadwal.'
+                                this.state.scheduled ? 'Scheduled meeting.'
                                   :
-                                  'Meeting tidak terjadwal. Selalu dapat diakses.'
+                                  'Meeting unscheduled. Always accessible.'
                               }
                             </Form.Text>
                           </Form.Group>
@@ -918,7 +918,7 @@ export default class LiveClassAdmin extends Component {
                             this.state.scheduled &&
                             <Form.Group controlId="formJudul">
                               <Form.Label className="f-w-bold">
-                                Waktu
+                                Time
                           </Form.Label>
                               <div style={{ width: '100%' }}>
                                 <DatePicker
@@ -936,14 +936,14 @@ export default class LiveClassAdmin extends Component {
                                 />
                               </div>
                               <Form.Text className="text-muted">
-                                Pilih waktu meeting akan berlangsung.
+                                Choose when the meeting will take place.
                           </Form.Text>
                             </Form.Group>
                           }
 
                           <div style={{ marginTop: "20px" }}>
                             <button disabled={this.state.sendingEmail} type="button" onClick={this.onSubmitForm} className="btn btn-primary f-w-bold mr-3">
-                              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
+                              {this.state.sendingEmail ? 'Sending Invitations...' : 'Save'}
                             </button>
                           &nbsp;
                           <button
@@ -951,7 +951,7 @@ export default class LiveClassAdmin extends Component {
                               className="btn f-w-bold"
                               onClick={this.closeClassModal}
                             >
-                              Tutup
+                              Close
                           </button>
                           </div>
                         </Form>
@@ -968,7 +968,7 @@ export default class LiveClassAdmin extends Component {
                           className="text-c-purple3 f-w-bold f-21"
                           style={{ marginBottom: "30px" }}
                         >
-                          Informasi Meeting dan Kehadiran
+                          Meeting and Attendance Information
                       </Modal.Title>
                         {
                           this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1
@@ -977,16 +977,16 @@ export default class LiveClassAdmin extends Component {
                               <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                                 <div className="card-carousel col-sm-8">
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Konfirmasi Kehadiran
+                                    Confirmation of attendance
                               </div>
-                                  <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                                  <h3 className="f-14">You have been invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                                 </div>
                                 <div className="card-carousel col-sm-4">
                                   <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}>
-                                    Tidak Hadir
+                                    Not present
                               </Link>
                                   <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}>
-                                    Hadir
+                                    Be present
                               </Link>
                                 </div>
                               </div>
@@ -998,9 +998,9 @@ export default class LiveClassAdmin extends Component {
                                 <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                                   <div className="card-carousel col-sm-8">
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                                      You have confirmed : {this.state.attendanceConfirmation}
                                     </div>
-                                    <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                                    <h3 className="f-14">A confirmation of your attendance has been sent to the moderator.</h3>
                                   </div>
                                 </div>
                               </div>
@@ -1021,12 +1021,12 @@ export default class LiveClassAdmin extends Component {
                                     Moderator : {this.state.infoClass.name}
                                   </h3>
                                   <h3 className="f-14">
-                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                    Type of Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                   </h3>
                                   {
                                     this.state.infoClass.is_private ?
                                       <h3 className="f-14">
-                                        Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                                        Confirmation of attendance : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
                                       </h3>
                                       : null
                                   }
@@ -1035,10 +1035,10 @@ export default class LiveClassAdmin extends Component {
                                   this.state.infoClass.is_scheduled ?
                                     <div className="col-sm-6">
                                       <h3 className="f-14">
-                                        Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
+                                        Star : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
                                       </h3>
                                       <h3 className="f-14">
-                                        Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
+                                        End : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
                                       </h3>
                                     </div>
                                     : null
@@ -1048,12 +1048,12 @@ export default class LiveClassAdmin extends Component {
                                 this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                                   <div>
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                                      Confirmation of attendance {this.state.infoParticipant.length} Peserta
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                      <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                      <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                      <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                      <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Be present ({this.state.countHadir})</h3>
+                                      <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Not present ({this.state.countTidakHadir})</h3>
+                                      <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Not Confirmed ({this.state.countTentative})</h3>
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {
@@ -1069,7 +1069,7 @@ export default class LiveClassAdmin extends Component {
                                 this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                                   <div>
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Kehadiran Aktual
+                                      Actual Attendance
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {
@@ -1087,7 +1087,7 @@ export default class LiveClassAdmin extends Component {
                           {
                             (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ?
                               <Link target='_blank' to={`/liveclass-room/${this.state.infoClass.class_id}`} onClick={e => this.closeModalConfirmation()} className="btn btn-sm btn-ideku" style={{ width: '100%', padding: '20px 20px' }}>
-                                <i className='fa fa-video'></i> Masuk
+                                <i className='fa fa-video'></i> Entry
                               </Link>
                               : null
                           }
@@ -1096,7 +1096,7 @@ export default class LiveClassAdmin extends Component {
                             className="btn btn-block f-w-bold"
                             onClick={e => this.closeModalConfirmation()}
                           >
-                            Batal
+                            Cancel
                             </button>
                         </div>
                       </Modal.Body>

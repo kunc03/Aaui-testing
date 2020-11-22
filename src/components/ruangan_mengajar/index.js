@@ -164,10 +164,10 @@ class RuanganMengajar extends React.Component {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama Ruangan</th>
+                    <th>Room Name</th>
                     <th>Folder</th>
                     <th>Pengajar</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,8 +203,8 @@ class RuanganMengajar extends React.Component {
           <Modal.Body>
             <form>
               <div className="form-group">
-                <label>Nama Ruangan</label>
-                <input value={this.state.namaRuangan} onChange={e => this.setState({ namaRuangan: e.target.value })} required type="text" className="form-control" placeholder="Enter nama ruangan" />
+                <label>Room Name</label>
+                <input value={this.state.namaRuangan} onChange={e => this.setState({ namaRuangan: e.target.value })} required type="text" className="form-control" placeholder="Enter Room Name" />
               </div>
               <div className="form-group row">
                 <div className="col-sm-6">
@@ -221,7 +221,7 @@ class RuanganMengajar extends React.Component {
                 <div className="col-sm-6">
                   <label>Folder</label>
                   <select value={this.state.folder} onChange={e => this.setState({ folder: e.target.value })} required className="form-control">
-                    <option value="">Pilih folder</option>
+                    <option value="">Select Folder</option>
                     {
                       this.state.dataFolder.map(item => (
                         <option value={item.id}>{item.name}</option>
@@ -237,7 +237,7 @@ class RuanganMengajar extends React.Component {
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={() => this.clearForm()}
             >
-              Batal
+              Cancel
             </button>
             <button
               className="btn btn-icademy-primary btn-icademy-blue"

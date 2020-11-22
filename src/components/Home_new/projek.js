@@ -199,9 +199,9 @@ class ProjekNew extends Component {
     API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal mengubah project ${this.state.editProjectName}`)
+          toast.error(`Failed to modify the project ${this.state.editProjectName}`)
         } else {
-          toast.success(`Berhasil mengubah project ${this.state.editProjectName}`)
+          toast.success(`Successfully modified project ${this.state.editProjectName}`)
           this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false })
           this.fetchProject();
         }
@@ -402,9 +402,9 @@ class ProjekNew extends Component {
                       </div>
                       <Form.Text className="text-muted">
                         {
-                          this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
+                          this.state.limited ? 'Only people who are registered as participants can access the project.'
                             :
-                            'Project bersifat terbuka. Semua user dapat mengakses.'
+                            'The meeting room is open. All users can join.'
                         }
                       </Form.Text>
                     </Form.Group>
@@ -512,7 +512,7 @@ class ProjekNew extends Component {
                         {
                           this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
                             :
-                            'Project bersifat terbuka. Semua user dapat mengakses.'
+                            'The meeting room is open. All users can join.'
                         }
                       </Form.Text>
                     </Form.Group>

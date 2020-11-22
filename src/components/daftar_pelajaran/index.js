@@ -116,10 +116,10 @@ class DaftarPelajaran extends React.Component {
                   <tr>
                     <th>No</th>
                     <th>Nama Pelajaran</th>
-                    <th>Kategori</th>
+                    <th> Category </th>
                     <th>Kode Pelajaran</th>
                     <th>Kelas</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -151,7 +151,7 @@ class DaftarPelajaran extends React.Component {
                   <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter Class Name" name="namaKelas" />
                 </div>
                 <div className="form-group">
-                  <label>Kategori</label>
+                  <label> Category </label>
                   <select required className="form-control" value={this.state.kategori} onChange={e => this.setState({ kategori: e.target.value })}>
                     <option value="" disabled selected>Pilih kelas</option>
                     <option value="Wajib">Wajib</option>

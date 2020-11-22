@@ -18,21 +18,21 @@ class MataPelajaran extends React.Component {
       {
         tanggal: "Senin, 10 Maret 2020",
         data: [
-          {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-          {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+          { mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual' },
+          { mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual' },
         ]
       },
       {
         tanggal: "Selasa, 11 Maret 2020",
         data: [
-          {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-          {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+          { mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual' },
+          { mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual' },
         ]
       },
     ];
     let dataSilabus = [
-      {sesi: 1, topik: "Ajektif 1", tujuan: "Murid dapat memahami ajektif 1", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
-      {sesi: 2, topik: "Ajektif 2", tujuan: "Murid dapat memahami ajektif 2", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
+      { sesi: 1, topik: "Ajektif 1", tujuan: "Murid dapat memahami ajektif 1", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com" },
+      { sesi: 2, topik: "Ajektif 2", tujuan: "Murid dapat memahami ajektif 2", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com" },
     ]
     this.setState({ mataPelajaran, dataSilabus })
   }
@@ -52,47 +52,47 @@ class MataPelajaran extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              <button onClick={() => this.setState({ isModalSilabus: true})} className="btn btn-v2 btn-primary">
+              <button onClick={() => this.setState({ isModalSilabus: true })} className="btn btn-v2 btn-primary">
                 <i className="fa fa-list"></i>
-                Lihat Silabus
+                See Syllabus
               </button>
             </div>
 
-            <div className="card-body" style={{padding: '12px'}}>
+            <div className="card-body" style={{ padding: '12px' }}>
 
               <table className="table table-bordered">
                 <thead>
                   <tr>
-                    <th>Tanggal</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Topik</th>
-                    <th>Waktu</th>
-                    <th>Sesi</th>
-                    <th>Nama Pengajar</th>
-                    <th>Pembelajaran</th>
-                    <th className="text-center">Aksi</th>
+                    <th> Date </th>
+                    <th> Subject </th>
+                    <th> Topic </th>
+                    <th>Time </th>
+                    <th> Session </th>
+                    <th>Teacher Name</th>
+                    <th> Learning </th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {
-                    this.state.mataPelajaran.map((item,i) => (
+                    this.state.mataPelajaran.map((item, i) => (
                       <>
                         <tr>
-                          <td style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
+                          <td style={{ verticalAlign: 'middle' }} rowSpan={item.data.length + 1}>{item.tanggal}</td>
                         </tr>
                         {
                           item.data.map(row => (
                             <tr>
-                              <td style={{verticalAlign: 'middle'}}>{row.mapel}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.topik}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.waktu}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.sesi}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.nama_pengajar}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.pembelajaran}</td>
-                              <td style={{verticalAlign: 'middle'}}>
-                                <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
-                                  <i className="fa fa-paper-plane"></i> Buka
+                              <td style={{ verticalAlign: 'middle' }}>{row.mapel}</td>
+                              <td style={{ verticalAlign: 'middle' }}>{row.topik}</td>
+                              <td style={{ verticalAlign: 'middle' }}>{row.waktu}</td>
+                              <td style={{ verticalAlign: 'middle' }}>{row.sesi}</td>
+                              <td style={{ verticalAlign: 'middle' }}>{row.nama_pengajar}</td>
+                              <td style={{ verticalAlign: 'middle' }}>{row.pembelajaran}</td>
+                              <td style={{ verticalAlign: 'middle' }}>
+                                <button onClick={e => { e.preventDefault(); this.setState({ isModalBuka: true }) }} className="btn btn-v2 btn-primary">
+                                  <i className="fa fa-paper-plane"></i> Open
                                 </button>
                               </td>
                             </tr>
@@ -105,14 +105,14 @@ class MataPelajaran extends React.Component {
 
                 <tfoot>
                   <tr>
-                    <th>Tanggal</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Topik</th>
-                    <th>Waktu</th>
-                    <th>Sesi</th>
-                    <th>Nama Pengajar</th>
-                    <th>Pembelajaran</th>
-                    <th className="text-center">Aksi</th>
+                    <th> Date </th>
+                    <th> Subject </th>
+                    <th> Topic </th>
+                    <th>Time </th>
+                    <th> Session </th>
+                    <th>Teacher Name</th>
+                    <th> Learning </th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </tfoot>
               </table>
@@ -139,7 +139,7 @@ class MataPelajaran extends React.Component {
         >
           <Modal.Header closeButton>
             <form className="form-inline">
-              <label>Mata Pelajaran</label>
+              <label> Subject </label>
               <select className="form-control ml-2">
                 <option value="">Pilih mata pelajaran</option>
               </select>
@@ -149,8 +149,8 @@ class MataPelajaran extends React.Component {
             <table className="table table-bordered">
               <thead>
                 <tr>
-                  <th>Sesi</th>
-                  <th>Topik</th>
+                  <th> Session </th>
+                  <th> Topic </th>
                   <th>Tujuan</th>
                   <th>Penyampaian Materi</th>
                   <th>Files</th>
@@ -159,7 +159,7 @@ class MataPelajaran extends React.Component {
 
               <tbody>
                 {
-                  this.state.dataSilabus.map((item,i) => (
+                  this.state.dataSilabus.map((item, i) => (
                     <tr>
                       <td>{item.sesi}</td>
                       <td>{item.topik}</td>
@@ -173,8 +173,8 @@ class MataPelajaran extends React.Component {
 
               <thead>
                 <tr>
-                  <th>Sesi</th>
-                  <th>Topik</th>
+                  <th> Session </th>
+                  <th> Topic </th>
                   <th>Tujuan</th>
                   <th>Penyampaian Materi</th>
                   <th>Files</th>

@@ -27,7 +27,7 @@ class Modal extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Tambah Cabang
+                Add Company
               </h5>
               <a href="#" title="Delete" className="openDelete">
                 <img

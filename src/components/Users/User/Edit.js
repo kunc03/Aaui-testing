@@ -27,15 +27,15 @@ class UserEdit extends Component {
     address: "",
     level: "",
     password: "",
-    unlimited:false,
+    unlimited: false,
     validity: new Date(),
 
     listCompany: [],
     listBranch: [],
     listGrup: [],
     listLevel: [],
-    optionsGroup:[],
-    valueGroup:[],
+    optionsGroup: [],
+    valueGroup: [],
 
     responseMessage: ""
   };
@@ -44,12 +44,12 @@ class UserEdit extends Component {
     this.setState({
       validity: date
     });
-    console.log('XX datepicker',date)
-    console.log('XX state',this.state.validity)
+    console.log('XX datepicker', date)
+    console.log('XX state', this.state.validity)
   };
 
   toggleSwitch(checked) {
-    this.setState({ unlimited:!this.state.unlimited });
+    this.setState({ unlimited: !this.state.unlimited });
   }
   onSubmitEditUser = e => {
     e.preventDefault();
@@ -82,8 +82,8 @@ class UserEdit extends Component {
             });
           }
           API.delete(`${API_SERVER}v1/user/assign/${this.state.user_id}`).then(res => {
-            if(res.status === 200) {
-              for (let i=0;i<this.state.valueCompany.length;i++){
+            if (res.status === 200) {
+              for (let i = 0; i < this.state.valueCompany.length; i++) {
                 let formData = {
                   user_id: this.state.user_id,
                   company_id: this.state.valueCompany[i],
@@ -113,7 +113,7 @@ class UserEdit extends Component {
         if (res.status === 200) {
           this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1] });
           res.data.result[0].map(item => {
-            this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+            this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
           });
           this.showMultipleCompany(value)
         }
@@ -127,14 +127,14 @@ class UserEdit extends Component {
 
   showMultipleCompany(except) {
     API.get(`${API_SERVER}v1/company`).then(res => {
-      this.setState({valueCompany:[]})
-      this.setState({optionComapny:[]})
+      this.setState({ valueCompany: [] })
+      this.setState({ optionComapny: [] })
       res.data.result.map(item => {
-        this.state.optionComapny.push({value: item.company_id, label: item.company_name});
+        this.state.optionComapny.push({ value: item.company_id, label: item.company_name });
       });
-        this.setState({
-          optionComapny: this.state.optionComapny.filter(item => item.value != except),
-        })
+      this.setState({
+        optionComapny: this.state.optionComapny.filter(item => item.value != except),
+      })
     });
   }
   componentDidMount() {
@@ -154,7 +154,7 @@ class UserEdit extends Component {
           address: res.data.result.address,
           level: res.data.result.level,
           unlimited: unlimited,
-					validity: new Date(res.data.result.validity),
+          validity: new Date(res.data.result.validity),
         });
         valueGroup = res.data.result.group_id ? res.data.result.group_id.split(',').map(Number) : [];
 
@@ -163,7 +163,7 @@ class UserEdit extends Component {
             this.setState({ listCompany: res.data.result });
           }
           res.data.result.map(item => {
-            this.state.optionComapny.push({value: item.company_id, label: item.company_name});
+            this.state.optionComapny.push({ value: item.company_id, label: item.company_name });
           });
           this.setState({
             optionComapny: this.state.optionComapny.filter(item => item.value != this.state.company_id),
@@ -176,7 +176,7 @@ class UserEdit extends Component {
           if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0], listGrup: res.data.result[1] });
             res.data.result[0].map(item => {
-              this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+              this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
           }
         });
@@ -184,9 +184,9 @@ class UserEdit extends Component {
         API.get(
           `${API_SERVER}v1/user/assign/${this.state.user_id}`
         ).then(res => {
-            if (res.status === 200) {
-              this.setState({valueCompany : res.data.result.multi_company})
-              this.setState({valueGroup: valueGroup})
+          if (res.status === 200) {
+            this.setState({ valueCompany: res.data.result.multi_company })
+            this.setState({ valueGroup: valueGroup })
           }
         });
 
@@ -235,7 +235,7 @@ class UserEdit extends Component {
                                     value={item.company_id}
                                     selected={
                                       item.company_id ===
-                                      this.state.user.company_id
+                                        this.state.user.company_id
                                         ? "selected"
                                         : ""
                                     }
@@ -255,7 +255,7 @@ class UserEdit extends Component {
                                 mode="tags"
                                 removableTags={true}
                                 hasSelectAll={true}
-                                selectAllLabel="Pilih Semua"
+                                selectAllLabel="Choose all"
                                 enableSearch={true}
                                 resetable={true}
                                 valuePlaceholder="Pilih Company"
@@ -312,7 +312,7 @@ class UserEdit extends Component {
                                     value={item.grup_id}
                                     selected={
                                       item.grup_id ===
-                                      this.state.user.grup_id
+                                        this.state.user.grup_id
                                         ? "selected"
                                         : ""
                                     }
@@ -324,7 +324,7 @@ class UserEdit extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Nama</label>
+                              <label className="label-input"> Name </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
@@ -337,7 +337,7 @@ class UserEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Nomor Induk</label>
+                              <label className="label-input"> Registration Number </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
@@ -388,7 +388,7 @@ class UserEdit extends Component {
                               <label className="label-input">Level</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <select
-                                style={{textTransform: 'capitalize'}}
+                                style={{ textTransform: 'capitalize' }}
                                 name="level"
                                 className="form-control"
                                 onChange={this.onChangeInput}
@@ -424,8 +424,8 @@ class UserEdit extends Component {
                               <label className="label-input" htmlFor>
                                 Batasi Waktu
                               </label>
-                              <div style={{width:'100%'}}>
-                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              <div style={{ width: '100%' }}>
+                                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
                               </div>
 
                             </div>
@@ -435,21 +435,21 @@ class UserEdit extends Component {
                                 <label className="label-input" htmlFor>
                                   Valid Until
                                 </label>
-                                <div style={{width:'100%'}}>
-                                      <DatePicker
-                                        selected={validityUser}
-                                        onChange={this.handleChangeValidity}
-                                        dateFormat="yyyy-MM-dd"
-                                      />
+                                <div style={{ width: '100%' }}>
+                                  <DatePicker
+                                    selected={validityUser}
+                                    onChange={this.handleChangeValidity}
+                                    dateFormat="yyyy-MM-dd"
+                                  />
                                 </div>
-              
+
                               </div>
                             }
                             <button
                               type="submit"
                               className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
                             >
-                              Simpan
+                              Save
                             </button>
                           </form>
                         </div>

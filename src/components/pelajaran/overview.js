@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Link } from 'react-router-dom';
@@ -28,13 +28,13 @@ class Overview extends React.Component {
   simpanOverview = e => {
     e.preventDefault();
 
-    if(this.state.overview) {
+    if (this.state.overview) {
       // action simpan
       console.log('ada isinya')
       console.log(this.state.overview);
 
     } else {
-      console.log('tidak ada isinya')
+
     }
   }
 

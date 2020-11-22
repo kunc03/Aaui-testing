@@ -47,7 +47,7 @@ class PersonaliaDetail extends React.Component {
     }
 
     API.put(`${API_SERVER}v2/${this.state.tipe}/update/${this.state.id}`, form).then(res => {
-      if(res.data.error) toast.warning("Error update data");
+      if (res.data.error) toast.warning("Error update data");
 
       toast.success("Update data berhasil")
       this.fetchDetail();
@@ -57,7 +57,7 @@ class PersonaliaDetail extends React.Component {
 
   simpanDataOrtu = e => {
     e.preventDefault();
-    if(this.state.parentsId) {
+    if (this.state.parentsId) {
       let form = {
         companyId: Storage.get('user').data.company_id,
         muridId: this.state.id,
@@ -72,7 +72,7 @@ class PersonaliaDetail extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/parents/update/${this.state.parentsId}`, form).then(res => {
-        if(res.data.error) toast.warning("Error update data");
+        if (res.data.error) toast.warning("Error update data");
 
         toast.success("Data berhasil diupdate")
         this.fetchDetail();
@@ -93,7 +93,7 @@ class PersonaliaDetail extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/parents/create`, form).then(res => {
-        if(res.data.error) toast.warning("Error update data");
+        if (res.data.error) toast.warning("Error update data");
 
         toast.success("Data berhasil ditambahkan")
         this.fetchDetail();
@@ -120,7 +120,7 @@ class PersonaliaDetail extends React.Component {
   deleteMuridParents = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/parents/one/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning("Error: hapus data");
+      if (res.data.error) toast.warning("Error: hapus data");
 
       this.fetchDetail();
     })
@@ -146,7 +146,7 @@ class PersonaliaDetail extends React.Component {
 
   fetchDetail() {
     API.get(`${API_SERVER}v2/${this.state.tipe}/no-induk/${this.state.noInduk}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data")
+      if (res.data.error) toast.warning("Error fetch data")
 
       this.setState({
         id: res.data.result.id,
@@ -160,7 +160,7 @@ class PersonaliaDetail extends React.Component {
       })
 
       API.get(`${API_SERVER}v2/parents/murid/${res.data.result.id}`).then(res => {
-        if(res.data.error) toast.warning("Error fetch data")
+        if (res.data.error) toast.warning("Error fetch data")
 
         this.setState({
           parents: res.data.result
@@ -172,63 +172,63 @@ class PersonaliaDetail extends React.Component {
 
   render() {
 
-    console.log('STATE: ',this.state)
+    console.log('STATE: ', this.state)
 
     return (
       <div className="row mt-3">
         <div className="col-sm-12">
 
           <div className="card">
-            <div className="card-header">Detail Informasi Murid</div>
-            <div className="card-body" style={{padding: '5px'}}>
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Personal Info</h5>
+            <div className="card-header">Student Detail Information</div>
+            <div className="card-body" style={{ padding: '5px' }}>
+              <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanData}>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">No Induk</label>
+                  <label className="col-sm-2 col-form-label text-right">Parent No.</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.noInduk} disabled className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Nama</label>
+                  <label className="col-sm-2 col-form-label text-right">Name</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.nama} onChange={e => this.setState({ nama: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Tempat Lahir</label>
+                  <label className="col-sm-2 col-form-label text-right">Place of birth</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.tempatLahir} onChange={e => this.setState({ tempatLahir: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Tanggal Lahir</label>
+                  <label className="col-sm-2 col-form-label text-right">Date of birth</label>
                   <div className="col-sm-4">
                     <input type="date" value={this.state.tanggalLahir} onChange={e => this.setState({ tanggalLahir: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Jenis Kelamin</label>
+                  <label className="col-sm-2 col-form-label text-right">Gender</label>
                   <div className="col-sm-2">
-                  <select value={this.state.jenisKelamin} onChange={e => this.setState({ jenisKelamin: e.target.value })} required className="form-control" placeholder="Enter">
-                    <option value="" disabled selected>Pilih</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
+                    <select value={this.state.jenisKelamin} onChange={e => this.setState({ jenisKelamin: e.target.value })} required className="form-control" placeholder="Enter">
+                      <option value="" disabled selected>Select</option>
+                      <option value="Laki-laki">Male</option>
+                      <option value="Perempuan">Female</option>
+                    </select>
                   </div>
                 </div>
 
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Alamat</h5>
+                <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Address</h5>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Alamat Lengkap</label>
+                  <label className="col-sm-2 col-form-label text-right">Complete address</label>
                   <div className="col-sm-4">
                     <textarea rows="4" value={this.state.alamat} onChange={e => this.setState({ alamat: e.target.value })} className="form-control" />
                   </div>
                 </div>
 
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Kontak</h5>
+                <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Contact</h5>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Telepon</label>
+                  <label className="col-sm-2 col-form-label text-right">Phone</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.telepon} onChange={e => this.setState({ telepon: e.target.value })} className="form-control" />
                   </div>
@@ -244,10 +244,10 @@ class PersonaliaDetail extends React.Component {
                   <label className="col-sm-2 col-form-label text-right"></label>
                   <div className="col-sm-3">
                     <button type="submit" className="btn btn-v2 btn-success">
-                      <i className="fa fa-save"></i> Simpan
+                      <i className="fa fa-save"></i> Save
                     </button>
-                    <Link to={`/learning/personalia`} className="btn btn-v2 btn-default ml-2" style={{border: '1px solid #e9e9e9'}}>
-                      <i className="fa fa-chevron-left"></i> Kembali
+                    <Link to={`/learning/personalia`} className="btn btn-v2 btn-default ml-2" style={{ border: '1px solid #e9e9e9' }}>
+                      <i className="fa fa-chevron-left"></i> Back
                     </Link>
                   </div>
                 </div>
@@ -261,56 +261,56 @@ class PersonaliaDetail extends React.Component {
         <div className="col-sm-12">
 
           <div className="card">
-            <div className="card-header">Informasi Orang Tua</div>
-            <div className="card-body" style={{padding: '5px'}}>
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Personal Info</h5>
+            <div className="card-header">Parental Information</div>
+            <div className="card-body" style={{ padding: '5px' }}>
+              <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanDataOrtu}>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Nomor KTP</label>
+                  <label className="col-sm-2 col-form-label text-right">ID card number</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.noKtp} onChange={e => this.setState({ noKtp: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Nama</label>
+                  <label className="col-sm-2 col-form-label text-right">Name</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.namaOrtu} onChange={e => this.setState({ namaOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Tempat Lahir</label>
+                  <label className="col-sm-2 col-form-label text-right">Place of birth</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.tempatLahirOrtu} onChange={e => this.setState({ tempatLahirOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Tanggal Lahir</label>
+                  <label className="col-sm-2 col-form-label text-right">Date of birth</label>
                   <div className="col-sm-4">
                     <input type="date" value={this.state.tanggalLahirOrtu} onChange={e => this.setState({ tanggalLahirOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Jenis Kelamin</label>
+                  <label className="col-sm-2 col-form-label text-right">Gender</label>
                   <div className="col-sm-2">
-                  <select value={this.state.jenisKelaminOrtu} onChange={e => this.setState({ jenisKelaminOrtu: e.target.value })} required className="form-control" placeholder="Enter">
-                    <option value="" disabled selected>Pilih</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
+                    <select value={this.state.jenisKelaminOrtu} onChange={e => this.setState({ jenisKelaminOrtu: e.target.value })} required className="form-control" placeholder="Enter">
+                      <option value="" disabled selected>Select</option>
+                      <option value="Laki-laki">Male</option>
+                      <option value="Perempuan">Female</option>
+                    </select>
                   </div>
                 </div>
 
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Alamat</h5>
+                <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Address</h5>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Alamat Lengkap</label>
+                  <label className="col-sm-2 col-form-label text-right">Complete Address</label>
                   <div className="col-sm-4">
                     <textarea rows="4" value={this.state.alamatOrtu} onChange={e => this.setState({ alamatOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
 
-              <h5 style={{color: '#004887', fontSize: '15px', margin: '20px'}}>Kontak</h5>
+                <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Contact</h5>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Telepon</label>
+                  <label className="col-sm-2 col-form-label text-right">Phone</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.teleponOrtu} onChange={e => this.setState({ teleponOrtu: e.target.value })} className="form-control" />
                   </div>
@@ -326,10 +326,10 @@ class PersonaliaDetail extends React.Component {
                   <label className="col-sm-2 col-form-label text-right"></label>
                   <div className="col-sm-3">
                     <button type="submit" className="btn btn-v2 btn-success">
-                      <i className="fa fa-save"></i> Tambahkan
+                      <i className="fa fa-save"></i> Add
                     </button>
-                    <Link to={`/learning/personalia`} className="btn btn-v2 btn-default ml-2" style={{border: '1px solid #e9e9e9'}}>
-                      <i className="fa fa-chevron-left"></i> Kembali
+                    <Link to={`/learning/personalia`} className="btn btn-v2 btn-default ml-2" style={{ border: '1px solid #e9e9e9' }}>
+                      <i className="fa fa-chevron-left"></i> Back
                     </Link>
                   </div>
                 </div>
@@ -340,21 +340,21 @@ class PersonaliaDetail extends React.Component {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>KTP</th>
-                    <th>Tempat Lahir</th>
-                    <th>Tanggal Lahir</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Telepon</th>
+                    <th>ID card</th>
+                    <th>Place of birth</th>
+                    <th>Date of birth</th>
+                    <th>Gender</th>
+                    <th> Phone </th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {
-                    this.state.parents.map((item,i) => (
+                    this.state.parents.map((item, i) => (
                       <tr>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama}</td>
                         <td>{item.email}</td>
                         <td>{item.no_induk}</td>
@@ -363,7 +363,7 @@ class PersonaliaDetail extends React.Component {
                         <td>{item.jenis_kelamin}</td>
                         <td>{item.telepon}</td>
                         <td>
-                          <i style={{cursor: 'pointer'}} onClick={this.updateMuridParents} className="fa fa-search"
+                          <i style={{ cursor: 'pointer' }} onClick={this.updateMuridParents} className="fa fa-search"
                             data-id={item.id}
                             data-muridId={item.murid_id}
                             data-noKtp={item.no_induk}
@@ -375,7 +375,7 @@ class PersonaliaDetail extends React.Component {
                             data-teleponOrtu={item.telepon}
                             data-emailOrtu={item.email}
                           ></i>
-                          <i style={{cursor: 'pointer'}} onClick={this.deleteMuridParents} data-id={item.id} className="fa fa-trash ml-2"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.deleteMuridParents} data-id={item.id} className="fa fa-trash ml-2"></i>
                         </td>
                       </tr>
                     ))

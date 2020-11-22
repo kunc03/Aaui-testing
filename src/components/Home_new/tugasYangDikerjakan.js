@@ -46,14 +46,14 @@ class TugasYangDikerjakan extends Component {
                     )
                   })
                 }
-                <td colSpan="2" align="center"><b>Aksi</b></td>
+                <td colSpan="2" align="center"><b> Action </b></td>
               </tr>
             </thead>
             <tbody>
               {
                 bodyTabble.length == 0 ?
                   <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>There is no</td>
                   </tr>
                   :
                   bodyTabble.map((item, i) => {

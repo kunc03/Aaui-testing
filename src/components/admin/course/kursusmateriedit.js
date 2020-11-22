@@ -7,48 +7,48 @@ import { Editor } from '@tinymce/tinymce-react';
 
 export default class KursusMateriEdit extends Component {
 
-	state = {
-		companyId: '',
+  state = {
+    companyId: '',
 
-		kategori: [],
-		courseId: this.props.match.params.course_id,
+    kategori: [],
+    courseId: this.props.match.params.course_id,
 
-		kategori_image: '', kategori_name: '', catId: '',
+    kategori_image: '', kategori_name: '', catId: '',
 
-		category_id: '',
-		type: '',
-		title: '',
-		caption: '',
-		body: '',
-		image: '',
-		thumbnail: '',
+    category_id: '',
+    type: '',
+    title: '',
+    caption: '',
+    body: '',
+    image: '',
+    thumbnail: '',
 
     isModalKategori: false,
-    
-    isNotifikasi: false, 
+
+    isNotifikasi: false,
     isiNotifikasi: ''
   }
-  
+
   closeNotifikasi = e => {
     this.setState({ isNotifikasi: false, isiNotifikasi: '' })
   }
 
-	onChangeInput = (event) => {
+  onChangeInput = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
 
-  	if(name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
+    if (name === 'image' || name === 'kategori_image' || name === 'thumbnail') {
       // if (target.files[0].size <= 20000000) {
       if (target.files[0].size >= 0) {
         this.setState({ [name]: target.files[0] });
       } else {
         target.value = null;
         this.handleCloseModal()
-        this.setState({ isNotifikasi: true, isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.' })
+        this.setState({ isNotifikasi: true, isiNotifikasi: 'The file does not match the format, please check again.' })
       }
     } else {
-    	this.setState({ [name]: value });
+      this.setState({ [name]: value });
     }
   }
 
@@ -56,21 +56,21 @@ export default class KursusMateriEdit extends Component {
     this.setState({ body: e.target.getContent().replace(/'/g, "\\'") });
   }
 
-	componentDidMount() {
-		this.fetchData();
-	}
+  componentDidMount() {
+    this.fetchData();
+  }
 
-	handleModalKategori = e => {
-  	this.setState({ isModalKategori: true });
+  handleModalKategori = e => {
+    this.setState({ isModalKategori: true });
   }
 
   handleCloseModal = e => {
-  	this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '' });
+    this.setState({ isModalKategori: false, kategori_image: '', kategori_name: '', catId: '' });
   }
 
-	handleSimpanKategori = e => {
+  handleSimpanKategori = e => {
     e.preventDefault();
-    if(this.state.catId === '') {
+    if (this.state.catId === '') {
       let form = new FormData();
       form.append('company_id', this.state.companyId);
       form.append('category_name', this.state.kategori_name);
@@ -79,7 +79,7 @@ export default class KursusMateriEdit extends Component {
 
       API.post(`${API_SERVER}v1/category`, form).then(res => {
         console.log(res)
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.fetchData();
           this.handleCloseModal();
         }
@@ -91,17 +91,17 @@ export default class KursusMateriEdit extends Component {
         category_publish: '1'
       };
       API.put(`${API_SERVER}v1/category/${this.state.catId}`, form).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.fetchData();
           this.setState({ kategori_image: '', kategori_name: '', catId: '' });
         }
       })
 
-      if(this.state.kategori_image !== "") {
+      if (this.state.kategori_image !== "") {
         let form = new FormData();
         form.append('category_image', this.state.kategori_image);
         API.put(`${API_SERVER}v1/category/image/${this.state.catId}`, form).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.fetchData();
             this.setState({ kategori_image: '', kategori_name: '', catId: '' });
           }
@@ -110,64 +110,64 @@ export default class KursusMateriEdit extends Component {
     }
   }
 
-	fetchData() {
-		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-			if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+  fetchData() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: res.data.result.company_id });
 
-				API.get(`${API_SERVER}v1/category/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
-					if(res.status === 200) {
-						this.setState({ kategori: res.data.result });
-					}
-				})
+        API.get(`${API_SERVER}v1/category/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(res => {
+          if (res.status === 200) {
+            this.setState({ kategori: res.data.result });
+          }
+        })
 
-				API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
-					if(res.status === 200) {
-						this.setState({
-							category_id: res.data.result.category_id,
-							type: res.data.result.type,
-							title: res.data.result.title,
-							caption: res.data.result.caption,
-							body: res.data.result.body,	
-						})
-					}
-				})
-			}
-		})
-	}
+        API.get(`${API_SERVER}v1/course/${this.state.courseId}`).then(res => {
+          if (res.status === 200) {
+            this.setState({
+              category_id: res.data.result.category_id,
+              type: res.data.result.type,
+              title: res.data.result.title,
+              caption: res.data.result.caption,
+              body: res.data.result.body,
+            })
+          }
+        })
+      }
+    })
+  }
 
-	submitForm = e => {
-		e.preventDefault();
-		let form = {
-			category_id: this.state.category_id,
-	    type: this.state.type,
-	    title: this.state.title,
-	    caption: this.state.caption,
-	    body: this.state.body,
-	    publish: '1'
-		};
+  submitForm = e => {
+    e.preventDefault();
+    let form = {
+      category_id: this.state.category_id,
+      type: this.state.type,
+      title: this.state.title,
+      caption: this.state.caption,
+      body: this.state.body,
+      publish: '1'
+    };
 
-    if(this.state.image !== '') {
+    if (this.state.image !== '') {
       let formData = new FormData();
       formData.append('image', this.state.image);
       API.put(`${API_SERVER}v1/course/image/${this.state.courseId}`, formData);
     }
-    
+
     if (this.state.thumbnail !== "") {
       let formData = new FormData();
       formData.append("thumbnail", this.state.thumbnail);
       API.put(`${API_SERVER}v1/course/thumbnail/${this.state.courseId}`, formData);
     }
 
-		API.put(`${API_SERVER}v1/course/${this.state.courseId}`, form).then(res => {
-			if(res.status === 200) {
-				this.props.history.push('/kursus-materi');
-			}
-		})
+    API.put(`${API_SERVER}v1/course/${this.state.courseId}`, form).then(res => {
+      if (res.status === 200) {
+        this.props.history.push('/kursus-materi');
+      }
+    })
 
-	}
+  }
 
-	onClickUbahKategori = e => {
+  onClickUbahKategori = e => {
     e.preventDefault();
     const catId = e.target.getAttribute('data-id');
     const catName = e.target.getAttribute('data-name');
@@ -178,18 +178,18 @@ export default class KursusMateriEdit extends Component {
   onClickHapusKategori = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/category/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.fetchData();
         this.setState({ kategori_image: '', kategori_name: '', catId: '' });
       }
     })
   }
 
-	render() {
+  render() {
     const { /* courseId, */ kategori, course } = this.state;
     console.log('course: ', course)
 
-		return (
+    return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -220,7 +220,7 @@ export default class KursusMateriEdit extends Component {
                         <div className="card-block">
                           <form onSubmit={event => this.submitForm(event)}>
                             <div className="form-group">
-                              <label className="label-input">Kategori</label>
+                              <label className="label-input"> Category </label>
                               <div className="input-group mb-3">
                                 <select
                                   required
@@ -234,7 +234,7 @@ export default class KursusMateriEdit extends Component {
                                       value={item.category_id}
                                       selected={
                                         item.category_id ===
-                                        this.state.category_id
+                                          this.state.category_id
                                           ? "selected"
                                           : ""
                                       }
@@ -253,13 +253,13 @@ export default class KursusMateriEdit extends Component {
                                     }}
                                     id="basic-addon2"
                                   >
-                                    Tambah Kategori
+                                    Add Category
                                   </span>
                                 </div>
                               </div>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Tipe</label>
+                              <label className="label-input"> Type </label>
                               <input
                                 required
                                 type="text"
@@ -271,7 +271,7 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Judul</label>
+                              <label className="label-input"> Title </label>
                               <input
                                 required
                                 type="text"
@@ -304,9 +304,9 @@ export default class KursusMateriEdit extends Component {
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
-                              <label style={{color:'#000', padding:'5px 10px'}}>{this.state.image.name === null ? 'Pilih File' : this.state.image.name }</label>
+                              <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.image.name === null ? 'Pilih File' : this.state.image.name}</label>
                               <Form.Text>
-                              Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf 
+                                Pastikan file berformat mp4, png, jpg, jpeg, gif, atau pdf
                               {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                             </div>
@@ -320,14 +320,14 @@ export default class KursusMateriEdit extends Component {
                                 placeholder="konten"
                                 onChange={this.onChangeInput}
                               />
-                              <label style={{color:'#000', padding:'5px 10px'}}>{this.state.thumbnail.name === null ? 'Pilih File' : this.state.thumbnail.name }</label>
+                              <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.thumbnail.name === null ? 'Pilih File' : this.state.thumbnail.name}</label>
                               <Form.Text>
-                                Pastikan file berformat png, jpg, jpeg, atau gif 
+                                Pastikan file berformat png, jpg, jpeg, atau gif
                                 {/* dan ukuran file tidak melebihi 20MB. */}
                               </Form.Text>
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Deskripsi</label>
+                              <label className="label-input"> Description </label>
                               <Editor
                                 apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                                 initialValue={this.state.body}
@@ -371,7 +371,7 @@ export default class KursusMateriEdit extends Component {
                               style={{ marginTop: "20px" }}
                               className="form-group"
                             >
-                              <label>Cover Kategori</label>
+                              <label> Cover Category</label>
                               <input
                                 className="form-control"
                                 required
@@ -381,7 +381,7 @@ export default class KursusMateriEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label>Nama Kategori</label>
+                              <label> Category Name</label>
                               <div className="input-group mb-3">
                                 <input
                                   value={this.state.kategori_name}
@@ -416,7 +416,7 @@ export default class KursusMateriEdit extends Component {
                               <thead>
                                 <tr>
                                   <th>No</th>
-                                  <th>Kategori</th>
+                                  <th> Category </th>
                                   <th></th>
                                 </tr>
                               </thead>
@@ -453,7 +453,7 @@ export default class KursusMateriEdit extends Component {
                             className="btn btn-block f-w-bold"
                             onClick={this.handleCloseModal}
                           >
-                            Tutup
+                            Close
                           </button>
                         </Modal.Body>
                       </Modal>
@@ -489,5 +489,5 @@ export default class KursusMateriEdit extends Component {
         </div>
       </div>
     );
-	}
+  }
 }

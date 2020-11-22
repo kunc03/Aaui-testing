@@ -130,17 +130,17 @@ class MuridLaporanRapor extends Component {
 
             <table className="table " style={{ textTransform: 'uppercase' }}>
               <tr>
-                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Nama</td>
+                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}> Name </td>
                 <td style={{ width: '1%' }}> : </td>
                 <td>Jo</td>
               </tr>
               <tr>
-                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Tempat/tanggal lahir</td>
+                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Date of birth</td>
                 <td style={{ width: '1%' }}> : </td>
                 <td>54</td>
               </tr>
               <tr>
-                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Kelas</td>
+                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Class</td>
                 <td style={{ width: '1%' }}> : </td>
                 <td>Jo</td>
               </tr>
@@ -150,7 +150,7 @@ class MuridLaporanRapor extends Component {
                 <td>54</td>
               </tr>
               <tr>
-                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>Tahun Pelajaran</td>
+                <td className="f-w-800 f-14 text-c-grey" style={{ width: '30%' }}>School year</td>
                 <td style={{ width: '1%' }}> : </td>
                 <td>54</td>
               </tr>
@@ -167,17 +167,17 @@ class MuridLaporanRapor extends Component {
                 </div>
                 <div className="col-sm-3">
                   <span className="f-w-800 f-14 text-c-grey2 " style={{ textTransform: 'uppercase' }}>
-                    Mata Pelajaran
+                    Subjects
                       </span>
                 </div>
                 <div className="col-sm-4">
                   <span className="f-w-800 f-14 text-c-grey2 " style={{ textTransform: 'uppercase' }}>
-                    Nilai Hasi Belajar
+                    The value of learning outcomes
                       </span>
                 </div>
                 <div className="col-sm-4">
                   <span className="f-w-800 f-14 text-c-grey2 " style={{ textTransform: 'uppercase' }}>
-                    Predikat
+                    Predicate
                       </span>
                 </div>
               </div>

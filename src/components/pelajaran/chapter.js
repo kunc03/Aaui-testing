@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Link } from 'react-router-dom';
@@ -49,9 +49,9 @@ class Chapter extends React.Component {
 
   fetchChapters() {
     let chapters = [
-      {id: 1, title: "Chapter 1"},
-      {id: 2, title: "Chapter 2"},
-      {id: 3, title: "Chapter 3"},
+      { id: 1, title: "Chapter 1" },
+      { id: 2, title: "Chapter 2" },
+      { id: 3, title: "Chapter 3" },
     ];
 
     this.setState({ chapters })
@@ -60,16 +60,16 @@ class Chapter extends React.Component {
   render() {
 
     var selection = [];
-    for(var i = 0; i < 24; i++) {
-        var j = zeroFill(i, 2);
-        selection.push(j+":00");
-        selection.push(j+":30");
+    for (var i = 0; i < 24; i++) {
+      var j = zeroFill(i, 2);
+      selection.push(j + ":00");
+      selection.push(j + ":30");
     }
 
-    function zeroFill( number, width ){
+    function zeroFill(number, width) {
       width -= number.toString().length;
-      if ( width > 0 ) {
-        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+      if (width > 0) {
+        return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
       }
       return number + ""; // always return a string
     }
@@ -117,11 +117,11 @@ class Chapter extends React.Component {
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-4">
-                    <label>Tanggal</label>
+                    <label> Date </label>
                     <input type="date" className="form-control" placeholder="Enter" />
                   </div>
                   <div className="col-sm-2">
-                    <label>Jam Mulai</label>
+                    <label> Starting Hours </label>
                     <select required name="waktu" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.waktu} className="form-control">
                       <option value="" disabled selected>Pilih</option>
                       {
@@ -144,7 +144,7 @@ class Chapter extends React.Component {
                 <ul className="list-group">
                   <li className="list-group-item">
                     <a href="#">Silabus-Semester-1.pdf</a>
-                    <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i>
+                    <i className="fa fa-trash float-right" style={{ cursor: 'pointer' }}></i>
                   </li>
                 </ul>
 
@@ -167,7 +167,7 @@ class Chapter extends React.Component {
             <div className="card-header header-kartu">
               List Chapter
             </div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
                 {
                   this.state.chapters.map((item, i) => (
@@ -178,9 +178,9 @@ class Chapter extends React.Component {
                 }
               </div>
 
-              <div style={{padding: '12px'}}>
+              <div style={{ padding: '12px' }}>
                 <button type="button" className="btn btn-v2 btn-primary btn-block mt-2">
-                  <i className="fa fa-plus"></i> Tambah
+                  <i className="fa fa-plus"></i> Add
                 </button>
               </div>
             </div>

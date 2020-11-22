@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import SocketContext from '../../socket';
 import {
-   Modal, FormControl, Form
+  Modal, FormControl, Form
 } from 'react-bootstrap';
 import API, { API_SERVER, API_SOCKET } from '../../repository/api';
 
@@ -47,12 +47,12 @@ class PengumumanTableClass extends Component {
   /* action for delete */
 
   isToggleDelete = e => {
-    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') }});
+    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') } });
   }
 
   fetchPengumuman() {
     let url = null;
-    if(this.state.level === "admin" || this.state.level === "superadmin") {
+    if (this.state.level === "admin" || this.state.level === "superadmin") {
       url = `${API_SERVER}v1/pengumuman/company/${this.state.companyId}`;
     } else {
       url = `${API_SERVER}v1/pengumuman/role/${Storage.get('user').data.grup_id}`;
@@ -61,14 +61,14 @@ class PengumumanTableClass extends Component {
     API.get(url).then(response => {
       console.log('RES: ', response.data)
       this.setState({ grup: response.data.result.reverse() });
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.log(error);
     });
   }
 
   fetchRole() {
     API.get(`${API_SERVER}v1/grup/company/${this.state.companyId}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning("Error, fetch data role")
       }
       res.data.result.map(item => item.isChecked = false);
@@ -79,7 +79,7 @@ class PengumumanTableClass extends Component {
   onClickDelete = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v1/pengumuman/delete/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.danger("Gagal hapus pengumuman");
+      if (res.data.error) toast.danger("Gagal hapus pengumuman");
 
       this.fetchPengumuman();
     })
@@ -90,14 +90,14 @@ class PengumumanTableClass extends Component {
     this.fetchRole();
 
     this.props.socket.on('broadcast', data => {
-      if(data.companyId == Storage.get('user').data.company_id) {
+      if (data.companyId == Storage.get('user').data.company_id) {
         this.fetchPengumuman();
       }
     })
   }
 
   closeClassModal = e => {
-    this.setState({ isCreateModal: false, judul: '', isi: '', penerima: []});
+    this.setState({ isCreateModal: false, judul: '', isi: '', penerima: [] });
     this.fetchRole();
   }
 
@@ -111,11 +111,11 @@ class PengumumanTableClass extends Component {
     }
 
     API.post(`${API_SERVER}v1/pengumuman/create`, form).then(res => {
-      if(res.data.error) {
-        toast.warning("Gagal fetch pengumuman")
+      if (res.data.error) {
+        toast.warning("Failed to fetch the announcement")
       }
 
-      this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
+      this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
 
       this.fetchPengumuman();
     })
@@ -129,9 +129,9 @@ class PengumumanTableClass extends Component {
     let dataPenerima = [...this.state.penerima];
 
     copyRoles.forEach(item => {
-      if(parseInt(item.grup_id) == parseInt(value)) {
+      if (parseInt(item.grup_id) == parseInt(value)) {
         item.isChecked = checked;
-        if(checked) {
+        if (checked) {
           dataPenerima.push(value);
         }
         else {
@@ -145,7 +145,7 @@ class PengumumanTableClass extends Component {
   }
 
   createModalPengumuman() {
-    this.setState({ isCreateModal: true});
+    this.setState({ isCreateModal: true });
   };
 
   render() {
@@ -155,7 +155,7 @@ class PengumumanTableClass extends Component {
     let statusCompany = ['active', 'nonactive'];
 
     let linkCompany = '';
-    if(Storage.get('user').data.level === 'superadmin') {
+    if (Storage.get('user').data.level === 'superadmin') {
       linkCompany = '/company-detail-super';
     } else {
       linkCompany = '/company-detail';
@@ -163,52 +163,52 @@ class PengumumanTableClass extends Component {
 
     const Item = ({ item }) => (
       <li>
-        <div className="card" style={{marginBottom:10}}>
+        <div className="card" style={{ marginBottom: 10 }}>
           <div
             className="card-block"
             style={{ padding: "10px 25px" }}
           >
             <div className="row d-flex align-items-center">
               <div className="col-sm-1">
-                    <input type="checkbox"/> &nbsp; &nbsp;
+                <input type="checkbox" /> &nbsp; &nbsp;
                     <img
-                      src='newasset/flag-active.svg'
-                    />
+                  src='newasset/flag-active.svg'
+                />
               </div>
               <div className="col-sm-2">
-                    <small className="f-w-600 f-16 text-c-grey2 ">
-                      <ul>
-                      {item.penerima.map(item => (
-                        <li>{item.grup_name}</li>
-                      ))}
-                      </ul>
-                    </small>
+                <small className="f-w-600 f-16 text-c-grey2 ">
+                  <ul>
+                    {item.penerima.map(item => (
+                      <li>{item.grup_name}</li>
+                    ))}
+                  </ul>
+                </small>
               </div>
               <div className="col-sm-3">
-                    <small className="f-w-600 f-14 text-c-grey2 ">
-                    {item.title}
-                    </small>
+                <small className="f-w-600 f-14 text-c-grey2 ">
+                  {item.title}
+                </small>
               </div>
               <div className="col-sm-3">
-                    <small className="f-w-600 f-14 text-c-grey-t ">
-                    {item.isi}
-                    </small>
+                <small className="f-w-600 f-14 text-c-grey-t ">
+                  {item.isi}
+                </small>
               </div>
               <div className="col-sm-2 text-right">
-              {moment(item.created_at).tz('Asia/Jakarta').format('hh:mm A')} &nbsp;
+                {moment(item.created_at).tz('Asia/Jakarta').format('hh:mm A')} &nbsp;
               {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}
               </div>
               <div className="col-sm-1 text-right">
                 {
-                  <i style={{cursor: 'pointer'}} className="fa fa-search mr-2"></i>
+                  <i style={{ cursor: 'pointer' }} className="fa fa-search mr-2"></i>
                 }
                 {
                   (this.state.level === "admin" || this.state.level === "superadmin") &&
                   <i
-                  style={{cursor: 'pointer'}}
-                  className="fa fa-trash"
-                  data-id={item.id_pengumuman}
-                  onClick={this.onClickDelete}
+                    style={{ cursor: 'pointer' }}
+                    className="fa fa-trash"
+                    data-id={item.id_pengumuman}
+                    onClick={this.onClickDelete}
                   ></i>
                 }
               </div>
@@ -228,112 +228,112 @@ class PengumumanTableClass extends Component {
 
     return (
 
-        <div className="row">
-          <div className="col-sm-12">
-            <h3 className="f-24 fc-skyblue f-w-800 mb-3">
-              Pengumuman Sekolah
+      <div className="row">
+        <div className="col-sm-12">
+          <h3 className="f-24 fc-skyblue f-w-800 mb-3">
+            School Announcement
             </h3>
-          </div>
+        </div>
 
-          <div className="col-sm-12 mb-3 mt-2">
+        <div className="col-sm-12 mb-3 mt-2">
 
-              {
-                (this.state.level === "admin" || this.state.level === "superadmin") &&
-                <button
-                className="btn btn-icademy-primary"
-                style={{ padding: "7px 8px !important", marginLeft:14 }}
-                onClick={this.createModalPengumuman.bind(this)}
-                >
-                <i className="fa fa-plus"></i>
+          {
+            (this.state.level === "admin" || this.state.level === "superadmin") &&
+            <button
+              className="btn btn-icademy-primary"
+              style={{ padding: "7px 8px !important", marginLeft: 14 }}
+              onClick={this.createModalPengumuman.bind(this)}
+            >
+              <i className="fa fa-plus"></i>
 
-                Buat Pengumuman
+              Make Announcement
                 </button>
-              }
+          }
 
-              <button className="btn btn-transparent"> Belum di baca </button>
-              <button className="btn btn-transparent-disabled"> Belum dibaca </button>
-              <button className="btn btn-transparent-disabled"> Semua pesan </button>
-              <button className="btn btn-transparent-disabled"> Flagging </button>
-
-
-              <span className="float-right">{this.state.grup.length} Pengumuman</span>
-
-          </div>
-
-          <div className="col-sm-12">
-            <div style={{ overflowX: "auto" }}>
-              <Lists lists={grup} />
-            </div>
-          </div>
-
-          <Modal
-            show={this.state.isCreateModal}
-            onHide={this.closeClassModal}
-            dialogClassName="modal-lg"
-          >
-            <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                Buat Pengumuman Baru
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
-                    Judul Pengumuman
-                  </Form.Label>
-                  <FormControl
-                    type="text"
-                    name="judul"
-                    required
-                    onChange={e => this.setState({ [e.target.name]: e.target.value })}
-                    placeholder="Tulis Judul Disini"
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formisi">
-                  <Form.Label className="f-w-bold">
-                    isi Pengumuman
-                  </Form.Label>
-                  <textarea
-                    className="form-control" id="exampleFormControlTextarea1" rows="8"
-                    name="isi"
-                    required
-                    onChange={e => this.setState({ [e.target.name]: e.target.value })} />
-                </Form.Group>
-
-                <Form.Group controlId="formisi">
-                  <Form.Label className="fc-skyblue f-w-bold">
-                    Penerima
-                  </Form.Label><br/>
-
-                  {
-                    this.state.roles.map(item => (
-                      <div className="form-check form-check-inline" key={item.grup_id}>
-                        <input checked={item.isChecked} className="form-check-input" type="checkbox" onChange={this.handleCheckBox} value={item.grup_id} />
-                        <label className="form-check-label" for="inlineCheckbox1">{item.grup_name}</label>
-                      </div>
-                    ))
-                  }
+          <button className="btn btn-transparent"> Unread </button>
+          <button className="btn btn-transparent-disabled">Unread  </button>
+          <button className="btn btn-transparent-disabled"> All messages </button>
+          <button className="btn btn-transparent-disabled"> Flagging </button>
 
 
-                </Form.Group>
-              </Form>
-
-            </Modal.Body>
-            <Modal.Footer>
-
-              <button
-                className="btn project-info"
-                onClick={this.onSubmitForm}
-              >
-                <i className="fa fa-paper-plane"></i>
-                Kirim Pengumuman
-              </button>
-            </Modal.Footer>
-          </Modal>
+          <span className="float-right">{this.state.grup.length} Announcement</span>
 
         </div>
+
+        <div className="col-sm-12">
+          <div style={{ overflowX: "auto" }}>
+            <Lists lists={grup} />
+          </div>
+        </div>
+
+        <Modal
+          show={this.state.isCreateModal}
+          onHide={this.closeClassModal}
+          dialogClassName="modal-lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Make a New Announcement
+              </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Announcement Title
+                  </Form.Label>
+                <FormControl
+                  type="text"
+                  name="judul"
+                  required
+                  onChange={e => this.setState({ [e.target.name]: e.target.value })}
+                  placeholder="Write Title Here"
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formisi">
+                <Form.Label className="f-w-bold">
+                  contents of the Announcement
+                  </Form.Label>
+                <textarea
+                  className="form-control" id="exampleFormControlTextarea1" rows="8"
+                  name="isi"
+                  required
+                  onChange={e => this.setState({ [e.target.name]: e.target.value })} />
+              </Form.Group>
+
+              <Form.Group controlId="formisi">
+                <Form.Label className="fc-skyblue f-w-bold">
+                  Receiver
+                  </Form.Label><br />
+
+                {
+                  this.state.roles.map(item => (
+                    <div className="form-check form-check-inline" key={item.grup_id}>
+                      <input checked={item.isChecked} className="form-check-input" type="checkbox" onChange={this.handleCheckBox} value={item.grup_id} />
+                      <label className="form-check-label" for="inlineCheckbox1">{item.grup_name}</label>
+                    </div>
+                  ))
+                }
+
+
+              </Form.Group>
+            </Form>
+
+          </Modal.Body>
+          <Modal.Footer>
+
+            <button
+              className="btn project-info"
+              onClick={this.onSubmitForm}
+            >
+              <i className="fa fa-paper-plane"></i>
+              Send Announcement
+              </button>
+          </Modal.Footer>
+        </Modal>
+
+      </div>
 
 
     );

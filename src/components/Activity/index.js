@@ -524,7 +524,7 @@ class Aktivity extends Component {
                      */}
                     <div className="col-md-12">
                       <div className="card p-10">
-                        <h4 className="p-10">Kalender</h4>
+                        <h4 className="p-10"> Calendar</h4>
                         {/* <Calendar
                             onChange={(a)=>{console.log(a)}}
                             value={new Date()}
@@ -580,7 +580,7 @@ class Aktivity extends Component {
                   <div className="row">
                     <div className="col-md-12">
                       <div className="card" style={{ padding: 10 }}>
-                        <h4 className="p-10">Rekaman Meeting</h4>
+                        <h4 className="p-10">Meeting Records</h4>
                         <div
                           className="chart-container"
                           style={{ position: 'relative', margin: 20 }}
@@ -590,7 +590,7 @@ class Aktivity extends Component {
                               <ClassRooms list={this.state.dataRecordings} />
                             ) : (
                                 <div className="col-md-3 col-xl-3 mb-3">
-                                  Tidak ada rekaman meeting
+                                  There is no recorded meeting
                                 </div>
                               )}
                           </div>
@@ -601,7 +601,7 @@ class Aktivity extends Component {
 
                   <Form.Group controlId="formJudul">
                     <Form.Label className="f-w-bold">
-                      Filter Waktu
+                      Time Filter
                           </Form.Label>
                     <div style={{ width: '100%' }}>
                       <DatePicker

@@ -10,7 +10,7 @@ import { MultiSelect } from 'react-sm-select';
 
 export default class WebinarEdit extends Component {
 
-	state = {
+  state = {
     companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
     webinarId: this.props.match.params.webinar,
 
@@ -34,7 +34,7 @@ export default class WebinarEdit extends Component {
     mom: [],
     recordedMeeting: [],
 
-    optionsFolder:[],
+    optionsFolder: [],
     projectId: [],
 
     //form upload folder
@@ -55,7 +55,7 @@ export default class WebinarEdit extends Component {
     uploading: false,
     dataWebinar: []
   }
-  goback(){
+  goback() {
     this.props.history.goBack();
   }
   handleModal = () => {
@@ -80,7 +80,7 @@ export default class WebinarEdit extends Component {
   handleOneCheck = e => {
     let pem = this.state.pembicara;
     pem.forEach(item => { if (item.email === e.target.value) item.checked = e.target.checked });
-    this.setState({ pembicara: pem }); 
+    this.setState({ pembicara: pem });
   }
 
   componentDidMount() {
@@ -93,45 +93,45 @@ export default class WebinarEdit extends Component {
     let sqlFromProject = `${API_SERVER}v2/project/user/${this.props.match.params.projectId}`;
     API.get(this.props.match.params.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
       response.data.result.map(item => {
-        this.state.optionNames.push({value: item.user_id, label: item.name});
+        this.state.optionNames.push({ value: item.user_id, label: item.name });
       });
-      if (this.state.optionsFolder.length==0){
+      if (this.state.optionsFolder.length == 0) {
         API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
           response.data.result.map(item => {
-            this.state.optionsFolder.push({value: item.id, label: item.name});
+            this.state.optionsFolder.push({ value: item.id, label: item.name });
           });
         })
-        .catch(function(error) {
-          console.log(error);
-        });
+          .catch(function (error) {
+            console.log(error);
+          });
       }
     })
   }
 
-  fetchWebinar(){
+  fetchWebinar() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
-        if (res.data.error)
-            toast.warning("Error fetch API")
-        else
+      if (res.data.error)
+        toast.warning("Error fetch API")
+      else
         this.setState({
-            projectId: [Number(res.data.result.project_id)],
-            judul: res.data.result.judul,
-            status: res.data.result.status
+          projectId: [Number(res.data.result.project_id)],
+          judul: res.data.result.judul,
+          status: res.data.result.status
         })
-        let tempSekretaris=[];
-        let tempPembicara=[];
-        let tempModerator=[];
-        let tempOwner=[];
-        res.data.result.sekretaris.map( item => tempSekretaris.push(item.user_id))
-        res.data.result.pembicara.map( item => tempPembicara.push(item.user_id))
-        res.data.result.moderator.map( item => tempModerator.push(item.user_id))
-        res.data.result.owner.map( item => tempOwner.push(item.user_id))
-        this.setState({
-          sekretarisId: tempSekretaris,
-          pembicaraId: tempPembicara,
-          moderatorId: tempModerator,
-          ownerId: tempOwner
-        })
+      let tempSekretaris = [];
+      let tempPembicara = [];
+      let tempModerator = [];
+      let tempOwner = [];
+      res.data.result.sekretaris.map(item => tempSekretaris.push(item.user_id))
+      res.data.result.pembicara.map(item => tempPembicara.push(item.user_id))
+      res.data.result.moderator.map(item => tempModerator.push(item.user_id))
+      res.data.result.owner.map(item => tempOwner.push(item.user_id))
+      this.setState({
+        sekretarisId: tempSekretaris,
+        pembicaraId: tempPembicara,
+        moderatorId: tempModerator,
+        ownerId: tempOwner
+      })
     })
   }
 
@@ -162,7 +162,7 @@ export default class WebinarEdit extends Component {
   onChangeInputFile = e => {
     const name = e.target.name;
     const value = e.target.value;
-    if(name == 'attachmentId') {
+    if (name == 'attachmentId') {
       this.setState({ [name]: e.target.files });
     } else {
       this.setState({ [name]: value });
@@ -183,24 +183,24 @@ export default class WebinarEdit extends Component {
 
 
     API.put(`${API_SERVER}v2/webinar/edit`, form).then(res => {
-      if(res.data.error){
+      if (res.data.error) {
         toast.warning("Error fetch API")
       }
-      else{
-        toast.success("Berhasil merubah webinar")
+      else {
+        toast.success("Successfully changed the webinar")
         this.props.history.goBack();
       }
     })
   }
 
-	render() {
+  render() {
 
     console.log('STATE: ', this.state);
 
     // let levelUser = 'admin';
 
-		return (
-			<div className="row">
+    return (
+      <div className="row">
         {/** STEP 1 */}
         {
           this.state.isStep1 &&
@@ -210,33 +210,33 @@ export default class WebinarEdit extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                    	<Link onClick={this.goback.bind(this)} className="btn btn-sm mr-4" style={{
-                    		border: '1px solid #e9e9e9',
-                    		borderRadius: '50px',
-                    	}}>
-                    		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
-                  		</Link>
-                      Buat Webinar
+                      <Link onClick={this.goback.bind(this)} className="btn btn-sm mr-4" style={{
+                        border: '1px solid #e9e9e9',
+                        borderRadius: '50px',
+                      }}>
+                        <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
+                      </Link>
+                      Create a Webinar
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
                     <p className="m-b-0">
-                      <span className="f-16 biru-bold mr-3">1. Tetapkan Role &nbsp;&nbsp;&bull;</span>
-                      <span className={`f-16 mr-3`}>2. Atur Folder & File &nbsp;&nbsp;&bull;</span>
-                      <span className="f-16">Selesai</span>
+                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&bull;</span>
+                      <span className={`f-16 mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&bull;</span>
+                      <span className="f-16"> Done </span>
                     </p>
                   </div>
                 </div>
-                <div style={{marginTop: '10px'}}>
+                <div style={{ marginTop: '10px' }}>
                   <div className="row">
                     <div className="col-sm-12">
-                      
+
                       <div className="form-group">
-                        <label className="bold">Judul Webinar</label>
+                        <label className="bold">Title Webinar</label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
-                        <small className="form-text text-muted">Judul tidak boleh menggunakan karakter spesial.</small>
+                        <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
-                        {/* <div className="form-group">
+                      {/* <div className="form-group">
                           <label className="bold">Project</label>
                           <MultiSelect
                               id="folder"
@@ -246,30 +246,30 @@ export default class WebinarEdit extends Component {
                               mode="single"
                               enableSearch={true}
                               resetable={true}
-                              valuePlaceholder="Pilih Folder Project"
+                              valuePlaceholder="Select Folder Project"
                             />
                           <small className="form-text text-muted">Pilih project folder.</small>
                         </div> */}
 
-                      <h4>Pilih Roles</h4>
+                      <h4>Select Roles</h4>
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label className="bold">Role</label>
                           <input type="text" className="form-control" value="Sekretaris" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Nama</label>
+                          <label className="bold">Name</label>
                           <MultiSelect
-                              id={`sekretarisId`}
-                              options={this.state.optionNames}
-                              value={this.state.sekretarisId}
-                              onChange={sekretarisId => this.setState({ sekretarisId })}
-                              mode="tags"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Silahkan Pilih User"
-                              allSelectedLabel="Silahkan Pilih User"
-                            />
+                            id={`sekretarisId`}
+                            options={this.state.optionNames}
+                            value={this.state.sekretarisId}
+                            onChange={sekretarisId => this.setState({ sekretarisId })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Please Select User"
+                            allSelectedLabel="Please Select User"
+                          />
                         </div>
                       </div>
 
@@ -279,18 +279,18 @@ export default class WebinarEdit extends Component {
                           <input type="text" className="form-control" value="Moderator" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Nama</label>
+                          <label className="bold">Name</label>
                           <MultiSelect
-                              id={`moderatorId`}
-                              options={this.state.optionNames}
-                              value={this.state.moderatorId}
-                              onChange={moderatorId => this.setState({ moderatorId })}
-                              mode="tags"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Silahkan Pilih User"
-                              allSelectedLabel="Silahkan Pilih User"
-                            />
+                            id={`moderatorId`}
+                            options={this.state.optionNames}
+                            value={this.state.moderatorId}
+                            onChange={moderatorId => this.setState({ moderatorId })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Please Select User"
+                            allSelectedLabel="Please Select User"
+                          />
                         </div>
                       </div>
 
@@ -300,18 +300,18 @@ export default class WebinarEdit extends Component {
                           <input type="text" className="form-control" value="Pembicara" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Nama</label>
+                          <label className="bold">Name</label>
                           <MultiSelect
-                              id={`pembicaraId`}
-                              options={this.state.optionNames}
-                              value={this.state.pembicaraId}
-                              onChange={pembicaraId => this.setState({ pembicaraId })}
-                              mode="tags"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Silahkan Pilih User"
-                              allSelectedLabel="Silahkan Pilih User"
-                            />
+                            id={`pembicaraId`}
+                            options={this.state.optionNames}
+                            value={this.state.pembicaraId}
+                            onChange={pembicaraId => this.setState({ pembicaraId })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Please Select User"
+                            allSelectedLabel="Please Select User"
+                          />
                         </div>
                       </div>
 
@@ -321,29 +321,29 @@ export default class WebinarEdit extends Component {
                           <input type="text" className="form-control" value="Owner" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Nama</label>
+                          <label className="bold">Name</label>
                           <MultiSelect
-                              id={`ownerId`}
-                              options={this.state.optionNames}
-                              value={this.state.ownerId}
-                              onChange={ownerId => this.setState({ ownerId })}
-                              mode="tags"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Silahkan Pilih User"
-                              allSelectedLabel="Silahkan Pilih User"
-                            />
+                            id={`ownerId`}
+                            options={this.state.optionNames}
+                            value={this.state.ownerId}
+                            onChange={ownerId => this.setState({ ownerId })}
+                            mode="tags"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Please Select User"
+                            allSelectedLabel="Please Select User"
+                          />
                         </div>
                       </div>
 
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={e => this.setState({isStep1: false, isStep2: true})} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft:14 }}>
-                        <i className="fa fa-file"></i> &nbsp; Atur Folder dan File
+                      <button onClick={e => this.setState({ isStep1: false, isStep2: true })} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                        <i className="fa fa-file"></i> &nbsp; Organize Folders and Files
                       </button>
                     </div>
                   </div>
-                  
+
                 </div>
               </Card.Body>
             </Card>
@@ -352,45 +352,45 @@ export default class WebinarEdit extends Component {
 
         {/** STEP 2 */}
         {
-          this.state.isStep2 && 
+          this.state.isStep2 &&
           <div className="col-sm-12">
             <Card>
               <Card.Body>
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      <a onClick={e => { e.preventDefault(); this.setState({isStep1: true, isStep2: false}) }} className="btn btn-sm mr-4" style={{
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
                         border: '1px solid #e9e9e9',
                         borderRadius: '50px',
                       }}>
-                        <i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
+                        <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                       </a>
                       Folder Dokumen
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
                     <p className="m-b-0">
-                      <span className="f-16 biru-bold mr-3">1. Tetapkan Role &nbsp;&nbsp;&bull;</span>
-                      <span className={`f-16 biru-bold mr-3`}>2. Atur Folder & File &nbsp;&nbsp;&bull;</span>
-                      <span className="f-16">Selesai</span>
+                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&bull;</span>
+                      <span className={`f-16 biru-bold mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&bull;</span>
+                      <span className="f-16"> Done </span>
                     </p>
                   </div>
                 </div>
-                <div style={{marginTop: '10px'}}>
+                <div style={{ marginTop: '10px' }}>
                   <div className="row">
 
                     <div className="col-sm-12">
-                      <div id="scrollin" style={{height:'492px', marginBottom: '0px', overflowY:'scroll'}}>
-                        <TableFiles access_project_admin={true} projectId={this.state.projectId}/>
+                      <div id="scrollin" style={{ height: '492px', marginBottom: '0px', overflowY: 'scroll' }}>
+                        <TableFiles access_project_admin={true} projectId={this.state.projectId} />
                       </div>
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={this.simpanWebinar} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft:14 }}>
+                      <button onClick={this.simpanWebinar} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
                         <i className="fa fa-save"></i> &nbsp; Simpan Webinar
                       </button>
                     </div>
                   </div>
-                  
+
                 </div>
               </Card.Body>
             </Card>
@@ -401,7 +401,7 @@ export default class WebinarEdit extends Component {
             >
               <Modal.Body>
                 <h5>
-                  Tambah File Dokumen
+                  Add Document File
                 </h5>
 
                 {
@@ -424,21 +424,21 @@ export default class WebinarEdit extends Component {
 
                 <div className="form-group">
                   <label>Hak Akses</label>
-                  <br/>
-                  <label className="checkbox-inline" style={{margin: ".5rem"}}>
+                  <br />
+                  <label className="checkbox-inline" style={{ margin: ".5rem" }}>
                     <input className="mr-2" onChange={this.handleCheckbox} name="accessSekretaris" type="checkbox" value="Sekretaris" /> Sekretaris
                   </label>
-                  <label className="checkbox-inline" style={{margin: ".5rem"}}>
+                  <label className="checkbox-inline" style={{ margin: ".5rem" }}>
                     <input className="mr-2" onChange={this.handleCheckbox} name="accessModerator" type="checkbox" value="Moderator" /> Moderator
                   </label>
-                  <label className="checkbox-inline" style={{margin: ".5rem"}}>
+                  <label className="checkbox-inline" style={{ margin: ".5rem" }}>
                     <input className="mr-2" onChange={this.handleCheckbox} name="accessPembicara" type="checkbox" value="Pembicara" /> Pembicara
                   </label>
-                  <label className="checkbox-inline" style={{margin: ".5rem"}}>
+                  <label className="checkbox-inline" style={{ margin: ".5rem" }}>
                     <input className="mr-2" onChange={this.handleCheckbox} name="accessPeserta" type="checkbox" value="Peserta" /> Peserta
                   </label>
                 </div>
-                
+
                 <button
                   type="button"
                   onClick={this.onClickFile}
@@ -452,13 +452,13 @@ export default class WebinarEdit extends Component {
                   className="btn btn-v2 f-w-bold"
                   onClick={this.handleModal}
                 >
-                  Tutup
+                  Close
                 </button>
               </Modal.Body>
             </Modal>
           </div>
         }
       </div>
-		);
-	}
+    );
+  }
 }

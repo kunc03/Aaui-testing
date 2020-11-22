@@ -15,7 +15,7 @@ class UjianYangAkanDatang extends Component {
     header: [
       { title: 'Subjects', width: null, status: true },
       { title: 'Topik', width: null, status: true },
-      { title: 'Waktu', width: null, status: true },
+      { title: 'Time', width: null, status: true },
       { title: 'Sesi', width: null, status: true },
     ]
   }
@@ -47,14 +47,14 @@ class UjianYangAkanDatang extends Component {
                     )
                   })
                 }
-                <td colSpan="2" align="center"><b>Aksi</b></td>
+                <td colSpan="2" align="center"><b> Action </b></td>
               </tr>
             </thead>
             <tbody>
               {
                 bodyTabble.length == 0 ?
                   <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>There is no</td>
                   </tr>
                   :
                   bodyTabble.map((item, i) => {

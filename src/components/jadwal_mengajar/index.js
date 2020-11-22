@@ -241,7 +241,7 @@ class JadwalMengajar extends React.Component {
                     <th>No</th>
                     <th>Nama Pelajaran</th>
                     <th>Status</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -271,7 +271,7 @@ class JadwalMengajar extends React.Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Tambah Teaching Schedule
+              Add Teaching Schedule
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -314,7 +314,7 @@ class JadwalMengajar extends React.Component {
                   </select>
                 </div>
                 <div className="col-sm-6">
-                  <label>Nama Pengajar</label>
+                  <label>Teacher Name</label>
                   <select value={this.state.namaPengajar} onChange={e => this.setState({ namaPengajar: e.target.value })} disabled className="form-control">
                     <option value="">Pilih</option>
                     {
@@ -339,7 +339,7 @@ class JadwalMengajar extends React.Component {
                   </select>
                 </div>
                 <div className="col-sm-4">
-                  <label>Jam Mulai</label>
+                  <label> Starting Hours </label>
                   <select value={this.state.jamMulai} onChange={e => this.setState({ jamMulai: e.target.value })} required className="form-control">
                     <option value="">Pilih</option>
                     {
@@ -350,7 +350,7 @@ class JadwalMengajar extends React.Component {
                   </select>
                 </div>
                 <div className="col-sm-4">
-                  <label>Jam Selesai</label>
+                  <label> End Hours </label>
                   <select value={this.state.jamSelesai} onChange={e => this.setState({ jamSelesai: e.target.value })} required className="form-control">
                     <option value="">Pilih</option>
                     {
@@ -386,7 +386,7 @@ class JadwalMengajar extends React.Component {
                     className="btn btm-icademy-primary btn-icademy-grey ml-2"
                     onClick={() => this.clearForm()}
                   >
-                    Batal
+                    Cancel
                   </button>
                 </div>
               </div>

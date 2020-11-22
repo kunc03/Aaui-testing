@@ -40,7 +40,7 @@ class PengumumanTerbaru extends Component {
               {
                 bodyTabble.length == 0 ?
                   <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>There is no</td>
                   </tr>
                   :
                   bodyTabble.map((item, i) => {

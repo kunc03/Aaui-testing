@@ -391,7 +391,7 @@ export default class DetailKursus extends Component {
       } else {
         return (
           <Card style={{ marginTop: '10px' }}>
-            <Card.Body>Tidak ada chapter</Card.Body>
+            <Card.Body>There are no chapters</Card.Body>
           </Card>
         )
       }
@@ -762,7 +762,7 @@ export default class DetailKursus extends Component {
                         className="btn f-w-bold "
                         onClick={this.handleModalScoreClose}
                       >
-                        Tutup
+                        Close
                       </button>
                     </Modal.Body>
                   </Modal>
@@ -826,13 +826,13 @@ export default class DetailKursus extends Component {
                               </td>
                               <td>
                                 <span style={{ marginLeft: "14px" }}>
-                                  Waktu Pengerjaan
+                                  Processing time
                                 </span>
                                 <h3
                                   style={{ marginLeft: "14px" }}
                                   className="f-18 f-w-800 mb-3"
                                 >
-                                  {durasiWaktu} Menit
+                                  {durasiWaktu} Minute
                                 </h3>
                               </td>
                             </tr>
@@ -847,14 +847,14 @@ export default class DetailKursus extends Component {
                           }`}
                         className="btn btn-block btn-ideku f-w-bold"
                       >
-                        Ya, Mulai Sekarang
+                        Yes, star now
                       </Link>
                       <button
                         type="button"
                         className="btn btn-block f-w-bold"
                         onClick={this.handleModalQuizClose}
                       >
-                        Kembali
+                        Back
                       </button>
                     </Modal.Body>
                   </Modal>
@@ -865,7 +865,7 @@ export default class DetailKursus extends Component {
                   >
                     <Modal.Body>
                       <h3 className="f-24 f-w-800 mb-3">
-                        Belum ada ujian pada kursus ini.
+                        There are no exams in this course yet.
                       </h3>
 
                       <button

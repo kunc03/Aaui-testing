@@ -9,7 +9,7 @@ import Ujian from '../tugas/ujian';
 const titleTabs = [
   { name: 'Subjects', link: '/mata-pelajaran', component: MataPelajaran },
   { name: 'Task', link: '/tugas', component: Tugas },
-  { name: 'Latihan', link: '/latihan', component: Latihan },
+  { name: 'Quiz', link: '/latihan', component: Latihan },
   { name: 'Exam', link: '/ujian', component: Ujian },
 ]
 

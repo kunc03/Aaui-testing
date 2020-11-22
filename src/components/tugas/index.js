@@ -13,8 +13,8 @@ class Tugas extends React.Component {
 
   componentDidMount() {
     let mataPelajaran = [
-      {mapel: 'Pendidikan Agama', deskripsi: 'Buat essay minimal 500 kata terkait deskripsi pahala dalam format ms word', waktu_pengumpulan: '4 Oktober 2020', status: 'Perlu Dikirim'},
-      {mapel: 'Pendidikan Pancasila', deskripsi: 'Buat essay minimal 500 kata terkait deskripsi pahala dalam format ms word', waktu_pengumpulan: '3 Oktober 2020', status: 'Perlu Dikirim'},
+      { mapel: 'Pendidikan Agama', deskripsi: 'Buat essay minimal 500 kata terkait deskripsi pahala dalam format ms word', waktu_pengumpulan: '4 Oktober 2020', status: 'Perlu Dikirim' },
+      { mapel: 'Pendidikan Pancasila', deskripsi: 'Buat essay minimal 500 kata terkait deskripsi pahala dalam format ms word', waktu_pengumpulan: '3 Oktober 2020', status: 'Perlu Dikirim' },
     ];
     this.setState({ mataPelajaran })
   }
@@ -33,30 +33,30 @@ class Tugas extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{padding: '12px'}}>
+            <div className="card-body" style={{ padding: '12px' }}>
 
               <table className="table table-striped">
                 <thead>
                   <tr>
-                    <th>Mata Pelajaran</th>
-                    <th>Deskripsi</th>
-                    <th>Waktu Pengumpulan</th>
+                    <th> Subject </th>
+                    <th> Description </th>
+                    <th> Time of Collection</th>
                     <th>Status</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {
-                    this.state.mataPelajaran.map((item,i) => (
+                    this.state.mataPelajaran.map((item, i) => (
                       <tr>
                         <td>{item.mapel}</td>
-                        <td><i style={{cursor: 'pointer'}} onClick={() => this.setState({ isModalDetail: true})} className="fa fa-search"></i> {item.deskripsi}</td>
+                        <td><i style={{ cursor: 'pointer' }} onClick={() => this.setState({ isModalDetail: true })} className="fa fa-search"></i> {item.deskripsi}</td>
                         <td>{item.waktu_pengumpulan}</td>
                         <td>{item.status}</td>
                         <td>
                           <button onClick={() => this.setState({ isModalTugas: true })} className="btn btn-v2 btn-primary">
-                            <i className="fa fa-paper-plane"></i> Kirim Tugas
+                            <i className="fa fa-paper-plane"></i> Send Assignments
                           </button>
                         </td>
                       </tr>
@@ -90,7 +90,7 @@ class Tugas extends React.Component {
           <Modal.Body>
             <form>
               <div className="form-group">
-                <label>Mata Pelajaran</label>
+                <label> Subject </label>
                 <input type="file" className="form-control" />
               </div>
             </form>

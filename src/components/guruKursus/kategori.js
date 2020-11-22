@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import {Hidden} from '@material-ui/core';
+import { Hidden } from '@material-ui/core';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
@@ -27,7 +27,7 @@ class Kategoris extends Component {
     let link = `${API_SERVER}v1/company`;
     API.get(link).then(response => {
       this.setState({ grup: response.data.result });
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.log(error);
     });
   }
@@ -39,7 +39,7 @@ class Kategoris extends Component {
     let statusCompany = ['active', 'nonactive'];
 
     let linkCompany = '';
-    if(Storage.get('user').data.level === 'superadmin') {
+    if (Storage.get('user').data.level === 'superadmin') {
       linkCompany = '/company-detail-super';
     } else {
       linkCompany = '/company-detail';
@@ -48,23 +48,23 @@ class Kategoris extends Component {
     const Item = ({ item }) => (
       <li >
         <div
-            className="card-block"
-            style={{ padding: "4px 25px" }}
-          >
-            <div className="row d-flex text-center">
-              <div className="col-sm-6 card-cell-grey">
-                <small className="f-w-600 f-12 text-c-grey ">
+          className="card-block"
+          style={{ padding: "4px 25px" }}
+        >
+          <div className="row d-flex text-center">
+            <div className="col-sm-6 card-cell-grey">
+              <small className="f-w-600 f-12 text-c-grey ">
                 02 Sep 2020
                 </small>
-              </div>
-              <div className="col-sm-6 card-cell-green">
-                <small className="f-w-600 f-12 text-c-white ">
+            </div>
+            <div className="col-sm-6 card-cell-green">
+              <small className="f-w-600 f-12 text-c-white ">
                 85
                 </small>
-              </div>
             </div>
           </div>
-        
+        </div>
+
       </li>
     );
 
@@ -77,11 +77,11 @@ class Kategoris extends Component {
           >
             <table className="table">
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{textTransform : 'uppercase'}}>Nama Kategori</span></td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Category Name</span></td>
                 <td>02 Sep 2020</td>
               </tr>
-              <tr style={{backgroundColor: '#44D7B6'}}>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{textTransform : 'uppercase'}}>Jumlah Lesson</span></td>
+              <tr style={{ backgroundColor: '#44D7B6' }}>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Jumlah Lesson</span></td>
                 <td>54</td>
               </tr>
             </table>
@@ -107,45 +107,45 @@ class Kategoris extends Component {
     );
 
     return (
-        <div className="row">
-          <div className="col-sm-12">
-            <div className="card" style={{height: '650px', paddingBottom: 10}}>
-              <h3 className="f-24 fc-skyblue f-w-800 mb-3 mt-3 p-l-20">
-                Kategori
+      <div className="row">
+        <div className="col-sm-12">
+          <div className="card" style={{ height: '650px', paddingBottom: 10 }}>
+            <h3 className="f-24 fc-skyblue f-w-800 mb-3 mt-3 p-l-20">
+              Kategori
               </h3>
 
-              {/*RESPONSIVE IN THE CENTER 'WEB VIEW'*/}
-              <Hidden only="xs">
-                
-                  <div className="row d-flex text-center" style={{padding: "12px 25px"}}>
-                    <div className="col-sm-6">
-                      <span className="f-w-800 f-14 text-c-grey2 " style={{textTransform : 'uppercase'}}>
-                      Nama Kategori
+            {/*RESPONSIVE IN THE CENTER 'WEB VIEW'*/}
+            <Hidden only="xs">
+
+              <div className="row d-flex text-center" style={{ padding: "12px 25px" }}>
+                <div className="col-sm-6">
+                  <span className="f-w-800 f-14 text-c-grey2 " style={{ textTransform: 'uppercase' }}>
+                    Nama Kategori
                       </span>
-                    </div>
-                    <div className="col-sm-6">
-                      <span className="f-w-800 f-14 text-c-grey2 " style={{textTransform : 'uppercase'}}>
-                      Jumlah Lesson
-                      </span>
-                    </div>
-                  </div>
-                <div style={{ overflowX: "hidden" }}>
-                  <Lists lists={grup} />
                 </div>
-              </Hidden>
+                <div className="col-sm-6">
+                  <span className="f-w-800 f-14 text-c-grey2 " style={{ textTransform: 'uppercase' }}>
+                    Jumlah Lesson
+                      </span>
+                </div>
+              </div>
+              <div style={{ overflowX: "hidden" }}>
+                <Lists lists={grup} />
+              </div>
+            </Hidden>
 
-              {/*RESPONSIVE IN THE CENTER 'MOBILE VIEW'*/}
-              <Hidden only={['lg', 'md', 'sm', 'xl']}>
-                <div style={{ overflowX: "auto" }}>
-                  <ListMobile lists={grup} />
-                  </div>
-              </Hidden>
-            </div>
+            {/*RESPONSIVE IN THE CENTER 'MOBILE VIEW'*/}
+            <Hidden only={['lg', 'md', 'sm', 'xl']}>
+              <div style={{ overflowX: "auto" }}>
+                <ListMobile lists={grup} />
+              </div>
+            </Hidden>
           </div>
-
         </div>
-      
-    
+
+      </div>
+
+
     );
   }
 }
