@@ -1,6 +1,7 @@
 import React from 'react';
 import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import { toast } from 'react-toastify'
 
 import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
@@ -19,28 +20,96 @@ class Chapter extends React.Component {
 
     chapters: [],
 
-    no: '',
-    nama: '',
-    isi: '',
+    id: '',
+    number: '',
+    title: '',
+    content: '',
     tanggal: new Date(),
     waktu: '',
+    attachments: [],
 
+    files: null,
     materi: '',
   };
 
   selectChapter = e => {
     e.preventDefault();
     console.log('selectKelas');
+    let id = e.target.getAttribute('data-id');
+    this.fetchOneChapter(id);
+    this.setState({ materi: Math.random().toString(36) })
+  }
+
+  saveChapter = e => {
+    let form = {
+      companyId: Storage.get('user').data.company_id,
+      pelajaranId: this.state.pelajaranId,
+      number: this.state.number,
+      title: this.state.title,
+      content: this.state.content,
+      tanggal: this.state.tanggal + ' ' + this.state.waktu
+    }
+
+    API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
+      if(res.data.error) toast.warning(`Error: create chapter`)
+
+      if(this.state.files) {
+        this.uplaodFiles(res.data.result.id)
+      }
+
+      this.fetchChapters();
+      this.fetchOneChapter(res.data.result.id)
+      toast.success(`Chapter inserted`)
+    })
   }
 
   editChapter = e => {
     e.preventDefault();
     console.log('editChapter');
+    let form = {
+      number: this.state.number,
+      title: this.state.title,
+      content: this.state.content,
+      tanggal: this.state.tanggal + ' ' + this.state.waktu
+    }
+
+    API.put(`${API_SERVER}v2/pelajaran/chapter/update/${this.state.id}`, form).then(res => {
+      if(res.data.error) toast.warning(`Error: create chapter`)
+
+      if(this.state.files) {
+        this.uplaodFiles(this.state.id)
+      }
+
+      this.fetchChapters();
+      this.fetchOneChapter(this.state.id)
+      toast.success(`Chapter updated`)
+    })
   }
 
   deleteChapter = e => {
     e.preventDefault();
     console.log('deleteChapter');
+    API.delete(`${API_SERVER}v2/pelajaran/chapter/delete/${this.state.id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: delete chapter`)
+
+      this.fetchChapters()
+      this.clearForm()
+    })
+  }
+
+  clearForm() {
+    this.setState({
+      id: '',
+      number: '',
+      title: '',
+      content: '',
+      tanggal: new Date(),
+      waktu: '',
+      attachments: [],
+
+      files: null,
+      materi: Math.random().toString(36)
+    })
   }
 
   componentDidMount() {
@@ -48,16 +117,59 @@ class Chapter extends React.Component {
   }
 
   fetchChapters() {
-    let chapters = [
-      {id: 1, title: "Chapter 1"},
-      {id: 2, title: "Chapter 2"},
-      {id: 3, title: "Chapter 3"},
-    ];
+    API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch chapters`)
 
-    this.setState({ chapters })
+      this.setState({ chapters: res.data.result })
+    })
+  }
+
+  fetchOneChapter(id) {
+    API.get(`${API_SERVER}v2/pelajaran/chapter/one/${id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch one chapter`)
+
+      this.setState({
+        id: res.data.result.id,
+        number: res.data.result.number,
+        title: res.data.result.title,
+        content: res.data.result.content,
+        tanggal: moment(res.data.result.tanggal).format('YYYY-MM-DD'),
+        waktu: moment(res.data.result.tanggal).format('HH:mm'),
+        attachments: res.data.result.attachments
+      })
+    })
+  }
+
+  uploadAttachments = e => {
+    e.preventDefault();
+    if(this.state.id){
+      if(this.state.files) {
+        this.uplaodFiles(this.state.id)
+      } else {
+        toast.info(`File masih kosong`)
+      }
+    } else {
+      toast.info(`Klik simpan terlebih dahulu`)
+    }
+  }
+
+  uplaodFiles(id) {
+    let form = new FormData();
+    for(var i=0; i<this.state.files.length; i++) {
+      form.append('files', this.state.files[i]);
+    }
+
+    API.put(`${API_SERVER}v2/pelajaran/chapter/files/${id}`, form).then(res => {
+      if(res.data.error) toast.warning(`Error: upload files`)
+
+      toast.success(`Attachments success upload`);
+      this.setState({ attachments: res.data.result.split(','), materi: Math.random().toString(36), files: null })
+    })
   }
 
   render() {
+
+    console.log('state: ', this.state)
 
     var selection = [];
     for(var i = 0; i < 24; i++) {
@@ -86,18 +198,19 @@ class Chapter extends React.Component {
                 <div className="form-group row">
                   <div className="col-sm-2">
                     <label>No Chapter</label>
-                    <input type="number" className="form-control" placeholder="Enter" />
+                    <input required value={this.state.number} name="number" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="number" className="form-control" placeholder="Enter" />
                   </div>
                   <div className="col-sm-10">
                     <label>Nama Chapter</label>
-                    <input type="text" className="form-control" placeholder="Enter" />
+                    <input required value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" className="form-control" placeholder="Enter" />
                   </div>
                 </div>
                 <div className="form-group">
                   <label>Isi Chapter</label>
                   <Editor
                     apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                    initialValue={this.state.overview}
+                    initialValue={this.state.content}
+                    value={this.state.content}
                     init={{
                       height: 300,
                       menubar: false,
@@ -112,13 +225,13 @@ class Chapter extends React.Component {
                        alignleft aligncenter alignright alignjustify | \
                         bullist numlist outdent indent | removeformat | help"
                     }}
-                    onChange={this.handleEditorChange}
+                    onEditorChange={e => this.setState({ content: e })}
                   />
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-4">
                     <label>Tanggal</label>
-                    <input type="date" className="form-control" placeholder="Enter" />
+                    <input value={this.state.tanggal} name="tanggal" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="date" className="form-control" placeholder="Enter" />
                   </div>
                   <div className="col-sm-2">
                     <label>Jam Mulai</label>
@@ -135,26 +248,33 @@ class Chapter extends React.Component {
 
                 <h4>Materi</h4>
                 <div className="input-group mb-3">
-                  <input type="file" className="form-control" placeholder="Search" />
+                  <input key={this.state.materi} type="file" multiple onChange={e => this.setState({ files: e.target.files })} className="form-control" placeholder="Search" />
                   <div className="input-group-append">
-                    <button className="btn btn-success" type="submit">Upload</button>
+                    <button onClick={this.uploadAttachments} className="btn btn-success" type="submit">Upload</button>
                   </div>
                 </div>
 
                 <ul className="list-group">
-                  <li className="list-group-item">
-                    <a href="#">Silabus-Semester-1.pdf</a>
-                    <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i>
-                  </li>
+                  {
+                    this.state.attachments && this.state.attachments.map(item => (
+                      <li className="list-group-item">
+                      <a href={item} target="_blank">{item}</a>
+                      { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */ }
+                      </li>
+                    ))
+                  }
                 </ul>
 
                 <div className="form-group mt-4">
-                  <button type="button" className="btn btn-v2 btn-success">
+                  <button onClick={this.state.id ? this.editChapter : this.saveChapter} type="button" className="btn btn-v2 btn-success">
                     <i className="fa fa-save"></i> Simpan
                   </button>
-                  <button type="button" className="btn btn-v2 btn-danger float-right">
-                    <i className="fa fa-trash"></i> Hapus
-                  </button>
+                  {
+                    this.state.id &&
+                    <button onClick={this.deleteChapter} type="button" className="btn btn-v2 btn-danger float-right">
+                      <i className="fa fa-trash"></i> Hapus
+                    </button>
+                  }
                 </div>
 
               </form>
@@ -179,7 +299,7 @@ class Chapter extends React.Component {
               </div>
 
               <div style={{padding: '12px'}}>
-                <button type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
                   <i className="fa fa-plus"></i> Tambah
                 </button>
               </div>

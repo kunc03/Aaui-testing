@@ -1,15 +1,16 @@
 import React from 'react';
+
 import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import moment from 'moment-timezone';
+import { toast } from 'react-toastify';
+import { Editor } from '@tinymce/tinymce-react';
 
 import { Link } from 'react-router-dom';
-import moment from 'moment-timezone';
 
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-
-import { Editor } from '@tinymce/tinymce-react';
 
 import SocketContext from '../../socket';
 
@@ -30,12 +31,28 @@ class Overview extends React.Component {
 
     if(this.state.overview) {
       // action simpan
-      console.log('ada isinya')
-      console.log(this.state.overview);
+      API.put(`${API_SERVER}v2/pelajaran/overview/${this.state.pelajaranId}`, {overview: this.state.overview}).then(res => {
+        if(res.data.error) console.log(`Error: update overview`)
+
+        this.fetchOverview()
+        toast.success(`Overview updated`)
+      })
 
     } else {
       console.log('tidak ada isinya')
     }
+  }
+
+  componentDidMount() {
+    this.fetchOverview()
+  }
+
+  fetchOverview() {
+    API.get(`${API_SERVER}v2/pelajaran/one/${this.state.pelajaranId}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch overview`)
+
+      this.setState({ overview: res.data.result.deskripsi });
+    })
   }
 
   render() {
@@ -51,8 +68,9 @@ class Overview extends React.Component {
                 <Editor
                   apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                   initialValue={this.state.overview}
+                  value={this.state.overview}
                   init={{
-                    height: 300,
+                    height: 460,
                     menubar: false,
                     plugins: [
                       "advlist autolink lists link image charmap print preview anchor",
@@ -65,7 +83,7 @@ class Overview extends React.Component {
                      alignleft aligncenter alignright alignjustify | \
                       bullist numlist outdent indent | removeformat | help"
                   }}
-                  onChange={this.handleEditorChange}
+                  onEditorChange={e => this.setState({ overview: e })}
                 />
               </div>
 
