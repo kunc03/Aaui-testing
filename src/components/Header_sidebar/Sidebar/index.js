@@ -164,6 +164,7 @@ class SidebarClass extends Component {
       menuBawah = menuAdmins.menuBawah;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
+      // let subMenuClient = "guru";
       if(subMenuClient === "guru" || subMenuClient === "murid") {
         menuContent = menuClients[subMenuClient].submenu;
       } else {

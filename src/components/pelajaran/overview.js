@@ -1,9 +1,9 @@
 import React from 'react';
 import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import moment from 'moment-timezone';
 
 import { Link } from 'react-router-dom';
-import moment from 'moment-timezone';
 
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
