@@ -81,7 +81,7 @@ class Tugas extends React.Component {
 
       console.log('state: ', res.data.result)
 
-      this.setState({ pertanyaan: res.data.result })
+      this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
     })
   }
 

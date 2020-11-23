@@ -70,7 +70,7 @@ class Overview extends React.Component {
                   initialValue={this.state.overview}
                   value={this.state.overview}
                   init={{
-                    height: 300,
+                    height: 460,
                     menubar: false,
                     plugins: [
                       "advlist autolink lists link image charmap print preview anchor",

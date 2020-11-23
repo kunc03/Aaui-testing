@@ -91,7 +91,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
-        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -117,7 +117,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
-        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -143,7 +143,7 @@ class SidebarClass extends Component {
       ],
       menuBawah : [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
-        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]

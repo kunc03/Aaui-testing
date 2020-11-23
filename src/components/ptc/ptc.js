@@ -31,6 +31,7 @@ class PtcClasses extends React.Component {
   openParticipants = e => {
     e.preventDefault()
     let dataId = e.target.getAttribute('data-id');
+    console.log('ptcId: ', dataId)
     let getPtc = this.state.ptc.filter(item => item.ptc_id === parseInt(dataId));
     this.fetchParticipants(dataId);
     this.setState({ openParticipants: true, ptcId: dataId })
@@ -64,6 +65,8 @@ class PtcClasses extends React.Component {
       user_id: this.state.pesertaId[0],
       peserta: 0
     };
+
+    console.log('form: ', form)
 
     API.post(`${API_SERVER}v1/add/ptc-room/peserta`, form).then(res => {
       if(res.data.error) console.log('Error: cannot add participants');
