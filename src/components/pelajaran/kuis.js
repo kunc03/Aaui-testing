@@ -23,21 +23,65 @@ class Tugas extends React.Component {
     examId: '',
     title: '',
     quizAt: '',
-    tanggalMulai: new Date(),
-    tanggalAkhir: new Date(),
+    tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
+    tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
     chapters: [],
 
+    pertanyaan: [],
 
+    formFile: null,
+    loading: false,
+    fileExcel: Math.random().toString(36)
   };
+
+  onClickTambahPertanyaan = () => {
+    if(this.state.examId) {
+      let baruPertanyaan = {
+        id: '',
+        jawaban: '',
+        tanya: '',
+        a: '',
+        b: '',
+        c: '',
+        d: '',
+        e: ''
+      };
+      this.setState({
+        pertanyaan: [...this.state.pertanyaan, baruPertanyaan]
+      })
+    } else {
+      toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
+    }
+  }
+
+  handleDynamicInput = (e, i) => {
+    const { value, name } = e.target;
+    let newObj = [...this.state.pertanyaan];
+
+    newObj[i][name] = value;
+    this.setState({ pertanyaan: newObj });
+  }
 
   clearForm() {
     this.setState({
       examId: '',
       title: '',
       quizAt: '',
-      tanggalMulai: new Date(),
-      tanggalAkhir: new Date(),
+      tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
+      tanggalAkhir: moment((new Date()).getDate() + 7).format('YYYY-MM-DD'),
+
+      fileExcel: Math.random().toString(36)
+    })
+  }
+
+  fetchPertanyaan(id) {
+    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+
+      console.log('state: ', res.data.result)
+
+      this.setState({ pertanyaan: res.data.result })
     })
   }
 
@@ -53,7 +97,11 @@ class Tugas extends React.Component {
         quizAt: res.data.result.quiz_at,
         tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
         tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
+
+        fileExcel: Math.random().toString(36)
       })
+
+      this.fetchPertanyaan(examId);
     })
   }
 
@@ -80,22 +128,37 @@ class Tugas extends React.Component {
 
   saveKuis = e => {
     e.preventDefault();
-    let form = {
-      companyId: Storage.get('user').data.company_id,
-      pelajaranId: this.state.pelajaranId,
+    if(this.state.examId) {
+      let form = {
+        title: this.state.title,
+        quizAt: this.state.quizAt,
+        tanggalMulai: this.state.tanggalMulai,
+        tanggalAkhir: this.state.tanggalAkhir
+      }
 
-      title: this.state.title,
-      quizAt: this.state.quizAt,
-      tanggalMulai: this.state.tanggalMulai,
-      tanggalAkhir: this.state.tanggalAkhir
+      API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
+        if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
+
+        this.fetchKuis();
+      })
+    } else {
+      let form = {
+        companyId: Storage.get('user').data.company_id,
+        pelajaranId: this.state.pelajaranId,
+
+        title: this.state.title,
+        quizAt: this.state.quizAt,
+        tanggalMulai: this.state.tanggalMulai,
+        tanggalAkhir: this.state.tanggalAkhir
+      }
+
+      API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
+        if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
+
+        this.fetchKuis();
+        this.clearForm();
+      })
     }
-
-    API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
-
-      this.fetchKuis();
-      this.clearForm();
-    })
   }
 
   deleteKuis = e => {
@@ -107,6 +170,63 @@ class Tugas extends React.Component {
       this.clearForm();
     })
   }
+
+  onClickHapusPertanyaan = (e) => {
+		let dataIndex = e.target.getAttribute('data-id');
+		let dataID = e.target.getAttribute('data-index');
+		API.delete(`${API_SERVER}v2/pelajaran/pertanyaan/hapus/${dataIndex}`).then(res => {
+			if(res.data.error) toast.warning("Gagal menghapus data");
+
+			toast.success("Data pertanyaan terhapus")
+      this.fetchPertanyaan(this.state.examId)
+		})
+  }
+
+  saveKuesioner(){
+    if(this.state.examId) {
+      let form = {
+        examId: this.state.examId,
+        pertanyaan: this.state.pertanyaan,
+      };
+
+      API.post(`${API_SERVER}v2/pelajaran/pertanyaan/buat`, form).then(res => {
+
+        console.log('state: ', res.data.result)
+
+        if(res.status === 200) {
+          if(res.data.error) {
+            toast.error('Error post data')
+          } else {
+            this.fetchKuis();
+            this.fetchPertanyaan(this.state.examId);
+            toast.success(`Menyimpan pertanyaan`)
+          }
+        }
+      })
+    } else {
+      toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
+    }
+  }
+
+  submitImport = e => {
+		e.preventDefault();
+    if(this.state.examId) {
+  		this.setState({ loading: true });
+  		let form = new FormData();
+  		form.append('examId', this.state.examId);
+  		form.append('files', this.state.formFile);
+
+  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import`, form).then(res => {
+  			if(res.data.error) toast.warning("Error import data");
+
+  			toast.success("Berhasil import pertanyaan")
+  			this.setState({ loading: false })
+  			this.fetchPertanyaan(this.state.examId);
+  		})
+    } else {
+      toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
+    }
+	}
 
   render() {
 
@@ -196,6 +316,28 @@ class Tugas extends React.Component {
                 <div className="card-header header-kartu">
                   2. Import Pertanyaan
                 </div>
+                <div className="card-body">
+                  <form onSubmit={this.submitImport} role="form" className="form-vertical">
+                    <div className="form-group row">
+                      <div className="col-sm-3">
+                        <label>Template Excel</label>
+                        <a href={`${API_SERVER}attachment/pertanyaan.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
+                          <i className="fa fa-download"></i>
+                          Download
+                        </a>
+                      </div>
+                      <div className="col-sm-6">
+                        <label>Import Excel</label>
+                        <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                      </div>
+                      <div className="col-sm-3">
+                        <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
+                          <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
 
@@ -203,6 +345,89 @@ class Tugas extends React.Component {
               <div className="card">
                 <div className="card-header header-kartu">
                   3. Semua Pertanyaan
+                </div>
+                <div className="card-body">
+                  {
+                    this.state.pertanyaan.map((item,i) => (
+                      <div className="form-group">
+                        <label>Pertanyaan <b>{i+1}</b></label>
+                        <span className="float-right">
+                          <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                        </span>
+                        <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
+
+                        <div className="jawaban mt-3 ml-4">
+                          <label>Jawaban Pertanyaan</label>
+                          <tr>
+                            <td>
+                              A
+                            </td>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="a" value={item.a} className="form-control" style={{width: '460px'}} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              B
+                            </td>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{width: '460px'}} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              C
+                            </td>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              D
+                            </td>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              E
+                            </td>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
+                            </td>
+                          </tr>
+                        </div>
+
+                        <div className="jawaban mt-3 ml-4">
+                          <div className="form-group">
+                            <label>Jawaban Benar</label>
+                            <select onChange={e => this.handleDynamicInput(e, i)} name="jawaban" value={item.jawaban} className="form-control col-sm-3">
+                              <option value="" disabled selected>Pilih</option>
+                              <option value="A">A</option>
+                              <option value="B">B</option>
+                              <option value="C">C</option>
+                              <option value="D">D</option>
+                              <option value="E">E</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
+
+                  <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
+
+                  <button
+                    type="button"
+                    style={{width: '100%'}}
+                    className="btn btn-icademy-primary mt-2"
+                    onClick={this.saveKuesioner.bind(this)}
+                  >
+                    <i className="fa fa-save"></i>
+                    Simpan
+                  </button>
                 </div>
               </div>
             </div>
