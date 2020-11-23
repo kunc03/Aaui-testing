@@ -62,6 +62,26 @@ export default class Gantt extends Component {
 			task.text = "Create a new task";
 		}
 		return true;
+    });
+    gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+		if (item.parent == 0) {
+			return;
+		}
+		
+		var parentTask = gantt.getTask(item.parent); //console.log(parent.id);return;
+		
+		var childs = gantt.getChildren(parentTask.id);
+		var totProgress = 0;
+		
+		var tempTask;
+		for (var i = 0; i < childs.length; i++) { //console.log(childs[i]);
+			tempTask = gantt.getTask(childs[i]);
+			totProgress += parseFloat(tempTask.progress);
+		}
+		//console.log(totProgress);
+		
+		parentTask.progress = (totProgress / childs.length).toFixed(2);
+		gantt.updateTask(parentTask.id);
 	});
 
 	gantt.ext.inlineEditors.attachEvent("onSave", function(state){
