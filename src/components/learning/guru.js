@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
 import { NavLink, Switch, Route, Link } from 'react-router-dom';
+import API, { API_SERVER, API_SOCKET } from '../../repository/api';
+import Storage from '../../repository/storage';
 
 import Overview from '../pelajaran/overview';
 import Chapter from '../pelajaran/chapter';
 import Kuis from '../pelajaran/kuis';
-import Tugas from '../pelajaran/tugas';
-import Ujian from '../pelajaran/ujian';
+// import Tugas from '../pelajaran/tugas';
+// import Ujian from '../pelajaran/ujian';
+
+const KuisComponent = props => (<Kuis {...props} tipe="kuis" />);
+const TugasComponent = props => (<Kuis {...props} tipe="tugas" />);
+const UjianComponent = props => (<Kuis {...props} tipe="ujian" />);
 
 const titleTabs = [
   {name: 'Overview', link: '/pelajaran', component: Overview},
   {name: 'Chapter', link: '/chapter', component: Chapter},
-  {name: 'Kuis', link: '/kuis', component: Kuis},
-  {name: 'Tugas', link: '/tugas', component: Tugas},
-  {name: 'Ujian', link: '/ujian', component: Ujian},
+  {name: 'Kuis', link: '/kuis', component: KuisComponent},
+  {name: 'Tugas', link: '/tugas', component: TugasComponent},
+  {name: 'Ujian', link: '/ujian', component: UjianComponent},
 ]
 
 const switchTambahan = [
@@ -35,16 +41,14 @@ export default class LearningGuru extends Component {
   fetchPelajaran() {
     let getPelajaranId = this.state.pelajaranId.split('/')[this.state.pelajaranId.split('/').length-1];
 
-    // dummy
-    let dummy = [
-      {id: 1, nama: 'Matematika'},
-      {id: 2, nama: 'Fisika'},
-      {id: 3, nama: 'Biologi'},
-    ];
+    API.get(`${API_SERVER}v2/pelajaran/one/${getPelajaranId}`).then(res => {
 
-    let getDummy = dummy.filter(item => item.id === parseInt(getPelajaranId));
-    this.setState({ infoPelajaran: getDummy[0] })
-    // end dummy
+      console.log('STATE: ', res.data.result);
+
+      if(res.data.error) console.log(`Error: fetch pelajaran`)
+
+      this.setState({ infoPelajaran: res.data.result })
+    })
   }
 
 	render() {
@@ -72,7 +76,7 @@ export default class LearningGuru extends Component {
 
 
                       <ul style={{paddingBottom: '0px'}} className="nav nav-pills">
-                        <h3 className="mr-4">{this.state.infoPelajaran.nama}</h3>
+                        <h3 className="mr-4">{this.state.infoPelajaran.nama_pelajaran}</h3>
                       {
                         titleTabs.map((item,i) => (
                           <li key={i} className={`nav-item`}>

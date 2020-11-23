@@ -18,6 +18,7 @@ class PengumumanTableClass extends Component {
     this.state = {
       grup: [],
       isCreateModal: false,
+      isAdd: true,
       delete: {
         modal: false,
         id: ''
@@ -27,6 +28,9 @@ class PengumumanTableClass extends Component {
       judul: '',
       isi: '',
       penerima: [],
+      attachments: [],
+
+      files: null,
 
       roles: [],
 
@@ -97,7 +101,7 @@ class PengumumanTableClass extends Component {
   }
 
   closeClassModal = e => {
-    this.setState({ isCreateModal: false, judul: '', isi: '', penerima: []});
+    this.setState({ isAdd: true, isCreateModal: false, judul: '', isi: '', penerima: [], attachments: [] });
     this.fetchRole();
   }
 
@@ -115,9 +119,22 @@ class PengumumanTableClass extends Component {
         toast.warning("Gagal fetch pengumuman")
       }
 
+      if(this.state.files) {
+        let formdata = new FormData();
+        for(var i=0; i<this.state.files.length; i++) {
+          formdata.append('files', this.state.files[i]);
+        }
+
+        API.put(`${API_SERVER}v1/pengumuman/files/${res.data.result.id_pengumuman}`, formdata).then(res => {
+          if(res.data.error) console.log("Error: upload files");
+        })
+      }
+
       this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id})
 
       this.fetchPengumuman();
+      this.setState({ isAdd: true, isCreateModal: false, judul: '', isi: '', penerima: [], attachments: [] });
+      this.fetchRole();
     })
   }
 
@@ -147,6 +164,31 @@ class PengumumanTableClass extends Component {
   createModalPengumuman() {
     this.setState({ isCreateModal: true});
   };
+
+  selectPengumuman = e => {
+    e.preventDefault();
+    let id = e.target.getAttribute('data-id');
+    API.get(`${API_SERVER}v1/pengumuman/${id}`).then(res => {
+      if(res.data.error) console.log("Error: fetch pengumuman");
+
+      let attachments = res.data.result.attachments ? res.data.result.attachments.split(',') : [];
+      let getRoles = [...this.state.roles];
+      let getPenerima = res.data.result.penerima.split(",").map(x => parseInt(x));
+
+      let filtered = getRoles.filter(item => getPenerima.includes(item.grup_id));
+      filtered.map(item => item.isChecked = true)
+
+      this.setState({
+        isCreateModal: true,
+        isAdd: false,
+        judul: res.data.result.title,
+        isi: res.data.result.isi,
+        penerima: res.data.result.penerima,
+        attachments: attachments,
+        roles: filtered
+      })
+    })
+  }
 
   render() {
     console.log('state: ', this.state);
@@ -200,7 +242,8 @@ class PengumumanTableClass extends Component {
               </div>
               <div className="col-sm-1 text-right">
                 {
-                  <i style={{cursor: 'pointer'}} className="fa fa-search mr-2"></i>
+                  <i data-id={item.id_pengumuman}
+                  onClick={this.selectPengumuman} style={{cursor: 'pointer'}} className="fa fa-search mr-2"></i>
                 }
                 {
                   (this.state.level === "admin" || this.state.level === "superadmin") &&
@@ -250,10 +293,14 @@ class PengumumanTableClass extends Component {
                 </button>
               }
 
+              {
+                /**
               <button className="btn btn-transparent"> Belum di baca </button>
               <button className="btn btn-transparent-disabled"> Belum dibaca </button>
               <button className="btn btn-transparent-disabled"> Semua pesan </button>
               <button className="btn btn-transparent-disabled"> Flagging </button>
+              */
+              }
 
 
               <span className="float-right">{this.state.grup.length} Pengumuman</span>
@@ -273,32 +320,36 @@ class PengumumanTableClass extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                Buat Pengumuman Baru
+                Pengumuman
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
                 <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
+                  <Form.Label className="fc-skyblue f-w-bold">
                     Judul Pengumuman
                   </Form.Label>
                   <FormControl
                     type="text"
                     name="judul"
                     required
+                    value={this.state.judul}
+                    disabled={!this.state.isAdd ? 'disabled':''}
                     onChange={e => this.setState({ [e.target.name]: e.target.value })}
                     placeholder="Tulis Judul Disini"
                   />
                 </Form.Group>
 
                 <Form.Group controlId="formisi">
-                  <Form.Label className="f-w-bold">
+                  <Form.Label className="fc-skyblue f-w-bold">
                     isi Pengumuman
                   </Form.Label>
                   <textarea
                     className="form-control" id="exampleFormControlTextarea1" rows="8"
                     name="isi"
+                    value={this.state.isi}
                     required
+                    disabled={!this.state.isAdd ? 'disabled':''}
                     onChange={e => this.setState({ [e.target.name]: e.target.value })} />
                 </Form.Group>
 
@@ -316,20 +367,54 @@ class PengumumanTableClass extends Component {
                     ))
                   }
 
-
                 </Form.Group>
+
+                {
+                  this.state.isAdd &&
+                  <Form.Group>
+                    <Form.Label className="fc-skyblue f-w-bold">Attachments</Form.Label>
+                    <input type="file" multiple className="form-control" onChange={e => this.setState({files: e.target.files})} />
+                  </Form.Group>
+                }
+
+                {
+                  !this.state.isAdd &&
+                  <Form.Group>
+                    <Form.Label>Attachments</Form.Label>
+                    <ul className="list-group">
+                      {
+                        this.state.attachments.length === 0 &&
+                        <li className="list-group-item">
+                        <a href="#">Tidak ada file attachments</a>
+                        </li>
+                      }
+                      {
+                        this.state.attachments && this.state.attachments.map(item => (
+                          <li className="list-group-item">
+                          <a href={item} target="_blank">{item}</a>
+                          { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */ }
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </Form.Group>
+                }
+
               </Form>
 
             </Modal.Body>
             <Modal.Footer>
 
+            {
+              this.state.isAdd &&
               <button
-                className="btn project-info"
-                onClick={this.onSubmitForm}
+              className="btn project-info"
+              onClick={this.onSubmitForm}
               >
-                <i className="fa fa-paper-plane"></i>
-                Kirim Pengumuman
+              <i className="fa fa-paper-plane"></i>
+              Kirim Pengumuman
               </button>
+            }
             </Modal.Footer>
           </Modal>
 
