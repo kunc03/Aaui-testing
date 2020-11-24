@@ -14,7 +14,10 @@ export default class Gantt extends Component {
         countOpen: 0,
         countProgress: 0,
         countDone: 0,
-        countClosed: 0
+        countClosed: 0,
+        zoomLevel: 1,
+        startDate: null,
+        endDate: null
         // tasks: {
         //     tasks : [],
         //     links : []
@@ -299,6 +302,54 @@ export default class Gantt extends Component {
         })
     }
 
+    collapseAll(){
+        gantt.eachTask(function(task){
+          task.$open = false;
+        });
+        gantt.render();
+    }
+    expandAll(){
+        gantt.eachTask(function(task){
+          task.$open = true;
+        });
+        gantt.render();
+    }
+
+    zoomIn(){
+        gantt.ext.zoom.zoomOut();
+        this.setState({zoomLevel: gantt.ext.zoom.getCurrentLevel()})
+    }
+    zoomOut(){
+        gantt.ext.zoom.zoomIn();
+        this.setState({zoomLevel: gantt.ext.zoom.getCurrentLevel()})
+    }
+
+    zoomLevel = e => {
+        gantt.ext.zoom.setLevel(e.target.value);
+        this.setState({zoomLevel: gantt.ext.zoom.getCurrentLevel()})
+    }
+
+    changeDate = e => {
+      if (e.target.name === 'startDate'){
+        this.setState({ startDate: e.target.value }, function () {
+            if (this.state.startDate && this.state.endDate){
+                gantt.config.start_date = this.state.startDate;
+                gantt.config.end_date = this.state.endDate;
+                gantt.render()
+            }
+        })
+      }
+      else{
+        this.setState({ endDate: e.target.value }, function () {
+            if (this.state.startDate && this.state.endDate){
+                gantt.config.start_date = this.state.startDate;
+                gantt.config.end_date = this.state.endDate;
+                gantt.render()
+            }
+        })
+      }
+    }
+
     render() {
        return (
         <div className="card p-20">
@@ -325,6 +376,39 @@ export default class Gantt extends Component {
               <i className="fa fa-square"></i>
             </span>
             Closed ({this.state.countClosed})
+          </div>
+          <div className="toolbar row">
+              <div className="toolbar-left col-sm-12">
+                <input type="button" value="Expand All" onClick={this.expandAll.bind(this)} />
+                <input type="button" value="Collapse All" onClick={this.collapseAll.bind(this)} />
+
+                <input type="button" value="Go to Today" onClick={()=> gantt.showDate(new Date())} />
+                
+                <input type="button" value="Zoom In" onClick={this.zoomIn.bind(this)} />
+                <input type="button" value="Zoom Out" onClick={this.zoomOut.bind(this)} />
+
+                <input type="radio" id="scale1" className="gantt_radio" name="scale" value="0" onClick={this.zoomLevel} checked={this.state.zoomLevel === 0} />
+                <label for="scale1">Month</label>
+
+                <input type="radio" id="scale2" className="gantt_radio" name="scale" value="1" onClick={this.zoomLevel} checked={this.state.zoomLevel === 1} />
+                <label for="scale2">Week</label>
+
+                <input type="radio" id="scale3" className="gantt_radio" name="scale" value="2" onClick={this.zoomLevel} checked={this.state.zoomLevel === 2} />
+                <label for="scale3">Day</label>
+
+                <input type="radio" id="scale4" className="gantt_radio" name="scale" value="3" onClick={this.zoomLevel} checked={this.state.zoomLevel === 3} />
+                <label for="scale4">12 Hours</label>
+
+                <input type="radio" id="scale5" className="gantt_radio" name="scale" value="4" onClick={this.zoomLevel} checked={this.state.zoomLevel === 4} />
+                <label for="scale5">6 Hours</label>
+
+                <input type="radio" id="scale6" class="gantt_radio" name="scale" value="5" onClick={this.zoomLevel} checked={this.state.zoomLevel === 5} />
+                <label for="scale6">Hour</label>
+
+                <input type="date" name="startDate" value={this.state.startDate} onChange={this.changeDate} />
+                <label for="startdate">To</label>
+                <input type="date" name="endDate" value={this.state.endDate} onChange={this.changeDate} />
+              </div>
           </div>
            <div
                 ref={ (input) => { this.ganttContainer = input } }
