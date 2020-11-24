@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 class PersonaliaDetail extends React.Component {
 
   state = {
-    tipe: this.props.match.params.id.split('-')[0],
+    tipe: this.props.match.params.id.split('|')[0],
 
     id: '',
-    noInduk: this.props.match.params.id.split('-')[1],
+    noInduk: this.props.match.params.id.split('|')[1],
     nama: '',
     tempatLahir: '',
     tanggalLahir: '',
@@ -36,7 +36,7 @@ class PersonaliaDetail extends React.Component {
   simpanData = e => {
     e.preventDefault();
     let form = {
-      noInduk: this.props.match.params.id.split('-')[1],
+      noInduk: this.props.match.params.id.split('|')[1],
       nama: this.state.nama,
       tempatLahir: this.state.tempatLahir,
       tanggalLahir: this.state.tanggalLahir,

@@ -61,7 +61,6 @@ export default class KursusNew extends Component {
 																<th>Kategori</th>
                                 <th>Tanggal Dibuat</th>
                                 <th>Total Sesi</th>
-                                <th>Waktu</th>
                                 <th>Materi</th>
                                 <th>Kuis</th>
                                 <th>Tugas</th>
@@ -77,8 +76,7 @@ export default class KursusNew extends Component {
 																		<td>{item.kelas}</td>
                                     <td>{item.kategori}</td>
 																		<td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
-                                    <td>{item.sesi}</td>
-                                    <td>{item.waktu}</td>
+                                    <td>{item.materi + item.kuis + item.tugas + item.ujian}</td>
                                     <td>{item.materi}</td>
                                     <td>{item.kuis}</td>
                                     <td>{item.tugas}</td>
