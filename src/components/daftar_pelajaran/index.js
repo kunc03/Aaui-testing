@@ -24,7 +24,6 @@ class DaftarPelajaran extends React.Component {
       // action for update
       console.log('update')
       let form = {
-        kelasId: this.state.kelas,
         namaPelajaran: this.state.namaPelajaran,
         kategori: this.state.kategori,
         kodePelajaran: this.state.kodePelajaran
@@ -40,7 +39,6 @@ class DaftarPelajaran extends React.Component {
       console.log('insert')
       let form = {
         companyId: Storage.get('user').data.company_id,
-        kelasId: this.state.kelas,
         namaPelajaran: this.state.namaPelajaran,
         kategori: this.state.kategori,
         kodePelajaran: this.state.kodePelajaran
@@ -68,8 +66,16 @@ class DaftarPelajaran extends React.Component {
         namaPelajaran: getKelas.nama_pelajaran,
         kategori: getKelas.kategori,
         kodePelajaran: getKelas.kode_pelajaran,
-        kelas: getKelas.kelas_id
       })
+    })
+  }
+
+  deletePelajaran = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v2/pelajaran/delete/${e.target.getAttribute('data-id')}`).then(res => {
+      if(res.data.error) toast.warning(`Error: delete pelajaran`)
+
+      this.fetchPelajaran();
     })
   }
 
@@ -118,7 +124,7 @@ class DaftarPelajaran extends React.Component {
                     <th>Nama Pelajaran</th>
                     <th>Kategori</th>
                     <th>Kode Pelajaran</th>
-                    <th>Kelas</th>
+                    {/**<th>Kelas</th> */}
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -130,8 +136,11 @@ class DaftarPelajaran extends React.Component {
                         <td>{item.nama_pelajaran}</td>
                         <td>{item.kategori}</td>
                         <td>{item.kode_pelajaran}</td>
-                        <td>{item.kelas}</td>
-                        <td className="text-center"><i style={{cursor: 'pointer'}} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit"></i></td>
+                        {/**<td>{item.kelas}</td> */}
+                        <td className="text-center">
+                          <i style={{cursor: 'pointer'}} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>
+                          <i style={{cursor: 'pointer'}} onClick={this.deletePelajaran} data-id={item.pelajaran_id} className="fa fa-trash"></i>
+                        </td>
                       </tr>
                     ))
                   }
@@ -148,20 +157,23 @@ class DaftarPelajaran extends React.Component {
               <form onSubmit={this.savePelajaran}>
                 <div className="form-group">
                   <label>Nama Pelajaran</label>
-                  <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter nama kelas" name="namaKelas" />
+                  <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter" name="namaKelas" />
                 </div>
                 <div className="form-group">
                   <label>Kategori</label>
                   <select required className="form-control" value={this.state.kategori} onChange={e => this.setState({ kategori: e.target.value })}>
-                    <option value="" disabled selected>Pilih kelas</option>
+                    <option value="" disabled selected>Pilih</option>
                     <option value="Wajib">Wajib</option>
                     <option value="Tidak Wajib">Tidak Wajib</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <label>Kode Pelajaran</label>
-                  <input required value={this.state.kodePelajaran} onChange={e => this.setState({ kodePelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter kurikulum" name="kurikulum" />
+                  <input required value={this.state.kodePelajaran} onChange={e => this.setState({ kodePelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />
                 </div>
+                {
+                  /**
+
                 <div className="form-group">
                   <label>Kelas</label>
                   <select required value={this.state.kelas} onChange={e => this.setState({ kelas: e.target.value })} className="form-control" name="semester">
@@ -173,6 +185,9 @@ class DaftarPelajaran extends React.Component {
                     }
                   </select>
                 </div>
+
+                  */
+                }
                 <div className="form-group">
                   <button type="submit" className="btn btn-v2 btn-success">
                     <i className="fa fa-save"></i> Simpan
