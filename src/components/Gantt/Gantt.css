@@ -157,3 +157,40 @@ html, body, #root,#root div:only-child, .gantt-container {
   .time-line-container{
       height:750px !important;
   }
+
+  .toolbar{
+      width:100%;
+      background: #ebebeb;
+  }
+
+  .toolbar input, .toolbar label {
+    cursor:pointer;
+    font-size: 11px;
+}
+.toolbar label {
+    padding-left:10px;
+}
+  .toolbar input[type=radio]{
+      margin-left:10px;
+  }
+  .toolbar input[type=button]{
+      border: none;
+      background: #ececec;
+      color: #000;
+      padding: 8px 16px;
+  }
+  .toolbar input[type=button]:hover{
+      background: #cfcfcf;
+  }
+
+.toolbar-left{
+    padding: 0px !important;
+}
+.toolbar-right{
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.toolbar input[type=date]{
+    margin-left:10px;
+}
