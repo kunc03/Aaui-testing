@@ -16,9 +16,9 @@ const UjianComponent = props => (<Kuis {...props} tipe="ujian" />);
 const titleTabs = [
   { name: 'Overview', link: '/pelajaran', component: Overview },
   { name: 'Chapter', link: '/chapter', component: Chapter },
-  { name: 'Kuis', link: '/kuis', component: Kuis },
-  { name: 'Task', link: '/tugas', component: Tugas },
-  { name: 'Exam', link: '/ujian', component: Ujian },
+  { name: 'Kuis', link: '/kuis', component: KuisComponent },
+  { name: 'Tugas', link: '/tugas', component: TugasComponent },
+  { name: 'Ujian', link: '/ujian', component: UjianComponent },
 ]
 
 const switchTambahan = [

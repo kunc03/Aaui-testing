@@ -51,9 +51,9 @@ class Chapter extends React.Component {
     }
 
     API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: create chapter`)
+      if (res.data.error) toast.warning(`Error: create chapter`)
 
-      if(this.state.files) {
+      if (this.state.files) {
         this.uplaodFiles(res.data.result.id)
       }
 
@@ -74,9 +74,9 @@ class Chapter extends React.Component {
     }
 
     API.put(`${API_SERVER}v2/pelajaran/chapter/update/${this.state.id}`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: create chapter`)
+      if (res.data.error) toast.warning(`Error: create chapter`)
 
-      if(this.state.files) {
+      if (this.state.files) {
         this.uplaodFiles(this.state.id)
       }
 
@@ -90,7 +90,7 @@ class Chapter extends React.Component {
     e.preventDefault();
     console.log('deleteChapter');
     API.delete(`${API_SERVER}v2/pelajaran/chapter/delete/${this.state.id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete chapter`)
+      if (res.data.error) toast.warning(`Error: delete chapter`)
 
       this.fetchChapters()
       this.clearForm()
@@ -117,16 +117,8 @@ class Chapter extends React.Component {
   }
 
   fetchChapters() {
-<<<<<<< HEAD
-    let chapters = [
-      { id: 1, title: "Chapter 1" },
-      { id: 2, title: "Chapter 2" },
-      { id: 3, title: "Chapter 3" },
-    ];
-=======
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch chapters`)
->>>>>>> staging
+      if (res.data.error) toast.warning(`Error: fetch chapters`)
 
       this.setState({ chapters: res.data.result })
     })
@@ -134,7 +126,7 @@ class Chapter extends React.Component {
 
   fetchOneChapter(id) {
     API.get(`${API_SERVER}v2/pelajaran/chapter/one/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch one chapter`)
+      if (res.data.error) toast.warning(`Error: fetch one chapter`)
 
       this.setState({
         id: res.data.result.id,
@@ -150,8 +142,8 @@ class Chapter extends React.Component {
 
   uploadAttachments = e => {
     e.preventDefault();
-    if(this.state.id){
-      if(this.state.files) {
+    if (this.state.id) {
+      if (this.state.files) {
         this.uplaodFiles(this.state.id)
       } else {
         toast.info(`File masih kosong`)
@@ -163,12 +155,12 @@ class Chapter extends React.Component {
 
   uplaodFiles(id) {
     let form = new FormData();
-    for(var i=0; i<this.state.files.length; i++) {
+    for (var i = 0; i < this.state.files.length; i++) {
       form.append('files', this.state.files[i]);
     }
 
     API.put(`${API_SERVER}v2/pelajaran/chapter/files/${id}`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: upload files`)
+      if (res.data.error) toast.warning(`Error: upload files`)
 
       toast.success(`Attachments success upload`);
       this.setState({ attachments: res.data.result.split(','), materi: Math.random().toString(36), files: null })
@@ -238,13 +230,8 @@ class Chapter extends React.Component {
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-4">
-<<<<<<< HEAD
-                    <label> Date </label>
-                    <input type="date" className="form-control" placeholder="Enter" />
-=======
-                    <label>Tanggal</label>
+                    <label>Date</label>
                     <input value={this.state.tanggal} name="tanggal" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="date" className="form-control" placeholder="Enter" />
->>>>>>> staging
                   </div>
                   <div className="col-sm-2">
                     <label> Starting Hours </label>
@@ -268,21 +255,14 @@ class Chapter extends React.Component {
                 </div>
 
                 <ul className="list-group">
-<<<<<<< HEAD
-                  <li className="list-group-item">
-                    <a href="#">Silabus-Semester-1.pdf</a>
-                    <i className="fa fa-trash float-right" style={{ cursor: 'pointer' }}></i>
-                  </li>
-=======
                   {
                     this.state.attachments && this.state.attachments.map(item => (
                       <li className="list-group-item">
-                      <a href={item} target="_blank">{item}</a>
-                      { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */ }
+                        <a href={item} target="_blank">{item}</a>
+                        { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */}
                       </li>
                     ))
                   }
->>>>>>> staging
                 </ul>
 
                 <div className="form-group mt-4">
@@ -318,15 +298,9 @@ class Chapter extends React.Component {
                 }
               </div>
 
-<<<<<<< HEAD
               <div style={{ padding: '12px' }}>
-                <button type="button" className="btn btn-v2 btn-primary btn-block mt-2">
-                  <i className="fa fa-plus"></i> Add
-=======
-              <div style={{padding: '12px'}}>
                 <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
-                  <i className="fa fa-plus"></i> Tambah
->>>>>>> staging
+                  <i className="fa fa-plus"></i> Add
                 </button>
               </div>
             </div>

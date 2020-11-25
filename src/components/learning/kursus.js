@@ -17,31 +17,17 @@ export default class KursusNew extends Component {
   }
 
   fetchPelajaran() {
-<<<<<<< HEAD
-    let pelajaran = [
-      { id: 1, pelajaran: "Matematika", tanggal: "16 Nov 2020", status: "Selesai", sesi: 5, kelas: "1 RPL", waktu: "08:00", materi: 2, kuis: 1, tugas: 1, ujian: 1 },
-      { id: 2, pelajaran: "Fisika", tanggal: "21 Nov 2020", status: "Belum Selesai", sesi: 11, kelas: "2 RPL", waktu: "08:00", materi: 3, kuis: 2, tugas: 12, ujian: 12 },
-      { id: 3, pelajaran: "Biologi", tanggal: "22 Nov 2020", status: "Belum Selesai", sesi: 0, kelas: "3 RPL", waktu: "08:00", materi: 0, kuis: 0, tugas: 0, ujian: 0 },
-    ];
-=======
     API.get(`${API_SERVER}v2/pelajaran/company/guru/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
->>>>>>> staging
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ pelajaran: res.data.result })
     })
   }
 
-<<<<<<< HEAD
   render() {
+    console.log(`state: `, this.state)
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
-=======
-	render() {
-		console.log(`state: `, this.state)
-		return (
-			<div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
->>>>>>> staging
         <div className="pcoded-wrapper">
           <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
             <div className="pcoded-inner-content">
@@ -71,15 +57,10 @@ export default class KursusNew extends Component {
                             <thead>
                               <tr>
                                 <th>Pelajaran</th>
-																<th>Kelas</th>
-																<th>Kategori</th>
+                                <th>Kelas</th>
+                                <th>Kategori</th>
                                 <th>Tanggal Dibuat</th>
                                 <th>Total Sesi</th>
-<<<<<<< HEAD
-                                <th>Kelas</th>
-                                <th>Time </th>
-=======
->>>>>>> staging
                                 <th>Materi</th>
                                 <th>Kuis</th>
                                 <th>Tugas</th>
@@ -92,42 +73,27 @@ export default class KursusNew extends Component {
                                 this.state.pelajaran.map((item, i) => (
                                   <tr>
                                     <td>{item.nama_pelajaran}</td>
-																		<td>{item.kelas}</td>
+                                    <td>{item.kelas}</td>
                                     <td>{item.kategori}</td>
-																		<td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
+                                    <td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
                                     <td>{item.materi + item.kuis + item.tugas + item.ujian}</td>
                                     <td>{item.materi}</td>
                                     <td>{item.kuis}</td>
                                     <td>{item.tugas}</td>
                                     <td>{item.ujian}</td>
                                     <td className="text-center">
-<<<<<<< HEAD
                                       {
-                                        item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
-                                        <Link to={`/guru/masuk/${item.id}`} className="btn btn-v2 btn-primary ml-2">Masuk</Link>
+                                        // item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
+                                        <Link to={`/guru/masuk/${item.pelajaran_id}`} className="btn btn-v2 btn-primary ml-2">Masuk</Link>
                                       }
                                       {
-                                        item.materi <= 0 &&
-                                        <Link to={`/guru/pelajaran/${item.id}`} className="btn btn-v2 btn-warning ml-2">Lengkapi</Link>
+                                        // item.materi <= 0 &&
+                                        <Link to={`/guru/pelajaran/${item.pelajaran_id}`} className="btn btn-v2 btn-warning ml-2">Lengkapi</Link>
                                       }
                                       {
-                                        Date.parse(item.tanggal) <= new Date() &&
-                                        <Link to={`/guru/riwayat/${item.id}`} className="btn btn-v2 btn-default ml-2">Riwayat</Link>
+                                        // Date.parse(item.tanggal) <= new Date() &&
+                                        <Link to={`/guru/riwayat/${item.pelajaran_id}`} className="btn btn-v2 btn-default ml-2">Riwayat</Link>
                                       }
-=======
-																			{
-																				// item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
-																				<Link to={`/guru/masuk/${item.pelajaran_id}`} className="btn btn-v2 btn-primary ml-2">Masuk</Link>
-																			}
-																			{
-																				// item.materi <= 0 &&
-																				<Link to={`/guru/pelajaran/${item.pelajaran_id}`} className="btn btn-v2 btn-warning ml-2">Lengkapi</Link>
-																			}
-																			{
-																				// Date.parse(item.tanggal) <= new Date() &&
-																				<Link to={`/guru/riwayat/${item.pelajaran_id}`} className="btn btn-v2 btn-default ml-2">Riwayat</Link>
-																			}
->>>>>>> staging
                                     </td>
                                   </tr>
                                 ))
