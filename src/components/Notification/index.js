@@ -34,7 +34,7 @@ class NotificationClass extends Component {
         temp.push(item.id)
       }
     });
-    API.delete(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, { notifIds: temp }).then(res => {
+    API.put(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, { notifIds: temp }).then(res => {
       if (res.data.error) console.log(`Error delete`)
 
       this.fetchNotif();
@@ -65,7 +65,7 @@ class NotificationClass extends Component {
         temp.push(item.id)
       }
     });
-    API.delete(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, { notifIds: temp }).then(res => {
+    API.put(`${API_SERVER}v1/notification/id/${Storage.get('user').data.user_id}`, { notifIds: temp }).then(res => {
       if (res.data.error) console.log(`Error delete`)
 
       this.fetchNotif();
@@ -80,6 +80,7 @@ class NotificationClass extends Component {
         temp.push(item.id)
       }
     });
+    console.log('state: ', temp)
     API.put(`${API_SERVER}v1/notification/read/all`, { userId: Storage.get('user').data.user_id, notifIds: temp }).then(res => {
       if (res.data.error) console.log('Error update')
 
@@ -89,9 +90,8 @@ class NotificationClass extends Component {
   }
 
   fetchNotif() {
-    API.get(
-      `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`
-    ).then((res) => {
+    API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
+      console.log('state: ', res.data.result)
       this.setState({ notificationData: res.data.result[0] });
     });
   }
@@ -106,7 +106,7 @@ class NotificationClass extends Component {
   }
 
   konfirmasiHadir(id) {
-    console.log(`INI GW KLIK KONFRIMASI`)
+    // console.log(`INI GW KLIK KONFRIMASI`)
     console.log(`${API_SERVER}v1/ptc-room/konfirmasi/${id}/${Storage.get('user').data.user_id}`);
     API.put(`${API_SERVER}v1/ptc-room/konfirmasi/${id}/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) console.log('Error: ', res.data.error);
@@ -172,10 +172,10 @@ class NotificationClass extends Component {
 
                                       {
                                         item.destination &&
-                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Check now</a>
+                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
                                       }
                                       {
-                                        item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
+                                        item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} data-activity={item.activity_id} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
                                       }
                                       <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{ cursor: 'pointer' }}></i>
                                     </span>

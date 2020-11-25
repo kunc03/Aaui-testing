@@ -284,100 +284,6 @@ p.text-muted {
   font-size: 13px;
 }
 
-.text-center {
-  text-align: center;
-}
-
-.card-cell-grey {
-  padding: 13px;
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #FAFAFA;
-  background-clip: border-box;
-}
-.card-cell-darkgrey {
-  padding: 13px;
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #F5F5F5;
-  background-clip: border-box;
-}
-.card-cell-blue {
-  padding: 13px;
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #0091FF;
-  background-clip: border-box;
-}
-.card-cell-red {
-  padding: 13px;
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color:#FF6384;
-  background-clip: border-box;
-}
-.card-cell-green {
-  padding: 13px;
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color:#44D7B6;
-  background-clip: border-box;
-}
-
-.card-table {
-  position: relative;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #F5F5F5;
-  background-clip: border-box;
-  margin: 8px;
-}
-
-.responsive-card-400 {
-  height: 411px;
-  overflow-y: scroll; /* Add the ability to scroll */
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.responsive-card-400::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.responsive-card-400 {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
 .card {
   border-radius: 0;
   -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
@@ -1141,19 +1047,19 @@ p.text-muted {
 }
 
 .p-5 {
-  padding: 5px !important;
+  padding: 5px;
 }
 .p-t-5 {
-  padding-top: 5px !important;
+  padding-top: 5px;
 }
 .p-b-5 {
-  padding-bottom: 5px !important;
+  padding-bottom: 5px;
 }
 .p-l-5 {
-  padding-left: 5px !important;
+  padding-left: 5px;
 }
 .p-r-5 {
-  padding-right: 5px !important;
+  padding-right: 5px;
 }
 
 .m-5 {
@@ -1179,13 +1085,13 @@ p.text-muted {
   padding-top: 10px !important;
 }
 .p-b-10 {
-  padding-bottom: 10px !important;
+  padding-bottom: 10px;
 }
 .p-l-10 {
-  padding-left: 10px !important;
+  padding-left: 10px;
 }
 .p-r-10 {
-  padding-right: 10px !important;
+  padding-right: 10px;
 }
 
 .m-10 {
@@ -1577,7 +1483,7 @@ p.text-muted {
 
 /*====== Card top border ends ======*/
 /*====== Font-size css starts ======*/
-.f-8 {
+.f-10 {
   font-size: 8px;
 }
 .f-10 {
@@ -11462,13 +11368,6 @@ div.code-toolbar > .toolbar span:hover {
   color: white;
 }
 
-.widget-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 411px;
-}
-
 .card-options {
   cursor: pointer;
   margin: 8px;
@@ -11723,33 +11622,12 @@ div.code-toolbar > .toolbar span:hover {
 
 /* Boxed */
 .box-event {
-  padding: 28px 15px;
+  padding: 25px 15px;
 }
 
 .box-project {
   padding: 10px;
 }
-
-.btn-transparent {
-  background: transparent;
-    padding: 8px 18px;
-    border: 1px solid #0895ff;
-    font-size: 14px;
-    border-radius: 40px;
-    margin-left: 6px;
-    color: #0895ff;
-}
-
-.btn-transparent-disabled {
-  background: #fafbfc;
-    padding: 8px 18px;
-    border: 1px solid #cbcbcb;
-    font-size: 14px;
-    border-radius: 40px;
-    margin-left: 6px;
-    color: #cbcbcb;
-}
-
 
 .project-info {
   background: transparent;

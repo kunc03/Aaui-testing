@@ -146,7 +146,7 @@ class Guru extends React.Component {
                         <td>{item.tanggal_lahir}</td>
                         <td>{item.jenis_kelamin}</td>
                         <td>
-                          <Link to={`/learning/personalia-detail/guru-${item.no_induk}`}>
+                          <Link to={`/learning/personalia-detail/guru|${item.no_induk}`}>
                             <i className="fa fa-search"></i>
                           </Link>
                           <i style={{ cursor: 'pointer' }} onClick={this.deleteMurid} data-id={item.id} className="fa fa-trash ml-2"></i>

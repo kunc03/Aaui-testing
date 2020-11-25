@@ -91,7 +91,7 @@ class SidebarClass extends Component {
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
-        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -117,8 +117,13 @@ class SidebarClass extends Component {
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+<<<<<<< HEAD
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+=======
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
+>>>>>>> staging
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -143,8 +148,13 @@ class SidebarClass extends Component {
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
+<<<<<<< HEAD
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'Dashboard', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+=======
+        { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Pengaturan', link: '/pengaturan' },
+>>>>>>> staging
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -164,7 +174,12 @@ class SidebarClass extends Component {
       menuBawah = menuAdmins.menuBawah;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
+<<<<<<< HEAD
       if (subMenuClient === "guru" || subMenuClient === "murid") {
+=======
+      // let subMenuClient = "guru";
+      if(subMenuClient === "guru" || subMenuClient === "murid") {
+>>>>>>> staging
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;

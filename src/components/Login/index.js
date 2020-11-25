@@ -76,6 +76,9 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
+
+      console.log('VOUCHER: ', res.data.result);
+
       if (res.status === 200) {
         if (!res.data.error) {
 
@@ -106,6 +109,8 @@ class Login extends Component {
 
           Storage.set('token', { data: res.data.result.token });
 
+          Storage.set('token', { data: res.data.result.token });
+
           if (this.props.redirectUrl) {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
@@ -117,6 +122,7 @@ class Login extends Component {
               window.location.href = `${window.location.origin}/pengaturan`;
             }
           }
+
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
             function () {
               console.log(arguments)
