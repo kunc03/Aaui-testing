@@ -42,7 +42,16 @@ export default class Gantt extends Component {
         //     return byId(gantt.serverList('people'), task.owner_id);
         // };
         gantt.templates.rightside_text=function(start,end,task){
-            return task.text;
+            if (end) {
+                if (new Date() > end.valueOf()) {
+                    var overdue = Math.ceil(Math.abs((new Date() - end.getTime()) / (24 * 60 * 60 * 1000)));
+                    var text = "<b>Overdue: " + overdue + " days</b>";
+                    return task.text+" - "+text;
+                }
+                else{
+                    return task.text;
+                }
+            }
         };
         gantt.templates.task_text=function(start,end,task){
             return "";
@@ -51,6 +60,17 @@ export default class Gantt extends Component {
             return Math.round(task.progress*100)+"%";
         };
         gantt.config.columns = [
+            {
+                name: "overdue", label: "", width: 38, template: function (obj) {
+                    if (obj.end_date) {
+                        var deadline = gantt.date.parseDate(obj.end_date, "xml_date");
+                        if (deadline && new Date() > deadline && obj.status!='Done' && obj.status!='Closed' && obj.type!='project') {
+                            return '<div class="overdue-indicator">!</div>';
+                        }
+                    }
+                    return '<div></div>';
+                }
+            },
             {name: "text", tree: true, width: "*", min_width: 120, editor: editors.text, resize: true},
             {name: "owner", width: 60, align: "center", label: "Assignee", editor: editors.owner, template: function (item) {
                     if (!item.owner_id)
