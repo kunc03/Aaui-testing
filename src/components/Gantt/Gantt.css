@@ -194,3 +194,10 @@ html, body, #root,#root div:only-child, .gantt-container {
 .toolbar input[type=date]{
     margin-left:10px;
 }
+
+/* .gantt-status-legend{
+    cursor: pointer;
+}
+.gantt-status-legend:hover{
+    text-decoration: underline;
+} */

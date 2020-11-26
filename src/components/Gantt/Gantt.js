@@ -11,13 +11,18 @@ export default class Gantt extends Component {
   
       this.state = {
         users:[],
+        companies:[],
         countOpen: 0,
         countProgress: 0,
         countDone: 0,
         countClosed: 0,
         zoomLevel: 1,
         startDate: null,
-        endDate: null
+        endDate: null,
+        statusOpen: true,
+        statusProgress: true,
+        statusDone: true,
+        statusClosed: true
         // tasks: {
         //     tasks : [],
         //     links : []
@@ -43,7 +48,7 @@ export default class Gantt extends Component {
         // };
         gantt.templates.rightside_text=function(start,end,task){
             if (end) {
-                if (new Date() > end.valueOf()) {
+                if (new Date() > end.valueOf() && task.status != 'Done' && task.status != 'Closed') {
                     var overdue = Math.ceil(Math.abs((new Date() - end.getTime()) / (24 * 60 * 60 * 1000)));
                     var text = "<b>Overdue: " + overdue + " days</b>";
                     return task.text+" - "+text;
@@ -51,6 +56,29 @@ export default class Gantt extends Component {
                 else{
                     return task.text;
                 }
+            }
+        };
+        function hashCode(str) {
+            var hash = 0;
+            for (var i = 0; i < str.length; i++) {
+               hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return hash;
+        } 
+        
+        function intToRGB(i){
+            var c = (i & 0x00FFFFFF)
+                .toString(16)
+                .toUpperCase();
+        
+            return "00000".substring(0, 6 - c.length) + c;
+        }
+        var companies = this.state.companies;
+        gantt.templates.leftside_text=function(start,end,task){
+            if (task.company !== '' && task.company !== null) {
+                var selectedCompany = companies.filter((item) => item.key == task.company)[0].label;
+                var company = "<b style='color: #"+intToRGB(hashCode(selectedCompany))+"'>"+selectedCompany+"</b>";
+                return company
             }
         };
         gantt.templates.task_text=function(start,end,task){
@@ -86,6 +114,26 @@ export default class Gantt extends Component {
 		}
 		return true;
     });
+    // var statusOpen = this.state.statusOpen;
+    // var statusProgress = this.state.statusProgress;
+    // var statusDone = this.state.statusDone;
+    // var statusClosed = this.state.statusClosed;
+    // gantt.attachEvent("onBeforeTaskDisplay", function(id, task){
+    //     console.log('ALVIN OPEN', ( statusOpen && task.type !== 'project' && (task.status === "Open" || task.status === "")))
+    //     if ( statusOpen && task.type !== 'project' && (task.status === "Open" || task.status === "")){
+    //         return true;
+    //     }
+    //     // else if ( statusProgress && task.type !== 'project' && task.status === "In Progress"){
+    //     //     return true;
+    //     // }
+    //     // else if ( statusDone && task.type !== 'project' && task.status === "Done"){
+    //     //     return true;
+    //     // }
+    //     // else if ( statusClosed && task.type !== 'project' && task.status === "Closed"){
+    //     //     return true;
+    //     // }
+    //     return false;
+    // });
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
 		if (item.parent == 0) {
 			return;
@@ -157,6 +205,7 @@ export default class Gantt extends Component {
         gantt.locale.labels.section_owner = "Assignee";
         gantt.locale.labels.section_description = "Task";
         gantt.locale.labels.section_detail = "Description";
+        gantt.locale.labels.section_company = "Company";
         gantt.locale.labels.section_period = "Time period";
         gantt.locale.labels.section_status = "Status";
         gantt.config.resource_store = "resource";
@@ -174,6 +223,10 @@ export default class Gantt extends Component {
                     {key: "Done", label: "Done"},
                     {key: "Closed", label: "Closed"}
                 ]
+            },
+            {
+                name:"company", height:38, map_to:"company",type:"select",
+                options: this.state.companies
             },
             {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]}
         ];
@@ -316,8 +369,15 @@ export default class Gantt extends Component {
         API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data user di project');
             this.setState({users: res.data.result}, () => {
-                this.renderGantt();
-                this.countTaskStatus();
+                this.state.users.unshift({id: '', text: ''});
+                API.get(`${API_SERVER}v2/project/gantt/company/${this.props.projectId}`).then(res => {
+                    if(res.data.error) console.log('Gagal fetch data company di project');
+                    this.setState({companies: res.data.result}, () => {
+                        this.state.companies.unshift({id: '', text: ''});
+                        this.renderGantt();
+                        this.countTaskStatus();
+                    })
+                })
             })
         })
     }
@@ -370,32 +430,50 @@ export default class Gantt extends Component {
       }
     }
 
+    // filterOpen(){
+    //     this.setState({statusOpen: !this.state.statusOpen}, function() {
+    //         gantt.refreshData();
+    //         this.renderGantt();
+    //     })
+    // }
+
     render() {
        return (
         <div className="card p-20">
         <div className="app-container">
           <div className="time-line-container">
           <div className="m-t-10 m-b-10" style={{alignSelf:'flex-start'}}>
-            <span className="p-r-5" style={{ color: '#f0e66e' }}>
-              <i className="fa fa-square"></i>
+            <span>
+                <span className="p-r-5" style={{ color: '#f0e66e' }}>
+                <i className="fa fa-square"></i>
+                </span>
+                Main Task
             </span>
-            Main Task
-            <span className="p-r-5" style={{ color: '#3185ED', marginLeft:15 }}>
-              <i className="fa fa-square"></i>
+            {/* <span className="gantt-status-legend" style={{textDecoration : this.state.statusOpen ? 'inherit' : 'line-through'}} onClick={this.filterOpen.bind(this)}> */}
+            <span className="gantt-status-legend">
+                <span className="p-r-5" style={{ color: '#3185ED', marginLeft:15 }}>
+                <i className="fa fa-square"></i>
+                </span>
+                Open ({this.state.countOpen})
             </span>
-            Open ({this.state.countOpen})
-            <span className="p-r-5" style={{ color: '#ff7800', marginLeft:15 }}>
-              <i className="fa fa-square"></i>
+            <span className="gantt-status-legend">
+                <span className="p-r-5" style={{ color: '#ff7800', marginLeft:15 }}>
+                <i className="fa fa-square"></i>
+                </span>
+                In Progress ({this.state.countProgress})
             </span>
-            In Progress ({this.state.countProgress})
-            <span className="p-r-5" style={{ color: '#67cb48', marginLeft:15 }}>
-              <i className="fa fa-square"></i>
+            <span className="gantt-status-legend">
+                <span className="p-r-5" style={{ color: '#67cb48', marginLeft:15 }}>
+                <i className="fa fa-square"></i>
+                </span>
+                Done ({this.state.countDone})
             </span>
-            Done ({this.state.countDone})
-            <span className="p-r-5" style={{ color: '#c0c0c0', marginLeft:15 }}>
-              <i className="fa fa-square"></i>
+            <span className="gantt-status-legend">
+                <span className="p-r-5" style={{ color: '#c0c0c0', marginLeft:15 }}>
+                <i className="fa fa-square"></i>
+                </span>
+                Closed ({this.state.countClosed})
             </span>
-            Closed ({this.state.countClosed})
           </div>
           <div className="toolbar row">
               <div className="toolbar-left col-sm-12">
