@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 
 import AllChart from './allChart';
 import RincianAbsensi from './rincianAbsensi';
@@ -40,10 +41,20 @@ class GuruPersonalia extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
+                  <div className="floating-back">
+                    <Link to={`/kursus-new`}>
+                    <img
+                      src={`newasset/back-button.svg`}
+                      alt=""
+                      width={90}
+                    ></img>
+                    </Link>
+                  </div>
+
                   <AllChart/>
 
                   <RincianAbsensi/>
-                  
+
                 </div>
               </div>
             </div>

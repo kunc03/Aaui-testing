@@ -99,14 +99,8 @@ import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
 import LearningGuru from './components/learning/guru';
+import LearningGuruInfo from './components/learning/guruinfo';
 import LearningMurid from './components/learning/murid';
-
-// ======= IMPORT COMPONENT GURU ======== //
-import GuruPersonalia from './components/guruPersonalia/index';
-import GuruKurusus from './components/guruKursus/index';
-import GuruUjian from './components/guruUjian/index';
-import InformasiKelas from './components/guruInformasiKelas/index';
-import GuruKPI from './components/guruKPI/index';
 
 import Ptc from './components/ptc/index';
 import KursusNew from './components/learning/kursus';
@@ -442,6 +436,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />
+        <Route path="/guru-info" component={LearningGuruInfo} />
 
         <Route path="/webinar" component={WebinarClient} />
 
@@ -488,14 +483,6 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
-
-
-         {/* ROUTE GURU */}
-         <Route path='/guru/personalia' component={GuruPersonalia} />
-         <Route path='/guru/kursus' component={GuruKurusus} />
-         <Route path='/guru/ujian' component={GuruUjian} />
-         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
-         <Route path='/guru/kpi' component={GuruKPI} />
 
 
         <Route path="/logout" component={Logout} />

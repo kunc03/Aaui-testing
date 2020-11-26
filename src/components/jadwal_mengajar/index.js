@@ -31,35 +31,9 @@ class JadwalMengajar extends React.Component {
     dataGuru: [],
   }
 
-  saveRuangan = e => {
-    e.preventDefault();
-
-    if(this.state.idRuangan) {
-
-    } else {
-
-      let cp = [...this.state.dataJadwal];
-      cp.push({
-        id: this.state.dataJadwal.length+1,
-        nama_pelajaran: this.state.namaPelajaran,
-        kelas_jadwal: this.state.kelasJadwal,
-        hari_jadwal: this.state.hariJadwal,
-        jam_mulai: this.state.jamMulai,
-        jam_selesai: this.state.jamSelesai,
-        nama_pengajar: this.state.namaPengajar,
-        ruangan_jadwal: this.state.ruanganJadwal,
-        jumlah_pertemuan: this.state.jumlahPertemuan,
-        kapasitas_murid: this.state.kapasitasMurid,
-      });
-      this.setState({ dataJadwal: cp });
-      this.clearForm();
-    }
-  }
-
   selectPelajaran = e => {
     e.preventDefault()
-    let split = e.target.value.split('_');
-    this.setState({ namaPelajaran: e.target.value, kelasJadwal: split[1] })
+    this.setState({ namaPelajaran: e.target.value })
   }
 
   selectRuangan = e => {
@@ -76,7 +50,8 @@ class JadwalMengajar extends React.Component {
 
       let form = {
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
-        pelajaran_id: this.state.namaPelajaran.split('_')[0],
+        pelajaran_id: this.state.namaPelajaran,
+        kelas_id: this.state.kelasJadwal,
         hari: this.state.hariJadwal,
         jam_mulai: this.state.jamMulai,
         jam_selesai: this.state.jamSelesai,
@@ -94,7 +69,8 @@ class JadwalMengajar extends React.Component {
       let form = {
         company_id: Storage.get('user').data.company_id,
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
-        pelajaran_id: this.state.namaPelajaran.split('_')[0],
+        pelajaran_id: this.state.namaPelajaran,
+        kelas_id: this.state.kelasJadwal,
         hari: this.state.hariJadwal,
         jam_mulai: this.state.jamMulai,
         jam_selesai: this.state.jamSelesai,
@@ -129,7 +105,7 @@ class JadwalMengajar extends React.Component {
 
       this.setState({
         idJadwal: id,
-        namaPelajaran: `${res.data.result.pelajaran_id}_${res.data.result.kelas_id}`,
+        namaPelajaran: res.data.result.pelajaran_id,
         kelasJadwal: res.data.result.kelas_id,
 
         ruanganJadwal: `${res.data.result.ruangan_id}_${res.data.result.pengajar_id}`,
@@ -202,6 +178,8 @@ class JadwalMengajar extends React.Component {
 
   render() {
 
+    console.log('state: ', this.state)
+
     const StatusJadwal = ({item}) => {
       if(
         (typeof item.hari === "string") &&
@@ -239,7 +217,12 @@ class JadwalMengajar extends React.Component {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama Pelajaran</th>
+                    <th>Pelajaran</th>
+                    <th>Kelas</th>
+                    <th>Pengajar</th>
+                    <th>Ruangan</th>
+                    <th>Kapasitas</th>
+                    <th>Jumlah Pertemuan</th>
                     <th>Status</th>
                     <th className="text-center">Aksi</th>
                   </tr>
@@ -250,6 +233,11 @@ class JadwalMengajar extends React.Component {
                       <tr>
                         <td>{i+1}</td>
                         <td>{item.nama_pelajaran}</td>
+                        <td>{item.kelas_nama}</td>
+                        <td>{item.pengajar}</td>
+                        <td>{item.nama_ruangan}</td>
+                        <td>{item.kapasitas}</td>
+                        <td>{item.jumlah_pertemuan}</td>
                         <td><StatusJadwal item={item} /></td>
                         <td className="text-center">
                           <i style={{cursor: 'pointer'}} onClick={this.selectJadwal} data-id={item.jadwal_id} className="fa fa-edit"></i>
@@ -283,14 +271,14 @@ class JadwalMengajar extends React.Component {
                     <option value="">Pilih</option>
                     {
                       this.state.dataPelajaran.map((item,i) => (
-                        <option value={`${item.pelajaran_id}_${item.kelas_id}`}>{item.nama_pelajaran}</option>
+                        <option value={item.pelajaran_id}>{item.nama_pelajaran}</option>
                       ))
                     }
                   </select>
                 </div>
                 <div className="col-sm-6">
                   <label>Kelas</label>
-                  <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value })} disabled className="form-control">
+                  <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value })} className="form-control">
                     <option value="">Pilih</option>
                     {
                       this.state.dataKelas.map((item,i) => (

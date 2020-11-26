@@ -17,6 +17,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { connect } from 'react-redux';
 import { initUser } from '../../actions/user_action';
 
+import DashGuru from './dashguru';
+import DashMurid from './dashmurid';
+
 class HomeNew extends Component {
   state = {
     user: {
@@ -308,13 +311,13 @@ class HomeNew extends Component {
 
                       <div className="col-sm-12">
                         <Card style={{backgroundColor: '#F3F3F3'}}>
-                          
+
                             <div className="widget-center">
                               <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
-                              
+
                               <p style={{marginTop: '55px'}}>Tambah Widget</p>
                             </div>
-                          
+
                         </Card>
                       </div>
 
@@ -332,6 +335,34 @@ class HomeNew extends Component {
   }
 }
 
+class HomeV2 extends Component {
+
+  state = {
+    level: Storage.get('user').data.level,
+    grupId: Storage.get('user').data.grup_id,
+    grupName: Storage.get('user').data.grup_name,
+  }
+
+  render() {
+    if(this.state.level === "client") {
+      if(this.state.grupName.toLowerCase() === "guru") {
+        return (
+          <DashGuru />
+        )
+      } else {
+        return (
+          <DashMurid />
+        )
+      }
+    } else {
+      return (
+        <HomeNew />
+      )
+    }
+  }
+
+}
+
 const mapStateToProps = state => {
   return state.user;
 }
@@ -340,4 +371,4 @@ const mapDispatchToProps = dispatch => ({
   initUser: () => dispatch(initUser())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeNew);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeV2);
