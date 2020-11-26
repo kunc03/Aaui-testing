@@ -74,7 +74,7 @@ class Registasi extends React.Component {
       response.data.result.map(item => {
         this.state.optionsName.push({
           value: item.id,
-          label: `${item.nama} - ${item.no_induk} - ${item.email}`
+          label: `${item.no_induk} - ${item.nama}`
         });
       });
     })
@@ -153,7 +153,7 @@ class Registasi extends React.Component {
 
   addParticipant = e => {
     e.preventDefault();
-    let form = {muridId: this.state.muridId[0], kelasId: this.state.idKelas};
+    let form = {muridId: this.state.muridId, kelasId: this.state.idKelas};
 
     API.post(`${API_SERVER}v2/murid/assign/kelas`, form).then(res => {
       if(res.data.error) toast.warning(`Error: add murid`)
@@ -266,7 +266,7 @@ class Registasi extends React.Component {
                             options={this.state.optionsName}
                             value={this.state.muridId}
                             onChange={muridId => this.setState({ muridId })}
-                            mode="single"
+                            mode="list"
                             enableSearch={true}
                             resetable={true}
                             valuePlaceholder="Pilih"

@@ -17,7 +17,7 @@ export default class KursusNew extends Component {
   }
 
   fetchPelajaran() {
-    API.get(`${API_SERVER}v2/pelajaran/company/guru/${Storage.get('user').data.company_id}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ pelajaran: res.data.result })
@@ -58,13 +58,14 @@ export default class KursusNew extends Component {
                               <tr>
                                 <th>Pelajaran</th>
 																<th>Kelas</th>
-																<th>Kategori</th>
-                                <th>Tanggal Dibuat</th>
-                                <th>Total Sesi</th>
+                                <th>Hari</th>
+                                <th>Waktu</th>
+																<th>Total Sesi</th>
                                 <th>Materi</th>
                                 <th>Kuis</th>
                                 <th>Tugas</th>
                                 <th>Ujian</th>
+																<th>Created At</th>
                                 <th className="text-center">Aksi</th>
                               </tr>
                             </thead>
@@ -73,14 +74,15 @@ export default class KursusNew extends Component {
                                 this.state.pelajaran.map((item,i) => (
                                   <tr>
                                     <td>{item.nama_pelajaran}</td>
-																		<td>{item.kelas}</td>
-                                    <td>{item.kategori}</td>
-																		<td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
-                                    <td>{item.materi + item.kuis + item.tugas + item.ujian}</td>
+																		<td>{item.kelas_nama}</td>
+                                    <td>{item.hari}</td>
+                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+																		<td>{item.jumlah_pertemuan}</td>
                                     <td>{item.materi}</td>
                                     <td>{item.kuis}</td>
                                     <td>{item.tugas}</td>
                                     <td>{item.ujian}</td>
+																		<td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
                                     <td className="text-center">
 																			{
 																				// item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
