@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Card } from 'react-bootstrap';
+import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import {toast} from 'react-toastify'
 
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
@@ -10,22 +11,22 @@ import ListToDoNew from './listToDo';
 class DashGuru extends Component {
 
   state = {
+    companyId: Storage.get('user').data.company_id,
     toDo: [],
     calendar: [],
 
-    pelajaran: [
-      {id: 1, mapel: 'Matematika'},
-      {id: 2, mapel: 'Fisika'},
-      {id: 3, mapel: 'Biologi'},
-      {id: 4, mapel: 'Bahasa Mandarin'},
-    ],
+    pelajaran: [],
+    openSilabus: false,
+    pelajaranId: '',
+    pelajaranNama: '',
+    silabus: [],
 
-    pengumuman: [
-      {id: 1, isi: 'Pengumuman 1'},
-      {id: 2, isi: 'Pengumuman 2'},
-      {id: 3, isi: 'Pengumuman 3'},
-      {id: 4, isi: 'Pengumuman 4'},
-    ],
+    pengumuman: [],
+    openPengumuman: false,
+    pengumumanId: '',
+    pengumumanNama: '',
+    pengumumanIsi: '',
+    pengumumanFile: [],
 
     tugas: [
       {id: 1, mapel: 'Matematika', batas: '24 Des 2020', terkumpul: '20/30'},
@@ -38,10 +39,87 @@ class DashGuru extends Component {
       {id: 3, tanggal: '29 Des 2020', waktu: '09:00', mapel: 'Biologi', durasi: '60 Menit'},
     ],
 
-    jadwal: [
-      {id: 1, mapel: 'Matematika', topik: 'Aljabar', waktu: '07:00 - 09:00', sesi: '2'},
-      {id: 2, mapel: 'Ilmu Pengetahuan Sosial', topik: 'Pancasila', waktu: '07:00 - 09:00', sesi: '3'},
-    ],
+    jadwal: [],
+  }
+
+  openSilabus = e => {
+    e.preventDefault();
+    let target = e.target;
+    this.setState({ pelajaranNama: target.getAttribute('data-title'), pelajaranId: target.getAttribute('data-id'), openSilabus: true })
+    this.fetchSilabus(target.getAttribute('data-id'))
+  }
+
+  closeSilabus() {
+    this.setState({
+      openSilabus: false,
+      pelajaranId: '',
+      pelajaranNama: '',
+      silabus: [],
+    })
+  }
+
+  openPengumuman = e => {
+    e.preventDefault();
+    this.setState({
+      openPengumuman: true,
+      pengumumanId: e.target.getAttribute('data-id'),
+      pengumumanNama: e.target.getAttribute('data-title'),
+      pengumumanIsi: e.target.getAttribute('data-isi'),
+      pengumumanFile: e.target.getAttribute('data-file') ? e.target.getAttribute('data-file').split(',') : []
+    })
+  }
+
+  closePengumuman() {
+    this.setState({
+      openPengumuman: false,
+      pengumumanId: '',
+      pengumumanNama: '',
+      pengumumanIsi: '',
+      pengumumanFile: [],
+    })
+  }
+
+  fetchSilabus(pelajaranId) {
+    API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
+      if(res.data.error) toast.info(`Error: fetch silabus`)
+
+      this.setState({ silabus: res.data.result })
+    })
+  }
+
+  componentDidMount() {
+    this.fetchPelajaran();
+    this.fetchPengumuman();
+    this.fetchJadwal();
+  }
+
+  fetchPelajaran() {
+    API.get(`${API_SERVER}v2/pelajaran/company/${this.state.companyId}`).then(res => {
+      this.setState({ pelajaran: res.data.result })
+    })
+  }
+
+  fetchPengumuman() {
+    let url = null;
+    if(this.state.level === "admin" || this.state.level === "superadmin") {
+      url = `${API_SERVER}v1/pengumuman/company/${this.state.companyId}`;
+    } else {
+      url = `${API_SERVER}v1/pengumuman/role/${Storage.get('user').data.grup_id}`;
+    }
+
+    API.get(url).then(response => {
+      this.setState({ pengumuman: response.data.result.reverse() });
+    }).catch(function(error) {
+      console.log(error);
+    });
+  }
+
+  fetchJadwal() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch pelajaran`)
+
+      this.setState({ jadwal: res.data.result })
+    })
   }
 
   render() {
@@ -62,16 +140,17 @@ class DashGuru extends Component {
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th>Timeline</th><th>Sesi Aktif</th><th>Aksi</th>
+                                <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
                                 this.state.jadwal.map((item,i) => (
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.mapel}</td>
-                                    <td>{item.waktu}</td>
-                                    <td>{item.sesi}</td>
+                                    <td>{item.nama_pelajaran}</td>
+                                    <td>{item.hari}</td>
+                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                    <td>{item.kelas_nama}</td>
                                     <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
@@ -152,7 +231,12 @@ class DashGuru extends Component {
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
                                     <td>{item.isi}</td>
                                     <td style={{width: '40px'}}>
-                                      <a href="#">Lihat</a>
+                                      <a href="#"
+                                        onClick={this.openPengumuman}
+                                        data-title={item.title}
+                                        data-file={item.attachments}
+                                        data-id={item.id_pengumuman}
+                                        data-isi={item.isi}>Lihat</a>
                                     </td>
                                   </tr>
                                 ))
@@ -161,6 +245,57 @@ class DashGuru extends Component {
                           </table>
                         </Card.Body>
                       </Card>
+
+                      <Modal
+                        show={this.state.openPengumuman}
+                        onHide={this.closePengumuman.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                            Pengumuman
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form>
+                            <Form.Group controlId="formJudul">
+                              <FormControl
+                                type="text"
+                                name="judul"
+                                value={this.state.pengumumanNama}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            <Form.Group controlId="formisi">
+                              <textarea
+                                className="form-control" id="exampleFormControlTextarea1" rows="8"
+                                name="isi"
+                                value={this.state.pengumumanIsi}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            {
+                              this.state.pengumumanFile.length > 0 &&
+                              <Form.Group>
+                              <Form.Label>Attachments</Form.Label>
+                              <ul className="list-group">
+                              {
+                                this.state.pengumumanFile.map(item => (
+                                  <li className="list-group-item">
+                                  <a href={item} target="_blank">{item}</a>
+                                  </li>
+                                ))
+                              }
+                              </ul>
+                              </Form.Group>
+                            }
+
+                          </Form>
+
+                        </Modal.Body>
+                      </Modal>
                     </div>
 
                     <div className="col-sm-6">
@@ -204,9 +339,9 @@ class DashGuru extends Component {
                               {
                                 this.state.pelajaran.map((item,i) => (
                                   <tr key={i}>
-                                    <td>{item.mapel}</td>
+                                    <td>{item.nama_pelajaran}</td>
                                     <td style={{width: '40px'}}>
-                                      <a href="#">Lihat</a>
+                                      <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
                                     </td>
                                   </tr>
                                 ))
@@ -215,6 +350,59 @@ class DashGuru extends Component {
                           </table>
                         </Card.Body>
                       </Card>
+
+                      <Modal
+                        show={this.state.openSilabus}
+                        onHide={this.closeSilabus.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                            Silabus {this.state.pelajaranNama}
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Sesi</th>
+                                <th>Topik</th>
+                                <th>Tujuan</th>
+                                <th>Deskripsi</th>
+                                <th>Files</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.silabus.map((item, i) => {
+                                  if(item.jenis === 0) {
+                                    return (
+                                        <tr key={i}>
+                                          <td>{item.sesi}</td>
+                                          <td>{item.topik}</td>
+                                          <td>{item.tujuan}</td>
+                                          <td>{item.deskripsi}</td>
+                                          <td style={{padding: '12px'}}>
+                                            {
+                                              item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                                            }
+                                          </td>
+                                        </tr>
+                                      )
+                                  } else {
+                                    return (
+                                      <tr key={i}>
+                                        <td>{item.sesi}</td>
+                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                                      </tr>
+                                    )
+                                  }
+                                })
+                              }
+                              </tbody>
+                            </table>
+                        </Modal.Body>
+                      </Modal>
                     </div>
 
                     <div className="col-sm-6">
