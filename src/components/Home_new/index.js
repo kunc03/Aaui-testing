@@ -335,6 +335,16 @@ class HomeNew extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return state.user;
+}
+
+const mapDispatchToProps = dispatch => ({
+  initUser: () => dispatch(initUser())
+})
+
+const HomeNewProps = connect(mapStateToProps, mapDispatchToProps)(HomeNew);
+
 class HomeV2 extends Component {
 
   state = {
@@ -356,19 +366,11 @@ class HomeV2 extends Component {
       }
     } else {
       return (
-        <HomeNew />
+        <HomeNewProps />
       )
     }
   }
 
 }
 
-const mapStateToProps = state => {
-  return state.user;
-}
-
-const mapDispatchToProps = dispatch => ({
-  initUser: () => dispatch(initUser())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeV2);
+export default HomeV2;
