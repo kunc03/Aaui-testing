@@ -14,7 +14,7 @@ import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
-import Files from "./components/files/files";
+// import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/detail_project/index";
@@ -261,7 +261,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
         <Route path="/notification" component={Notification} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
@@ -341,7 +341,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
