@@ -223,10 +223,10 @@ editFolder(){
       await API.get(apiUrl).then(res => {
         if(res.data.error) toast.warning("Gagal fetch API");
         form = {
-          aSekretaris: userId == res.data.result.sekretaris[0].user_id ? 1 : 0,
-          aModerator: userId == res.data.result.moderator[0].user_id ? 1 : 0,
-          aPembicara: userId == res.data.result.pembicara[0].user_id ? 1 : 0,
-          aOwner: userId == res.data.result.owner[0].user_id ? 1 : 0,
+          aSekretaris: res.data.result.sekretaris.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aModerator: res.data.result.moderator.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aPembicara: res.data.result.pembicara.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aOwner: res.data.result.owner.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
           aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length || res.data.result.tamu.filter((item) => item.voucher == this.props.voucherTamu).length ? 1 : 0,
         }
       })

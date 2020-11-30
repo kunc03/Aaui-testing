@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import API, { API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../../repository/api';
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
@@ -9,6 +9,7 @@ import TableFiles from '../../files/_files';
 import Moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
+import {isMobile} from 'react-device-detect';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -388,6 +389,9 @@ export default class WebinarLive extends Component {
                               )
                               this.setState({joinUrl: joinUrl})
                               this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                              if (isMobile){
+                                window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                              }
                           }
                           else{
                           console.log('GAGAL', result)
@@ -404,6 +408,9 @@ export default class WebinarLive extends Component {
                       )
                       this.setState({joinUrl: joinUrl})
                       this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                      if (isMobile){
+                        window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                      }
                   }
               })
               // BBB JOIN END
@@ -487,6 +494,9 @@ export default class WebinarLive extends Component {
                               )
                               this.setState({joinUrl: joinUrl})
                               this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                              if (isMobile){
+                                window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                              }
                           }
                           else{
                           console.log('GAGAL', result)
@@ -503,6 +513,9 @@ export default class WebinarLive extends Component {
                       )
                       this.setState({joinUrl: joinUrl})
                       this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                      if (isMobile){
+                        window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
+                      }
                   }
               })
               // BBB JOIN END
