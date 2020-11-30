@@ -16,6 +16,7 @@ class Registasi extends React.Component {
     semester: "",
     kurikulum: "",
     tahunAjaran: "",
+    kapasitas: "",
 
     listSemester: [],
     listKelas: [],
@@ -36,7 +37,8 @@ class Registasi extends React.Component {
         kelasNama: this.state.namaKelas,
         semesterId: this.state.semester,
         kurikulum: this.state.kurikulum,
-        tahunAjaran: this.state.tahunAjaran
+        tahunAjaran: this.state.tahunAjaran,
+        kapasitas: this.state.kapasitas
       }
 
       API.put(`${API_SERVER}v2/kelas/update/${this.state.idKelas}`, form).then(res => {
@@ -54,7 +56,8 @@ class Registasi extends React.Component {
         kelasNama: this.state.namaKelas,
         semesterId: this.state.semester,
         kurikulum: this.state.kurikulum,
-        tahunAjaran: this.state.tahunAjaran
+        tahunAjaran: this.state.tahunAjaran,
+        kapasitas: this.state.kapasitas
       }
 
       API.post(`${API_SERVER}v2/kelas/create`, form).then(res => {
@@ -92,7 +95,8 @@ class Registasi extends React.Component {
         namaKelas: getKelas.kelas_nama,
         semester: getKelas.semester_id,
         kurikulum: getKelas.kurikulum,
-        tahunAjaran: getKelas.tahun_ajaran
+        tahunAjaran: getKelas.tahun_ajaran,
+        kapasitas: getKelas.kapasitas
       })
 
       this.fetchMurid(idKelas);
@@ -116,6 +120,7 @@ class Registasi extends React.Component {
       semester: '',
       kurikulum: '',
       tahunAjaran: '',
+      kapasitas: '',
       dataMurid: [],
       muridId: []
     })
@@ -174,6 +179,7 @@ class Registasi extends React.Component {
   }
 
   render() {
+    // console.log('state: ', this.state)
     return (
       <div className="row mt-3">
         <div className="col-sm-3">
@@ -206,7 +212,7 @@ class Registasi extends React.Component {
                     <div className="row mb-3">
                       <div className="col">
                         <label>Nama Kelas</label>
-                        <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter nama kelas" name="namaKelas" />
+                        <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter" name="namaKelas" />
                       </div>
                       <div className="col">
                         <label>Semester</label>
@@ -223,11 +229,15 @@ class Registasi extends React.Component {
                     <div className="row mb-3">
                       <div className="col">
                         <label>Kurikulum</label>
-                        <input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter kurikulum" name="kurikulum" />
+                        <input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />
                       </div>
                       <div className="col">
                         <label>Tahun Ajaran</label>
-                        <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} type="text" className="form-control" placeholder="Enter tahun ajaran" name="tahunAjaran" />
+                        <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} type="text" className="form-control" placeholder="Enter" name="tahunAjaran" />
+                      </div>
+                      <div className="col">
+                        <label>Kapasitas</label>
+                        <input required value={this.state.kapasitas} onChange={e => this.setState({ kapasitas: e.target.value })} type="number" className="form-control" placeholder="Enter" name="kapasitas" />
                       </div>
                     </div>
                     <div className="row">

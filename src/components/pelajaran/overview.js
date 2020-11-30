@@ -17,7 +17,8 @@ import SocketContext from '../../socket';
 class Overview extends React.Component {
 
   state = {
-    pelajaranId: this.props.match.params.id,
+    jadwalId: this.props.match.params.id,
+    pelajaranId: '',
 
     overview: ''
   };
@@ -44,14 +45,14 @@ class Overview extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchOverview()
+    this.fetchOverview();
   }
 
   fetchOverview() {
-    API.get(`${API_SERVER}v2/pelajaran/one/${this.state.pelajaranId}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${this.state.jadwalId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch overview`)
 
-      this.setState({ overview: res.data.result.deskripsi });
+      this.setState({ pelajaranId: res.data.result.pelajaran_id, overview: res.data.result.deskripsi });
     })
   }
 

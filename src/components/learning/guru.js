@@ -11,6 +11,7 @@ import InformasiKelas from '../guruInformasiKelas/index';
 import GuruKPI from '../guruKPI/index';
 
 import Overview from '../pelajaran/overview';
+import Silabus from '../pelajaran/silabus';
 import Chapter from '../pelajaran/chapter';
 import Kuis from '../pelajaran/kuis';
 // import Tugas from '../pelajaran/tugas';
@@ -22,7 +23,8 @@ const UjianComponent = props => (<Kuis {...props} tipe="ujian" />);
 
 const titleTabs = [
   {name: 'Overview', link: '/pelajaran', component: Overview},
-  {name: 'Chapter', link: '/chapter', component: Chapter},
+  {name: 'Silabus', link: '/silabus', component: Silabus},
+  {name: 'Sesi', link: '/chapter', component: Chapter},
   {name: 'Kuis', link: '/kuis', component: KuisComponent},
   {name: 'Tugas', link: '/tugas', component: TugasComponent},
   {name: 'Ujian', link: '/ujian', component: UjianComponent},
@@ -52,10 +54,7 @@ export default class LearningGuru extends Component {
 
   fetchPelajaran() {
     let getPelajaranId = this.state.pelajaranId.split('/')[this.state.pelajaranId.split('/').length-1];
-
-    API.get(`${API_SERVER}v2/pelajaran/one/${getPelajaranId}`).then(res => {
-
-      console.log('STATE: ', res.data.result);
+    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${getPelajaranId}`).then(res => {
 
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 

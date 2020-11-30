@@ -69,7 +69,7 @@ class Tugas extends React.Component {
       title: '',
       quizAt: '',
       tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
-      tanggalAkhir: moment((new Date()).getDate() + 7).format('YYYY-MM-DD'),
+      tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
       fileExcel: Math.random().toString(36)
     })

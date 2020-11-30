@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Card } from 'react-bootstrap';
+import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 
@@ -15,12 +15,12 @@ class DashMurid extends Component {
     toDo: [],
     calendar: [],
 
-    pengumuman: [
-      {id: 1, isi: 'Pengumuman 1'},
-      {id: 2, isi: 'Pengumuman 2'},
-      {id: 3, isi: 'Pengumuman 3'},
-      {id: 4, isi: 'Pengumuman 4'},
-    ],
+    pengumuman: [],
+    openPengumuman: false,
+    pengumumanId: '',
+    pengumumanNama: '',
+    pengumumanIsi: '',
+    pengumumanFile: [],
 
     tugas: [
       {id: 1, mapel: 'Matematika', batas: '24 Des 2020', terkumpul: '20/30'},
@@ -37,6 +37,46 @@ class DashMurid extends Component {
       {id: 1, mapel: 'Matematika', topik: 'Aljabar', waktu: '07:00 - 09:00', sesi: '2'},
       {id: 2, mapel: 'Ilmu Pengetahuan Sosial', topik: 'Pancasila', waktu: '07:00 - 09:00', sesi: '3'},
     ],
+  }
+
+  openPengumuman = e => {
+    e.preventDefault();
+    this.setState({
+      openPengumuman: true,
+      pengumumanId: e.target.getAttribute('data-id'),
+      pengumumanNama: e.target.getAttribute('data-title'),
+      pengumumanIsi: e.target.getAttribute('data-isi'),
+      pengumumanFile: e.target.getAttribute('data-file') ? e.target.getAttribute('data-file').split(',') : []
+    })
+  }
+
+  closePengumuman() {
+    this.setState({
+      openPengumuman: false,
+      pengumumanId: '',
+      pengumumanNama: '',
+      pengumumanIsi: '',
+      pengumumanFile: [],
+    })
+  }
+
+  componentDidMount() {
+    this.fetchPengumuman();
+  }
+
+  fetchPengumuman() {
+    let url = null;
+    if(this.state.level === "admin" || this.state.level === "superadmin") {
+      url = `${API_SERVER}v1/pengumuman/company/${this.state.companyId}`;
+    } else {
+      url = `${API_SERVER}v1/pengumuman/role/${Storage.get('user').data.grup_id}`;
+    }
+
+    API.get(url).then(response => {
+      this.setState({ pengumuman: response.data.result.reverse() });
+    }).catch(function(error) {
+      console.log(error);
+    });
   }
 
   render() {
@@ -116,7 +156,12 @@ class DashMurid extends Component {
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
                                     <td>{item.isi}</td>
                                     <td style={{width: '40px'}}>
-                                      <a href="#">Lihat</a>
+                                      <a href="#"
+                                        onClick={this.openPengumuman}
+                                        data-title={item.title}
+                                        data-file={item.attachments}
+                                        data-id={item.id_pengumuman}
+                                        data-isi={item.isi}>Lihat</a>
                                     </td>
                                   </tr>
                                 ))
@@ -125,6 +170,57 @@ class DashMurid extends Component {
                           </table>
                         </Card.Body>
                       </Card>
+
+                      <Modal
+                        show={this.state.openPengumuman}
+                        onHide={this.closePengumuman.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                            Pengumuman
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form>
+                            <Form.Group controlId="formJudul">
+                              <FormControl
+                                type="text"
+                                name="judul"
+                                value={this.state.pengumumanNama}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            <Form.Group controlId="formisi">
+                              <textarea
+                                className="form-control" id="exampleFormControlTextarea1" rows="8"
+                                name="isi"
+                                value={this.state.pengumumanIsi}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            {
+                              this.state.pengumumanFile.length > 0 &&
+                              <Form.Group>
+                              <Form.Label>Attachments</Form.Label>
+                              <ul className="list-group">
+                              {
+                                this.state.pengumumanFile.map(item => (
+                                  <li className="list-group-item">
+                                  <a href={item} target="_blank">{item}</a>
+                                  </li>
+                                ))
+                              }
+                              </ul>
+                              </Form.Group>
+                            }
+
+                          </Form>
+
+                        </Modal.Body>
+                      </Modal>
                     </div>
 
                     <div className="col-sm-6">
