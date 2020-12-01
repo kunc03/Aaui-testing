@@ -314,7 +314,9 @@ export default class WebinarRiwayat extends Component {
             <th>Kehadiran</th>
             <th>Jam Masuk</th>
             <th>Status</th>
-            <th>Durasi</th>
+            <th>Durasi (To schedule end)</th>
+            <th>Audio</th>
+            <th>Camera</th>
           </tr>
         </thead>
         <tbody>
@@ -336,6 +338,8 @@ export default class WebinarRiwayat extends Component {
                 <td>{jamMulai}</td>
                 <td>{item.voucher ? 'Tamu' : 'Peserta'}</td>
                 <td>{durasi}</td>
+                <td>{item.audio}</td>
+                <td>{item.camera}</td>
               </tr>)
             })
           }
