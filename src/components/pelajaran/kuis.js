@@ -30,6 +30,8 @@ class Tugas extends React.Component {
 
     pertanyaan: [],
 
+    mengumpulkan: [],
+
     formFile: null,
     loading: false,
     fileExcel: Math.random().toString(36)
@@ -71,6 +73,8 @@ class Tugas extends React.Component {
       tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
       tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
+      mengumpulkan: [],
+
       fileExcel: Math.random().toString(36)
     })
   }
@@ -82,6 +86,18 @@ class Tugas extends React.Component {
       console.log('state: ', res.data.result)
 
       this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+    })
+  }
+
+  fetchMengumpulkan(id) {
+    this.setState({
+      mengumpulkan: [
+        {id: 1, nama: 'Agus', nilai: 76, submission: true},
+        {id: 2, nama: 'Muhammad', nilai: 88, submission: true},
+        {id: 3, nama: 'Sulton', nilai: 98, submission: true},
+        {id: 4, nama: 'Bella', nilai: 0, submission: false},
+        {id: 5, nama: 'Deby', nilai: 0, submission: false},
+      ]
     })
   }
 
@@ -102,6 +118,8 @@ class Tugas extends React.Component {
       })
 
       this.fetchPertanyaan(examId);
+
+      this.fetchMengumpulkan(examId);
     })
   }
 
@@ -434,6 +452,7 @@ class Tugas extends React.Component {
 
           </div>
         </div>
+
       </div>
     )
   }

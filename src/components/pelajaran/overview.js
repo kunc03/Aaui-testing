@@ -18,7 +18,6 @@ class Overview extends React.Component {
 
   state = {
     jadwalId: this.props.match.params.id,
-    pelajaranId: '',
 
     overview: ''
   };
@@ -32,7 +31,7 @@ class Overview extends React.Component {
 
     if(this.state.overview) {
       // action simpan
-      API.put(`${API_SERVER}v2/pelajaran/overview/${this.state.pelajaranId}`, {overview: this.state.overview}).then(res => {
+      API.put(`${API_SERVER}v2/pelajaran/overview/${this.state.jadwalId}`, {overview: this.state.overview}).then(res => {
         if(res.data.error) console.log(`Error: update overview`)
 
         this.fetchOverview()
@@ -49,10 +48,10 @@ class Overview extends React.Component {
   }
 
   fetchOverview() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${this.state.jadwalId}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch overview`)
 
-      this.setState({ pelajaranId: res.data.result.pelajaran_id, overview: res.data.result.deskripsi });
+      this.setState({ overview: res.data.result.deskripsi });
     })
   }
 
