@@ -75,7 +75,8 @@ export default class Gantt extends Component {
         }
         var companies = this.state.companies;
         gantt.templates.leftside_text=function(start,end,task){
-            if (task.company != '' && task.company != null) {
+            if (task.company != '' && task.company != null && task.company != 'undefined') {
+                console.log('ALVIN TASK COMPANY', task.company)
                 var selectedCompany = companies.filter((item) => item.key == task.company)[0].label;
                 var company = "<b style='color: #"+intToRGB(hashCode(selectedCompany))+"'>"+selectedCompany+"</b>";
                 return company
