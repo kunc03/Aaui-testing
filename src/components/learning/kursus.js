@@ -74,51 +74,44 @@ export default class KursusNew extends Component {
                                 this.state.pelajaran.map((item, i) => (
                                   <tr>
                                     <td>{item.nama_pelajaran}</td>
-<<<<<<< HEAD
-                            <td>{item.kelas}</td>
-                            <td>{item.kategori}</td>
-                            <td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
-                            <td>{item.materi + item.kuis + item.tugas + item.ujian}</td>
-=======
-																		<td>{item.kelas_nama}</td>
-                            <td>{item.hari}</td>
-                            <td>{item.jam_mulai} - {item.jam_selesai}</td>
-                            <td>{item.jumlah_pertemuan}</td>
->>>>>>> staging
-                            <td>{item.materi}</td>
-                            <td>{item.kuis}</td>
-                            <td>{item.tugas}</td>
-                            <td>{item.ujian}</td>
-                            <td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
-                            <td className="text-center">
-                              {
-                                // item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
-                                <Link to={`/guru/masuk/${item.pelajaran_id}`} className="btn btn-v2 btn-primary ml-2">Masuk</Link>
-                              }
-                              {
-                                // item.materi <= 0 &&
-                                <Link to={`/guru/pelajaran/${item.pelajaran_id}`} className="btn btn-v2 btn-warning ml-2">Lengkapi</Link>
-                              }
-                              {
-                                // Date.parse(item.tanggal) <= new Date() &&
-                                <Link to={`/guru/riwayat/${item.pelajaran_id}`} className="btn btn-v2 btn-default ml-2">Riwayat</Link>
-                              }
-                            </td>
+                                    <td>{item.kelas_nama}</td>
+                                    <td>{item.hari}</td>
+                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                    <td>{item.jumlah_pertemuan}</td>
+                                    <td>{item.materi}</td>
+                                    <td>{item.kuis}</td>
+                                    <td>{item.tugas}</td>
+                                    <td>{item.ujian}</td>
+                                    <td>{moment(item.created_at).format('DD/MM/YYYY')}</td>
+                                    <td className="text-center">
+                                      {
+                                        // item.materi > 0 && Date.parse(item.tanggal) >= new Date() &&
+                                        <Link to={`/guru/masuk/${item.pelajaran_id}`} className="btn btn-v2 btn-primary ml-2">Masuk</Link>
+                                      }
+                                      {
+                                        // item.materi <= 0 &&
+                                        <Link to={`/guru/pelajaran/${item.pelajaran_id}`} className="btn btn-v2 btn-warning ml-2">Lengkapi</Link>
+                                      }
+                                      {
+                                        // Date.parse(item.tanggal) <= new Date() &&
+                                        <Link to={`/guru/riwayat/${item.pelajaran_id}`} className="btn btn-v2 btn-default ml-2">Riwayat</Link>
+                                      }
+                                    </td>
                                   </tr>
                                 ))
                               }
                             </tbody>
                           </table>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
 
                 </div>
               </div>
-
             </div>
           </div>
-        </div>
-      </div>
         </div >
       </div >
     );
