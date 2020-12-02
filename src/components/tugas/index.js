@@ -88,7 +88,7 @@ class Tugas extends React.Component {
 
   render() {
 
-    console.log(`state: `, this.state)
+    // console.log(`state: `, this.state)
 
     return (
       <div className="row mt-3">
@@ -114,7 +114,7 @@ class Tugas extends React.Component {
                       <tr>
                         <td>{item.nama_pelajaran}</td>
                         <td><a href="#" data-id={item.exam_id} data-title={item.title} onClick={this.openDetail}>{item.title}</a></td>
-                        <td>{moment(item.time_start).format('DD-MM-YYYY')} sampai {moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                        <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                         <td>{item.answer_file ? 'Sudah Mengumpulkan' : 'Belum Mengumpulkan'}</td>
                         <td className="text-center">
                           {

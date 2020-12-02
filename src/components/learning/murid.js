@@ -4,13 +4,15 @@ import { NavLink, Switch, Route } from 'react-router-dom';
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Tugas from '../tugas/index';
 import Latihan from '../tugas/latihan';
-import Ujian from '../tugas/ujian';
+
+const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
+const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
 
 const titleTabs = [
   {name: 'Mata Pelajaran', link: '/mata-pelajaran', component: MataPelajaran},
   {name: 'Tugas', link: '/tugas', component: Tugas},
-  {name: 'Kuis', link: '/kuis', component: Latihan},
-  {name: 'Ujian', link: '/ujian', component: Ujian},
+  {name: 'Kuis', link: '/kuis', component: KuisComponent},
+  {name: 'Ujian', link: '/ujian', component: UjianComponent},
 ]
 
 const switchTambahan = [

@@ -9,13 +9,16 @@ class MataPelajaran extends React.Component {
 
   state = {
     mataPelajaran: [],
-    dataSilabus: [],
+
+    isModalBuka: false,
 
     isModalSilabus: false,
-    isModalBuka: false,
+    jadwalPelajaran: [],
+    pelajaranId: '',
+    dataSilabus: [],
   }
 
-  componentDidMount() {
+  fetchPelajaran() {
     API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
@@ -23,38 +26,50 @@ class MataPelajaran extends React.Component {
         mataPelajaran: res.data.result
       })
     })
-    // let mataPelajaran = [
-    //   {
-    //     tanggal: "Senin, 10 Maret 2020",
-    //     data: [
-    //       {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-    //       {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-    //     ]
-    //   },
-    //   {
-    //     tanggal: "Selasa, 11 Maret 2020",
-    //     data: [
-    //       {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-    //       {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-    //     ]
-    //   },
-    // ];
+  }
 
-    let dataSilabus = [
-      {sesi: 1, topik: "Ajektif 1", tujuan: "Murid dapat memahami ajektif 1", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
-      {sesi: 2, topik: "Ajektif 2", tujuan: "Murid dapat memahami ajektif 2", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
-    ]
-    this.setState({ dataSilabus })
+  fetchJadwal() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+
+      this.setState({
+        jadwalPelajaran: res.data.result.jadwal,
+      })
+    })
+  }
+
+  fetchSilabus(pelajaranId) {
+    API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch overview`)
+
+      this.setState({ dataSilabus: res.data.result });
+    })
+  }
+
+  componentDidMount() {
+    this.fetchPelajaran();
+    this.fetchJadwal();
   }
 
   clearForm() {
     this.setState({
       isModalSilabus: false,
-      isModalBuka: false
+      isModalBuka: false,
+      pelajaranId: '',
+      dataSilabus: [],
     })
   }
 
+  selectPelajaran = e => {
+    e.preventDefault();
+    let pelajaranId = e.target.value;
+    this.setState({ isModalSilabus: true, pelajaranId })
+    this.fetchSilabus(pelajaranId);
+  }
+
   render() {
+
+    // console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -89,6 +104,10 @@ class MataPelajaran extends React.Component {
                       <>
                         <tr>
                           <td className="text-center" style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
+                          {
+                            item.data.length === 0 &&
+                            <td className="text-center" colSpan="6">No schedule</td>
+                          }
                         </tr>
                         {
                           item.data.map(row => (
@@ -142,51 +161,60 @@ class MataPelajaran extends React.Component {
         <Modal
           show={this.state.isModalSilabus}
           onHide={() => this.clearForm()}
-          dialogClassName="modal-xlg"
+          dialogClassName="modal-lg"
         >
           <Modal.Header closeButton>
             <form className="form-inline">
               <label>Mata Pelajaran</label>
-              <select className="form-control ml-2">
-                <option value="">Pilih mata pelajaran</option>
+              <select onChange={this.selectPelajaran} className="form-control ml-2">
+                <option value="" disabled selected>Pilih mata pelajaran</option>
+                {
+                  this.state.jadwalPelajaran.map((item,i) => (
+                    <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
+                  ))
+                }
               </select>
             </form>
           </Modal.Header>
           <Modal.Body>
-            <table className="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Sesi</th>
-                  <th>Topik</th>
-                  <th>Tujuan</th>
-                  <th>Penyampaian Materi</th>
-                  <th>Files</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {
-                  this.state.dataSilabus.map((item,i) => (
-                    <tr>
-                      <td>{item.sesi}</td>
-                      <td>{item.topik}</td>
-                      <td>{item.tujuan}</td>
-                      <td>{item.penyampaian_materi}</td>
-                      <td>{item.files}</td>
-                    </tr>
-                  ))
-                }
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Sesi</th>
+                <th>Topik</th>
+                <th>Tujuan</th>
+                <th>Deskripsi</th>
+                <th>Files</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                this.state.dataSilabus.map((item, i) => {
+                  if(item.jenis === 0) {
+                    return (
+                        <tr key={i}>
+                          <td>{item.sesi}</td>
+                          <td>{item.topik}</td>
+                          <td>{item.tujuan}</td>
+                          <td>{item.deskripsi}</td>
+                          <td style={{padding: '12px'}}>
+                            {
+                              item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                            }
+                          </td>
+                        </tr>
+                      )
+                  } else {
+                    return (
+                      <tr key={i}>
+                        <td>{item.sesi}</td>
+                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                      </tr>
+                    )
+                  }
+                })
+              }
               </tbody>
-
-              <thead>
-                <tr>
-                  <th>Sesi</th>
-                  <th>Topik</th>
-                  <th>Tujuan</th>
-                  <th>Penyampaian Materi</th>
-                  <th>Files</th>
-                </tr>
-              </thead>
             </table>
           </Modal.Body>
         </Modal>
