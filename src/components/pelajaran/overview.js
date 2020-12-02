@@ -48,13 +48,8 @@ class Overview extends React.Component {
   }
 
   fetchOverview() {
-<<<<<<< HEAD
-    API.get(`${API_SERVER}v2/pelajaran/one/${this.state.pelajaranId}`).then(res => {
-      if (res.data.error) console.log(`Error: fetch overview`)
-=======
     API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch overview`)
->>>>>>> 1d4f6dda04b009e08f02474bc8e52a4e60523edb
+      if (res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ overview: res.data.result.deskripsi });
     })
