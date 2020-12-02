@@ -33,7 +33,7 @@ class JadwalMengajar extends React.Component {
 
   selectPelajaran = e => {
     e.preventDefault()
-    this.setState({ namaPelajaran: e.target.value })
+    this.setState({ namaPelajaran: e.target.value, jumlahPertemuan: e.target.value.split('_')[1] })
   }
 
   selectRuangan = e => {
@@ -50,8 +50,8 @@ class JadwalMengajar extends React.Component {
 
       let form = {
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
-        pelajaran_id: this.state.namaPelajaran,
-        kelas_id: this.state.kelasJadwal,
+        pelajaran_id: this.state.namaPelajaran.split('_')[0],
+        kelas_id: this.state.kelasJadwal.split('_')[0],
         hari: this.state.hariJadwal,
         jam_mulai: this.state.jamMulai,
         jam_selesai: this.state.jamSelesai,
@@ -69,8 +69,8 @@ class JadwalMengajar extends React.Component {
       let form = {
         company_id: Storage.get('user').data.company_id,
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
-        pelajaran_id: this.state.namaPelajaran,
-        kelas_id: this.state.kelasJadwal,
+        pelajaran_id: this.state.namaPelajaran.split('_')[0],
+        kelas_id: this.state.kelasJadwal.split('_')[0],
         hari: this.state.hariJadwal,
         jam_mulai: this.state.jamMulai,
         jam_selesai: this.state.jamSelesai,
@@ -105,8 +105,8 @@ class JadwalMengajar extends React.Component {
 
       this.setState({
         idJadwal: id,
-        namaPelajaran: res.data.result.pelajaran_id,
-        kelasJadwal: res.data.result.kelas_id,
+        namaPelajaran: res.data.result.pelajaran_id + '_' + res.data.result.silabus,
+        kelasJadwal: res.data.result.kelas_id + '_' + res.data.result.kapasitas,
 
         ruanganJadwal: `${res.data.result.ruangan_id}_${res.data.result.pengajar_id}`,
         namaPengajar: res.data.result.pengajar_id,
@@ -221,8 +221,8 @@ class JadwalMengajar extends React.Component {
                     <th>Kelas</th>
                     <th>Pengajar</th>
                     <th>Ruangan</th>
+                    <th>Pertemuan</th>
                     <th>Kapasitas</th>
-                    <th>Jumlah Pertemuan</th>
                     <th>Status</th>
                     <th className="text-center"> Action </th>
                   </tr>
@@ -236,8 +236,8 @@ class JadwalMengajar extends React.Component {
                         <td>{item.kelas_nama}</td>
                         <td>{item.pengajar}</td>
                         <td>{item.nama_ruangan}</td>
-                        <td>{item.kapasitas}</td>
-                        <td>{item.jumlah_pertemuan}</td>
+                        <td>{item.jumlah_pertemuan}x</td>
+                        <td>{item.kapasitas} Murid</td>
                         <td><StatusJadwal item={item} /></td>
                         <td className="text-center">
                           <i style={{ cursor: 'pointer' }} onClick={this.selectJadwal} data-id={item.jadwal_id} className="fa fa-edit"></i>
@@ -271,18 +271,18 @@ class JadwalMengajar extends React.Component {
                     <option value="">Pilih</option>
                     {
                       this.state.dataPelajaran.map((item, i) => (
-                        <option value={item.pelajaran_id}>{item.nama_pelajaran}</option>
+                        <option value={item.pelajaran_id + '_' + item.silabus}>{item.nama_pelajaran}</option>
                       ))
                     }
                   </select>
                 </div>
                 <div className="col-sm-6">
                   <label>Class</label>
-                  <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value })} className="form-control">
+                  <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value, kapasitasMurid: e.target.value.split('_')[1] })} className="form-control">
                     <option value="">Pilih</option>
                     {
                       this.state.dataKelas.map((item, i) => (
-                        <option value={item.kelas_id}>{item.kelas_nama}</option>
+                        <option value={`${item.kelas_id}_${item.kapasitas}`}>{item.kelas_nama}</option>
                       ))
                     }
                   </select>

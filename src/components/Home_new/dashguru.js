@@ -151,7 +151,11 @@ class DashGuru extends Component {
                                     <td>{item.hari}</td>
                                     <td>{item.jam_mulai} - {item.jam_selesai}</td>
                                     <td>{item.kelas_nama}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td>
+                                      <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
+                                        <i className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }

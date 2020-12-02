@@ -191,22 +191,22 @@ class Chapter extends React.Component {
         <div className="col-sm-8">
           <div className="card">
             <div className="card-header header-kartu">
-              Form Chapter
+              Form
             </div>
             <div className="card-body">
               <form>
                 <div className="form-group row">
                   <div className="col-sm-2">
-                    <label>No Chapter</label>
+                    <label>No</label>
                     <input required value={this.state.number} name="number" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="number" className="form-control" placeholder="Enter" />
                   </div>
                   <div className="col-sm-10">
-                    <label>Nama Chapter</label>
+                    <label>Nama</label>
                     <input required value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" className="form-control" placeholder="Enter" />
                   </div>
                 </div>
                 <div className="form-group">
-                  <label>Isi Chapter</label>
+                  <label>Isi</label>
                   <Editor
                     apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                     initialValue={this.state.content}
@@ -285,7 +285,7 @@ class Chapter extends React.Component {
         <div className="col-sm-4">
           <div className="card">
             <div className="card-header header-kartu">
-              List Chapter
+              List
             </div>
             <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
