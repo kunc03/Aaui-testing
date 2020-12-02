@@ -99,8 +99,10 @@ import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
 import LearningGuru from './components/learning/guru';
+import LearningGuruInfo from './components/learning/guruinfo';
 import LearningMurid from './components/learning/murid';
 
+<<<<<<< HEAD
 // ======= IMPORT COMPONENT GURU ======== //
 import GuruPersonalia from './components/guruPersonalia/index';
 import GuruKurusus from './components/guruKursus/index';
@@ -111,6 +113,8 @@ import GuruKPI from './components/guruKPI/index';
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
 
+=======
+>>>>>>> staging
 import Ptc from './components/ptc/index';
 import KursusNew from './components/learning/kursus';
 
@@ -445,6 +449,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />
+        <Route path="/guru-info" component={LearningGuruInfo} />
 
 
 
@@ -493,6 +498,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate3' component={PrintCertificate3} />
 
 
+<<<<<<< HEAD
         {/* ROUTE GURU */}
         <Route path='/guru/personalia' component={GuruPersonalia} />
         <Route path='/guru/kursus' component={GuruKurusus} />
@@ -505,6 +511,8 @@ export class ClientSwitch extends React.Component {
         <Route path='/rapor' component={MuridLaporanRapor} />
         <Route path="/webinar-murid" component={Webinar} />
 
+=======
+>>>>>>> staging
         <Route path="/logout" component={Logout} />
       </Switch>
     );

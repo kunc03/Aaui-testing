@@ -63,11 +63,11 @@ class SidebarClass extends Component {
 
       guru: {
         submenu: [
-          { iconOn: 'people-on.svg', iconOff: 'people.svg', label: 'Personnel', link: '/guru/personalia' },
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Courses', link: '/guru/kursus' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Exam', link: '/guru/ujian' },
-          { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Class Information', link: '/guru/informasi-kelas' },
-          { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'KPI Teacher', link: '/guru/kpi' },
+          { iconOn: 'people-on.svg', iconOff: 'people.svg', label: 'Personnel', link: '/guru-info/personalia' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Courses', link: '/guru-info/kursus' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Exam', link: '/guru-info/ujian' },
+          { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Class Information', link: '/guru-info/informasi-kelas' },
+          { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'KPI Teacher', link: '/guru-info/kpi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },

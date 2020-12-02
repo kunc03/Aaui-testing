@@ -3,6 +3,13 @@ import { NavLink, Switch, Route, Link } from 'react-router-dom';
 import API, { API_SERVER, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+// ======= IMPORT COMPONENT GURU ======== //
+import GuruPersonalia from '../guruPersonalia/index';
+import GuruKurusus from '../guruKursus/index';
+import GuruUjian from '../guruUjian/index';
+import InformasiKelas from '../guruInformasiKelas/index';
+import GuruKPI from '../guruKPI/index';
+
 import Overview from '../pelajaran/overview';
 import Chapter from '../pelajaran/chapter';
 import Kuis from '../pelajaran/kuis';
@@ -22,6 +29,11 @@ const titleTabs = [
 ]
 
 const switchTambahan = [
+  {name: 'Personalia', link: '/personalia', component: GuruPersonalia},
+  {name: 'Guru Kursus', link: '/kursus', component: GuruKurusus},
+  {name: 'Ujian', link: '/ujian', component: GuruUjian},
+  {name: 'Informasi Kelas', link: '/informasi-kelas', component: InformasiKelas},
+  {name: 'Guru KPI', link: '/kpi', component: GuruKPI},
 ];
 
 export default class LearningGuru extends Component {
@@ -71,6 +83,7 @@ export default class LearningGuru extends Component {
                       ></img>
                     </Link>
                   </div>
+
                   <div className="row">
                     <div className="col-xl-12">
 

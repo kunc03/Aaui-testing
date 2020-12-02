@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Storage from '../../repository/storage';
 
 import UjianAktif from './ujianAktif';
+import { Link } from 'react-router-dom'
 import RincianExercise from "./rincianExercise";
 import Peforma from "./peforma";
 
@@ -25,7 +26,17 @@ class GuruUjian extends Component {
               <div className="pcoded-inner-content">
                 <div className="main-body">
                   <div className="page-wrapper">
-                 
+
+                    <div className="floating-back">
+                      <Link to={`/kursus-new`}>
+                      <img
+                        src={`newasset/back-button.svg`}
+                        alt=""
+                        width={90}
+                      ></img>
+                      </Link>
+                    </div>
+
                     <div className="row">
                       <div className="col-xl-12">
                         <UjianAktif />
