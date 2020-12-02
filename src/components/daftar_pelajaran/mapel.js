@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import API, {USER_ME, API_SERVER} from '../../repository/api';
+import Storage from '../../repository/storage';
 import { Modal } from 'react-bootstrap';
+import { toast } from 'react-toastify'
 
 class MataPelajaran extends React.Component {
 
@@ -14,27 +16,35 @@ class MataPelajaran extends React.Component {
   }
 
   componentDidMount() {
-    let mataPelajaran = [
-      {
-        tanggal: "Senin, 10 Maret 2020",
-        data: [
-          {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-          {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-        ]
-      },
-      {
-        tanggal: "Selasa, 11 Maret 2020",
-        data: [
-          {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-          {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
-        ]
-      },
-    ];
+    API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
+
+      this.setState({
+        mataPelajaran: res.data.result
+      })
+    })
+    // let mataPelajaran = [
+    //   {
+    //     tanggal: "Senin, 10 Maret 2020",
+    //     data: [
+    //       {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+    //       {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+    //     ]
+    //   },
+    //   {
+    //     tanggal: "Selasa, 11 Maret 2020",
+    //     data: [
+    //       {mapel: 'Pendidikan Agama', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+    //       {mapel: 'Pendidikan Pancasila', topik: 'Pahala itu apa ?', waktu: '08:00 - 09:00', sesi: 1, nama_pengajar: 'Ian Francis', pembelajaran: 'Tatap Muka Virtual'},
+    //     ]
+    //   },
+    // ];
+
     let dataSilabus = [
       {sesi: 1, topik: "Ajektif 1", tujuan: "Murid dapat memahami ajektif 1", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
       {sesi: 2, topik: "Ajektif 2", tujuan: "Murid dapat memahami ajektif 2", penyampaian_materi: "Video 20:00 | Materi Bacaan : 20:00 | Tugas 20:00", files: "https://google.com"},
     ]
-    this.setState({ mataPelajaran, dataSilabus })
+    this.setState({ dataSilabus })
   }
 
   clearForm() {
@@ -63,13 +73,12 @@ class MataPelajaran extends React.Component {
               <table className="table table-bordered">
                 <thead>
                   <tr>
-                    <th>Tanggal</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Topik</th>
-                    <th>Waktu</th>
-                    <th>Sesi</th>
-                    <th>Nama Pengajar</th>
-                    <th>Pembelajaran</th>
+                    <th className="text-center">Tanggal</th>
+                    <th className="text-center">Mata Pelajaran</th>
+                    <th className="text-center">Waktu</th>
+                    <th className="text-center">Sesi</th>
+                    <th className="text-center">Nama Pengajar</th>
+                    <th className="text-center">Ruangan</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -79,18 +88,17 @@ class MataPelajaran extends React.Component {
                     this.state.mataPelajaran.map((item,i) => (
                       <>
                         <tr>
-                          <td style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
+                          <td className="text-center" style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
                         </tr>
                         {
                           item.data.map(row => (
                             <tr>
-                              <td style={{verticalAlign: 'middle'}}>{row.mapel}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.topik}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.waktu}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.sesi}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.nama_pengajar}</td>
-                              <td style={{verticalAlign: 'middle'}}>{row.pembelajaran}</td>
-                              <td style={{verticalAlign: 'middle'}}>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.mapel}</td>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.jam_mulai}-{row.jam_selesai}</td>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.sesi}</td>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_guru}</td>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_ruangan}</td>
+                              <td className="text-center" style={{verticalAlign: 'middle'}}>
                                 <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
                                   <i className="fa fa-paper-plane"></i> Buka
                                 </button>
@@ -105,13 +113,12 @@ class MataPelajaran extends React.Component {
 
                 <tfoot>
                   <tr>
-                    <th>Tanggal</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Topik</th>
-                    <th>Waktu</th>
-                    <th>Sesi</th>
-                    <th>Nama Pengajar</th>
-                    <th>Pembelajaran</th>
+                    <th className="text-center">Tanggal</th>
+                    <th className="text-center">Mata Pelajaran</th>
+                    <th className="text-center">Waktu</th>
+                    <th className="text-center">Sesi</th>
+                    <th className="text-center">Nama Pengajar</th>
+                    <th className="text-center">Ruangan</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </tfoot>

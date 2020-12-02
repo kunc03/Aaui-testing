@@ -115,7 +115,7 @@ class DashMurid extends Component {
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
                                     <td>{item.nama_pelajaran}</td>
                                     <td>{item.hari}</td>
-                                    <td>{item.jam_mulai}</td>
+                                    <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                     <td>{item.sesi}</td>
                                     <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
                                   </tr>
