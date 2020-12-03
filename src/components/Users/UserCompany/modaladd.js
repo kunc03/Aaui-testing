@@ -23,8 +23,8 @@ class ModalAdd extends Component {
       status: "active",
       logo: "",
       notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
-      unlimited:false,
-      validity:new Date()
+      unlimited: false,
+      validity: new Date()
     };
   }
 
@@ -35,14 +35,14 @@ class ModalAdd extends Component {
   };
 
   toggleSwitch(checked) {
-    this.setState({ unlimited:!this.state.unlimited });
+    this.setState({ unlimited: !this.state.unlimited });
   }
 
   onClickSimpan = e => {
     e.preventDefault();
     const { triggerUpdate } = this.props;
 
-    if(this.state.nama && this.state.logo && this.state.tipe) {
+    if (this.state.nama && this.state.logo && this.state.tipe) {
       let unlimited = this.state.unlimited == false ? '1' : '0'
       let formData = new FormData();
       formData.append('company_name', this.state.nama);
@@ -51,14 +51,14 @@ class ModalAdd extends Component {
       formData.append('unlimited', unlimited);
       formData.append('logo', this.state.logo);
       formData.append('validity', this.state.validity.toISOString().split('T')[0]);
-  
+
       let linkURL = `${API_SERVER}v1/company`;
       API.post(linkURL, formData).then(res => {
         triggerUpdate(res.data.result);
-        this.setState({ nama: '', status: '', logo: ''});
+        this.setState({ nama: '', status: '', logo: '' });
         window.$('#modalAdd').modal('hide');
-        console.log('resss',res.data.result)
-        console.log('reqqq',this.state.validate)
+        console.log('resss', res.data.result)
+        console.log('reqqq', this.state.validate)
       }).catch((err) => {
         console.log(err);
       })
@@ -70,7 +70,7 @@ class ModalAdd extends Component {
   }
 
   onChangeTipe = e => {
-    this.setState({ tipe: e.target.value }); 
+    this.setState({ tipe: e.target.value });
   }
 
   onChangeStatus = e => {
@@ -83,7 +83,7 @@ class ModalAdd extends Component {
       this.setState({ logo: target.files[0] });
     } else {
       target.value = null;
-      this.setState({ notif: "File tidak sesuai dengan format, silahkan cek kembali." });
+      this.setState({ notif: "The file does not match the format, please check again." });
     }
   }
 
@@ -114,16 +114,16 @@ class ModalAdd extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Tambah Company
+                Add Company
               </h5>
             </div>
             <div className="modal-body">
               <Form>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Tipe Company
+                    Type Company
                   </label>
-                  <select onChange={this.onChangeTipe} className="form-control" style={{textTransform: "capitalize"}}>
+                  <select onChange={this.onChangeTipe} className="form-control" style={{ textTransform: "capitalize" }}>
                     <option value="">Pilih tipe company</option>
                     <option value="perusahaan">Perusahaan</option>
                     <option value="pendidikan">Pendidikan</option>
@@ -157,8 +157,8 @@ class ModalAdd extends Component {
                   <label className="label-input" htmlFor>
                     Batasi Waktu
                   </label>
-                  <div style={{width:'100%'}}>
-                  <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                  <div style={{ width: '100%' }}>
+                    <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
                   </div>
 
                 </div>
@@ -168,15 +168,15 @@ class ModalAdd extends Component {
                     <label className="label-input" htmlFor>
                       Valid Until
                     </label>
-                    <div style={{width:'100%'}}>
-                          <DatePicker
-                            selected={this.state.validity}
-                            onChange={this.handleChangeValidity}
-                            showTimeSelect
-                            dateFormat="yyyy-MM-dd"
-                          />
+                    <div style={{ width: '100%' }}>
+                      <DatePicker
+                        selected={this.state.validity}
+                        onChange={this.handleChangeValidity}
+                        showTimeSelect
+                        dateFormat="yyyy-MM-dd"
+                      />
                     </div>
-  
+
                   </div>
                 }
                 {/* <div className="form-group">

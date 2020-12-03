@@ -12,9 +12,9 @@ class Laporan extends React.Component {
 
   fetchNilai() {
     let data = [
-      {id: 1, mata_pelajaran: "Matematika", nilai_rata: 98.2, nilai_tugas: 88, nilai_uts: 80, nilai_uas: 90, persensi: '95%'},
-      {id: 2, mata_pelajaran: "Fisika", nilai_rata: 93.2, nilai_tugas: 89, nilai_uts: 90, nilai_uas: 80, persensi: '98%'},
-      {id: 2, mata_pelajaran: "Bahasa Indonesia", nilai_rata: 91.2, nilai_tugas: 90.5, nilai_uts: 95, nilai_uas: 80, persensi: '96%'},
+      { id: 1, mata_pelajaran: "Matematika", nilai_rata: 98.2, nilai_tugas: 88, nilai_uts: 80, nilai_uas: 90, persensi: '95%' },
+      { id: 2, mata_pelajaran: "Fisika", nilai_rata: 93.2, nilai_tugas: 89, nilai_uts: 90, nilai_uas: 80, persensi: '98%' },
+      { id: 2, mata_pelajaran: "Bahasa Indonesia", nilai_rata: 91.2, nilai_tugas: 90.5, nilai_uts: 95, nilai_uas: 80, persensi: '96%' },
     ];
     this.setState({ nilaiMurid: data })
   }
@@ -31,28 +31,28 @@ class Laporan extends React.Component {
               <form>
                 <div className="form-group row">
                   <div className="col-sm-2">
-                    <label>Tahun Pelajaran</label>
+                    <label>School year</label>
                     <select className="form-control" required>
-                      <option value="" selected disabled>Pilih</option>
+                      <option value="" selected disabled>Select</option>
                     </select>
                   </div>
                   <div className="col-sm-2">
                     <label>Kelas</label>
                     <select className="form-control" required>
-                      <option value="" selected disabled>Pilih</option>
+                      <option value="" selected disabled>Select</option>
                     </select>
                   </div>
                   <div className="col-sm-3">
                     <label>Nama Murid</label>
                     <select className="form-control" required>
-                      <option value="" selected disabled>Pilih</option>
+                      <option value="" selected disabled>Select</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="form-group row">
                   <div className="col-sm-12">
-                    <label>Penerima</label><br/>
+                    <label>Penerima</label><br />
                     <div className="form-check-inline">
                       <label className="form-check-label">
                         <input type="checkbox" className="form-check-input" value="" /> Option 1
@@ -60,7 +60,7 @@ class Laporan extends React.Component {
                     </div>
                     <div className="form-check-inline">
                       <label className="form-check-label">
-                        <input type="checkbox" className="form-check-input" value=""/> Option 2
+                        <input type="checkbox" className="form-check-input" value="" /> Option 2
                       </label>
                     </div>
                   </div>
@@ -81,7 +81,7 @@ class Laporan extends React.Component {
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">NAMA</label>
+                  <label className="col-sm-2 col-form-label text-right"> Name </label>
                   <div className="col-sm-4">
                     <input type="text" value={'Ahmad Ardiansyah'} className="form-control" />
                   </div>
@@ -100,7 +100,7 @@ class Laporan extends React.Component {
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">TAHUN PELAJARAN</label>
+                  <label className="col-sm-2 col-form-label text-right">SCHOOL YEAR</label>
                   <div className="col-sm-4">
                     <input type="text" value={'2019/2020'} className="form-control" />
                   </div>
@@ -110,11 +110,11 @@ class Laporan extends React.Component {
               <table className="table table-striped mt-4 table-bordered">
                 <thead>
                   <tr className="text-center">
-                    <td style={{verticalAlign: 'middle'}} rowSpan="2">NO</td>
-                    <td style={{verticalAlign: 'middle'}}  rowSpan="2">MATA PELAJARAN</td>
-                    <td style={{verticalAlign: 'middle'}}  rowSpan="2">NILAI RATA-RATA</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> Subject </td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI RATA-RATA</td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
-                    <td style={{verticalAlign: 'middle'}}  rowSpan="2">PERSENSI</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
                   </tr>
                   <tr className="text-center">
                     <td>TUGAS</td>
@@ -125,9 +125,9 @@ class Laporan extends React.Component {
 
                 <tbody>
                   {
-                    this.state.nilaiMurid.map((item,i) => (
+                    this.state.nilaiMurid.map((item, i) => (
                       <tr className="text-center">
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.mata_pelajaran}</td>
                         <td>{item.nilai_rata}</td>
                         <td>{item.nilai_tugas}</td>

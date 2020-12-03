@@ -24,13 +24,13 @@ class ModalAdd extends Component {
 
   onClickSimpan = e => {
     e.preventDefault();
-    const { triggerUpdate } = this.props; 
-   
+    const { triggerUpdate } = this.props;
+
     let data = {
       chapter_title: this.state.chapter_title,
       chapter_body: this.state.chapter_body,
       chapter_number: this.state.chapter_number,
-      chapter_video:this.state.chapter_video
+      chapter_video: this.state.chapter_video
     }
     let datas = new FormData();
     datas.append('chapter_title', data.chapter_title);
@@ -54,7 +54,7 @@ class ModalAdd extends Component {
   onChangeTitle = e => {
     this.setState({ chapter_title: e.target.value });
   }
-  
+
   onChangeBody = e => {
     this.setState({ chapter_body: e.target.value });
   }
@@ -68,7 +68,7 @@ class ModalAdd extends Component {
   }
 
   render() {
-    const statusCompany = ['active','nonactive'];
+    const statusCompany = ['active', 'nonactive'];
     return (
       <div
         id="modalAdd"
@@ -94,7 +94,7 @@ class ModalAdd extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Tambah Kursus Materi
+                Add Course Material
               </h5>
             </div>
             <div className="modal-body">
@@ -113,7 +113,7 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                  Chapter Body
+                    Chapter Body
                   </label>
                   <input
                     type="text"
@@ -125,7 +125,7 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                   Chapter Number
+                    Chapter Number
                   </label>
                   <input
                     type="number"
@@ -159,7 +159,7 @@ class ModalAdd extends Component {
               >
                 Simpan
               </button>
-            
+
               <button
                 type="button"
                 className="btn btn-block bg-c-white text-c-grey3 f-18 f-w-bold"

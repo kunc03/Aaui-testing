@@ -11,34 +11,44 @@ import InformasiKelas from '../guruInformasiKelas/index';
 import GuruKPI from '../guruKPI/index';
 
 import Overview from '../pelajaran/overview';
+import Silabus from '../pelajaran/silabus';
 import Chapter from '../pelajaran/chapter';
 import Kuis from '../pelajaran/kuis';
-// import Tugas from '../pelajaran/tugas';
-// import Ujian from '../pelajaran/ujian';
+import KuisDetail from '../pelajaran/kuisdetail';
+import Tugas from '../pelajaran/tugas';
+import Murid from '../pelajaran/murid';
+import Preview from '../pelajaran/preview';
 
 const KuisComponent = props => (<Kuis {...props} tipe="kuis" />);
-const TugasComponent = props => (<Kuis {...props} tipe="tugas" />);
 const UjianComponent = props => (<Kuis {...props} tipe="ujian" />);
 
+const KuisDetailComponent = props => (<KuisDetail {...props} tipe="kuis" />);
+const UjianDetailComponent = props => (<KuisDetail {...props} tipe="ujian" />);
+
 const titleTabs = [
-  {name: 'Overview', link: '/pelajaran', component: Overview},
-  {name: 'Chapter', link: '/chapter', component: Chapter},
-  {name: 'Kuis', link: '/kuis', component: KuisComponent},
-  {name: 'Tugas', link: '/tugas', component: TugasComponent},
-  {name: 'Ujian', link: '/ujian', component: UjianComponent},
+  { name: 'Overview', link: '/pelajaran', component: Overview },
+  { name: 'Silabus', link: '/silabus', component: Silabus },
+  { name: 'Murid', link: '/murid', component: Murid },
+  { name: 'Sesi', link: '/chapter', component: Chapter },
+  { name: 'Kuis', link: '/kuis', component: KuisComponent },
+  { name: 'Tugas', link: '/tugas', component: Tugas },
+  { name: 'Ujian', link: '/ujian', component: UjianComponent },
+  { name: 'Preview', link: '/preview', component: Preview },
 ]
 
 const switchTambahan = [
-  {name: 'Personalia', link: '/personalia', component: GuruPersonalia},
-  {name: 'Guru Kursus', link: '/kursus', component: GuruKurusus},
-  {name: 'Ujian', link: '/ujian', component: GuruUjian},
-  {name: 'Informasi Kelas', link: '/informasi-kelas', component: InformasiKelas},
-  {name: 'Guru KPI', link: '/kpi', component: GuruKPI},
+  { name: 'Detail Kuis', link: '/detail-kuis/:id/:examId', component: KuisDetailComponent },
+  { name: 'Detail Ujian', link: '/detail-ujian/:id/:examId', component: UjianDetailComponent },
+  { name: 'Personalia', link: '/personalia', component: GuruPersonalia },
+  { name: 'Guru Kursus', link: '/kursus', component: GuruKurusus },
+  { name: 'Ujian', link: '/ujian', component: GuruUjian },
+  { name: 'Informasi Kelas', link: '/informasi-kelas', component: InformasiKelas },
+  { name: 'Guru KPI', link: '/kpi', component: GuruKPI },
 ];
 
 export default class LearningGuru extends Component {
 
-	state = {
+  state = {
     pelajaranId: this.props.location.pathname,
     infoPelajaran: {
       id: 0,
@@ -51,36 +61,35 @@ export default class LearningGuru extends Component {
   }
 
   fetchPelajaran() {
-    let getPelajaranId = this.state.pelajaranId.split('/')[this.state.pelajaranId.split('/').length-1];
+    let pecah = this.state.pelajaranId.split('/');
+    let getPelajaranId = pecah[3];
+    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${getPelajaranId}`).then(res => {
 
-    API.get(`${API_SERVER}v2/pelajaran/one/${getPelajaranId}`).then(res => {
-
-      console.log('STATE: ', res.data.result);
-
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ infoPelajaran: res.data.result })
     })
   }
 
-	render() {
-    let getPelajaranId = this.state.pelajaranId.split('/')[this.state.pelajaranId.split('/').length-1];
-
+  render() {
+    let pecah = this.state.pelajaranId.split('/');
+    let getPelajaranId = pecah[3];
+    console.log('guru: ', this.state)
     return (
-			<div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
+      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{padding: '40px 40px 0 40px'}}>
+          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
 
                   <div className="floating-back">
                     <Link to={`/kursus-new`}>
-                    <img
-                      src={`newasset/back-button.svg`}
-                      alt=""
-                      width={90}
-                    ></img>
+                      <img
+                        src={`newasset/back-button.svg`}
+                        alt=""
+                        width={90}
+                      ></img>
                     </Link>
                   </div>
 
@@ -88,21 +97,21 @@ export default class LearningGuru extends Component {
                     <div className="col-xl-12">
 
 
-                      <ul style={{paddingBottom: '0px'}} className="nav nav-pills">
+                      <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
                         <h3 className="mr-4">{this.state.infoPelajaran.nama_pelajaran}</h3>
-                      {
-                        titleTabs.map((item,i) => (
-                          <li key={i} className={`nav-item`}>
-                            <NavLink style={{borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px'}}
-                              activeClassName='active'
-                              className={`nav-link`}
-                              to={`/guru${item.link}/${getPelajaranId}`}>
-                                <img src="/newasset/webinar.svg" className="mr-2"/>
+                        {
+                          titleTabs.map((item, i) => (
+                            <li key={i} className={`nav-item`}>
+                              <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                activeClassName='active'
+                                className={`nav-link`}
+                                to={`/guru${item.link}/${getPelajaranId}`}>
+                                <img src="/newasset/webinar.svg" className="mr-2" />
                                 {item.name}
-                            </NavLink>
-                          </li>
-                        ))
-                      }
+                              </NavLink>
+                            </li>
+                          ))
+                        }
                       </ul>
 
                     </div>
@@ -120,7 +129,7 @@ export default class LearningGuru extends Component {
                         <Route path={`/guru${item.link}`} component={item.component} />
                       ))
                     }
-					        </Switch>
+                  </Switch>
 
                 </div>
               </div>
@@ -128,7 +137,7 @@ export default class LearningGuru extends Component {
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 
 }

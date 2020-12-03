@@ -26,7 +26,7 @@ class RuanganMengajar extends React.Component {
   saveRuangan = e => {
     e.preventDefault();
 
-    if(this.state.idRuangan) {
+    if (this.state.idRuangan) {
 
       let form = {
         nama_ruangan: this.state.namaRuangan,
@@ -35,7 +35,7 @@ class RuanganMengajar extends React.Component {
       };
 
       API.put(`${API_SERVER}v2/ruangan-mengajar/${this.state.idRuangan}`, form).then(res => {
-        if(res.data.error) toast.warning("Error create ruangan")
+        if (res.data.error) toast.warning("Error create ruangan")
 
         toast.success("Ruangan berhasil diupdate")
         this.fetchRuangan();
@@ -52,7 +52,7 @@ class RuanganMengajar extends React.Component {
       };
 
       API.post(`${API_SERVER}v2/ruangan-mengajar`, form).then(res => {
-        if(res.data.error) toast.warning("Error create ruangan")
+        if (res.data.error) toast.warning("Error create ruangan")
 
         toast.success("Ruangan berhasil disimpan")
         this.fetchRuangan();
@@ -66,7 +66,7 @@ class RuanganMengajar extends React.Component {
   deleteRuangan = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/ruangan-mengajar/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning("Error hapus ruangan");
+      if (res.data.error) toast.warning("Error hapus ruangan");
       this.fetchRuangan();
     })
   }
@@ -75,7 +75,7 @@ class RuanganMengajar extends React.Component {
     e.preventDefault()
     let id = e.target.getAttribute('data-id')
     API.get(`${API_SERVER}v2/ruangan-mengajar/${id}`).then(res => {
-      if(res.data.error) toast.warning("Error get ruangan")
+      if (res.data.error) toast.warning("Error get ruangan")
 
       this.setState({
         idRuangan: id,
@@ -107,7 +107,7 @@ class RuanganMengajar extends React.Component {
 
   fetchRuangan() {
     API.get(`${API_SERVER}v2/ruangan-mengajar/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch ruangan")
+      if (res.data.error) toast.warning("Error fetch ruangan")
 
       this.setState({ dataRuangan: res.data.result })
     })
@@ -115,7 +115,7 @@ class RuanganMengajar extends React.Component {
 
   fetchPengajar() {
     API.get(`${API_SERVER}v2/guru/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch pengajar");
+      if (res.data.error) toast.warning("Error fetch pengajar");
 
       this.setState({ dataPengajar: res.data.result })
     })
@@ -123,7 +123,7 @@ class RuanganMengajar extends React.Component {
 
   fetchFolder() {
     API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.result.length) {
+      if (res.data.result.length) {
         let role = {
           aSekretaris: 1,
           aModerator: 1,
@@ -134,7 +134,7 @@ class RuanganMengajar extends React.Component {
         API.get(`${API_SERVER}v1/folder/${Storage.get('user').data.company_id}/${res.data.result[0].id}`, role).then(res => {
           if (res.data.error) toast.warning("Error fetch folder")
 
-          this.setState({dataFolder: res.data.result})
+          this.setState({ dataFolder: res.data.result })
         })
       } else {
         toast.warning("Buat project terlebih dahulu")
@@ -149,10 +149,10 @@ class RuanganMengajar extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              Ruangan Mengajar
-              <button onClick={() => this.setState({ isModalTambah: true})} className="btn btn-v2 btn-primary float-right">
+              Teaching Room
+              <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
                 <i className="fa fa-plus"></i>
-                Tambah Ruangan Mengajar
+                Add Teaching Room
               </button>
               <Link to={`/learning/folder`} className="btn btn-v2 btn-primary float-right mr-3">
                 <i className="fa fa-cogs"></i>
@@ -164,23 +164,23 @@ class RuanganMengajar extends React.Component {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama Ruangan</th>
+                    <th>Room Name</th>
                     <th>Folder</th>
                     <th>Pengajar</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center"> Action </th>
                   </tr>
                 </thead>
                 <tbody>
                   {
                     this.state.dataRuangan.map((item, i) => (
                       <tr>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama_ruangan}</td>
                         <td>{item.folder}</td>
                         <td>{item.pengajar}</td>
                         <td className="text-center">
-                          <i style={{cursor: 'pointer'}} onClick={this.selectRuangan} data-id={item.id} className="fa fa-edit"></i>
-                          <i style={{cursor: 'pointer'}} onClick={this.deleteRuangan} data-id={item.id} className="fa fa-trash ml-2"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.selectRuangan} data-id={item.id} className="fa fa-edit"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.deleteRuangan} data-id={item.id} className="fa fa-trash ml-2"></i>
                         </td>
                       </tr>
                     ))
@@ -196,15 +196,15 @@ class RuanganMengajar extends React.Component {
           onHide={() => this.clearForm()}
         >
           <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-              Tambah Ruangan Mengajar
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Add Teaching Room
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <form>
               <div className="form-group">
-                <label>Nama Ruangan</label>
-                <input value={this.state.namaRuangan} onChange={e => this.setState({ namaRuangan: e.target.value })} required type="text" className="form-control" placeholder="Enter nama ruangan" />
+                <label>Room Name</label>
+                <input value={this.state.namaRuangan} onChange={e => this.setState({ namaRuangan: e.target.value })} required type="text" className="form-control" placeholder="Enter Room Name" />
               </div>
               <div className="form-group row">
                 <div className="col-sm-6">
@@ -221,7 +221,7 @@ class RuanganMengajar extends React.Component {
                 <div className="col-sm-6">
                   <label>Folder</label>
                   <select value={this.state.folder} onChange={e => this.setState({ folder: e.target.value })} required className="form-control">
-                    <option value="">Pilih folder</option>
+                    <option value="">Select Folder</option>
                     {
                       this.state.dataFolder.map(item => (
                         <option value={item.id}>{item.name}</option>
@@ -237,7 +237,7 @@ class RuanganMengajar extends React.Component {
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={() => this.clearForm()}
             >
-              Batal
+              Cancel
             </button>
             <button
               className="btn btn-icademy-primary btn-icademy-blue"

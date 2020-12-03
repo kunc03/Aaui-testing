@@ -5,121 +5,122 @@ import API, { API_SERVER } from '../../../repository/api';
 
 export default class QuestionExamCreate extends Component {
 
-	state = {
-		companyId: '',
-		courseId: this.props.match.params.exam_id.split('.')[1],
-		examId: this.props.match.params.exam_id.split('.')[0],
+  state = {
+    companyId: '',
+    courseId: this.props.match.params.exam_id.split('.')[1],
+    examId: this.props.match.params.exam_id.split('.')[0],
 
-		isQuestionReady: false,
+    isQuestionReady: false,
 
-		questionId: '',
-		number: '',
-		tag: '',
-		pertanyaan: '',
-		correctOption: '',
+    questionId: '',
+    number: '',
+    tag: '',
+    pertanyaan: '',
+    correctOption: '',
 
-		isModalPilihan: false,
-		optionId: '',
-		pilihan: '',
-		jawaban: '',
+    isModalPilihan: false,
+    optionId: '',
+    pilihan: '',
+    jawaban: '',
 
-		pilihans: [],
+    pilihans: [],
 
     isSimpanPertanyaan: false,
     isiSimpanPertanyan: ''
-	}
+  }
 
-	handleSimpanPertanyaan = e => {
+  handleSimpanPertanyaan = e => {
     this.setState({ isSimpanPertanyaan: false, isiSimpanPertanyan: '' })
-	}
+  }
 
-	onSubmitFormPilihan = e => {
-		e.preventDefault();
-		let form = {
-			question_id: this.state.questionId,
-			exam_option: this.state.pilihan,
-			description: this.state.jawaban
-		}
-		API.post(`${API_SERVER}v1/option`, form).then(res => {
-			if(res.status === 200){
-				this.setState({ isModalPilihan: false, pilihan: '', jawaban: '' })
-				this.fetchDataPilihan();
-			}
-		})
-	}
+  onSubmitFormPilihan = e => {
+    e.preventDefault();
+    let form = {
+      question_id: this.state.questionId,
+      exam_option: this.state.pilihan,
+      description: this.state.jawaban
+    }
+    API.post(`${API_SERVER}v1/option`, form).then(res => {
+      if (res.status === 200) {
+        this.setState({ isModalPilihan: false, pilihan: '', jawaban: '' })
+        this.fetchDataPilihan();
+      }
+    })
+  }
 
-	fetchDataPilihan() {
-		API.get(`${API_SERVER}v1/option/question/${this.state.questionId}`).then(res => {
-			if(res.status === 200){
-				this.setState({ pilihans: res.data.result })
-			}
-		})
-	}
+  fetchDataPilihan() {
+    API.get(`${API_SERVER}v1/option/question/${this.state.questionId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ pilihans: res.data.result })
+      }
+    })
+  }
 
-	onClickAddQuestion = e => {
-		e.preventDefault();
-		this.setState({ isModalPilihan: true })
-	}
+  onClickAddQuestion = e => {
+    e.preventDefault();
+    this.setState({ isModalPilihan: true })
+  }
 
-	handleClose = e => {
-		this.setState({ isModalPilihan: false })
-	}
+  handleClose = e => {
+    this.setState({ isModalPilihan: false })
+  }
 
-	onSubmitFormAdd = e => {
-		e.preventDefault();
-		let form = {
-			exam_id: this.state.examId,
-			tag: this.state.tag,
-			number: this.state.number,
-			question: this.state.pertanyaan,
-			correct_option: this.state.correctOption
-		}
-		if(this.state.questionId !== "") {
-			API.put(`${API_SERVER}v1/question/${this.state.questionId}`, form).then(res => {
-				if(res.status === 200) {
-					this.setState({ 
-						number: res.data.result.number,
-						tag: res.data.result.tag,
-						pertanyaan: res.data.result.question,
+  onSubmitFormAdd = e => {
+    e.preventDefault();
+    let form = {
+      exam_id: this.state.examId,
+      tag: this.state.tag,
+      number: this.state.number,
+      question: this.state.pertanyaan,
+      correct_option: this.state.correctOption
+    }
+    if (this.state.questionId !== "") {
+      API.put(`${API_SERVER}v1/question/${this.state.questionId}`, form).then(res => {
+        if (res.status === 200) {
+          this.setState({
+            number: res.data.result.number,
+            tag: res.data.result.tag,
+            pertanyaan: res.data.result.question,
             correctOption: res.data.result.correct_option,
             isSimpanPertanyaan: true,
             isiSimpanPertanyan: 'Pertanyaan berhasil diedit.'
-					})
-				}
-			})
-		} else {
-			API.post(`${API_SERVER}v1/question`, form).then(res => {
-				if(res.status === 200) {
+          })
+        }
+      })
+    } else {
+      API.post(`${API_SERVER}v1/question`, form).then(res => {
+        if (res.status === 200) {
           this.setState({
-            isQuestionReady: true, questionId: res.data.result.question_id, 
+            isQuestionReady: true, questionId: res.data.result.question_id,
             isSimpanPertanyaan: true,
-            isiSimpanPertanyan: 'Pertanyaan berhasil disimpan.' })
-				}
-			})
-		}
-	}
-
-	onChangeInput = e => {
-		const name = e.target.name;
-		const value = e.target.value;
-		this.setState({ [name]: value });
-	}
-
-	handleDeleteOption = e => {
-		e.preventDefault();
-		const optionId = e.target.getAttribute('data-id');
-		API.delete(`${API_SERVER}v1/option/${optionId}`).then(res => {
-			if(res.status === 200){
-				this.fetchDataPilihan();
-			}
-		})
-	}
-
-	backToQuiz = e => {
-		e.preventDefault();
-		this.props.history.push(`/question-exam/${this.state.examId}`)
+            isiSimpanPertanyan: 'Pertanyaan berhasil disimpan.'
+          })
+        }
+      })
+    }
   }
-  
+
+  onChangeInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value });
+  }
+
+  handleDeleteOption = e => {
+    e.preventDefault();
+    const optionId = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v1/option/${optionId}`).then(res => {
+      if (res.status === 200) {
+        this.fetchDataPilihan();
+      }
+    })
+  }
+
+  backToQuiz = e => {
+    e.preventDefault();
+    this.props.history.push(`/question-exam/${this.state.examId}`)
+  }
+
   pilihJawabanBenar = e => {
     const pilihan = e.target.getAttribute('data-option');
     let form = {
@@ -143,12 +144,12 @@ export default class QuestionExamCreate extends Component {
     );
   }
 
-	componentDidMount() {
+  componentDidMount() {
 
-	}
+  }
 
-	render() {
-		return (
+  render() {
+    return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -214,7 +215,7 @@ export default class QuestionExamCreate extends Component {
                             </Form.Group>
 
                             <Button variant="ideku" type="submit">
-                              Simpan
+                              Save
                             </Button>
 
                             <Button
@@ -240,7 +241,7 @@ export default class QuestionExamCreate extends Component {
                             type="button"
                             disabled={this.state.isQuestionReady ? "" : "true"}
                           >
-                            Tambah Pilihan
+                            Add Options
                           </Button>
                           <Form.Text>Jangan lupa untuk memilih jawaban benar</Form.Text>
 
@@ -419,6 +420,6 @@ export default class QuestionExamCreate extends Component {
         </div>
       </div>
     );
-	}
+  }
 
 }

@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 export default class WebinarKuesioner extends Component {
 
-	state = {
+  state = {
     kuesioner: [
-      {id: 1, nama: 'Ahmad', tanggal: '03 Sep 2020', jam: '09:05', via: 'Login'},
-      {id: 2, nama: 'Ardi', tanggal: '03 Sep 2020', jam: '09:10', via: 'Voucher'},
-      {id: 3, nama: 'Ansyah', tanggal: '03 Sep 2020', jam: '09:04', via: 'Login'},
-      {id: 4, nama: 'Arra', tanggal: '03 Sep 2020', jam: '09:03', via: 'Voucher'},
+      { id: 1, nama: 'Ahmad', tanggal: '03 Sep 2020', jam: '09:05', via: 'Login' },
+      { id: 2, nama: 'Ardi', tanggal: '03 Sep 2020', jam: '09:10', via: 'Voucher' },
+      { id: 3, nama: 'Ansyah', tanggal: '03 Sep 2020', jam: '09:04', via: 'Login' },
+      { id: 4, nama: 'Arra', tanggal: '03 Sep 2020', jam: '09:03', via: 'Voucher' },
     ],
 
     idDetail: '',
@@ -23,22 +23,22 @@ export default class WebinarKuesioner extends Component {
     });
   }
 
-	render() {
+  render() {
 
-    const TabelKuesioner = ({items}) => (
+    const TabelKuesioner = ({ items }) => (
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Nama</th>
-            <th>Tanggal</th>
+            <th> Name </th>
+            <th> Date </th>
             <th>Jam Submit</th>
             <th>Via</th>
-            <th>Aksi</th>
+            <th> Action </th>
           </tr>
         </thead>
         <tbody>
           {
-            items.map((item,i) => (
+            items.map((item, i) => (
               <tr>
                 <td>{item.nama}</td>
                 <td>{item.tanggal}</td>
@@ -54,7 +54,7 @@ export default class WebinarKuesioner extends Component {
       </table>
     );
 
-    const ModalDetail = ({id}) => (
+    const ModalDetail = ({ id }) => (
       <Modal
         show={this.state.isModalDetail}
         onHide={this.handleModal}
@@ -64,37 +64,37 @@ export default class WebinarKuesioner extends Component {
           <h5>
             Ahmad Ardiansyah
           </h5>
-          <p>Hasil dari kuesioner yang telah di input oleh peserta.</p>
+          <p>The results of the questionnaire that had been input by the participants.</p>
 
           <div style={{ marginTop: "20px" }} className="form-group">
-            
+
           </div>
-          
+
           <button
             type="button"
             className="btn btn-v2 f-w-bold"
             onClick={this.handleModal}
           >
-            Tutup
+            Close
           </button>
         </Modal.Body>
       </Modal>
     );
 
-		return (
-			<div className="row">                     
+    return (
+      <div className="row">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to={`/webinar/riwayat/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
-                  		border: '1px solid #e9e9e9',
-                  		borderRadius: '50px',
-                  	}}>
-                  		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
-                		</Link>
+                    <Link to={`/webinar/riwayat/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
+                      border: '1px solid #e9e9e9',
+                      borderRadius: '50px',
+                    }}>
+                      <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
+                    </Link>
                     Hasil Kuesioner Peserta
                   </h3>
                 </div>
@@ -104,15 +104,15 @@ export default class WebinarKuesioner extends Component {
                   </p>
                 </div>
               </div>
-              <div style={{marginTop: '10px'}}>
+              <div style={{ marginTop: '10px' }}>
                 <div className="row">
                   <div className="col-sm-12">
-                    
+
                     <TabelKuesioner items={this.state.kuesioner} />
 
                   </div>
                 </div>
-                
+
               </div>
             </Card.Body>
           </Card>
@@ -120,6 +120,6 @@ export default class WebinarKuesioner extends Component {
           <ModalDetail />
         </div>
       </div>
-		);
-	}
+    );
+  }
 }

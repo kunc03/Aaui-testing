@@ -97,7 +97,7 @@ export default class QuestionQuizCreate extends Component {
             isQuestionReady: true,
             questionId: res.data.result.question_id,
             isSimpanPertanyaan: true,
-            isiSimpanPertanyan: 'Pertanyaan berhasil disimpan. Selanjutnya silahkan tambahkan pilihan jawaban.'
+            isiSimpanPertanyan: 'Question saved successfully. Next, please add an answer option.'
           });
         }
       });
@@ -148,7 +148,7 @@ export default class QuestionQuizCreate extends Component {
     );
   };
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   render() {
     return (
@@ -217,7 +217,7 @@ export default class QuestionQuizCreate extends Component {
                             </Form.Group>
 
                             <Button variant="ideku" type="submit">
-                              Simpan
+                              Save
                             </Button>
 
                             <Button
@@ -243,7 +243,7 @@ export default class QuestionQuizCreate extends Component {
                             type="button"
                             disabled={this.state.isQuestionReady ? "" : "true"}
                           >
-                            Tambah Pilihan
+                            Add Options
                           </Button>
                           <Form.Text>
                             Jangan lupa untuk memilih jawaban benar

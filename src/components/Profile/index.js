@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import {Alert, Modal, Form} from 'react-bootstrap';
-import API, {USER_ME, USER, API_SERVER} from '../../repository/api';
+import { Alert, Modal, Form } from 'react-bootstrap';
+import API, { USER_ME, USER, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 class Profile extends Component {
@@ -118,14 +118,14 @@ class Profile extends Component {
               address: res.data.result.address,
               phone: res.data.result.phone,
               unlimited: res.data.result.unlimited,
-              validity: res.data.result.validity ? res.data.result.validity.toString().substring(0,10) : '0000-00-00',
+              validity: res.data.result.validity ? res.data.result.validity.toString().substring(0, 10) : '0000-00-00',
             }
           });
           // if (this.state.user_data.level==='client'){
-            // this.setState({user_data:{
-              // ...this.state.user_data,
-              // level:'user'
-            // }})
+          // this.setState({user_data:{
+          // ...this.state.user_data,
+          // level:'user'
+          // }})
           // }
         }
       }
@@ -136,8 +136,8 @@ class Profile extends Component {
     e.preventDefault();
     const { user_data } = this.state;
     API.put(`${USER}/${user_data.user_id}`, user_data)
-    .then(res => {
-      console.log(res,'sinpenennn')
+      .then(res => {
+        console.log(res, 'sinpenennn')
         if (res.status === 200) {
           if (!res.data.error) {
             this.fetchProfile();
@@ -168,7 +168,7 @@ class Profile extends Component {
         this.setState({
           isNotifikasi: true,
           isiNotifikasi:
-            "File tidak sesuai dengan format, silahkan cek kembali."
+            "The file does not match the format, please check again."
         });
       }
     } else {
@@ -243,7 +243,7 @@ class Profile extends Component {
                               onClick={this.onClickModalAvatar}
                               className="btn btn-icademy-primary mb-2 ml-3"
                             >
-                              Ganti
+                              Change
                             </button>
                           </div>
                           <Modal
@@ -252,7 +252,7 @@ class Profile extends Component {
                           >
                             <Modal.Body>
                               <Modal.Title className="text-c-purple3 f-w-bold">
-                                Ganti Foto
+                                Change Foto
                               </Modal.Title>
                               <div
                                 style={{ marginTop: "20px" }}
@@ -268,8 +268,8 @@ class Profile extends Component {
                                   required
                                 />
                                 <Form.Text className="text-muted">
-                                  Pastikan format file png, jpg, jpeg, atau gif
-                                  dan ukuran file tidak lebih dari 500KB
+                                  Make sure the file format is png, jpg, jpeg, or gif
+                                  and the file size is not more than 500KB
                                 </Form.Text>
                               </div>
                               <div className="float-right">
@@ -278,21 +278,21 @@ class Profile extends Component {
                                   onClick={this.onClickSubmitModal}
                                   className="btn btn-icademy-primary ml-2"
                                 >
-                                  Simpan
-                                </button>
+                                  Save
+                                 </button>
                                 <button
                                   type="button"
                                   onClick={this.onClickSubmitModalDelete}
                                   className="btn btn-icademy-danger ml-2"
                                 >
-                                  Hapus Foto
+                                  Delete Photo
                                 </button>
                                 <button
                                   type="button"
                                   className="btn btn-icademy-block ml-2"
                                   onClick={this.handleModalAvatarClose}
                                 >
-                                  Batal
+                                  Cancel
                                 </button>
                               </div>
                             </Modal.Body>
@@ -301,26 +301,26 @@ class Profile extends Component {
                           <form style={{ margin: "0 0px" }}>
                             {toggle_alert && (
                               <Alert variant={"success"}>
-                                Data profil kamu berhasil di simpan.
+                                Your profile data has been saved successfully.
                               </Alert>
                             )}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nama Lengkap
+                                Full name
                               </label>
                               <input
                                 name="name"
                                 type="text"
                                 className="form-control"
                                 required
-                                placeholder="Nama lengkap"
+                                placeholder="Full name"
                                 value={user_data.name}
                                 onChange={this.handleChange}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nomor Induk
+                                Registration number
                               </label>
                               <input
                                 name="identity"
@@ -339,21 +339,21 @@ class Profile extends Component {
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Alamat
+                                Address
                               </label>
                               <input
                                 name="address"
                                 type="text"
                                 className="form-control"
                                 required
-                                placeholder="Alamat lengkap"
+                                placeholder="Complete address"
                                 value={user_data.address}
                                 onChange={this.handleChange}
                               />
                             </div>
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Nomor Handphone
+                                Mobile phone number
                               </label>
                               <input
                                 name="phone"
@@ -378,7 +378,7 @@ class Profile extends Component {
                               className="btn btn btn-icademy-primary float-right mt-3"
                               onClick={event => this.updateProfile(event)}
                             >
-                              Simpan
+                              Save
                             </button>
                           </form>
                         </div>
