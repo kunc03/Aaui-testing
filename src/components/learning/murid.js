@@ -9,10 +9,10 @@ const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
 
 const titleTabs = [
-  {name: 'Mata Pelajaran', link: '/mata-pelajaran', component: MataPelajaran},
-  {name: 'Tugas', link: '/tugas', component: Tugas},
-  {name: 'Kuis', link: '/kuis', component: KuisComponent},
-  {name: 'Ujian', link: '/ujian', component: UjianComponent},
+  {name: 'Subjects', link: '/mata-pelajaran', component: MataPelajaran},
+  {name: 'Task', link: '/tugas', component: Tugas},
+  {name: 'Quiz', link: '/kuis', component: KuisComponent},
+  {name: 'Exam', link: '/ujian', component: UjianComponent},
 ]
 
 const switchTambahan = [
@@ -20,14 +20,14 @@ const switchTambahan = [
 
 export default class LearningMurid extends Component {
 
-	state = {
+  state = {
   }
 
-	render() {
-		return (
-			<div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
+  render() {
+    return (
+      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{padding: '40px 40px 0 40px'}}>
+          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
@@ -43,20 +43,20 @@ export default class LearningMurid extends Component {
                   <div className="row">
                     <div className="col-xl-12">
 
-                      <ul style={{paddingBottom: '0px'}} className="nav nav-pills">
-                      {
-                        titleTabs.map((item,i) => (
-                          <li key={i} className={`nav-item`}>
-                            <NavLink style={{borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px'}}
-                              activeClassName='active'
-                              className={`nav-link`}
-                              to={`/murid${item.link}`}>
-                                <img src="/newasset/webinar.svg" className="mr-2"/>
+                      <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
+                        {
+                          titleTabs.map((item, i) => (
+                            <li key={i} className={`nav-item`}>
+                              <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                activeClassName='active'
+                                className={`nav-link`}
+                                to={`/murid${item.link}`}>
+                                <img src="/newasset/webinar.svg" className="mr-2" />
                                 {item.name}
-                            </NavLink>
-                          </li>
-                        ))
-                      }
+                              </NavLink>
+                            </li>
+                          ))
+                        }
                       </ul>
 
                     </div>
@@ -75,7 +75,7 @@ export default class LearningMurid extends Component {
                         <Route path={`/murid${item.link}`} component={item.component} />
                       ))
                     }
-					        </Switch>
+                  </Switch>
 
                 </div>
               </div>
@@ -83,7 +83,7 @@ export default class LearningMurid extends Component {
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 
 }

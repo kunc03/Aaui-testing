@@ -1,16 +1,20 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Card } from 'react-bootstrap';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 
-import {dataToDo} from '../../modul/data';
+import { dataToDo } from '../../modul/data';
 import EventNew from './event';
 import ProjekNew from './projek';
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
+import JadwalHariIni from './jadwalHariIni';
+import PengumumanTerbaru from './pengumumanTerbaru';
+import TugasYangDikerjakan from './tugasYangDikerjakan';
+import UjianYangAkanDatang from './ujianYangAkanDatang';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -42,11 +46,11 @@ class HomeNew extends Component {
     const value = e.target.value;
 
     if (name === 'attachmentId') {
-        this.setState({ [name]: e.target.files });
+      this.setState({ [name]: e.target.files });
     } else {
-        this.setState({ [name]: value });
+      this.setState({ [name]: value });
     }
-}
+  }
 
   componentDidMount() {
     this.props.initUser();
@@ -57,7 +61,7 @@ class HomeNew extends Component {
 
   fetchDataUser() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
 
         this.fetchDataKategoriKursus(
           localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id
@@ -67,8 +71,8 @@ class HomeNew extends Component {
         );
 
         Object.keys(res.data.result).map((key, index) => {
-          if(key === 'registered') {
-            return res.data.result[key] = res.data.result[key].toString().substring(0,10);
+          if (key === 'registered') {
+            return res.data.result[key] = res.data.result[key].toString().substring(0, 10);
           }
         });
 
@@ -79,7 +83,7 @@ class HomeNew extends Component {
 
   fetchDataKategoriKursus(companyId) {
     API.get(`${API_SERVER}v1/category/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : companyId}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ kategoriKursus: res.data.result.filter(item => { return item.count_course > 0 }) })
       }
     })
@@ -87,28 +91,28 @@ class HomeNew extends Component {
 
   fetchDataKursusTerbaru(companyId) {
     API.get(`${API_SERVER}v1/course/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : companyId}`).then(res => {
-      if(res.status === 200) {
-        this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }).slice(0,3) })
+      if (res.status === 200) {
+        this.setState({ kursusTerbaru: res.data.result.filter(item => { return item.count_chapter > 0 }).slice(0, 3) })
       }
     })
   }
 
   fetchDataKursusDiikuti() {
     API.get(`${API_SERVER}v1/user-course/${Storage.get('user').data.user_id}`).then(res => {
-      if(res.status === 200) {
-        this.setState({ kursusDiikuti: res.data.result.reverse().slice(0,6) })
+      if (res.status === 200) {
+        this.setState({ kursusDiikuti: res.data.result.reverse().slice(0, 6) })
       }
     })
   }
 
-  fetchEvent(){
+  fetchEvent() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/event/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
           console.log(response.data.result, 'resulttttttttt');
           this.setState({ event: response.data.result });
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log(error);
         });
       }
@@ -116,15 +120,15 @@ class HomeNew extends Component {
 
     // recent docs
     API.get(`${API_SERVER}v1/files-logs`).then(res => {
-      if(!res.data.error) {
-        this.setState({recentDocs: res.data.result});
+      if (!res.data.error) {
+        this.setState({ recentDocs: res.data.result });
       };
     });
   }
 
   findCourse = (e) => {
     e.preventDefault();
-    this.setState({findCourseInput : e.target.value});
+    this.setState({ findCourseInput: e.target.value });
   }
 
   render() {
@@ -132,19 +136,20 @@ class HomeNew extends Component {
     const projekDashboard = this.state.project;
     const toDoDashboard = dataToDo;
 
-    console.log('PROPS: ', this.props.user)
-    console.log('PROPS: ', Storage.get('user').data)
+    let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
+    console.log(levelUser);
 
     var { kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
-    if(findCourseInput != ""){
+    if (findCourseInput != "") {
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
-        .map(y=>
-          y.filter(x=>
+        .map(y =>
+          y.filter(x =>
             JSON.stringify(
               Object.values(x)
             ).replace(
-              /[^\w ]/g,''
-            ).match(new RegExp(findCourseInput,"gmi"))
+              /[^\w ]/g, ''
+            ).match(new RegExp(findCourseInput, "gmi"))
           )
         );
     }
@@ -160,13 +165,13 @@ class HomeNew extends Component {
         ) {
           return (
             <div>
-              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${media})`}}></div>
+              <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${media})` }}></div>
             </div>
           );
         } else {
           return (
             <div>
-              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url('https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640')`}}></div>
+              <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url('https://media.istockphoto.com/videos/play-button-blue-video-id472605657?s=640x640')` }}></div>
             </div>
 
           );
@@ -231,98 +236,210 @@ class HomeNew extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  <div className="row">
-                    <div className='col-sm-12 col-xl-6' style={{paddingLeft:0, paddingRight:0}}>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Event
-                                </h3>
+                  {/* DASHBOARD CLIENT ===  levelUser */}
+                  {levelUser === 'client' ?
+                    <div className="row">
+                      <div className='col-sm-12 col-xl-6' style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body className="responsive-card-400 ">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Schedule today
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <Link to={""}>
+                                      <span className=" f-12 fc-skyblue">See all</span>
+                                    </Link>
+                                  </p>
+                                </div>
                               </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
+                              <div style={{ marginTop: '10px' }}>
+                                <JadwalHariIni />
                               </div>
-                            </div>
-                            <div style={{marginTop: '35px'}}>
-                              <EventNew lists={eventDashboard} />
-                            </div>
-                          </Card.Body>
-                        </Card>
+                            </Card.Body>
+                          </Card>
+                        </div>
+
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body className="responsive-card-400 ">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Latest Announcements
+                                    </h3>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '10px' }}>
+                                <PengumumanTerbaru />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
                       </div>
+
+                      <div className='col-sm-12 col-xl-6' style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body className="responsive-card-400 ">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Completed task
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <Link to={""}>
+                                      <span className=" f-12 fc-skyblue">See all</span>
+                                    </Link>
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '10px' }}>
+                                <TugasYangDikerjakan />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body className="responsive-card-400 ">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Upcoming Exams
+                                    </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <Link to={""}>
+                                      <span className=" f-12 fc-skyblue">See all</span>
+                                    </Link>
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '10px' }}>
+                                <UjianYangAkanDatang />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </div>
+
                       <div className="col-sm-12">
                         <CalenderNew lists={kursusTerbaru} />
                       </div>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Dokumen Terakhir Diakses
-                                </h3>
-                              </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
-                              </div>
-                            </div>
-                            <div style={{marginTop: '10px'}}>
-                              <RecentDocs lists={this.state.recentDocs} />
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </div>
                     </div>
-                    <div className="col-sm-12 col-xl-6" style={{paddingLeft:0, paddingRight:0}}>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
+                    :
+
+                    // ======= DASHBOARD ADMIN ======
+                    <div className="row">
+                      <div className='col-sm-12 col-xl-6' style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Event
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '35px' }}>
+                                <EventNew lists={eventDashboard} />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <CalenderNew lists={kursusTerbaru} />
+                        </div>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Recently Accessed Documents
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '10px' }}>
+                                <RecentDocs lists={this.state.recentDocs} />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
                               <ProjekNew lists={projekDashboard} />
-                          </Card.Body>
-                        </Card>
-                      </div>
-                      <div className="col-sm-12">
-                        <Card>
-                          <Card.Body>
-                            <div className="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-w-900 f-18 fc-blue">
-                                  Things To Do
-                                </h3>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Things To Do
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="col-sm-6 text-right">
-                                <p className="m-b-0">
-                                  {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                                </p>
+                              <div style={{ marginTop: '10px' }}>
+                                <ListToDoNew lists={toDoDashboard} />
                               </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+
+                        <div className="col-sm-12">
+                          <Card style={{ backgroundColor: '#F3F3F3' }}>
+
+                            <div className="col-sm-12">
+                              <Card style={{ backgroundColor: '#F3F3F3' }}>
+
+                                <div className="widget-center">
+                                  <img src='newasset/Combined Shape.svg' style={{ position: 'absolute', top: '8pc' }}></img>
+
+                                  <p style={{ marginTop: '55px' }}>Add Widget</p>
+                                </div>
+
+                              </Card>
                             </div>
-                            <div style={{marginTop: '10px'}}>
-                              <ListToDoNew lists={toDoDashboard} />
-                            </div>
-                          </Card.Body>
-                        </Card>
+
+                          </Card>
+                        </div>
+
                       </div>
-
-                      <div className="col-sm-12">
-                        <Card style={{backgroundColor: '#F3F3F3'}}>
-
-                            <div className="widget-center">
-                              <img src='newasset/Combined Shape.svg' style={{position: 'absolute', top:'8pc'}}></img>
-
-                              <p style={{marginTop: '55px'}}>Tambah Widget</p>
-                            </div>
-
-                        </Card>
-                      </div>
-
                     </div>
-                  </div>
+
+                  }
+
 
                 </div>
               </div>
@@ -354,8 +471,8 @@ class HomeV2 extends Component {
   }
 
   render() {
-    if(this.state.level === "client") {
-      if(this.state.grupName.toLowerCase() === "guru") {
+    if (this.state.level === "client") {
+      if (this.state.grupName.toLowerCase() === "guru") {
         return (
           <DashGuru />
         )

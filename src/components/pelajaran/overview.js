@@ -1,6 +1,6 @@
 import React from 'react';
 
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
@@ -29,17 +29,17 @@ class Overview extends React.Component {
   simpanOverview = e => {
     e.preventDefault();
 
-    if(this.state.overview) {
+    if (this.state.overview) {
       // action simpan
-      API.put(`${API_SERVER}v2/pelajaran/overview/${this.state.jadwalId}`, {overview: this.state.overview}).then(res => {
-        if(res.data.error) console.log(`Error: update overview`)
+      API.put(`${API_SERVER}v2/pelajaran/overview/${this.state.jadwalId}`, { overview: this.state.overview }).then(res => {
+        if (res.data.error) console.log(`Error: update overview`)
 
         this.fetchOverview()
         toast.success(`Overview updated`)
       })
 
     } else {
-      console.log('tidak ada isinya')
+
     }
   }
 
@@ -49,7 +49,7 @@ class Overview extends React.Component {
 
   fetchOverview() {
     API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch overview`)
+      if (res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ overview: res.data.result.deskripsi });
     })

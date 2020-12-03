@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from "react-toastify";
 
-import API, {API_SERVER} from '../../repository/api';
+import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Modal } from 'react-bootstrap'
@@ -65,7 +65,7 @@ class DaftarPelajaran extends React.Component {
   savePelajaran = e => {
     e.preventDefault();
 
-    if(this.state.idPelajaran) {
+    if (this.state.idPelajaran) {
       // action for update
       console.log('update')
       let form = {
@@ -74,7 +74,7 @@ class DaftarPelajaran extends React.Component {
         kodePelajaran: this.state.kodePelajaran
       }
       API.put(`${API_SERVER}v2/pelajaran/update/${this.state.idPelajaran}`, form).then(res => {
-        if(res.data.error) toast.warning("Error create pelajaran")
+        if (res.data.error) toast.warning("Error create pelajaran")
 
         this.fetchPelajaran();
       })
@@ -89,7 +89,7 @@ class DaftarPelajaran extends React.Component {
         kodePelajaran: this.state.kodePelajaran
       }
       API.post(`${API_SERVER}v2/pelajaran/create`, form).then(res => {
-        if(res.data.error) toast.warning("Error create pelajaran")
+        if (res.data.error) toast.warning("Error create pelajaran")
 
         this.fetchPelajaran();
       })
@@ -103,7 +103,7 @@ class DaftarPelajaran extends React.Component {
     e.preventDefault();
     let idKelas = e.target.getAttribute('data-id');
     API.get(`${API_SERVER}v2/pelajaran/one/${idKelas}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
       let getKelas = res.data.result;
 
       this.setState({
@@ -118,7 +118,7 @@ class DaftarPelajaran extends React.Component {
   deletePelajaran = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/pelajaran/delete/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete pelajaran`)
+      if (res.data.error) toast.warning(`Error: delete pelajaran`)
 
       this.fetchPelajaran();
     })
@@ -141,7 +141,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchKelas() {
     API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
 
       this.setState({ listKelas: res.data.result })
     })
@@ -149,7 +149,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchPelajaran() {
     API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch data kelas");
+      if (res.data.error) toast.warning("Error fetch data kelas");
 
       this.setState({ listPelajaran: res.data.result })
     })
@@ -167,7 +167,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchSilabus(pelajaranId) {
     API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) toast.info(`Error: fetch silabus`)
+      if (res.data.error) toast.info(`Error: fetch silabus`)
 
       this.setState({ silabus: res.data.result })
     })
@@ -183,11 +183,11 @@ class DaftarPelajaran extends React.Component {
       jenis: jenis,
     }
 
-    if(this.state.silabusId) {
+    if (this.state.silabusId) {
       API.put(`${API_SERVER}v2/silabus/update/${this.state.silabusId}`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: edit silabus`)
+        if (res.data.error) toast.warning(`Error: edit silabus`)
 
-        if(this.state.files) {
+        if (this.state.files) {
           this.uploadFile(this.state.silabusId)
         }
 
@@ -196,9 +196,9 @@ class DaftarPelajaran extends React.Component {
       })
     } else {
       API.post(`${API_SERVER}v2/silabus/create`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: create silabus`)
+        if (res.data.error) toast.warning(`Error: create silabus`)
 
-        if(this.state.files) {
+        if (this.state.files) {
           this.uploadFile(res.data.result.id)
         }
 
@@ -216,12 +216,12 @@ class DaftarPelajaran extends React.Component {
 
   uploadFile(silabusId) {
     let form = new FormData();
-    for(var i=0; i<this.state.files.length; i++) {
+    for (var i = 0; i < this.state.files.length; i++) {
       form.append('files', this.state.files[i]);
     }
 
     API.put(`${API_SERVER}v2/silabus/files/${silabusId}`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: upload file`)
+      if (res.data.error) toast.warning(`Error: upload file`)
 
       this.fetchSilabus(this.state.pelajaranId);
     })
@@ -229,7 +229,7 @@ class DaftarPelajaran extends React.Component {
 
   selectSilabus = e => {
     API.get(`${API_SERVER}v2/silabus/id/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning(`Error: get one silabus`)
+      if (res.data.error) toast.warning(`Error: get one silabus`)
 
       this.setState({
         silabusId: res.data.result.id,
@@ -245,7 +245,7 @@ class DaftarPelajaran extends React.Component {
   deleteSilabus = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/silabus/delete/${e.target.getAttribute('data-id')}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete silabus`)
+      if (res.data.error) toast.warning(`Error: delete silabus`)
 
       this.fetchSilabus(this.state.pelajaranId);
     })
@@ -260,32 +260,32 @@ class DaftarPelajaran extends React.Component {
         <div className="col-sm-8">
           <div className="card">
             <div className="card-header">Pelajaran</div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <table className="table table-striped">
                 <thead>
                   <tr>
                     <th>No</th>
                     <th>Kode</th>
                     <th>Pelajaran</th>
-                    <th>Kategori</th>
+                    <th>Category</th>
                     <th>Silabus</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {
                     this.state.listPelajaran.map((item, i) => (
                       <tr key={i}>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.kode_pelajaran}</td>
                         <td>{item.nama_pelajaran}</td>
                         <td>{item.kategori}</td>
-                        <td style={{padding: '12px'}}>
-                          <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share':'plus'}`}></i> {item.silabus > 0 ? 'Open' : 'Setup'}</span>
+                        <td style={{ padding: '12px' }}>
+                          <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share' : 'plus'}`}></i> {item.silabus > 0 ? 'Open' : 'Setup'}</span>
                         </td>
                         <td className="text-center">
-                          <i style={{cursor: 'pointer'}} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>
-                          <i style={{cursor: 'pointer'}} onClick={this.deletePelajaran} data-id={item.pelajaran_id} className="fa fa-trash"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>
+                          <i style={{ cursor: 'pointer' }} onClick={this.deletePelajaran} data-id={item.pelajaran_id} className="fa fa-trash"></i>
                         </td>
                       </tr>
                     ))
@@ -299,7 +299,7 @@ class DaftarPelajaran extends React.Component {
                 dialogClassName="modal-lg"
               >
                 <Modal.Header closeButton>
-                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                     Silabus {this.state.pelajaranNama}
                   </Modal.Title>
                 </Modal.Header>
@@ -345,7 +345,7 @@ class DaftarPelajaran extends React.Component {
 
                     <div className="form-group">
                       <button type="submit" className="btn btn-v2 btn-success mr-2">
-                        <i className="fa fa-plus"></i> {this.state.silabusId ? 'Edit':'Tambah'}
+                        <i className="fa fa-plus"></i> {this.state.silabusId ? 'Edit' : 'Tambah'}
                       </button>
                       <button onClick={() => this.clearFormSilabus()} type="button" className="btn btn-v2 btn-primary mr-2">
                         <i className="fa fa-history"></i> Reset
@@ -366,40 +366,40 @@ class DaftarPelajaran extends React.Component {
                     <tbody>
                       {
                         this.state.silabus.map((item, i) => {
-                          if(item.jenis === 0) {
+                          if (item.jenis === 0) {
                             return (
-                                <tr key={i}>
-                                  <td>{item.sesi}</td>
-                                  <td>{item.topik}</td>
-                                  <td>{item.tujuan}</td>
-                                  <td>{item.deskripsi}</td>
-                                  <td style={{padding: '12px'}}>
-                                    {
-                                      item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
-                                    }
-                                  </td>
-                                  <td className="text-center">
-                                    <i style={{cursor: 'pointer'}} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
-                                    <i style={{cursor: 'pointer'}} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
-                                  </td>
-                                </tr>
-                              )
+                              <tr key={i}>
+                                <td>{item.sesi}</td>
+                                <td>{item.topik}</td>
+                                <td>{item.tujuan}</td>
+                                <td>{item.deskripsi}</td>
+                                <td style={{ padding: '12px' }}>
+                                  {
+                                    item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                                  }
+                                </td>
+                                <td className="text-center">
+                                  <i style={{ cursor: 'pointer' }} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
+                                  <i style={{ cursor: 'pointer' }} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
+                                </td>
+                              </tr>
+                            )
                           } else {
                             return (
                               <tr key={i}>
                                 <td>{item.sesi}</td>
-                                <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                                <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
                                 <td className="text-center">
-                                  <i style={{cursor: 'pointer'}} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
-                                  <i style={{cursor: 'pointer'}} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
+                                  <i style={{ cursor: 'pointer' }} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
+                                  <i style={{ cursor: 'pointer' }} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
                                 </td>
                               </tr>
                             )
                           }
                         })
                       }
-                      </tbody>
-                    </table>
+                    </tbody>
+                  </table>
                 </Modal.Body>
               </Modal>
             </div>
@@ -416,7 +416,7 @@ class DaftarPelajaran extends React.Component {
                   <input required value={this.state.namaPelajaran} onChange={e => this.setState({ namaPelajaran: e.target.value })} type="text" className="form-control" placeholder="Enter" name="namaKelas" />
                 </div>
                 <div className="form-group">
-                  <label>Kategori</label>
+                  <label> Category </label>
                   <select required className="form-control" value={this.state.kategori} onChange={e => this.setState({ kategori: e.target.value })}>
                     <option value="" disabled selected>Pilih</option>
                     <option value="Wajib">Wajib</option>
@@ -435,7 +435,7 @@ class DaftarPelajaran extends React.Component {
                   <select required value={this.state.kelas} onChange={e => this.setState({ kelas: e.target.value })} className="form-control" name="semester">
                     <option value="" disabled selected>Pilih kelas</option>
                     {
-                      this.state.listKelas.map((item,i) => (
+                      this.state.listKelas.map((item, i) => (
                         <option value={item.kelas_id}>{item.kelas_nama}</option>
                       ))
                     }

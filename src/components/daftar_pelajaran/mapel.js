@@ -77,30 +77,30 @@ class MataPelajaran extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              <button onClick={() => this.setState({ isModalSilabus: true})} className="btn btn-v2 btn-primary">
+              <button onClick={() => this.setState({ isModalSilabus: true })} className="btn btn-v2 btn-primary">
                 <i className="fa fa-list"></i>
-                Lihat Silabus
+                See Syllabus
               </button>
             </div>
 
-            <div className="card-body" style={{padding: '12px'}}>
+            <div className="card-body" style={{ padding: '12px' }}>
 
               <table className="table table-bordered">
                 <thead>
                   <tr>
-                    <th className="text-center">Tanggal</th>
-                    <th className="text-center">Mata Pelajaran</th>
-                    <th className="text-center">Waktu</th>
-                    <th className="text-center">Sesi</th>
-                    <th className="text-center">Nama Pengajar</th>
-                    <th className="text-center">Ruangan</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center">Date</th>
+                    <th className="text-center">Subject</th>
+                    <th className="text-center">Time</th>
+                    <th className="text-center">Session</th>
+                    <th className="text-center">Teacher</th>
+                    <th className="text-center">Room</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {
-                    this.state.mataPelajaran.map((item,i) => (
+                    this.state.mataPelajaran.map((item, i) => (
                       <>
                         <tr>
                           <td className="text-center" style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
@@ -119,7 +119,7 @@ class MataPelajaran extends React.Component {
                               <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_ruangan}</td>
                               <td className="text-center" style={{verticalAlign: 'middle'}}>
                                 <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
-                                  <i className="fa fa-paper-plane"></i> Buka
+                                  <i className="fa fa-paper-plane"></i> Open
                                 </button>
                               </td>
                             </tr>
@@ -132,13 +132,13 @@ class MataPelajaran extends React.Component {
 
                 <tfoot>
                   <tr>
-                    <th className="text-center">Tanggal</th>
-                    <th className="text-center">Mata Pelajaran</th>
-                    <th className="text-center">Waktu</th>
-                    <th className="text-center">Sesi</th>
-                    <th className="text-center">Nama Pengajar</th>
-                    <th className="text-center">Ruangan</th>
-                    <th className="text-center">Aksi</th>
+                    <th className="text-center">Date</th>
+                    <th className="text-center">Subject</th>
+                    <th className="text-center">Time</th>
+                    <th className="text-center">Session</th>
+                    <th className="text-center">Teacher</th>
+                    <th className="text-center">Room</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </tfoot>
               </table>
@@ -165,9 +165,9 @@ class MataPelajaran extends React.Component {
         >
           <Modal.Header closeButton>
             <form className="form-inline">
-              <label>Mata Pelajaran</label>
+              <label>Subject</label>
               <select onChange={this.selectPelajaran} className="form-control ml-2">
-                <option value="" disabled selected>Pilih mata pelajaran</option>
+                <option value="" disabled selected>Choose subject</option>
                 {
                   this.state.jadwalPelajaran.map((item,i) => (
                     <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
@@ -180,10 +180,10 @@ class MataPelajaran extends React.Component {
           <table className="table table-striped">
             <thead>
               <tr>
-                <th>Sesi</th>
-                <th>Topik</th>
-                <th>Tujuan</th>
-                <th>Deskripsi</th>
+                <th>Session</th>
+                <th>Topic</th>
+                <th>Goal</th>
+                <th>Description</th>
                 <th>Files</th>
               </tr>
             </thead>

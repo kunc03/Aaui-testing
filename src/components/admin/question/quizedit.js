@@ -246,7 +246,7 @@ export default class QuestionQuizEdit extends Component {
                             </Form.Group>
 
                             <Button variant="ideku" type="submit">
-                              Simpan
+                              Save
                             </Button>
                             <Button
                               onClick={this.props.history.goBack}

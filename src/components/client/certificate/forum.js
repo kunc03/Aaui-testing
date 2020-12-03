@@ -25,32 +25,32 @@ export default class Course extends Component {
     return (
       <div className="row">
         {this.state.certificates.length === 0 ? (
-          <div>Tidak ada sertifikat</div>
+          <div>No certificate</div>
         ) : (
-          this.state.certificates.map((elem, index) => {
-            return (
-              <div className="col-md-4 col-xl-4 mb-3" key={index}>
-                <Link
-                  className="card"
-                  to={`/print-certificate${elem.template}/${elem.user_id}/${elem.certificate_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div
-                    className="responsive-image-content radius-top-l-r-5"
-                    style={{
-                      backgroundImage: `url('/assets/images/certificate/certificate${elem.template}.jpeg')`,
-                    }}
-                  ></div>
-                  <div className="card-carousel ">
-                    <div className="title-head f-w-900 f-16">{elem.title}</div>
-                    <small className="mr-3">{elem.signature_name_1}</small>
-                  </div>
-                </Link>
-              </div>
-            );
-          })
-        )}
+            this.state.certificates.map((elem, index) => {
+              return (
+                <div className="col-md-4 col-xl-4 mb-3" key={index}>
+                  <Link
+                    className="card"
+                    to={`/print-certificate${elem.template}/${elem.user_id}/${elem.certificate_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div
+                      className="responsive-image-content radius-top-l-r-5"
+                      style={{
+                        backgroundImage: `url('/assets/images/certificate/certificate${elem.template}.jpeg')`,
+                      }}
+                    ></div>
+                    <div className="card-carousel ">
+                      <div className="title-head f-w-900 f-16">{elem.title}</div>
+                      <small className="mr-3">{elem.signature_name_1}</small>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })
+          )}
       </div>
     );
   }

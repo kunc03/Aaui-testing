@@ -15,7 +15,7 @@ class UserAdd extends Component {
     company_id: "",
     branch_id: "",
     grup_id: "",
-    
+
     identity: "",
     name: "",
     email: "",
@@ -24,8 +24,8 @@ class UserAdd extends Component {
     address: "",
     password: "",
     level: "",
-    unlimited:false,
-    validity:new Date(),
+    unlimited: false,
+    validity: new Date(),
 
     listCompany: [],
     listBranch: [],
@@ -34,8 +34,8 @@ class UserAdd extends Component {
     responseMessage: '',
     responseEmail: '',
     responsePhone: '',
-    optionsGroup:[],
-    valueGroup:[]
+    optionsGroup: [],
+    valueGroup: []
   };
 
   handleChangeValidity = date => {
@@ -45,27 +45,27 @@ class UserAdd extends Component {
   };
 
   toggleSwitch(checked) {
-    this.setState({ unlimited:!this.state.unlimited });
+    this.setState({ unlimited: !this.state.unlimited });
   }
   onChangeInput = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
 
-    if(name === 'email') {
+    if (name === 'email') {
       API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
-        if(res.data.error) {
+        if (res.data.error) {
           target.value = ''
           this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
         } else {
           this.setState({ [name]: value, alertemail: '' })
         }
       })
-    } else if(name === 'address') {
+    } else if (name === 'address') {
       if (value.length <= 100) {
         this.setState({ [name]: value })
       } else {
-        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+        this.setState({ responseMessage: 'Cannot exceed the character limit.', [name]: value.slice(0, target.maxLength) })
       }
     } else {
       this.setState({ [name]: value })
@@ -95,18 +95,18 @@ class UserAdd extends Component {
     };
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
+      if (res.status === 200) {
+        if (res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
-          if (Storage.get('User').data.level === 'superadmin'){
+          if (Storage.get('User').data.level === 'superadmin') {
             this.props.history.push('/user')
           }
-          else{
-            if (Storage.get('User').data.level === 'superadmin'){
+          else {
+            if (Storage.get('User').data.level === 'superadmin') {
               this.props.history.push('/user')
             }
-            else{
+            else {
               this.props.history.push('/my-company')
             }
           }
@@ -117,20 +117,20 @@ class UserAdd extends Component {
 
   componentDidMount() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.company_id}`).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
             res.data.result[0].map(item => {
-              this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+              this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
           }
         })
 
         API.get(`${API_SERVER}v1/grup/company/${this.state.company_id}`).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.setState({ listGrup: res.data.result })
           }
         })
@@ -139,7 +139,7 @@ class UserAdd extends Component {
   }
 
   render() {
-    const levelUser = [{level: 'admin'}, {level: 'client'}];
+    const levelUser = [{ level: 'admin' }, { level: 'client' }];
 
     return (
       <div className="pcoded-main-container">
@@ -192,7 +192,7 @@ class UserAdd extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Nama</label>
+                              <label className="label-input"> Name </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
@@ -204,8 +204,8 @@ class UserAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Nomor Induk</label>
-                              <Form.Text className="text-danger">Required</Form.Text> 
+                              <label className="label-input"> Registration Number </label>
+                              <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
                                 required
@@ -253,7 +253,7 @@ class UserAdd extends Component {
                             <div className="form-group">
                               <label className="label-input">Level</label>
                               <Form.Text className="text-danger">Required</Form.Text>
-                              <select name="level" className="form-control" onChange={this.onChangeInput} required style={{textTransform: 'capitalize'}}>
+                              <select name="level" className="form-control" onChange={this.onChangeInput} required style={{ textTransform: 'capitalize' }}>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
@@ -279,8 +279,8 @@ class UserAdd extends Component {
                               <label className="label-input" htmlFor>
                                 Batasi Waktu
                               </label>
-                              <div style={{width:'100%'}}>
-                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              <div style={{ width: '100%' }}>
+                                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
                               </div>
 
                             </div>
@@ -290,27 +290,27 @@ class UserAdd extends Component {
                                 <label className="label-input" htmlFor>
                                   Valid Until
                                 </label>
-                                <div style={{width:'100%'}}>
-                                      <DatePicker
-                                        selected={this.state.validity}
-                                        onChange={this.handleChangeValidity}
-                                        showTimeSelect
-                                        dateFormat="yyyy-MM-dd"
-                                      />
+                                <div style={{ width: '100%' }}>
+                                  <DatePicker
+                                    selected={this.state.validity}
+                                    onChange={this.handleChangeValidity}
+                                    showTimeSelect
+                                    dateFormat="yyyy-MM-dd"
+                                  />
                                 </div>
-              
+
                               </div>
                             }
-                            <div style={{marginTop: '50px'}}>
-                            {
-                              this.state.responseMessage && 
-                              <div class="alert alert-primary" role="alert">
-                                <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
-                              </div>
-                            }
+                            <div style={{ marginTop: '50px' }}>
+                              {
+                                this.state.responseMessage &&
+                                <div class="alert alert-primary" role="alert">
+                                  <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
+                                </div>
+                              }
                             </div>
                             <button type="submit" className="btn btn-primary btn-block m-t-10 f-20 f-w-600">
-                              Simpan
+                              Save
                             </button>
                           </form>
                         </div>

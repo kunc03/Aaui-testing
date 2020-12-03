@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
 
@@ -51,9 +51,9 @@ class Chapter extends React.Component {
     }
 
     API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: create chapter`)
+      if (res.data.error) toast.warning(`Error: create chapter`)
 
-      if(this.state.files) {
+      if (this.state.files) {
         this.uplaodFiles(res.data.result.id)
       }
 
@@ -74,9 +74,9 @@ class Chapter extends React.Component {
     }
 
     API.put(`${API_SERVER}v2/pelajaran/chapter/update/${this.state.id}`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: create chapter`)
+      if (res.data.error) toast.warning(`Error: create chapter`)
 
-      if(this.state.files) {
+      if (this.state.files) {
         this.uplaodFiles(this.state.id)
       }
 
@@ -90,7 +90,7 @@ class Chapter extends React.Component {
     e.preventDefault();
     console.log('deleteChapter');
     API.delete(`${API_SERVER}v2/pelajaran/chapter/delete/${this.state.id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete chapter`)
+      if (res.data.error) toast.warning(`Error: delete chapter`)
 
       this.fetchChapters()
       this.clearForm()
@@ -118,7 +118,7 @@ class Chapter extends React.Component {
 
   fetchChapters() {
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch chapters`)
+      if (res.data.error) toast.warning(`Error: fetch chapters`)
 
       this.setState({ chapters: res.data.result })
     })
@@ -126,7 +126,7 @@ class Chapter extends React.Component {
 
   fetchOneChapter(id) {
     API.get(`${API_SERVER}v2/pelajaran/chapter/one/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch one chapter`)
+      if (res.data.error) toast.warning(`Error: fetch one chapter`)
 
       this.setState({
         id: res.data.result.id,
@@ -142,8 +142,8 @@ class Chapter extends React.Component {
 
   uploadAttachments = e => {
     e.preventDefault();
-    if(this.state.id){
-      if(this.state.files) {
+    if (this.state.id) {
+      if (this.state.files) {
         this.uplaodFiles(this.state.id)
       } else {
         toast.info(`File masih kosong`)
@@ -155,12 +155,12 @@ class Chapter extends React.Component {
 
   uplaodFiles(id) {
     let form = new FormData();
-    for(var i=0; i<this.state.files.length; i++) {
+    for (var i = 0; i < this.state.files.length; i++) {
       form.append('files', this.state.files[i]);
     }
 
     API.put(`${API_SERVER}v2/pelajaran/chapter/files/${id}`, form).then(res => {
-      if(res.data.error) toast.warning(`Error: upload files`)
+      if (res.data.error) toast.warning(`Error: upload files`)
 
       toast.success(`Attachments success upload`);
       this.setState({ attachments: res.data.result.split(','), materi: Math.random().toString(36), files: null })
@@ -172,16 +172,16 @@ class Chapter extends React.Component {
     console.log('state: ', this.state)
 
     var selection = [];
-    for(var i = 0; i < 24; i++) {
-        var j = zeroFill(i, 2);
-        selection.push(j+":00");
-        selection.push(j+":30");
+    for (var i = 0; i < 24; i++) {
+      var j = zeroFill(i, 2);
+      selection.push(j + ":00");
+      selection.push(j + ":30");
     }
 
-    function zeroFill( number, width ){
+    function zeroFill(number, width) {
       width -= number.toString().length;
-      if ( width > 0 ) {
-        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+      if (width > 0) {
+        return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
       }
       return number + ""; // always return a string
     }
@@ -230,11 +230,11 @@ class Chapter extends React.Component {
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-4">
-                    <label>Tanggal</label>
+                    <label>Date</label>
                     <input value={this.state.tanggal} name="tanggal" onChange={e => this.setState({ [e.target.name]: e.target.value })} type="date" className="form-control" placeholder="Enter" />
                   </div>
                   <div className="col-sm-2">
-                    <label>Jam Mulai</label>
+                    <label> Starting Hours </label>
                     <select required name="waktu" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.waktu} className="form-control">
                       <option value="" disabled selected>Pilih</option>
                       {
@@ -258,8 +258,8 @@ class Chapter extends React.Component {
                   {
                     this.state.attachments && this.state.attachments.map(item => (
                       <li className="list-group-item">
-                      <a href={item} target="_blank">{item}</a>
-                      { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */ }
+                        <a href={item} target="_blank">{item}</a>
+                        { /** <i className="fa fa-trash float-right" style={{cursor: 'pointer'}}></i> */}
                       </li>
                     ))
                   }
@@ -287,7 +287,7 @@ class Chapter extends React.Component {
             <div className="card-header header-kartu">
               List
             </div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
                 {
                   this.state.chapters.map((item, i) => (
@@ -298,9 +298,9 @@ class Chapter extends React.Component {
                 }
               </div>
 
-              <div style={{padding: '12px'}}>
+              <div style={{ padding: '12px' }}>
                 <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
-                  <i className="fa fa-plus"></i> Tambah
+                  <i className="fa fa-plus"></i> Add
                 </button>
               </div>
             </div>

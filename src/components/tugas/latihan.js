@@ -65,22 +65,22 @@ class Latihan extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{padding: '12px'}}>
+            <div className="card-body" style={{ padding: '12px' }}>
 
               <table className="table table-striped">
                 <thead>
                   <tr>
-                    <th>Mata Pelajaran</th>
-                    <th>Deskripsi</th>
+                    <th>Subject</th>
+                    <th>Description</th>
                     <th>Deadline</th>
-                    <th>Soal</th>
-                    <th>Aksi</th>
+                    <th>Question</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {
-                    this.state.mataPelajaran.map((item,i) => (
+                    this.state.mataPelajaran.map((item, i) => (
                       <tr>
                         <td>{item.nama_pelajaran}</td>
                         <td>

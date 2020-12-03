@@ -35,7 +35,7 @@ class PtcCreate extends React.Component {
 
   createPtc = e => {
     e.preventDefault()
-    if(this.state.idPtc) {
+    if (this.state.idPtc) {
       // action for update
       let form = {
         company_id: this.state.companyId,
@@ -50,7 +50,7 @@ class PtcCreate extends React.Component {
       }
       console.log('form: ', form);
       API.put(`${API_SERVER}v1/ptc-room/update/${this.state.idPtc}`, form).then(res => {
-        if(res.data.error) console.log('Error: ', res.data.result);
+        if (res.data.error) console.log('Error: ', res.data.result);
 
         this.clearForm();
       })
@@ -71,7 +71,7 @@ class PtcCreate extends React.Component {
 
       console.log('form: ', form);
       API.post(`${API_SERVER}v1/add/ptc-room`, form).then(res => {
-        if(res.data.error) console.log('Error: ', res.data.result);
+        if (res.data.error) console.log('Error: ', res.data.result);
 
         this.clearForm();
       })
@@ -80,7 +80,7 @@ class PtcCreate extends React.Component {
   }
 
   componentDidMount() {
-    if(this.state.idPtc) {
+    if (this.state.idPtc) {
       this.fetchPtc();
     } else {
       this.fetchFiles();
@@ -106,7 +106,7 @@ class PtcCreate extends React.Component {
       this.fetchUsers()
     ]).then(() => {
       API.get(`${API_SERVER}v1/ptc-room/${this.state.idPtc}`).then(res => {
-        if(res.data.error) console.log('Error: ', res.data.result)
+        if (res.data.error) console.log('Error: ', res.data.result)
 
         let respon = res.data.result[0];
 
@@ -126,12 +126,12 @@ class PtcCreate extends React.Component {
   fetchFiles() {
     API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
       response.data.result.map(item => {
-        this.state.files.push({value: item.id, label: item.name});
+        this.state.files.push({ value: item.id, label: item.name });
       });
     })
-    .catch(function(error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   fetchUsers() {
@@ -139,7 +139,7 @@ class PtcCreate extends React.Component {
       // console.log(response)
       let filter = response.data.result.filter(item => item.level === "client" && item.grup_name.toLowerCase() === "guru");
       filter.map(item => {
-        this.state.users.push({value: item.user_id, label: item.name});
+        this.state.users.push({ value: item.user_id, label: item.name });
       });
     });
   }
@@ -149,50 +149,50 @@ class PtcCreate extends React.Component {
     console.log('state: ', this.state)
 
     var selection = [];
-    for(var i = 0; i < 24; i++) {
-        var j = zeroFill(i, 2);
-        selection.push(j+":00");
-        selection.push(j+":30");
+    for (var i = 0; i < 24; i++) {
+      var j = zeroFill(i, 2);
+      selection.push(j + ":00");
+      selection.push(j + ":30");
     }
 
-    function zeroFill( number, width ){
+    function zeroFill(number, width) {
       width -= number.toString().length;
-      if ( width > 0 ) {
-        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+      if (width > 0) {
+        return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
       }
       return number + ""; // always return a string
     }
 
     return (
       <>
-      <div className="floating-back">
-        <Link to={`/ptc`}>
-        <img
-          src={`newasset/back-button.svg`}
-          alt=""
-          width={90}
-        />
-        </Link>
-      </div>
+        <div className="floating-back">
+          <Link to={`/ptc`}>
+            <img
+              src={`newasset/back-button.svg`}
+              alt=""
+              width={90}
+            />
+          </Link>
+        </div>
 
-      <div className="row">
-        <div className="col-sm-12">
-          <div className="card">
-            <div className="card-header header-kartu">
-              Parent Teacher Conference Room
+        <div className="row">
+          <div className="col-sm-12">
+            <div className="card">
+              <div className="card-header header-kartu">
+                Parent Teacher Conference Room
             </div>
-            <div className="card-body">
-              <form className="form-vertical" onSubmit={this.createPtc}>
-                <div className="form-group">
-                  <label>Nama Ruangan</label>
-                  <input required name="nama_ruangan" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.nama_ruangan} type="text" className="form-control col-sm-8" placeholder="enter" />
-                </div>
-                <div className="form-group row">
-                  <div className="col-sm-4">
-                    <label>Moderator</label>
-                    {
-                      (this.state.level === "admin" || this.state.level === "superadmin") &&
-                      <MultiSelect
+              <div className="card-body">
+                <form className="form-vertical" onSubmit={this.createPtc}>
+                  <div className="form-group">
+                    <label>Room Name</label>
+                    <input required name="nama_ruangan" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.nama_ruangan} type="text" className="form-control col-sm-8" placeholder="enter" />
+                  </div>
+                  <div className="form-group row">
+                    <div className="col-sm-4">
+                      <label>Moderator</label>
+                      {
+                        (this.state.level === "admin" || this.state.level === "superadmin") &&
+                        <MultiSelect
                           id={`moderator`}
                           options={this.state.users}
                           value={this.state.moderator}
@@ -201,17 +201,17 @@ class PtcCreate extends React.Component {
                           enableSearch={true}
                           resetable={true}
                           valuePlaceholder="Pilih Moderator"
-                          allSelectedLabel="Semua"
+                          allSelectedLabel="All"
                         />
-                    }
-                    {
-                      this.state.level === "client" &&
-                      <input disabled name="moderator" value={Storage.get('user').data.user} type="text" className="form-control" placeholder="enter" />
-                    }
-                  </div>
-                  <div className="col-sm-4">
-                    <label>Folder</label>
-                    <MultiSelect
+                      }
+                      {
+                        this.state.level === "client" &&
+                        <input disabled name="moderator" value={Storage.get('user').data.user} type="text" className="form-control" placeholder="enter" />
+                      }
+                    </div>
+                    <div className="col-sm-4">
+                      <label>Folder</label>
+                      <MultiSelect
                         id="folder"
                         options={this.state.files}
                         value={this.state.folderId}
@@ -219,73 +219,73 @@ class PtcCreate extends React.Component {
                         mode="single"
                         enableSearch={true}
                         resetable={true}
-                        valuePlaceholder="Pilih Folder"
-                        allSelectedLabel="Semua"
+                        valuePlaceholder="Select Folder"
+                        allSelectedLabel="All"
                       />
+                    </div>
                   </div>
-                </div>
-                <div className="form-group row">
-                  <div className="col-sm-2">
-                    <label>Tanggal</label>
-                    <input required name="tanggal_mulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.tanggal_mulai} type="date" className="form-control" placeholder="enter" />
+                  <div className="form-group row">
+                    <div className="col-sm-2">
+                      <label> Date </label>
+                      <input required name="tanggal_mulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.tanggal_mulai} type="date" className="form-control" placeholder="enter" />
+                    </div>
+                    <div className="col-sm-2">
+                      <label>Jam</label>
+                      <select required name="waktu_mulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.waktu_mulai} className="form-control">
+                        <option value="" disabled selected>Pilih</option>
+                        {
+                          selection.map(item => (
+                            <option value={item}>{item}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
                   </div>
-                  <div className="col-sm-2">
-                    <label>Jam</label>
-                    <select required name="waktu_mulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} value={this.state.waktu_mulai} className="form-control">
-                      <option value="" disabled selected>Pilih</option>
-                      {
-                        selection.map(item => (
-                          <option value={item}>{item}</option>
-                        ))
-                      }
-                    </select>
-                  </div>
-                </div>
 
-                {
-                  /**
-                  <div className="form-group">
-                  <label>Peserta</label>
-                  <div class="input-group col-sm-3" style={{background: 'none', paddingLeft: 0}}>
-                  <input value="100" type="text" className="form-control" />
-                  <span className="input-group-btn">
-                  <button className="btn btn-default">
-                  <i className="fa fa-plus"></i> Tambah
-                  </button>
-                  </span>
-                  </div>
-                  </div>
-                  */
-                }
-                <div class="form-group mb-4 mt-4">
-                  <label class="container">
-                    Private Meeting
-                    <input type="checkbox" name="is_private" checked={this.state.is_private} onChange={this.handleCheckbox} />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-                {
-                  /**
+                  {
+                    /**
+                    <div className="form-group">
+                    <label> Participants </label>
+                    <div class="input-group col-sm-3" style={{background: 'none', paddingLeft: 0}}>
+                    <input value="100" type="text" className="form-control" />
+                    <span className="input-group-btn">
+                    <button className="btn btn-default">
+                    <i className="fa fa-plus"></i> Add
+                    </button>
+                    </span>
+                    </div>
+                    </div>
+                    */
+                  }
                   <div class="form-group mb-4 mt-4">
-                  <label class="container">
-                  Scheduled Meeting
-                  <input type="checkbox" name="is_scheduled" checked={this.state.is_scheduled} onChange={this.handleCheckbox} />
-                  <span className="checkmark"></span>
-                  </label>
+                    <label class="container">
+                      Private Meeting
+                    <input type="checkbox" name="is_private" checked={this.state.is_private} onChange={this.handleCheckbox} />
+                      <span className="checkmark"></span>
+                    </label>
                   </div>
-                  */
-                }
-                <div className="form-group">
-                  <button type="submit" className="btn btn-v2 btn-primary">
-                    <i className="fa fa-save"></i> Simpan
+                  {
+                    /**
+                    <div class="form-group mb-4 mt-4">
+                    <label class="container">
+                    Scheduled Meeting
+                    <input type="checkbox" name="is_scheduled" checked={this.state.is_scheduled} onChange={this.handleCheckbox} />
+                    <span className="checkmark"></span>
+                    </label>
+                    </div>
+                    */
+                  }
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-v2 btn-primary">
+                      <i className="fa fa-save"></i> Simpan
                   </button>
-                </div>
-              </form>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
 
-      </div>
+        </div>
       </>
     )
   }

@@ -14,28 +14,28 @@ class ListToDoNew extends Component {
 
 
   render() {
-  //  console.log(this.props, 'props evenntttt')
+    //  console.log(this.props, 'props evenntttt')
     const lists = this.props.lists;
     return (
       <div className="row">
         <div className="col-sm-12 mb-1">
-          <input type="text" className="form-control mb-3" placeholder="Tuliskan to do"/>
+          <input type="text" className="form-control mb-3" placeholder="Write to do" />
           <h3 className="f-w-900 f-18 fc-blue">List To Do</h3>
         </div>
         {
           lists.map((item, i) => (
             <div className="col-sm-12 mb-1" key={item.course_id}>
-                <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
-                  <div className="box-project">
-                    <div className="box-badge-red">{item.type} </div>
-                    <div className=" f-w-800 f-16 fc-black">
-                      {item.title} <span className="f-w-600 f-12 fc-skyblue"> Diberikan kepada {item.name}</span>
-                    </div>
-                    <p className="text-muted">
-                        {item.description}
-                      </p>
+              <div className="p-10" style={{ borderBottom: '1px solid #E6E6E6' }}>
+                <div className="box-project">
+                  <div className="box-badge-red">{item.type} </div>
+                  <div className=" f-w-800 f-16 fc-black">
+                    {item.title} <span className="f-w-600 f-12 fc-skyblue"> Diberikan kepada {item.name}</span>
                   </div>
+                  <p className="text-muted">
+                    {item.description}
+                  </p>
                 </div>
+              </div>
             </div>
           ))
         }
