@@ -4,9 +4,13 @@ import { NavLink, Switch, Route } from 'react-router-dom';
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Tugas from '../tugas/index';
 import Latihan from '../tugas/latihan';
+import Detail from '../tugas/detail';
 
 const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
+
+const KuisDetail = props => <Detail {...props} tipe="kuis" />;
+const UjianDetail = props => <Detail {...props} tipe="ujian" />;
 
 const titleTabs = [
   {name: 'Subjects', link: '/mata-pelajaran', component: MataPelajaran},
@@ -16,6 +20,8 @@ const titleTabs = [
 ]
 
 const switchTambahan = [
+  {name: 'Detail', link: '/detail-kuis/:examId', component: KuisDetail},
+  {name: 'Detail', link: '/detail-ujian/:examId', component: UjianDetail},
 ];
 
 export default class LearningMurid extends Component {
