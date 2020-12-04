@@ -22,8 +22,17 @@ class Tugas extends React.Component {
 
     pertanyaan: [],
 
-    mengumpulkan: []
+    mengumpulkan: [],
+    belum: [],
   };
+
+  fetchMengumpulkan(id) {
+    API.get(`${API_SERVER}v2/guru/mengumpulkan-tugas/${this.state.jadwalId}/${id}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch mengumpulkan tugas`)
+
+      this.setState({ mengumpulkan: res.data.result.sudahMengumpulkan, belum: res.data.result.belumMengumpulkan })
+    })
+  }
 
   fetchExam(id) {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${this.state.examId}`).then(res => {
@@ -46,6 +55,7 @@ class Tugas extends React.Component {
   componentDidMount() {
     this.fetchExam(this.state.examId);
     this.fetchPertanyaan(this.state.examId);
+    this.fetchMengumpulkan(this.state.examId);
   }
 
   render() {
@@ -92,65 +102,63 @@ class Tugas extends React.Component {
                     this.state.pertanyaan.map((item,i) => (
                       <div className="form-group">
                         <label>Pertanyaan <b>{i+1}</b></label>
-                        <textarea name="tanya" className="form-control" rows="3" value={item.tanya} />
+                        <textarea name="tanya" className="form-control" rows="4" value={item.tanya} />
 
                         <div className="jawaban mt-3 ml-4">
-                          <label>Pilihan</label>
-                          <tr>
-                            <td>
-                              A
-                            </td>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="a" value={item.a} className="form-control" style={{width: '460px'}} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              B
-                            </td>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{width: '460px'}} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              C
-                            </td>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              D
-                            </td>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              E
-                            </td>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
-                            </td>
-                          </tr>
+                          {
+                            item.a &&
+                            <tr>
+                              <td style={{width: '24px'}}>A.</td>
+                              <td>{item.a}</td>
+                            </tr>
+                          }
+                          {
+                            item.b &&
+                            <tr>
+                              <td style={{width: '24px'}}>B.</td>
+                              <td>{item.b}</td>
+                            </tr>
+                          }
+                          {
+                            item.c &&
+                            <tr>
+                              <td style={{width: '24px'}}>C.</td>
+                              <td>{item.c}</td>
+                            </tr>
+                          }
+                          {
+                            item.d &&
+                            <tr>
+                              <td style={{width: '24px'}}>D.</td>
+                              <td>{item.d}</td>
+                            </tr>
+                          }
+                          {
+                            item.e &&
+                            <tr>
+                              <td style={{width: '24px'}}>E.</td>
+                              <td>{item.e}</td>
+                            </tr>
+                          }
+
                         </div>
 
-                        <div className="jawaban mt-3 ml-4">
-                          <div className="form-group">
-                            <label>Jawaban</label>
-                            <select name="jawaban" value={item.jawaban} className="form-control col-sm-3">
-                              <option value="" disabled selected>Pilih</option>
-                              <option value="A">A</option>
-                              <option value="B">B</option>
-                              <option value="C">C</option>
-                              <option value="D">D</option>
-                              <option value="E">E</option>
-                            </select>
-                          </div>
-                        </div>
+                        {
+                          item.jawaban &&
+                            <div className="jawaban mt-3 ml-4">
+                              <div className="form-group">
+                                <label>Jawaban</label>
+                                <select name="jawaban" value={item.jawaban} className="form-control col-sm-3">
+                                  <option value="" disabled selected>Pilih</option>
+                                  <option value="A">A</option>
+                                  <option value="B">B</option>
+                                  <option value="C">C</option>
+                                  <option value="D">D</option>
+                                  <option value="E">E</option>
+                                </select>
+                              </div>
+                            </div>
+                        }
                       </div>
                     ))
                   }
@@ -174,15 +182,11 @@ class Tugas extends React.Component {
                   <div className="list-group list-group-flush">
                     {
                       this.state.mengumpulkan.map((item, i) => {
-                        if(item.submission) {
                           return (
                             <Link onClick={this.selectKuis} data-id={item.id} key={i} className="list-group-item list-group-item-action">
-                            {item.nama}
-
-                            <span className="float-right">{item.nilai}</span>
+                              {item.nama}
                             </Link>
                           )
-                        }
                       })
                     }
                   </div>
@@ -207,14 +211,12 @@ class Tugas extends React.Component {
                 <div className="card-body" style={{padding: '5px'}}>
                   <div className="list-group list-group-flush">
                     {
-                      this.state.mengumpulkan.map((item, i) => {
-                        if(!item.submission) {
+                      this.state.belum.map((item, i) => {
                           return (
                             <Link onClick={this.selectKuis} data-id={item.id} key={i} className="list-group-item list-group-item-action">
                               {item.nama}
                             </Link>
                           )
-                        }
                       })
                     }
                   </div>
