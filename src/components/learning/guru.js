@@ -24,6 +24,7 @@ const UjianComponent = props => (<Kuis {...props} tipe="ujian" />);
 
 const KuisDetailComponent = props => (<KuisDetail {...props} tipe="kuis" />);
 const UjianDetailComponent = props => (<KuisDetail {...props} tipe="ujian" />);
+const TugasDetailComponent = props => (<KuisDetail {...props} tipe="tugas" />);
 
 const titleTabs = [
   { name: 'Overview', link: '/pelajaran', component: Overview },
@@ -39,6 +40,7 @@ const titleTabs = [
 const switchTambahan = [
   { name: 'Detail Kuis', link: '/detail-kuis/:id/:examId', component: KuisDetailComponent },
   { name: 'Detail Ujian', link: '/detail-ujian/:id/:examId', component: UjianDetailComponent },
+  { name: 'Detail Tugas', link: '/detail-tugas/:id/:examId', component: TugasDetailComponent },
   { name: 'Personalia', link: '/personalia', component: GuruPersonalia },
   { name: 'Guru Kursus', link: '/kursus', component: GuruKurusus },
   { name: 'Ujian', link: '/ujian', component: GuruUjian },

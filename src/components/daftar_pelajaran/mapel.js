@@ -118,9 +118,16 @@ class MataPelajaran extends React.Component {
                               <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_guru}</td>
                               <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_ruangan}</td>
                               <td className="text-center" style={{verticalAlign: 'middle'}}>
-                                <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
+                                {
+                                  /**
+                                  <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
                                   <i className="fa fa-paper-plane"></i> Open
-                                </button>
+                                  </button>
+                                  */
+                                }
+                                <Link to={`/murid/detail-mapel/${row.jadwal_id}`} className="btn btn-v2 btn-primary">
+                                  <i className="fa fa-paper-plane"></i> Open
+                                </Link>
                               </td>
                             </tr>
                           ))

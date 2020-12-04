@@ -12,8 +12,8 @@ class Tugas extends React.Component {
     mataPelajaran: [],
 
     isModalTugas: false,
-    isModalDetail: false,
 
+    isModalDetail: false,
     examId: '',
     examTitle: '',
     examSoal: [],

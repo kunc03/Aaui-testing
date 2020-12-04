@@ -5,6 +5,7 @@ import MataPelajaran from '../daftar_pelajaran/mapel';
 import Tugas from '../tugas/index';
 import Latihan from '../tugas/latihan';
 import Detail from '../tugas/detail';
+import DetailMapel from '../tugas/mapel';
 
 const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
@@ -22,6 +23,7 @@ const titleTabs = [
 const switchTambahan = [
   {name: 'Detail', link: '/detail-kuis/:examId', component: KuisDetail},
   {name: 'Detail', link: '/detail-ujian/:examId', component: UjianDetail},
+  {name: 'Detail', link: '/detail-mapel/:jadwalId', component: DetailMapel},
 ];
 
 export default class LearningMurid extends Component {

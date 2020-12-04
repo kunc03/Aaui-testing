@@ -17,11 +17,16 @@ import SocketContext from '../../socket';
 class Overview extends React.Component {
 
   state = {
-    jadwalId: this.props.match.params.id,
+    jadwalId: this.props.match.params.jadwalId,
 
     overview: '',
     preview: [],
     kuis: [],
+
+    isModalDetail: false,
+    examId: '',
+    examTitle: '',
+    examSoal: [],
 
     openTugas: false,
     infoTugas: {},
@@ -61,10 +66,18 @@ class Overview extends React.Component {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
-      console.log('state: ', res.data.result)
-
-      this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      this.setState({ pertanyaan: res.data.result})
     })
+  }
+
+  selectKuis(exam) {
+    this.setState({ openTugas: true, infoTugas: exam });
+    this.fetchPertanyaan(exam.exam_id);
+  }
+
+  selectUjian(exam) {
+    this.setState({ openTugas: true, infoTugas: exam });
+    this.fetchPertanyaan(exam.id);
   }
 
   render() {
@@ -154,9 +167,9 @@ class Overview extends React.Component {
 
                                           {
                                             item.hasOwnProperty('exam_id') &&
-                                            <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info">
+                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info">
                                               <i className="fa fa-share"></i> Detail
-                                            </Link>
+                                            </button>
                                           }
                                         </div>
                                     </div>
@@ -189,9 +202,9 @@ class Overview extends React.Component {
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
                             <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
                             <div className="collapse" id={`tU${i}`}>
-                              <Link to={`/guru/detail-ujian/${this.state.jadwalId}/${item.id}`} className="btn btn-v2 btn-info">
+                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info">
                                 <i className="fa fa-share"></i> Detail
-                              </Link>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -205,19 +218,55 @@ class Overview extends React.Component {
               <Modal
                 show={this.state.openTugas}
                 onHide={() => this.setState({ openTugas: false, infoTugas: {}, pertanyaan: [] })}
+                dialogClassName="modal-lg"
               >
                 <Modal.Header closeButton>
                   <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                    {this.state.infoTugas.exam_title}
+                    {this.state.infoTugas.exam_title ? this.state.infoTugas.exam_title : this.state.infoTugas.title}
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <Link to={`/guru/detail-tugas/${this.state.jadwalId}/${this.state.infoTugas.exam_id}`} className="btn btn-v2 btn-primary mb-3">Lihat Detail</Link>
                 {
                   this.state.pertanyaan.map((item,i) => (
                     <div className="form-group">
                       <label>Pertanyaan <b>{i+1}</b></label>
-                      <textarea name="tanya" className="form-control" rows="6" value={item.tanya} />
+                      <textarea name="tanya" className="form-control mb-3" rows="3" value={item.tanya} />
+
+                      {
+                        item.a &&
+                        <tr>
+                          <td style={{width: '24px'}}>A.</td>
+                          <td>{item.a}</td>
+                        </tr>
+                      }
+                      {
+                        item.b &&
+                        <tr>
+                          <td style={{width: '24px'}}>B.</td>
+                          <td>{item.b}</td>
+                        </tr>
+                      }
+                      {
+                        item.c &&
+                        <tr>
+                          <td style={{width: '24px'}}>C.</td>
+                          <td>{item.c}</td>
+                        </tr>
+                      }
+                      {
+                        item.d &&
+                        <tr>
+                          <td style={{width: '24px'}}>D.</td>
+                          <td>{item.d}</td>
+                        </tr>
+                      }
+                      {
+                        item.e &&
+                        <tr>
+                          <td style={{width: '24px'}}>E.</td>
+                          <td>{item.e}</td>
+                        </tr>
+                      }
                     </div>
                   ))
                 }

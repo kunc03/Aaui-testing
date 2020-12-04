@@ -21,6 +21,7 @@ class Ujian extends React.Component {
     score: 0,
 
     isSubmit: false,
+    openConfirm: false,
   }
 
   clearScore() {
@@ -88,9 +89,7 @@ class Ujian extends React.Component {
     }
   }
 
-  submitJawaban = e => {
-    e.preventDefault();
-
+  saveJawaban() {
     let form = {
       userId: Storage.get('user').data.user_id,
       examId: this.state.examId,
@@ -175,7 +174,7 @@ class Ujian extends React.Component {
 
               {
                 !this.state.isSubmit &&
-                <button onClick={this.submitJawaban} className="btn btn-v2 btn-primary mt-3">Submit</button>
+                <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
               }
 
               {
@@ -207,6 +206,19 @@ class Ujian extends React.Component {
               <td><b>{this.state.score}</b></td>
             </tr>
 
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={this.state.openConfirm}
+          onHide={() => this.setState({ openConfirm: false })}
+        >
+          <Modal.Body>
+            <h4>Perhatian</h4>
+            <p>Mohon dicek kembali. Apakah Kamu yakin telah mengerjakan semua dan akan mengumpulkannya ?</p>
+
+            <Link onClick={() => this.saveJawaban()} className="btn btn-v2 btn-primary mr-2">Yakin</Link>
+            <Link onClick={() => this.setState({ openConfirm: false })} className="btn btn-v2 btn-default">Tidak</Link>
           </Modal.Body>
         </Modal>
 
