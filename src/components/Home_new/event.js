@@ -39,10 +39,12 @@ class EventNew extends Component {
     let urlLearning = ''
     if ((levelUser !== 'superadmin' && access.manage_course == 1) || (levelUser === 'superadmin')) {
       // urlLearning = 'kursus-materi'
-      urlLearning = (levelUser === "client" && Storage.get('user').data.grup_name.toLowerCase() === "guru") ? 'kursus-new' : 'learning'
-    }
-    else {
-      urlLearning = 'Courses'
+      urlLearning = 'learning';
+    } else if(levelUser === "admin") {
+      urlLearning = "learning";
+    } else {
+      urlLearning = 'kursus-new';
+      // urlLearning = 'Courses';
     }
 
     let urlMeeting = ''
