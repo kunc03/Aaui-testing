@@ -189,7 +189,7 @@ class Registasi extends React.Component {
               <div className="list-group list-group-flush">
                 {
                   this.state.listKelas.map((item, i) => (
-                    <Link onClick={this.selectKelas} data-id={item.kelas_id} key={i} className="list-group-item list-group-item-action">{item.kelas_nama} - {item.semester}</Link>
+                    <Link onClick={this.selectKelas} data-id={item.kelas_id} key={i} className="list-group-item list-group-item-action">{item.kelas_nama}</Link>
                   ))
                 }
               </div>
