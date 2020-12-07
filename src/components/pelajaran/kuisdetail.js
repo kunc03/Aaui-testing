@@ -37,6 +37,8 @@ class Tugas extends React.Component {
     salah: 0,
     score: 0,
     nama: "",
+
+    nilaiTugas: 0,
   };
 
   clearScore() {
@@ -99,7 +101,7 @@ class Tugas extends React.Component {
     API.get(`${API_SERVER}v2/guru/detail-tugas/${answerId}`).then(res => {
       if(res.data.error) toast.warning(`Warning: fetch detail`);
 
-      this.setState({ openDetail: true, detail: res.data.result })
+      this.setState({ openDetail: true, detail: res.data.result, nilaiTugas: res.data.result.score })
     })
 
   }
@@ -122,6 +124,17 @@ class Tugas extends React.Component {
         salah: res.data.result.length ? res.data.result[0].total_uncorrect : 0,
         score: res.data.result.length ? res.data.result[0].score : 0,
       })
+    })
+  }
+
+  setNilaiTugas = e => {
+    e.preventDefault();
+    let score = this.state.nilaiTugas;
+    API.put(`${API_SERVER}v2/guru/detail-tugas/${this.state.detail.answer_id}`, {score}).then(res => {
+      if(res.data.error) toast.warning(`Warning: update score`)
+
+      toast.success(`Berasil memberi nilai`)
+      this.setState({ nilaiTugas: res.data.result.score })
     })
   }
 
@@ -310,6 +323,16 @@ class Tugas extends React.Component {
                 </a>
               </li>
             </ul>
+
+            <div className="form-group mt-4">
+              <label>Nilai</label>
+              <div class="input-group mb-3">
+                <input value={this.state.nilaiTugas} onChange={e => this.setState({ nilaiTugas: e.target.value })} type="text" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
+                <div class="input-group-append">
+                  <button onClick={this.setNilaiTugas} class="btn btn-outline-secondary" type="button">Beri Nilai</button>
+                </div>
+              </div>
+            </div>
 
             <button onClick={() => this.setState({ openDetail: false, detail: {} })} className="btn btn-v2 btn-primary mt-3">Close</button>
 

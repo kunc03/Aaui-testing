@@ -31,8 +31,8 @@ const titleTabs = [
   { name: 'Silabus', link: '/silabus', component: Silabus },
   { name: 'Murid', link: '/murid', component: Murid },
   { name: 'Sesi', link: '/chapter', component: Chapter },
-  { name: 'Kuis', link: '/kuis', component: KuisComponent },
   { name: 'Tugas', link: '/tugas', component: Tugas },
+  { name: 'Kuis', link: '/kuis', component: KuisComponent },
   { name: 'Ujian', link: '/ujian', component: UjianComponent },
   { name: 'Preview', link: '/preview', component: Preview },
 ]
