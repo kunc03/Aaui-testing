@@ -385,26 +385,29 @@ class FilesTableClass extends Component {
       API.get(
         `${API_SERVER}v2/webinar/list/${folder}`
       ).then((res) => {
+        console.log('resFiles: ', res.data.result)
         if (res.status === 200) {
           let data = res.data.result;
           // BBB GET MEETING RECORD
           if (data !== "No webinars available") {
-            data.map((item) => {
-              BBB_SERVER_LIST.map((items) => {
-                let api = bbb.api(items.server, items.key)
-                let http = bbb.http
-                let getRecordingsUrl = api.recording.getRecordings({ meetingID: item.id })
-                http(getRecordingsUrl).then((result) => {
-                  if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
-                    this.state.dataRecordings.push(result.recordings)
-                    this.forceUpdate()
-                  }
-                  else {
-                    console.log('GAGAL', result)
-                  }
+            if(typeof data === "object") {
+              data.map((item) => {
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({ meetingID: item.id })
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else {
+                      console.log('GAGAL', result)
+                    }
+                  })
                 })
               })
-            })
+            }
           }
           else {
             this.setState({ dataRecordings: this.state.dataRecordings })
