@@ -24,10 +24,34 @@ class Tugas extends React.Component {
 
     mengumpulkan: [],
     belum: [],
+
+    openDetail: false,
+    detail: {},
+
+    // for kuis & ujian
+    infoExam: {},
+    examSoal: [],
+
+    openScore: false,
+    benar: 0,
+    salah: 0,
+    score: 0,
+    nama: "",
   };
 
+  clearScore() {
+    this.setState({
+      openScore: false,
+      infoExam: {},
+      benar: 0,
+      salah: 0,
+      score: 0,
+      nama: "",
+    })
+  }
+
   fetchMengumpulkan(id) {
-    API.get(`${API_SERVER}v2/guru/mengumpulkan-tugas/${this.state.jadwalId}/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/mengumpulkan-${this.state.tipe}/${this.state.jadwalId}/${id}`).then(res => {
       if(res.data.error) toast.warning(`Warning: fetch mengumpulkan tugas`)
 
       this.setState({ mengumpulkan: res.data.result.sudahMengumpulkan, belum: res.data.result.belumMengumpulkan })
@@ -52,10 +76,53 @@ class Tugas extends React.Component {
     })
   }
 
+  fetchSoal(examId, userId) {
+    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/murid-user/${examId}/${userId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch exam`);
+
+      this.setState({ examSoal: res.data.result })
+    })
+  }
+
   componentDidMount() {
     this.fetchExam(this.state.examId);
     this.fetchPertanyaan(this.state.examId);
     this.fetchMengumpulkan(this.state.examId);
+  }
+
+  detailMengumpulkan = e => {
+    e.preventDefault();
+    let answerId = e.target.getAttribute('data-id');
+    let tugasId = e.target.getAttribute('data-tugas');
+    let userId = e.target.getAttribute('data-user');
+
+    API.get(`${API_SERVER}v2/guru/detail-tugas/${answerId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch detail`);
+
+      this.setState({ openDetail: true, detail: res.data.result })
+    })
+
+  }
+
+  detailMengumpulkanKuis = e => {
+    e.preventDefault();
+    let answerId = e.target.getAttribute('data-id');
+    let examId = e.target.getAttribute('data-tugas');
+    let userId = e.target.getAttribute('data-user');
+    let nama = e.target.getAttribute('data-nama');
+
+    this.fetchSoal(examId, userId);
+    API.get(`${API_SERVER}v2/murid/kuis-ujian/result/${userId}/${examId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch hasil`);
+
+      this.setState({
+        openScore: true,
+        nama: nama,
+        benar: res.data.result.length ? res.data.result[0].total_correct : 0,
+        salah: res.data.result.length ? res.data.result[0].total_uncorrect : 0,
+        score: res.data.result.length ? res.data.result[0].score : 0,
+      })
+    })
   }
 
   render() {
@@ -183,7 +250,7 @@ class Tugas extends React.Component {
                     {
                       this.state.mengumpulkan.map((item, i) => {
                           return (
-                            <Link onClick={this.selectKuis} data-id={item.id} key={i} className="list-group-item list-group-item-action">
+                            <Link onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i} className="list-group-item list-group-item-action">
                               {item.nama}
                             </Link>
                           )
@@ -227,6 +294,79 @@ class Tugas extends React.Component {
           </div>
 
         </div>
+
+        <Modal
+          show={this.state.openDetail}
+          onHide={() => this.setState({ openDetail: false, detail: {} })}
+        >
+          <Modal.Body>
+            <h4 className="mb-3">{this.state.detail.name}</h4>
+
+            <p>{this.state.detail.answer_deskripsi}</p>
+            <ul className="list-group f-12">
+              <li className="list-group-item">
+                <a href={this.state.detail.answer_file} target="_blank">
+                  <i className="fa fa-download"></i> Download
+                </a>
+              </li>
+            </ul>
+
+            <button onClick={() => this.setState({ openDetail: false, detail: {} })} className="btn btn-v2 btn-primary mt-3">Close</button>
+
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={this.state.openScore}
+          onHide={() => this.setState({
+            openScore: false,
+            examSoal: [],
+            benar: 0,
+            salah: 0,
+            score: 0,
+            nama: "",
+          })}
+          dialogClassName="modal-lg"
+        >
+          <Modal.Body>
+            <h4 className="mb-3">{this.state.infoExam.title}</h4>
+
+            <table className="table">
+              <tr>
+                <td style={{width: '180px'}}>Nama</td>
+                <td><b>{this.state.nama}</b></td>
+              </tr>
+              <tr>
+                <td>Score</td>
+                <td><b>{this.state.score}</b></td>
+              </tr>
+              <tr>
+                <td>Benar</td>
+                <td><b>{this.state.benar}</b></td>
+              </tr>
+              <tr>
+                <td>Salah</td>
+                <td><b>{this.state.salah}</b></td>
+              </tr>
+            </table>
+
+            {
+              this.state.examSoal.map((item,i) => (
+                <div className="mb-2 border p-3">
+                  <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+
+                  <ul class="list-group">
+                    { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> }
+                    { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> }
+                    { item.c && <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> }
+                    { item.d && <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': item.myJawaban[0].answer_option === "D" ? 'danger' : ''}`}><b>D.</b> {item.d}</li> }
+                    { item.e && <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': item.myJawaban[0].answer_option === "E" ? 'danger' : ''}`}><b>E.</b> {item.e}</li> }
+                  </ul>
+                </div>
+              ))
+            }
+          </Modal.Body>
+        </Modal>
 
       </div>
     )
