@@ -230,7 +230,7 @@ class Laporan extends React.Component {
                   <tr className="text-center">
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> AVERAGE</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
                   </tr>
@@ -255,10 +255,22 @@ class Laporan extends React.Component {
                       <tr className="text-center">
                         <td>{i + 1}</td>
                         <td>{item.nama_pelajaran}</td>
-                        <td>{item.rata}</td>
-                        <td>{item.kumpulTugas.length}/{item.totalTugas.length}</td>
-                        <td>{item.kumpulKuis.length}/{item.totalKuis.length}</td>
-                        <td>{item.kumpulUjian.length}/{item.totalUjian.length}</td>
+                        <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
+                        <td>
+                          {item.totalAkhirScoreTugas}
+                          <br/>
+                          {item.kumpulTugas.length}/{item.totalTugas.length}
+                        </td>
+                        <td>
+                          {item.totalAkhirScoreKuis}
+                          <br/>
+                          {item.kumpulKuis.length}/{item.totalKuis.length}
+                        </td>
+                        <td>
+                          {item.totalAkhirScoreUjian}
+                          <br/>
+                          {item.kumpulUjian.length}/{item.totalUjian.length}
+                        </td>
                         <td>{item.persensi}</td>
                       </tr>
                     ))
