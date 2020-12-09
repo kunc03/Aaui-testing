@@ -84,7 +84,7 @@ class Overview extends React.Component {
     console.log('state: ', this.state);
 
     return (
-      <div className="row mt-3">
+      <>
         <div className="col-sm-12">
           <div className="card">
             <div className="card-body">
@@ -166,10 +166,22 @@ class Overview extends React.Component {
                                           }
 
                                           {
+                                            item.hasOwnProperty('chapter_id') &&
+                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                              <i className="fa fa-share"></i> Open
+                                            </a>
+                                          }
+
+                                          {
                                             item.hasOwnProperty('exam_id') &&
+                                            <>
                                             <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info">
                                               <i className="fa fa-share"></i> Detail
                                             </button>
+                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
+                                              <i className="fa fa-share"></i> Open
+                                            </a>
+                                            </>
                                           }
                                         </div>
                                     </div>
@@ -277,7 +289,7 @@ class Overview extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 }
