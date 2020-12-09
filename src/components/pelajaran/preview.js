@@ -11,8 +11,12 @@ import { Link } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-
 import SocketContext from '../../socket';
+
+// Core viewer
+import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
+
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
 class Overview extends React.Component {
 
@@ -86,7 +90,7 @@ class Overview extends React.Component {
                             <div class="col">&nbsp;</div>
                         </div>
                         <h5 class="m-2">
-                            <span class="badge badge-pill bg-light border">&nbsp;</span>
+                            <span class="badge badge-pill bg-success border">&nbsp;</span>
                         </h5>
                         <div class="row h-50">
                             <div class="col border-right">&nbsp;</div>
@@ -95,7 +99,7 @@ class Overview extends React.Component {
                     </div>
                     <div class="col py-2">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body timeline-active">
                                 <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
@@ -126,38 +130,57 @@ class Overview extends React.Component {
                             <div class="col py-2">
                                 <div class="card border-success shadow">
                                     <div class="card-body">
-                                        <div class="float-right text-muted f-12">{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</div>
+                                        <div class="float-right text-muted f-12">
+                                          {item.hasOwnProperty('exam_id') ? moment(item.time_start).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                        </div>
                                         <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
                                         <div class="collapse" id={`t${i}`}>
                                           <div dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                           {
                                             item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
-                                            <ul className="list-group f-12">
+                                              <ul className="list-group f-12">
                                               {
                                                 item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
                                                   <li className="list-group-item">
-                                                  <a href={item} target="_blank">{item}</a>
+                                                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
+                                                      <div style={{ height: '750px' }}>
+                                                          <Viewer fileUrl={item} />
+                                                      </div>
+                                                    </Worker>
                                                   </li>
                                                 ))
                                               }
-                                            </ul>
+                                              </ul>
                                           }
 
                                           {
                                             (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="mt-2 btn btn-v2 btn-info mr-2">
+                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
                                                 <i className="fa fa-share"></i> {row.exam_title}
                                               </button>
                                             ))
                                           }
 
                                           {
-                                            item.hasOwnProperty('exam_id') &&
-                                            <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info">
-                                              <i className="fa fa-share"></i> Detail
+                                            item.hasOwnProperty('chapter_id') &&
+                                            <Link to={`/ruangan/mengajar/${this.state.jadwalId}/chapter/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                              <i className="fa fa-share"></i> Open
                                             </Link>
                                           }
+
+                                          {
+                                            item.hasOwnProperty('exam_id') &&
+                                            <>
+                                            <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info mr-2">
+                                              <i className="fa fa-share"></i> Detail
+                                            </Link>
+                                            <Link to={`/ruangan/mengajar/${this.state.jadwalId}/exam/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
+                                              <i className="fa fa-share"></i> Open
+                                            </Link>
+                                            </>
+                                          }
+
                                         </div>
                                     </div>
                                 </div>
