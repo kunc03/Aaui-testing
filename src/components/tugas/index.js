@@ -91,7 +91,7 @@ class Tugas extends React.Component {
     // console.log(`state: `, this.state)
 
     return (
-      <div className="row mt-3">
+      <>
 
         <div className="col-sm-12">
           <div className="card">
@@ -183,7 +183,7 @@ class Tugas extends React.Component {
           </Modal.Body>
         </Modal>
 
-      </div>
+      </>
     );
   }
 
