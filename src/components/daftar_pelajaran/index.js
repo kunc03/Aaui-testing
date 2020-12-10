@@ -32,6 +32,57 @@ class DaftarPelajaran extends React.Component {
 
     silabus: [],
 
+    nilaiTugas: 0,
+    nilaiKuis: 0,
+    nilaiUjian: 0,
+    openProsentase: false,
+
+  }
+
+  openProsentase = e => {
+    e.preventDefault();
+    this.setState({
+      pelajaranId: e.target.getAttribute('data-id'),
+      pelajaranNama: e.target.getAttribute('data-title'),
+      openProsentase: true
+    })
+    this.fetchProsentase(e.target.getAttribute('data-id'))
+  }
+
+  saveProsentase = e => {
+    e.preventDefault()
+    let form = {
+      tugas: this.state.nilaiTugas,
+      kuis: this.state.nilaiKuis,
+      ujian: this.state.nilaiUjian
+    };
+    API.put(`${API_SERVER}v2/nilai-pelajaran/${this.state.pelajaranId}`, form).then(res => {
+      if(res.data.error) toast.warning(`Warning: update prosentase`)
+
+      toast.success('Set prosentase nilai berhasil disimpan');
+      this.fetchProsentase(this.state.pelajaranId)
+    })
+  }
+
+  fetchProsentase(pelajaranId) {
+    API.get(`${API_SERVER}v2/nilai-pelajaran/${pelajaranId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch prosentase`);
+
+      this.setState({
+        nilaiTugas: res.data.result.tugas,
+        nilaiKuis: res.data.result.kuis,
+        nilaiUjian: res.data.result.ujian,
+      })
+    })
+  }
+
+  closeProsentase() {
+    this.setState({
+      nilaiTugas: 0,
+      nilaiKuis: 0,
+      nilaiUjian: 0,
+      openProsentase: false,
+    })
   }
 
   closeModal() {
@@ -269,6 +320,7 @@ class DaftarPelajaran extends React.Component {
                     <th>Pelajaran</th>
                     <th>Category</th>
                     <th>Silabus</th>
+                    <th>Nilai %</th>
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
@@ -283,6 +335,9 @@ class DaftarPelajaran extends React.Component {
                         <td style={{ padding: '12px' }}>
                           <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share' : 'plus'}`}></i> {item.silabus > 0 ? 'Open' : 'Setup'}</span>
                         </td>
+                        <td style={{ padding: '12px' }}>
+                          <span onClick={this.openProsentase} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-cog`}></i> Set</span>
+                        </td>
                         <td className="text-center">
                           <i style={{ cursor: 'pointer' }} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>
                           <i style={{ cursor: 'pointer' }} onClick={this.deletePelajaran} data-id={item.pelajaran_id} className="fa fa-trash"></i>
@@ -292,6 +347,40 @@ class DaftarPelajaran extends React.Component {
                   }
                 </tbody>
               </table>
+
+              <Modal
+                show={this.state.openProsentase}
+                onHide={this.closeProsentase.bind(this)}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    {this.state.pelajaranNama}
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <form onSubmit={this.saveProsentase}>
+                    <div className="form-group row">
+                      <div className="col-sm-4">
+                        <label>Tugas</label>
+                        <input className="form-control" required type="number" value={this.state.nilaiTugas} onChange={e => this.setState({ nilaiTugas: e.target.value })} />
+                      </div>
+                      <div className="col-sm-4">
+                        <label>Kuis</label>
+                        <input  className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
+                      </div>
+                      <div className="col-sm-4">
+                        <label>Kuis</label>
+                        <input  className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <button type="submit" className="btn btn-v2 btn-success">
+                        <i className="fa fa-save"></i> Save
+                      </button>
+                    </div>
+                  </form>
+                </Modal.Body>
+              </Modal>
 
               <Modal
                 show={this.state.openSilabus}

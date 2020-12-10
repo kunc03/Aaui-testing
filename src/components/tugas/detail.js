@@ -42,7 +42,7 @@ class Ujian extends React.Component {
   }
 
   fetchSoal(id) {
-    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/murid/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/murid-user/${id}/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) toast.warning(`Warning: fetch exam`);
 
       this.setState({ examSoal: res.data.result })
@@ -95,16 +95,18 @@ class Ujian extends React.Component {
       examId: this.state.examId,
     }
 
-    console.log('state1: ', form)
     API.post(`${API_SERVER}v2/murid/kuis-ujian/submit`, form).then(res => {
       if(res.data.error) toast.warning(`Warning: submit jawaban`);
 
       this.setState({
         openScore: true,
+        openConfirm: false,
         benar: res.data.result.benar,
         salah: res.data.result.salah,
         score: res.data.result.score
       })
+
+      window.location.reload();
     })
   }
 
@@ -114,9 +116,11 @@ class Ujian extends React.Component {
   }
 
   render() {
+
     console.log('state: ', this.state)
+
     return (
-      <div className="row mt-3">
+      <>
 
         <div className="col-sm-12">
           <div className="card">
@@ -128,42 +132,54 @@ class Ujian extends React.Component {
                 this.state.examSoal.map((item,i) => (
                   <div className="mb-2 border p-3">
                     <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+
                     {
-                      item.a &&
+                      this.state.isSubmit &&
+                      <ul class="list-group">
+                        { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> }
+                        { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> }
+                        { item.c && <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> }
+                        { item.d && <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': item.myJawaban[0].answer_option === "D" ? 'danger' : ''}`}><b>D.</b> {item.d}</li> }
+                        { item.e && <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': item.myJawaban[0].answer_option === "E" ? 'danger' : ''}`}><b>E.</b> {item.e}</li> }
+                      </ul>
+                    }
+
+                    {
+                      !this.state.isSubmit && item.a &&
                       <tr>
-                        <td><input checked={"A" === item.jawaban} type="radio" value="A" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
+                        <td><input type="radio" value="A" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>A.</td>
                         <td>{item.a}</td>
                       </tr>
                     }
                     {
-                      item.b &&
+                      !this.state.isSubmit && item.b &&
                       <tr>
-                        <td><input checked={"B" === item.jawaban} type="radio" value="B" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
+                        <td><input type="radio" value="B" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>B.</td>
                         <td>{item.b}</td>
                       </tr>
                     }
                     {
-                      item.c &&
+                      !this.state.isSubmit && item.c &&
                       <tr>
-                      <td><input checked={"C" === item.jawaban} type="radio" value="C" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
+                      <td><input type="radio" value="C" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>C.</td>
                         <td>{item.c}</td>
                       </tr>
                     }
                     {
-                      item.d &&
+                      !this.state.isSubmit && item.d &&
                       <tr>
-                      <td><input checked={"D" === item.jawaban} type="radio" value="D" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
+                      <td><input type="radio" value="D" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>D.</td>
                         <td>{item.d}</td>
                       </tr>
                     }
                     {
-                      item.e &&
+                      !this.state.isSubmit && item.e &&
                       <tr>
-                      <td><input checked={"E" === item.jawaban} type="radio" value="E" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
+                      <td><input type="radio" value="E" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>E.</td>
                         <td>{item.e}</td>
                       </tr>
@@ -188,7 +204,7 @@ class Ujian extends React.Component {
 
         <Modal
           show={this.state.openScore}
-          onHide={() => this.clearScore()}
+          onHide={() => this.setState({ openScore: false })}
         >
           <Modal.Body>
             <h4 className="mb-3">Hasil</h4>
@@ -222,7 +238,7 @@ class Ujian extends React.Component {
           </Modal.Body>
         </Modal>
 
-      </div>
+      </>
     );
   }
 

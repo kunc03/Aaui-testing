@@ -52,7 +52,7 @@ class Overview extends React.Component {
           <div className="card">
             <div className="card-body">
               <h4 className="f-w-900 f-18 fc-blue">Informasi Kelas</h4>
-              <table className="table">
+              <table>
                 <tr>
                   <td style={{width: '180px'}}>Nama Kelas</td>
                   <td><b>{this.state.kelas.kelas_nama}</b></td>

@@ -263,6 +263,7 @@ class Tugas extends React.Component {
                   this.state.kuis.map((item, i) => (
                     <Link onClick={this.selectKuis} data-id={item.id} key={i} className="list-group-item list-group-item-action">
                       {item.title}
+                      <Link className="float-right" to={`/guru/detail-${this.state.tipe}/${this.state.pelajaranId}/${item.id}`}>Detail</Link>
                     </Link>
                   ))
                 }

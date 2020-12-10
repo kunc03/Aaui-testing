@@ -20,8 +20,8 @@ const titleTabs = [
   { name: 'Teaching Room', link: '/ruangan-mengajar', component: RuanganMengajar },
   { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
   { name: 'Personnel', link: '/personalia', component: Personalia },
-  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
   { name: 'Report', link: '/laporan', component: Laporan },
+  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
 ]
 
 const switchTambahan = [

@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
@@ -91,7 +91,7 @@ class Tugas extends React.Component {
     // console.log(`state: `, this.state)
 
     return (
-      <div className="row mt-3">
+      <>
 
         <div className="col-sm-12">
           <div className="card">
@@ -110,24 +110,26 @@ class Tugas extends React.Component {
 
                 <tbody>
                   {
-                    this.state.mataPelajaran.map((item, i) => (
-                      <tr>
-                        <td>{item.nama_pelajaran}</td>
-                        <td><a href="#" data-id={item.exam_id} data-title={item.title} onClick={this.openDetail}>{item.title}</a></td>
-                        <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
-                        <td>{item.answer_file ? 'Sudah Mengumpulkan' : 'Belum Mengumpulkan'}</td>
-                        <td className="text-center">
-                          {
-                            item.answer_file ?
-                            <a href={item.answer_file} target="_blank" className="silabus">Open</a>
-                            :
-                            <button onClick={() => this.setState({ isModalTugas: true, examId: item.exam_id })} className="btn btn-v2 btn-primary">
-                              <i className="fa fa-paper-plane"></i> Kirim Tugas
-                            </button>
-                          }
-                        </td>
-                      </tr>
-                    ))
+                    this.state.mataPelajaran.map((item, i) => {
+                      return (
+                        <tr>
+                          <td>{item.nama_pelajaran}</td>
+                          <td><a href="#" data-id={item.exam_id} data-title={item.title} onClick={this.openDetail}>{item.title}</a></td>
+                          <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
+                          <td>{item.submitted.length === 1 ? 'Sudah Mengumpulkan' : 'Belum Mengumpulkan'}</td>
+                          <td className="text-center">
+                            {
+                              item.submitted.length === 1 && item.submitted[0].answer_file ?
+                              <a href={item.submitted[0].answer_file} target="_blank" className="silabus">Open</a>
+                              :
+                              <button onClick={() => this.setState({ isModalTugas: true, examId: item.exam_id })} className="btn btn-v2 btn-primary">
+                                <i className="fa fa-paper-plane"></i> Kirim Tugas
+                              </button>
+                            }
+                          </td>
+                        </tr>
+                      )
+                    })
                   }
                 </tbody>
 
@@ -181,7 +183,7 @@ class Tugas extends React.Component {
           </Modal.Body>
         </Modal>
 
-      </div>
+      </>
     );
   }
 

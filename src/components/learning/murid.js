@@ -70,6 +70,7 @@ export default class LearningMurid extends Component {
                     </div>
                   </div>
 
+                  <div className="row mt-3">
                   <Switch>
                     <Route path="/murid" exact component={MataPelajaran} />
                     {
@@ -84,7 +85,8 @@ export default class LearningMurid extends Component {
                       ))
                     }
                   </Switch>
-
+                  </div>
+                  
                 </div>
               </div>
             </div>
