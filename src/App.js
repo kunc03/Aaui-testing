@@ -22,6 +22,9 @@ import DetailProject from "./components/detail_project/index";
 
 import Project from "./components/project/index";
 
+//gantt public
+import GanttPublic from "./components/Gantt/GanttPublic";
+
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
 import UserEdit from "./components/Users/User/Edit";
@@ -150,6 +153,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
+          <Route path="/gantt/:projectId" exact component={GanttPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
@@ -342,6 +346,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
         {/* <Route path="/files" component={Files} /> */}
+        <Route path="/notification" component={Notification} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
@@ -445,6 +450,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/profile" component={Profile} />
         {/* <Route path="/files" component={Files} /> */}
+        <Route path="/notification" component={Notification} />
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />
