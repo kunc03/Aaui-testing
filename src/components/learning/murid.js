@@ -10,8 +10,8 @@ import DetailMapel from '../tugas/mapel';
 const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
 
-const KuisDetail = props => <Detail {...props} tipe="kuis" />;
-const UjianDetail = props => <Detail {...props} tipe="ujian" />;
+const KuisDetail = props => <Detail {...props} role={'murid'} tipe="kuis" />;
+const UjianDetail = props => <Detail {...props} role={'murid'} tipe="ujian" />;
 
 const titleTabs = [
   {name: 'Subjects', link: '/mata-pelajaran', component: MataPelajaran},
@@ -86,7 +86,7 @@ export default class LearningMurid extends Component {
                     }
                   </Switch>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
