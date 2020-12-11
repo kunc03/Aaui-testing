@@ -6,11 +6,9 @@ import Storage from '../../repository/storage';
 
 import CalenderNew from '../kalender/kalender';
 import ProjekNew from './projek';
+import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
 import { toast } from 'react-toastify'
-import moment from 'moment-timezone'
-
-import Pengumuman from '../Pengumuman/pengumuman';
 
 class DashParent extends Component {
 
@@ -104,27 +102,7 @@ class DashParent extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.jadwal.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai}-{item.jam_selesai}</td>
-                                    <td>{item.sesi}</td>
-                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <ProjekNew lists={this.state.project} />
                         </Card.Body>
                       </Card>
                     </div>
@@ -132,7 +110,7 @@ class DashParent extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <ProjekNew lists={this.state.project} />
+                          <LaporanPembelajaranMurid lists={this.state.project} />
                         </Card.Body>
                       </Card>
                     </div>

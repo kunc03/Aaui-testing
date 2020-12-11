@@ -3,11 +3,6 @@ import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 import API, { USER_ME, API_SERVER } from '../../repository/api';
-import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
-import { MultiSelect } from 'react-sm-select';
-import ToggleSwitch from "react-switch";
-
-
 class LaporanPembelajaranMurid extends Component {
   state = {
     user: {
@@ -237,31 +232,16 @@ class LaporanPembelajaranMurid extends Component {
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser == 'client' ? false : true;
     //  console.log(this.props, 'props evenntttt')
-    const lists = this.state.project;
+    // const lists = this.state.project;
+    const lists = [{ title: 'Materi', level: 25 }, { title: 'Tugas', level: 25 }, { title: 'Ujian', level: 25 }, { title: 'Kuis', level: 25 }]
     return (
       <div className="row">
         <div className="col-sm-8">
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
-                Project
+                Student Learning Report
             </h3>
-            </div>
-            <div>
-              {
-                accessProjectManager ?
-                  <button
-                    className="btn btn-icademy-primary float-left"
-                    style={{ padding: "7px 8px !important" }}
-                    onClick={e => this.setState({ modalNewFolder: true })}
-                  >
-                    <i className="fa fa-plus"></i>
-
-            Add
-            </button>
-                  :
-                  null
-              }
             </div>
           </div>
         </div>
@@ -272,6 +252,36 @@ class LaporanPembelajaranMurid extends Component {
             </Link>
           </p>
           <b className="f-24 f-w-800">  . . . </b>
+        </div>
+        <div className="col-sm-6">
+          <table>
+            <tr>
+              <td style={{ width: '180px' }}>Nama</td>
+              <td><b>JO</b></td>
+            </tr>
+            <tr>
+              <td>Nik</td>
+              <td><b>12358945</b></td>
+            </tr>
+            <tr>
+              <td>Kelas</td>
+              <td><b>12 IPS</b></td>
+            </tr>
+          </table>
+        </div>
+        <div className="col-sm-6">
+          <div className="form-group">
+            <label>Mata Pelajaran</label>
+            <select
+              className="form-control"
+              required
+              name="quizAt"
+            >
+              <option value="">-- pilih --</option>
+              <option value="1">Ssatu</option>
+              <option value="2">Dua</option>
+            </select>
+          </div>
         </div>
         <div className="col-sm-12" style={{ marginTop: '10px' }}>
           <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
@@ -293,8 +303,7 @@ class LaporanPembelajaranMurid extends Component {
                         </div>
                       </Link>
                       <span className="col-sm-7">
-                        <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
-                        <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
+                        <Link to=""><span className="circle-info float-right">{item.level}%</span></Link>
                       </span>
 
                       {
