@@ -167,7 +167,7 @@ class Overview extends React.Component {
 
                                           {
                                             item.hasOwnProperty('chapter_id') &&
-                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2 mt-2">
                                               <i className="fa fa-share"></i> Open
                                             </a>
                                           }
@@ -175,7 +175,7 @@ class Overview extends React.Component {
                                           {
                                             item.hasOwnProperty('exam_id') &&
                                             <>
-                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info">
+                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info mr-2">
                                               <i className="fa fa-share"></i> Detail
                                             </button>
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
@@ -214,9 +214,12 @@ class Overview extends React.Component {
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
                             <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
                             <div className="collapse" id={`tU${i}`}>
-                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info">
+                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info mr-2">
                                 <i className="fa fa-share"></i> Detail
                               </button>
+                              <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.id}`} className="btn btn-v2 btn-success mr-2">
+                                <i className="fa fa-share"></i> Open
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -242,7 +245,7 @@ class Overview extends React.Component {
                   this.state.pertanyaan.map((item,i) => (
                     <div className="form-group">
                       <label>Pertanyaan <b>{i+1}</b></label>
-                      <textarea name="tanya" className="form-control mb-3" rows="3" value={item.tanya} />
+                      <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                       {
                         item.a &&
