@@ -135,11 +135,11 @@ class Overview extends React.Component {
                                         </div>
                                         <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
                                         <div class="collapse" id={`t${i}`}>
-                                          <div dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
+                                          <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                           {
                                             item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
-                                              <ul className="list-group f-12">
+                                              <ul className="list-group f-12 mb-3">
                                               {
                                                 item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
                                                   <li className="list-group-item">
@@ -212,7 +212,7 @@ class Overview extends React.Component {
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
                             <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
                             <div className="collapse" id={`tU${i}`}>
-                              <Link to={`/guru/detail-ujian/${this.state.jadwalId}/${item.id}`} className="btn btn-v2 btn-info">
+                              <Link to={`/guru/detail-ujian/${this.state.jadwalId}/${item.id}`} className="btn btn-v2 btn-info mr-2">
                                 <i className="fa fa-share"></i> Detail
                               </Link>
                               <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
@@ -243,7 +243,7 @@ class Overview extends React.Component {
                   this.state.pertanyaan.map((item,i) => (
                     <div className="form-group">
                       <label>Pertanyaan <b>{i+1}</b></label>
-                      <textarea name="tanya" className="form-control" rows="6" value={item.tanya} />
+                      <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                     </div>
                   ))
                 }

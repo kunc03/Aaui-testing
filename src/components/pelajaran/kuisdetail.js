@@ -154,7 +154,7 @@ class Tugas extends React.Component {
                   Informasi
                 </div>
                 <div className="card-body">
-                  <table className="table">
+                  <table>
                     <tr>
                       <td style={{width: '180px'}}>Tugas</td>
                       <td><b>{this.state.infoExam.title}</b></td>
@@ -182,7 +182,7 @@ class Tugas extends React.Component {
                     this.state.pertanyaan.map((item,i) => (
                       <div className="form-group">
                         <label>Pertanyaan <b>{i+1}</b></label>
-                        <textarea name="tanya" className="form-control" rows="4" value={item.tanya} />
+                        <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                         <div className="jawaban mt-3 ml-4">
                           {
@@ -226,19 +226,10 @@ class Tugas extends React.Component {
                         {
                           item.jawaban &&
                             <div className="jawaban mt-3 ml-4">
-                              <div className="form-group">
-                                <label>Jawaban</label>
-                                <select name="jawaban" value={item.jawaban} className="form-control col-sm-3">
-                                  <option value="" disabled selected>Pilih</option>
-                                  <option value="A">A</option>
-                                  <option value="B">B</option>
-                                  <option value="C">C</option>
-                                  <option value="D">D</option>
-                                  <option value="E">E</option>
-                                </select>
-                              </div>
+                              Jawaban : <b>{item.jawaban}</b>
                             </div>
                         }
+
                       </div>
                     ))
                   }
@@ -315,14 +306,16 @@ class Tugas extends React.Component {
           <Modal.Body>
             <h4 className="mb-3">{this.state.detail.name}</h4>
 
-            <p>{this.state.detail.answer_deskripsi}</p>
-            <ul className="list-group f-12">
-              <li className="list-group-item">
-                <a href={this.state.detail.answer_file} target="_blank">
-                  <i className="fa fa-download"></i> Download
-                </a>
-              </li>
-            </ul>
+            <p style={{marginLef: '160px'}}>{this.state.detail.answer_deskripsi}</p>
+
+            <div className="score-exam text-center">
+              <span>Score</span>
+              <h1>{this.state.nilaiTugas}</h1>
+            </div>
+
+            <a href={this.state.detail.answer_file} target="_blank" className="btn btn-v2 btn-default btn-info">
+              <i className="fa fa-download"></i> Download
+            </a>
 
             <div className="form-group mt-4">
               <label>Nilai</label>
@@ -334,7 +327,7 @@ class Tugas extends React.Component {
               </div>
             </div>
 
-            <button onClick={() => this.setState({ openDetail: false, detail: {} })} className="btn btn-v2 btn-primary mt-3">Close</button>
+            <button onClick={() => this.setState({ openDetail: false, detail: {} })} className="btn btn-v2 btn-primary mt-2">Close</button>
 
           </Modal.Body>
         </Modal>
@@ -354,14 +347,10 @@ class Tugas extends React.Component {
           <Modal.Body>
             <h4 className="mb-3">{this.state.infoExam.title}</h4>
 
-            <table className="table">
+            <table>
               <tr>
                 <td style={{width: '180px'}}>Nama</td>
                 <td><b>{this.state.nama}</b></td>
-              </tr>
-              <tr>
-                <td>Score</td>
-                <td><b>{this.state.score}</b></td>
               </tr>
               <tr>
                 <td>Benar</td>
@@ -373,12 +362,18 @@ class Tugas extends React.Component {
               </tr>
             </table>
 
+            <div className="score-exam text-center">
+              <span>Score</span>
+              <h1>{this.state.score}</h1>
+            </div>
+
             {
               this.state.examSoal.map((item,i) => (
-                <div className="mb-2 border p-3">
-                  <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+                <div className="mb-2 mt-3">
+                  <label>Pertanyaan <b>{i+1}</b></label>
+                  <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
-                  <ul class="list-group">
+                  <ul class="list-group mt-2">
                     { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> }
                     { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> }
                     { item.c && <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> }

@@ -9,6 +9,9 @@ import Storage from '../../repository/storage';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 class Laporan extends React.Component {
 
   state = {
@@ -109,8 +112,64 @@ class Laporan extends React.Component {
     this.setState({ nilaiMurid: data })
   }
 
+  exportPDF = () => {
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(15);
+
+    const title = "Report ";
+    const headers = [["NO", "SUBJECT", "NILAI", "TASK", "QUIZ", "EXAM", "PRESENSI"]];
+
+    const data = this.state.nilaiMurid.map((item,i) =>
+      [
+        i+1,
+        item.nama_pelajaran,
+        (item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2),
+        item.totalAkhirScoreTugas,
+        item.totalAkhirScoreKuis,
+        item.totalAkhirScoreUjian,
+        0
+      ]
+    );
+
+    let content = {
+      startY: 100,
+      head: headers,
+      body: data
+    };
+
+    doc.text(title, marginLeft, 40);
+
+    doc.setFontSize(9);
+
+    doc.text(`NIK`, 40, 60);
+    doc.text(`: ${this.state.muridId[0]}`, 120, 60);
+
+    doc.text(`NAME`, 40, 75);
+    doc.text(`: ${this.state.muridInfo.nama}`, 120, 75);
+
+    doc.text(`CLASS`, 40, 90);
+    doc.text(`: ${this.state.kelasInfo.kelas_nama}`, 120, 90);
+
+    doc.text(`SEMESTER`, 220, 60)
+    doc.text(`: ${this.state.semesterInfo.semester_name}`, 300, 60);
+
+    doc.text(`YEAR`, 220, 75)
+    doc.text(`: ${this.state.kelasInfo.tahun_ajaran}`, 300, 75);
+
+    doc.setFontSize(15);
+    doc.autoTable(content);
+
+    doc.save("report.pdf")
+  }
+
   render() {
-    console.log('state: ', this.state)
+
     return (
       <div className="row mt-3">
 
@@ -156,6 +215,12 @@ class Laporan extends React.Component {
                       valuePlaceholder="Pilih"
                       allSelectedLabel="Semua"
                     />
+                  </div>
+
+                  <div className="col-sm-3">
+                    <button className="btn btn-v2 btn-success mt-4" onClick={() => this.exportPDF()}>
+                      <i className="fa fa-download"></i> Download Report
+                    </button>
                   </div>
                 </div>
 
