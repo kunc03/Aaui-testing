@@ -145,7 +145,7 @@ class Overview extends React.Component {
                                                   <li className="list-group-item">
                                                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
                                                       <div style={{ height: '750px' }}>
-                                                          <Viewer fileUrl={item} />
+                                                          <Viewer fileUrl='http://www.africau.edu/images/default/sample.pdf' />
                                                       </div>
                                                     </Worker>
                                                   </li>
