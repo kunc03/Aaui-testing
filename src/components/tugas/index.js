@@ -148,8 +148,8 @@ class Tugas extends React.Component {
             {
               this.state.examSoal.map((item,i) => (
                 <div className="mb-2">
-                  <b>Pertanyaan {i+1}</b>
-                  <textarea rows='4' className="form-control">{item.tanya}</textarea>
+                  <label>Pertanyaan <b>{i+1}</b></label>
+                  <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                 </div>
               ))
             }

@@ -131,7 +131,8 @@ class Ujian extends React.Component {
               {
                 this.state.examSoal.map((item,i) => (
                   <div className="mb-2 border p-3">
-                    <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+                    <label>Pertanyaan <b>{i+1}</b></label>
+                    <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                     {
                       this.state.isSubmit &&
@@ -207,10 +208,15 @@ class Ujian extends React.Component {
           onHide={() => this.setState({ openScore: false })}
         >
           <Modal.Body>
-            <h4 className="mb-3">Hasil</h4>
+            <h4 className="mb-3">Hasil {this.state.infoExam.title}</h4>
+
+            <div className="score-exam text-center" style={{padding: '8px 26px'}}>
+              <span>Score</span>
+              <h1>{this.state.score}</h1>
+            </div>
 
             <tr>
-              <td style={{width: '80px'}}>Benar</td>
+              <td>Benar</td>
               <td><b>{this.state.benar}</b></td>
             </tr>
             <tr>

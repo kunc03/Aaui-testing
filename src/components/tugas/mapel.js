@@ -12,6 +12,10 @@ import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
+
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
+
 import SocketContext from '../../socket';
 
 class Overview extends React.Component {
@@ -150,7 +154,11 @@ class Overview extends React.Component {
                                               {
                                                 item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
                                                   <li className="list-group-item">
-                                                  <a href={item} target="_blank">{item}</a>
+                                                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
+                                                      <div style={{ height: '750px' }}>
+                                                          <Viewer fileUrl={item} />
+                                                      </div>
+                                                    </Worker>
                                                   </li>
                                                 ))
                                               }
