@@ -112,6 +112,11 @@ import GuruKPI from './components/guruKPI/index';
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
 
+// ======= IMPORT COMPONENT PARENT ======== //
+import LaporanPembelajaranMurid from './components/parentLearning/index';
+import ParentSylabus from './components/parentSilabus/index';
+import ParentRapor from './components/parentRapor/index';
+
 // ======= IMPORT COMPONENT RUANGAN ======== //
 import LearningRuangan from './components/learning/ruangan';
 
@@ -509,6 +514,11 @@ export class ClientSwitch extends React.Component {
         {/* ROUTE MURID */}
         <Route path='/rapor' component={MuridLaporanRapor} />
         <Route path="/webinar-murid" component={Webinar} />
+
+        {/* ROUTE PARENT */}
+        <Route path='/parent-learning' component={LaporanPembelajaranMurid} />
+        <Route path='/parent-syllabus' component={ParentSylabus} />
+        <Route path='/parent-rapor' component={ParentRapor} />
 
         <Route path="/logout" component={Logout} />
       </Switch>
