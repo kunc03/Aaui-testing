@@ -398,7 +398,7 @@ class Mengajar extends React.Component {
 
             {
               (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
-              <Detail tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+              <Detail role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
             }
 
             <Modal
