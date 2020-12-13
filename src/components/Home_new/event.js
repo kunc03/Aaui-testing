@@ -32,7 +32,11 @@ class EventNew extends Component {
   // }
 
   render() {
-    const lists = this.props.lists;
+    let companyType = Storage.get('user').data.company_type;
+
+    const listEvents = this.props.lists;
+    const lists = companyType === "pendidikan" ? listEvents.filter(item => item.title === "Learning") : listEvents;
+
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
 

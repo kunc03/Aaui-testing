@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 class Ujian extends React.Component {
 
   state = {
+    role: this.props.role ? this.props.role : '',
     tipe: this.props.tipe,
     examId: this.props.match.params.examId,
 
@@ -130,8 +131,9 @@ class Ujian extends React.Component {
 
               {
                 this.state.examSoal.map((item,i) => (
-                  <div className="mb-2 border p-3">
-                    <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+                  <div className="mb-2">
+                    <label>Pertanyaan <b>{i+1}</b></label>
+                    <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                     {
                       this.state.isSubmit &&
@@ -145,7 +147,18 @@ class Ujian extends React.Component {
                     }
 
                     {
-                      !this.state.isSubmit && item.a &&
+                      this.state.role === "guru" &&
+                      <ul class="list-group">
+                        { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': ''}`}><b>A.</b> {item.a}</li> }
+                        { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': ''}`}><b>B.</b> {item.b}</li> }
+                        { item.c && <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': ''}`}><b>C.</b> {item.c}</li> }
+                        { item.d && <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': ''}`}><b>D.</b> {item.d}</li> }
+                        { item.e && <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': ''}`}><b>E.</b> {item.e}</li> }
+                      </ul>
+                    }
+
+                    {
+                      this.state.role === "murid" && !this.state.isSubmit && item.a &&
                       <tr>
                         <td><input type="radio" value="A" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>A.</td>
@@ -153,7 +166,7 @@ class Ujian extends React.Component {
                       </tr>
                     }
                     {
-                      !this.state.isSubmit && item.b &&
+                      this.state.role === "murid" && !this.state.isSubmit && item.b &&
                       <tr>
                         <td><input type="radio" value="B" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>B.</td>
@@ -161,7 +174,7 @@ class Ujian extends React.Component {
                       </tr>
                     }
                     {
-                      !this.state.isSubmit && item.c &&
+                      this.state.role === "murid" && !this.state.isSubmit && item.c &&
                       <tr>
                       <td><input type="radio" value="C" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>C.</td>
@@ -169,7 +182,7 @@ class Ujian extends React.Component {
                       </tr>
                     }
                     {
-                      !this.state.isSubmit && item.d &&
+                      this.state.role === "murid" && !this.state.isSubmit && item.d &&
                       <tr>
                       <td><input type="radio" value="D" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>D.</td>
@@ -177,19 +190,27 @@ class Ujian extends React.Component {
                       </tr>
                     }
                     {
-                      !this.state.isSubmit && item.e &&
+                      this.state.role === "murid" && !this.state.isSubmit && item.e &&
                       <tr>
                       <td><input type="radio" value="E" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{width: '24px'}}>E.</td>
                         <td>{item.e}</td>
                       </tr>
                     }
+
+                    {
+                      this.state.role === "murid" && this.state.isSubmit &&
+                      <div className="penjelasan mt-3 mb-4">
+                        <label><b>Penjelasan</b></label>
+                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.penjelasan }} />
+                      </div>
+                    }
                   </div>
                 ))
               }
 
               {
-                !this.state.isSubmit &&
+                this.state.role === "murid" && !this.state.isSubmit &&
                 <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
               }
 
@@ -207,10 +228,15 @@ class Ujian extends React.Component {
           onHide={() => this.setState({ openScore: false })}
         >
           <Modal.Body>
-            <h4 className="mb-3">Hasil</h4>
+            <h4 className="mb-3">Hasil {this.state.infoExam.title}</h4>
+
+            <div className="score-exam text-center" style={{padding: '8px 26px'}}>
+              <span>Score</span>
+              <h1>{this.state.score}</h1>
+            </div>
 
             <tr>
-              <td style={{width: '80px'}}>Benar</td>
+              <td>Benar</td>
               <td><b>{this.state.benar}</b></td>
             </tr>
             <tr>

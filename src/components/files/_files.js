@@ -890,7 +890,7 @@ class FilesTableClass extends Component {
                   </Col>
                 </Row>
                 {
-                  this.state.folderId != 0 ?
+                  Storage.get('user').data.company_type !== "pendidikan" && this.state.folderId != 0 ?
                     <div>
                       <Row>
                         <Col>

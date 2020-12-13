@@ -110,40 +110,42 @@ class Latihan extends React.Component {
 
                   {
                     this.state.examSoal.map((item,i) => (
-                      <div className="mb-2 border p-3">
-                        <p><b>{i+1}.</b> &nbsp; {item.tanya}</p>
+                      <div className="mb-2">
+                        <label>Pertanyaan <b>{i+1}</b></label>
+                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+
                         {
                           item.a &&
                           <tr>
-                            <td style={{width: '24px'}}>A</td>
+                            <td style={{width: '24px'}}>A.</td>
                             <td>{item.a}</td>
                           </tr>
                         }
                         {
                           item.b &&
                           <tr>
-                            <td style={{width: '24px'}}>B</td>
+                            <td style={{width: '24px'}}>B.</td>
                             <td>{item.b}</td>
                           </tr>
                         }
                         {
                           item.c &&
                           <tr>
-                            <td style={{width: '24px'}}>C</td>
+                            <td style={{width: '24px'}}>C.</td>
                             <td>{item.c}</td>
                           </tr>
                         }
                         {
                           item.d &&
                           <tr>
-                            <td style={{width: '24px'}}>D</td>
+                            <td style={{width: '24px'}}>D.</td>
                             <td>{item.d}</td>
                           </tr>
                         }
                         {
                           item.e &&
                           <tr>
-                            <td style={{width: '24px'}}>E</td>
+                            <td style={{width: '24px'}}>E.</td>
                             <td>{item.e}</td>
                           </tr>
                         }

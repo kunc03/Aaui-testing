@@ -12,6 +12,10 @@ import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
+
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
+
 import SocketContext from '../../socket';
 
 class Overview extends React.Component {
@@ -99,7 +103,7 @@ class Overview extends React.Component {
                             <div class="col">&nbsp;</div>
                         </div>
                         <h5 class="m-2">
-                            <span class="badge badge-pill bg-light border">&nbsp;</span>
+                            <span class="badge badge-pill bg-success border">&nbsp;</span>
                         </h5>
                         <div class="row h-50">
                             <div class="col border-right">&nbsp;</div>
@@ -107,8 +111,8 @@ class Overview extends React.Component {
                         </div>
                     </div>
                     <div class="col py-2">
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card shadow">
+                            <div class="card-body timeline-active">
                                 <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
@@ -129,7 +133,7 @@ class Overview extends React.Component {
                                     <div class="col">&nbsp;</div>
                                 </div>
                                 <h5 class="m-2">
-                                    <span class="badge badge-pill bg-light border">&nbsp;</span>
+                                    <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
                                 </h5>
                                 <div class="row h-50">
                                     <div class="col border-right">&nbsp;</div>
@@ -137,7 +141,7 @@ class Overview extends React.Component {
                                 </div>
                             </div>
                             <div class="col py-2">
-                                <div class="card border-success shadow">
+                                <div class={`card ${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</div>
                                         <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
@@ -150,7 +154,11 @@ class Overview extends React.Component {
                                               {
                                                 item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
                                                   <li className="list-group-item">
-                                                  <a href={item} target="_blank">{item}</a>
+                                                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
+                                                      <div style={{ height: '750px' }}>
+                                                          <Viewer fileUrl={item} />
+                                                      </div>
+                                                    </Worker>
                                                   </li>
                                                 ))
                                               }
@@ -167,7 +175,7 @@ class Overview extends React.Component {
 
                                           {
                                             item.hasOwnProperty('chapter_id') &&
-                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2 mt-2">
                                               <i className="fa fa-share"></i> Open
                                             </a>
                                           }
@@ -175,7 +183,7 @@ class Overview extends React.Component {
                                           {
                                             item.hasOwnProperty('exam_id') &&
                                             <>
-                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info">
+                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info mr-2">
                                               <i className="fa fa-share"></i> Detail
                                             </button>
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
@@ -209,14 +217,17 @@ class Overview extends React.Component {
                         </div>
                       </div>
                       <div class="col py-2">
-                        <div class="card">
+                        <div class="card shadow">
                           <div class="card-body">
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
                             <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
                             <div className="collapse" id={`tU${i}`}>
-                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info">
+                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info mr-2">
                                 <i className="fa fa-share"></i> Detail
                               </button>
+                              <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.id}`} className="btn btn-v2 btn-success mr-2">
+                                <i className="fa fa-share"></i> Open
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -242,7 +253,7 @@ class Overview extends React.Component {
                   this.state.pertanyaan.map((item,i) => (
                     <div className="form-group">
                       <label>Pertanyaan <b>{i+1}</b></label>
-                      <textarea name="tanya" className="form-control mb-3" rows="3" value={item.tanya} />
+                      <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                       {
                         item.a &&

@@ -131,13 +131,38 @@ class RuanganMengajar extends React.Component {
           aOwner: 1,
           aPeserta: 1
         }
+
         API.get(`${API_SERVER}v1/folder/${Storage.get('user').data.company_id}/${res.data.result[0].id}`, role).then(res => {
           if (res.data.error) toast.warning("Error fetch folder")
 
           this.setState({ dataFolder: res.data.result })
         })
       } else {
-        toast.warning("Buat project terlebih dahulu")
+
+        const formData = {
+          name: 'Learning',
+          company: Storage.get('user').data.company_id,
+          mother: 0,
+          project_admin: [Storage.get('user').data.user_id],
+          is_limit: this.state.limited ? 1 : 0,
+          user: [],
+          aSekretaris: 1,
+          aModerator: 1,
+          aPembicara: 1,
+          aOwner: 1,
+          aPeserta: 1
+        };
+
+        API.post(`${API_SERVER}v1/folder`, formData).then(res => {
+          if (res.status === 200) {
+            if (res.data.error) {
+              toast.warning("Warning initial project")
+            } else {
+              toast.success(`Inisiasi project berhasil`)
+            }
+          }
+        })
+
       }
     })
   }
