@@ -197,6 +197,14 @@ class Ujian extends React.Component {
                         <td>{item.e}</td>
                       </tr>
                     }
+
+                    {
+                      this.state.role === "murid" && this.state.isSubmit &&
+                      <div className="penjelasan mt-3 mb-4">
+                        <label><b>Penjelasan</b></label>
+                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.penjelasan }} />
+                      </div>
+                    }
                   </div>
                 ))
               }

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
+import { Editor } from '@tinymce/tinymce-react';
 
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
@@ -138,6 +139,18 @@ class Tugas extends React.Component {
     })
   }
 
+  handleDynamicInput = (e, i) => {
+    let newObj = [...this.state.pertanyaan];
+    if(e.hasOwnProperty('target')) {
+      const { value, name } = e.target;
+      newObj[i][name] = value;
+      this.setState({ pertanyaan: newObj });
+    } else {
+      newObj[i].penjelasan = e;
+      this.setState({ pertanyaan: newObj });
+    }
+  }
+
   render() {
 
     console.log('state: ', this.state)
@@ -229,6 +242,62 @@ class Tugas extends React.Component {
                               Jawaban : <b>{item.jawaban}</b>
                             </div>
                         }
+
+                        <div className="penjelasan mt-3">
+                          <label>Pembahasan</label>
+                          <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
+                          <Editor
+                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                            initialValue={item.penjelasan}
+                            value={item.penjelasan}
+                            init={{
+                              height: 200,
+                              menubar: false,
+                              convert_urls: false,
+                              image_class_list: [
+                                {title: 'None', value: ''},
+                                {title: 'Responsive', value: 'img-responsive'},
+                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                              ],
+                              file_browser_callback_types: 'image',
+                              file_picker_callback: function (callback, value, meta) {
+                                if (meta.filetype == 'image') {
+                                  var input = document.getElementById(`myFile${i}`);
+                                  input.click();
+                                  input.onchange = function () {
+
+                                    var dataForm = new FormData();
+                                    dataForm.append('file', this.files[0]);
+
+                                    window.$.ajax({
+                                      url: `${API_SERVER}v2/media/upload`,
+                                      type: 'POST',
+                                      data: dataForm,
+                                      processData: false,
+                                      contentType: false,
+                                      success: (data)=>{
+                                        callback(data.result.url);
+                                        this.value = '';
+                                      }
+                                    })
+
+                                  };
+                                }
+                              },
+                              plugins: [
+                                "advlist autolink lists link image charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table paste code help wordcount"
+                              ],
+                              toolbar:
+                                // eslint-disable-next-line no-multi-str
+                                "undo redo | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | image | \
+                                bullist numlist outdent indent | removeformat | help"
+                            }}
+                            onEditorChange={e => this.handleDynamicInput(e, i)}
+                          />
+                        </div>
 
                       </div>
                     ))

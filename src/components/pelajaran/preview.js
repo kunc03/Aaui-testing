@@ -98,7 +98,7 @@ class Overview extends React.Component {
                         </div>
                     </div>
                     <div class="col py-2">
-                        <div class="card">
+                        <div class="card shadow">
                             <div class="card-body timeline-active">
                                 <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
@@ -120,7 +120,7 @@ class Overview extends React.Component {
                                     <div class="col">&nbsp;</div>
                                 </div>
                                 <h5 class="m-2">
-                                    <span class="badge badge-pill bg-light border">&nbsp;</span>
+                                    <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
                                 </h5>
                                 <div class="row h-50">
                                     <div class="col border-right">&nbsp;</div>
@@ -128,7 +128,7 @@ class Overview extends React.Component {
                                 </div>
                             </div>
                             <div class="col py-2">
-                                <div class="card border-success shadow">
+                                <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">
                                           {item.hasOwnProperty('exam_id') ? moment(item.time_start).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
@@ -145,7 +145,7 @@ class Overview extends React.Component {
                                                   <li className="list-group-item">
                                                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
                                                       <div style={{ height: '750px' }}>
-                                                          <Viewer fileUrl={item} />
+                                                          <Viewer fileUrl={item.replace('https://', 'http://')} />
                                                       </div>
                                                     </Worker>
                                                   </li>
@@ -199,7 +199,7 @@ class Overview extends React.Component {
                           <div class="col">&nbsp;</div>
                         </div>
                         <h5 class="m-2">
-                          <span class="badge badge-pill bg-light border">&nbsp;</span>
+                          <span class={`badge badge-pill bg-${moment(item.time_start) < moment(new Date()) ? 'success' : 'light'} border`}>&nbsp;</span>
                         </h5>
                         <div class="row h-50">
                           <div class="col">&nbsp;</div>
@@ -207,7 +207,7 @@ class Overview extends React.Component {
                         </div>
                       </div>
                       <div class="col py-2">
-                        <div class="card">
+                        <div class={`card ${moment(item.time_start) < moment(new Date()) ? 'timeline-active' : ''} shadow`}>
                           <div class="card-body">
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
                             <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>

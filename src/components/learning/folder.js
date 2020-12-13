@@ -18,7 +18,7 @@ class Folder extends React.Component  {
       if(response.data.result.length) {
         this.setState({ projectId: response.data.result[0].id })
       } else {
-        toast.warning("Buat project terlebih dahulu")
+        toast.warning(`Buat project terlebih dahulu.`)
       }
     })
   }
