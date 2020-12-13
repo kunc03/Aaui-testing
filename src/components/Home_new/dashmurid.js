@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Card, Modal, Form, FormControl } from 'react-bootstrap';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import CalenderNew from '../kalender/kalender';
@@ -34,7 +34,7 @@ class DashMurid extends Component {
 
   fetchJadwal() {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
         jadwal: res.data.result.jadwal,
@@ -72,7 +72,7 @@ class DashMurid extends Component {
 
   fetchPengumuman() {
     let url = null;
-    if(this.state.level === "admin" || this.state.level === "superadmin") {
+    if (this.state.level === "admin" || this.state.level === "superadmin") {
       url = `${API_SERVER}v1/pengumuman/company/${this.state.companyId}`;
     } else {
       url = `${API_SERVER}v1/pengumuman/role/${Storage.get('user').data.grup_id}`;
@@ -80,7 +80,7 @@ class DashMurid extends Component {
 
     API.get(url).then(response => {
       this.setState({ pengumuman: response.data.result.reverse() });
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.log(error);
     });
   }
@@ -111,13 +111,13 @@ class DashMurid extends Component {
                             </thead>
                             <tbody>
                               {
-                                this.state.jadwal.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                this.state.jadwal.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
                                     <td>{item.nama_pelajaran}</td>
                                     <td>{item.hari}</td>
                                     <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                     <td>{item.sesi}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
@@ -139,12 +139,12 @@ class DashMurid extends Component {
                             </thead>
                             <tbody>
                               {
-                                this.state.tugas.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                this.state.tugas.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
                                     <td>{item.title}</td>
                                     <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
@@ -161,10 +161,10 @@ class DashMurid extends Component {
                           <table className="table">
                             <tbody>
                               {
-                                this.state.pengumuman.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                this.state.pengumuman.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
                                     <td>{item.isi}</td>
-                                    <td style={{width: '40px'}}>
+                                    <td style={{ width: '40px' }}>
                                       <a href="#"
                                         onClick={this.openPengumuman}
                                         data-title={item.title}
@@ -186,7 +186,7 @@ class DashMurid extends Component {
                         dialogClassName="modal-lg"
                       >
                         <Modal.Header closeButton>
-                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                             Pengumuman
                           </Modal.Title>
                         </Modal.Header>
@@ -213,16 +213,16 @@ class DashMurid extends Component {
                             {
                               this.state.pengumumanFile.length > 0 &&
                               <Form.Group>
-                              <Form.Label>Attachments</Form.Label>
-                              <ul className="list-group">
-                              {
-                                this.state.pengumumanFile.map(item => (
-                                  <li className="list-group-item">
-                                  <a href={item} target="_blank">{item}</a>
-                                  </li>
-                                ))
-                              }
-                              </ul>
+                                <Form.Label>Attachments</Form.Label>
+                                <ul className="list-group">
+                                  {
+                                    this.state.pengumumanFile.map(item => (
+                                      <li className="list-group-item">
+                                        <a href={item} target="_blank">{item}</a>
+                                      </li>
+                                    ))
+                                  }
+                                </ul>
                               </Form.Group>
                             }
 
@@ -244,12 +244,12 @@ class DashMurid extends Component {
                             </thead>
                             <tbody>
                               {
-                                this.state.ujian.map((item,i) => (
+                                this.state.ujian.map((item, i) => (
                                   <tr key={i}>
-                                  <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
-                                  <td>{item.title}</td>
-                                  <td>{item.nama_pelajaran}</td>
-                                  <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                    <td>{item.title}</td>
+                                    <td>{item.nama_pelajaran}</td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
@@ -271,6 +271,8 @@ class DashMurid extends Component {
                         </Card.Body>
                       </Card>
                     </div>
+
+
 
                   </div>
 

@@ -23,6 +23,7 @@ import { initUser } from '../../actions/user_action';
 
 import DashGuru from './dashguru';
 import DashMurid from './dashmurid';
+import DashParent from './dashparent'
 
 class HomeNew extends Component {
   state = {
@@ -476,9 +477,13 @@ class HomeV2 extends Component {
         return (
           <DashGuru />
         )
-      } else {
+      } else if (this.state.grupName.toLowerCase() === "murid") {
         return (
           <DashMurid />
+        )
+      } else {
+        return (
+          <DashParent />
         )
       }
     } else {

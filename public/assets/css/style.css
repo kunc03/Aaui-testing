@@ -11641,6 +11641,17 @@ div.code-toolbar > .toolbar span:hover {
     color: #0895ff;
 }
 
+.circle-info {
+  background: transparent;
+    padding: 6px 18px;
+    border: 1px solid #0895ff;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 60px;
+    margin-left: 6px;
+    color: #0895ff;
+}
+
 .project-info-disabled {
   background: #f7f7f7;
     padding: 6px 18px;
