@@ -7,6 +7,10 @@ import { Switch, Route } from 'react-router-dom';
 import PtcClass from './ptc';
 import PtcCreate from './create';
 
+const PtcComponent = props => (
+  <PtcClass {...props} role={Storage.get('user').data.grup_name} />
+)
+
 const switchPtc = [
   {name: 'PTC Create', link: '/create/:jenis', component: PtcCreate},
   {name: 'Rapat Create', link: '/create/:jenis', component: PtcCreate},
@@ -26,7 +30,7 @@ class Ptc extends Component {
                 <div className="page-wrapper">
 
                   <Switch>
-                    <Route path="/ptc" exact component={PtcClass} />
+                    <Route path="/ptc" exact component={PtcComponent} />
                     {
                       switchPtc.map(item => (
                         <Route key={item.link} path={`/ptc${item.link}`} component={item.component} />

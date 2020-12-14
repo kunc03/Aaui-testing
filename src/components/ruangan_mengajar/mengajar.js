@@ -9,6 +9,10 @@ import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify'
 import { isMobile } from 'react-device-detect';
 import Detail from '../tugas/detail';
+// Core viewer
+import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
+
+import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
 import { Timer } from 'react-countdown-clock-timer';
 
@@ -286,12 +290,14 @@ class Mengajar extends React.Component {
                     <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
                       <i className="fa fa-sign-out-alt"></i> Keluar
                     </button>
+
                     {
-                      this.state.role === "guru" &&
+                      this.state.jenis === "materi" && this.state.role === "guru" &&
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-danger mr-2 mt-2">
                         <i className="fa fa-stop-circle"></i> Akhiri
                       </button>
                     }
+
                     <button onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning mr-2 mt-2' : 'float-right btn btn-icademy-primary mr-2 mt-2'}>
                       <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
                     </button>
@@ -397,6 +403,23 @@ class Mengajar extends React.Component {
                   <div className="card-body">
                     <div dangerouslySetInnerHTML={{ __html: this.state.infoChapter.chapter_body }} />
 
+                    {
+                      this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id !== null &&
+                        <ul className="list-group f-12 mb-3">
+                        {
+                          this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id.split(',').map(item => (
+                            <li className="list-group-item">
+                              <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
+                                <div style={{ height: '750px' }}>
+                                    <Viewer fileUrl={item} />
+                                </div>
+                              </Worker>
+                            </li>
+                          ))
+                        }
+                        </ul>
+                    }
+
                   </div>
                 </div>
               </div>
@@ -405,35 +428,38 @@ class Mengajar extends React.Component {
             {
               (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
               <>
-              <div className="col-sm-12">
-                <div className="card">
+                {
+                  this.state.role === "murid" &&
+                  <div className="col-sm-12">
+                  <div className="card">
                   <div className="card-header">
-                    <h4 className="header-kartu">
-                      Waktu Pengerjaan
+                  <h4 className="header-kartu">
+                  Waktu Pengerjaan
 
-                      {
-                        this.state.role === "murid" &&
-                        <Timer
-                          durationInSeconds={7200}
-                          formatted={true}
+                  {
+                    this.state.role === "murid" &&
+                    <Timer
+                    durationInSeconds={7200}
+                    formatted={true}
 
-                          onStart = {()=> {
-                            console.log('Triggered when the timer starts')
-                          }}
+                    onStart = {()=> {
+                      console.log('Triggered when the timer starts')
+                    }}
 
-                          onFinish = {()=> {
-                            console.log('Triggered when the timer finishes')
-                          }}
+                    onFinish = {()=> {
+                      console.log('Triggered when the timer finishes')
+                    }}
 
-                          />
-                      }
+                    />
+                  }
 
-                    </h4>
+                  </h4>
                   </div>
-                </div>
-              </div>
+                  </div>
+                  </div>
+                }
 
-              <Detail role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+                <Detail role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
               </>
             }
 
