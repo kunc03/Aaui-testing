@@ -155,7 +155,8 @@ class WebinarTable extends Component {
                             )
                         })
                     }
-                    <td colSpan="2" align="center">Aksi</td>
+                    <td align="center"></td>
+                    <td align="center">Aksi</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -182,19 +183,38 @@ class WebinarTable extends Component {
                                         <i className="fa fa-download fc-skyblue"></i> Download File
                                     </button>
                                 </td> */}
+                                <td className="fc-muted f-14 f-w-300" align="center">
+                                    <span class="btn-group dropleft">
+                                      <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i
+                                          className="fa fa-ellipsis-v"
+                                          style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                        />
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                        {
+                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) && 
+                                          <Link to={`/webinar/add/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Detail
+                                          </Link>
+                                        }
+                                        {
+                                          (access_project_admin && item.status !=3) &&  
+                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Edit
+                                          </Link>
+                                        }
+                                        {
+                                          access_project_admin &&
+                                          <Link onClick={this.dialogDelete.bind(this, item.id)} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Delete
+                                          </Link>
+                                        }
+                                        
+                                      </div>
+                                    </span>
+                                </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
-                                    {
-                                        access_project_admin && 
-                                        <Link onClick={this.dialogDelete.bind(this, item.id)} className="btn btn-v2 btn-primary mr-2" style={{backgroundColor:'#9f4040', border:'none', color:'#FFF'}}>Hapus</Link>
-                                    }
-                                    {
-                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) && 
-                                        <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
-                                    }
-                                    {
-                                        (access_project_admin && item.status !=3) && 
-                                        <Link to={`/webinar/edit/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Ubah</Link>
-                                    }
                                     {
                                         ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) && 
                                         <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
