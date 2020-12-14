@@ -411,19 +411,23 @@ class Mengajar extends React.Component {
                     <h4 className="header-kartu">
                       Waktu Pengerjaan
 
-                      <Timer
-                        durationInSeconds={7200}
-                        formatted={true}
+                      {
+                        this.state.role === "murid" &&
+                        <Timer
+                          durationInSeconds={7200}
+                          formatted={true}
 
-                        onStart = {()=> {
-                          console.log('Triggered when the timer starts')
-                        }}
+                          onStart = {()=> {
+                            console.log('Triggered when the timer starts')
+                          }}
 
-                        onFinish = {()=> {
-                          console.log('Triggered when the timer finishes')
-                        }}
+                          onFinish = {()=> {
+                            console.log('Triggered when the timer finishes')
+                          }}
 
-                        />
+                          />
+                      }
+
                     </h4>
                   </div>
                 </div>
