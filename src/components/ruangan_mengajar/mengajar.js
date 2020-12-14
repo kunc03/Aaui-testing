@@ -10,6 +10,8 @@ import { toast } from 'react-toastify'
 import { isMobile } from 'react-device-detect';
 import Detail from '../tugas/detail';
 
+import { Timer } from 'react-countdown-clock-timer';
+
 const bbb = require('bigbluebutton-js')
 
 class Mengajar extends React.Component {
@@ -303,17 +305,21 @@ class Mengajar extends React.Component {
                   </h4>
                   <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
                 </div>
-                <div className="card-body p-1">
-                  <Iframe url={this.state.joinUrl}
-                  width="100%"
-                  height="600px"
-                  display="initial"
-                  frameBorder="0"
-                  allow="fullscreen *; geolocation *; microphone *; camera *"
-                  position="relative" />
 
-                  <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
-                </div>
+                {
+                  this.state.jenis === "materi" &&
+                    <div className="card-body p-1">
+                    <Iframe url={this.state.joinUrl}
+                    width="100%"
+                    height="600px"
+                    display="initial"
+                    frameBorder="0"
+                    allow="fullscreen *; geolocation *; microphone *; camera *"
+                    position="relative" />
+
+                    <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
+                  </div>
+                }
               </div>
             </div>
 
@@ -398,7 +404,33 @@ class Mengajar extends React.Component {
 
             {
               (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
+              <>
+              <div className="col-sm-12">
+                <div className="card">
+                  <div className="card-header">
+                    <h4 className="header-kartu">
+                      Waktu Pengerjaan
+
+                      <Timer
+                        durationInSeconds={7200}
+                        formatted={true}
+
+                        onStart = {()=> {
+                          console.log('Triggered when the timer starts')
+                        }}
+
+                        onFinish = {()=> {
+                          console.log('Triggered when the timer finishes')
+                        }}
+
+                        />
+                    </h4>
+                  </div>
+                </div>
+              </div>
+
               <Detail role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+              </>
             }
 
             <Modal
