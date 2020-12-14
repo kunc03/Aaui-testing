@@ -11836,3 +11836,12 @@ div.code-toolbar > .toolbar span:hover {
   bottom: 0px;
   left: 0px;
 }
+
+.modal-2xl{
+  max-width:1200px;
+}
+
+.select-project{
+  font-size: 16px;
+  color: #3e3e3e;
+}

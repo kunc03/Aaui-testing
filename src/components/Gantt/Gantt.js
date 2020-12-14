@@ -4,6 +4,7 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
+import equal from 'fast-deep-equal'
  
 export default class Gantt extends Component {
     constructor(props) {
@@ -28,6 +29,8 @@ export default class Gantt extends Component {
         //     links : []
         // }
       };
+      this.fetchGanttData = this.fetchGanttData.bind(this)
+      this.renderGantt = this.renderGantt.bind(this)
     }
 
     renderGantt(){
@@ -76,7 +79,6 @@ export default class Gantt extends Component {
         var companies = this.state.companies;
         gantt.templates.leftside_text=function(start,end,task){
             if (task.company != '' && task.company != null && task.company != 'undefined') {
-                console.log('ALVIN TASK COMPANY', task.company)
                 var selectedCompany = companies.filter((item) => item.key == task.company)[0].label;
                 var company = "<b style='color: #"+intToRGB(hashCode(selectedCompany))+"'>"+selectedCompany+"</b>";
                 return company
@@ -188,6 +190,62 @@ export default class Gantt extends Component {
                 return "open"
         }
     };
+
+    // custom lightbox
+    // var taskId = null;
+ 
+    // gantt.showLightbox = function(id) {
+    //     taskId = id;
+    //     var task = gantt.getTask(id);
+    
+    //     var form = getForm();
+    //     var input = form.querySelector("[name='description']");
+    //     input.focus();
+    //     input.value = task.text;
+    
+    //     form.style.display = "block";
+    
+    //     form.querySelector("[name='save']").onclick = save;
+    //     form.querySelector("[name='close']").onclick = cancel;
+    //     form.querySelector("[name='delete']").onclick = remove;
+    // };
+    
+    // gantt.hideLightbox = function(){
+    //     getForm().style.display = "";
+    //     taskId = null;
+    // }
+    
+    
+    // function getForm() {
+    //     return document.getElementById("my-form");
+    // };
+    
+    // function save() {
+    //     var task = gantt.getTask(taskId);
+    
+    //     task.text = getForm().querySelector("[name='description']").value;
+    
+    //     if(task.$new){
+    //         delete task.$new;
+    //         gantt.addTask(task,task.parent);
+    //     }else{
+    //         gantt.updateTask(task.id);
+    //     }
+    
+    //     gantt.hideLightbox();
+    // }
+    
+    // function cancel() {
+    //     var task = gantt.getTask(taskId);
+    //     if(typeof task.$new != 'undefined')
+    //     gantt.deleteTask(task.id);
+    //     gantt.hideLightbox();
+    // }
+    
+    // function remove() {
+    //     gantt.deleteTask(taskId);
+    //     gantt.hideLightbox();
+    // }
     
     gantt.config.initial_scroll = false
     gantt.config.scroll_size = 12;
@@ -366,7 +424,8 @@ export default class Gantt extends Component {
             })
         })
     }
-    componentDidMount() {
+
+    fetchGanttData(){
         API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data user di project');
             this.setState({users: res.data.result}, () => {
@@ -382,6 +441,17 @@ export default class Gantt extends Component {
             })
         })
     }
+    componentDidMount() {
+        this.fetchGanttData()
+    }
+
+    componentDidUpdate(prevProps) {
+        if(!equal(this.props.projectId, prevProps.projectId))
+        {
+            gantt.clearAll()
+            this.fetchGanttData();
+        }
+    } 
 
     collapseAll(){
         gantt.eachTask(function(task){
@@ -513,6 +583,15 @@ export default class Gantt extends Component {
                 ref={ (input) => { this.ganttContainer = input } }
                 style={ { width: '100%', height: '100%' } }
             ></div>
+            {/* <div id="my-form" style={{display:'none'}}>
+                <label for="description">Task text
+                    <input type="text" name="description" />
+                </label>
+                <br/>
+                <input type="button" name="save" value="Save"/>
+                <input type="button" name="close" value="Close"/>
+                <input type="button" name="delete" value="Delete"/>
+            </div> */}
             </div>
         </div>
         </div>
