@@ -45,6 +45,7 @@ class Sidebar extends Component {
       other: {
         submenu : [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
           { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
           { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
           { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
@@ -68,6 +69,7 @@ class Sidebar extends Component {
     let menuAdmins = {
       submenu : [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
@@ -92,6 +94,7 @@ class Sidebar extends Component {
     let menuSuperAdmins = {
       submenu : [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
@@ -127,7 +130,7 @@ class Sidebar extends Component {
       menuAtas = menuAdmins.menuAtas;
       menuBawah = menuAdmins.menuBawah;
     } else {
-      menuContent = menuClients.murid.submenu;
+      menuContent = menuClients.other.submenu;
       menuAtas = menuClients.menuAtas;
       menuBawah = menuClients.menuBawah;
     }

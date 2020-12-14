@@ -11845,3 +11845,10 @@ div.code-toolbar > .toolbar span:hover {
   font-size: 16px;
   color: #3e3e3e;
 }
+
+.gantt-report-select{
+  position: absolute;
+  top: 15px;
+  right: 31px;
+  z-index: 2;
+}

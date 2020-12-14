@@ -403,7 +403,9 @@ export default class Gantt extends Component {
     resourcesStore.parse(this.state.users);
 
         gantt.init(this.ganttContainer);
-        gantt.load(`${API_SERVER}v2/gantt/${this.props.projectId}`)
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        gantt.load(`${API_SERVER}v2/${by}/${val}`)
         var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId}/`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
@@ -414,7 +416,9 @@ export default class Gantt extends Component {
     }
 
     countTaskStatus(){
-        API.get(`${API_SERVER}v2/gantt/${this.props.projectId}`).then(res => {
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        API.get(`${API_SERVER}v2/${by}/${val}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data task di project');
             this.setState({
               countOpen: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '' || item.type === null) && (item.status === 'Open' || item.status === '' || item.status === null)).length,
@@ -426,11 +430,13 @@ export default class Gantt extends Component {
     }
 
     fetchGanttData(){
-        API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        API.get(`${API_SERVER}v2/project/${by}/user/${val}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data user di project');
             this.setState({users: res.data.result}, () => {
                 this.state.users.unshift({id: '', text: ''});
-                API.get(`${API_SERVER}v2/project/gantt/company/${this.props.projectId}`).then(res => {
+                API.get(`${API_SERVER}v2/project/${by}/company/${val}`).then(res => {
                     if(res.data.error) console.log('Gagal fetch data company di project');
                     this.setState({companies: res.data.result}, () => {
                         this.state.companies.unshift({id: '', text: ''});
@@ -446,7 +452,7 @@ export default class Gantt extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(!equal(this.props.projectId, prevProps.projectId))
+        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))))
         {
             gantt.clearAll()
             this.fetchGanttData();
