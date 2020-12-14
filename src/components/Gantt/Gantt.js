@@ -4,6 +4,7 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
+import equal from 'fast-deep-equal'
  
 export default class Gantt extends Component {
     constructor(props) {
@@ -28,6 +29,8 @@ export default class Gantt extends Component {
         //     links : []
         // }
       };
+      this.fetchGanttData = this.fetchGanttData.bind(this)
+      this.renderGantt = this.renderGantt.bind(this)
     }
 
     renderGantt(){
@@ -76,7 +79,6 @@ export default class Gantt extends Component {
         var companies = this.state.companies;
         gantt.templates.leftside_text=function(start,end,task){
             if (task.company != '' && task.company != null && task.company != 'undefined') {
-                console.log('ALVIN TASK COMPANY', task.company)
                 var selectedCompany = companies.filter((item) => item.key == task.company)[0].label;
                 var company = "<b style='color: #"+intToRGB(hashCode(selectedCompany))+"'>"+selectedCompany+"</b>";
                 return company
@@ -188,6 +190,62 @@ export default class Gantt extends Component {
                 return "open"
         }
     };
+
+    // custom lightbox
+    // var taskId = null;
+ 
+    // gantt.showLightbox = function(id) {
+    //     taskId = id;
+    //     var task = gantt.getTask(id);
+    
+    //     var form = getForm();
+    //     var input = form.querySelector("[name='description']");
+    //     input.focus();
+    //     input.value = task.text;
+    
+    //     form.style.display = "block";
+    
+    //     form.querySelector("[name='save']").onclick = save;
+    //     form.querySelector("[name='close']").onclick = cancel;
+    //     form.querySelector("[name='delete']").onclick = remove;
+    // };
+    
+    // gantt.hideLightbox = function(){
+    //     getForm().style.display = "";
+    //     taskId = null;
+    // }
+    
+    
+    // function getForm() {
+    //     return document.getElementById("my-form");
+    // };
+    
+    // function save() {
+    //     var task = gantt.getTask(taskId);
+    
+    //     task.text = getForm().querySelector("[name='description']").value;
+    
+    //     if(task.$new){
+    //         delete task.$new;
+    //         gantt.addTask(task,task.parent);
+    //     }else{
+    //         gantt.updateTask(task.id);
+    //     }
+    
+    //     gantt.hideLightbox();
+    // }
+    
+    // function cancel() {
+    //     var task = gantt.getTask(taskId);
+    //     if(typeof task.$new != 'undefined')
+    //     gantt.deleteTask(task.id);
+    //     gantt.hideLightbox();
+    // }
+    
+    // function remove() {
+    //     gantt.deleteTask(taskId);
+    //     gantt.hideLightbox();
+    // }
     
     gantt.config.initial_scroll = false
     gantt.config.scroll_size = 12;
@@ -345,7 +403,9 @@ export default class Gantt extends Component {
     resourcesStore.parse(this.state.users);
 
         gantt.init(this.ganttContainer);
-        gantt.load(`${API_SERVER}v2/gantt/${this.props.projectId}`)
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        gantt.load(`${API_SERVER}v2/${by}/${val}`)
         var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId}/`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
@@ -356,7 +416,9 @@ export default class Gantt extends Component {
     }
 
     countTaskStatus(){
-        API.get(`${API_SERVER}v2/gantt/${this.props.projectId}`).then(res => {
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        API.get(`${API_SERVER}v2/${by}/${val}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data task di project');
             this.setState({
               countOpen: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '' || item.type === null) && (item.status === 'Open' || item.status === '' || item.status === null)).length,
@@ -366,12 +428,15 @@ export default class Gantt extends Component {
             })
         })
     }
-    componentDidMount() {
-        API.get(`${API_SERVER}v2/project/gantt/user/${this.props.projectId}`).then(res => {
+
+    fetchGanttData(){
+        let by = this.props.userId ? 'gantt-user' : 'gantt';
+        let val = this.props.userId ? this.props.userId : this.props.projectId;
+        API.get(`${API_SERVER}v2/project/${by}/user/${val}`).then(res => {
             if(res.data.error) console.log('Gagal fetch data user di project');
             this.setState({users: res.data.result}, () => {
                 this.state.users.unshift({id: '', text: ''});
-                API.get(`${API_SERVER}v2/project/gantt/company/${this.props.projectId}`).then(res => {
+                API.get(`${API_SERVER}v2/project/${by}/company/${val}`).then(res => {
                     if(res.data.error) console.log('Gagal fetch data company di project');
                     this.setState({companies: res.data.result}, () => {
                         this.state.companies.unshift({id: '', text: ''});
@@ -382,6 +447,17 @@ export default class Gantt extends Component {
             })
         })
     }
+    componentDidMount() {
+        this.fetchGanttData()
+    }
+
+    componentDidUpdate(prevProps) {
+        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))))
+        {
+            gantt.clearAll()
+            this.fetchGanttData();
+        }
+    } 
 
     collapseAll(){
         gantt.eachTask(function(task){
@@ -513,6 +589,15 @@ export default class Gantt extends Component {
                 ref={ (input) => { this.ganttContainer = input } }
                 style={ { width: '100%', height: '100%' } }
             ></div>
+            {/* <div id="my-form" style={{display:'none'}}>
+                <label for="description">Task text
+                    <input type="text" name="description" />
+                </label>
+                <br/>
+                <input type="button" name="save" value="Save"/>
+                <input type="button" name="close" value="Close"/>
+                <input type="button" name="delete" value="Delete"/>
+            </div> */}
             </div>
         </div>
         </div>

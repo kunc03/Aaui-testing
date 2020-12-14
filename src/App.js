@@ -25,6 +25,8 @@ import Project from "./components/project/index";
 //gantt public
 import GanttPublic from "./components/Gantt/GanttPublic";
 
+import GanttReport from "./components/Gantt/report"
+
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
 import UserEdit from "./components/Users/User/Edit";
@@ -251,6 +253,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -335,6 +338,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -420,6 +424,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />

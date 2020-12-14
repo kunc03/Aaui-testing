@@ -23,6 +23,7 @@ import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
 import {isMobile} from 'react-device-detect';
 import Iframe from 'react-iframe';
+import Gantt from '../Gantt';
 
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
@@ -76,11 +77,15 @@ export default class MeetingRoom extends Component {
     prevFolderId: 0,
     files: [],
     projectName: '',
+    project: [],
     modalNewFolder: false,
     modalUpload: false,
     attachmentId: [],
     uploading: false,
     alert: '',
+
+    shareGantt: '',
+    newShareGantt: false,
 
     //kehadiran
     isModalConfirmation: false,
@@ -97,8 +102,12 @@ export default class MeetingRoom extends Component {
     //modal
     modalFileSharing: false,
     modalMOM: false,
+    modalGantt: false
   }
   
+  closeModalGantt = e => {
+    this.setState({ modalGantt: false });
+  }
   closeModalConfirmation = e => {
     this.setState({ isModalConfirmation: false });
   }
@@ -243,13 +252,29 @@ uploadFile = e => {
 		this.setState({ isLive: false, liveURL: '' })
   }
 
+  fetchProject(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          this.setState({ project: response.data.result });
+        }).catch(function(error) {
+          console.log(error);
+        });
+      }
+    })
+  }
+
   componentDidMount() {
     // this.onBotoomScroll();
+    this.fetchProject()
     socket.on("broadcast", data => {
-      console.log(this.state.fileChat, 'sockett onnnnn')
       if(data.room == this.state.classId) {
         this.fetchData();
         this.setState({ loadingFileSharing: false, fileChat: [...this.state.fileChat, data] })
+      }
+      if(data.socketAction == 'shareGantt' && data.meetingId===this.state.classRooms.class_id && data.userId!==this.state.user.user_id) {
+        this.setState({newShareGantt: true, shareGantt: data.projectId})
       }
     });
     this.fetchData();
@@ -330,6 +355,7 @@ uploadFile = e => {
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
+          shareGantt: liveClass.data.result.share_gantt
           // jwt: token.data.token
         });
         // BBB JOIN START
@@ -528,6 +554,30 @@ uploadFile = e => {
       } else {
           this.setState({ [name]: e.target.value })
       }
+  }
+
+  changeShareGantt = (e) => {
+    let projectId = e.target.value;
+    let form = {
+      projectId: projectId
+    }
+    API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
+      if(res.status === 200) {
+        if(!res.data.error){
+          this.setState({
+            shareGantt: projectId
+          })
+          socket.emit('send', {
+            socketAction: 'shareGantt',
+            userId: this.state.user.user_id,
+            meetingId: this.state.classRooms.class_id,
+            projectId: projectId
+          })
+        }else{
+          alert('Error update share timeline')
+        }
+      }
+    })
   }
 
   sendFileNew(){
@@ -767,28 +817,44 @@ uploadFile = e => {
                 <div className="card p-20">
                   <div>
                   <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
-                  <button onClick={()=> window.close()} className="float-right btn btn-icademy-primary btn-icademy-red">
-                    <i className="fa fa-sign-out-alt"></i>Keluar Meeting
-                  </button>
-                  {
-                      user.user_id == classRooms.moderator ?
-                      <button onClick={()=> this.setState({modalEnd: true})} className="float-right btn btn-icademy-primary btn-icademy-red">
-                        <i className="fa fa-stop-circle"></i>Akhiri Meeting
+                  
+                  <div className="float-right dropleft">
+                      <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i
+                          className="fa fa-ellipsis-v"
+                          style={{ fontSize: 20, marginRight:0, color:'rgb(148 148 148)' }}
+                        />
                       </button>
-                      :
-                      null
-                  }
-                  <button style={{marginRight:14}} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
-                    <i className="fa fa-user"></i>Undang Peserta
-                  </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                        <button style={{cursor:'pointer'}} onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} type="button" class="dropdown-item">
+                          <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:10}}></i>
+                          {this.state.fullscreen ? 'Minimize' : 'Maximize'}
+                        </button>
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite}>
+                          <i className="fa fa-user-plus" style={{marginRight:10}}></i>
+                          Invite People
+                        </button>
+                        {
+                        user.user_id == classRooms.moderator &&
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=> this.setState({modalEnd: true})}>
+                          <i className="fa fa-stop-circle" style={{marginRight:10}}></i>
+                          End Meeting
+                        </button>
+                        }
+                        <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=> window.close()}>
+                          <i className="fa fa-sign-out-alt" style={{marginRight:10}}></i>
+                          Exit Meeting
+                        </button>
+                      </div>
+                  </div>
                   <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important'}} onClick={()=> this.setState({modalFileSharing: true})} className="float-right btn btn-icademy-primary">
                     <i className="fa fa-file" style={{marginRight:'0px !important'}}></i>File Sharing
                   </button>
                   <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important'}} onClick={()=> this.setState({modalMOM: true})} className="float-right btn btn-icademy-primary">
                     <i className="fa fa-clipboard-list" style={{marginRight:'0px !important'}}></i>MOM
                   </button>
-                  <button style={{marginRight:14}} onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning' : 'float-right btn btn-icademy-primary'}>
-                    <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:'0px !important'}}></i>{this.state.fullscreen ? 'Minimize' : 'Maximize'}
+                  <button style={{marginRight:14, padding: '0px !important', height:'40px !important', width:'40px !important', borderRadius:'50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalGantt: true, newShareGantt: false})} className="float-right btn btn-icademy-primary">
+                    <i className="fa fa-tasks" style={{marginRight:'0px !important'}}></i>Task & Timeline
                   </button>
                   {/* <a target='_blank' href={this.state.joinUrl}>
                   <button className="float-right btn btn-icademy-primary">
@@ -1244,7 +1310,28 @@ uploadFile = e => {
               </div>
           </Modal.Body>
         </Modal>
-        
+        <Modal
+          show={this.state.modalGantt}
+          onHide={this.closeModalGantt}
+          dialogClassName='modal-2xl'
+          centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Task & Timeline - &nbsp;
+            <select className="select-project" name="shareGantt" value={this.state.shareGantt} onChange={this.changeShareGantt}>
+              <option value={0}>Project Not Selected</option>
+              {this.state.project.map(item=>
+                <option value={item.id}>{item.title}</option>  
+              )}
+            </select>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          <div className="gantt-container">
+            { this.state.shareGantt != 0 && <Gantt projectId={this.state.shareGantt}/> }
+          </div>
+          </Modal.Body>
+        </Modal>
 			</div>
       </ReactFullScreenElement>
 			</div>
