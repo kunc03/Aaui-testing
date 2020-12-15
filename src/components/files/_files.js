@@ -321,7 +321,7 @@ fetchRekamanBBB(folder){
                 BBB_SERVER_LIST.map((items) => {
                   let api = bbb.api(items.server, items.key)
                   let http = bbb.http
-                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id, state: 'any'})
                   http(getRecordingsUrl).then((result) => {
                     if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
                       this.state.dataRecordings.push(result.recordings)
@@ -366,7 +366,7 @@ fetchRekamanBBBWebinar(folder){
                 BBB_SERVER_LIST.map((items) => {
                   let api = bbb.api(items.server, items.key)
                   let http = bbb.http
-                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id})
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id, state: 'any'})
                   http(getRecordingsUrl).then((result) => {
                     if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
                       this.state.dataRecordings.push(result.recordings)
@@ -707,7 +707,7 @@ componentDidMount(){
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
