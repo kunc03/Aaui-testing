@@ -183,9 +183,17 @@ class Mengajar extends React.Component {
     // BBB JOIN END
   }
 
+  cekKehadiran(userId) {
+    API.get(`${API_SERVER}v2/murid/cek-hadir/${userId}/${this.state.sesiId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: cek kehadiran Anda`)
+
+      this.setState({ openKehadiran: res.data.result.length ? false : true })
+    })
+  }
+
   componentDidMount() {
     if(this.state.role === "murid") {
-      this.setState({ openKehadiran: true })
+      this.cekKehadiran(Storage.get('user').data.user_id)
     }
 
     this.fetchJadwal(this.state.jadwalId)

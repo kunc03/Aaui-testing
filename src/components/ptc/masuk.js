@@ -27,6 +27,9 @@ class Mengajar extends React.Component {
     ptcId: this.props.match.params.id,
     infoPtc: {},
 
+    openParticipants: false,
+    peserta: [],
+
     joinUrl: '',
     modalEnd: false,
 
@@ -39,6 +42,29 @@ class Mengajar extends React.Component {
     deleteFileId: '',
     deleteFileName: '',
     modalDeleteFile: false,
+
+    openKehadiran: false,
+  }
+
+  hadirMurid = e => {
+    e.preventDefault();
+    let form = {
+      ptcId: this.state.ptcId,
+      userId: Storage.get('user').data.user_id,
+    }
+
+    API.put(`${API_SERVER}v1/ptc-room/hadir/${form.ptcId}/${form.userId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: gagal absen`)
+
+      toast.success(`Terimakasih Anda sudah mengkonfirmasi kehadiran.`)
+      this.setState({ openKehadiran: false })
+
+      this.props.socket.emit('send', {
+        event: 'absen',
+        ptcId: this.state.ptcId,
+        companyId: Storage.get('user').data.company_id
+      })
+    })
   }
 
   onChangeInput = e => {
@@ -169,11 +195,23 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
+    if(this.state.role !== "guru") {
+      API.get(`${API_SERVER}v1/ptc-room/cek-hadir/${this.state.ptcId}/${Storage.get('user').data.user_id}`).then(res => {
+        if(res.data.error) toast.warning(`Warning: cek kehadiran`)
+
+        this.setState({ openKehadiran: res.data.result.join_at ? false : true })
+      })
+    }
+
     this.fetchPtcInfo(this.state.ptcId)
 
     this.props.socket.on('broadcast', data => {
       if (data.event == 'ptc' && data.ptcId == this.state.ptcId && data.companyId == Storage.get('user').data.company_id) {
         this.fetchFiles(this.state.infoPtc.folder_id);
+      }
+
+      if (data.event == 'absen' && data.ptcId == this.state.ptcId && data.companyId == Storage.get('user').data.company_id) {
+        this.fetchParticipants(this.state.ptcId);
       }
     })
   }
@@ -222,6 +260,20 @@ class Mengajar extends React.Component {
     })
   }
 
+  infoParticipants = e => {
+    e.preventDefault()
+    this.setState({ openParticipants: true })
+    this.fetchParticipants(this.state.ptcId);
+  }
+
+  fetchParticipants(ptcId) {
+    API.get(`${API_SERVER}v1/ptc-room/peserta/${ptcId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch peserta PTC`)
+
+      this.setState({ peserta: res.data.result })
+    })
+  }
+
   render() {
 
     console.log('state: ', this.state);
@@ -254,7 +306,7 @@ class Mengajar extends React.Component {
 
                     {
                       this.state.role === "guru" &&
-                      <button className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
+                      <button onClick={this.infoParticipants} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
                         <i className={'fa fa-list-alt'}></i> Info
                       </button>
                     }
@@ -263,7 +315,6 @@ class Mengajar extends React.Component {
                 </div>
 
                 {
-                  this.state.role === "murid" &&
                   <div className="card-body p-1">
                     <Iframe url={this.state.joinUrl}
                     width="100%"
@@ -522,6 +573,59 @@ class Mengajar extends React.Component {
                     {'Upload'}
                 </button>
               </Modal.Footer>
+            </Modal>
+
+            <Modal
+              show={this.state.openParticipants}
+              onHide={() => this.setState({ openParticipants: false })}
+              dialogClassName="modal-lg">
+              <Modal.Body>
+                <h4 className="f-w-900 f-18 fc-blue">Informasi Participants</h4>
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>Identity</th>
+                      <th>Kehadiran</th>
+                      <th>Jam</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.state.peserta.map((item, i) => (
+                        <tr>
+                          <td>{i+1}</td>
+                          <td>{item.name}</td>
+                          <td>{item.identity}</td>
+                          <td>{item.join_at ? <span class="badge badge-pill badge-success">Hadir</span> : <span class="badge badge-pill badge-info">Belum</span>}</td>
+                          <td>{item.join_at ? moment(item.join_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </Modal.Body>
+            </Modal>
+
+            <Modal
+              show={this.state.openKehadiran}
+              onHide={() => this.setState({ openKehadiran: false })}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                  Konfirmasi Kehadiran
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <button onClick={this.hadirMurid} className="btn btn-v2 btn-primary mr-2">
+                  Ya, Hadir
+                </button>
+                <button onClick={() => this.setState({ openKehadiran: false })} className="btn btn-v2 btn-default">
+                  Tutup
+                </button>
+              </Modal.Body>
             </Modal>
 
           </div>
