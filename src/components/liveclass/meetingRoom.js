@@ -1108,15 +1108,15 @@ uploadFile = e => {
                       { this.state.fileChat.map((item, i)=>{
                         return (
                           <div className='box-chat-send-left'>
-                            <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br/>
-                            <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
+                            <span className="m-b-5"><b>{item.name} </b></span><br/>
+                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
                             <small >
                               {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
                               {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
                             </small>
                             {
                               classRooms.moderator == Storage.get("user").data.user_id &&
-                              <button style={{cursor: 'pointer'}} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                              <i style={{marginLeft:10, cursor:'pointer'}} data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i>
                             }
                           </div>
                         )
