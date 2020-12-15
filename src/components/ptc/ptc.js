@@ -185,7 +185,9 @@ class PtcClasses extends React.Component {
                           <td className="text-center">
                             {
                               Date.parse(item.tanggal_mulai) >= new Date() &&
-                              <button className="btn btn-v2 btn-primary">Masuk</button>
+                              <a target="_blank" className="btn btn-v2 btn-primary" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
+                                <i className="fa fa-video"></i> Masuk
+                              </a>
                             }
                             {
                               Date.parse(item.tanggal_mulai) <= new Date() &&
@@ -198,7 +200,7 @@ class PtcClasses extends React.Component {
                               <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
                                 <i className="fa fa-edit ml-2"></i>
                               </Link>
-                              
+
                               <i onClick={this.deletePtc} data-id={item.ptc_id} className="fa fa-trash ml-2" style={{ cursor: 'pointer' }}></i>
                               </>
                             }

@@ -6,15 +6,21 @@ import { Switch, Route } from 'react-router-dom';
 
 import PtcClass from './ptc';
 import PtcCreate from './create';
+import PtcMasuk from './masuk';
 
 const PtcComponent = props => (
   <PtcClass {...props} role={Storage.get('user').data.grup_name} />
+)
+
+const PtcMasukComponent = props => (
+  <PtcMasuk {...props} role={Storage.get('user').data.grup_name} />
 )
 
 const switchPtc = [
   {name: 'PTC Create', link: '/create/:jenis', component: PtcCreate},
   {name: 'Rapat Create', link: '/create/:jenis', component: PtcCreate},
   {name: 'Edit Create', link: '/update/:jenis/:id', component: PtcCreate},
+  {name: 'PTC Start', link: '/masuk/:jenis/:id', component: PtcMasukComponent},
 ];
 
 class Ptc extends Component {
