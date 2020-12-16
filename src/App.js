@@ -108,6 +108,7 @@ import GuruKurusus from './components/guruKursus/index';
 import GuruUjian from './components/guruUjian/index';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
+import DetailKelas from './components/detail_kelas/index';
 
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
@@ -509,6 +510,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/guru/ujian' component={GuruUjian} />
         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
         <Route path='/guru/kpi' component={GuruKPI} />
+        <Route path='/detail-kelas' component={DetailKelas} />
 
 
         {/* ROUTE MURID */}
