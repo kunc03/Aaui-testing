@@ -419,7 +419,7 @@ class HomeNew extends Component {
                           </Card>
                         </div>
 
-                        <div className="col-sm-12">
+                        {/* <div className="col-sm-12">
                           <Card style={{ backgroundColor: '#F3F3F3' }}>
 
                             <div className="col-sm-12">
@@ -435,7 +435,7 @@ class HomeNew extends Component {
                             </div>
 
                           </Card>
-                        </div>
+                        </div> */}
 
                       </div>
                     </div>

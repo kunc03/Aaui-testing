@@ -358,7 +358,7 @@ fetchRekamanBBB(folder){
                   })
                 })
               })
-            })
+            }
           }
           else {
             this.setState({ dataRecordings: this.state.dataRecordings })
@@ -368,7 +368,6 @@ fetchRekamanBBB(folder){
           this.setState({
             isLoading: false
           })
-        }
       });
     }
   }
@@ -735,6 +734,7 @@ fetchRekamanBBB(folder){
                               </span>
                             </td>
                           </tr>
+                        )
                         )
                         }
                         {
