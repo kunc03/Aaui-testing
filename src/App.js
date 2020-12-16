@@ -13,6 +13,8 @@ import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
+import Pengumuman from "./components/Pengumuman/index";
+
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 // import Files from "./components/files/files";
@@ -292,6 +294,8 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
 
+         <Route path="/pengumuman" component={Pengumuman} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -384,6 +388,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
 
+        <Route path="/pengumuman" component={Pengumuman} />
         <Route path="/pengaturan" exact component={Pengaturan} />
 
         <Route path="/profile" exact component={Profile} />
@@ -469,6 +474,8 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
+
+         <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
