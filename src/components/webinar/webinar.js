@@ -23,15 +23,15 @@ class WebinarTable extends Component {
       dataUser: [],
       webinars: [],
       isLoading: [],
-      deleteWebinarId:'',
-      modalDelete:false,
+      deleteWebinarId: '',
+      modalDelete: false,
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
-        {title : 'Moderator', width: null, status: true},
-        {title : 'Status', width: null, status: true},
-        {title : 'Waktu', width: null, status: true},
-        {title : 'Tanggal', width: null, status: true},
-        {title : 'Peserta', width: null, status: true},
+        { title: 'Moderator', width: null, status: true },
+        { title: 'Status', width: null, status: true },
+        { title: 'Time', width: null, status: true },
+        { title: 'Date', width: null, status: true },
+        { title: 'Participants', width: null, status: true },
         // {title : 'File Project', width: null, status: true},
       ]
     };
@@ -42,46 +42,46 @@ class WebinarTable extends Component {
   }
 
   fetchData() {
-    this.setState({isLoading:true})
+    this.setState({ isLoading: true })
     API.get(
-        this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}`
+      this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}`
         : `${API_SERVER}v2/webinar/list-by-company/${this.state.companyId}`
-        ).then(res => {
-        if(res.data.error) {
-            // toast.warning("Error fetch API");
-        }
-        else{
-            this.setState({ webinars: res.data.result, isLoading: false });
-        }
+    ).then(res => {
+      if (res.data.error) {
+        // toast.warning("Error fetch API");
+      }
+      else {
+        this.setState({ webinars: res.data.result, isLoading: false });
+      }
     })
   }
-  updateStatus (id, status) {
+  updateStatus(id, status) {
     let form = {
       id: id,
       status: status,
     };
     API.put(`${API_SERVER}v2/webinar/status`, form).then(async res => {
-      if(res.data.error) 
+      if (res.data.error)
         toast.warning("Error fetch API")
       else
         toast.success('Webinar dimulai, silahkan gunakan tombol masuk untuk join')
-        this.fetchData()
+      this.fetchData()
     })
   }
-  deleteWebinar () {
+  deleteWebinar() {
     API.delete(`${API_SERVER}v2/webinar/unpublish/${this.state.deleteWebinarId}`).then(async res => {
-      if(res.data.error) 
+      if (res.data.error)
         toast.warning("Error fetch API")
       else
         toast.success('Menghapus webinar')
-        this.closeModalDelete()
-        this.fetchData()
+      this.closeModalDelete()
+      this.fetchData()
     })
   }
   closeModalDelete = e => {
-    this.setState({modalDelete:false, deleteWebinarId:''})
+    this.setState({ modalDelete: false, deleteWebinarId: '' })
   }
-  dialogDelete(id){
+  dialogDelete(id) {
     this.setState({
       deleteWebinarId: id,
       modalDelete: true
@@ -93,48 +93,48 @@ class WebinarTable extends Component {
     const bodyTabble = this.state.webinars;
     const access_project_admin = this.props.access_project_admin;
 
-    const StatusBadge = ({value}) => {
-        if(value == 0) {
-            return (
-                <span class="badge badge-pill badge-warning">Belum Selesai</span>
-            )
-        } else if (value == 1) {
-            return (
-                <span class="badge badge-pill badge-primary">Belum Mulai</span>
-            )
-        } else if (value == 2) {
-            return (
-                <span class="badge badge-pill badge-success">Sedang Berlangsung</span>
-            )
-        } else if (value == 3) {
-            return (
-                <span class="badge badge-pill badge-secondary">Selesai</span>
-            )
-        }
+    const StatusBadge = ({ value }) => {
+      if (value == 0) {
+        return (
+          <span class="badge badge-pill badge-warning">Not finished</span>
+        )
+      } else if (value == 1) {
+        return (
+          <span class="badge badge-pill badge-primary">Not Started yet</span>
+        )
+      } else if (value == 2) {
+        return (
+          <span class="badge badge-pill badge-success">In progress</span>
+        )
+      } else if (value == 3) {
+        return (
+          <span class="badge badge-pill badge-secondary">Done</span>
+        )
+      }
     }
 
     return (
-            <div className="card p-20">
-            <span className="mb-4">
-                <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
+      <div className="card p-20">
+        <span className="mb-4">
+          <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
 
-                
-                {access_project_admin == true ?
-                <Link
-                to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}`}
-                >
-                    <button
-                    className="btn btn-icademy-primary float-right"
-                    style={{ padding: "7px 8px !important", marginLeft:14 }}
-                    >
-                    <i className="fa fa-plus"></i>
-                    
-                    Tambah
+
+          {access_project_admin == true ?
+            <Link
+              to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}`}
+            >
+              <button
+                className="btn btn-icademy-primary float-right"
+                style={{ padding: "7px 8px !important", marginLeft: 14 }}
+              >
+                <i className="fa fa-plus"></i>
+
+                    Add
                     </button>
-                </Link>
-                : null
-                }
-                {/* <Link
+            </Link>
+            : null
+          }
+          {/* <Link
                 to={`/webinar/roles/${this.props.projectId}`}
                 className="btn btn-v2 btn-primary float-right mr-2"
                 // onClick={()=>toast.warning('Webinar sedang dalam pembangunan')}
@@ -193,13 +193,13 @@ class WebinarTable extends Component {
                                       </button>
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                                         {
-                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) && 
+                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
                                           <Link to={`/webinar/add/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Detail
                                           </Link>
                                         }
                                         {
-                                          (access_project_admin && item.status !=3) &&  
+                                          (access_project_admin && item.status !=3) &&
                                           <Link to={`/webinar/edit/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Edit
                                           </Link>
@@ -210,13 +210,13 @@ class WebinarTable extends Component {
                                             Delete
                                           </Link>
                                         }
-                                        
+
                                       </div>
                                     </span>
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
-                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) && 
+                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
                                         <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
                                     }
                                     {
@@ -232,7 +232,7 @@ class WebinarTable extends Component {
                             )
                         })
                     }
-                    
+
                 </tbody>
                 </table>
             </div>
@@ -245,28 +245,28 @@ class WebinarTable extends Component {
                   <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
                   Konfirmasi
                   </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <div>Anda yakin akan menghapus webinar ini ?</div>
-                </Modal.Body>
-                <Modal.Footer>
-                            <button
-                              className="btn btm-icademy-primary btn-icademy-grey"
-                              onClick={this.closeModalDelete.bind(this)}
-                            >
-                              Batal
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan menghapus webinar ini ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btm-icademy-primary btn-icademy-grey"
+              onClick={this.closeModalDelete.bind(this)}
+            >
+              Cancel
                             </button>
-                            <button
-                              className="btn btn-icademy-primary btn-icademy-red"
-                              onClick={this.deleteWebinar.bind(this, this.state.deleteWebinarId)}
-                            >
-                              <i className="fa fa-trash"></i>
+            <button
+              className="btn btn-icademy-primary btn-icademy-red"
+              onClick={this.deleteWebinar.bind(this, this.state.deleteWebinarId)}
+            >
+              <i className="fa fa-trash"></i>
                               Hapus
                             </button>
-                </Modal.Footer>
-              </Modal>
-            </div>
-                    
+          </Modal.Footer>
+        </Modal>
+      </div>
+
     );
   }
 }

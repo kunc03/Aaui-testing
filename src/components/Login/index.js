@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import {Alert} from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import axios from 'axios';
-import API, {USER_LOGIN, API_SERVER} from '../../repository/api';
+import API, { USER_LOGIN, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import LupaPassword from './lupaPassword'
 import { Link } from "react-router-dom";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 const tabs = [
   { title: 'Login' },
@@ -24,28 +24,28 @@ class Login extends Component {
     toggle_alert: false,
     isVoucher: false,
     voucher: '',
-    alertMessage : '',
-    tabIndex : 1,
-    showPass : false
+    alertMessage: '',
+    tabIndex: 1,
+    showPass: false
   };
 
   tabLogin(a, b) {
     this.setState({ tabIndex: b + 1 });
-    if(b === 1){
+    if (b === 1) {
       this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
-    }else{
-      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false});
+    } else {
+      this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false });
     }
     // console.log(b, this.state.tabIndex)
   }
 
-  backToLogin(){
+  backToLogin() {
     //console.log('balikk')
-    this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false, showPass: false, tabIndex: 1});
+    this.setState({ isVoucher: false, voucher: '', email: '', password: '', toggle_alert: false, showPass: false, tabIndex: 1 });
   }
 
-  lupaPassword(){
-    this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: true, showPass: true, tabIndex: 4});
+  lupaPassword() {
+    this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: true, showPass: true, tabIndex: 4 });
   }
 
   onChangeEmail = e => {
@@ -76,20 +76,28 @@ class Login extends Component {
     let body = { voucher };
 
     axios.post(`${USER_LOGIN}/voucher`, body).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error) {
+
+      console.log('VOUCHER: ', res.data.result);
+
+      if (res.status === 200) {
+        if (!res.data.error) {
 
           let form = {
-            user_id : res.data.result.user_id, 
-            description : res.data.result.email, 
-            title : 'voucher login'
+            user_id: res.data.result.user_id,
+            description: res.data.result.email,
+            title: 'voucher login'
           }
 
-          Storage.set('user', {data: { 
-            user_id: res.data.result.user_id, 
-            email: res.data.result.email, 
-            level: res.data.result.level,
-          }});
+          Storage.set('user', {
+            data: {
+              user_id: res.data.result.user_id,
+              email: res.data.result.email,
+              level: res.data.result.level,
+              grup_id: res.data.result.grup_id,
+              grup_name: res.data.result.grup_name,
+            }
+          });
+
           Storage.set('access', {
             activity: res.data.result.activity,
             course: res.data.result.course,
@@ -98,30 +106,32 @@ class Login extends Component {
             group_meeting: res.data.result.group_meeting,
             manage_group_meeting: res.data.result.manage_group_meeting
           });
-          Storage.set('token', {data: res.data.result.token});
 
-          if (this.props.redirectUrl){
-            window.location.href = window.location.origin+this.props.redirectUrl
+          Storage.set('token', { data: res.data.result.token });
+
+          if (this.props.redirectUrl) {
+            window.location.href = window.location.origin + this.props.redirectUrl
           }
-          else{
-            if (res.data.result.is_new_password===1){
+          else {
+            if (res.data.result.is_new_password === 1) {
               window.location.href = window.location.origin;
             }
-            else{
+            else {
               window.location.href = `${window.location.origin}/pengaturan`;
             }
           }
+
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
-            function(){
+            function () {
               console.log(arguments)
             }
           );
-          
+
         } else {
-          if (res.data.result.status=='expired'){
+          if (res.data.result.status == 'expired') {
             this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
           }
-          else{
+          else {
             this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
           }
         }
@@ -139,41 +149,56 @@ class Login extends Component {
     let body = { email, password }
 
     axios.post(USER_LOGIN, body).then(res => {
-      if(res.status === 200){
-        if(!res.data.error){
+      if (res.status === 200) {
+        if (!res.data.error) {
 
           let form = {
-            user_id : res.data.result.user_id, 
-            description : res.data.result.email, 
-            title : 'regular login'
+            user_id: res.data.result.user_id,
+            description: res.data.result.email,
+            title: 'regular login'
           }
-          Storage.set('user', {data: { 
-            user_id: res.data.result.user_id, 
-            email: res.data.result.email,
-            level: res.data.result.level,
-          }});
-          Storage.set('token', {data:res.data.result.token});
-          if (this.props.redirectUrl){
-            window.location.href = window.location.origin+this.props.redirectUrl
+          Storage.set('user', {
+            data: {
+              user_id: res.data.result.user_id,
+              email: res.data.result.email,
+              level: res.data.result.level,
+              grup_id: res.data.result.grup_id,
+              grup_name: res.data.result.grup_name,
+            }
+          });
+
+          Storage.set('access', {
+            activity: res.data.result.activity,
+            course: res.data.result.course,
+            manage_course: res.data.result.manage_course,
+            forum: res.data.result.forum,
+            group_meeting: res.data.result.group_meeting,
+            manage_group_meeting: res.data.result.manage_group_meeting
+          });
+
+          Storage.set('token', { data: res.data.result.token });
+          
+          if (this.props.redirectUrl) {
+            window.location.href = window.location.origin + this.props.redirectUrl
           }
-          else{
-            if (res.data.result.is_new_password===1){
+          else {
+            if (res.data.result.is_new_password === 1) {
               window.location.href = window.location.origin;
             }
-            else{
+            else {
               window.location.href = `${window.location.origin}/pengaturan`;
             }
           }
-          
+
           API.post(`${API_SERVER}v1/api-activity/new-login`, form).then(
-            function(){
+            function () {
             }
           );
         } else {
-          if (res.data.result.status=='expired'){
+          if (res.data.result.status == 'expired') {
             this.setState({ toggle_alert: true, alertMessage: res.data.result.message });
           }
-          else{
+          else {
             this.setState({ toggle_alert: true, alertMessage: 'Login failed. Please verify the data correct!' });
           }
         }
@@ -184,35 +209,35 @@ class Login extends Component {
       console.log('failed fetch', err);
     })
   };
-  componentDidMount(){
+  componentDidMount() {
     try {
-      if (this.props.match.params.id && this.props.match.params.key){
+      if (this.props.match.params.id && this.props.match.params.key) {
         this.lupaPassword()
       }
     } catch (error) {
-      console.log('Continue',error)
+      console.log('Continue', error)
     }
   }
   render() {
     const { toggle_alert, isVoucher } = this.state;
     let formKu = null;
-    if(isVoucher) {
+    if (isVoucher) {
       formKu = (
         <form onSubmit={this.submitFormVoucher}>
-          <b style={{float: 'left' , color: 'black'}}>Nomor Voucher</b>
+          <b style={{ float: 'left', color: 'black' }}>Voucher Number</b>
           <div className="input-group mb-4 mt-5">
             <input
               type="text"
               value={this.state.voucher}
               className="form-control"
-              style={{marginTop:8}}
-              placeholder="Masukan nomor voucher Anda"
+              style={{ marginTop: 8 }}
+              placeholder="Enter your voucher number"
               onChange={this.onChangeVoucher}
               required
             />
           </div>
-          <button type="submit" className="btn btn-ideku col-12 shadow-2 mt-10 b-r-3 f-16" style={{height:60}}>
-            Masuk
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mt-10 b-r-3 f-16" style={{ height: 60 }}>
+            Login
           </button>
           {
             toggle_alert &&
@@ -225,35 +250,35 @@ class Login extends Component {
     } else {
       formKu = (
         <form onSubmit={this.submitForm}>
-          <b style={{float: 'left' , color: 'black'}}>Email</b>
+          <b style={{ float: 'left', color: 'black' }}>Email</b>
           <div className="input-group mb-4">
             <input
               type="text"
               value={this.state.email}
               className="form-control"
-              style={{marginTop:8}}
-              placeholder="Masukan email Anda"
+              style={{ marginTop: 8 }}
+              placeholder="Enter your email"
               onChange={this.onChangeEmail}
               required
             />
           </div>
-          <b style={{float: 'left' , color: 'black'}}>Password</b>
+          <b style={{ float: 'left', color: 'black' }}>Password</b>
           <div className="input-group mb-3">
             <input
               type="password"
               value={this.state.password}
               className="form-control"
-              style={{marginTop:8}}
-              placeholder="Masukan password Anda"
+              style={{ marginTop: 8 }}
+              placeholder="Enter your password"
               onChange={this.onChangePassword}
               required
             />
           </div>
           <p className="mt-5">
-            <a style={{cursor: 'pointer', color: '#00478C'}} onClick={this.lupaPassword.bind(this)}>Lupa Password ?</a>
+            <a style={{ cursor: 'pointer', color: '#00478C' }} onClick={this.lupaPassword.bind(this)}>Forgot Password ?</a>
           </p>
-          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16" style={{height:60}}>
-            Masuk
+          <button type="submit" className="btn btn-ideku col-12 shadow-2 mb-3 mt-4 b-r-3 f-16" style={{ height: 60 }}>
+            Login
           </button>
           {
             toggle_alert &&
@@ -266,7 +291,7 @@ class Login extends Component {
     }
 
     return (
-      <div style={{background:"#fafbfc"}}>
+      <div style={{ background: "#fafbfc" }}>
         <header className="header-login">
           <center>
             <div className="mb-4">
@@ -280,9 +305,9 @@ class Login extends Component {
         </header>
         <div
           className="auth-wrapper"
-          
+
         >
-          <div className="auth-content mb-4" style={{display: isMobile ? 'none' : 'block'}}>
+          <div className="auth-content mb-4" style={{ display: isMobile ? 'none' : 'block' }}>
             <div className=" b-r-15">
               <div
                 className=" text-center"
@@ -295,13 +320,13 @@ class Login extends Component {
                     alt=""
                   />
                 </div>
-                <h4 className="mb-0 mt-1" style={{textTransform: 'uppercase'}}>
-                   <b>Connect with people anytime anywhere</b>
+                <h4 className="mb-0 mt-1" style={{ textTransform: 'uppercase' }}>
+                  <b>Connect with people anytime anywhere</b>
                 </h4>
                 <p className="mb-0 mt-1">
-                    We are ready to connect you with others
+                  We are ready to connect you with others
                 </p>
-                
+
               </div>
             </div>
           </div>
@@ -309,11 +334,11 @@ class Login extends Component {
             <div className="card b-r-15">
               <div
                 className="card-body text-center"
-                style={{ padding: "50px !important"}}
+                style={{ padding: "50px !important" }}
               >
                 <div className="row ">
-                  <span className={!this.state.showPass ? 'hidden' : ''} style={{color: '#00478C', paddingLeft: 15, cursor: 'pointer'}}
-                        onClick={this.backToLogin.bind(this)}> 
+                  <span className={!this.state.showPass ? 'hidden' : ''} style={{ color: '#00478C', paddingLeft: 15, cursor: 'pointer' }}
+                    onClick={this.backToLogin.bind(this)}>
                     <i className="fa fa-arrow-left fa-2x"></i>
                   </span>
                   {tabs.map((tab, index) => {
@@ -338,12 +363,12 @@ class Login extends Component {
                   })}
                   {/* {console.log(this.state.tabIndex)} */}
                   {this.state.tabIndex === 1 && (!isVoucher) ? (
-                      <div className="col-sm-12">{formKu}</div>
+                    <div className="col-sm-12">{formKu}</div>
                   ) : this.state.tabIndex === 2 && (isVoucher) ? (
-                      <div className="col-sm-12">{formKu}</div>
+                    <div className="col-sm-12">{formKu}</div>
                   ) : (
-                    <div><LupaPassword id={this.props.match.params.id} otp={this.props.match.params.key}/></div>
-                  )}
+                        <div><LupaPassword id={this.props.match.params.id} otp={this.props.match.params.key} /></div>
+                      )}
                 </div>
                 {/* <p className="mb-0 mt-1">
                   <a
@@ -359,7 +384,7 @@ class Login extends Component {
           </div>
         </div>
         <div className="footer-info">
-          <div className="row ">      
+          <div className="row ">
             <div className="col-md-6"></div>
             <div className="col-md-3 mt-5">
               Gedung Total, Lantai 10.

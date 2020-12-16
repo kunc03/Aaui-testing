@@ -10,8 +10,8 @@ class EvaluasiDetail extends React.Component {
 
   componentDidMount() {
     let list = [
-      {id: 1, nama_murid: 'Ahmad', tanggal: '11 Sep 2020', jam_submit: '13:00', status: 'Submited'},
-      {id: 2, nama_murid: 'Ardi', tanggal: '11 Sep 2020', jam_submit: '13:20', status: 'Submited'},
+      { id: 1, nama_murid: 'Ahmad', tanggal: '11 Sep 2020', jam_submit: '13:00', status: 'Submited' },
+      { id: 2, nama_murid: 'Ardi', tanggal: '11 Sep 2020', jam_submit: '13:20', status: 'Submited' },
     ];
     this.setState({ listResponden: list })
   }
@@ -26,7 +26,7 @@ class EvaluasiDetail extends React.Component {
             <div className="card-header">
               Evaluasi Untuk Guru
             </div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
 
               <ul className="nav nav-tabs nav-justified">
                 <li class="nav-item">
@@ -37,24 +37,24 @@ class EvaluasiDetail extends React.Component {
                 </li>
               </ul>
 
-              <div class="tab-content" style={{padding: '20px'}}>
+              <div class="tab-content" style={{ padding: '20px' }}>
                 <div class="tab-pane active" id="home">
                   <table className="table table-striped">
                     <thead>
                       <tr>
                         <th>No</th>
                         <th>Nama Murid</th>
-                        <th>Tanggal</th>
+                        <th> Date </th>
                         <th>Jam Submit</th>
                         <th>Status</th>
-                        <th>Aksi</th>
+                        <th> Action </th>
                       </tr>
                     </thead>
                     <tbody>
                       {
                         this.state.listResponden.map((item, i) => (
                           <tr key={item.id}>
-                            <td>{i+1}</td>
+                            <td>{i + 1}</td>
                             <td>{item.nama_murid}</td>
                             <td>{item.tanggal}</td>
                             <td>{item.jam_submit}</td>

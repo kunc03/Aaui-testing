@@ -12,7 +12,7 @@ class Pengaturan extends Component {
     this.state = {
       isOpen: false,
       email: Storage.get('user').data.email,
-      
+
       userId: Storage.get('user').data.user_id,
       confirm1: '',
       confirm2: '',
@@ -50,19 +50,19 @@ class Pengaturan extends Component {
 
   onClickSubmitSetting = e => {
     let formData = {
-      confirm_1: this.state.confirm1 ? '1':'0',
-      confirm_2: this.state.confirm2 ? '1':'0',
-      confirm_3: this.state.confirm3 ? '1':'0',
-      confirm_4: this.state.confirm4 ? '1':'0',
-      confirm_5: this.state.confirm5 ? '1':'0',
-      confirm_6: this.state.confirm6 ? '1':'0',
-      confirm_7: this.state.confirm7 ? '1':'0',
-      confirm_8: this.state.confirm8 ? '1':'0',
-      confirm_9: this.state.confirm9 ? '1':'0',
+      confirm_1: this.state.confirm1 ? '1' : '0',
+      confirm_2: this.state.confirm2 ? '1' : '0',
+      confirm_3: this.state.confirm3 ? '1' : '0',
+      confirm_4: this.state.confirm4 ? '1' : '0',
+      confirm_5: this.state.confirm5 ? '1' : '0',
+      confirm_6: this.state.confirm6 ? '1' : '0',
+      confirm_7: this.state.confirm7 ? '1' : '0',
+      confirm_8: this.state.confirm8 ? '1' : '0',
+      confirm_9: this.state.confirm9 ? '1' : '0',
     }
 
     API.put(`${API_SERVER}v1/setting/user/${this.state.userId}`, formData).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ isModalResponse: true });
       }
     })
@@ -71,20 +71,20 @@ class Pengaturan extends Component {
   fetchData() {
     let stringUrl = `${API_SERVER}v1/setting/user/${Storage.get('user').data.user_id}`;
     API.get(stringUrl).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         console.log('response: ', res.data.result)
         this.setState({
-          confirm1: (res.data.result.confirm_1 !== 1) ? false:true,
-          confirm2: (res.data.result.confirm_2 !== 1) ? false:true,
-          confirm3: (res.data.result.confirm_3 !== 1) ? false:true,
-          confirm4: (res.data.result.confirm_4 !== 1) ? false:true,
-          confirm5: (res.data.result.confirm_5 !== 1) ? false:true,
-          confirm6: (res.data.result.confirm_6 !== 1) ? false:true,
-          confirm7: (res.data.result.confirm_7 !== 1) ? false:true,
-          confirm8: (res.data.result.confirm_8 !== 1) ? false:true,
-          confirm9: (res.data.result.confirm_9 !== 1) ? false:true
+          confirm1: (res.data.result.confirm_1 !== 1) ? false : true,
+          confirm2: (res.data.result.confirm_2 !== 1) ? false : true,
+          confirm3: (res.data.result.confirm_3 !== 1) ? false : true,
+          confirm4: (res.data.result.confirm_4 !== 1) ? false : true,
+          confirm5: (res.data.result.confirm_5 !== 1) ? false : true,
+          confirm6: (res.data.result.confirm_6 !== 1) ? false : true,
+          confirm7: (res.data.result.confirm_7 !== 1) ? false : true,
+          confirm8: (res.data.result.confirm_8 !== 1) ? false : true,
+          confirm9: (res.data.result.confirm_9 !== 1) ? false : true
         });
-        if (res.data.result.is_new_password===0){
+        if (res.data.result.is_new_password === 0) {
           document.getElementById("changePass").click()
         }
       }
@@ -108,7 +108,7 @@ class Pengaturan extends Component {
                         <div className="card-block">
                           <div className="row m-b-100">
                             <div className="col-xl-2">
-                              <h3 className="f-w-bold f-18 fc-blue mb-4">Pengaman</h3>
+                              <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
                             </div>
                             <div className="col-xl-10">
                               <form>
@@ -122,7 +122,7 @@ class Pengaturan extends Component {
                                       disabled
                                       value={this.state.email}
                                       className="form-control"
-                                      placeholder="Masukan Email Lama Anda"
+                                      placeholder="Enter your Old Email"
                                       aria-label="emailModel"
                                       aria-describedby="basic-addon2"
                                     />
@@ -133,14 +133,14 @@ class Pengaturan extends Component {
                                         data-target="#modalEmail"
                                         type="button"
                                       >
-                                        Ubah
+                                        Edit
                                       </button>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="form-group">
                                   <label className="label-input" htmlFor>
-                                    Password Baru
+                                    New Password
                                   </label>
                                   <div className="input-group">
                                     <input
@@ -164,7 +164,7 @@ class Pengaturan extends Component {
                                         type="button"
                                         id="changePass"
                                       >
-                                        Ubah
+                                        Edit
                                       </button>
                                     </div>
                                   </div>
@@ -357,12 +357,12 @@ class Pengaturan extends Component {
 
                         <Modal show={this.state.isModalResponse} onHide={this.handleModalResponse}>
                           <Modal.Body>
-                            <Modal.Title className="text-c-purple3 f-w-bold">Konfirmasi</Modal.Title>
-                            <p className="f-w-bold">Ubah setting user telah disimpan.</p>
-                            <button style={{ marginTop: '50px'}} type="button"
+                            <Modal.Title className="text-c-purple3 f-w-bold">Confirmation</Modal.Title>
+                            <p className="f-w-bold">Change user settings have been saved.</p>
+                            <button style={{ marginTop: '50px' }} type="button"
                               className="btn btn-block f-w-bold"
                               onClick={this.handleModalResponse}>
-                              Tutup
+                              Close
                             </button>
                           </Modal.Body>
                         </Modal>

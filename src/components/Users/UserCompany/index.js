@@ -33,11 +33,11 @@ class UserCompany extends Component {
   /* action for delete */
 
   isToggleDelete = e => {
-    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') }});
+    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') } });
   }
 
   handleClose = e => {
-    this.setState({ delete: { modal: false, id: '' }});
+    this.setState({ delete: { modal: false, id: '' } });
   }
 
   onClickDelete = e => {
@@ -45,9 +45,9 @@ class UserCompany extends Component {
     let linkURL = `${API_SERVER}v1/company/${this.state.delete.id}`;
     API.delete(linkURL).then(res => {
       console.log(res.data);
-      this.setState({ 
-        grup: this.state.grup.filter(item => { return item.company_id != this.state.delete.id}),
-        delete: { modal: false, id: ''}
+      this.setState({
+        grup: this.state.grup.filter(item => { return item.company_id != this.state.delete.id }),
+        delete: { modal: false, id: '' }
       });
     }).catch(err => {
       console.log(err);
@@ -58,7 +58,7 @@ class UserCompany extends Component {
     let link = `${API_SERVER}v1/company`;
     API.get(link).then(response => {
       this.setState({ grup: response.data.result });
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.log(error);
     });
   }
@@ -68,7 +68,7 @@ class UserCompany extends Component {
     // let statusCompany = ['active', 'nonactive'];
 
     let linkCompany = '';
-    if(Storage.get('user').data.level === 'superadmin') {
+    if (Storage.get('user').data.level === 'superadmin') {
       linkCompany = '/company-detail-super';
     } else {
       linkCompany = '/company-detail';
@@ -113,7 +113,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-14 text-c-grey-t ">
                       User
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                    <h5 style={{ textTransform: 'capitalize' }} className="f-w-bold f-16 text-c-purple3">
                       {item.user}
                     </h5>
                   </div>
@@ -125,7 +125,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-14 text-c-grey-t ">
                       Meeting
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                    <h5 style={{ textTransform: 'capitalize' }} className="f-w-bold f-16 text-c-purple3">
                       {item.meeting}
                     </h5>
                   </div>
@@ -149,7 +149,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-14 text-c-grey-t ">
                       Status
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                    <h5 style={{ textTransform: 'capitalize' }} className="f-w-bold f-16 text-c-purple3">
                       {item.status}
                     </h5>
                   </div>
@@ -161,7 +161,7 @@ class UserCompany extends Component {
                     <small className="f-w-600 f-14 text-c-grey-t ">
                       Jenis
                     </small>
-                    <h5 style={{textTransform: 'capitalize'}} className="f-w-bold f-16 text-c-purple3">
+                    <h5 style={{ textTransform: 'capitalize' }} className="f-w-bold f-16 text-c-purple3">
                       {item.company_type ? item.company_type : 'Not Set'}
                     </h5>
                   </div>
@@ -230,10 +230,10 @@ class UserCompany extends Component {
                           className="button-img"
                           alt=""
                         />
-                        Tambah Baru
+                        Add New
                       </a>
                     </div>
-                    
+
                     <div className="col-xl-12">
                       <div style={{ overflowX: "auto" }}>
                         <Lists lists={grup} />
@@ -241,9 +241,9 @@ class UserCompany extends Component {
                     </div>
 
                     <ModalAdd
-                      show={this.state.isOpen} 
-                      onClose={this.toggleModal} 
-                      closeModalAdd={this.closeModalAdd} 
+                      show={this.state.isOpen}
+                      onClose={this.toggleModal}
+                      closeModalAdd={this.closeModalAdd}
                       triggerUpdate={this.triggerUpdate}></ModalAdd>
 
                     <Modal show={this.state.delete.modal} onHide={this.handleClose}>

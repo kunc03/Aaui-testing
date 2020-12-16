@@ -20,7 +20,7 @@ class Header extends Component {
     menuAktif: '/',
     sideMenu: false,
     sideMenuCollapse: false,
-    dateNow : Date.now(),
+    dateNow: Date.now(),
   };
 
   pilihCompany = (e) => {
@@ -215,7 +215,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
         access: 'activity',
       },
@@ -264,7 +264,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -279,7 +279,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
       },
       {
@@ -328,7 +328,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -343,7 +343,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
       },
       {
@@ -379,13 +379,13 @@ class Header extends Component {
       {
         iconOn: 'kelola-kursus-on.png',
         iconOff: 'kelola-kursus-off.png',
-        label: 'Kelola Sertifikat',
+        label: 'Manage Certificates',
         link: '/certificate-admin',
       },
       {
         iconOn: 'kelola-kursus-on.png',
         iconOff: 'kelola-kursus-off.png',
-        label: 'Sertifikat',
+        label: 'Certificate',
         link: '/certificate',
       },
       {
@@ -410,7 +410,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -426,7 +426,7 @@ class Header extends Component {
       menuContent = menuClients;
     }
     return (
-      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{marginBottom:-1, background:'#FFF'}}>
+      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{ marginBottom: -1, background: '#FFF' }}>
         <div className="m-header">
           <a
             className="mobile-menu"
@@ -475,9 +475,8 @@ class Header extends Component {
                   return (
                     <li
                       data-username="Sample Page"
-                      className={`nav-item mt-4 ${
-                        menuAktif === item.link ? 'active' : ''
-                      }`}
+                      className={`nav-item mt-4 ${menuAktif === item.link ? 'active' : ''
+                        }`}
                     >
                       <Link
                         to={item.link}
@@ -486,20 +485,18 @@ class Header extends Component {
                       >
                         <span className="pcoded-micon">
                           <img
-                            src={`assets/images/component/${
-                              menuAktif === item.link
-                                ? item.iconOn
-                                : item.iconOff
-                            }`}
+                            src={`assets/images/component/${menuAktif === item.link
+                              ? item.iconOn
+                              : item.iconOff
+                              }`}
                             alt=""
                           ></img>
                         </span>
                         <span
                           className="pcoded-mtext f-16 f-w-bold"
                           style={{
-                            color: `${
-                              menuAktif == item.link ? '#fff' : '#945A86'
-                            }`,
+                            color: `${menuAktif == item.link ? '#fff' : '#945A86'
+                              }`,
                           }}
                         >
                           &nbsp;{item.label}
@@ -619,11 +616,11 @@ class Header extends Component {
               <li>
                 <div className="dropdown">
                   <a href="javascript:;" data-toggle="dropdown">
-                      <img
-                        src={`newasset/company.svg`}
-                        alt=""
-                        width={25}
-                      ></img>
+                    <img
+                      src={`newasset/company.svg`}
+                      alt=""
+                      width={25}
+                    ></img>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
@@ -631,7 +628,7 @@ class Header extends Component {
                         <b>{this.state.company.length > 0
                           ? 'Pilih Perusahaan'
                           : 'Tidak multiple company'}
-                          </b>
+                        </b>
                       </h6>
                     </div>
                     <ul className="noti-body">
@@ -673,14 +670,14 @@ class Header extends Component {
                               </p>
                               {localStorage.getItem('companyID') ==
                                 this.state.company_id && (
-                                <p
-                                  data-id={this.state.company_id}
-                                  data-logo={this.state.logo}
-                                  style={{ color: 'green' }}
-                                >
-                                  active
-                                </p>
-                              )}
+                                  <p
+                                    data-id={this.state.company_id}
+                                    data-logo={this.state.logo}
+                                    style={{ color: 'green' }}
+                                  >
+                                    active
+                                  </p>
+                                )}
                             </div>
                           </div>
                         </li>
@@ -718,10 +715,10 @@ class Header extends Component {
                                   data-id={item.company_id}
                                   data-logo={item.logo}
                                 >
-                                   {item.company_name}
+                                  {item.company_name}
                                 </b>
 
-                                <span style={{color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right'}}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null }</span>
+                                <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
                               </p>
                               
                               {/* {parseInt(localStorage.getItem('companyID')) ==

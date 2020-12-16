@@ -100,7 +100,25 @@ import OTP from './components/OTP';
 import WebinarClient from './components/client/webinar/index';
 
 import LearningAdmin from './components/learning/index';
+import LearningGuru from './components/learning/guru';
+import LearningGuruInfo from './components/learning/guruinfo';
 import LearningMurid from './components/learning/murid';
+
+// ======= IMPORT COMPONENT GURU ======== //
+import GuruPersonalia from './components/guruPersonalia/index';
+import GuruKurusus from './components/guruKursus/index';
+import GuruUjian from './components/guruUjian/index';
+import InformasiKelas from './components/guruInformasiKelas/index';
+import GuruKPI from './components/guruKPI/index';
+
+// ======= IMPORT COMPONENT MURID ======== //
+import MuridLaporanRapor from './components/muridLaporanRapor/index';
+
+// ======= IMPORT COMPONENT RUANGAN ======== //
+import LearningRuangan from './components/learning/ruangan';
+
+import Ptc from './components/ptc/index';
+import KursusNew from './components/learning/kursus';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -141,16 +159,16 @@ export class PublicContent extends React.Component {
   render() {
     return (
       <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
         />
         <Switch>
           <Route path="/" exact component={Login} />
@@ -172,11 +190,11 @@ export class PublicContent extends React.Component {
 export class RedirectPage extends React.Component {
   render() {
     let userInfo = localStorage.getItem("user");
-    if (userInfo){
-      return <Redirect to={'/'+this.props.match.params.url} />
+    if (userInfo) {
+      return <Redirect to={'/' + this.props.match.params.url} />
     }
-    else{
-      return <Login redirectUrl={'/'+this.props.match.params.url} />
+    else {
+      return <Login redirectUrl={'/' + this.props.match.params.url} />
     }
   }
 }
@@ -188,9 +206,9 @@ export class Main extends React.Component {
 
   render() {
     let workSpaceSwitch = null;
-    if(this.state.level === 'superadmin') {
+    if (this.state.level === 'superadmin') {
       workSpaceSwitch = <SuperAdminSwitch />;
-    } else if(this.state.level === 'admin') {
+    } else if (this.state.level === 'admin') {
       workSpaceSwitch = <AdminSwitch />;
     } else {
       workSpaceSwitch = <ClientSwitch />;
@@ -211,7 +229,7 @@ export class Main extends React.Component {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          />
+        />
         {workSpaceSwitch}
       </div>
     );
@@ -234,7 +252,7 @@ export class Logout extends React.Component {
     API.get(`${API_SERVER}v1/auth/logout/${user_id}`).then((res) => {
       localStorage.clear();
       window.location.href = window.location.origin;
-  });
+    });
   }
 
   render() {
@@ -254,6 +272,8 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
         <Route path="/gantt/report" component={GanttReport} />
+
+        <Route path="/ptc" component={Ptc} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -340,6 +360,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/project" component={Project} />
         <Route path="/gantt/report" component={GanttReport} />
 
+        <Route path="/ptc" component={Ptc} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -419,12 +441,17 @@ export class ClientSwitch extends React.Component {
         <Route path="/" exact component={Home} />
 
         <Route path="/murid" component={LearningMurid} />
+        <Route path="/guru" component={LearningGuru} />
+        <Route path="/guru-info" component={LearningGuruInfo} />
 
-        <Route path="/webinar" component={WebinarClient} />
+        <Route path="/ruangan" component={LearningRuangan} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
         <Route path="/gantt/report" component={GanttReport} />
+
+        <Route path="/ptc" component={Ptc} />
+        <Route path="/kursus-new" component={KursusNew} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -461,6 +488,19 @@ export class ClientSwitch extends React.Component {
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
+
+
+        {/* ROUTE GURU */}
+        <Route path='/guru/personalia' component={GuruPersonalia} />
+        <Route path='/guru/kursus' component={GuruKurusus} />
+        <Route path='/guru/ujian' component={GuruUjian} />
+        <Route path='/guru/informasi-kelas' component={InformasiKelas} />
+        <Route path='/guru/kpi' component={GuruKPI} />
+
+
+        {/* ROUTE MURID */}
+        <Route path='/rapor' component={MuridLaporanRapor} />
+        <Route path="/webinar-murid" component={Webinar} />
 
         <Route path="/logout" component={Logout} />
       </Switch>

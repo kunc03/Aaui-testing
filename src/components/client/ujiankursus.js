@@ -59,20 +59,20 @@ export default class UjianKursus extends Component {
   fetchPertanyaanUjian() {
     //start ujian
     API.get(`${API_SERVER}v1/exam-answer/start/${this.state.examId}/${this.state.userId}`).then(res => {
-      if(res.status === 200){
+      if (res.status === 200) {
         console.log('start: ', res.data.result)
       }
     })
 
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ companyId: res.data.result.company_id });
-        
+
         API.get(`${API_SERVER}v1/isquizorexam/${this.state.examId}`).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.setState({ courseId: res.data.result.course_id });
             API.get(`${API_SERVER}v1/course/${res.data.result.course_id}`).then(res => {
-              if(res.status === 200) {
+              if (res.status === 200) {
                 this.setState({ courseTitle: res.data.result.title })
               }
             })
@@ -83,10 +83,10 @@ export default class UjianKursus extends Component {
     })
 
     API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         let soalUjian = res.data.result;
 
-        let answers = soalUjian.map((item,i)=>{
+        let answers = soalUjian.map((item, i) => {
           return {
             question_id: item.question_id,
             exam_id: item.exam_id,
@@ -94,14 +94,14 @@ export default class UjianKursus extends Component {
             number: item.number,
             question: item.question,
             image: item.image,
-            answer_option : ''
+            answer_option: ''
           }
         });
-        
-        Storage.set('currentExam',{answers:answers,questions:soalUjian});
-       
-        this.setState({ 
-          soalUjian: soalUjian, 
+
+        Storage.set('currentExam', { answers: answers, questions: soalUjian });
+
+        this.setState({
+          soalUjian: soalUjian,
           questionId: soalUjian[0].question_id,
           nomorUjian: soalUjian[0].number,
           pertanyaanUjian: soalUjian[0].question,
@@ -112,15 +112,15 @@ export default class UjianKursus extends Component {
   }
 
   componentDidMount() {
-    if(this.state.durasiWaktu != 0) {
-      if(Date.now() < this.state.stateAkhir) {
-        if(localStorage.getItem('waktuUjian') === null) {
+    if (this.state.durasiWaktu != 0) {
+      if (Date.now() < this.state.stateAkhir) {
+        if (localStorage.getItem('waktuUjian') === null) {
           localStorage.setItem('waktuUjian', this.state.durasiWaktu);
         } else {
           this.setState({ durasiWaktu: parseInt(localStorage.getItem('waktuUjian')) })
         }
       } else {
-        this.resetCountDown()      
+        this.resetCountDown()
       }
     }
     this.fetchPertanyaanUjian()
@@ -180,61 +180,61 @@ export default class UjianKursus extends Component {
     this.setState({ jawabanKu: answer[indexarray].answer_option || '' });
 
     /*disable request current answer */ console.log('disabling to api') && API
-    .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
-      if(res.status === 200) {
-        console.log(res.data.result, 'jawab pertanyaaan')
-        this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
-      }
-    })
+      .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarray].question_id}`).then(res => {
+        if (res.status === 200) {
+          console.log(res.data.result, 'jawab pertanyaaan')
+          this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
+        }
+      })
   }
 
-  buttonNextPrevios(a){
-    switch (a){
+  buttonNextPrevios(a) {
+    switch (a) {
       case 'next':
-        let indexarraynext =  this.state.nomorUjian+1;
+        let indexarraynext = this.state.nomorUjian + 1;
 
         this.setState({
-          questionId: this.state.soalUjian[indexarraynext-1].question_id,
-          nomorUjian:  indexarraynext,
-          pertanyaanUjian: this.state.soalUjian[indexarraynext-1].question,
-          pilihanUjian: this.state.soalUjian[indexarraynext-1].options,
+          questionId: this.state.soalUjian[indexarraynext - 1].question_id,
+          nomorUjian: indexarraynext,
+          pertanyaanUjian: this.state.soalUjian[indexarraynext - 1].question,
+          pilihanUjian: this.state.soalUjian[indexarraynext - 1].options,
           durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
         });
-    
+
         var exam = Storage.get('currentExam');
         var answer = exam.answers;
-    
-        this.setState({ jawabanKu: answer[indexarraynext-1].answer_option || '' });
-    
+
+        this.setState({ jawabanKu: answer[indexarraynext - 1].answer_option || '' });
+
         /*disable request current answer */ console.log('disabling to api') && API
-        .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarraynext-1].question_id}`).then(res => {
-          if(res.status === 200) {
-            //console.log(res.data.result, 'jawab pertanyaaan')
-            this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
-          }
-        })
+          .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarraynext - 1].question_id}`).then(res => {
+            if (res.status === 200) {
+              //console.log(res.data.result, 'jawab pertanyaaan')
+              this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
+            }
+          })
 
         break;
       case 'previos':
-          //console.log(a, 'previos nih');
-          let indexarrayprevios =  this.state.nomorUjian-1;
+        //console.log(a, 'previos nih');
+        let indexarrayprevios = this.state.nomorUjian - 1;
 
-          this.setState({
-            questionId: this.state.soalUjian[indexarrayprevios-1].question_id,
-            nomorUjian:  indexarrayprevios,
-            pertanyaanUjian: this.state.soalUjian[indexarrayprevios-1].question,
-            pilihanUjian: this.state.soalUjian[indexarrayprevios-1].options,
-            durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
-          });
-    
-          var exam = Storage.get('currentExam');
-          var answer = exam.answers;
-      
-          this.setState({ jawabanKu: answer[indexarrayprevios-1].answer_option || '' });
-      
+        this.setState({
+          questionId: this.state.soalUjian[indexarrayprevios - 1].question_id,
+          nomorUjian: indexarrayprevios,
+          pertanyaanUjian: this.state.soalUjian[indexarrayprevios - 1].question,
+          pilihanUjian: this.state.soalUjian[indexarrayprevios - 1].options,
+          durasiWaktu: this.state.durasiWaktu != 0 ? parseInt(localStorage.getItem('waktuUjian')) : 0,
+        });
+
+        var exam = Storage.get('currentExam');
+        var answer = exam.answers;
+
+        this.setState({ jawabanKu: answer[indexarrayprevios - 1].answer_option || '' });
+
           /*disable request current answer */ console.log('disabling to api') && API
-          .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarrayprevios-1].question_id}`).then(res => {
-            if(res.status === 200) {
+          .get(`${API_SERVER}v1/exam-answer/answer/${this.state.userId}/${this.state.soalUjian[indexarrayprevios - 1].question_id}`).then(res => {
+            if (res.status === 200) {
               //console.log(res.data.result, 'jawab pertanyaaan')
               this.setState({ jawabanKu: res.data.result.length !== 0 ? res.data.result.answer_option : '' })
             }
@@ -245,27 +245,27 @@ export default class UjianKursus extends Component {
 
   sendAnswers = e => {
     var exam = Storage.get('currentExam');
-    var answers = exam.answers.filter(x=>x.answer_option !== '');
+    var answers = exam.answers.filter(x => x.answer_option !== '');
     var _self = this;
-    (function loop(x){
+    (function loop(x) {
       let answer = answers[x];
-      if(answer){ 
+      if (answer) {
         let form = {
           user_id: _self.state.userId,
           question_id: answer.question_id,
           answer_number: answer.number,
           answer_option: answer.answer_option
         };
-        
-        console.log(form,'qweqweqwe') ;
+
+        console.log(form, 'qweqweqwe');
         API.get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
-          if(res.status === 200) {
-            if(res.data.result.length === 0) {
+          if (res.status === 200) {
+            if (res.data.result.length === 0) {
               // insert
-              API.post(`${API_SERVER}v1/exam-answer`, form).then(res=>loop(x+1))
+              API.post(`${API_SERVER}v1/exam-answer`, form).then(res => loop(x + 1))
             } else {
               //update
-              API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form).then(res=>loop(x+1))
+              API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form).then(res => loop(x + 1))
             }
           }
         });
@@ -290,61 +290,61 @@ export default class UjianKursus extends Component {
 
     var exam = Storage.get('currentExam');
     var answer = exam.answers;
-    var currentAnswer = answer.find(x=>x.question_id == form.question_id);
+    var currentAnswer = answer.find(x => x.question_id == form.question_id);
 
     currentAnswer.answer_option = answerOption;
 
-    Storage.set('currentExam',exam);
+    Storage.set('currentExam', exam);
 
     //this.setState({ jawabanKu: answers[indexarray].answer_option || '' });
 
     let refactoring = this.state.soalUjian.map((item) => {
-      if(item.question_id === form.question_id) {
+      if (item.question_id === form.question_id) {
         item.isJawab = true;
       }
       return item;
     });
 
-    this.setState({ 
-      jawabanKu: form.answer_option, 
-      soalTerjawab: answer.filter(x=>x.answer_option != '').length,
+    this.setState({
+      jawabanKu: form.answer_option,
+      soalTerjawab: answer.filter(x => x.answer_option != '').length,
       soalUjian: refactoring
     });
 
     /*disabled*/console.log('disables set correct answer request') && API
-    .get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
-      if(res.status === 200) {
-        if(res.data.result.length === 0) {
-          // insert
-          API.post(`${API_SERVER}v1/exam-answer`, form)
-        } else {
-          //update
-          API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form)
-        }
-
-        let refactoring = this.state.soalUjian.map((item) => {
-          if(item.question_id === form.question_id) {
-            item.isJawab = true;
+      .get(`${API_SERVER}v1/exam-answer/answer/${form.user_id}/${form.question_id}`).then(res => {
+        if (res.status === 200) {
+          if (res.data.result.length === 0) {
+            // insert
+            API.post(`${API_SERVER}v1/exam-answer`, form)
+          } else {
+            //update
+            API.put(`${API_SERVER}v1/exam-answer/update/${form.user_id}/${form.question_id}`, form)
           }
-          return item;
-        })
 
-        this.setState({ 
-          jawabanKu: form.answer_option, 
-          soalTerjawab: (parseInt(this.state.soalTerjawab) === parseInt(this.state.jumlahSoal)) ? this.state.jumlahSoal : this.state.soalTerjawab+1,
-          soalUjian: refactoring
-        })
-      }
-    })
+          let refactoring = this.state.soalUjian.map((item) => {
+            if (item.question_id === form.question_id) {
+              item.isJawab = true;
+            }
+            return item;
+          })
+
+          this.setState({
+            jawabanKu: form.answer_option,
+            soalTerjawab: (parseInt(this.state.soalTerjawab) === parseInt(this.state.jumlahSoal)) ? this.state.jumlahSoal : this.state.soalTerjawab + 1,
+            soalUjian: refactoring
+          })
+        }
+      })
   }
 
   render() {
     const { durasiWaktu, jumlahSoal, soalUjian, jawabanKu, soalTerjawab, nomorUjian } = this.state;
-    const Completionist = () => <span>Waktu Habis !</span>;
-    
+    const Completionist = () => <span>Time out !</span>;
 
-    const ListNomor = ({lists}) => (
-      <ul class="flex-container" style={{marginTop: '16px'}}>
+
+    const ListNomor = ({ lists }) => (
+      <ul class="flex-container" style={{ marginTop: '16px' }}>
         {
           lists.map((item, i) => (
             <li key={item.question_id} onClick={this.pilihPertanyaan} data-index={i} className={`flex-item ${item.hasOwnProperty('isJawab') ? 'flex-item-ideku' : ''}`}>{item.number}</li>
@@ -368,26 +368,26 @@ export default class UjianKursus extends Component {
                       continuous="true"
                     />
                   )}
-                  
+
                   <div className="row">
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
                           <div className="row">
                             <div className="col-sm-3 text-center">
-                              <h3 className="f-24 f-w-800 mb-3" style={{marginTop: '24px'}}>SOAL</h3>
+                              <h3 className="f-24 f-w-800 mb-3" style={{ marginTop: '24px' }}>SOAL</h3>
                             </div>
                             <div className="col-sm-9">
                               <table>
                                 <tbody>
                                   <tr>
                                     <td colSpan="2">
-                                      <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>{this.state.courseTitle}</h3>
+                                      <h3 className="f-18 f-w-800 mb-3" style={{ marginTop: '14px' }}>{this.state.courseTitle}</h3>
                                     </td>
                                   </tr>
                                   <tr>
                                     <td>
-                                      <img src="/assets/images/component/clockkecil.png" style={{ marginRight: '8px' }} alt="media" /> 
+                                      <img src="/assets/images/component/clockkecil.png" style={{ marginRight: '8px' }} alt="media" />
                                       {
                                         (durasiWaktu != 0) && <Countdown
                                           date={Date.now() + durasiWaktu}
@@ -399,7 +399,7 @@ export default class UjianKursus extends Component {
                                       }
                                     </td>
                                     <td>
-                                      <img src="/assets/images/component/questionkecil.png" style={{marginRight: '8px'}} alt="media" /> 
+                                      <img src="/assets/images/component/questionkecil.png" style={{ marginRight: '8px' }} alt="media" />
                                       {soalTerjawab}/{jumlahSoal}
                                     </td>
                                   </tr>
@@ -414,22 +414,22 @@ export default class UjianKursus extends Component {
                             </div>
                           </div>
 
-                          
+
                         </Card.Body>
                       </Card>
                     </div>
 
                     {/* MODAL CONFIRM */}
                     <Modal show={this.state.isOpenModal} onHide={this.closeModalConfirm}>
-                      <Modal.Body style={{padding: '30px'}}>
-                        
-                        <h4 style={{marginTop: '30px', fontWeight: 'bold', color:'pink'}}>
+                      <Modal.Body style={{ padding: '30px' }}>
+
+                        <h4 style={{ marginTop: '30px', fontWeight: 'bold', color: 'pink' }}>
                           SUBMIT UJIAN
                         </h4>
-                        
+
                         <h5 className=" f-w-800 mb-3">Apakah Anda Yakin Untuk Submit Ujian Ini ?</h5>
 
-                        <Link style={{marginTop: '20px'}} to={`/hasil-ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
+                        <Link style={{ marginTop: '20px' }} to={`/hasil-ujian-kursus`} className="btn btn-block btn-ideku f-w-bold">
                           Iya
                         </Link>
                         <button type="button"
@@ -443,14 +443,14 @@ export default class UjianKursus extends Component {
                     <div className="col-sm-6">
                       <Card className="pilih-jawaban">
                         <Card.Body>
-                          <h3 className="f-18 f-w-800 mb-3" style={{marginTop: '14px'}}>
+                          <h3 className="f-18 f-w-800 mb-3" style={{ marginTop: '14px' }}>
                             {this.state.nomorUjian}. {this.state.pertanyaanUjian}
                           </h3>
 
                           {
                             this.state.pilihanUjian.map((item, i) => (
-                              <Card className={`card-options ${jawabanKu === item.exam_option ? 'card-blue':''}`} key={item.answer_id} onClick={this.jawabPertanyaan}>
-                                <Card.Body style={{padding: '16px'}} data-option={item.exam_option}>
+                              <Card className={`card-options ${jawabanKu === item.exam_option ? 'card-blue' : ''}`} key={item.answer_id} onClick={this.jawabPertanyaan}>
+                                <Card.Body style={{ padding: '16px' }} data-option={item.exam_option}>
                                   {item.exam_option}. {item.description}
                                 </Card.Body>
                               </Card>
@@ -461,42 +461,42 @@ export default class UjianKursus extends Component {
 
                       {/* fungsi untuk kembali dan next jawaban */}
                       <div className="row">
-                        <div className="col-sm-12 "> 
+                        <div className="col-sm-12 ">
                           {nomorUjian === 1 ?
-                            <button  className="btn float-left"><span className=""><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
+                            <button className="btn float-left"><span className=""><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
                             :
                             <button className="btn btn-ideku float-left" onClick={this.buttonNextPrevios.bind(this, 'previos')}><span><i className="fa  fa-angle-double-left"></i> KEMBALI</span></button>
                           }
 
-                          {nomorUjian === soalUjian.length ? 
-                            <button  className="btn float-right"><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
-                          :
+                          {nomorUjian === soalUjian.length ?
+                            <button className="btn float-right"><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
+                            :
                             <button className="btn btn-ideku float-right" onClick={this.buttonNextPrevios.bind(this, 'next')}><span className="">BERIKUTNYA <i className="fa  fa-angle-double-right"></i></span></button>
                           }
                         </div>
                       </div><br />
                       {/* Button Selesai */}
                       <div className="row">
-                        <div className="col-sm-12 ">    
-                          <button onClick={this.konfirmasiSubmitUjian} className="btn btn-primary float-right">Selesai</button>
+                        <div className="col-sm-12 ">
+                          <button onClick={this.konfirmasiSubmitUjian} className="btn btn-primary float-right"> Done </button>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <Modal show={this.state.isModalSubmit} onHide={this.handleModalSubmit}>
-                    <Modal.Body style={{padding: '30px'}}>
-                      <div className="text-center" style={{marginTop: '20px'}}>
+                    <Modal.Body style={{ padding: '30px' }}>
+                      <div className="text-center" style={{ marginTop: '20px' }}>
                         <img className="img-fluid" src="/assets/images/component/tes.png" alt="media" />
                       </div>
-                     
-                      {soalTerjawab == jumlahSoal ? 
-                        <span><h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3></span>
-                      :
-                        <span><h3 style={{marginTop: '40px'}} className="f-18 f-w-800 mb-3">Anda belum menjawab semua soal, apakah anda yakin tidak ingin menyelesaikan semua soal ?</h3></span>
+
+                      {soalTerjawab == jumlahSoal ?
+                        <span><h3 style={{ marginTop: '40px' }} className="f-18 f-w-800 mb-3">Apakah Anda sudah yakin dengan semua jawaban?</h3></span>
+                        :
+                        <span><h3 style={{ marginTop: '40px' }} className="f-18 f-w-800 mb-3">Anda belum menjawab semua soal, apakah anda yakin tidak ingin menyelesaikan semua soal ?</h3></span>
                       }
 
-                      <Link to={`/ujian-hasil/${this.state.examId}`} style={{marginTop: '30px'}}
+                      <Link to={`/ujian-hasil/${this.state.examId}`} style={{ marginTop: '30px' }}
                         className="btn btn-block f-w-bold btn-ideku">
                         Ya, Saya Yakin
                       </Link>
@@ -504,7 +504,7 @@ export default class UjianKursus extends Component {
                       <button type="button"
                         className="btn btn-block f-w-bold"
                         onClick={this.handleModalSubmit}>
-                        Batal
+                        Cancel
                       </button>
                     </Modal.Body>
                   </Modal>

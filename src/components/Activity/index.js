@@ -63,7 +63,7 @@ class Aktivity extends Component {
     this.state = {
       tabIndex: 1,
       user: {
-        name: 'AKTIVITAS',
+        name: 'Activity',
         registered: '2019-12-09',
         companyId: '',
       },
@@ -125,11 +125,11 @@ class Aktivity extends Component {
     this.fetchUserCalendar();
     this.fetchDataRekaman();
 
-    this.setState({startDate: moment(this.state.startDate).subtract(1, 'month')._d})
+    this.setState({ startDate: moment(this.state.startDate).subtract(1, 'month')._d })
     let start = MomentTZ.tz(moment(this.state.startDate).subtract(1, 'month'), 'Asia/Jakarta').format("YYYY-MM-DD");
     let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
     this.fetchDataChart(start, end);
-    
+
     console.log('RECENTS DID', this.state.recentCourse);
     let date = new Date();
     console.log(String(date));
@@ -138,13 +138,12 @@ class Aktivity extends Component {
 
   fetchDataChart(start, stop) {
     API.get(
-      `${API_SERVER}v1/api-activity/chart/${
-        Storage.get('user').data.company_id
+      `${API_SERVER}v1/api-activity/chart/${Storage.get('user').data.company_id
       }/${start}/${stop}`
     ).then((res) => {
       console.log('alvin res', res);
       if (res.status === 200) {
-        console.log('ALVIN',res.data.result)
+        console.log('ALVIN', res.data.result)
         dataBar.labels = res.data.result.chart1.grup;
         dataBar.datasets[0].data = res.data.result.chart1.count;
         dataUser.labels = res.data.result.chart2.name;
@@ -172,10 +171,9 @@ class Aktivity extends Component {
             : res.data.result.company_id,
         });
         API.get(
-          `${API_SERVER}v1/liveclass/company/${
-            localStorage.getItem('companyID')
-              ? localStorage.getItem('companyID')
-              : res.data.result.company_id
+          `${API_SERVER}v1/liveclass/company/${localStorage.getItem('companyID')
+            ? localStorage.getItem('companyID')
+            : res.data.result.company_id
           }`
         ).then((res) => {
           if (res.status === 200) {
@@ -184,18 +182,18 @@ class Aktivity extends Component {
             let api = bbb.api(BBB_URL, BBB_KEY)
             let http = bbb.http
             data.map((item) => {
-              let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id})
+              let getRecordingsUrl = api.recording.getRecordings({ meetingID: item.class_id })
               http(getRecordingsUrl).then((result) => {
-                if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
                   this.state.dataRecordings.push(result.recordings)
                   this.forceUpdate()
                 }
-                else{
+                else {
                   console.log('GAGAL', result)
                 }
               })
             })
-              // BBB END
+            // BBB END
             // this.setState({ classRooms: data.filter((data) => data.record) });
           }
         });
@@ -301,8 +299,8 @@ class Aktivity extends Component {
                 elem.type === 1
                   ? 'Ujian ' + elem.description
                   : elem.type === 2
-                  ? 'Forum ' + elem.description
-                  : 'Meeting ' + elem.description,
+                    ? 'Forum ' + elem.description
+                    : 'Meeting ' + elem.description,
               start: new Date(
                 start.getFullYear(),
                 start.getMonth(),
@@ -355,36 +353,36 @@ class Aktivity extends Component {
       <Row>
         {list.map((item) => (
           <div className="col-sm-12" key={item.class_id}>
-              <div className="card">
-                <div className="card-carousel ">
-                  <div className="title-head f-w-900 f-16" style={{marginBottom:20}}>
-                    {item.recording.length ? item.recording[0].name: item.recording.name}
-                  </div>
-                    <div className="f-14 row">
-                      {
-                        item.recording.length ?
-                        item.recording.map(item =>
-                          <a className="card col-md-4" target="_blank" href={item.playback.format.url} style={{alignItems:'center', justifyContent:'center'}}>
-                            <img src={item.playback.format.preview.images.image[0]}/>
-                            <p>{new Date(item.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
-                          </a>
-                        )
-                        :
-                          <a className="card col-md-4" target="_blank" href={item.recording.playback.format.url} style={{alignItems:'center', justifyContent:'center'}}>
-                            <img src={item.recording.playback.format.preview.images.image[0]}/>
-                            <p>{new Date(item.recording.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
-                          </a>
-                      }
-                    </div>
+            <div className="card">
+              <div className="card-carousel ">
+                <div className="title-head f-w-900 f-16" style={{ marginBottom: 20 }}>
+                  {item.recording.length ? item.recording[0].name : item.recording.name}
+                </div>
+                <div className="f-14 row">
+                  {
+                    item.recording.length ?
+                      item.recording.map(item =>
+                        <a className="card col-md-4" target="_blank" href={item.playback.format.url} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                          <img src={item.playback.format.preview.images.image[0]} />
+                          <p>{new Date(item.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
+                        </a>
+                      )
+                      :
+                      <a className="card col-md-4" target="_blank" href={item.recording.playback.format.url} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <img src={item.recording.playback.format.preview.images.image[0]} />
+                        <p>{new Date(item.recording.startTime).toISOString().slice(0, 16).replace('T', ' ')} - {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</p>
+                      </a>
+                  }
                 </div>
               </div>
+            </div>
           </div>
         ))}
       </Row>
     );
 
     // const data = {
-    //   labels: ['Kursus', 'Forum', 'Meeting'],
+    //   labels: ['Courses', 'Forum', 'Meeting'],
     //   datasets: [
     //     {
     //       data: [
@@ -526,7 +524,7 @@ class Aktivity extends Component {
                      */}
                     <div className="col-md-12">
                       <div className="card p-10">
-                        <h4 className="p-10">Kalender</h4>
+                        <h4 className="p-10"> Calendar</h4>
                         {/* <Calendar
                             onChange={(a)=>{console.log(a)}}
                             value={new Date()}
@@ -552,10 +550,10 @@ class Aktivity extends Component {
                           }}
                           // views={['month']}
                           views={['month', 'day']}
-                          // views={{
-                          //   month: true,
-                          //   week: true,
-                          // }}
+                        // views={{
+                        //   month: true,
+                        //   week: true,
+                        // }}
                         />
                         {/* <div className="p-l-20">
                           <span className="p-r-5" style={{ color: 'red' }}>
@@ -582,7 +580,7 @@ class Aktivity extends Component {
                   <div className="row">
                     <div className="col-md-12">
                       <div className="card" style={{ padding: 10 }}>
-                        <h4 className="p-10">Rekaman Meeting</h4>
+                        <h4 className="p-10">Meeting Records</h4>
                         <div
                           className="chart-container"
                           style={{ position: 'relative', margin: 20 }}
@@ -591,34 +589,34 @@ class Aktivity extends Component {
                             {this.state.dataRecordings.length ? (
                               <ClassRooms list={this.state.dataRecordings} />
                             ) : (
-                              <div className="col-md-3 col-xl-3 mb-3">
-                                Tidak ada rekaman meeting
-                              </div>
-                            )}
+                                <div className="col-md-3 col-xl-3 mb-3">
+                                  There is no recorded meeting
+                                </div>
+                              )}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                        <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Filter Waktu
+                  <Form.Group controlId="formJudul">
+                    <Form.Label className="f-w-bold">
+                      Time Filter
                           </Form.Label>
-                          <div style={{width:'100%'}}>
-                          <DatePicker
-                            selected={this.state.startDate}
-                            onChange={this.handleChangeDateStart}
-                            dateFormat="yyyy-MM-dd"
-                          />
+                    <div style={{ width: '100%' }}>
+                      <DatePicker
+                        selected={this.state.startDate}
+                        onChange={this.handleChangeDateStart}
+                        dateFormat="yyyy-MM-dd"
+                      />
                           &nbsp;&mdash;&nbsp;
                           <DatePicker
-                            selected={this.state.endDate}
-                            onChange={this.handleChangeDateEnd}
-                            dateFormat="yyyy-MM-dd"
-                          />
-                          </div>
-                        </Form.Group>
+                        selected={this.state.endDate}
+                        onChange={this.handleChangeDateEnd}
+                        dateFormat="yyyy-MM-dd"
+                      />
+                    </div>
+                  </Form.Group>
 
                   <div className="row">
                     <div className="col-xl-2">
@@ -761,8 +759,8 @@ class Aktivity extends Component {
                     ) : this.state.tabIndex === 2 ? (
                       <RiwayatForum recent={recentForum} />
                     ) : (
-                      <RiwayatLiveClass recent={recentClass} />
-                    )}
+                          <RiwayatLiveClass recent={recentClass} />
+                        )}
                   </div>
                 </div>
               </div>

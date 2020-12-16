@@ -24,7 +24,7 @@ class ModalPassword extends Component {
   onKeyUpPasswordLama = e => {
     let formData = { user_id: this.state.userId, password: this.state.passwordLama };
     API.post(`${API_SERVER}v1/user/password`, formData).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         if (res.data.result.length !== 0) {
           this.setState({ isDisabled: false });
         } else {
@@ -38,7 +38,7 @@ class ModalPassword extends Component {
     e.preventDefault();
 
     let isValidate = false;
-    if(this.state.passwordBaru === '' && this.state.ulangiPassword === '') {
+    if (this.state.passwordBaru === '' && this.state.ulangiPassword === '') {
       this.setState({ isValidate: false });
       isValidate = false
       this.forceUpdate()
@@ -46,24 +46,26 @@ class ModalPassword extends Component {
       isValidate = true
       this.forceUpdate()
     }
-    
-    if(isValidate) {
-      if(this.state.passwordBaru === this.state.ulangiPassword) {
+
+    if (isValidate) {
+      if (this.state.passwordBaru === this.state.ulangiPassword) {
         let formData = { password: this.state.passwordBaru };
         API.put(`${API_SERVER}v1/user/password/${this.state.userId}`, formData).then(res => {
-          if(res.status === 200) {
-            this.setState({ msgValidate: 'Password berhasil diubah', passwordLama: '', passwordBaru: '', ulangiPassword: ''});
+          if (res.status === 200) {
+            this.setState({ msgValidate: 'Password changed successfully', passwordLama: '', passwordBaru: '', ulangiPassword: '' });
             this.forceUpdate()
-            toast.success('Berhasil mengubah password')
+            toast.success('Password changed successfully')
             // localStorage.clear();
             // window.location.href = window.location.origin;
           }
         })
       } else {
-        this.setState({ passwordBaru: '', ulangiPassword: '', isValidate: false, msgValidate: 'Password tidak sama.' });
+        this.setState({ passwordBaru: '', ulangiPassword: '', isValidate: false, msgValidate: 'Passwords are not the same.' });
       }
-    } else{
-      this.setState({ msgValidate: 'Password lama tidak sesuai'});
+    } else {
+      this.setState({
+        msgValidate: "The old password doesn't match"
+      });
     }
   }
 
@@ -90,7 +92,7 @@ class ModalPassword extends Component {
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle"
               >
-                Ganti Password
+                Change Password
               </h5>
             </div>
             <div className="modal-body">
@@ -140,7 +142,7 @@ class ModalPassword extends Component {
                     placeholder="Ulangi Password Baru Anda"
                   />
                 </div>
-                { this.state.msgValidate && 
+                {this.state.msgValidate &&
                   <span className="label label-primary">{this.state.msgValidate}</span>
                 }
                 <div

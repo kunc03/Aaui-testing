@@ -6,95 +6,95 @@ import Storage from '../../../repository/storage';
 
 export default class QuestionQuiz extends Component {
 
-	state = {
-		companyId: '',
-		courseId: this.props.match.params.exam_id.split('.')[1],
-		examId: this.props.match.params.exam_id.split('.')[0],
-    isLoading:true,
+  state = {
+    companyId: '',
+    courseId: this.props.match.params.exam_id.split('.')[1],
+    examId: this.props.match.params.exam_id.split('.')[0],
+    isLoading: true,
 
     question: [],
-    questionChecked:[],
-    cekAll : false,
+    questionChecked: [],
+    cekAll: false,
 
-		isModalDelete: false,
+    isModalDelete: false,
     questionId: '',
-    
+
     statusImport: false,
-		message: '',
-    dataImport : []
-	}
+    message: '',
+    dataImport: []
+  }
 
-	handleOpenDelete = e => {
-		e.preventDefault();
-		let quizId = e.target.getAttribute('data-id');
-		this.setState({ isModalDelete: true, questionId: quizId });
-	}
+  handleOpenDelete = e => {
+    e.preventDefault();
+    let quizId = e.target.getAttribute('data-id');
+    this.setState({ isModalDelete: true, questionId: quizId });
+  }
 
-	onClickDelete = e => {
-		e.preventDefault();
-		API.delete(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
-			if(res.status === 200) {
-				this.handleClose();
-				this.fetchData();
-			}
-		})
-	}
-	bulkDelete = e => {
-		e.preventDefault();
-		API.delete(`${API_SERVER}v1/question/bulk/${this.state.questionChecked.join()}`).then(res => {
-			if(res.status === 200) {
+  onClickDelete = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v1/question/${this.state.questionId}`).then(res => {
+      if (res.status === 200) {
+        this.handleClose();
         this.fetchData();
-        console.log('RESSS',res)
-			}
-		})
-	}
+      }
+    })
+  }
+  bulkDelete = e => {
+    e.preventDefault();
+    API.delete(`${API_SERVER}v1/question/bulk/${this.state.questionChecked.join()}`).then(res => {
+      if (res.status === 200) {
+        this.fetchData();
+        console.log('RESSS', res)
+      }
+    })
+  }
 
-	handleClose = e => {
-		this.setState({ isModalDelete: false, questionId: '' });
-	}
+  handleClose = e => {
+    this.setState({ isModalDelete: false, questionId: '' });
+  }
 
-	fetchData() {
-		API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
-				this.setState({ companyId: res.data.result.company_id });
+  fetchData() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: res.data.result.company_id });
 
-				API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
-					if(res.status === 200) {
+        API.get(`${API_SERVER}v1/question/exam/${this.state.examId}`).then(res => {
+          if (res.status === 200) {
             console.log(res.data.result, 'fetch');
-            for(let a in res.data.result){
+            for (let a in res.data.result) {
               res.data.result[a].check = false;
             }
-						this.setState({ question: res.data.result, isLoading:false  })
-					}
-				})
-			}
-		})
-	}
-
-	componentDidMount() {
-		this.fetchData()
+            this.setState({ question: res.data.result, isLoading: false })
+          }
+        })
+      }
+    })
   }
-  
+
+  componentDidMount() {
+    this.fetchData()
+  }
+
   onChangeAllCheckbox(e) {
     //console.log(document.getElementById("ceked").checked,'cek semuaa');
     let value = document.getElementById("ceked").checked;
-    
-    for(let a in this.state.question){
+
+    for (let a in this.state.question) {
       //return console.log(this.state.question[a])
-      if (value){
+      if (value) {
         this.state.question[a].check = true;
-        this.setState({question: this.state.question});
+        this.setState({ question: this.state.question });
         var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
         if (index !== -1) this.state.questionChecked.splice(index, 1);
         this.state.questionChecked.push(this.state.question[a].question_id);
       } else {
         this.state.question[a].check = false;
-        this.setState({question: this.state.question});
+        this.setState({ question: this.state.question });
         var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
         if (index !== -1) this.state.questionChecked.splice(index, 1);
       }
     }
-    console.log('hapus',this.state.questionChecked)
+    console.log('hapus', this.state.questionChecked)
   }
 
   handleChecked = e => {
@@ -102,15 +102,15 @@ export default class QuestionQuiz extends Component {
     let value = document.getElementById(checkboxId).checked;
     console.log(value);
 
-    for(let a in this.state.question){
+    for (let a in this.state.question) {
       //console.log(this.state.question[a].question_id, checkboxId);
-      if(value) {
-        if(this.state.question[a].question_id === checkboxId){
+      if (value) {
+        if (this.state.question[a].question_id === checkboxId) {
           this.state.question[a].check = true;
           this.state.questionChecked.push(this.state.question[a].question_id);
         }
-      }else{
-        if(this.state.question[a].question_id === checkboxId){
+      } else {
+        if (this.state.question[a].question_id === checkboxId) {
           this.state.question[a].check = false;
           var index = this.state.questionChecked.indexOf(this.state.question[a].question_id);
           if (index !== -1) this.state.questionChecked.splice(index, 1);
@@ -122,12 +122,12 @@ export default class QuestionQuiz extends Component {
     });
   };
 
-	render() {
-		const {question} = this.state;
+  render() {
+    const { question } = this.state;
 
-		const QuestionList = ({lists}) => {
-			if(lists.length !== 0) {
-				return (
+    const QuestionList = ({ lists }) => {
+      if (lists.length !== 0) {
+        return (
           <Accordion>
             {lists.map((item, i) => (
               <Card style={{ marginBottom: "10px" }} key={item.question_id}>
@@ -137,15 +137,15 @@ export default class QuestionQuiz extends Component {
                   eventKey={item.question_id}
                 >
                   <div className="row">
-                      <div className="col-sm-1">
-                          <label class="container">
-                            <input type="checkbox" id={item.question_id} onChange={this.handleChecked} checked={item.check}/>
-                            <span class="checkmark"></span>
-                          </label>
-                      </div>
-                      <div className="col-sm-1">
-                        <h3 className="f-w-bold f-20 text-c-purple3">{item.number}</h3>
-                      </div>
+                    <div className="col-sm-1">
+                      <label class="container">
+                        <input type="checkbox" id={item.question_id} onChange={this.handleChecked} checked={item.check} />
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div className="col-sm-1">
+                      <h3 className="f-w-bold f-20 text-c-purple3">{item.number}</h3>
+                    </div>
                     <div className="col-sm-9">
                       <p className="f-w-bold f-18 text-c-purple3">
                         {item.question.toString().substring(0, 60)}
@@ -185,35 +185,35 @@ export default class QuestionQuiz extends Component {
             ))}
           </Accordion>
         );
-			} else {
-				return (
-					<ul className="list-cabang">
-						<li>
-							<div className="card">
-								<div className="card-block" style={{ padding: "25px 30px !important" }}>
-									<div className="row d-flex align-items-center">
-										<div className="col-xl-12 col-md-12">
-			                <div className="row align-items-center justify-content-center">
-			                  <div className="col">
-			                    <small className="f-w-600 f-16 text-c-grey-t ">
-                            { this.state.isLoading ? 'Loading...' : 'Tidak ada pertanyaan'}
+      } else {
+        return (
+          <ul className="list-cabang">
+            <li>
+              <div className="card">
+                <div className="card-block" style={{ padding: "25px 30px !important" }}>
+                  <div className="row d-flex align-items-center">
+                    <div className="col-xl-12 col-md-12">
+                      <div className="row align-items-center justify-content-center">
+                        <div className="col">
+                          <small className="f-w-600 f-16 text-c-grey-t ">
+                            {this.state.isLoading ? 'Loading...' : 'There is no question'}
                           </small>
                           <h5 className="f-w-bold f-20 text-c-purple3">
-                            { this.state.isLoading ? 'Sedang memuat data soal...' : 'Silahkan buat pertanyaan Anda'}
-			                    </h5>
-			                  </div>
-			                </div>
-			              </div>
-									</div>
-								</div>
-							</div>
-						</li>
-					</ul>
-				);
-			}
-		};
+                            {this.state.isLoading ? 'Currently loading question data...' : 'Please make your inquiry'}
+                          </h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        );
+      }
+    };
 
-		return (
+    return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
@@ -238,7 +238,7 @@ export default class QuestionQuiz extends Component {
                           ></i>
                         </Link>
                         &nbsp;Pertanyaan Quiz
-                      </h3>                     
+                      </h3>
                       {/* <button className="btn btn-primary f-14 float-right m-l-5" style={{ padding: "7px 25px !important",color: "white"}}>
                         Template
                       </button> &nbsp;
@@ -252,15 +252,15 @@ export default class QuestionQuiz extends Component {
                     </div>
 
                     <div className="col-sm-6">
-                      <div style={{padding: '10px',margin: '10px 0px 0px 15px'}}>
+                      <div style={{ padding: '10px', margin: '10px 0px 0px 15px' }}>
                         <label class="container"> &nbsp; <small>Pilih Semua</small>
-                          <input id="ceked" type="checkbox" onChange={this.onChangeAllCheckbox.bind(this)} value={false}/>
+                          <input id="ceked" type="checkbox" onChange={this.onChangeAllCheckbox.bind(this)} value={false} />
                           <span class="checkmark"></span>
                         </label>
                       </div>
                     </div>
                     <div className="col-sm-6">
-                    
+
                       <a
                         href={`/question-quiz-create/${this.state.examId}.${this.state.courseId}`}
                         className="btn btn-ideku f-14 float-right m-l-5 mb-3"
@@ -274,7 +274,7 @@ export default class QuestionQuiz extends Component {
                           className="button-img"
                           alt=""
                         />
-                        Tambah Baru
+                        Add New
                       </a>
                       <a
                         href='javascript:'
@@ -286,7 +286,7 @@ export default class QuestionQuiz extends Component {
                         }}
                       >
                         Bulk Delete
-                      </a>  
+                      </a>
                     </div>
 
                     <div className="col-xl-12">
@@ -332,5 +332,5 @@ export default class QuestionQuiz extends Component {
         </div>
       </div>
     );
-	}
+  }
 }
