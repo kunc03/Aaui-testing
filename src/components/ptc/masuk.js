@@ -23,19 +23,18 @@ class Mengajar extends React.Component {
 
   state = {
     role: this.props.role.toString().toLowerCase(),
-    jadwalId: this.props.match.params.jadwalId,
     jenis: this.props.match.params.jenis,
-    sesiId: this.props.match.params.sesiId,
+    ptcId: this.props.match.params.id,
+    infoPtc: {},
 
-    projectAdmin: this.props.role.toString().toLowerCase() === "guru" ? true : false,
+    openParticipants: false,
+    peserta: [],
+
+    joinUrl: '',
+    modalEnd: false,
 
     fullscreen: false,
-    infoJadwal: {},
-    infoChapter: {},
-
-    openKelas: false,
-    infoKelas: {},
-    infoMurid: [],
+    openUpload: false,
 
     openUpload: false,
     attachmentId: [],
@@ -45,10 +44,39 @@ class Mengajar extends React.Component {
     modalDeleteFile: false,
 
     openKehadiran: false,
-    isAbsen: false,
+  }
 
-    joinUrl: '',
-    modalEnd: false,
+  hadirMurid = e => {
+    e.preventDefault();
+    let form = {
+      ptcId: this.state.ptcId,
+      userId: Storage.get('user').data.user_id,
+    }
+
+    API.put(`${API_SERVER}v1/ptc-room/hadir/${form.ptcId}/${form.userId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: gagal absen`)
+
+      toast.success(`Terimakasih Anda sudah mengkonfirmasi kehadiran.`)
+      this.setState({ openKehadiran: false })
+
+      this.props.socket.emit('send', {
+        event: 'absen',
+        ptcId: this.state.ptcId,
+        companyId: Storage.get('user').data.company_id
+      })
+    })
+  }
+
+  onChangeInput = e => {
+    // const target = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
+      this.setState({ [name]: value });
+    }
   }
 
   endMeeting() {
@@ -56,12 +84,12 @@ class Mengajar extends React.Component {
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
 
-    let meetingID = `${this.state.jadwalId}-${this.state.jenis}-${this.state.sesiId}`;
+    let meetingID = `${this.state.jenis}-${this.state.jenis}-${this.state.ptcId}`;
     let endMeeting = api.administration.end(meetingID, 'moderator')
     http(endMeeting).then((result) => {
       if (result.returncode == 'SUCCESS') {
         this.closeModalEnd()
-        toast.success('Mengakhiri kelas untuk semua murid.')
+        toast.success('Mengakhiri PTC untuk semua participants.')
       }
     })
   }
@@ -74,56 +102,13 @@ class Mengajar extends React.Component {
     this.setState({ modalDeleteFile: false, deleteFileName: '', deleteFileId: '' })
   }
 
-  fetchMurid(jadwalId) {
-    API.get(`${API_SERVER}v2/murid/jadwal-absen/${jadwalId}/${this.state.jenis}/${this.state.sesiId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
-
-      this.setState({ infoMurid: res.data.result })
-    })
-  }
-
-  fetchKelas(kelasId) {
-    API.get(`${API_SERVER}v2/murid/kelas-v1/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch kelas");
-
-      this.setState({ infoKelas: res.data.result })
-    })
-  }
-
-  fetchJadwal(jadwalId) {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: ${res.data.result}`)
-
-      this.setState({ infoJadwal: res.data.result })
-
-      this.fetchFiles(res.data.result.folder)
-      this.fetchBBB()
-    })
-  }
-
-  fetchChapter(chapterId) {
-    API.get(`${API_SERVER}v1/chapter/${chapterId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
-
-      this.setState({ infoChapter: res.data.result })
-    })
-  }
-
-  fetchFiles(folderId) {
-    API.get(`${API_SERVER}v1/files/${folderId}`).then(res => {
-      if (res.status === 200) {
-        this.setState({ infoFiles: res.data.result })
-      }
-    })
-  }
-
   fetchBBB() {
     // BBB JOIN START
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
 
     // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
-    let meetingID = `${this.state.jadwalId}-${this.state.jenis}-${this.state.sesiId}`;
+    let meetingID = `${this.state.jenis}-${this.state.jenis}-${this.state.ptcId}`;
     let meetingInfo = api.monitoring.getMeetingInfo(meetingID)
     console.log('meetingInfo: ', meetingInfo)
 
@@ -131,7 +116,7 @@ class Mengajar extends React.Component {
       console.log('result: ', result)
       if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
         // Jika belum ada, create room nya.
-        let meetingCreateUrl = api.administration.create(this.state.infoJadwal.nama_pelajaran, meetingID, {
+        let meetingCreateUrl = api.administration.create(this.state.infoPtc.nama_ruangan, meetingID, {
           attendeePW: 'peserta',
           moderatorPW: 'moderator',
           allowModsToUnmuteUsers: true,
@@ -183,60 +168,78 @@ class Mengajar extends React.Component {
     // BBB JOIN END
   }
 
-  cekKehadiran(userId) {
-    API.get(`${API_SERVER}v2/murid/cek-hadir/${userId}/${this.state.sesiId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: cek kehadiran Anda`)
+  fetchFiles(folderId) {
+    API.get(`${API_SERVER}v1/files/${folderId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ infoFiles: res.data.result })
+      }
+    })
+  }
 
-      this.setState({ openKehadiran: res.data.result.length ? false : true })
+  deleteFile() {
+    API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Gagal menghapus file`)
+        } else {
+          toast.success(`Berhasil menghapus file `)
+          this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
+          this.props.socket.emit('send', {
+            event: 'ptc',
+            ptcId: this.state.ptcId,
+            companyId: Storage.get('user').data.company_id
+          })
+        }
+      }
     })
   }
 
   componentDidMount() {
-    if(this.state.role === "murid") {
-      this.cekKehadiran(Storage.get('user').data.user_id)
+    if(this.state.role !== "guru") {
+      API.get(`${API_SERVER}v1/ptc-room/cek-hadir/${this.state.ptcId}/${Storage.get('user').data.user_id}`).then(res => {
+        if(res.data.error) toast.warning(`Warning: cek kehadiran`)
+
+        this.setState({ openKehadiran: res.data.result.join_at ? false : true })
+      })
     }
 
-    this.fetchJadwal(this.state.jadwalId)
-
-    if(this.state.jenis === "materi") {
-      this.fetchChapter(this.state.sesiId);
-    }
+    this.fetchPtcInfo(this.state.ptcId)
 
     this.props.socket.on('broadcast', data => {
-      if (data.event == 'mengajar' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
-        this.fetchFiles(this.state.infoJadwal.folder);
+      if (data.event == 'ptc' && data.ptcId == this.state.ptcId && data.companyId == Storage.get('user').data.company_id) {
+        this.fetchFiles(this.state.infoPtc.folder_id);
       }
 
-      if (data.event == 'absen' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
-        this.fetchMurid(this.state.jadwalId);
+      if (data.event == 'absen' && data.ptcId == this.state.ptcId && data.companyId == Storage.get('user').data.company_id) {
+        this.fetchParticipants(this.state.ptcId);
       }
     })
   }
 
-  openInfoKelas = e => {
-    e.preventDefault();
-    this.setState({ openKelas: true });
-    this.fetchKelas(this.state.infoJadwal.kelas_id);
-    this.fetchMurid(this.state.jadwalId);
+  fetchPtcInfo(ptcId) {
+    API.get(`${API_SERVER}v1/ptc-room/${ptcId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch ptc detail`)
+
+      this.setState({ infoPtc: res.data.result })
+
+      this.fetchFiles(res.data.result.folder_id)
+      this.fetchBBB()
+    })
   }
 
-  onChangeInput = e => {
-    // const target = e.target;
-    const name = e.target.name;
-    const value = e.target.value;
-
-    if (name === 'attachmentId') {
-      this.setState({ [name]: e.target.files });
-    } else {
-      this.setState({ [name]: value });
-    }
+  dialogDeleteFile(id, name) {
+    this.setState({
+      deleteFileId: id,
+      deleteFileName: name,
+      modalDeleteFile: true
+    })
   }
 
   uploadFile = async e => {
     e.preventDefault();
     for (let i = 0; i <= this.state.attachmentId.length - 1; i++) {
       let form = new FormData();
-      form.append('folder', this.state.infoJadwal.folder);
+      form.append('folder', this.state.infoPtc.folder_id);
       form.append('file', this.state.attachmentId[i]);
       await API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
         if (res.status === 200) {
@@ -251,59 +254,23 @@ class Mengajar extends React.Component {
     this.setState({ openUpload: false, attachmentId: [] })
 
     this.props.socket.emit('send', {
-      event: 'mengajar',
-      jadwalId: this.state.jadwalId,
+      event: 'ptc',
+      ptcId: this.state.ptcId,
       companyId: Storage.get('user').data.company_id
     })
   }
 
-  deleteFile() {
-    API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          toast.error(`Gagal menghapus project`)
-        } else {
-          toast.success(`Berhasil menghapus file `)
-          this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
-
-          this.props.socket.emit('send', {
-            event: 'mengajar',
-            jadwalId: this.state.jadwalId,
-            companyId: Storage.get('user').data.company_id
-          })
-        }
-      }
-    })
+  infoParticipants = e => {
+    e.preventDefault()
+    this.setState({ openParticipants: true })
+    this.fetchParticipants(this.state.ptcId);
   }
 
-  dialogDeleteFile(id, name) {
-    this.setState({
-      deleteFileId: id,
-      deleteFileName: name,
-      modalDeleteFile: true
-    })
-  }
+  fetchParticipants(ptcId) {
+    API.get(`${API_SERVER}v1/ptc-room/peserta/${ptcId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch peserta PTC`)
 
-  hadirMurid = e => {
-    e.preventDefault();
-    let form = {
-      jadwalId: this.state.jadwalId,
-      event: this.state.jenis,
-      sesiId: this.state.sesiId,
-      userId: Storage.get('user').data.user_id
-    }
-
-    API.post(`${API_SERVER}v2/murid/jadwal-absen`, form).then(res => {
-      if(res.data.error) toast.warning(`Warning: gagal absen`)
-
-      toast.success(`Anda mengkonfirmasi kehadiran ${this.state.jenis}.`)
-      this.setState({ openKehadiran: false })
-
-      this.props.socket.emit('send', {
-        event: 'absen',
-        jadwalId: this.state.jadwalId,
-        companyId: Storage.get('user').data.company_id
-      })
+      this.setState({ peserta: res.data.result })
     })
   }
 
@@ -320,14 +287,14 @@ class Mengajar extends React.Component {
               <div className="card">
                 <div className="card-header">
                   <h4 className="header-kartu">
-                    {this.state.infoJadwal.nama_pelajaran}
+                    {this.state.infoPtc.nama_ruangan}
 
                     <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
                       <i className="fa fa-sign-out-alt"></i> Keluar
                     </button>
 
                     {
-                      this.state.jenis === "materi" && this.state.role === "guru" &&
+                      this.state.role === "guru" &&
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-danger mr-2 mt-2">
                         <i className="fa fa-stop-circle"></i> Akhiri
                       </button>
@@ -339,17 +306,16 @@ class Mengajar extends React.Component {
 
                     {
                       this.state.role === "guru" &&
-                      <button onClick={this.openInfoKelas} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
+                      <button onClick={this.infoParticipants} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
                         <i className={'fa fa-list-alt'}></i> Info
                       </button>
                     }
                   </h4>
-                  <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
+                  <span>Moderator : {this.state.infoPtc.name}</span>
                 </div>
 
                 {
-                  this.state.jenis === "materi" &&
-                    <div className="card-body p-1">
+                  <div className="card-body p-1">
                     <Iframe url={this.state.joinUrl}
                     width="100%"
                     height="600px"
@@ -357,20 +323,17 @@ class Mengajar extends React.Component {
                     frameBorder="0"
                     allow="fullscreen *; geolocation *; microphone *; camera *"
                     position="relative" />
-
-                    <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
                   </div>
                 }
               </div>
             </div>
 
             {
-              this.state.jenis === "materi" &&
-              <div className="col-sm-4">
+              <div className="col-sm-12">
                 <div className="card">
                   <div className="card-header">
                     <h4 className="header-kartu">
-                      Files
+                      File Sharing
 
                       {
                         this.state.role === "guru" &&
@@ -499,65 +462,63 @@ class Mengajar extends React.Component {
             }
 
             <Modal
-              show={this.state.openKelas}
-              onHide={() => this.setState({ openKelas: false })}
-              dialogClassName="modal-lg">
+              show={this.state.modalEnd}
+              onHide={this.closeModalEnd}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                  Konfirmasi
+                  </Modal.Title>
+              </Modal.Header>
               <Modal.Body>
-                <h4 className="f-w-900 f-18 fc-blue">Informasi Kelas</h4>
-                <table>
-                  <tr>
-                    <td style={{width: '180px'}}>Nama Kelas</td>
-                    <td><b>{this.state.infoKelas.kelas_nama}</b></td>
-                  </tr>
-                  <tr>
-                    <td>Semester</td>
-                    <td><b>{this.state.infoKelas.semester}</b></td>
-                  </tr>
-                  <tr>
-                    <td>Kurikulum</td>
-                    <td><b>{this.state.infoKelas.kurikulum}</b></td>
-                  </tr>
-                  <tr>
-                    <td>Tahun Ajaran</td>
-                    <td><b>{this.state.infoKelas.tahun_ajaran}</b></td>
-                  </tr>
-                  <tr>
-                    <td>Kapasitas Murid</td>
-                    <td><b>{this.state.infoKelas.kapasitas} Murid</b></td>
-                  </tr>
-                </table>
-
-                <br/>
-                <br/>
-
-                <h4 className="f-w-900 f-18 fc-blue">Informasi Murid</h4>
-                <table className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Nama</th>
-                      <th>No. Induk</th>
-                      <th>Jenis Kelamin</th>
-                      <th>Kehadiran</th>
-                      <th>Jam</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      this.state.infoMurid.map((item, i) => (
-                        <tr>
-                          <td>{i+1}</td>
-                          <td>{item.nama}</td>
-                          <td>{item.no_induk}</td>
-                          <td>{item.jenis_kelamin}</td>
-                          <td>{item.absen_jam ? <span class="badge badge-pill badge-success">Hadir</span> : <span class="badge badge-pill badge-info">Belum</span>}</td>
-                          <td>{item.absen_jam ? moment(item.absen_jam).format('DD/MM/YYYY HH:mm') : '-'}</td>
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
+                <div>Anda yakin akan mengakhiri kelas untuk semua murid ?</div>
               </Modal.Body>
+              <Modal.Footer>
+                <button
+                  className="btn btm-icademy-primary btn-icademy-grey"
+                  onClick={this.closeModalEnd.bind(this)}
+                >
+                  Cancel
+              </button>
+                <button
+                  className="btn btn-icademy-primary btn-icademy-red"
+                  onClick={this.endMeeting.bind(this)}
+                >
+                  <i className="fa fa-trash"></i>
+                Akhiri Meeting
+              </button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal
+              show={this.state.modalDeleteFile}
+              onHide={this.closeModalDeleteFile}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                  Konfirmasi
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+              </Modal.Body>
+              <Modal.Footer>
+                <button
+                  className="btn btm-icademy-primary btn-icademy-grey"
+                  onClick={this.closeModalDeleteFile.bind(this)}
+                >
+                  Cancel
+                          </button>
+                <button
+                  className="btn btn-icademy-primary btn-icademy-red"
+                  onClick={this.deleteFile.bind(this)}
+                >
+                  <i className="fa fa-trash"></i>
+                  Hapus
+                </button>
+              </Modal.Footer>
             </Modal>
 
             <Modal
@@ -615,33 +576,36 @@ class Mengajar extends React.Component {
             </Modal>
 
             <Modal
-              show={this.state.modalDeleteFile}
-              onHide={this.closeModalDeleteFile}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                  Konfirmasi
-                </Modal.Title>
-              </Modal.Header>
+              show={this.state.openParticipants}
+              onHide={() => this.setState({ openParticipants: false })}
+              dialogClassName="modal-lg">
               <Modal.Body>
-                <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+                <h4 className="f-w-900 f-18 fc-blue">Informasi Participants</h4>
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>Identity</th>
+                      <th>Kehadiran</th>
+                      <th>Jam</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.state.peserta.map((item, i) => (
+                        <tr>
+                          <td>{i+1}</td>
+                          <td>{item.name}</td>
+                          <td>{item.identity}</td>
+                          <td>{item.join_at ? <span class="badge badge-pill badge-success">Hadir</span> : <span class="badge badge-pill badge-info">Belum</span>}</td>
+                          <td>{item.join_at ? moment(item.join_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
               </Modal.Body>
-              <Modal.Footer>
-                <button
-                  className="btn btm-icademy-primary btn-icademy-grey"
-                  onClick={this.closeModalDeleteFile.bind(this)}
-                >
-                  Cancel
-                          </button>
-                <button
-                  className="btn btn-icademy-primary btn-icademy-red"
-                  onClick={this.deleteFile.bind(this)}
-                >
-                  <i className="fa fa-trash"></i>
-                            Hapus
-                          </button>
-              </Modal.Footer>
             </Modal>
 
             <Modal
@@ -664,36 +628,6 @@ class Mengajar extends React.Component {
               </Modal.Body>
             </Modal>
 
-            <Modal
-              show={this.state.modalEnd}
-              onHide={this.closeModalEnd}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                  Konfirmasi
-                  </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div>Anda yakin akan mengakhiri kelas untuk semua murid ?</div>
-              </Modal.Body>
-              <Modal.Footer>
-                <button
-                  className="btn btm-icademy-primary btn-icademy-grey"
-                  onClick={this.closeModalEnd.bind(this)}
-                >
-                  Cancel
-              </button>
-                <button
-                  className="btn btn-icademy-primary btn-icademy-red"
-                  onClick={this.endMeeting.bind(this)}
-                >
-                  <i className="fa fa-trash"></i>
-                Akhiri Meeting
-              </button>
-              </Modal.Footer>
-            </Modal>
-
           </div>
         </div>
       </ReactFullScreenElement>
@@ -702,10 +636,10 @@ class Mengajar extends React.Component {
 
 }
 
-const MengajarSocket = props => (
+const PtcMasukSocket = props => (
   <SocketContext.Consumer>
     {socket => <Mengajar {...props} socket={socket} />}
   </SocketContext.Consumer>
 )
 
-export default MengajarSocket;
+export default PtcMasukSocket;

@@ -4,7 +4,7 @@ import { Hidden } from '@material-ui/core';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
-class TableSilabus extends Component {
+class TableMurid extends Component {
   constructor(props) {
     super(props);
 
@@ -155,4 +155,4 @@ class TableSilabus extends Component {
   }
 }
 
-export default TableSilabus;
+export default TableMurid;

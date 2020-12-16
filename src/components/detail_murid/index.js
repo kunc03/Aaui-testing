@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import TableSilabus from "./table";
 
 
-class GuruUjian extends Component {
+class DetailMurid extends Component {
   constructor(props) {
     super(props);
     this.goBack = this.goBack.bind(this);
@@ -56,4 +56,4 @@ class GuruUjian extends Component {
   }
 }
 
-export default GuruUjian;
+export default DetailMurid;

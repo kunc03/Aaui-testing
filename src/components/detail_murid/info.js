@@ -5,7 +5,7 @@ import { dataBar, dataUser, dataRadar, dataPie } from '../../modul/data';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
-class InfoSilabus extends Component {
+class InfoMurid extends Component {
   constructor(props) {
     super(props);
 
@@ -120,4 +120,4 @@ class InfoSilabus extends Component {
   }
 }
 
-export default InfoSilabus;
+export default InfoMurid;

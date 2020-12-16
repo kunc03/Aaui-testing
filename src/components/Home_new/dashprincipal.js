@@ -99,10 +99,10 @@ class DashParent extends Component {
 
                   <div className="row">
 
-                    <div className="col-sm-12">
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <LaporanPembelajaranMurid lists={this.state.project} />
+                          <ProjekNew lists={this.state.project} />
                         </Card.Body>
                       </Card>
                     </div>
@@ -110,7 +110,7 @@ class DashParent extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <ProjekNew lists={this.state.project} />
+                          <LaporanPembelajaranMurid lists={this.state.project} />
                         </Card.Body>
                       </Card>
                     </div>

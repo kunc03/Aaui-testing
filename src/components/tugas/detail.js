@@ -148,6 +148,7 @@ class Ujian extends React.Component {
 
                     {
                       this.state.role === "guru" &&
+                      <>
                       <ul class="list-group">
                         { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': ''}`}><b>A.</b> {item.a}</li> }
                         { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': ''}`}><b>B.</b> {item.b}</li> }
@@ -155,6 +156,12 @@ class Ujian extends React.Component {
                         { item.d && <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': ''}`}><b>D.</b> {item.d}</li> }
                         { item.e && <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': ''}`}><b>E.</b> {item.e}</li> }
                       </ul>
+
+                      <div className="penjelasan mt-3 mb-4">
+                        <label><b>Penjelasan</b></label>
+                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.penjelasan }} />
+                      </div>
+                      </>
                     }
 
                     {

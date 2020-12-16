@@ -82,6 +82,24 @@ class SidebarClass extends Component {
         ]
       },
 
+      principal: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
+      management: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
       other: {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },

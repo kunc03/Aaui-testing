@@ -11,6 +11,7 @@ import SocketContext from '../../socket';
 class PtcClasses extends React.Component {
 
   state = {
+    role: this.props.role,
     ptc: [],
     rapat: [],
 
@@ -87,18 +88,21 @@ class PtcClasses extends React.Component {
   }
 
   fetchNotif() {
-    API.get(`${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`).then(res => {
+    let url = ``;
+
+    if(this.state.role.toLowerCase() === "guru") {
+      url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+    } else if(this.state.role.toLowerCase() === "parents") {
+      url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
+    } else {
+      url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+    }
+
+    API.get(url).then(res => {
       if (res.data.error) console.log('Error: ', res.data.result);
 
       this.setState({ ptc: res.data.result })
     });
-
-    let rapat = [
-      { nama_ruangan: 'Rapat T1', peserta: [{ id: 4, name: "Kepala Sekolah" }, { id: 2, name: "Guru" }], status: "Private", waktu: "08:30", tanggal: "20 Oktober 2020", total: 10 },
-      { nama_ruangan: 'Rapat T2', peserta: [{ id: 2, name: "Guru" }], status: "Private", waktu: "08:00", tanggal: "16 Oktober 2020", total: 15 },
-    ];
-
-    this.setState({ rapat })
   }
 
   fetchOptionNames() {
@@ -122,7 +126,9 @@ class PtcClasses extends React.Component {
   }
 
   render() {
+
     console.log('state: ', this.state);
+
     return (
       <>
         <div className="floating-back">
@@ -141,9 +147,12 @@ class PtcClasses extends React.Component {
               <div className="card-header header-kartu">
                 Parent Teacher Conference (PTC)
 
-              <Link to={`/ptc/create/ptc`} className="btn btn-v2 btn-primary float-right" style={{ margin: 0 }}>
+              {
+                this.state.role.toLowerCase() !== "parents" &&
+                <Link to={`/ptc/create/ptc`} className="btn btn-v2 btn-primary float-right" style={{ margin: 0 }}>
                   <i className="fa fa-plus"></i> Add
-              </Link>
+                </Link>
+              }
               </div>
               <div className="card-body" style={{ padding: 0 }}>
                 <table className="table table-striped">
@@ -154,7 +163,7 @@ class PtcClasses extends React.Component {
                       <th>Status</th>
                       <th>Time </th>
                       <th> Date </th>
-                      <th className="text-center"> Participants </th>
+                      { this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th> }
                       <th className="text-center"> Action </th>
                     </tr>
                   </thead>
@@ -167,22 +176,34 @@ class PtcClasses extends React.Component {
                           <td>{item.is_private ? "Private" : "Public"}</td>
                           <td>{item.waktu_mulai}</td>
                           <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
-                          <td className="text-center">
-                            <button data-id={item.ptc_id} onClick={this.openParticipants} className="btn btn-v2 btn-default ml-2">{item.peserta.length} Participants</button>
-                          </td>
+                          {
+                            this.state.role.toLowerCase() !== "parents" &&
+                            <td className="text-center">
+                              <button data-id={item.ptc_id} onClick={this.openParticipants} className="btn btn-v2 btn-default ml-2">{item.peserta.length} Participants</button>
+                            </td>
+                          }
                           <td className="text-center">
                             {
                               Date.parse(item.tanggal_mulai) >= new Date() &&
-                              <button className="btn btn-v2 btn-primary">Masuk</button>
+                              <a target="_blank" className="btn btn-v2 btn-primary" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
+                                <i className="fa fa-video"></i> Masuk
+                              </a>
                             }
                             {
                               Date.parse(item.tanggal_mulai) <= new Date() &&
                               <button className="btn btn-v2 btn-default ml-2">Riwayat</button>
                             }
-                            <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
-                              <i className="fa fa-edit ml-2"></i>
-                            </Link>
-                            <i onClick={this.deletePtc} data-id={item.ptc_id} className="fa fa-trash ml-2" style={{ cursor: 'pointer' }}></i>
+
+                            {
+                              this.state.role.toLowerCase() !== "parents" &&
+                              <>
+                              <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
+                                <i className="fa fa-edit ml-2"></i>
+                              </Link>
+
+                              <i onClick={this.deletePtc} data-id={item.ptc_id} className="fa fa-trash ml-2" style={{ cursor: 'pointer' }}></i>
+                              </>
+                            }
                           </td>
                         </tr>
                       ))
@@ -195,12 +216,12 @@ class PtcClasses extends React.Component {
 
           {
             /**
-  
+
           <div className="col-sm-12">
             <div className="card">
               <div className="card-header header-kartu">
                 Rapat Reguler Internal
-  
+
                 <Link to={`/ptc/create/rapat`} className="btn btn-v2 btn-primary float-right" style={{margin: 0}}>
                   <i className="fa fa-plus"></i> Add
                 </Link>
@@ -248,7 +269,7 @@ class PtcClasses extends React.Component {
               </div>
             </div>
           </div>
-  
+
             */
           }
         </div>

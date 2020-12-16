@@ -108,7 +108,7 @@ class PtcCreate extends React.Component {
       API.get(`${API_SERVER}v1/ptc-room/${this.state.idPtc}`).then(res => {
         if (res.data.error) console.log('Error: ', res.data.result)
 
-        let respon = res.data.result[0];
+        let respon = res.data.result;
 
         this.setState({
           nama_ruangan: respon.nama_ruangan,

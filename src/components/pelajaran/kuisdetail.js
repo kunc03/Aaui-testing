@@ -151,6 +151,18 @@ class Tugas extends React.Component {
     }
   }
 
+  simpanPenjelasan(e, i) {
+    let newObj = [...this.state.pertanyaan];
+    let getOne = newObj[i];
+
+    API.put(`${API_SERVER}v1/question/penjelasan/${getOne.id}`, {penjelasan: getOne.penjelasan}).then(res => {
+      if(res.data.error) toast.warning(`Warning: update penjelasan`)
+
+      toast.success(`Pembahasan soal nomor ${i+1} berhasil disimpan.`)
+      this.fetchPertanyaan(this.state.examId);
+    })
+  }
+
   render() {
 
     console.log('state: ', this.state)
@@ -244,7 +256,10 @@ class Tugas extends React.Component {
                         }
 
                         <div className="penjelasan mt-3">
-                          <label>Pembahasan</label>
+                          <label>
+                            Pembahasan
+                          </label>
+                          <span data-id={item.id} onClick={e => this.simpanPenjelasan(e, i)} style={{cursor: 'pointer', color: 'blue'}} className="float-right blue">Simpan</span>
                           <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
                           <Editor
                             apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"

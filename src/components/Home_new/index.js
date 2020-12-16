@@ -23,7 +23,9 @@ import { initUser } from '../../actions/user_action';
 
 import DashGuru from './dashguru';
 import DashMurid from './dashmurid';
-import DashParent from './dashparent'
+import DashParent from './dashparent';
+import DashPrincipal from './dashprincipal';
+import DashManagement from './dashmanagement';
 
 class HomeNew extends Component {
   state = {
@@ -481,9 +483,21 @@ class HomeV2 extends Component {
         return (
           <DashMurid />
         )
-      } else {
+      } else if(this.state.grupName.toLowerCase() === "parents") {
         return (
           <DashParent />
+        )
+      } else if(this.state.grupName.toLowerCase() === "principal") {
+        return (
+          <DashPrincipal />
+        )
+      } else if(this.state.grupName.toLowerCase() === "management") {
+        return (
+          <DashManagement />
+        )
+      } else {
+        return (
+          <HomeNewProps />
         )
       }
     } else {
