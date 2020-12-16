@@ -46,8 +46,9 @@ class SidebarClass extends Component {
   render() {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
+    let groupUser = Storage.get('user').data.grup_name;
 
-    console.log('Storage: ', Storage.get('user'));
+    // console.log('Storage: ', Storage.get('user'));
 
     let menuClients = {
       murid: {
@@ -68,6 +69,33 @@ class SidebarClass extends Component {
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Exam', link: '/guru-info/ujian' },
           { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Class Information', link: '/guru-info/informasi-kelas' },
           { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'KPI Teacher', link: '/guru-info/kpi' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
+      parents: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
+      principal: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        ]
+      },
+
+      management: {
+        submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -154,6 +182,8 @@ class SidebarClass extends Component {
     let menuContent = [];
     let menuAtas = [];
     let menuBawah = [];
+
+
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
       menuAtas = menuSuperAdmins.menuAtas;
@@ -164,8 +194,8 @@ class SidebarClass extends Component {
       menuBawah = menuAdmins.menuBawah;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
-      // let subMenuClient = "guru";
-      if (subMenuClient === "guru" || subMenuClient === "murid") {
+      console.log(subMenuClient, 'lepell userr');
+      if (subMenuClient === "guru" || subMenuClient === "murid" || subMenuClient === "parents") {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;

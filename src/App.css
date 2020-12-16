@@ -1,5 +1,9 @@
 /* @import "../node_modules/bootstrap/dist/css/bootstrap.css"; */
 
+.timer-wrapper {
+  float: right;
+}
+
 .score-exam {
   position: absolute;
   right: 16px;
