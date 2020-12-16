@@ -2,8 +2,9 @@ import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import API, { API_SERVER } from './repository/api';
+import API, { API_SERVER, API_SOCKET  } from './repository/api';
 import Storage from './repository/storage';
+import io from 'socket.io-client';
 
 import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
@@ -123,6 +124,13 @@ import KursusNew from './components/learning/kursus';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import SocketContext from './socket';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  console.log("Loading App");
+});
+
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -215,7 +223,7 @@ export class Main extends React.Component {
     }
 
     return (
-      <div>
+      <SocketContext.Provider value={socket}>
         <Loader />
         <Sidebar />
         <Header />
@@ -231,7 +239,7 @@ export class Main extends React.Component {
           pauseOnHover
         />
         {workSpaceSwitch}
-      </div>
+      </SocketContext.Provider>
     );
   }
 }

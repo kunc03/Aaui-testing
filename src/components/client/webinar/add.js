@@ -14,7 +14,7 @@ import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import SocketContext from '../../socket';
+import SocketContext from '../../../socket';
 import moment from 'moment-timezone'
 
 class WebinarAddClass extends Component {

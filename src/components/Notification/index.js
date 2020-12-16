@@ -296,4 +296,10 @@ class NotificationClass extends Component {
   }
 }
 
+const Notification = props => (
+  <SocketContext.Consumer>
+    {socket => <NotificationClass {...props} socket={socket} />}
+  </SocketContext.Consumer>
+)
+
 export default Notification;

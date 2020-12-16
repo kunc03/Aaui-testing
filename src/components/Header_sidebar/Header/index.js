@@ -75,20 +75,18 @@ class Header extends Component {
           window.location.reload();
         }
 
-        Storage.set('user', {
-          data: {
-            logo: res.data.result.logo,
-            company_id: res.data.result.company_id,
-            user_id: res.data.result.user_id,
-            email: res.data.result.email,
-            user: res.data.result.name,
-            level: res.data.result.level,
-            avatar: res.data.result.avatar
-              ? res.data.result.avatar
-              : '/assets/images/user/avatar-1.png',
-          },
-        });
+        let userStorage = Storage.get('user').data;
+        let addStorage = {...userStorage,
+          logo: res.data.result.logo,
+          company_id: res.data.result.company_id,
+          company_type: res.data.result.company_type,
+          user: res.data.result.name,
+          avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png'
+        };
+
+        Storage.set('user', { data: addStorage });
         console.log('ALVIN', res.data.result)
+
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
@@ -558,11 +556,11 @@ class Header extends Component {
                 </div>
               </Link>
             </li>
-            
+
           </ul>
 
           <ul className="navbar-nav ml-auto">
-            
+
             <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
             {/* <li>
               <div className="dropdown">
@@ -593,7 +591,7 @@ class Header extends Component {
               </div>
             </li> */}
           </ul>
-          
+
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               <div className="media">
@@ -609,7 +607,7 @@ class Header extends Component {
               </div>
             </li>
           </ul>
-          
+
 
           {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
@@ -720,7 +718,7 @@ class Header extends Component {
 
                                 <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
                               </p>
-                              
+
                               {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p

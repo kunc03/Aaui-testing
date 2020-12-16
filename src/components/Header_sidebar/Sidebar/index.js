@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
-import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../repository/api';
-import SocketContext from '../../socket';
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
+import SocketContext from '../../../socket';
 
 class SidebarClass extends Component {
   constructor(props) {
