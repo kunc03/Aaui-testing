@@ -69,7 +69,7 @@ class Header extends Component {
   async componentDidMount() {
     await API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
       if (res.status === 200) {
-        console.log('res company', res);
+
         if (res.data.error) {
           localStorage.clear();
           window.location.reload();
@@ -95,8 +95,8 @@ class Header extends Component {
           role: res.data.result.grup_name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
-            ? res.data.result.avatar
-            : '/assets/images/user/avatar-1.png',
+          ? res.data.result.avatar
+          : '/assets/images/user/avatar-1.png',
         });
 
         if (this.state.level === 'client') {

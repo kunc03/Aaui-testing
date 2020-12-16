@@ -141,7 +141,8 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    let userInfo = localStorage.getItem("user");
+    // let userInfo = localStorage.getItem("user");
+    let userInfo = Storage.get('user').data.email;
     if (userInfo == null) {
       this.setState({ userLogin: false });
     } else {
