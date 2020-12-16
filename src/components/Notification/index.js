@@ -116,6 +116,7 @@ class NotificationClass extends Component {
         badgeRemind: Remind.length
       });
     });
+  }
 
   readNotif(id) {
     API.put(`${API_SERVER}v1/notification/read`, { id }).then(res => {

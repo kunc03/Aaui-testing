@@ -7,10 +7,11 @@ import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
+import SocketContext from '../../socket';
+
 const bbb = require('bigbluebutton-js')
 
-
-class FilesTable extends Component {
+class FilesTableClass extends Component {
   constructor(props) {
     super(props);
 
@@ -109,7 +110,7 @@ class FilesTable extends Component {
   closeModalUpload = e => {
     this.setState({ modalUpload: false })
   }
-  uploadFile = e => {
+  uploadFile = async e => {
     e.preventDefault();
     this.setState({ uploading: true })
 

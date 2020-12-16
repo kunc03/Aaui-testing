@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
@@ -14,8 +14,10 @@ import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import SocketContext from '../../socket';
+import moment from 'moment-timezone'
 
-export default class WebinarAdd extends Component {
+class WebinarAddClass extends Component {
 
   state = {
     oldJamMulai: new Date(),
