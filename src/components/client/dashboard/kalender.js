@@ -16,14 +16,14 @@ class EventNew extends Component {
   }
 
   render() {
-  //  console.log(this.props, 'props evenntttt')
+    //  console.log(this.props, 'props evenntttt')
     // const lists = this.props.lists;
 
 
     return (
       <div >
         <div className="card p-10">
-        <h3 className="f-w-900 f-18 fc-blue">Kalender</h3>
+          <h3 className="f-w-900 f-18 fc-blue"> Calendar</h3>
           <Calendar
             popup
             events={this.state.event}

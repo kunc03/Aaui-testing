@@ -23,7 +23,7 @@ class ModalEmail extends Component {
   }
 
   handleKeyUpEmail = e => {
-    if(this.state.email === e.target.value) {
+    if (this.state.email === e.target.value) {
       this.setState({ isDisabled: false });
     } else {
       this.setState({ isDisabled: true });
@@ -32,8 +32,8 @@ class ModalEmail extends Component {
 
   handleKeyUpEmailBaru = e => {
     API.get(`${API_SERVER}v1/user/cek/email/${e.target.value}`).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error) {
+      if (res.status === 200) {
+        if (!res.data.error) {
           this.setState({ msgEmailBaru: res.data.result, isEmailBaru: true });
         } else {
           this.setState({ msgEmailBaru: res.data.result, isEmailBaru: false, });
@@ -44,12 +44,12 @@ class ModalEmail extends Component {
 
   onSubmitPengaturanEmail = e => {
     e.preventDefault();
-    if(!this.state.isEmailBaru) {
+    if (!this.state.isEmailBaru) {
       this.setState({ isEmailBaru: false, msgEmaemailBaru: '', emailBaru: '' });
     } else {
       let formData = { email: this.state.emailBaru };
       API.put(`${API_SERVER}v1/user/email/${this.state.userId}`, formData).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           localStorage.clear();
           window.location.href = window.location.origin;
         }
@@ -76,14 +76,14 @@ class ModalEmail extends Component {
               <h5
                 className="modal-title p-t-0 f-21 f-w-bold text-c-black"
                 id="exampleModalCenterTitle">
-                Ganti Email
+                Change Email
               </h5>
             </div>
             <div className="modal-body">
               <form onSubmit={this.onSubmitPengaturanEmail}>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Email Lama
+                    Old Email
                   </label>
                   <input
                     type="email"
@@ -91,7 +91,7 @@ class ModalEmail extends Component {
                     name="emailLama"
                     onChange={this.handleChangeInput}
                     onKeyUp={this.handleKeyUpEmail}
-                    placeholder="Masukan Email Lama Anda"
+                    placeholder="Enter your Old Email"
                   />
                 </div>
                 <div className="text-center">
@@ -102,7 +102,7 @@ class ModalEmail extends Component {
                     Email Baru
                   </label>
                   <input
-                    disabled={(this.state.isDisabled) ? 'disabled':''}
+                    disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     type="email"
                     name="emailBaru"
                     onChange={this.handleChangeInput}
@@ -111,7 +111,7 @@ class ModalEmail extends Component {
                     className="form-control"
                     placeholder="Masukan Email Baru Anda"
                   />
-                  { this.state.msgEmailBaru && <span className={`label label-${(this.state.isEmailBaru) ? 'success':'danger'}`}>{this.state.msgEmailBaru}</span> }
+                  {this.state.msgEmailBaru && <span className={`label label-${(this.state.isEmailBaru) ? 'success' : 'danger'}`}>{this.state.msgEmailBaru}</span>}
                 </div>
                 <div className="modal-footer mt-4 p-b-0" style={{ borderTop: "0 !important" }}>
                   <button type="submit" className="btn btn-icademy-primary ml-2">

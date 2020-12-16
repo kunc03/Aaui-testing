@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import API, { API_SERVER } from '../../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 
@@ -14,13 +14,16 @@ import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import SocketContext from '../../../socket';
+import moment from 'moment-timezone'
 
-export default class WebinarAdd extends Component {
+class WebinarAddClass extends Component {
 
-	state = {
+  state = {
+    oldJamMulai: new Date(),
     webinarId: this.props.match.params.webinarId,
     isSending: false,
-    role:[],
+    role: [],
     access_project_admin: false,
 
     pembicara: [
@@ -43,7 +46,7 @@ export default class WebinarAdd extends Component {
     peserta: [],
     kirimEmailPeserta: [],
     kirimEmailTamu: [],
-    userId:'',
+    userId: '',
 
     // form peserta
     pesertaId: [],
@@ -70,7 +73,7 @@ export default class WebinarAdd extends Component {
 
   addTamu = e => {
     e.preventDefault();
-    if(!this.state.nama && !this.state.email && !this.state.telepon) {
+    if (!this.state.nama && !this.state.email && !this.state.telepon) {
       toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
     } else {
       let form = {
@@ -80,19 +83,19 @@ export default class WebinarAdd extends Component {
         status: false,
         checked: false
       };
-      this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: ''});
+      this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: '' });
     }
 
   }
 
-  deleteTamu (id) {
+  deleteTamu(id) {
     // let cpTamu = [...this.state.tamu];
     // let filter = cpTamu.filter((item) => item.email != e.target.getAttribute('data-email'));
     // this.setState({ tamu: filter });
 
     API.delete(`${API_SERVER}v2/webinar/tamu/${id}`).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
+      if (res.status === 200) {
+        if (res.data.error) {
           toast.error('Gagal menghapus tamu')
         } else {
           toast.success(`Berhasil menghapus tamu`)
@@ -137,15 +140,15 @@ export default class WebinarAdd extends Component {
     this.setState({ tamu: pem });
   }
 
-  kirimEmail () {
-    this.setState({kirimEmailPeserta: [], kirimEmailTamu: [], isSending: true})
-    this.state.peserta.map(item=>{
-      if (item.checked){
+  kirimEmail() {
+    this.setState({ kirimEmailPeserta: [], kirimEmailTamu: [], isSending: true })
+    this.state.peserta.map(item => {
+      if (item.checked) {
         this.state.kirimEmailPeserta.push(item.id)
       }
     })
-    this.state.tamu.map(item=>{
-      if (item.checked){
+    this.state.tamu.map(item => {
+      if (item.checked) {
         this.state.kirimEmailTamu.push(item.id)
       }
     })
@@ -156,29 +159,40 @@ export default class WebinarAdd extends Component {
     };
 
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
+      if (res.status === 200) {
+        if (res.data.error) {
           toast.error('Error sending email')
-          this.setState({isSending: false})
+          this.setState({ isSending: false })
         } else {
           toast.success(`Berhasil mengirim email undangan`)
-          this.setState({isSending: false})
+          this.setState({ isSending: false })
           this.fetchData();
         }
       }
     })
+
+    // send notification
+    let sendNotif = {
+      type: 7,
+      peserta: form.pengguna,
+      description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
+      destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
+    };
+    API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
+      this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
+    })
   }
 
-  checkProjectAccess(projectId){
+  checkProjectAccess(projectId) {
     API.get(`${API_SERVER}v1/project-access/${projectId}/${Storage.get('user').data.user_id}`).then(res => {
       if (res.status === 200) {
         let levelUser = Storage.get('user').data.level;
-        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client') {
           this.setState({
             access_project_admin: true,
           })
         }
-        else{
+        else {
           this.setState({
             access_project_admin: false,
           })
@@ -192,7 +206,7 @@ export default class WebinarAdd extends Component {
 
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
-      if(res.data.error) toast.warning("Gagal fetch API");
+      if (res.data.error) toast.warning("Gagal fetch API");
       const tanggal = res.data.result.tanggal ? new Date(res.data.result.tanggal) : '';
       const jam_mulai = res.data.result.jam_mulai ? new Date('2020-09-19 ' + res.data.result.jam_mulai) : ''
       const jam_selesai = res.data.result.jam_selesai ? new Date('2020-09-19 ' + res.data.result.jam_selesai) : ''
@@ -204,6 +218,7 @@ export default class WebinarAdd extends Component {
         tanggal: tanggal,
         jamMulai: jam_mulai,
         jamSelesai: jam_selesai,
+        oldJamMulai: jam_mulai,
         projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         peserta: res.data.result.peserta,
@@ -212,12 +227,12 @@ export default class WebinarAdd extends Component {
         userId: Storage.get('user').data.user_id,
         sekretarisId: res.data.result.sekretaris
       })
-      res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
+      res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)
     })
-    
+
     API.get(`${API_SERVER}v2/project/user/${this.props.match.params.projectId}`).then(response => {
-      this.setState({optionsName: []})
+      this.setState({ optionsName: [] })
       response.data.result.map(item => {
         this.state.optionsName.push({
           value: item.user_id,
@@ -227,27 +242,27 @@ export default class WebinarAdd extends Component {
     })
   }
 
-  showTambahPeserta(){
-    if (this.state.judul == '' || this.state.isi == '' || this.state.tanggal == '' || this.state.jamMulai == '' || this.state.jamSelesai == ''){
+  showTambahPeserta() {
+    if (this.state.judul == '' || this.state.isi == '' || this.state.tanggal == '' || this.state.jamMulai == '' || this.state.jamSelesai == '') {
       toast.warning('Silahkan lengkapi data acara terlebih dahulu.')
     }
-    else{
+    else {
       this.updateWebinar()
       this.fetchData()
       this.setState({ isModalPeserta: true });
     }
   }
 
-  updateWebinar (back) {
+  updateWebinar(back) {
 
     let dd = new Date(this.state.tanggal);
-    let tanggal = dd.getFullYear()+'-'+('0' + (dd.getMonth()+1)).slice(-2)+'-'+('0' + dd.getDate()).slice(-2);
+    let tanggal = dd.getFullYear() + '-' + ('0' + (dd.getMonth() + 1)).slice(-2) + '-' + ('0' + dd.getDate()).slice(-2);
 
     let jamMl = new Date(this.state.jamMulai);
-    let jamMulai = ('0' + jamMl.getHours()).slice(-2)+':'+('0' + jamMl.getMinutes()).slice(-2);
+    let jamMulai = ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2);
 
     let jamSl = new Date(this.state.jamSelesai);
-    let jamSelesai = ('0' + jamSl.getHours()).slice(-2)+':'+('0' + jamSl.getMinutes()).slice(-2);
+    let jamSelesai = ('0' + jamSl.getHours()).slice(-2) + ':' + ('0' + jamSl.getMinutes()).slice(-2);
 
     let form = {
       id: this.state.webinarId,
@@ -260,7 +275,7 @@ export default class WebinarAdd extends Component {
       // pesertanya: this.state.pesertanya
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
-      if(res.data.error)
+      if (res.data.error)
         toast.warning("Error fetch API")
       else
         if (this.state.gambar) {
@@ -268,14 +283,30 @@ export default class WebinarAdd extends Component {
           formData.append('gambar', this.state.gambar);
           await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
         }
-        toast.success("Menyimpan informasi webinar")
-        back && this.props.history.goBack();
+
+      toast.success("Save webinar information")
+      back && this.props.history.goBack();
     })
+
+    // send notification
+    let oldJamMul = moment(this.state.oldJamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
+    let jamMul = moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
+    if (oldJamMul != jamMul) {
+      let sendNotif = {
+        type: 7,
+        peserta: this.state.peserta.map(item => item.id),
+        description: `Training "${this.state.judul}" pada tanggal ${oldJamMul} diubah ke tanggal ${jamMul}`,
+        destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
+      };
+      API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
+        this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
+      })
+    }
 
     console.log(form);
   }
 
-  backButton(){
+  backButton() {
     this.props.history.goBack();
   }
 
@@ -286,25 +317,25 @@ export default class WebinarAdd extends Component {
       userId: this.state.pesertaId.toString(),
     };
     formData.userId ?
-    API.post(`${API_SERVER}v2/webinar/peserta`, formData).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
-          toast.error('Gagal menambah peserta')
-        } else {
-          toast.success(`Berhasil menambah peserta`)
-          this.setState({pesertaId:[]})
-          this.fetchData();
+      API.post(`${API_SERVER}v2/webinar/peserta`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Gagal menambah peserta')
+          } else {
+            toast.success(`Berhasil menambah peserta`)
+            this.setState({ pesertaId: [] })
+            this.fetchData();
+          }
         }
-      }
-    })
-    :
-    toast.warning('Silahkan pilih peserta terlebih dahulu')
+      })
+      :
+      toast.warning('Silahkan pilih peserta terlebih dahulu')
   }
 
-  deletePeserta (id) {
+  deletePeserta(id) {
     API.delete(`${API_SERVER}v2/webinar/peserta/${id}`).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
+      if (res.status === 200) {
+        if (res.data.error) {
           toast.error('Gagal menghapus peserta')
         } else {
           toast.success(`Berhasil menghapus peserta`)
@@ -323,41 +354,41 @@ export default class WebinarAdd extends Component {
       phone: this.state.telepon,
     };
     formData.email || formData.name || formData.phone ?
-    API.post(`${API_SERVER}v2/webinar/tamu`, formData).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
-          toast.error('Gagal menambah tamu')
-        } else {
-          toast.success(`Berhasil menambah tamu`)
-          this.setState({nama: '', email:'', telepon:''})
-          this.fetchData();
+      API.post(`${API_SERVER}v2/webinar/tamu`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Gagal menambah tamu')
+          } else {
+            toast.success(`Berhasil menambah tamu`)
+            this.setState({ nama: '', email: '', telepon: '' })
+            this.fetchData();
+          }
         }
-      }
-    })
-    :
-    toast.warning('Silahkan masukkan data tamu terlebih dahulu')
+      })
+      :
+      toast.warning('Silahkan masukkan data tamu terlebih dahulu')
   }
 
-	render() {
+  render() {
 
     // const role = this.state.role
     let levelUser = Storage.get('user').data.level;
 
-    const TabelPembicara = ({items}) => (
+    const TabelPembicara = ({ items }) => (
       <table className="table table-striped mb-4">
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>Nama</th>
+            <th> Name </th>
             <th>Email</th>
-            <th>Telepon</th>
+            <th> Phone </th>
             <th>Status</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {
-            items.length && items.map((item,i) => (
+            items.length && items.map((item, i) => (
               <tr key={i}>
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
@@ -367,7 +398,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.telepon}</td>
                 <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
-                  <i className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
               </tr>
             ))
@@ -376,21 +407,21 @@ export default class WebinarAdd extends Component {
       </table>
     );
 
-    const TabelPeserta = ({items}) => (
+    const TabelPeserta = ({ items }) => (
       <table className="table table-striped mb-4">
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>Nama</th>
+            <th> Name </th>
             <th>Email</th>
-            <th>Telepon</th>
+            <th> Phone </th>
             <th>Status</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {
-            items.map((item,i) => (
+            items.map((item, i) => (
               <tr key={i}>
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheck} />
@@ -400,7 +431,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.phone}</td>
                 <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
-                  <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
               </tr>
             ))
@@ -409,21 +440,21 @@ export default class WebinarAdd extends Component {
       </table>
     );
 
-    const TabelTamu = ({items}) => (
+    const TabelTamu = ({ items }) => (
       <table className="table table-striped mb-4">
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
-            <th>Nama</th>
+            <th> Name </th>
             <th>Email</th>
-            <th>Telepon</th>
+            <th> Phone </th>
             <th>Status</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {
-            items.map((item,i) => (
+            items.map((item, i) => (
               <tr key={i}>
                 <td>
                   <input type="checkbox" checked={item.checked} value={item.email} onClick={this.handleOneCheckTamu} />
@@ -433,7 +464,7 @@ export default class WebinarAdd extends Component {
                 <td>{item.phone}</td>
                 <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
                 <td>
-                  <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                  <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
               </tr>
             ))
@@ -442,36 +473,36 @@ export default class WebinarAdd extends Component {
       </table>
     );
 
-		return (
-			<div className="row">
+    return (
+      <div className="row">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link onClick={this.backButton.bind(this)} className="btn btn-sm mr-4" style={{
-                  		border: '1px solid #e9e9e9',
-                  		borderRadius: '50px',
-                  	}}>
-                  		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
-                		</Link>
+                    <Link onClick={this.backButton.bind(this)} className="btn btn-sm mr-4" style={{
+                      border: '1px solid #e9e9e9',
+                      borderRadius: '50px',
+                    }}>
+                      <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
+                    </Link>
                     Detail Webinar
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
                   <div className="form-group">
                     {
-                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={()=>this.setState({modalKuesioner: true})} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
                     }
                     {
-                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={()=>this.setState({modalPosttest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Post Test</button>
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPosttest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Post Test</button>
                     }
                     {
-                      (levelUser !='client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={()=>this.setState({modalPretest: true})} className="btn btn-icademy-primary float-right" style={{marginRight:10}}><i className="fa fa-plus"></i> Pre Test</button>
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPretest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                   </div>
                   <p className="m-b-0">
@@ -479,14 +510,14 @@ export default class WebinarAdd extends Component {
                   </p>
                 </div>
               </div>
-              <div style={{marginTop: '10px'}}>
+              <div style={{ marginTop: '10px' }}>
                 <div className="row">
                   <div className="col-sm-12">
                     <div className="form-group">
                       <label className="bold">Gambar Webinar</label>
                       <div className="row">
                         <div className="col-sm-3">
-                          <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar } />
+                          <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar} />
                         </div>
                         <div className="col-sm-2">
                           <input type="file" name="gambar" onChange={e => this.setState({ gambar: e.target.files[0] })} className="ml-5 btn btn-sm btn-default" />
@@ -514,28 +545,28 @@ export default class WebinarAdd extends Component {
                         />
                       </div>
                       <div className="col-sm-4">
-                        <label className="bold col-sm-12">Jam Mulai</label>
+                        <label className="bold col-sm-12"> Starting Hours </label>
                         <DatePicker
                           selected={this.state.jamMulai}
-                          onChange={date => this.setState({ jamMulai: date})}
+                          onChange={date => this.setState({ jamMulai: date })}
                           showTimeSelect
                           showTimeSelectOnly
                           timeIntervals={30}
                           timeCaption="Time"
                           dateFormat="h:mm aa"
-                          />
+                        />
                       </div>
                       <div className="col-sm-4">
-                        <label className="bold col-sm-12">Jam Selesai</label>
+                        <label className="bold col-sm-12"> End Hours </label>
                         <DatePicker
                           selected={this.state.jamSelesai}
-                          onChange={date => this.setState({ jamSelesai: date})}
+                          onChange={date => this.setState({ jamSelesai: date })}
                           showTimeSelect
                           showTimeSelectOnly
                           timeIntervals={30}
                           timeCaption="Time"
                           dateFormat="h:mm aa"
-                          />
+                        />
                       </div>
                     </div>
 
@@ -546,18 +577,18 @@ export default class WebinarAdd extends Component {
                           <input disabled type="text" value={this.state.pembicara.toString()} className="form-control" />
                           {/* <span className="input-group-btn">
                             <button onClick={e => this.setState({ isModalPembicara: true })} className="btn btn-default">
-                              <i className="fa fa-plus"></i> Tambah
+                              <i className="fa fa-plus"></i> Add
                             </button>
                           </span> */}
                         </div>
                       </div>
                       <div className="col-sm-6">
-                        <label className="bold">Peserta</label>
+                        <label className="bold"> Participants </label>
                         <div class="input-group">
-                          <input value={this.state.peserta.length+this.state.tamu.length} type="text" className="form-control" />
+                          <input value={this.state.peserta.length + this.state.tamu.length} type="text" className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={this.showTambahPeserta.bind(this)} className="btn btn-default">
-                              <i className="fa fa-plus"></i> Tambah
+                              <i className="fa fa-plus"></i> Add
                             </button>
                           </span>
                         </div>
@@ -568,8 +599,8 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-12">
                         <label className="bold">Folder & File</label>
                         <div className="col-sm-12">
-                          <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
-                            <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} webinarId={this.state.webinarId}/>
+                          <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                            <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} webinarId={this.state.webinarId} />
                           </div>
                         </div>
                       </div>
@@ -578,8 +609,8 @@ export default class WebinarAdd extends Component {
                       <div className="col-sm-12">
                         <label className="bold">Ruang Meeting</label>
                         <div className="col-sm-12">
-                          <div id="scrollin" style={{height:'300px', marginBottom: '0px', overflowY:'scroll', border:'1px solid #CCC'}}>
-                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId}/>
+                          <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
                           </div>
                         </div>
                       </div>
@@ -608,7 +639,7 @@ export default class WebinarAdd extends Component {
                     </div> */}
 
                     <div className="form-group">
-                      <button onClick={this.updateWebinar.bind(this,true)} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
+                      <button onClick={this.updateWebinar.bind(this, true)} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
                     </div>
 
                   </div>
@@ -632,7 +663,7 @@ export default class WebinarAdd extends Component {
                 <div className="form-group">
                   <label>Cari Pembicara</label>
                   <div class="input-group">
-                    { <input type="text" list="pembicara" className="form-control" /> }
+                    {<input type="text" list="pembicara" className="form-control" />}
                     <span className="input-group-btn">
                       <button className="btn btn-default">
                         <i className="fa fa-search"></i> Cari
@@ -663,7 +694,7 @@ export default class WebinarAdd extends Component {
                 className="btn btn-v2 f-w-bold"
                 onClick={this.handleModal}
               >
-                Tutup
+                Close
               </button>
             </Modal.Body>
           </Modal>
@@ -674,30 +705,30 @@ export default class WebinarAdd extends Component {
             dialogClassName="modal-lg"
           >
             <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                Peserta Webinar
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Webinar Participants
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <h5>Peserta</h5>
+              <h5> Participants </h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
-                  <label>Cari Peserta</label>
+                  <label> Find Participants</label>
                   <div class="input-group">
                     <MultiSelect
-                        id={`userId`}
-                        options={this.state.optionsName}
-                        value={this.state.pesertaId}
-                        onChange={pesertaId => this.setState({ pesertaId })}
-                        mode="single"
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Silahkan Pilih User"
-                        allSelectedLabel="Silahkan Pilih User"
-                      />
+                      id={`userId`}
+                      options={this.state.optionsName}
+                      value={this.state.pesertaId}
+                      onChange={pesertaId => this.setState({ pesertaId })}
+                      mode="single"
+                      enableSearch={true}
+                      resetable={true}
+                      valuePlaceholder="Silahkan Pilih User"
+                      allSelectedLabel="Silahkan Pilih User"
+                    />
                     <span className="input-group-btn">
                       <button className="btn btn-default" onClick={this.addPeserta.bind(this)}>
-                        <i className="fa fa-plus"></i> Tambah
+                        <i className="fa fa-plus"></i> Add
                       </button>
                     </span>
                   </div>
@@ -706,11 +737,11 @@ export default class WebinarAdd extends Component {
                 <TabelPeserta items={this.state.peserta} />
               </div>
 
-              <h5>Tamu</h5>
+              <h5> Guest</h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group row">
                   <div className="col-sm-3">
-                    <label>Nama</label>
+                    <label> Name </label>
                     <input type="text" name="nama" value={this.state.nama} onChange={e => this.setState({ nama: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-3">
@@ -718,11 +749,11 @@ export default class WebinarAdd extends Component {
                     <input type="email" name="email" value={this.state.email} onChange={e => this.setState({ email: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-3">
-                    <label>Telepon</label>
+                    <label> Phone </label>
                     <input type="text" name="telepon" value={this.state.telepon} onChange={e => this.setState({ telepon: e.target.value })} className="form-control" />
                   </div>
                   <div className="col-sm-3">
-                    <button onClick={this.addTamu} className="btn btn-default" style={{marginTop: '25px'}}><i className="fa fa-plus"></i> Tambah</button>
+                    <button onClick={this.addTamu} className="btn btn-default" style={{ marginTop: '25px' }}><i className="fa fa-plus"></i> Add</button>
                   </div>
                 </div>
 
@@ -743,14 +774,14 @@ export default class WebinarAdd extends Component {
                 onClick={this.handleModal}
               >
                 <i className="fa fa-save"></i>
-                Tutup
+                Close
               </button>
               {/* <button
                 type="button"
                 className="btn btn-icademy-grey m-2"
                 onClick={this.handleModal}
               >
-                Tutup
+                Close
               </button> */}
             </Modal.Body>
           </Modal>
@@ -760,12 +791,12 @@ export default class WebinarAdd extends Component {
             dialogClassName="modal-lg"
           >
             <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 Kuesioner
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-							<div className="form-group">
+              <div className="form-group">
                 <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
@@ -776,12 +807,12 @@ export default class WebinarAdd extends Component {
             dialogClassName="modal-lg"
           >
             <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 Pre Test
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-							<div className="form-group">
+              <div className="form-group">
                 <WebinarPretestAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
@@ -792,18 +823,26 @@ export default class WebinarAdd extends Component {
             dialogClassName="modal-lg"
           >
             <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 Post Test
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-							<div className="form-group">
+              <div className="form-group">
                 <WebinarPosttestAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
           </Modal>
         </div>
       </div>
-		);
-	}
+    );
+  }
 }
+
+const WebinarAdd = props => (
+  <SocketContext.Consumer>
+    { socket => <WebinarAddClass {...props} socket={socket} />}
+  </SocketContext.Consumer>
+)
+
+export default WebinarAdd;

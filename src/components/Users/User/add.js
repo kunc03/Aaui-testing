@@ -16,17 +16,17 @@ class UserAdd extends Component {
 
     optionComapny: [],
     valueCompany: [],
-    
+
     identity: "",
     name: "",
     email: "",
-    alertemail:"",
+    alertemail: "",
     phone: "",
     address: "",
     password: "",
     level: "",
-    unlimited:false,
-    validity:new Date(),
+    unlimited: false,
+    validity: new Date(),
 
     listCompany: [],
     listBranch: [],
@@ -34,12 +34,12 @@ class UserAdd extends Component {
 
     responseMessage: '',
     responseEmail: '',
-    responsePhone: '' ,
-    optionsGroup:[],
-    valueGroup:[]
+    responsePhone: '',
+    optionsGroup: [],
+    valueGroup: []
   };
 
-  
+
   handleChangeValidity = date => {
     this.setState({
       validity: date
@@ -47,7 +47,7 @@ class UserAdd extends Component {
   };
 
   toggleSwitch(checked) {
-    this.setState({ unlimited:!this.state.unlimited });
+    this.setState({ unlimited: !this.state.unlimited });
   }
 
   onChangeInput = (event) => {
@@ -55,9 +55,9 @@ class UserAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-    if(name === 'email') {
+    if (name === 'email') {
       API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
-        if(res.data.error) {
+        if (res.data.error) {
           target.value = ''
           this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
         } else {
@@ -65,12 +65,12 @@ class UserAdd extends Component {
         }
       })
     }
-    else if(name === 'company_id') {
+    else if (name === 'company_id') {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
-        if(res.status === 200) {
-          this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1]})
+        if (res.status === 200) {
+          this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1] })
           res.data.result[0].map(item => {
-            this.state.optionsGroup.push({value: item.branch_id, label: item.branch_name});
+            this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
           });
           this.showMultipleCompany(value)
         }
@@ -81,7 +81,7 @@ class UserAdd extends Component {
       });
     }
   }
-//
+  //
   submitForm = e => {
     e.preventDefault();
     let unlimited = this.state.unlimited == false ? '1' : '0'
@@ -105,14 +105,14 @@ class UserAdd extends Component {
     };
 
     API.post(`${API_SERVER}v1/user`, formData).then(res => {
-      if(res.status === 200) {
-        if(res.data.error) {
+      if (res.status === 200) {
+        if (res.data.error) {
           this.setState({ responseMessage: res.data.result })
         } else {
           let userId = res.data.result.user_id;
           API.delete(`${API_SERVER}v1/user/assign/${res.data.result.user_id}`).then(res => {
-            if(res.status === 200) {
-              for (let i=0;i<this.state.valueCompany.length;i++){
+            if (res.status === 200) {
+              for (let i = 0; i < this.state.valueCompany.length; i++) {
                 let formData = {
                   user_id: userId,
                   company_id: this.state.valueCompany[i],
@@ -129,26 +129,26 @@ class UserAdd extends Component {
 
   showMultipleCompany(except) {
     API.get(`${API_SERVER}v1/company`).then(res => {
-      this.setState({valueCompany:[]})
-      this.setState({optionComapny:[]})
+      this.setState({ valueCompany: [] })
+      this.setState({ optionComapny: [] })
       res.data.result.map(item => {
-        this.state.optionComapny.push({value: item.company_id, label: item.company_name});
+        this.state.optionComapny.push({ value: item.company_id, label: item.company_name });
       });
-        this.setState({
-          optionComapny: this.state.optionComapny.filter(item => item.value != except),
-        })
+      this.setState({
+        optionComapny: this.state.optionComapny.filter(item => item.value != except),
+      })
     });
   }
   componentDidMount() {
     API.get(`${API_SERVER}v1/company`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ listCompany: res.data.result })
       }
     });
   }
 
   render() {
-    const levelUser = [{level: 'superadmin'}, {level: 'admin'}, {level: 'client'}];
+    const levelUser = [{ level: 'superadmin' }, { level: 'admin' }, { level: 'client' }];
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -185,7 +185,7 @@ class UserAdd extends Component {
                                 mode="tags"
                                 removableTags={true}
                                 hasSelectAll={true}
-                                selectAllLabel="Pilih Semua"
+                                selectAllLabel="Choose all"
                                 enableSearch={true}
                                 resetable={true}
                                 valuePlaceholder="Pilih Company"
@@ -227,7 +227,7 @@ class UserAdd extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Nama</label>
+                              <label className="label-input"> Name </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
@@ -239,7 +239,7 @@ class UserAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Nomor Induk</label>
+                              <label className="label-input"> Registration Number </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
@@ -250,7 +250,7 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
-                            
+
                             <div className="form-group">
                               <label className="label-input">Email</label>
                               <Form.Text className="text-danger">Required</Form.Text>
@@ -282,7 +282,7 @@ class UserAdd extends Component {
                             <div className="form-group">
                               <label className="label-input">Level</label>
                               <Form.Text className="text-danger">Required</Form.Text>
-                              <select style={{textTransform: 'capitalize'}} name="level" className="form-control" onChange={this.onChangeInput} required>
+                              <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
@@ -303,13 +303,13 @@ class UserAdd extends Component {
                                 onChange={this.onChangeInput}
                               />
                             </div>
-                            
+
                             <div className="form-group">
                               <label className="label-input" htmlFor>
                                 Batasi Waktu
                               </label>
-                              <div style={{width:'100%'}}>
-                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              <div style={{ width: '100%' }}>
+                                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
                               </div>
 
                             </div>
@@ -319,27 +319,27 @@ class UserAdd extends Component {
                                 <label className="label-input" htmlFor>
                                   Valid Until
                                 </label>
-                                <div style={{width:'100%'}}>
-                                      <DatePicker
-                                        selected={this.state.validity}
-                                        onChange={this.handleChangeValidity}
-                                        showTimeSelect
-                                        dateFormat="yyyy-MM-dd"
-                                      />
+                                <div style={{ width: '100%' }}>
+                                  <DatePicker
+                                    selected={this.state.validity}
+                                    onChange={this.handleChangeValidity}
+                                    showTimeSelect
+                                    dateFormat="yyyy-MM-dd"
+                                  />
                                 </div>
-              
+
                               </div>
                             }
-                            <div style={{marginTop: '50px'}}>
-                            {
-                              this.state.responseMessage && 
-                              <div class="alert alert-primary" role="alert">
-                                <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
-                              </div>
-                            }
+                            <div style={{ marginTop: '50px' }}>
+                              {
+                                this.state.responseMessage &&
+                                <div class="alert alert-primary" role="alert">
+                                  <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
+                                </div>
+                              }
                             </div>
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
-                              Simpan
+                              Save
                             </button>
                           </form>
                         </div>

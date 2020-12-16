@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import API, { API_SERVER, APPS_SERVER, USER_ME } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
-import { 
-	Tab, Tabs
+import {
+  Tab, Tabs
 } from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
@@ -15,11 +15,11 @@ import Gantt from '../Gantt';
 import { MultiSelect } from 'react-sm-select';
 
 const titleTabs = [
-  {name: 'Semua'},
-  {name: 'Meeting'},
-  {name: 'Webinar'},
-  {name: 'Timeline Chart'},
-  {name: 'Files'}
+  { name: 'Semua' },
+  { name: 'Meeting' },
+  { name: 'Webinar' },
+  { name: 'Timeline Chart' },
+  { name: 'Files' }
 ]
 
 export default class User extends Component {
@@ -31,11 +31,11 @@ export default class User extends Component {
       projectName: '',
       dataUser: [],
       access_project_admin: false,
-      contentAll : true,
-      contentMeeting : true,
-      contentWebinar : true,
-      contentGanttChart : true,
-      contentFiles : true,
+      contentAll: true,
+      contentMeeting: true,
+      contentWebinar: true,
+      contentGanttChart: true,
+      contentFiles: true,
       currentZoom: 'Days',
       visibility: 'public',
       users: [],
@@ -45,26 +45,26 @@ export default class User extends Component {
       userId: Storage.get('user').data.user_id,
     };
   }
-  
+
   handleZoomChange = (zoom) => {
     this.setState({
-        currentZoom: zoom
+      currentZoom: zoom
     });
-}
-  goBack(){
+  }
+  goBack() {
     this.props.history.goBack();
   }
 
-  checkProjectAccess(){
+  checkProjectAccess() {
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${this.state.userId}`).then(res => {
       if (res.status === 200) {
         let levelUser = Storage.get('user').data.level;
-        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client' ){
+        if ((levelUser == 'client' && res.data.result == 'Project Admin') || levelUser != 'client') {
           this.setState({
             access_project_admin: true,
           })
         }
-        else{
+        else {
           this.setState({
             access_project_admin: false,
           })
@@ -73,21 +73,21 @@ export default class User extends Component {
     })
   }
 
-  getProject(){
+  getProject() {
     API.get(`${API_SERVER}v1/project-read/${this.state.projectId}`).then(res => {
       if (res.status === 200) {
-        this.setState({projectName: res.data.result.name})
+        this.setState({ projectName: res.data.result.name })
       }
     })
   }
 
-  choiceTab(item){
-    console.log(item,'tabbb wooiii')
-    if(item === 'Semua') return this.setState({contentAll: true,contentMeeting: true,contentWebinar: true,contentGanttChart: true,contentFiles: true});
-    if(item === 'Meeting') return this.setState({contentAll: false,contentMeeting: true,contentWebinar: false,contentGanttChart: false,contentFiles: false});
-    if(item === 'Webinar') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: true,contentGanttChart: false,contentFiles: false});
-    if(item === 'Timeline Chart') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: false,contentGanttChart: true,contentFiles: false});
-    if(item === 'Files') return this.setState({contentAll: false,contentMeeting: false,contentWebinar: false,contentGanttChart: false,contentFiles: true});
+  choiceTab(item) {
+    console.log(item, 'tabbb wooiii')
+    if (item === 'Semua') return this.setState({ contentAll: true, contentMeeting: true, contentWebinar: true, contentGanttChart: true, contentFiles: true });
+    if (item === 'Meeting') return this.setState({ contentAll: false, contentMeeting: true, contentWebinar: false, contentGanttChart: false, contentFiles: false });
+    if (item === 'Webinar') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: true, contentGanttChart: false, contentFiles: false });
+    if (item === 'Timeline Chart') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: false, contentGanttChart: true, contentFiles: false });
+    if (item === 'Files') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: false, contentGanttChart: false, contentFiles: true });
   }
 
   fetchUsers(){
@@ -141,25 +141,25 @@ export default class User extends Component {
                   <div className="row">
                     <div className="col-xl-12">
                       {/* Tab */}
-                      <div className="card mb-2" style={{padding: '20px 0px 0px 20px', alignItems:'flex-end'}}>
-                          <div style={{position:'absolute', left : 20}}>
-                            <h4>{this.state.projectName}</h4>
-                          </div>
-                          <Tabs defaultActiveKey="Semua" id="uncontrolled-tab-example" onSelect={this.choiceTab.bind(this)}>
-                            {titleTabs.map(tab =>{
-                              return (
-                                <Tab eventKey={tab.name} title={tab.name} ></Tab>    
-                              )
-                            })}
-                          </Tabs>
+                      <div className="card mb-2" style={{ padding: '20px 0px 0px 20px', alignItems: 'flex-end' }}>
+                        <div style={{ position: 'absolute', left: 20 }}>
+                          <h4>{this.state.projectName}</h4>
+                        </div>
+                        <Tabs defaultActiveKey="All" id="uncontrolled-tab-example" onSelect={this.choiceTab.bind(this)}>
+                          {titleTabs.map(tab => {
+                            return (
+                              <Tab eventKey={tab.name} title={tab.name} ></Tab>
+                            )
+                          })}
+                        </Tabs>
                       </div>
                     </div>
-                    
+
                     <div className={this.state.contentMeeting ? "col-xl-12" : "hidden"}>
-                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
+                      <TableMeetings access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} />
                     </div>
                     <div className={this.state.contentWebinar ? "col-xl-12" : "hidden"}>
-                      <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
+                      <TableWebinar access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} />
                     </div>
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
                       {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
@@ -188,7 +188,7 @@ export default class User extends Component {
                       </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
-                      <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId}/>
+                      <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} />
                     </div>
                   </div>
                 </div>

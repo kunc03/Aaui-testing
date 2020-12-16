@@ -174,14 +174,14 @@ export const dataKalender = [
 ]
 
 export const dataEvent = [
-  {title : 'Meeting', total: 6, status: true},{title : 'Learning', total: 6, status: true},{title : 'Webinar', total: 6, status: false}
+  { title: 'Meeting', total: 6, status: true }, { title: 'Learning', total: 6, status: true }, { title: 'Webinar', total: 6, status: false }
 ];
 
 export const dataProjek = [
-  {title : 'Bisnis Projek',webinar: 1, meeting: 6, status: true},
-  {title : 'Marketing Projek',webinar: 0, meeting: 3, status: false},
-  {title : 'Sales Projek',webinar: 8, meeting: 0, status: false},
-  {title : 'Team Projek',webinar: 0, meeting: 6, status: false}
+  { title: 'Bisnis Projek', webinar: 1, meeting: 6, status: true },
+  { title: 'Marketing Projek', webinar: 0, meeting: 3, status: false },
+  { title: 'Sales Projek', webinar: 8, meeting: 0, status: false },
+  { title: 'Team Projek', webinar: 0, meeting: 6, status: false }
 ];
 
 export const dataToDo = [
@@ -190,29 +190,29 @@ export const dataToDo = [
 ];
 
 export const headerTabble = [
-  // {title : 'Nama Meeting', width: null, status: true},
-  {title : 'Moderator', width: null, status: true},
-  {title : 'Status', width: null, status: true},
-  {title : 'Waktu', width: null, status: true},
-  {title : 'Tanggal', width: null, status: true},
-  {title : 'Peserta', width: null, status: true},
+  // {title : 'Meeting Name', width: null, status: true},
+  { title: 'Moderator', width: null, status: true },
+  { title: 'Status', width: null, status: true },
+  { title: 'Time', width: null, status: true },
+  { title: 'Date', width: null, status: true },
+  { title: 'Participants', width: null, status: true },
   // {title : 'File Project', width: null, status: true},
 ];
 
 export const bodyTabble = [
-  {title : 'Andi',pembicara: 'Vitoria Hart', status: 'Close', waktu: '10:00 - 12:00', tanggal: '2020-09-04', peserta: 27, lampiran: null},
-  {title : 'Josep Sinatupulu',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
-  {title : 'Anggun Srikandi Ayu',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
-  {title : 'Jejep',pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null},
+  { title: 'Andi', pembicara: 'Vitoria Hart', status: 'Close', waktu: '10:00 - 12:00', tanggal: '2020-09-04', peserta: 27, lampiran: null },
+  { title: 'Josep Sinatupulu', pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null },
+  { title: 'Anggun Srikandi Ayu', pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null },
+  { title: 'Jejep', pembicara: 'Vitoria Hart', status: 'Open', waktu: null, tanggal: null, peserta: null, lampiran: null },
 ];
 export const headerFiles = [
   // {title : 'Date', width: null, status: true},
   // {title : 'By', width: null, status: true},
   // {title : 'Size', width: null, status: true},
-  {title : '', width: null, status: true},
+  { title: '', width: null, status: true },
 ];
 export const dataFiles = [
-  {name : 'Folder ABC',date: '2020-09-09', by: 'Alvin', size: '13MB'},
+  { name: 'Folder ABC', date: '2020-09-09', by: 'Alvin', size: '13MB' },
 ];
 
 export const bodyTabbleWebinar = [
@@ -371,7 +371,7 @@ export const bodyTabbleWebinar = [
 //     type: "task"
 //   }
 // ];
- 
+
 // export const options = {
 //   title: {
 //     label: "Your project title as html (link or whatever...)",
@@ -434,3 +434,109 @@ export const bodyTabbleWebinar = [
 //     ]
 //   }
 // }
+
+
+export const dataBar = {
+  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+  datasets: [
+    {
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgb(255, 99, 132)', //red
+        'rgb(54, 162, 235)', //blue
+        'rgb(75, 192, 192)', //green
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+}
+
+export const dataRadar = {
+  labels: [] /* [
+    'Eating',
+    'Drinking',
+    'Sleeping',
+    'Designing',
+    'Coding',
+    'Cycling',
+    'Running',
+  ], */,
+  datasets: [
+    {
+      label: 'user activity',
+      backgroundColor: 'rgba(179,181,198,0.2)',
+      borderColor: 'rgba(179,181,198,1)',
+      pointBackgroundColor: 'rgba(179,181,198,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(179,181,198,1)',
+      data: [], // [65, 59, 90, 81, 56, 55, 40],
+    },
+  ],
+};
+
+export const dataUser = {
+  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+  datasets: [
+    {
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgb(255, 99, 132)', //red
+        'rgb(54, 162, 235)', //blue
+        'rgb(75, 192, 192)', //green
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+}
+
+export const dataPie = {
+  labels: ['Blue', 'Yellow', 'Green'],
+  datasets: [
+    {
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgb(255, 99, 132)', //red
+        'rgb(54, 162, 235)', //blue
+        'rgb(75, 192, 192)', //green
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+}

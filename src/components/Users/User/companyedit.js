@@ -17,7 +17,7 @@ class UserEdit extends Component {
     company_id: "",
     branch_id: "",
     grup_id: "",
-    
+
     identity: "",
     name: "",
     email: "",
@@ -25,17 +25,17 @@ class UserEdit extends Component {
     address: "",
     level: "",
     password: "",
-    unlimited:false,
+    unlimited: false,
     validity: new Date(),
 
     listCompany: [],
     listBranch: [],
     listGrup: [],
     listLevel: [],
-    optionsGroup:[],
-    valueGroup:[],
+    optionsGroup: [],
+    valueGroup: [],
 
-    responseMessage: '', 
+    responseMessage: '',
   }
 
   handleChangeValidity = date => {
@@ -45,7 +45,7 @@ class UserEdit extends Component {
   };
 
   toggleSwitch(checked) {
-    this.setState({ unlimited:!this.state.unlimited });
+    this.setState({ unlimited: !this.state.unlimited });
   }
   onSubmitEditUser = e => {
     e.preventDefault();
@@ -59,13 +59,13 @@ class UserEdit extends Component {
       phone: this.state.phone, address: this.state.address, level: this.state.level,
       status: 'active',
       unlimited: unlimited,
-  		validity: this.state.validity.toISOString().split('T')[0]
+      validity: this.state.validity.toISOString().split('T')[0]
     };
 
 
     API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(res => {
-      if(res.status === 200) {
-        
+      if (res.status === 200) {
+
         if (this.state.password !== '') {
           let formData = { password: this.state.password };
           API.put(`${API_SERVER}v1/user/password/${this.state.user_id}`, formData).then(res => {
@@ -73,7 +73,7 @@ class UserEdit extends Component {
           })
         }
 
-        if(Storage.get('user').data.level === 'superadmin') {
+        if (Storage.get('user').data.level === 'superadmin') {
           this.props.history.push('/user')
         } else {
           this.props.history.push(`/my-company`)
@@ -87,27 +87,27 @@ class UserEdit extends Component {
     const value = target.value;
     const name = target.name;
 
-    if(name === 'company_id') {
+    if (name === 'company_id') {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.setState({ listBranch: res.data.result[0], company_id: value })
         }
       })
     } else if (name === 'email') {
-      API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
-        if (res.data.error) {
-          target.value = ''
-        } else {
-          this.setState({ [name]: value })
-        }
-      })
+      // API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
+      //   if (res.data.error) {
+      //     target.value = ''
+      //   } else {
+      this.setState({ [name]: value })
+      //   }
+      // })
     } else if (name === 'address') {
       if (value.length <= 100) {
         this.setState({ [name]: value })
       } else {
-        this.setState({ responseMessage: 'Tidak boleh melebihi batas karakter.', [name]: value.slice(0, target.maxLength) })
+        this.setState({ responseMessage: 'Cannot exceed the character limit.', [name]: value.slice(0, target.maxLength) })
       }
-    }else {
+    } else {
       this.setState({
         [name]: value
       });
@@ -117,26 +117,26 @@ class UserEdit extends Component {
   componentDidMount() {
     let valueGroup = [];
     API.get(`${API_SERVER}v1/user/${this.state.user_id}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         let unlimited = res.data.result.unlimited == 0 ? true : false;
-        this.setState({ 
+        this.setState({
           user: res.data.result,
           company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id,
           branch_id: res.data.result.branch_id,
           grup_id: res.data.result.grup_id,
-          name: res.data.result.name, 
+          name: res.data.result.name,
           identity: res.data.result.identity,
           email: res.data.result.email,
           phone: res.data.result.phone,
           address: res.data.result.address,
           level: res.data.result.level,
           unlimited: unlimited,
-					validity: new Date(res.data.result.validity),
+          validity: new Date(res.data.result.validity),
         });
         valueGroup = res.data.result.group_id ? res.data.result.group_id.split(',').map(Number) : [];
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.user.company_id}`).then(res => {
-          if(res.status === 200) {
+          if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
             let tempGroup=[];
             res.data.result[0].map(item => {
@@ -148,12 +148,12 @@ class UserEdit extends Component {
 
         API.get(`${API_SERVER}v1/grup/company/${this.state.user.company_id}`).then(res => {
           if (res.status === 200) {
-            this.setState({valueGroup: valueGroup})
+            this.setState({ valueGroup: valueGroup })
             this.setState({ listGrup: res.data.result })
           }
         })
 
-        const levelUser = [{level: 'admin'}, {level: 'client'}];
+        const levelUser = [{ level: 'admin' }, { level: 'client' }];
         this.setState({ listLevel: levelUser });
       }
     })
@@ -178,7 +178,7 @@ class UserEdit extends Component {
                       <h3 className="f-24 f-w-800">Edit User Management</h3>
                       <div className="card">
                         <div className="card-block">
-                          
+
                           <form onSubmit={this.onSubmitEditUser}>
                             <div className="form-group">
                               <label className="label-input">Group</label>
@@ -217,7 +217,7 @@ class UserEdit extends Component {
                             </div>
 
                             <div className="form-group">
-                              <label className="label-input">Nama</label>
+                              <label className="label-input"> Name </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 required
@@ -230,7 +230,7 @@ class UserEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Nomor Induk</label>
+                              <label className="label-input"> Registration Number </label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <input
                                 type="text"
@@ -281,7 +281,7 @@ class UserEdit extends Component {
                                 <option value="">-- pilih --</option>
                                 {
                                   levelUser.map(item => (
-                                    <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected': ''}>{item.level === 'client' ? 'User' : item.level}</option>
+                                    <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected' : ''}>{item.level === 'client' ? 'User' : item.level}</option>
                                   ))
                                 }
                               </select>
@@ -301,8 +301,8 @@ class UserEdit extends Component {
                               <label className="label-input" htmlFor>
                                 Batasi Waktu
                               </label>
-                              <div style={{width:'100%'}}>
-                              <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
+                              <div style={{ width: '100%' }}>
+                                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
                               </div>
 
                             </div>
@@ -312,18 +312,18 @@ class UserEdit extends Component {
                                 <label className="label-input" htmlFor>
                                   Valid Until
                                 </label>
-                                <div style={{width:'100%'}}>
-                                      <DatePicker
-                                        selected={validityUser}
-                                        onChange={this.handleChangeValidity}
-                                        dateFormat="yyyy-MM-dd"
-                                      />
+                                <div style={{ width: '100%' }}>
+                                  <DatePicker
+                                    selected={validityUser}
+                                    onChange={this.handleChangeValidity}
+                                    dateFormat="yyyy-MM-dd"
+                                  />
                                 </div>
-              
+
                               </div>
                             }
                             <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
-                              Simpan
+                              Save
                             </button>
                           </form>
                         </div>

@@ -46,7 +46,7 @@ const config = {
       }
     }
   },
-  
+
   // Style Untuk Title Header
   taskList: {
     title: {
@@ -76,7 +76,7 @@ const config = {
     }
   },
 
-  // Style Untuk Row 
+  // Style Untuk Row
   dataViewPort: {
     rows: {
       style: {
@@ -85,7 +85,7 @@ const config = {
       }
     },
 
-    // Style Untuk Task 
+    // Style Untuk Task
     task: {
       showLabel: false,
       style: {
@@ -117,7 +117,7 @@ class GanttChart extends Component {
       itemheight: 20,
       data: [],
       links: result.links,
-      
+
       isModalTodo: false,
       task: "",
       description: "",
@@ -167,13 +167,13 @@ class GanttChart extends Component {
   }
 
   closeModalDelete = e => {
-    this.setState({ 
+    this.setState({
       modalDeleteTask: false,
     });
   };
 
   closeClassModal = e => {
-    this.setState({ 
+    this.setState({
       isModalTodo: false, task: "", start: new Date(), end: new Date(),
       isModalDetail: false, taskId: "", taskDetail: {}, max: 100, val: 0,
       valueAssigne: [], file: "", status: "", assigne: [], subtask: [], attachments: [],
@@ -222,14 +222,14 @@ class GanttChart extends Component {
     } else{
       // update start & end date
       form = {
-        start: this.convertDateToMysql(f.start, true), 
+        start: this.convertDateToMysql(f.start, true),
         end: this.convertDateToMysql(f.end, true)
       };
     }
 
     API.put(`${API_SERVER}v2/task/update/${e.id}`, form).then(res => {
       if(res.data.error) toast.warning("Gagal update task");
-      
+
       if (res.data.result==='locked'){
         toast.error('Tidak dapat mengubah task karena task terkunci')
       }
@@ -242,7 +242,7 @@ class GanttChart extends Component {
             item.end = res.data.result.end;
           }
         });
-  
+
         this.setState({ data: copyState });
       }
 
@@ -252,13 +252,13 @@ class GanttChart extends Component {
   onSubmitTask = e => {
     e.preventDefault();
     let form = {
-      name: this.state.task, 
-      start: this.convertDateToMysql(this.state.start), 
-      end: this.convertDateToMysql(this.state.end), 
+      name: this.state.task,
+      start: this.convertDateToMysql(this.state.start),
+      end: this.convertDateToMysql(this.state.end),
       projectId: this.state.projectId,
       userId: this.state.userId
     };
-    
+
     API.post(`${API_SERVER}v2/task/create`, form).then(res => {
       if(res.data.error) toast.warning("Gagal membuat task");
 
@@ -326,7 +326,7 @@ class GanttChart extends Component {
       this.fetchDetailTask(this.state.taskId);
     })
   }
-  // END ATTACHMENT  
+  // END ATTACHMENT
 
   // START SUBTASK
   addSubtask = e => {
@@ -357,7 +357,7 @@ class GanttChart extends Component {
       this.setState({tags: res.data.result})
     })
   }
-  
+
   saveTags = e => {
     e.preventDefault();
     if(e.key === "Enter") {
@@ -372,7 +372,7 @@ class GanttChart extends Component {
       })
     }
   }
-  
+
   setTags(tags_id){
       let form = {
         tags_id: tags_id,
@@ -441,13 +441,13 @@ class GanttChart extends Component {
 
       // update start & end date
       form = {
-        start: this.convertDateToMysql(this.state.start, true), 
+        start: this.convertDateToMysql(this.state.start, true),
         end: this.convertDateToMysql(this.state.end, true)
       };
 
     API.put(`${API_SERVER}v2/task/update/${this.state.taskId}`, form).then(res => {
       if(res.data.error) toast.warning("Gagal update task");
-      
+
       let copyState = [...this.state.data];
       copyState.map((item, i) => {
         if(item.id === this.state.taskId) {
@@ -501,10 +501,10 @@ class GanttChart extends Component {
       let assignePush = [];
       res.data.result.assigne.map(item => assignePush.push(item.user_id))
 
-      this.setState({ 
-        isModalDetail: true, 
-        taskId: id, 
-        description: res.data.result.description, 
+      this.setState({
+        isModalDetail: true,
+        taskId: id,
+        description: res.data.result.description,
         start: this.convertDateToMysql(res.data.result.start, true),
         end: this.convertDateToMysql(res.data.result.end, true),
         status: res.data.result.status,
@@ -598,7 +598,7 @@ class GanttChart extends Component {
   }
 
   render() {
-  
+
     return (
         <div className="card p-20">
             <span className="mb-4">
@@ -629,7 +629,7 @@ class GanttChart extends Component {
             <Modal
               show={this.state.isModalTodo}
               onHide={this.closeClassModal}>
-              
+
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
                   Tambah Task
@@ -665,7 +665,7 @@ class GanttChart extends Component {
               dialogClassName="modal-lg"
               show={this.state.isModalDetail}
               onHide={this.closeClassModal}>
-              
+
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold mr-3" style={{color:'#00478C'}}>
                   <button disabled={this.props.access_project_admin ? false : true} onClick={this.lockTask.bind(this, this.state.taskId, this.state.islock ? 0 : 1)} style={{padding: '9.5px 15px'}} className="btn btn-sm btn-primary" style={{border:'none', backgroundColor: this.state.islock ? '#d13939' : '#9b9b9b'}}><i className={this.state.islock ? 'fa fa-lock' : 'fa fa-lock-open'}></i> {this.state.islock ? 'Locked' : "Unlocked"}</button>
@@ -693,12 +693,12 @@ class GanttChart extends Component {
 
               <Modal.Body>
                 <h3>{this.state.taskDetail.name}</h3>
-               
+
                 <textarea rows="4" defaultValue={""}
                   name="description"
-                  value={this.state.description !== 'null' ? this.state.description : ''} 
+                  value={this.state.description !== 'null' ? this.state.description : ''}
                   placeholder="Isi deskripsi task..."
-                  onChange={e => this.setState({ description: e.target.value })} 
+                  onChange={e => this.setState({ description: e.target.value })}
                   onBlur={this.simpanDeskripsi} className="form-control mb-3" />
 
                 <div>
@@ -783,12 +783,12 @@ class GanttChart extends Component {
                       this.state.subtasks.map((item, i) => (
                         <tr key={item.id}>
                           <td width="40px">
-                            <input 
-                              checked={item.status == 2 ? true : false} 
-                              onClick={this.doneSubtask} 
-                              data-id={item.id} 
-                              data-title={item.title} 
-                              data-status={item.status} 
+                            <input
+                              checked={item.status == 2 ? true : false}
+                              onClick={this.doneSubtask}
+                              data-id={item.id}
+                              data-title={item.title}
+                              data-status={item.status}
                               style={{ cursor: 'pointer'}} type="checkbox" />
                           </td>
                           <td style={item.status == 2 ? {textDecoration: 'line-through'} : {}}>
@@ -800,7 +800,7 @@ class GanttChart extends Component {
                             <i style={{cursor: 'pointer'}} onClick={this.deleteSubtask} data-id={item.id} className="fa fa-trash"></i>
                           </td>
                         </tr>
-                      )) 
+                      ))
                     }
                     <tr>
                       <td colSpan="3">
@@ -819,7 +819,7 @@ class GanttChart extends Component {
                           <td width="40px">{i+1}</td>
                           <td>
                           {
-                            item.file ? item.file.split('/')[item.file.split('/').length-1] : 
+                            item.file ? item.file.split('/')[item.file.split('/').length-1] :
                             <div className="form-group">
                               <input multiple type="file" onChange={e => this.setState({ file: e.target.files })} />
                               <i onClick={this.saveAttachment} className="fa fa-save float-right" style={{cursor: 'pointer'}}></i>
@@ -855,7 +855,7 @@ class GanttChart extends Component {
                 }
               </Modal.Footer>
             </Modal>
-            
+
         <Modal
           show={this.state.modalDeleteTask}
           onHide={this.closeModalDelete}
@@ -886,7 +886,7 @@ class GanttChart extends Component {
           </Modal.Footer>
         </Modal>
         </div>
-                    
+
     );
   }
 }

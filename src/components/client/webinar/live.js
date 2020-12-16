@@ -148,7 +148,7 @@ export default class WebinarLive extends Component {
         webinar_test: this.state.jawabanPosttest
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Gagal mengirim jawaban post test webinar')
         else
           toast.success('Mengirim jawaban post test webinar')
@@ -175,7 +175,7 @@ export default class WebinarLive extends Component {
         webinar_test: this.state.jawabanPretest
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Gagal mengirim jawaban pre test webinar')
         else
           toast.success('Mengirim jawaban pre test webinar')
@@ -196,7 +196,7 @@ export default class WebinarLive extends Component {
         webinar_test: this.state.jawabanPretest
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Gagal mengirim jawaban pre test webinar')
         else
           toast.warning('Waktu habis')
@@ -214,7 +214,7 @@ export default class WebinarLive extends Component {
         webinar_test: this.state.jawabanPosttest
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Gagal mengirim jawaban post test webinar')
         else
         toast.warning('Waktu habis')
@@ -231,7 +231,7 @@ export default class WebinarLive extends Component {
         kuesioner: this.state.jawaban
       }
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Sudah pernah mengirim jawaban kuesioner pada webinar ini')
         else
           socket.emit('send', {
@@ -250,7 +250,7 @@ export default class WebinarLive extends Component {
   }
   postLog(webinar_id, peserta_id, type, action){
     API.post(`${API_SERVER}v2/webinar/log/${webinar_id}/${peserta_id}/${type}/${action}`).then(res => {
-      if(res.data.error) 
+      if(res.data.error)
         console.log('Log webinar error')
       else
       console.log('Log webinar posted')
@@ -268,7 +268,7 @@ export default class WebinarLive extends Component {
         description: this.state.pertanyaanQNA
       }
       API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
-        if(res.data.error) 
+        if(res.data.error)
           toast.error('Error mengirim pertanyaan')
         else
           toast.success('Mengirim pertanyaan')
@@ -354,7 +354,7 @@ export default class WebinarLive extends Component {
 
             let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0,2)))
             let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3,5)))
-            
+
             let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
             this.setState({isWebinarStartDate: isWebinarStartDate})
 
@@ -366,7 +366,7 @@ export default class WebinarLive extends Component {
               // BBB JOIN START
               let api = bbb.api(BBB_URL, BBB_KEY)
               let http = bbb.http
-      
+
               // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
               let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
               http(meetingInfo).then((result) => {
@@ -459,7 +459,7 @@ export default class WebinarLive extends Component {
 
             let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0,2)))
             let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3,5)))
-            
+
             let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
             this.setState({isWebinarStartDate: isWebinarStartDate})
 
@@ -471,7 +471,7 @@ export default class WebinarLive extends Component {
               // BBB JOIN START
               let api = bbb.api(BBB_URL, BBB_KEY)
               let http = bbb.http
-      
+
               // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
               let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
               http(meetingInfo).then((result) => {
@@ -663,7 +663,7 @@ export default class WebinarLive extends Component {
       status: status,
     };
     API.put(`${API_SERVER}v2/webinar/status`, form).then(async res => {
-      if(res.data.error) 
+      if(res.data.error)
         toast.warning("Error fetch API")
       else
         status == 3 &&
@@ -690,7 +690,7 @@ export default class WebinarLive extends Component {
   }
 
   sendKuesioner(){
-    
+
     API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
       if (res.status === 200) {
         socket.emit('send', {
@@ -702,7 +702,7 @@ export default class WebinarLive extends Component {
       }
     })
   }
-  
+
 	render() {
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
@@ -716,7 +716,7 @@ export default class WebinarLive extends Component {
     //           <div className='border-disabled'>
     //             <div className="box-lampiran">
     //               <div className="title-head f-w-900 f-16 fc-skyblue">
-    //                 {item.nama} 
+    //                 {item.nama}
     //                 <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
     //               </div>
     //             </div>
@@ -736,7 +736,7 @@ export default class WebinarLive extends Component {
                 <div className="box-lampiran">
                   <div className="">
                     <span style={{fontWeight: 'bold'}}>{item.name}</span>
-                    <span className="float-right">{item.jenis_peserta == 'peserta' ? 'Pengguna' : 'Tamu'}</span> 
+                    <span className="float-right">{item.jenis_peserta == 'peserta' ? 'Pengguna' : 'Tamu'}</span>
                     <br/>
                     <p style={{marginBottom: '1px'}}>
                     {item.description}
@@ -751,7 +751,7 @@ export default class WebinarLive extends Component {
     );
 
 		return (
-			<div className="row">                     
+			<div className="row">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
@@ -922,12 +922,12 @@ export default class WebinarLive extends Component {
                 </div>
                 }
                     </div>
-  
+
                   </div>
-                  
+
                 </div>
               }
-              
+
             </Card.Body>
           </Card>
         </div>

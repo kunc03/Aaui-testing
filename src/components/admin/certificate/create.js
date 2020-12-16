@@ -55,7 +55,7 @@ export default class CertificateCreate extends Component {
       e.target.value = null;
       this.setState({
         isNotifikasi: true,
-        isiNotifikasi: 'File tidak sesuai dengan format, silahkan cek kembali.',
+        isiNotifikasi: 'The file does not match the format, please check again.',
       });
     }
   };
@@ -133,8 +133,7 @@ export default class CertificateCreate extends Component {
     switch (this.state.type_activity) {
       case 1:
         API.get(
-          `${API_SERVER}v1/hasilkursus/${Storage.get('user').data.user_id}/${
-            this.state.activity_id
+          `${API_SERVER}v1/hasilkursus/${Storage.get('user').data.user_id}/${this.state.activity_id
           }`
         ).then(async (res) => {
           let listUser = res.data.result.users;
@@ -262,7 +261,7 @@ export default class CertificateCreate extends Component {
                         alt="media"
                         src={
                           this.state.signature_1_img === null ||
-                          this.state.signature_1_img === ''
+                            this.state.signature_1_img === ''
                             ? '/assets/images/component/placeholder-image.png'
                             : this.state.signature_1_img
                         }
@@ -298,7 +297,7 @@ export default class CertificateCreate extends Component {
                         alt="media"
                         src={
                           this.state.signature_2_img === null ||
-                          this.state.signature_2_img === ''
+                            this.state.signature_2_img === ''
                             ? '/assets/images/component/placeholder-image.png'
                             : this.state.signature_2_img
                         }
@@ -387,7 +386,7 @@ export default class CertificateCreate extends Component {
     }
 
     for (let i = 0; i < this.state.ujian; i++) {
-      header.push(<th>ujian {i + 1}</th>);
+      header.push(<th> Exams {i + 1}</th>);
     }
 
     return header;

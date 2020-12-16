@@ -20,7 +20,7 @@ class Header extends Component {
     menuAktif: '/',
     sideMenu: false,
     sideMenuCollapse: false,
-    dateNow : Date.now(),
+    dateNow: Date.now(),
   };
 
   pilihCompany = (e) => {
@@ -69,26 +69,24 @@ class Header extends Component {
   async componentDidMount() {
     await API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
       if (res.status === 200) {
-        console.log('res company', res);
+
         if (res.data.error) {
           localStorage.clear();
           window.location.reload();
         }
 
-        Storage.set('user', {
-          data: {
-            logo: res.data.result.logo,
-            company_id: res.data.result.company_id,
-            user_id: res.data.result.user_id,
-            email: res.data.result.email,
-            user: res.data.result.name,
-            level: res.data.result.level,
-            avatar: res.data.result.avatar
-              ? res.data.result.avatar
-              : '/assets/images/user/avatar-1.png',
-          },
-        });
+        let userStorage = Storage.get('user').data;
+        let addStorage = {...userStorage,
+          logo: res.data.result.logo,
+          company_id: res.data.result.company_id,
+          company_type: res.data.result.company_type,
+          user: res.data.result.name,
+          avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png'
+        };
+
+        Storage.set('user', { data: addStorage });
         console.log('ALVIN', res.data.result)
+
         this.setState({
           logo: res.data.result.logo,
           myCompanyName: res.data.result.company_name,
@@ -97,8 +95,8 @@ class Header extends Component {
           role: res.data.result.grup_name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
-            ? res.data.result.avatar
-            : '/assets/images/user/avatar-1.png',
+          ? res.data.result.avatar
+          : '/assets/images/user/avatar-1.png',
         });
 
         if (this.state.level === 'client') {
@@ -215,7 +213,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
         access: 'activity',
       },
@@ -264,7 +262,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -279,7 +277,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
       },
       {
@@ -328,7 +326,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -343,7 +341,7 @@ class Header extends Component {
       {
         iconOn: 'aktivitason.png',
         iconOff: 'aktivitasoff.png',
-        label: 'Aktivitas',
+        label: 'Activity',
         link: '/aktivitas',
       },
       {
@@ -379,13 +377,13 @@ class Header extends Component {
       {
         iconOn: 'kelola-kursus-on.png',
         iconOff: 'kelola-kursus-off.png',
-        label: 'Kelola Sertifikat',
+        label: 'Manage Certificates',
         link: '/certificate-admin',
       },
       {
         iconOn: 'kelola-kursus-on.png',
         iconOff: 'kelola-kursus-off.png',
-        label: 'Sertifikat',
+        label: 'Certificate',
         link: '/certificate',
       },
       {
@@ -410,7 +408,7 @@ class Header extends Component {
       {
         iconOn: 'pengaturanon.png',
         iconOff: 'pengaturanoff.png',
-        label: 'Pengaturan',
+        label: 'Settings',
         link: '/pengaturan',
       },
     ];
@@ -426,7 +424,7 @@ class Header extends Component {
       menuContent = menuClients;
     }
     return (
-      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{marginBottom:-1, background:'#FFF'}}>
+      <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{ marginBottom: -1, background: '#FFF' }}>
         <div className="m-header">
           <a
             className="mobile-menu"
@@ -475,9 +473,8 @@ class Header extends Component {
                   return (
                     <li
                       data-username="Sample Page"
-                      className={`nav-item mt-4 ${
-                        menuAktif === item.link ? 'active' : ''
-                      }`}
+                      className={`nav-item mt-4 ${menuAktif === item.link ? 'active' : ''
+                        }`}
                     >
                       <Link
                         to={item.link}
@@ -486,20 +483,18 @@ class Header extends Component {
                       >
                         <span className="pcoded-micon">
                           <img
-                            src={`assets/images/component/${
-                              menuAktif === item.link
-                                ? item.iconOn
-                                : item.iconOff
-                            }`}
+                            src={`assets/images/component/${menuAktif === item.link
+                              ? item.iconOn
+                              : item.iconOff
+                              }`}
                             alt=""
                           ></img>
                         </span>
                         <span
                           className="pcoded-mtext f-16 f-w-bold"
                           style={{
-                            color: `${
-                              menuAktif == item.link ? '#fff' : '#945A86'
-                            }`,
+                            color: `${menuAktif == item.link ? '#fff' : '#945A86'
+                              }`,
                           }}
                         >
                           &nbsp;{item.label}
@@ -561,11 +556,11 @@ class Header extends Component {
                 </div>
               </Link>
             </li>
-            
+
           </ul>
 
           <ul className="navbar-nav ml-auto">
-            
+
             <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
             {/* <li>
               <div className="dropdown">
@@ -596,7 +591,7 @@ class Header extends Component {
               </div>
             </li> */}
           </ul>
-          
+
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               <div className="media">
@@ -612,18 +607,18 @@ class Header extends Component {
               </div>
             </li>
           </ul>
-          
+
 
           {(level == 'superadmin' || level == 'admin') && (
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
                   <a href="javascript:;" data-toggle="dropdown">
-                      <img
-                        src={`newasset/company.svg`}
-                        alt=""
-                        width={25}
-                      ></img>
+                    <img
+                      src={`newasset/company.svg`}
+                      alt=""
+                      width={25}
+                    ></img>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right notification">
                     <div className="noti-head">
@@ -631,7 +626,7 @@ class Header extends Component {
                         <b>{this.state.company.length > 0
                           ? 'Pilih Perusahaan'
                           : 'Tidak multiple company'}
-                          </b>
+                        </b>
                       </h6>
                     </div>
                     <ul className="noti-body">
@@ -673,14 +668,14 @@ class Header extends Component {
                               </p>
                               {localStorage.getItem('companyID') ==
                                 this.state.company_id && (
-                                <p
-                                  data-id={this.state.company_id}
-                                  data-logo={this.state.logo}
-                                  style={{ color: 'green' }}
-                                >
-                                  active
-                                </p>
-                              )}
+                                  <p
+                                    data-id={this.state.company_id}
+                                    data-logo={this.state.logo}
+                                    style={{ color: 'green' }}
+                                  >
+                                    active
+                                  </p>
+                                )}
                             </div>
                           </div>
                         </li>
@@ -718,12 +713,12 @@ class Header extends Component {
                                   data-id={item.company_id}
                                   data-logo={item.logo}
                                 >
-                                   {item.company_name}
+                                  {item.company_name}
                                 </b>
 
-                                <span style={{color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right'}}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null }</span>
+                                <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
                               </p>
-                              
+
                               {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p

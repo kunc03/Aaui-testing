@@ -7,7 +7,7 @@ import API, { API_SERVER } from '../../../repository/api';
 
 export default class WebinarRoles extends Component {
 
-	state = {
+  state = {
     roles: [],
 
     id: "",
@@ -19,15 +19,15 @@ export default class WebinarRoles extends Component {
 
   onClickSimpan = e => {
     e.preventDefault();
-    if(!this.state.name) {
-      toast.warning('Nama role tidak boleh kosong');
+    if (!this.state.name) {
+      toast.warning('Role names cannot be empty');
     }
 
-    if(this.state.id) {
+    if (this.state.id) {
       // update
       let { id, name } = this.state;
       API.put(`${API_SERVER}v2/webinar/role/${id}`, { name }).then(res => {
-        if(res.data.error) toast.warning('Gagal fetch API');
+        if (res.data.error) toast.warning('Gagal fetch API');
         this.fetchData();
       })
     } else {
@@ -35,11 +35,11 @@ export default class WebinarRoles extends Component {
       let { name, projectId, userId, companyId } = this.state;
       let form = { name, projectId, userId, companyId };
       API.post(`${API_SERVER}v2/webinar/role`, form).then(res => {
-        if(res.data.error) toast.warning('Gagal fetch API');
+        if (res.data.error) toast.warning('Gagal fetch API');
         this.fetchData();
       })
     }
-    
+
     this.setState({ id: "", name: "" });
   }
 
@@ -47,7 +47,7 @@ export default class WebinarRoles extends Component {
     e.preventDefault();
     let id = e.target.getAttribute('data-id');
     API.delete(`${API_SERVER}v2/webinar/role/${id}`).then(res => {
-      if(res.data.error) toast.warning('Gagal fetch API');
+      if (res.data.error) toast.warning('Gagal fetch API');
       this.fetchData();
     })
   }
@@ -70,30 +70,30 @@ export default class WebinarRoles extends Component {
 
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/role/${this.state.companyId}/${this.state.projectId}`).then(res => {
-      if(res.data.error) console.log('ERROR');
+      if (res.data.error) console.log('ERROR');
 
       this.setState({ roles: res.data.result });
     })
   }
 
-	render() {
-    
+  render() {
+
     console.log('STATE: ', this.state);
 
-		return (
-			<div className="row">                     
+    return (
+      <div className="row">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
               <div className="row">
                 <div className="col-sm-6">
                   <h3 className="f-w-900 f-18 fc-blue">
-                  	<Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
-                  		border: '1px solid #e9e9e9',
-                  		borderRadius: '50px',
-                  	}}>
-                  		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
-                		</Link>
+                    <Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
+                      border: '1px solid #e9e9e9',
+                      borderRadius: '50px',
+                    }}>
+                      <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
+                    </Link>
                     Atur Role Webinar
                   </h3>
                 </div>
@@ -103,7 +103,7 @@ export default class WebinarRoles extends Component {
                   </p>
                 </div>
               </div>
-              <div style={{marginTop: '10px'}}>
+              <div style={{ marginTop: '10px' }}>
                 <div className="row">
                   <div className="col-sm-4">
 
@@ -126,19 +126,19 @@ export default class WebinarRoles extends Component {
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Nama</th>
+                          <th> Name </th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
                         {
-                          this.state.roles.map((item,i) => (
+                          this.state.roles.map((item, i) => (
                             <tr key={i}>
                               <td>{item.id}</td>
                               <td>{item.name}</td>
                               <td>
-                                <i onClick={this.handleGet} data-id={item.id} data-name={item.name} className="fa fa-edit mr-2" style={{cursor: 'pointer'}}></i>
-                                <i onClick={this.onClickHapus} data-id={item.id} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                                <i onClick={this.handleGet} data-id={item.id} data-name={item.name} className="fa fa-edit mr-2" style={{ cursor: 'pointer' }}></i>
+                                <i onClick={this.onClickHapus} data-id={item.id} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                               </td>
                             </tr>
                           ))
@@ -147,14 +147,14 @@ export default class WebinarRoles extends Component {
                     </table>
                   </div>
                 </div>
-                
+
               </div>
             </Card.Body>
           </Card>
 
-          
+
         </div>
       </div>
-		);
-	}
+    );
+  }
 }

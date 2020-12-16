@@ -18,7 +18,7 @@ class KursusMateriPreview extends Component {
         modal: false,
         id: ''
       },
-      idCourse : ''
+      idCourse: ''
     };
   }
 
@@ -35,15 +35,15 @@ class KursusMateriPreview extends Component {
   /* action for delete */
 
   isToggleDelete = e => {
-    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') }});
+    this.setState({ delete: { modal: !this.state.delete.modal, id: e.target.getAttribute('data-id') } });
   }
   isToggleEdit(id) {
     console.log(id);
-    this.setState({idCourse: id });
+    this.setState({ idCourse: id });
   }
 
   handleClose = e => {
-    this.setState({ delete: { modal: false, id: '' }});
+    this.setState({ delete: { modal: false, id: '' } });
   }
 
   onClickDelete = e => {
@@ -51,9 +51,9 @@ class KursusMateriPreview extends Component {
     let linkURL = `${API_SERVER}v1/chapter/${this.state.delete.id}`;
     API.delete(linkURL).then(res => {
       console.log(res.data);
-      this.setState({ 
-        grup: this.state.grup.filter(item => { return item.chapter_id != this.state.delete.id}),
-        delete: { modal: false, id: ''}
+      this.setState({
+        grup: this.state.grup.filter(item => { return item.chapter_id != this.state.delete.id }),
+        delete: { modal: false, id: '' }
       });
     }).catch(err => {
       console.log(err);
@@ -65,7 +65,7 @@ class KursusMateriPreview extends Component {
     API.get(link).then(response => {
       console.log(response)
       this.setState({ grup: response.data.result });
-    }).catch(function(error) {
+    }).catch(function (error) {
       console.log(error);
     });
   }
@@ -98,10 +98,10 @@ class KursusMateriPreview extends Component {
                     <small className="f-w-600 f-16 text-c-grey-t ">
                       Chapter Title
                     </small>
-         
-                      <h5 className="f-w-bold f-20 text-c-purple3">
-                        {item.chapter_title}
-                      </h5>
+
+                    <h5 className="f-w-bold f-20 text-c-purple3">
+                      {item.chapter_title}
+                    </h5>
 
                   </div>
                 </div>
@@ -133,17 +133,17 @@ class KursusMateriPreview extends Component {
               <div className="col-xl-2 col-md-12 text-right">
                 <p className="m-b-0">
                   <a
-                        href="#"
-                        data-toggle="modal"
-                        data-target="#modalEdit"
-                        onClick={this.isToggleEdit.bind(this, item.chapter_id)}
-                      >
+                    href="#"
+                    data-toggle="modal"
+                    data-target="#modalEdit"
+                    onClick={this.isToggleEdit.bind(this, item.chapter_id)}
+                  >
                     <img
                       src="assets/images/component/Edit-1.png"
                       className="img-icon-edit m-r-10"
                       alt="Edit"
                       data-id={item.chapter_id}
-                      
+
                     />
                   </a>
                   &nbsp; &nbsp;
@@ -201,7 +201,7 @@ class KursusMateriPreview extends Component {
                           className="button-img"
                           alt=""
                         />
-                        Tambah Baru
+                        Add New
                       </a>
                     </div>
                     <div className="col-xl-12">
@@ -211,17 +211,17 @@ class KursusMateriPreview extends Component {
                     </div>
 
                     <ModalAdd
-                      show={this.state.isOpen} 
-                      onClose={this.toggleModal} 
-                      closeModalAdd={this.closeModalAdd} 
+                      show={this.state.isOpen}
+                      onClose={this.toggleModal}
+                      closeModalAdd={this.closeModalAdd}
                       triggerUpdate={this.triggerUpdate}></ModalAdd>
 
                     <ModalEdit
-                       show={this.state.isOpen} 
-                       onClose={this.toggleModal} 
-                       closeModalAdd={this.closeModalAdd} 
-                       triggerUpdate={this.triggerUpdate}
-                       idCourse={this.state.idCourse}></ModalEdit>
+                      show={this.state.isOpen}
+                      onClose={this.toggleModal}
+                      closeModalAdd={this.closeModalAdd}
+                      triggerUpdate={this.triggerUpdate}
+                      idCourse={this.state.idCourse}></ModalEdit>
 
                     <Modal show={this.state.delete.modal} onHide={this.handleClose}>
                       <Modal.Header closeButton>

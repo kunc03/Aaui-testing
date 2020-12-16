@@ -7891,7 +7891,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 .table th {
   border-top: 1px solid #eaeaea;
   /* white-space: nowrap; */
-  padding: 8px 0.75rem;
+  padding: 15px 0.75rem;
 }
 .table thead th {
   border-bottom: 1px solid #eaeaea;
@@ -11422,7 +11422,7 @@ div.code-toolbar > .toolbar span:hover {
 
 .kategori {
   border-radius: 10px;
-  background-color: white;
+  background-color: #f1f1f1;
   padding: 20px; 
   font-size: 15.9px;
   font-weight: bold;
@@ -11431,11 +11431,12 @@ div.code-toolbar > .toolbar span:hover {
 
 .kategori-aktif {
   border-radius: 10px;
-  background-color: white;
-  padding: 20px; 
-  border-bottom: 5px solid #945A86; 
-  font-size: 15.9px;
-  font-weight: bold;
+    background-color: #c1eaff;
+    padding: 20px;
+    /* border-bottom: 5px solid #945A86; */
+    font-size: 15.9px;
+    font-weight: bold;
+    text-align: center;
 }
 
 
@@ -11640,6 +11641,17 @@ div.code-toolbar > .toolbar span:hover {
     color: #0895ff;
 }
 
+.circle-info {
+  background: transparent;
+    padding: 6px 18px;
+    border: 1px solid #0895ff;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 60px;
+    margin-left: 6px;
+    color: #0895ff;
+}
+
 .project-info-disabled {
   background: #f7f7f7;
     padding: 6px 18px;
@@ -11668,7 +11680,8 @@ div.code-toolbar > .toolbar span:hover {
 
 .btn-v2 {
   border-radius: 40px;
-  padding: 6px 12px;
+    padding: 7px 21px;
+    margin-bottom: 0px;
 }
 
 .biru-bold {
@@ -11835,20 +11848,4 @@ div.code-toolbar > .toolbar span:hover {
   right: 0px;
   bottom: 0px;
   left: 0px;
-}
-
-.modal-2xl{
-  max-width:1200px;
-}
-
-.select-project{
-  font-size: 16px;
-  color: #3e3e3e;
-}
-
-.gantt-report-select{
-  position: absolute;
-  top: 15px;
-  right: 31px;
-  z-index: 2;
 }
