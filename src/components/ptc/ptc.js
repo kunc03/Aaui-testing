@@ -11,7 +11,7 @@ import SocketContext from '../../socket';
 class PtcClasses extends React.Component {
 
   state = {
-    role: this.props.role,
+    role: this.props.role ? this.props.role : 'admin',
     ptc: [],
     rapat: [],
 

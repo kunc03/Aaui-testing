@@ -270,7 +270,7 @@ export default class WebinarRiwayat extends Component {
     //           <div className='border-disabled'>
     //             <div className="box-lampiran">
     //               <div className="title-head f-w-900 f-16 fc-skyblue">
-    //                 {item.nama} 
+    //                 {item.nama}
     //                 <Link to={item.url} className="float-right link-lampiran"><i className="fa fa-download"></i></Link>
     //               </div>
     //             </div>

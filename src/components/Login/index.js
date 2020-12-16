@@ -109,8 +109,6 @@ class Login extends Component {
 
           Storage.set('token', { data: res.data.result.token });
 
-          Storage.set('token', { data: res.data.result.token });
-
           if (this.props.redirectUrl) {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
@@ -168,7 +166,18 @@ class Login extends Component {
               grup_name: res.data.result.grup_name,
             }
           });
+
+          Storage.set('access', {
+            activity: res.data.result.activity,
+            course: res.data.result.course,
+            manage_course: res.data.result.manage_course,
+            forum: res.data.result.forum,
+            group_meeting: res.data.result.group_meeting,
+            manage_group_meeting: res.data.result.manage_group_meeting
+          });
+
           Storage.set('token', { data: res.data.result.token });
+          
           if (this.props.redirectUrl) {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
