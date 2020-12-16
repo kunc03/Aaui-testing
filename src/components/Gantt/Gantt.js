@@ -267,6 +267,7 @@ export default class Gantt extends Component {
         gantt.locale.labels.section_company = "Company";
         gantt.locale.labels.section_period = "Time period";
         gantt.locale.labels.section_status = "Status";
+        gantt.locale.labels.section_visibility = "Visibility";
         gantt.config.resource_store = "resource";
         gantt.config.resource_property = "owner_id";
         gantt.config.order_branch = true;
@@ -287,7 +288,13 @@ export default class Gantt extends Component {
                 name:"company", height:38, map_to:"company",type:"select",
                 options: this.state.companies
             },
-            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]}
+            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]},
+            {
+                name: "visibility", height: 38, map_to: "visibility", type: "select", options: [
+                    {key: "Public", label: "Public"},
+                    {key: "Private", label: "Private"}
+                ]
+            }
         ];
         gantt.templates.time_picker = function(date){
             return gantt.date.date_to_str(gantt.config.time_picker)(date);
@@ -403,10 +410,16 @@ export default class Gantt extends Component {
     resourcesStore.parse(this.state.users);
 
         gantt.init(this.ganttContainer);
-        let by = this.props.userId ? 'gantt-user' : 'gantt';
-        let val = this.props.userId ? this.props.userId : this.props.projectId;
-        gantt.load(`${API_SERVER}v2/${by}/${val}`)
-        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId}/`);
+        let api =
+        this.props.userId && this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/${this.props.projectId}/${this.props.userId}/${this.props.visibility}`
+        :
+        this.props.userId && !this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/0/${this.props.userId}/${this.props.visibility}`
+        :
+        `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
+        gantt.load(api)
+        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId ? this.props.projectId : '0'}`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
 
@@ -416,9 +429,15 @@ export default class Gantt extends Component {
     }
 
     countTaskStatus(){
-        let by = this.props.userId ? 'gantt-user' : 'gantt';
-        let val = this.props.userId ? this.props.userId : this.props.projectId;
-        API.get(`${API_SERVER}v2/${by}/${val}`).then(res => {
+        let api =
+        this.props.userId && this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/${this.props.projectId}/${this.props.userId}/${this.props.visibility}`
+        :
+        this.props.userId && !this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/0/${this.props.userId}/${this.props.visibility}`
+        :
+        `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
+        API.get(api).then(res => {
             if(res.data.error) console.log('Gagal fetch data task di project');
             this.setState({
               countOpen: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '' || item.type === null) && (item.status === 'Open' || item.status === '' || item.status === null)).length,
@@ -452,7 +471,7 @@ export default class Gantt extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))))
+        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))) || ((this.props.visibility && !equal(this.props.visibility, prevProps.visibility))))
         {
             gantt.clearAll()
             this.fetchGanttData();
@@ -516,7 +535,7 @@ export default class Gantt extends Component {
 
     render() {
        return (
-        <div className="card p-20">
+        <div className="card p-20" style={{width:'100%'}}>
         <div className="app-container">
           <div className="time-line-container">
           <div className="m-t-10 m-b-10" style={{alignSelf:'flex-start'}}>
