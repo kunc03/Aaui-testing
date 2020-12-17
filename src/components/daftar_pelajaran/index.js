@@ -320,7 +320,7 @@ class DaftarPelajaran extends React.Component {
                     <th>Pelajaran</th>
                     <th>Category</th>
                     <th>Silabus</th>
-                    <th>Nilai %</th>
+                    <th>Bobot %</th>
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
