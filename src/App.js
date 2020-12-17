@@ -111,6 +111,7 @@ import LearningMurid from './components/learning/murid';
 import GuruPersonalia from './components/guruPersonalia/index';
 import GuruKurusus from './components/guruKursus/index';
 import GuruUjian from './components/guruUjian/index';
+import GuruJadwal from './components/jadwal_mengajar/guru';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
 import DetailMurid from './components/detail_murid/index';
@@ -467,6 +468,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/guru-info" component={LearningGuruInfo} />
 
         <Route path="/ruangan" component={LearningRuangan} />
+        <Route path="/jadwal-mengajar" component={GuruJadwal} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
@@ -521,6 +523,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/guru/ujian' component={GuruUjian} />
         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
         <Route path='/guru/kpi' component={GuruKPI} />
+
         <Route path='/detail-murid' component={DetailMurid} />
         <Route path='/detail-kelas' component={DetailKelas} />
         <Route path='/detail-rapor' component={DetailRapor} />
