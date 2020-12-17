@@ -499,6 +499,7 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/pengaturan" component={Pengaturan} />
 
