@@ -86,7 +86,7 @@ export default class LearningGuru extends Component {
                 <div className="page-wrapper">
 
                   <div className="floating-back">
-                    <Link to={`/kursus-new`}>
+                    <Link to={`/jadwal-mengajar`}>
                       <img
                         src={`newasset/back-button.svg`}
                         alt=""
