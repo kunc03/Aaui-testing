@@ -850,9 +850,6 @@ export default class MeetingRoom extends Component {
                             <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalGantt: true, newShareGantt: false})} className="float-right btn btn-icademy-primary">
                               <i className="fa fa-tasks" style={{marginRight: '0px !important'}}></i>Task & Timeline
                             </button>
-                            <button style={{ marginRight: 14 }} onClick={()=> this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning' : 'float-right btn btn-icademy-primary'}>
-                              <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important' }}></i>{this.state.fullscreen ? 'Minimize' : 'Maximize'}
-                            </button>
                             {/*
                             <a target='_blank' href={this.state.joinUrl}>
                               <button className="float-right btn btn-icademy-primary">
@@ -1081,15 +1078,12 @@ export default class MeetingRoom extends Component {
                               classRooms.moderator == Storage.get("user").data.user_id &&
                               <i style={{marginLeft:10, cursor:'pointer'}} data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i>
                             }
-                          </div>
-                        </div>
-
-                        <button style={{ marginTop: "30px" }} disabled={this.state.sendingEmail} type="button" onClick={this.onClickSubmitInvite} className="btn btn-block btn-ideku f-w-bold">
-                          {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
-                        </button>
-                        <button type="button" className="btn btn-block f-w-bold" onClick={this.handleCloseInvite}>
-                          Tidak
-                        </button>
+                          </div>                        )
+                      })}
+                      </div>
+                  </div>
+                      </div>
+                  </div>
                       </Modal.Body>
                     </Modal>
 

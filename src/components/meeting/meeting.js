@@ -1345,124 +1345,75 @@ class MeetingTable extends Component {
                 </div>
               </div>
             </div>
-            : null }
-            <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-              <div className="card">
-                <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
+            : null }<div className="col-sm-12" style={{flex:1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            <div className="card">
+              <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
 
-                <div className="card-carousel">
-                  <div className="title-head f-w-900 f-16 mb-2">
-                    {this.state.infoClass.room_name}
+              <div className="card-carousel">
+                <div className="title-head f-w-900 f-16 mb-2">
+                  {this.state.infoClass.room_name}
+                </div>
+
+                <div class="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-14">
+                                Moderator : {this.state.infoClass.name}
+                              </h3>
+                    <h3 className="f-14">
+                                Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                              </h3> { this.state.infoClass.is_private ?
+                    <h3 className="f-14">
+                                  Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                                </h3> : null }
                   </div>
-                  <div class="row">
-                    <div className="col-sm-6">
-                      <h3 className="f-14">
-                        Moderator : {this.state.infoClass.name}
-                      </h3>
-                      <h3 className="f-14">
-                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                      </h3>
+                  { this.state.infoClass.is_scheduled ?
+                  <div className="col-sm-6">
+                    <h3 className="f-14">
+                                  Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
+                                </h3>
+                    <h3 className="f-14">
+                                  Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
+                                </h3>
+                  </div>
+                  : null }
+                </div>
 
-                      { this.state.infoClass.is_private ?
-                        <h3 className="f-14">
-                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
-                        </h3> : null }
-
-                      <div className="col-sm-12" style={{flex:1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                        <div className="card">
-                          <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
-
-                          <div className="card-carousel">
-                            <div className="title-head f-w-900 f-16 mb-2">
-                              {this.state.infoClass.room_name}
-                            </div>
-
-                            <div class="row">
-                              <div className="col-sm-6">
-                                <h3 className="f-14">
-                                            Moderator : {this.state.infoClass.name}
-                                          </h3>
-                                <h3 className="f-14">
-                                            Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                                          </h3> { this.state.infoClass.is_private ?
-                                <h3 className="f-14">
-                                              Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
-                                            </h3> : null }
-                              </div>
-                              { this.state.infoClass.is_scheduled ?
-                              <div className="col-sm-6">
-                                <h3 className="f-14">
-                                              Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
-                                            </h3>
-                                <h3 className="f-14">
-                                              Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
-                                            </h3>
-                              </div>
-                              : null }
-                            </div>
-
-                            { this.state.infoClass.is_private && ((levelUser =='client' && (access.manage_group_meeting || access_project_admin)) || levelUser!=='client') ?
-                            <div>
-                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
-                                Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
-                              </div>
-                              <div className="row mt-3" style={{flex:1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px'}}>
-                                <div className='legend-kehadiran hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                <div className='legend-kehadiran tidak-hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                <div className='legend-kehadiran tentative'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
-                              </div>
-                              <div className="row mt-3" style={{flex:1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px'}}>
-                                { this.state.infoParticipant.map(item=>
-                                <div className={item.confirmation==='Hadir' ? 'peserta hadir' : item.confirmation==='Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                                ) }
-                              </div>
-                            </div>
-                            : null }
-
-                            { this.state.infoClass.is_private && ((levelUser =='client' && access.manage_group_meeting) || levelUser!=='client') ?
-                            <div>
-                              <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
-                                Kehadiran Aktual
-                              </div>
-                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                <div className='legend-kehadiran hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                <div className='legend-kehadiran tidak-hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                <div className='legend-kehadiran tentative'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
-                              </div>
-                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                { this.state.infoParticipant.map(item =>
-                                <div className={item.confirmation==='Hadir' ? 'peserta hadir' : item.confirmation==='Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                                ) }
-                              </div>
-                            </div>
-                            : null }
-
-                            { this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
-                            <div>
-                              <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                Kehadiran Aktual
-                              </div>
-                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                { this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
-                                <div className='peserta aktual-hadir'>{item.name}</div>
-                                ) }
-                              </div>
-                            </div>
-                            : null }
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                { this.state.infoClass.is_private && ((levelUser =='client' && (access.manage_group_meeting || access_project_admin)) || levelUser!=='client') ?
+                <div>
+                  <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
+                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                  </div>
+                  <div className="row mt-3" style={{flex:1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px'}}>
+                    <div className='legend-kehadiran hadir'></div>
+                    <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                    <div className='legend-kehadiran tidak-hadir'></div>
+                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                    <div className='legend-kehadiran tentative'></div>
+                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                  </div>
+                  <div className="row mt-3" style={{flex:1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px'}}>
+                    { this.state.infoParticipant.map(item=>
+                    <div className={item.confirmation==='Hadir' ? 'peserta hadir' : item.confirmation==='Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                    ) }
                   </div>
                 </div>
+                : null }
+
+                { this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
+                <div>
+                  <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                    Kehadiran Aktual
+                  </div>
+                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                    { this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
+                    <div className='peserta aktual-hadir'>{item.name}</div>
+                    ) }
+                  </div>
+                </div>
+                : null }
               </div>
             </div>
+          </div>
           </Modal.Body>
           <Modal.Footer>
             { (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date()
