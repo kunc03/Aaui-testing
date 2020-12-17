@@ -971,20 +971,116 @@ export default class MeetingRoom extends Component {
                       <Modal.Body>
                         <div className="form-vertical">
                           <Form.Group controlId="formJudul">
-                            <Form.Label className="f-w-bold">
-                              Invite User
-                            </Form.Label>
-                            <MultiSelect id="peserta" options={this.state.optionsInvite} value={this.state.valueInvite} onChange={valueInvite=> this.setState({ valueInvite })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Pilih" />
-                              <Form.Text className="text-muted">
-                                Pilih user yang ingin diundang.
-                              </Form.Text>
-                          </Form.Group>
-                          <div className="form-group">
-                            <label style={{ fontWeight: "bold" }}>Email</label>
-                            <TagsInput value={this.state.emailInvite} onChange={this.handleChange.bind(this)} addOnPaste={true} addOnBlur={true} inputProps={{ placeholder: 'Email Peserta' }} />
-                            <Form.Text>
-                              Masukkan email yang ingin di invite.
-                            </Form.Text>
+                          <Form.Label className="f-w-bold">
+                            Invite User
+                          </Form.Label>
+                          <MultiSelect
+                            id="peserta"
+                            options={this.state.optionsInvite}
+                            value={this.state.valueInvite}
+                            onChange={valueInvite => this.setState({ valueInvite })}
+                            mode="tags"
+                            removableTags={true}
+                            hasSelectAll={true}
+                            selectAllLabel="Pilih Semua"
+                            enableSearch={true}
+                            resetable={true}
+                            valuePlaceholder="Pilih"
+                          />
+                          <Form.Text className="text-muted">
+                            Pilih user yang ingin diundang.
+                          </Form.Text>
+                        </Form.Group>
+              <div className="form-group">
+                <label style={{ fontWeight: "bold" }}>Email</label>
+                <TagsInput
+                  value={this.state.emailInvite}
+                  onChange={this.handleChange.bind(this)}
+                  addOnPaste={true}
+                  addOnBlur={true}
+                  inputProps={{placeholder:'Email Peserta'}}
+                />
+                <Form.Text>
+                  Masukkan email yang ingin di invite.
+                </Form.Text>
+              </div>
+            </div>
+
+            <button
+              style={{ marginTop: "30px" }}
+              disabled={this.state.sendingEmail}
+              type="button"
+              onClick={this.onClickSubmitInvite}
+              className="btn btn-block btn-ideku f-w-bold"
+            >
+              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-block f-w-bold"
+              onClick={this.handleCloseInvite}
+            >
+              Tidak
+            </button>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalEnd}
+          onHide={this.closeModalEnd}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Konfirmasi
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+                      <button
+                        className="btn btm-icademy-primary btn-icademy-grey"
+                        onClick={this.closeModalEnd.bind(this)}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-red"
+                        onClick={this.endMeeting.bind(this)}
+                      >
+                        <i className="fa fa-trash"></i>
+                        Akhiri Meeting
+                      </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalFileSharing}
+          onHide={this.closeModalFileSharing}
+          centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            File Sharing
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            
+          <div>
+                <div className="col-sm-12">
+                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
+                      <div style={{height:'100%', overflowY:'scroll'}}>
+                      { this.state.fileChat.map((item, i)=>{
+                        return (
+                          <div className='box-chat-send-left'>
+                            <span className="m-b-5"><b>{item.name} </b></span><br/>
+                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
+                            <small >
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
+                            </small>
+                            {
+                              classRooms.moderator == Storage.get("user").data.user_id &&
+                              <i style={{marginLeft:10, cursor:'pointer'}} data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i>
+                            }
                           </div>
                         </div>
 
