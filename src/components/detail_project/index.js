@@ -170,6 +170,7 @@ export default class User extends Component {
                               <option value='public'>Public</option>
                               <option value='private'>Private</option>
                           </select>
+                          {levelUser !== 'client' &&
                           <div style={{width:300, float:'right', backgroundColor:'#FFF'}}>
                               <MultiSelect
                                 id={`users`}
@@ -183,6 +184,7 @@ export default class User extends Component {
                                 hasSelectAll
                               />
                           </div>
+                          }
                         </div>
                       <Gantt projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility}/>
                       </div>
