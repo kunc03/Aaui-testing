@@ -369,7 +369,7 @@ class Mengajar extends React.Component {
                     {
                       this.state.role === "guru" && (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
                       <button onClick={this.startPertemuan} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
-                        <i className={'fa fa-play'}></i> Start
+                        <i className={`fa fa-${this.state.startPertemuan ? 'pause':'play'}`}></i> {this.state.startPertemuan ? 'Stop' : 'Start'}
                       </button>
                     }
                   </h4>
@@ -377,8 +377,7 @@ class Mengajar extends React.Component {
                 </div>
 
                 {
-                  /**
-                  this.state.jenis === "materi" &&
+                  // this.state.jenis === "materi" &&
                     <div className="card-body p-1">
                     <Iframe url={this.state.joinUrl}
                     width="100%"
@@ -390,7 +389,6 @@ class Mengajar extends React.Component {
 
                     <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
                   </div>
-                  */
                 }
               </div>
             </div>
