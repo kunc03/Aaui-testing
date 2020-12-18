@@ -841,8 +841,8 @@ export default class MeetingRoom extends Component {
                                 </button>
                               </div>
                             </div>
-                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={()=> this.setState({modalFileSharing: true})} className="float-right btn btn-icademy-primary">
-                              <i className="fa fa-file" style={{marginRight: '0px !important'}}></i>File Sharing
+                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={()=> this.setState({modalMOM: true})} className="float-right btn btn-icademy-primary">
+                              <i className="fa fa-clipboard-list" style={{marginRight: '0px !important'}}></i>MOM
                             </button>
                             <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important' }} onClick={()=> this.setState({ modalFileSharing: true })} className="float-right btn btn-icademy-primary">
                               <i className="fa fa-file" style={{ marginRight: '0px !important' }}></i>File Sharing
