@@ -46,6 +46,7 @@ class SidebarClass extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let groupUser = Storage.get('user').data.grup_name;
+    let companyType = Storage.get('user').data.company_type;
 
     // console.log('Storage: ', Storage.get('user'));
 
@@ -189,18 +190,26 @@ class SidebarClass extends Component {
     let menuAtas = [];
     let menuBawah = [];
 
-
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
-      menuAtas = menuSuperAdmins.menuAtas;
-      menuBawah = menuSuperAdmins.menuBawah;
+      if(companyType === "perusahaan") {
+        menuAtas = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+        menuBawah = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
+      } else {
+        menuAtas = menuSuperAdmins.menuAtas;
+        menuBawah = menuSuperAdmins.menuBawah;
+      }
     } else if (levelUser === 'admin') {
       menuContent = menuAdmins.submenu;
-      menuAtas = menuAdmins.menuAtas;
-      menuBawah = menuAdmins.menuBawah;
+      if(companyType === "perusahaan") {
+        menuAtas = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+        menuBawah = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
+      } else {
+        menuAtas = menuAdmins.menuAtas;
+        menuBawah = menuAdmins.menuBawah;
+      }
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
-      console.log(subMenuClient, 'lepell userr');
       if (subMenuClient === "guru"
             || subMenuClient === "murid"
             || subMenuClient === "parents"

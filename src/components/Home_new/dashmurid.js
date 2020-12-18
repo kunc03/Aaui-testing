@@ -117,7 +117,11 @@ class DashMurid extends Component {
                                     <td>{item.hari}</td>
                                     <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                     <td>{item.sesi}</td>
-                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
+                                    <td>
+                                      <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
+                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }
