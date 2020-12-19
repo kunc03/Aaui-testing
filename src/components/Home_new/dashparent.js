@@ -9,6 +9,7 @@ import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
 import { toast } from 'react-toastify'
+import moment from 'moment-timezone'
 
 class DashParent extends Component {
 
@@ -31,10 +32,11 @@ class DashParent extends Component {
 
     project: [],
 
+    myMurid: {},
   }
 
-  fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
+  fetchJadwal(muridId) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${muridId}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
@@ -68,7 +70,17 @@ class DashParent extends Component {
 
   componentDidMount() {
     this.fetchPengumuman();
-    this.fetchJadwal();
+    this.fetchMyMurid(Storage.get('user').data.user_id);
+  }
+
+  fetchMyMurid(userId) {
+    API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch murid`)
+
+      this.setState({ myMurid: res.data.result })
+
+      this.fetchJadwal(res.data.result.user_id_murid)
+    })
   }
 
   fetchPengumuman() {
@@ -109,10 +121,91 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.jadwal.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                    <td>{item.nama_pelajaran}</td>
+                                    <td>{item.hari}</td>
+                                    <td>{item.jam_mulai}-{item.jam_selesai}</td>
+                                    <td>{item.sesi}</td>
+
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Tugas Yang Harus Dikerjakan</h4>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Tugas</th><th>Batas Waktu</th><th>Mata Pelajaran</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.tugas.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                    <td>{item.title}</td>
+                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                    <td>{item.nama_pelajaran}</td>
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Ujian Yang Akan Datang</h4>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Tanggal</th><th>Ujian</th><th>Mata Pelajaran</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.ujian.map((item, i) => (
+                                  <tr key={i}>
+                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                    <td>{item.title}</td>
+                                    <td>{item.nama_pelajaran}</td>
+
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
                     <Card>
                       <Card.Body>
                         <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
-                        <div className="wrap" style={{ height: '400px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                        <div className="wrap" style={{ height: '200px', overflowY: 'scroll', overflowX: 'hidden' }}>
                           <table className="table">
                           <tbody>
                           {

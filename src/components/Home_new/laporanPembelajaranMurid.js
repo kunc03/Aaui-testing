@@ -86,7 +86,7 @@ class LaporanPembelajaranMurid extends Component {
                 <div className="form-group row">
                   <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
                   <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.nama_murid} disabled className="form-control" />
+                    <input type="text" value={this.state.myMurid.nik_murid} disabled className="form-control" />
                   </div>
 
                   <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
