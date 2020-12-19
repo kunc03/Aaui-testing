@@ -144,11 +144,12 @@ class Overview extends React.Component {
                                 <div class={`card ${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</div>
-                                        <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
+                                        <h4 data-target={`#t${i}`} data-toggle={`${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'collapse' : '') : (moment(item.start_date) < moment(new Date()) ? 'collapse' : '')}`} style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
                                         <div class="collapse" id={`t${i}`}>
                                           <div dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                           {
+                                            /**
                                             item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
                                             <ul className="list-group f-12">
                                               {
@@ -163,6 +164,7 @@ class Overview extends React.Component {
                                                 ))
                                               }
                                             </ul>
+                                            */
                                           }
 
                                           {
