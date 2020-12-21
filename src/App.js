@@ -117,6 +117,7 @@ import GuruKPI from './components/guruKPI/index';
 import DetailMurid from './components/detail_murid/index';
 import DetailKelas from './components/detail_kelas/index';
 import DetailRapor from './components/detail_rapor/index';
+import LaporanForGuru from './components/laporan/laporanguru';
 
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
@@ -524,6 +525,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
         <Route path='/guru/kpi' component={GuruKPI} />
 
+        <Route path='/guru-laporan' component={LaporanForGuru} />
         <Route path='/detail-murid' component={DetailMurid} />
         <Route path='/detail-kelas' component={DetailKelas} />
         <Route path='/detail-rapor' component={DetailRapor} />
