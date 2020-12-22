@@ -25,6 +25,7 @@ class Tugas extends React.Component {
     examId: '',
     title: '',
     quizAt: '',
+    tatapmuka: '',
     tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
     tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
@@ -76,6 +77,7 @@ class Tugas extends React.Component {
       examId: '',
       title: '',
       quizAt: '',
+      tatapmuka: '',
       tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
       tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
@@ -117,6 +119,7 @@ class Tugas extends React.Component {
         examId: examId,
         title: res.data.result.title,
         quizAt: res.data.result.quiz_at,
+        tatapmuka: res.data.result.tatapmuka,
         tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
         tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
 
@@ -156,6 +159,7 @@ class Tugas extends React.Component {
       let form = {
         title: this.state.title,
         quizAt: this.state.quizAt,
+        tatapmuka: this.state.tatapmuka,
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
       }
@@ -163,6 +167,7 @@ class Tugas extends React.Component {
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
         if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
 
+        toast.success(`Sukses mengubah ${this.state.tipe}`)
         this.fetchKuis();
       })
     } else {
@@ -171,6 +176,7 @@ class Tugas extends React.Component {
         pelajaranId: this.state.pelajaranId,
 
         title: this.state.title,
+        tatapmuka: this.state.tatapmuka,
         quizAt: this.state.quizAt,
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
@@ -179,6 +185,7 @@ class Tugas extends React.Component {
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
         if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
 
+        toast.success(`Sukses menyimpan ${this.state.tipe}`)
         this.fetchKuis();
         this.clearForm();
       })
@@ -298,16 +305,29 @@ class Tugas extends React.Component {
                       <label>Nama {this.state.tipe}</label>
                       <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
                     </div>
-                    <div className="form-group">
-                      <label>{this.state.tipe.charAt(0).toUpperCase() + this.state.tipe.slice(1)} akan dilaksanakan setelah</label>
-                      <select value={this.state.quizAt} onChange={e => this.setState({ [e.target.name]: e.target.value })} name="quizAt" className="form-control col-sm-6">
-                        <option value="" disabled selected>Pilih</option>
-                        {
-                          this.state.chapters.map(item => (
-                            <option value={item.id}>{item.title}</option>
-                          ))
-                        }
-                      </select>
+                    <div className="form-group row">
+                      <div className="col-sm-6">
+                        <label>{this.state.tipe.charAt(0).toUpperCase() + this.state.tipe.slice(1)} akan dilaksanakan setelah</label>
+                        <select value={this.state.quizAt} onChange={e => this.setState({ [e.target.name]: e.target.value })} name="quizAt" className="form-control">
+                          <option value="" disabled selected>Pilih</option>
+                          {
+                            this.state.chapters.map(item => (
+                              <option value={item.id}>{item.title}</option>
+                            ))
+                          }
+                        </select>
+                      </div>
+                      <div className="col-sm-4">
+                        <label className="mb-3">Tatap Muka</label><br/>
+                        <div class="form-check form-check-inline">
+                          <input checked={this.state.tatapmuka == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                          <label class="form-check-label" for="inlineRadio1">Ya</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input checked={this.state.tatapmuka == "0"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                          <label class="form-check-label" for="inlineRadio2">Tidak</label>
+                        </div>
+                      </div>
                     </div>
                     <div className="form-group row">
                       <div className="col-sm-4">
