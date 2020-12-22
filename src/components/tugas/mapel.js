@@ -222,7 +222,9 @@ class Overview extends React.Component {
                         <div class="card shadow">
                           <div class="card-body">
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
-                            <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
+                            <h4 class="card-title" data-target={`#tU${i}`}
+                              data-toggle={`${(moment(item.time_start) < moment(new Date()) ? 'collapse' : '')}`}
+                              >{item.title}</h4>
                             <div className="collapse" id={`tU${i}`}>
                               <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info mr-2">
                                 <i className="fa fa-share"></i> Detail
