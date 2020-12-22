@@ -99,7 +99,7 @@ export default class Gantt extends Component {
         gantt.templates.progress_text=function(start,end,task){
             let done = '';
             if (task.status==='Done'){
-                done = ' - Done : '+MomentTZ.tz(task.done_time, 'Asia/Jakarta').format("DD/MM/YYYY HH:mm")
+                done = task.done_time !== null ? ' - Done : '+MomentTZ.tz(task.done_time, 'Asia/Jakarta').format("DD/MM/YYYY HH:mm") : '';
             }
             return Math.round(task.progress*100)+"%"+done;
         };
