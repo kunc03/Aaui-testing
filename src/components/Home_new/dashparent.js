@@ -39,8 +39,12 @@ class DashParent extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${muridId}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
+      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let tglIni = new Date();
+      let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
+
       this.setState({
-        jadwal: res.data.result.jadwal,
+        jadwal: hariIni,
         tugas: res.data.result.tugas,
         ujian: res.data.result.ujian,
       })
@@ -112,14 +116,6 @@ class DashParent extends Component {
 
                   <div className="row">
 
-                    <div className="col-sm-12">
-                      <Card>
-                        <Card.Body>
-                          <LaporanPembelajaranMurid lists={this.state.project} />
-                        </Card.Body>
-                      </Card>
-                    </div>
-
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
@@ -170,6 +166,14 @@ class DashParent extends Component {
                               }
                             </tbody>
                           </table>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-12">
+                      <Card>
+                        <Card.Body>
+                          <LaporanPembelajaranMurid lists={this.state.project} />
                         </Card.Body>
                       </Card>
                     </div>
