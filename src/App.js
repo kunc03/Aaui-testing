@@ -2,7 +2,7 @@ import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import API, { API_SERVER, API_SOCKET  } from './repository/api';
+import API, { API_SERVER, API_SOCKET } from './repository/api';
 import Storage from './repository/storage';
 import io from 'socket.io-client';
 
@@ -121,6 +121,12 @@ import LaporanForGuru from './components/laporan/laporanguru';
 
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
+
+// ======= IMPORT COMPONENT PRINCIPAL ======== //
+import PrincipalPembelajaran from './components/principalPembelajaran/index';
+import principalLaporanRapor from './components/principalLaporan/index';
+import principalKPI from './components/principalKpi/index';
+import principalEvaluasi from './components/principalEvaluasi/index';
 
 // ======= IMPORT COMPONENT PARENT ======== //
 import LaporanPembelajaranMurid from './components/parentLearning/index';
@@ -296,7 +302,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
 
-         <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -478,7 +484,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
 
-         <Route path="/pengumuman" component={Pengumuman} />
+        <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -539,6 +545,12 @@ export class ClientSwitch extends React.Component {
         <Route path='/parent-learning' component={LaporanPembelajaranMurid} />
         <Route path='/parent-syllabus' component={ParentSylabus} />
         <Route path='/parent-rapor' component={ParentRapor} />
+
+        {/* ROUTE PRINCIPAL */}
+        <Route path='/principal-pembelajaran' component={PrincipalPembelajaran} />
+        <Route path='/principal-laporan' component={principalLaporanRapor} />
+        <Route path='/principal-kpi' component={principalKPI} />
+        <Route path='/principal-evaluasi' component={principalEvaluasi} />
 
         <Route path="/logout" component={Logout} />
       </Switch>
