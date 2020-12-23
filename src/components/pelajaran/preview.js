@@ -205,7 +205,7 @@ class Overview extends React.Component {
                               <Link to={`/guru/detail-ujian/${this.state.jadwalId}/${item.id}`} className="btn btn-v2 btn-info mr-2">
                                 <i className="fa fa-tasks"></i> Detail
                               </Link>
-                              <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
+                              <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.id}`} className="btn btn-v2 btn-success mr-2">
                                 <i className="fa fa-video"></i> Open
                               </a>
                             </div>

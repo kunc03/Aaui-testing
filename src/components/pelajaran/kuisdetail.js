@@ -340,6 +340,7 @@ class Tugas extends React.Component {
                           return (
                             <Link onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i} className="list-group-item list-group-item-action">
                               {item.nama}
+                              <span className="label label-info rounded float-right">{item.score}</span>
                             </Link>
                           )
                       })

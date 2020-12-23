@@ -52,6 +52,8 @@ class Mengajar extends React.Component {
 
     startPertemuan: false,
     isSubmit: false,
+
+    isTatapMuka: 0,
   }
 
   endMeeting() {
@@ -329,6 +331,10 @@ class Mengajar extends React.Component {
     this.setState({ isSubmit: nilai });
   }
 
+  cekTatapMuka = (nilai) => {
+    this.setState({ isTatapMuka: nilai })
+  }
+
   render() {
 
     console.log('state: ', this.state);
@@ -379,16 +385,30 @@ class Mengajar extends React.Component {
                 {
                   // this.state.jenis === "materi" &&
                     <div className="card-body p-1">
-                    <Iframe url={this.state.joinUrl}
-                    width="100%"
-                    height="600px"
-                    display="initial"
-                    frameBorder="0"
-                    allow="fullscreen *; geolocation *; microphone *; camera *"
-                    position="relative" />
+                      {
+                        this.state.infoChapter.tatapmuka == 1 &&
+                        <Iframe url={this.state.joinUrl}
+                          width="100%"
+                          height="600px"
+                          display="initial"
+                          frameBorder="0"
+                          allow="fullscreen *; geolocation *; microphone *; camera *"
+                          position="relative" />
+                      }
 
-                    <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
-                  </div>
+                      {
+                        this.state.isTatapMuka == 1 &&
+                        <Iframe url={this.state.joinUrl}
+                          width="100%"
+                          height="600px"
+                          display="initial"
+                          frameBorder="0"
+                          allow="fullscreen *; geolocation *; microphone *; camera *"
+                          position="relative" />
+                      }
+
+                      <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
+                    </div>
                 }
               </div>
             </div>
@@ -472,7 +492,7 @@ class Mengajar extends React.Component {
                         <ul className="list-group f-12 mb-3">
                         {
                           this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id.split(',').map(item => (
-                            <li className="list-group-item">
+                            <li className="list-group-item p-0">
                               <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
                                 <div style={{ height: '750px' }}>
                                     <Viewer fileUrl={item} />
@@ -529,7 +549,7 @@ class Mengajar extends React.Component {
                   </div>
                 }
 
-                <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+                <Detail getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
               </>
             }
 

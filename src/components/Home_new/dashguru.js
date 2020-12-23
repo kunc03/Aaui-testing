@@ -6,7 +6,7 @@ import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import {toast} from 'react-toastify'
 
-import CalenderNew from '../kalender/kalender';
+import CalenderNew from '../kalender/kalenderlearning';
 import ListToDoNew from './listToDo';
 
 class DashGuru extends Component {
@@ -97,6 +97,15 @@ class DashGuru extends Component {
     this.fetchPengumuman();
     this.fetchJadwal();
     this.fetchPtc();
+    this.fetchTugas();
+  }
+
+  fetchTugas() {
+    API.get(`${API_SERVER}v2/guru/semua-tugas/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) toast.warning(`Warning: fetch tugas`);
+
+      this.setState({ tugas: res.data.result })
+    })
   }
 
   fetchPelajaran() {
@@ -170,7 +179,10 @@ class DashGuru extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Mengajar Hari Ini</h4>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Jadwal Mengajar Hari Ini
+                            <Link to='/jadwal-mengajar' className="float-right f-12">See all</Link>
+                          </h4>
                           <table className="table table-striped">
                             <thead>
                               <tr>
@@ -202,23 +214,23 @@ class DashGuru extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Mengajar Besok</h4>
+                          <h4 className="f-w-900 f-18 fc-blue">Tugas</h4>
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
+                                <th>Mata Pelajaran</th><th>Judul</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.jadwalBesok.map((item,i) => (
+                                this.state.tugas.map((item,i) => (
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                    <td>{item.exam_title}</td>
+                                    <td>{moment(item.time_finish).format('DD/MM/YYYY')}</td>
                                     <td>{item.kelas_nama}</td>
                                     <td>
-                                      <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
+                                      <Link to={`/guru/detail-tugas/${item.jadwal_id}/${item.exam_id}`}>
                                         <i className="fa fa-search"></i>
                                       </Link>
                                     </td>
@@ -232,7 +244,7 @@ class DashGuru extends Component {
                     </div>
 
                     <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
+                      <CalenderNew />
                     </div>
 
                     <div className="col-sm-6">

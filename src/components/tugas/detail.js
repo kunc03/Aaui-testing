@@ -43,6 +43,7 @@ class UjianClass extends React.Component {
       if(res.data.error) toast.warning(`Warning: fetch exam`);
 
       this.setState({ infoExam: res.data.result })
+      this.props.getTatapMuka(res.data.result.tatapmuka);
     })
   }
 
