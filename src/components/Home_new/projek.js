@@ -271,7 +271,6 @@ class ProjekNew extends Component {
               <span className=" f-12 fc-skyblue">See all</span>
             </Link>
           </p>
-          <b className="f-24 f-w-800">  . . . </b>
         </div>
         <div className="col-sm-12" style={{ marginTop: '10px' }}>
           <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>

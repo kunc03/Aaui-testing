@@ -4,10 +4,11 @@ import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIS
 import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
-import SocketContext from '../../socket';
 import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
+import SocketContext from '../../socket';
+
 const bbb = require('bigbluebutton-js')
 
 class FilesTableClass extends Component {
@@ -63,20 +64,20 @@ class FilesTableClass extends Component {
     this.setState({ limited: !this.state.limited });
   }
 
-  handleCheck(role) {
-    if (role == 'sekretaris') {
+  handleCheck (role) {
+    if (role == 'sekretaris'){
       this.setState({ aSekretaris: !this.state.aSekretaris });
     }
-    else if (role == 'moderator') {
+    else if (role == 'moderator'){
       this.setState({ aModerator: !this.state.aModerator });
     }
-    else if (role == 'pembicara') {
+    else if (role == 'pembicara'){
       this.setState({ aPembicara: !this.state.aPembicara });
     }
-    else if (role == 'owner') {
+    else if (role == 'owner'){
       this.setState({ aOwner: !this.state.aOwner });
     }
-    else if (role == 'peserta') {
+    else if (role == 'peserta'){
       this.setState({ aPeserta: !this.state.aPeserta });
     }
   }
@@ -123,9 +124,6 @@ class FilesTableClass extends Component {
             this.setState({ uploading: false, attachmentId: [] });
             toast.error('Error : ' + res.data.result)
           }
-          // else {
-          //   toast.success('Berhasil upload file')
-          // }
         }
       })
     }
@@ -152,7 +150,6 @@ class FilesTableClass extends Component {
     })
     this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
   }
-
   onChangeInput = e => {
     // const target = e.target;
     const name = e.target.name;
@@ -252,10 +249,10 @@ class FilesTableClass extends Component {
       await API.get(apiUrl).then(res => {
         if (res.data.error) toast.warning("Gagal fetch API");
         form = {
-          aSekretaris: userId == res.data.result.sekretaris[0].user_id ? 1 : 0,
-          aModerator: userId == res.data.result.moderator[0].user_id ? 1 : 0,
-          aPembicara: userId == res.data.result.pembicara[0].user_id ? 1 : 0,
-          aOwner: userId == res.data.result.owner[0].user_id ? 1 : 0,
+          aSekretaris: res.data.result.sekretaris.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aModerator: res.data.result.moderator.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aPembicara: res.data.result.pembicara.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aOwner: res.data.result.owner.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
           aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length || res.data.result.tamu.filter((item) => item.voucher == this.props.voucherTamu).length ? 1 : 0,
         }
       })

@@ -2,9 +2,8 @@ import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import API, { API_SERVER, API_SOCKET } from './repository/api';
+import API, { API_SERVER, API_SOCKET  } from './repository/api';
 import Storage from './repository/storage';
-
 import io from 'socket.io-client';
 
 import Header from "./components/Header_sidebar/Header";
@@ -14,16 +13,20 @@ import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
-import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
-import Files from "./components/files/files";
+// import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/detail_project/index";
 // import WebinarDetail from "./components/webinar/index";
 
 import Project from "./components/project/index";
+
+//gantt public
+import GanttPublic from "./components/Gantt/GanttPublic";
+
+import GanttReport from "./components/Gantt/report"
 
 import User from "./components/Users/User/index";
 import UserAdd from "./components/Users/User/add";
@@ -135,6 +138,7 @@ socket.on("connect", () => {
   console.log("Loading App");
 });
 
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -145,7 +149,8 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    let userInfo = localStorage.getItem("user");
+    // let userInfo = localStorage.getItem("user");
+    let userInfo = Storage.get('user').data.email;
     if (userInfo == null) {
       this.setState({ userLogin: false });
     } else {
@@ -185,6 +190,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
+          <Route path="/gantt/:projectId" exact component={GanttPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
@@ -282,6 +288,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -298,9 +305,8 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
         <Route path="/notification" component={Notification} />
-        <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
@@ -351,9 +357,6 @@ export class SuperAdminSwitch extends React.Component {
         <Route path='/print-certificate2' component={PrintCertificate2} />
         <Route path='/print-certificate3' component={PrintCertificate3} />
 
-
-
-
         <Route path="/logout" component={Logout} />
       </Switch>
     );
@@ -372,6 +375,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -384,7 +388,8 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
+        <Route path="/notification" component={Notification} />
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
@@ -401,9 +406,6 @@ export class AdminSwitch extends React.Component {
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
 
         <Route path="/kursus" component={Kursus} />
-
-        <Route path="/pengumuman" component={Pengumuman} />
-        <Route path="/notification" component={Notification} />
 
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
@@ -463,6 +465,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
@@ -471,9 +474,6 @@ export class ClientSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
 
         <Route path="/aktivitas" component={Activity} />
-
-        <Route path="/pengumuman" component={Pengumuman} />
-        <Route path="/notification" component={Notification} />
 
         <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
@@ -499,6 +499,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/profile" component={Profile} />
         {/* <Route path="/files" component={Files} /> */}
+        <Route path="/notification" component={Notification} />
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />

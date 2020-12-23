@@ -463,8 +463,7 @@ export default class CompanyDetail extends Component {
 
 						let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
 						API.get(linkURLCabang).then(res => {
-							console.log('CABANG: ', res.data)
-							if (res.status === 200) {
+							if(res.status === 200) {
 								this.setState({ cabang: res.data.result[0] })
 							}
 						}).catch(err => {
