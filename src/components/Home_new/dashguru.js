@@ -6,7 +6,7 @@ import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import {toast} from 'react-toastify'
 
-import CalenderNew from '../kalender/kalender';
+import CalenderNew from '../kalender/kalenderlearning';
 import ListToDoNew from './listToDo';
 
 class DashGuru extends Component {
@@ -170,7 +170,10 @@ class DashGuru extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Mengajar Hari Ini</h4>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Jadwal Mengajar Hari Ini
+                            <Link to='/jadwal-mengajar' className="float-right f-12">See all</Link>
+                          </h4>
                           <table className="table table-striped">
                             <thead>
                               <tr>
@@ -232,7 +235,7 @@ class DashGuru extends Component {
                     </div>
 
                     <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
+                      <CalenderNew />
                     </div>
 
                     <div className="col-sm-6">
