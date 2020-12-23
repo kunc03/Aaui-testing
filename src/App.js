@@ -13,6 +13,8 @@ import Loader from "./components/Header_sidebar/Loader";
 import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
+import Pengumuman from "./components/Pengumuman/index";
+
 import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
 // import Files from "./components/files/files";
@@ -109,11 +111,13 @@ import LearningMurid from './components/learning/murid';
 import GuruPersonalia from './components/guruPersonalia/index';
 import GuruKurusus from './components/guruKursus/index';
 import GuruUjian from './components/guruUjian/index';
+import GuruJadwal from './components/jadwal_mengajar/guru';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
 import DetailMurid from './components/detail_murid/index';
 import DetailKelas from './components/detail_kelas/index';
 import DetailRapor from './components/detail_rapor/index';
+import LaporanForGuru from './components/laporan/laporanguru';
 
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
@@ -292,6 +296,8 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
 
+         <Route path="/pengumuman" component={Pengumuman} />
+
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
@@ -384,6 +390,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
 
+        <Route path="/pengumuman" component={Pengumuman} />
         <Route path="/pengaturan" exact component={Pengaturan} />
 
         <Route path="/profile" exact component={Profile} />
@@ -462,6 +469,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/guru-info" component={LearningGuruInfo} />
 
         <Route path="/ruangan" component={LearningRuangan} />
+        <Route path="/jadwal-mengajar" component={GuruJadwal} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
@@ -469,6 +477,8 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
+
+         <Route path="/pengumuman" component={Pengumuman} />
 
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
@@ -492,6 +502,7 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/pengaturan" component={Pengaturan} />
 
@@ -513,6 +524,8 @@ export class ClientSwitch extends React.Component {
         <Route path='/guru/ujian' component={GuruUjian} />
         <Route path='/guru/informasi-kelas' component={InformasiKelas} />
         <Route path='/guru/kpi' component={GuruKPI} />
+
+        <Route path='/guru-laporan' component={LaporanForGuru} />
         <Route path='/detail-murid' component={DetailMurid} />
         <Route path='/detail-kelas' component={DetailKelas} />
         <Route path='/detail-rapor' component={DetailRapor} />

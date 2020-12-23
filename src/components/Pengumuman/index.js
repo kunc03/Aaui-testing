@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import TableWebinar from './webinar';
-import MuridWebinar from './webinar-murid';
+import TablePengumuman from './pengumuman';
 import Storage from '../../repository/storage';
 
-class Meeting extends Component {
+class Pengumumans extends Component {
   constructor(props) {
     super(props);
     this.goBack = this.goBack.bind(this);
@@ -22,26 +21,17 @@ class Meeting extends Component {
               <div className="pcoded-inner-content">
                 <div className="main-body">
                   <div className="page-wrapper">
-                    <div className="floating-back">
-                      <img
-                        src={`newasset/back-button.svg`}
-                        alt=""
-                        width={90}
-                        onClick={this.goBack}
-                      ></img>
-                    </div>
+                  <div className="floating-back">
+                    <img
+                      src={`newasset/back-button.svg`}
+                      alt=""
+                      width={90}
+                      onClick={this.goBack}
+                    ></img>
+                  </div>
                     <div className="row">
                       <div className="col-xl-12">
-                        {
-                        // access_project_admin ?
-                          <div>
-                            <TableWebinar access_project_admin={access_project_admin}/>
-                          </div>
-                          // : 
-                          //   <div>
-                          //     <MuridWebinar/>
-                          //   </div>
-                        }
+                        <TablePengumuman />
                       </div>
                     </div>
                   </div>
@@ -54,4 +44,4 @@ class Meeting extends Component {
   }
 }
 
-export default Meeting;
+export default Pengumumans;

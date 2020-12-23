@@ -238,8 +238,8 @@ class HomeNew extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  {/* DASHBOARD CLIENT ===  levelUser */}
-                  {levelUser === 'client' ?
+                  {/* DASHBOARD CLIENT ===  levelUser, sementara dimatiin di production */}
+                  {levelUser === 'clientlearning' ?
                     <div className="row">
                       <div className='col-sm-12 col-xl-6' style={{ paddingLeft: 0, paddingRight: 0 }}>
                         <div className="col-sm-12">
@@ -419,7 +419,7 @@ class HomeNew extends Component {
                           </Card>
                         </div>
 
-                        <div className="col-sm-12">
+                        {/* <div className="col-sm-12">
                           <Card style={{ backgroundColor: '#F3F3F3' }}>
 
                             <div className="col-sm-12">
@@ -435,7 +435,7 @@ class HomeNew extends Component {
                             </div>
 
                           </Card>
-                        </div>
+                        </div> */}
 
                       </div>
                     </div>

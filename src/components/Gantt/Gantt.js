@@ -4,7 +4,10 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
-import equal from 'fast-deep-equal'
+import equal from 'fast-deep-equal';
+import Storage from '../../repository/storage';
+import {Modal} from 'react-bootstrap';
+import MomentTZ from 'moment-timezone';
  
 export default class Gantt extends Component {
     constructor(props) {
@@ -23,7 +26,9 @@ export default class Gantt extends Component {
         statusOpen: true,
         statusProgress: true,
         statusDone: true,
-        statusClosed: true
+        statusClosed: true,
+        modalHistory: false,
+        history: []
         // tasks: {
         //     tasks : [],
         //     links : []
@@ -31,6 +36,10 @@ export default class Gantt extends Component {
       };
       this.fetchGanttData = this.fetchGanttData.bind(this)
       this.renderGantt = this.renderGantt.bind(this)
+    }
+
+    closeModalHistory = e => {
+        this.setState({modalHistory: false})
     }
 
     renderGantt(){
@@ -85,10 +94,14 @@ export default class Gantt extends Component {
             }
         };
         gantt.templates.task_text=function(start,end,task){
-            return "";
+                return "";
         };
         gantt.templates.progress_text=function(start,end,task){
-            return Math.round(task.progress*100)+"%";
+            let done = '';
+            if (task.status==='Done'){
+                done = task.done_time !== null ? ' - Done : '+MomentTZ.tz(task.done_time, 'Asia/Jakarta').format("DD/MM/YYYY HH:mm") : '';
+            }
+            return Math.round(task.progress*100)+"%"+done;
         };
         gantt.config.columns = [
             {
@@ -137,6 +150,26 @@ export default class Gantt extends Component {
     //     // }
     //     return false;
     // });
+    gantt.attachEvent("onLightboxSave", function(id, task, is_new){
+        if (task.status==='Done'){
+            task.progress=1;
+        }
+        return;
+    })
+    gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
+        if (mode === 'progress'){
+            if (gantt.getTask(id).progress === 1){
+                gantt.getTask(id).status = 'Done';
+                gantt.getTask(id).done_time = new Date();
+                gantt.updateTask(id);
+            }
+            else if (gantt.getTask(id).progress !== 1){
+                gantt.getTask(id).status = 'In Progress';
+                gantt.updateTask(id);
+            }
+        }
+        return;
+    });
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
 		if (item.parent == 0) {
 			return;
@@ -267,6 +300,8 @@ export default class Gantt extends Component {
         gantt.locale.labels.section_company = "Company";
         gantt.locale.labels.section_period = "Time period";
         gantt.locale.labels.section_status = "Status";
+        gantt.locale.labels.section_visibility = "Visibility";
+        gantt.locale.labels["logs_button"] = "History";
         gantt.config.resource_store = "resource";
         gantt.config.resource_property = "owner_id";
         gantt.config.order_branch = true;
@@ -287,7 +322,13 @@ export default class Gantt extends Component {
                 name:"company", height:38, map_to:"company",type:"select",
                 options: this.state.companies
             },
-            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]}
+            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]},
+            {
+                name: "visibility", height: 38, map_to: "visibility", type: "select", options: [
+                    {key: "Public", label: "Public"},
+                    {key: "Private", label: "Private"}
+                ]
+            }
         ];
         gantt.templates.time_picker = function(date){
             return gantt.date.date_to_str(gantt.config.time_picker)(date);
@@ -363,7 +404,15 @@ export default class Gantt extends Component {
         gantt.attachEvent("onGanttReady", function(){
             var tooltips = gantt.ext.tooltips;
             tooltips.tooltip.setViewport(gantt.$task_data);
+            gantt.config.buttons_left = ["gantt_save_btn","gantt_cancel_btn","logs_button"];   
+            gantt.config.buttons_right = ["gantt_delete_btn"];  
         });
+        gantt.attachEvent("onLightboxButton", function(button_id, node, e){
+            if(button_id == "logs_button"){
+                var id = gantt.getState().lightbox;
+                this.getHistory(id)
+            }
+        }.bind(this));
         const { tasks } = this.state;
         // today
         
@@ -403,10 +452,16 @@ export default class Gantt extends Component {
     resourcesStore.parse(this.state.users);
 
         gantt.init(this.ganttContainer);
-        let by = this.props.userId ? 'gantt-user' : 'gantt';
-        let val = this.props.userId ? this.props.userId : this.props.projectId;
-        gantt.load(`${API_SERVER}v2/${by}/${val}`)
-        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId}/`);
+        let api =
+        this.props.userId && this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/${this.props.projectId}/${this.props.userId}/${this.props.visibility}`
+        :
+        this.props.userId && !this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/0/${this.props.userId}/${this.props.visibility}`
+        :
+        `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
+        gantt.load(api)
+        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${Storage.get("user").data.user_id}/${this.props.projectId ? this.props.projectId : '0'}`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
 
@@ -416,9 +471,15 @@ export default class Gantt extends Component {
     }
 
     countTaskStatus(){
-        let by = this.props.userId ? 'gantt-user' : 'gantt';
-        let val = this.props.userId ? this.props.userId : this.props.projectId;
-        API.get(`${API_SERVER}v2/${by}/${val}`).then(res => {
+        let api =
+        this.props.userId && this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/${this.props.projectId}/${this.props.userId}/${this.props.visibility}`
+        :
+        this.props.userId && !this.props.projectId ?
+            `${API_SERVER}v2/gantt-user/0/${this.props.userId}/${this.props.visibility}`
+        :
+        `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
+        API.get(api).then(res => {
             if(res.data.error) console.log('Gagal fetch data task di project');
             this.setState({
               countOpen: res.data.tasks.filter((item) => (item.type === 'task' || item.type === '' || item.type === null) && (item.status === 'Open' || item.status === '' || item.status === null)).length,
@@ -452,7 +513,7 @@ export default class Gantt extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))))
+        if((this.props.projectId && !equal(this.props.projectId, prevProps.projectId)) || ((this.props.userId && !equal(this.props.userId, prevProps.userId))) || ((this.props.visibility && !equal(this.props.visibility, prevProps.visibility))))
         {
             gantt.clearAll()
             this.fetchGanttData();
@@ -507,6 +568,18 @@ export default class Gantt extends Component {
       }
     }
 
+    getHistory(id){        
+        API.get(`${API_SERVER}v2/gantt-history/${id}`).then(res => {
+            if (res.status === 200) {
+                this.setState({
+                    history: res.data.result,
+                    modalHistory: true
+                })
+                gantt.hideLightbox();
+            }
+        })
+    }
+
     // filterOpen(){
     //     this.setState({statusOpen: !this.state.statusOpen}, function() {
     //         gantt.refreshData();
@@ -516,7 +589,7 @@ export default class Gantt extends Component {
 
     render() {
        return (
-        <div className="card p-20">
+        <div className="card p-20" style={{width:'100%'}}>
         <div className="app-container">
           <div className="time-line-container">
           <div className="m-t-10 m-b-10" style={{alignSelf:'flex-start'}}>
@@ -599,7 +672,25 @@ export default class Gantt extends Component {
                 <input type="button" name="delete" value="Delete"/>
             </div> */}
             </div>
-        </div>
+        </div>        
+        <Modal show={this.state.modalHistory} onHide={this.closeModalHistory} dialogClassName='modal-lg'>
+            <Modal.Header closeButton>
+                <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
+                    History
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div>
+                    {
+                        this.state.history.map(item =>
+                            <div>
+                                <div>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")} - {item.description} by {item.name}</div>
+                            </div>    
+                        )
+                    }
+                </div>
+            </Modal.Body>
+        </Modal>
         </div>
        );
     }

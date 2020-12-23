@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
+import moment from 'moment-timezone';
 import {toast} from 'react-toastify'
 
 import CalenderNew from '../kalender/kalender';
@@ -28,6 +29,8 @@ class DashGuru extends Component {
     pengumumanIsi: '',
     pengumumanFile: [],
 
+    ptc: [],
+
     tugas: [
       {id: 1, mapel: 'Matematika', batas: '24 Des 2020', terkumpul: '20/30'},
       {id: 2, mapel: 'Fisika', batas: '25 Des 2020', terkumpul: '29/30'},
@@ -40,6 +43,8 @@ class DashGuru extends Component {
     ],
 
     jadwal: [],
+
+    jadwalBesok: [],
   }
 
   openSilabus = e => {
@@ -91,6 +96,7 @@ class DashGuru extends Component {
     this.fetchPelajaran();
     this.fetchPengumuman();
     this.fetchJadwal();
+    this.fetchPtc();
   }
 
   fetchPelajaran() {
@@ -118,8 +124,36 @@ class DashGuru extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
-      this.setState({ jadwal: res.data.result })
+
+      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let tglIni = new Date();
+      let hariIni = res.data.result.filter(item => item.hari === hari[tglIni.getDay()]);
+      let jadwalBesok = res.data.result.filter(item => item.hari === hari[tglIni.getDay()+1]);
+
+      this.setState({ jadwal: hariIni, jadwalBesok: jadwalBesok })
     })
+  }
+
+  fetchPtc() {
+    let url = ``;
+
+    if(Storage.get('user').data.grup_name.toLowerCase() === "guru") {
+      if(Storage.get('user').data.level !== "client") {
+        url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+      } else {
+        url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+      }
+    } else if(Storage.get('user').data.grup_name.toLowerCase() === "parents") {
+      url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
+    } else {
+      url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+    }
+
+    API.get(url).then(res => {
+      if (res.data.error) console.log('Error: ', res.data.result);
+
+      this.setState({ ptc: res.data.result.reverse() })
+    });
   }
 
   render() {
@@ -168,21 +202,26 @@ class DashGuru extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Tugas Yang Akan Datang</h4>
+                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Mengajar Besok</h4>
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th>Batas Waktu</th><th>Terkumpul</th><th>Aksi</th>
+                                <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.tugas.map((item,i) => (
+                                this.state.jadwalBesok.map((item,i) => (
                                   <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.mapel}</td>
-                                    <td>{item.batas}</td>
-                                    <td>{item.terkumpul}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td>{item.nama_pelajaran}</td>
+                                    <td>{item.hari}</td>
+                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                    <td>{item.kelas_nama}</td>
+                                    <td>
+                                      <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
+                                        <i className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }
@@ -203,18 +242,25 @@ class DashGuru extends Component {
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Tanggal</th><th>Waktu</th><th>Mata Pelajaran</th><th>Durasi</th><th>Aksi</th>
+                                <th>Ruangan</th><th>Moderator</th><th>Tanggal</th><th>Jam</th><th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.ujian.map((item,i) => (
+                                this.state.ptc.map((item,i) => (
                                   <tr key={i}>
-                                    <td>{item.tanggal}</td>
-                                    <td>{item.waktu}</td>
-                                    <td>{item.mapel}</td>
-                                    <td>{item.durasi}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td>{item.nama_ruangan}</td>
+                                    <td>{item.name}</td>
+                                    <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
+                                    <td>{item.waktu_mulai}</td>
+                                    <td>
+                                      {
+                                        Date.parse(item.tanggal_mulai) >= new Date() &&
+                                        <a target="_blank" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
+                                          <i className="fa fa-video"></i>
+                                        </a>
+                                      }
+                                    </td>
                                   </tr>
                                 ))
                               }

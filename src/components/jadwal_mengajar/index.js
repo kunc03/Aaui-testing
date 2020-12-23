@@ -209,7 +209,7 @@ class JadwalMengajar extends React.Component {
               Teaching Schedule
               <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
                 <i className="fa fa-plus"></i>
-                Add Teaching Room
+                Add Teaching Schedule
               </button>
             </div>
             <div className="card-body">
