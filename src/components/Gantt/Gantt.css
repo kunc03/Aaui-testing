@@ -1,0 +1,151 @@
+html, body, #root,#root div:only-child, .gantt-container {
+    /* height: 100%; */
+  }
+  
+  .weekend{
+    background: #F0DFE5 !important;
+}
+
+.gantt_marker.today{
+    background: #ffb121;
+}
+
+.deadline {
+    position: absolute;
+    border-radius: 12px;
+    border: 2px solid #585858;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    margin-top: 6px;
+    z-index: 1;
+    /* background: url("common/deadline_icon.png") center no-repeat; */
+}
+
+.overdue-indicator {
+    width: 24px;
+    margin-top: 5px;
+    height: 24px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 17px;
+    color: white;
+    background: rgb(255, 60, 60);
+    line-height: 25px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.dhx_calendar_cont input {
+    width: 96px;
+    padding: 0;
+    margin: 3px 10px 10px 10px;
+    font-size: 11px;
+    height: 17px;
+    text-align: center;
+    border: 1px solid #ccc;
+    color: #646464;
+}
+
+.dhtmlxcalendar_dhx_skyblue, .dhtmlxcalendar_dhx_web, .dhtmlxcalendar_dhx_terrace {
+    z-index: 999999 !important;
+}
+
+
+.resource_marker{
+    text-align: center;
+}
+.resource_marker div{
+    width: 28px;
+    height: 28px;
+    line-height: 29px;
+    display: inline-block;
+    border-radius: 15px;
+    color: #FFF;
+    margin: 3px;
+}
+.resource_marker.workday_ok div {
+    background: #51c185;
+}
+
+.resource_marker.workday_over div{
+    background: #ff8686;
+}
+
+.owner-label{
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    display: inline-block;
+    border: 1px solid #cccccc;
+    border-radius: 25px;
+    background: #e6e6e6;
+    color: #6f6f6f;
+    margin: 0 3px;
+    font-weight: bold;
+}
+
+.closed {
+    border: none;
+    color: #ffffff;
+    background: #c0c0c0;
+}
+
+.closed .gantt_task_progress {
+    background: #b8b8b8;
+}
+
+.progress {
+    border: none;
+    color: #ffffff;
+    background: #ff7800;
+}
+
+.progress .gantt_task_progress {
+    background: #cf6c16;
+}
+
+.done {
+    border: none;
+    color: #ffffff;
+    background: #67cb48;
+}
+
+.done .gantt_task_progress {
+    background: #4eaa33;
+}
+
+.open {
+    border: none;
+    color: #ffffff;
+    background: #3185ED;
+}
+
+.open .gantt_task_progress {
+    background: #2870c9;
+}
+
+.gantt_task_line.gantt_project{
+    border:none !important;
+    border-radius:12px;
+    background: #a6de96 !important;
+}
+.gantt_task_line.gantt_project .gantt_task_progress{
+    background: #87c477 !important;
+}
+
+.gantt_task_line{
+    border-radius:12px;
+}
+
+.gantt-multiselect{
+    margin: 0 20px;
+    width:80%;
+  }
+  .chosen-container{
+  	min-width:220px !important;
+  }
