@@ -30,13 +30,10 @@ class LaporanKpi extends Component {
                         <thead>
                           <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                             <td>Nama Guru</td>
-                            {
-                              headerTabble.map((item, i) => {
-                                return (
-                                  <td align="center" width={item.width}>{item.title}</td>
-                                )
-                              })
-                            }
+                            <td>NIK</td>
+                            <td>Mata pelajaran yang diajarkan</td>
+                            <td>Angkatan</td>
+                            <td>Status</td>
                             <td colSpan="2" align="center"> Action </td>
                           </tr>
                         </thead>

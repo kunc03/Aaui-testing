@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Hidden } from '@material-ui/core';
 import { Bar } from 'react-chartjs-2';
-import { dataBar, dataPie } from '../../modul/data';
+import { dataBar } from '../../modul/data';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
@@ -58,27 +57,27 @@ class Evaluasi extends Component {
           >
             <table className="table">
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Subject </span></td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Responden</span></td>
+                <td>Siswa</td>
+              </tr>
+              <tr>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                  Jumlah Responden</span></td>
+                <td>54</td>
+              </tr>
+              <tr>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                  Mata Pelajaran</span></td>
                 <td>Matematika</td>
               </tr>
               <tr>
                 <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  asdasdasd</span></td>
+                  Guru</span></td>
                 <td>54</td>
               </tr>
               <tr>
                 <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  asdasd</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  asdasd</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  asdasd</span></td>
+                  Ringkasan Evaluasi</span></td>
                 <td>54</td>
               </tr>
             </table>
@@ -110,7 +109,7 @@ class Evaluasi extends Component {
                 <div className="row">
                   <div className="col-sm-3">
                     <div className="form-group pl-5">
-                      <label>Subjects of Learning</label>
+                      <label>Nama Guru</label>
                       <select
                         className="form-control"
                         required
@@ -124,7 +123,7 @@ class Evaluasi extends Component {
                   </div>
                   <div className="col-sm-3">
                     <div className="form-group">
-                      <label>Class</label>
+                      <label>Tahun Ajaran</label>
                       <select
                         className="form-control"
                         required
@@ -138,7 +137,7 @@ class Evaluasi extends Component {
                   </div>
                   <div className="col-sm-3">
                     <div className="form-group">
-                      <label>School year</label>
+                      <label>Kelas</label>
                       <select
                         className="form-control"
                         required
