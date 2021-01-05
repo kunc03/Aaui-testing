@@ -86,9 +86,12 @@ class SidebarClass extends Component {
 
       principal: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'Laporan/Rapor ▼', link: '' },
+          { iconOn: '', iconOff: '', label: 'Semua Pembelajaran', link: '/principal-pembelajaran' },
+          { iconOn: '', iconOff: '', label: 'Pebelajaran Murid', link: '/principal-laporan' },
+          { iconOn: '', iconOff: '', label: 'Kinerja Guru (KPI)', link: '/principal-kpi' },
+          { iconOn: '', iconOff: '', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -129,7 +132,7 @@ class SidebarClass extends Component {
     };
 
     let menuAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -156,7 +159,7 @@ class SidebarClass extends Component {
     };
 
     let menuSuperAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -190,7 +193,7 @@ class SidebarClass extends Component {
 
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
-      if(companyType === "perusahaan") {
+      if (companyType === "perusahaan") {
         menuAtas = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
         menuBawah = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
       } else {
@@ -199,7 +202,7 @@ class SidebarClass extends Component {
       }
     } else if (levelUser === 'admin') {
       menuContent = menuAdmins.submenu;
-      if(companyType === "perusahaan") {
+      if (companyType === "perusahaan") {
         menuAtas = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
         menuBawah = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
       } else {
@@ -209,11 +212,11 @@ class SidebarClass extends Component {
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
       if (subMenuClient === "guru"
-            || subMenuClient === "murid"
-            || subMenuClient === "parents"
-            || subMenuClient === "principal"
-            || subMenuClient === "management"
-          ) {
+        || subMenuClient === "murid"
+        || subMenuClient === "parents"
+        || subMenuClient === "principal"
+        || subMenuClient === "management"
+      ) {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;
