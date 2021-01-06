@@ -14,8 +14,8 @@ import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment-timezone';
 import SocketContext from '../../../socket';
-import moment from 'moment-timezone'
 
 class WebinarAddClass extends Component {
 
@@ -372,6 +372,8 @@ class WebinarAddClass extends Component {
   render() {
 
     // const role = this.state.role
+    console.log('state: ', this.state);
+
     let levelUser = Storage.get('user').data.level;
 
     const TabelPembicara = ({ items }) => (

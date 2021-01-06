@@ -6,9 +6,7 @@ import moment from 'moment-timezone'
 import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 
-import SocketContext from '../../socket';
-
-class UjianClass extends React.Component {
+class Ujian extends React.Component {
 
   state = {
     role: this.props.role ? this.props.role : '',
@@ -25,8 +23,6 @@ class UjianClass extends React.Component {
 
     isSubmit: false,
     openConfirm: false,
-
-    isStart: false
   }
 
   clearScore() {
@@ -65,38 +61,13 @@ class UjianClass extends React.Component {
         salah: res.data.result.length ? res.data.result[0].total_uncorrect : 0,
         score: res.data.result.length ? res.data.result[0].score : 0,
       })
-
-      if(res.data.result.length) {
-        this.fetchSoal(this.state.examId)
-      }
-
-      if(this.props.getNilai) {
-        this.props.getNilai(res.data.result.length ? true : false)
-      }
-
     })
   }
 
   componentDidMount() {
     this.fetchSubmit()
     this.fetchExam(this.state.examId)
-
-    this.props.socket.on('broadcast', data => {
-      console.log('state1: ', data)
-      if (data.event == 'mulai' && data.companyId == Storage.get('user').data.company_id) {
-        if(data.isStart) {
-          this.setState({ isStart: data.isStart })
-          this.fetchSoal(this.state.examId)
-        }
-        else {
-          this.setState({ examSoal: [], isStart: false })
-        }
-      }
-
-      if (data.event == 'selesai' && data.companyId == Storage.get('user').data.company_id) {
-        this.saveJawaban();
-      }
-    })
+    this.fetchSoal(this.state.examId)
   }
 
   selectJawaban = (e, i) => {
@@ -161,7 +132,7 @@ class UjianClass extends React.Component {
 
               {
                 this.state.examSoal.map((item,i) => (
-                  <div className="mb-2" key={i}>
+                  <div className="mb-2">
                     <label>Pertanyaan <b>{i+1}</b></label>
                     <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
@@ -247,7 +218,7 @@ class UjianClass extends React.Component {
               }
 
               {
-                this.state.isStart && this.state.role === "murid" && !this.state.isSubmit &&
+                this.state.role === "murid" && !this.state.isSubmit &&
                 <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
               }
 
@@ -306,11 +277,5 @@ class UjianClass extends React.Component {
   }
 
 }
-
-const Ujian = props => (
-  <SocketContext.Consumer>
-    {socket => <UjianClass {...props} socket={socket} />}
-  </SocketContext.Consumer>
-)
 
 export default Ujian;

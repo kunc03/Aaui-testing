@@ -88,7 +88,7 @@ class Tugas extends React.Component {
 
   render() {
 
-    console.log(`state: `, this.state)
+    // console.log(`state: `, this.state)
 
     return (
       <>
@@ -104,7 +104,6 @@ class Tugas extends React.Component {
                     <th> Description </th>
                     <th> Time of Collection</th>
                     <th>Status</th>
-                    <th> Date Submit </th>
                     <th className="text-center"> Action </th>
                   </tr>
                 </thead>
@@ -118,7 +117,6 @@ class Tugas extends React.Component {
                           <td><a href="#" data-id={item.exam_id} data-title={item.title} onClick={this.openDetail}>{item.title}</a></td>
                           <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                           <td>{item.submitted.length === 1 ? 'Sudah Mengumpulkan' : 'Belum Mengumpulkan'}</td>
-                          <td>{item.submitted.length === 1 ? moment(item.submitted[0].created_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
                           <td className="text-center">
                             {
                               item.submitted.length === 1 && item.submitted[0].answer_file ?

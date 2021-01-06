@@ -154,7 +154,6 @@ class Overview extends React.Component {
                                           <div dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                           {
-                                            /**
                                             item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
                                             <ul className="list-group f-12">
                                               {
@@ -169,7 +168,6 @@ class Overview extends React.Component {
                                                 ))
                                               }
                                             </ul>
-                                            */
                                           }
 
                                           {

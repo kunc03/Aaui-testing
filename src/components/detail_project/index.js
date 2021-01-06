@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER, APPS_SERVER, USER_ME } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import {
   Tab, Tabs
@@ -12,7 +12,6 @@ import TableWebinar from '../webinar/webinar';
 import GanttChart from '../ganttChart/index';
 import TableFiles from '../files/_files';
 import Gantt from '../Gantt';
-import { MultiSelect } from 'react-sm-select';
 
 const titleTabs = [
   { name: 'Semua' },
@@ -29,6 +28,7 @@ export default class User extends Component {
 
     this.state = {
       projectName: '',
+      users: [],
       dataUser: [],
       access_project_admin: false,
       contentAll: true,
@@ -37,9 +37,6 @@ export default class User extends Component {
       contentGanttChart: true,
       contentFiles: true,
       currentZoom: 'Days',
-      visibility: 'public',
-      users: [],
-      valUsers: [],
 
       projectId: this.props.match.params.project_id,
       userId: Storage.get('user').data.user_id,
@@ -90,38 +87,13 @@ export default class User extends Component {
     if (item === 'Files') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: false, contentGanttChart: false, contentFiles: true });
   }
 
-  fetchUsers(){
-    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
-        this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-
-        API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
-          response.data.result.map(item => {
-            this.state.users.push({value: item.user_id, label: item.name});
-          });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-      }
-    });
-  }
-  changeUser = (val) => {
-    this.setState({valUsers: val})
-  }
-  componentDidMount(){
+  componentDidMount() {
     this.checkProjectAccess()
     this.getProject()
-    this.fetchUsers()
-  }
-
-  changeVisibility = e => {
-    this.setState({visibility: e.target.value})
   }
 
   render() {
     const { currentZoom } = this.state;
-    let levelUser = Storage.get('user').data.level;
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -164,29 +136,7 @@ export default class User extends Component {
                     <div className={this.state.contentGanttChart ? "col-xl-12" : "hidden"}>
                       {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
                       <div className="gantt-container">
-                        <div className="m-t-10 m-b-10">
-                          <select value={this.state.visibility} onChange={this.changeVisibility} style={{float:'right', marginBottom: 10, width:200, height:40, marginLeft: 10}}>
-                              {levelUser !== 'client' && <option value='all'>All</option>}
-                              <option value='public'>Public</option>
-                              <option value='private'>Private</option>
-                          </select>
-                          {levelUser !== 'client' &&
-                          <div style={{width:300, float:'right', backgroundColor:'#FFF'}}>
-                              <MultiSelect
-                                id={`users`}
-                                options={this.state.users}
-                                value={this.state.valUsers}
-                                onChange={valUsers => this.changeUser(valUsers)}
-                                mode="tags"
-                                enableSearch={true}
-                                resetable={true}
-                                valuePlaceholder="Filter Users"
-                                hasSelectAll
-                              />
-                          </div>
-                          }
-                        </div>
-                      <Gantt projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility}/>
+                        <Gantt projectId={this.state.projectId} />
                       </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>

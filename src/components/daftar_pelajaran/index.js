@@ -320,7 +320,7 @@ class DaftarPelajaran extends React.Component {
                     <th>Pelajaran</th>
                     <th>Category</th>
                     <th>Silabus</th>
-                    <th>Bobot %</th>
+                    <th>Nilai %</th>
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
@@ -369,7 +369,7 @@ class DaftarPelajaran extends React.Component {
                         <input  className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
                       </div>
                       <div className="col-sm-4">
-                        <label>Ujian</label>
+                        <label>Kuis</label>
                         <input  className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
                       </div>
                     </div>

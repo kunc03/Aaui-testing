@@ -58,7 +58,7 @@ class Latihan extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    // console.log('state: ', this.state)
 
     return (
       <>
@@ -89,18 +89,9 @@ class Latihan extends React.Component {
                         <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                         <td>{item.soal}</td>
                         <td>
-                          <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/${this.state.tipe}/${item.exam_id}`} className="btn btn-v2 btn-primary">
+                          <Link to={`/murid/detail-${this.state.tipe}/${item.exam_id}`} className="btn btn-v2 btn-primary">
                             <i className="fa fa-share"></i> Open
-                          </a>
-
-                          {
-                            /**
-                            <Link to={`/murid/detail-${this.state.tipe}/${item.exam_id}`} className="btn btn-v2 btn-primary">
-                            <i className="fa fa-share"></i> Open
-                            </Link>
-                            */
-                          }
-
+                          </Link>
                         </td>
                       </tr>
                     ))

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
+import API, { API_SERVER, API_SOCKET } from '../../../repository/api';
 import Tooltip from '@material-ui/core/Tooltip';
-import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
+
 import SocketContext from '../../../socket';
 
 class SidebarClass extends Component {
@@ -46,8 +47,7 @@ class SidebarClass extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let groupUser = Storage.get('user').data.grup_name;
-    let companyType = Storage.get('user').data.company_type;
-    console.log(`tipe: `, companyType)
+
     // console.log('Storage: ', Storage.get('user'));
 
     let menuClients = {
@@ -64,8 +64,6 @@ class SidebarClass extends Component {
 
       guru: {
         submenu: [
-          { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Jadwal Mengajar', link: '/jadwal-mengajar' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Laporan Murid', link: '/guru-laporan/ratakelas' },
           { iconOn: 'people-on.svg', iconOff: 'people.svg', label: 'Personnel', link: '/guru-info/personalia' },
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Courses', link: '/guru-info/kursus' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Exam', link: '/guru-info/ujian' },
@@ -86,12 +84,9 @@ class SidebarClass extends Component {
 
       principal: {
         submenu: [
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'instructor-on.svg', iconOff: 'instructor.svg', label: 'Laporan/Rapor ▼', link: '' },
-          { iconOn: '', iconOff: '', label: 'Semua Pembelajaran', link: '/principal-pembelajaran' },
-          { iconOn: '', iconOff: '', label: 'Pebelajaran Murid', link: '/principal-laporan' },
-          { iconOn: '', iconOff: '', label: 'Kinerja Guru (KPI)', link: '/principal-kpi' },
-          { iconOn: '', iconOff: '', label: 'Evaluasi', link: '/principal-evaluasi' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -108,8 +103,7 @@ class SidebarClass extends Component {
       other: {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus', access: 'course' },
           { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
           { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi', access: 'manage_course' },
@@ -133,9 +127,8 @@ class SidebarClass extends Component {
 
     let menuAdmins = {
       submenu: [
-        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
@@ -160,9 +153,8 @@ class SidebarClass extends Component {
 
     let menuSuperAdmins = {
       submenu: [
-        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
@@ -218,12 +210,8 @@ class SidebarClass extends Component {
       menuBawah = tempBawahAdmin;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
-      if (subMenuClient === "guru"
-        || subMenuClient === "murid"
-        || subMenuClient === "parents"
-        || subMenuClient === "principal"
-        || subMenuClient === "management"
-      ) {
+      console.log(subMenuClient, 'lepell userr');
+      if (subMenuClient === "guru" || subMenuClient === "murid" || subMenuClient === "parents") {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;

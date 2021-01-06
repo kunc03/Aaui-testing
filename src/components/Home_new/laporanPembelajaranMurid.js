@@ -5,48 +5,235 @@ import { toast } from "react-toastify";
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 class LaporanPembelajaranMurid extends Component {
   state = {
-    myMurid: {},
+    user: {
+      name: 'Anonymous',
+      registered: '2019-12-09',
+      companyId: ''
+    },
+    deleteProjectName: '',
+    deleteProjectId: '',
+    editProjectName: '',
+    editProjectId: '',
+    project: [],
+    modalNewFolder: false,
+    folderName: '',
+    alert: '',
+    modalDelete: false,
+    modalEdit: false,
+    modalSharing: false,
+    limited: false,
 
-    listSemester: [],
-    semesterId: '',
-    semesterInfo: {},
-
-    jadwalKu: [],
-
-    listKelas: [],
-    kelasId: '',
-    kelasInfo: {},
-
-    listMurid: [],
-    muridId: [],
-    muridInfo: {},
-
-    isLoading: false,
-    nilaiMurid: []
+    optionsProjectAdmin: [],
+    valueProjectAdmin: [],
+    valueUser: [],
+    share: [],
+    projectShareId: ''
   }
 
+  onChangeInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
+      this.setState({ [name]: value });
+    }
+  }
+
+  toggleSwitch(checked) {
+    this.setState({ limited: !this.state.limited });
+  }
+
+  closeModalProject = e => {
+    this.setState({ modalNewFolder: false, alert: '', valueProjectAdmin: [], limited: false, valueUser: [] })
+  }
+  closeModalEdit = e => {
+    this.setState({ modalEdit: false, alert: '', folderName: '', valueProjectAdmin: [], valueProjectAdmin: [], limited: false, valueUser: [] })
+  }
+  closeModalSharing = e => {
+    this.setState({ modalSharing: false, projectShareId: '' })
+  }
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteProjectName: '', deleteProjectId: '', alert: '' })
+  }
+  saveFolder = e => {
+    e.preventDefault();
+    const formData = {
+      name: this.state.folderName,
+      company: this.state.companyId,
+      mother: 0,
+      project_admin: this.state.valueProjectAdmin,
+      is_limit: this.state.limited ? 1 : 0,
+      user: this.state.valueUser,
+      aSekretaris: 1,
+      aModerator: 1,
+      aPembicara: 1,
+      aOwner: 1,
+      aPeserta: 1
+    };
+
+    API.post(`${API_SERVER}v1/folder`, formData).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          this.setState({ alert: res.data.result });
+        } else {
+          toast.success(`Berhasil menambah project ${this.state.folderName}`)
+          this.setState({ modalNewFolder: false, alert: '', folderName: '', valueProjectAdmin: [], valueUser: [], limited: false })
+          this.fetchProject();
+        }
+      }
+    })
+  }
+  fetchProject() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          this.setState({ project: response.data.result });
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }
+    })
+  }
+
+  dialogDelete(id, name) {
+    this.setState({
+      deleteProjectId: id,
+      deleteProjectName: name,
+      modalDelete: true
+    })
+  }
+
+  openModalEdit(id) {
+    API.get(`${API_SERVER}v1/project-read/${id}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          editProjectId: id,
+          editProjectName: res.data.result.name,
+          valueProjectAdmin: res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [],
+          valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
+          limited: res.data.result.is_limit === 0 ? false : true,
+          modalEdit: true
+        })
+      }
+    })
+  }
+  fetchShare(id) {
+    API.get(`${API_SERVER}v2/project/share/${id}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Gagal fetch data share`)
+        } else {
+          this.setState({
+            share: res.data.result,
+          })
+        }
+      }
+    })
+  }
+  share() {
+    let form = {
+      project_id: this.state.projectShareId,
+      email: this.state.email
+    }
+    API.post(`${API_SERVER}v2/project/share`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Gagal share project ${this.state.editProjectName}`)
+        } else {
+          if (res.data.result === 'success') {
+            this.setState({ email: '' })
+            this.fetchShare(this.state.projectShareId)
+            toast.success(`Sharing project to ${form.email}`)
+          }
+          else {
+            toast.warning(`Email ${form.email} not registered in ICADEMY`)
+          }
+        }
+      }
+    })
+  }
+  deleteShare(id) {
+    API.delete(`${API_SERVER}v2/project/share/${id}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Gagal delete data share`)
+        } else {
+          this.fetchShare(this.state.projectShareId)
+        }
+      }
+    })
+  }
+  openModalSharing(id) {
+    this.setState({ modalSharing: true, projectShareId: id })
+    this.fetchShare(id)
+  }
+
+  deleteProject() {
+    API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+        } else {
+          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
+          this.fetchProject();
+        }
+      }
+    })
+  }
+  editProject() {
+    let form = {
+      name: this.state.editProjectName,
+      project_admin: this.state.valueProjectAdmin,
+      is_limit: this.state.limited ? 1 : 0,
+      user: this.state.valueUser
+    }
+    API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Failed to modify the project ${this.state.editProjectName}`)
+        } else {
+          toast.success(`Successfully modified project ${this.state.editProjectName}`)
+          this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false })
+          this.fetchProject();
+        }
+      }
+    })
+  }
+
+  fetchOtherData() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+        if (this.state.optionsProjectAdmin.length == 0 || this.state.optionsProjectAdmin.length == 0) {
+          API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
+            response.data.result.map(item => {
+              this.state.optionsProjectAdmin.push({ value: item.user_id, label: item.name });
+            });
+          })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      }
+    })
+  }
   componentDidMount() {
-    this.fetchMyMurid(Storage.get('user').data.user_id);
+    this.fetchProject()
+    this.fetchOtherData()
   }
 
-  fetchMyMurid(userId) {
-    API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch murid`)
-
-      this.setState({ myMurid: res.data.result })
-
-      this.fetchNilaiMurid(res.data.result.semester_id, res.data.result.kelas_id, res.data.result.user_id_murid)
-    })
-  }
-
-  fetchNilaiMurid(semesterId, kelasId, userId) {
-    this.setState({ nilaiMurid: [], isLoading: true })
-    API.get(`${API_SERVER}v2/guru/nilai-murid/${semesterId}/${kelasId}/${userId}`).then(res => {
-      this.setState({ nilaiMurid: res.data.result, isLoading: false })
-    })
-  }
 
   render() {
+    // let access = Storage.get('access');
+    let levelUser = Storage.get('user').data.level;
+    let accessProjectManager = levelUser == 'client' ? false : true;
+    //  console.log(this.props, 'props evenntttt')
+    // const lists = this.state.project;
+    const lists = [{ title: 'Materi', level: 25 }, { title: 'Tugas', level: 25 }, { title: 'Ujian', level: 25 }, { title: 'Kuis', level: 25 }]
     return (
       <div className="row">
         <div className="col-sm-8">
@@ -66,115 +253,83 @@ class LaporanPembelajaranMurid extends Component {
           </p>
           <b className="f-24 f-w-800">  . . . </b>
         </div>
-
-        <div className="col-xl-12">
-
-          <div className="row">
-            <div className="col-sm-2">
-              <img
-                style={{
-                  marginTop: '36px',
-                  marginLeft: '64px'
-                }}
-                src="/assets/images/user/avatar-1.png"
-                className="rounded-circle img-profile mb-4"
-              />
-            </div>
-
-            <div className="col-sm-10">
-              <form className="mt-4">
-                <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
-                  <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.nik_murid} disabled className="form-control" />
-                  </div>
-
-                  <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
-                  <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.semester_name} className="form-control" />
-                  </div>
+        <div className="col-sm-6">
+          <table>
+            <tr>
+              <td style={{ width: '180px' }}>Nama</td>
+              <td><b>JO</b></td>
+            </tr>
+            <tr>
+              <td>Nik</td>
+              <td><b>12358945</b></td>
+            </tr>
+            <tr>
+              <td>Kelas</td>
+              <td><b>12 IPS</b></td>
+            </tr>
+          </table>
+        </div>
+        <div className="col-sm-6">
+          <div className="form-group">
+            <label>Mata Pelajaran</label>
+            <select
+              className="form-control"
+              required
+              name="quizAt"
+            >
+              <option value="">-- pilih --</option>
+              <option value="1">Ssatu</option>
+              <option value="2">Dua</option>
+            </select>
+          </div>
+        </div>
+        <div className="col-sm-12" style={{ marginTop: '10px' }}>
+          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+            {
+              lists.length == 0 ?
+                <div className="col-sm-12 mb-1">
+                  Not available
                 </div>
+                :
+                lists.map((item, i) => (
+                  <div className="col-sm-12 mb-1">
+                    <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
+                      <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
+                        <div className="box-project">
+                          <div className=" f-w-800 f-16 fc-black">
+                            {item.title}
+                          </div>
+                          {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
+                        </div>
+                      </Link>
+                      <span className="col-sm-7">
+                        <Link to=""><span className="circle-info float-right">{item.level}%</span></Link>
+                      </span>
 
-                <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right"> NAME </label>
-                  <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.nama_murid} className="form-control" />
-                  </div>
+                      {
+                        accessProjectManager ?
+                          <span class="btn-group dropleft col-sm-1">
+                            <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i
+                                className="fa fa-ellipsis-v"
+                                style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                              />
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
+                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
+                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
+                            </div>
+                          </span>
+                          : null
+                      }
 
-                  <label className="col-sm-2 col-form-label text-right">SCHOOL YEAR</label>
-                  <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.tahun_ajaran} className="form-control" />
+                    </div>
                   </div>
-                </div>
-
-                <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">KELAS</label>
-                  <div className="col-sm-4">
-                    <input type="text" value={this.state.myMurid.kelas_nama} className="form-control" />
-                  </div>
-                </div>
-              </form>
-            </div>
+                ))
+            }
 
           </div>
-
-          <div className="row">
-            <div className="col-sm-12">
-              <table className="table table-striped mt-4 table-bordered">
-                <thead>
-                  <tr className="text-center">
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
-                    <td colSpan="3">NILAI HASIL BELAJAR</td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
-                  </tr>
-                  <tr className="text-center">
-                    <td>TASK</td>
-                    <td>QUIZ</td>
-                    <td>EXAM</td>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {
-                    this.state.isLoading &&
-                    <tr>
-                      <td className="text-center" colSpan='7'>
-                        <span>Loading...</span>
-                      </td>
-                    </tr>
-                  }
-                  {
-                    this.state.nilaiMurid.map((item, i) => (
-                      <tr className="text-center">
-                        <td>{i + 1}</td>
-                        <td>{item.nama_pelajaran}</td>
-                        <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
-                        <td>
-                          {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
-                          <br/>
-                          {item.kumpulTugas.length}/{item.totalTugas.length}
-                        </td>
-                        <td>
-                          {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
-                          <br/>
-                          {item.kumpulKuis.length}/{item.totalKuis.length}
-                        </td>
-                        <td>
-                          {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
-                          <br/>
-                          {item.kumpulUjian.length}/{item.totalUjian.length}
-                        </td>
-                        <td>{item.persensi}</td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-
         </div>
 
       </div>

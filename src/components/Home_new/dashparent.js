@@ -9,7 +9,6 @@ import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
 import { toast } from 'react-toastify'
-import moment from 'moment-timezone'
 
 class DashParent extends Component {
 
@@ -31,12 +30,10 @@ class DashParent extends Component {
     jadwal: [],
 
     project: [],
-
-    myMurid: {},
   }
 
-  fetchJadwal(muridId) {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${muridId}`).then(res => {
+  fetchJadwal() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
       let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
@@ -74,17 +71,7 @@ class DashParent extends Component {
 
   componentDidMount() {
     this.fetchPengumuman();
-    this.fetchMyMurid(Storage.get('user').data.user_id);
-  }
-
-  fetchMyMurid(userId) {
-    API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch murid`)
-
-      this.setState({ myMurid: res.data.result })
-
-      this.fetchJadwal(res.data.result.user_id_murid)
-    })
+    this.fetchJadwal();
   }
 
   fetchPengumuman() {
@@ -203,86 +190,6 @@ class DashParent extends Component {
                           </table>
                         </Card.Body>
                       </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                    <Card>
-                      <Card.Body>
-                        <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
-                        <div className="wrap" style={{ height: '200px', overflowY: 'scroll', overflowX: 'hidden' }}>
-                          <table className="table">
-                          <tbody>
-                          {
-                            this.state.pengumuman.map((item, i) => (
-                              <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                              <td>{item.isi}</td>
-                              <td style={{ width: '40px' }}>
-                              <a href="#"
-                              onClick={this.openPengumuman}
-                              data-title={item.title}
-                              data-file={item.attachments}
-                              data-id={item.id_pengumuman}
-                              data-isi={item.isi}>Lihat</a>
-                              </td>
-                              </tr>
-                            ))
-                          }
-                          </tbody>
-                          </table>
-                        </div>
-                      </Card.Body>
-                    </Card>
-
-                    <Modal
-                      show={this.state.openPengumuman}
-                      onHide={this.closePengumuman.bind(this)}
-                      dialogClassName="modal-lg"
-                    >
-                      <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                          Pengumuman
-                        </Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <Form>
-                          <Form.Group controlId="formJudul">
-                            <FormControl
-                              type="text"
-                              name="judul"
-                              value={this.state.pengumumanNama}
-                              disabled
-                            />
-                          </Form.Group>
-
-                          <Form.Group controlId="formisi">
-                            <textarea
-                              className="form-control" id="exampleFormControlTextarea1" rows="8"
-                              name="isi"
-                              value={this.state.pengumumanIsi}
-                              disabled
-                            />
-                          </Form.Group>
-
-                          {
-                            this.state.pengumumanFile.length > 0 &&
-                            <Form.Group>
-                              <Form.Label>Attachments</Form.Label>
-                              <ul className="list-group">
-                                {
-                                  this.state.pengumumanFile.map(item => (
-                                    <li className="list-group-item">
-                                      <a href={item} target="_blank">{item}</a>
-                                    </li>
-                                  ))
-                                }
-                              </ul>
-                            </Form.Group>
-                          }
-
-                        </Form>
-
-                      </Modal.Body>
-                    </Modal>
                     </div>
 
                     <div className="col-sm-6">

@@ -92,18 +92,14 @@ export default class WebinarEdit extends Component {
     let sqlNotFromProject = `${API_SERVER}v1/user/company/${this.state.companyId}`;
     let sqlFromProject = `${API_SERVER}v2/project/user/${this.props.match.params.projectId}`;
     API.get(this.props.match.params.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
-      let tempOptions=[];
       response.data.result.map(item => {
-        tempOptions.push({value: item.user_id, label: item.name});
+        this.state.optionNames.push({ value: item.user_id, label: item.name });
       });
-      this.setState({optionNames: tempOptions})
-      if (this.state.optionsFolder.length==0){
+      if (this.state.optionsFolder.length == 0) {
         API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
-          let tempFolder=[];
           response.data.result.map(item => {
-            tempFolder.push({value: item.id, label: item.name});
+            this.state.optionsFolder.push({ value: item.id, label: item.name });
           });
-          this.setState({optionsFolder: tempFolder})
         })
           .catch(function (error) {
             console.log(error);

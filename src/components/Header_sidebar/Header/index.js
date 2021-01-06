@@ -8,8 +8,8 @@ import moment from 'moment-timezone';
 
 class Header extends Component {
   state = {
-    user: 'Anonymous',
-    level: 'Member',
+    user: 'Loading...',
+    level: 'Loading...',
     avatar: '/assets/images/user/avatar-1.png',
     notificationData: [],
 
@@ -69,22 +69,29 @@ class Header extends Component {
   async componentDidMount() {
     await API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
       if (res.status === 200) {
-
+        console.log('res company', res);
         if (res.data.error) {
           localStorage.clear();
           window.location.reload();
         }
 
-        let userStorage = Storage.get('user').data;
-        let addStorage = {...userStorage,
-          logo: res.data.result.logo,
-          company_id: res.data.result.company_id,
-          company_type: res.data.result.company_type,
-          user: res.data.result.name,
-          avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png'
-        };
+        Storage.set('user', {
+          data: {
+            logo: res.data.result.logo,
+            company_id: res.data.result.company_id,
+            company_type: res.data.result.company_type,
 
-        Storage.set('user', { data: addStorage });
+            user_id: res.data.result.user_id,
+            user: res.data.result.name,
+
+            grup_id: res.data.result.grup_id,
+            grup_name: res.data.result.grup_name,
+
+            email: res.data.result.email,
+            level: res.data.result.level,
+            avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png',
+          },
+        });
         console.log('ALVIN', res.data.result)
 
         this.setState({
@@ -95,8 +102,8 @@ class Header extends Component {
           role: res.data.result.grup_name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
-          ? res.data.result.avatar
-          : '/assets/images/user/avatar-1.png',
+            ? res.data.result.avatar
+            : '/assets/images/user/avatar-1.png',
         });
 
         if (this.state.level === 'client') {
@@ -540,7 +547,7 @@ class Header extends Component {
                     alt="Media"
                     className="img-radius"
                     style={{ width: 40, height: 40 }}
-                    src={this.state.avatar}
+                    src={this.state.avatar ? this.state.avatar : '/assets/images/user/avatar-1.png'}
                   />
                   <div className="media-body mt-1 ml-1">
                     <h6 className="chat-header f-w-900">
@@ -599,9 +606,9 @@ class Header extends Component {
                   alt="Media"
                   style={{ height: 26 }}
                   src={
-                    localStorage.getItem('logo')
-                      ? localStorage.getItem('logo')
-                      : this.state.logo
+                    this.state.logo
+                      ? this.state.logo
+                      : '/assets/images/user/avatar-1.png'
                   }
                 />
               </div>

@@ -15,7 +15,6 @@ export const DEV_MODE = 'pro';
 export const API_SERVER = DEV_MODE === 'development' ? API_SERVER_DEV : DEV_MODE === 'staging' ? API_SERVER_STG : API_SERVER_PROD;
 export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MODE === 'staging' ? APPS_SERVER_STG : APPS_SERVER_PROD;
 
-
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.id";
 

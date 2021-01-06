@@ -322,17 +322,17 @@ class Laporan extends React.Component {
                         <td>{item.nama_pelajaran}</td>
                         <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
                         <td>
-                          {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
+                          {item.totalAkhirScoreTugas}
                           <br/>
                           {item.kumpulTugas.length}/{item.totalTugas.length}
                         </td>
                         <td>
-                          {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
+                          {item.totalAkhirScoreKuis}
                           <br/>
                           {item.kumpulKuis.length}/{item.totalKuis.length}
                         </td>
                         <td>
-                          {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
+                          {item.totalAkhirScoreUjian}
                           <br/>
                           {item.kumpulUjian.length}/{item.totalUjian.length}
                         </td>

@@ -121,11 +121,7 @@ class DashMurid extends Component {
                                     <td>{item.hari}</td>
                                     <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                     <td>{item.sesi}</td>
-                                    <td>
-                                      <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
@@ -152,11 +148,7 @@ class DashMurid extends Component {
                                     <td>{item.title}</td>
                                     <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td>
-                                      <Link to={`/murid/tugas`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
@@ -261,11 +253,7 @@ class DashMurid extends Component {
                                     <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
                                     <td>{item.title}</td>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td>
-                                      <Link to={`/murid/ujian`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
+                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
                                   </tr>
                                 ))
                               }
