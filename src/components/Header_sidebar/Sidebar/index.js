@@ -47,7 +47,7 @@ class SidebarClass extends Component {
     let levelUser = Storage.get('user').data.level;
     let groupUser = Storage.get('user').data.grup_name;
     let companyType = Storage.get('user').data.company_type;
-
+    console.log(`tipe: `, companyType)
     // console.log('Storage: ', Storage.get('user'));
 
     let menuClients = {
@@ -191,24 +191,31 @@ class SidebarClass extends Component {
     let menuAtas = [];
     let menuBawah = [];
 
+    let tempAtasSuper = [], tempBawahSuper = [];
+    let tempAtasAdmin = [], tempBawahAdmin = [];
+
+    if(companyType === "perusahaan") {
+      tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+      tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
+
+      tempAtasAdmin = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+      tempBawahAdmin = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
+    } else {
+      tempAtasSuper = menuSuperAdmins.menuAtas;
+      tempBawahSuper = menuSuperAdmins.menuBawah;
+
+      tempAtasAdmin = menuAdmins.menuAtas;
+      tempBawahAdmin = menuAdmins.menuBawah;
+    }
+
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
-      if (companyType === "perusahaan") {
-        menuAtas = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-        menuBawah = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
-      } else {
-        menuAtas = menuSuperAdmins.menuAtas;
-        menuBawah = menuSuperAdmins.menuBawah;
-      }
+      menuAtas = tempAtasSuper;
+      menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
       menuContent = menuAdmins.submenu;
-      if (companyType === "perusahaan") {
-        menuAtas = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-        menuBawah = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
-      } else {
-        menuAtas = menuAdmins.menuAtas;
-        menuBawah = menuAdmins.menuBawah;
-      }
+      menuAtas = tempAtasAdmin;
+      menuBawah = tempBawahAdmin;
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
       if (subMenuClient === "guru"
