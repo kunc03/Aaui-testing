@@ -154,7 +154,7 @@ export default class Gantt extends Component {
         if (task.status==='Done'){
             task.progress=1;
         }
-        return;
+        return true;
     })
     gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
         if (mode === 'progress'){
