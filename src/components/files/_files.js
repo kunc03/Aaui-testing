@@ -493,6 +493,15 @@ fetchRekamanBBB(folder){
     this.setState({ modalDeleteFile: false, deleteFileName: '', deleteFileId: '', alert: '' })
   }
 
+  selectFileShow = (type, val) => {
+    if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg'){
+      this.props.selectedFileShow(val)
+    }
+    else{
+      toast.warning('Sorry, this file type not support yet to show')
+    }
+  }
+
   filesLogs(e) {
     let data = {
       id: e.id,
@@ -526,7 +535,7 @@ fetchRekamanBBB(folder){
         <span className="mb-4">
           <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
           {
-            this.props.guest === false &&
+            this.props.guest === false || !this.props.guest &&
             <button
               onClick={e => this.setState({ modalUpload: true })}
               className="btn btn-icademy-primary float-right"
@@ -639,7 +648,7 @@ fetchRekamanBBB(folder){
                     {
                       this.state.files.map(item =>
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td className="fc-muted f-14 f-w-300 p-t-20">
+                          <td className="fc-muted f-14 f-w-300 p-t-20" style={{cursor:'pointer'}} onClick={this.selectFileShow.bind(this, item.type, item.location)}>
                             <img src={
                               item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
                                 ? `assets/images/files/${item.type}.svg`
@@ -707,6 +716,7 @@ fetchRekamanBBB(folder){
                       )
                     }
                     {
+                      this.state.selectFolder === false &&
                       this.state.recordedMeeting.map(item =>
                         item.record && item.record.split(',').map(item =>
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -738,6 +748,7 @@ fetchRekamanBBB(folder){
                         )
                         }
                         {
+                        this.state.selectFolder === false &&
                         this.state.dataRecordings.map((item) =>
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
