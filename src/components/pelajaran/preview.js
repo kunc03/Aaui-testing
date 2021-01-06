@@ -100,7 +100,7 @@ class Overview extends React.Component {
                     <div class="col py-2">
                         <div class="card shadow">
                             <div class="card-body timeline-active">
-                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">Overview Pelajaran</h4>
+                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
                                 </div>
@@ -133,31 +133,19 @@ class Overview extends React.Component {
                                         <div class="float-right text-muted f-12">
                                           {item.hasOwnProperty('exam_id') ? moment(item.time_start).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
                                         </div>
-                                        <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">{item.chapter_title ? item.chapter_title : item.exam_title}</h4>
+                                        <h4 data-target={`#t${i}`} data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title">
+                                          {
+                                            item.hasOwnProperty('exam_id') ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                          }
+                                          {item.chapter_title ? item.chapter_title : item.exam_title}
+                                        </h4>
                                         <div class="collapse" id={`t${i}`}>
                                           <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                           {
-                                            item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
-                                              <ul className="list-group f-12 mb-3">
-                                              {
-                                                item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
-                                                  <li className="list-group-item">
-                                                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-                                                      <div style={{ height: '750px' }}>
-                                                          <Viewer fileUrl={item} />
-                                                      </div>
-                                                    </Worker>
-                                                  </li>
-                                                ))
-                                              }
-                                              </ul>
-                                          }
-
-                                          {
                                             (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
                                               <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
-                                                <i className="fa fa-share"></i> {row.exam_title}
+                                                <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
                                           }
@@ -165,7 +153,7 @@ class Overview extends React.Component {
                                           {
                                             item.hasOwnProperty('chapter_id') &&
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
-                                              <i className="fa fa-share"></i> Open
+                                              <i className="fa fa-video"></i> Open
                                             </a>
                                           }
 
@@ -173,10 +161,10 @@ class Overview extends React.Component {
                                             item.hasOwnProperty('exam_id') &&
                                             <>
                                             <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info mr-2">
-                                              <i className="fa fa-share"></i> Detail
+                                              <i className="fa fa-tasks"></i> Detail
                                             </Link>
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
-                                              <i className="fa fa-share"></i> Open
+                                              <i className="fa fa-video"></i> Open
                                             </a>
                                             </>
                                           }
@@ -210,10 +198,12 @@ class Overview extends React.Component {
                         <div class={`card ${moment(item.time_start) < moment(new Date()) ? 'timeline-active' : ''} shadow`}>
                           <div class="card-body">
                             <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
-                            <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">{item.title}</h4>
+                            <h4 class="card-title" data-target={`#tU${i}`} data-toggle="collapse">
+                              <i className="fa fa-flag mr-3"></i> {item.title}
+                            </h4>
                             <div className="collapse" id={`tU${i}`}>
                               <Link to={`/guru/detail-ujian/${this.state.jadwalId}/${item.id}`} className="btn btn-v2 btn-info mr-2">
-                                <i className="fa fa-share"></i> Detail
+                                <i className="fa fa-tasks"></i> Detail
                               </Link>
                               <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.id}`} className="btn btn-v2 btn-success mr-2">
                                 <i className="fa fa-video"></i> Open

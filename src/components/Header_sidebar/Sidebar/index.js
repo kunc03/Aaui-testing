@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../../repository/storage';
-import API, { API_SERVER, API_SOCKET } from '../../../repository/api';
 import Tooltip from '@material-ui/core/Tooltip';
-
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
 
 class SidebarClass extends Component {
@@ -106,7 +105,8 @@ class SidebarClass extends Component {
       other: {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus', access: 'course' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
           { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
           { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi', access: 'manage_course' },
@@ -129,9 +129,10 @@ class SidebarClass extends Component {
     };
 
     let menuAdmins = {
-      submenu: [
-        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus' },
+      submenu : [
+        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
@@ -155,9 +156,10 @@ class SidebarClass extends Component {
     };
 
     let menuSuperAdmins = {
-      submenu: [
-        { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Courses & Materials', link: '/kursus' },
+      submenu : [
+        // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
@@ -186,35 +188,32 @@ class SidebarClass extends Component {
     let menuAtas = [];
     let menuBawah = [];
 
-    let tempAtasSuper = [], tempBawahSuper = [];
-    let tempAtasAdmin = [], tempBawahAdmin = [];
-
-    if(companyType === "perusahaan") {
-      tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-      tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
-
-      tempAtasAdmin = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-      tempBawahAdmin = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
-    } else {
-      tempAtasSuper = menuSuperAdmins.menuAtas;
-      tempBawahSuper = menuSuperAdmins.menuBawah;
-
-      tempAtasAdmin = menuAdmins.menuAtas;
-      tempBawahAdmin = menuAdmins.menuBawah;
-    }
-
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
-      menuAtas = tempAtasSuper;
-      menuBawah = tempBawahSuper;
+      if(companyType === "perusahaan") {
+        menuAtas = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+        menuBawah = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
+      } else {
+        menuAtas = menuSuperAdmins.menuAtas;
+        menuBawah = menuSuperAdmins.menuBawah;
+      }
     } else if (levelUser === 'admin') {
       menuContent = menuAdmins.submenu;
-      menuAtas = tempAtasAdmin;
-      menuBawah = tempBawahAdmin;
+      if(companyType === "perusahaan") {
+        menuAtas = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+        menuBawah = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
+      } else {
+        menuAtas = menuAdmins.menuAtas;
+        menuBawah = menuAdmins.menuBawah;
+      }
     } else {
       let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
-      console.log(subMenuClient, 'lepell userr');
-      if (subMenuClient === "guru" || subMenuClient === "murid" || subMenuClient === "parents") {
+      if (subMenuClient === "guru"
+            || subMenuClient === "murid"
+            || subMenuClient === "parents"
+            || subMenuClient === "principal"
+            || subMenuClient === "management"
+          ) {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;

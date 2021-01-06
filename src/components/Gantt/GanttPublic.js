@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Grantt from './Gantt';
+import Gantt from './Gantt';
 
 export default class GanttPublic extends Component {
 
@@ -8,7 +8,7 @@ export default class GanttPublic extends Component {
 
 	render() {
 		return (
-            <Grantt projectId={this.props.match.params.projectId}/>
+            <Gantt projectId={this.props.match.params.projectId}/>
 		);
 	}
 

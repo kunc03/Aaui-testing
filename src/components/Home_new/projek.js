@@ -271,7 +271,6 @@ class ProjekNew extends Component {
               <span className=" f-12 fc-skyblue">See all</span>
             </Link>
           </p>
-          <b className="f-24 f-w-800">  . . . </b>
         </div>
         <div className="col-sm-12" style={{ marginTop: '10px' }}>
           <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
@@ -282,8 +281,8 @@ class ProjekNew extends Component {
                 </div>
                 :
                 lists.map((item, i) => (
-                  <div className="col-sm-12 mb-1 ">
-                    <div className="row p-10 p-t-15 p-b-15 " style={{ borderBottom: '1px solid #E6E6E6' }}>
+                  <div className="col-sm-12 mb-1">
+                    <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
                       <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
                         <div className="box-project">
                           <div className=" f-w-800 f-16 fc-black">
@@ -453,7 +452,7 @@ class ProjekNew extends Component {
           centered
         >
           <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: 'red' }}>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
               Edit Project
             </Modal.Title>
           </Modal.Header>

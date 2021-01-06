@@ -11,7 +11,7 @@ import SocketContext from '../../socket';
 class PtcClasses extends React.Component {
 
   state = {
-    role: this.props.role,
+    role: this.props.role ? this.props.role : 'admin',
     ptc: [],
     rapat: [],
 
@@ -91,7 +91,11 @@ class PtcClasses extends React.Component {
     let url = ``;
 
     if(this.state.role.toLowerCase() === "guru") {
-      url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+      if(Storage.get('user').data.level !== "client") {
+        url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+      } else {
+        url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+      }
     } else if(this.state.role.toLowerCase() === "parents") {
       url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
     } else {

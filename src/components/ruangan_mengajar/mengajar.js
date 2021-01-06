@@ -215,6 +215,10 @@ class Mengajar extends React.Component {
       if (data.event == 'absen' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
         this.fetchMurid(this.state.jadwalId);
       }
+
+      if (data.event == 'mulai' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
+        this.setState({ startPertemuan: data.isStart })
+      }
     })
   }
 
@@ -367,12 +371,19 @@ class Mengajar extends React.Component {
                         <i className={'fa fa-list-alt'}></i> Info
                       </button>
                     }
+
+                    {
+                      this.state.role === "guru" && (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
+                      <button onClick={this.startPertemuan} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
+                        <i className={`fa fa-${this.state.startPertemuan ? 'pause':'play'}`}></i> {this.state.startPertemuan ? 'Stop' : 'Start'}
+                      </button>
+                    }
                   </h4>
                   <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
                 </div>
 
                 {
-                  this.state.jenis === "materi" &&
+                  // this.state.jenis === "materi" &&
                     <div className="card-body p-1">
                       {
                         this.state.infoChapter.tatapmuka == 1 &&
@@ -502,33 +513,39 @@ class Mengajar extends React.Component {
               (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
               <>
                 {
-                  this.state.role === "murid" &&
+                  this.state.role === "murid" && !this.state.isSubmit && this.state.startPertemuan &&
                   <div className="col-sm-12">
-                  <div className="card">
-                  <div className="card-header">
-                  <h4 className="header-kartu">
-                  Waktu Pengerjaan
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="header-kartu">
+                        Waktu Pengerjaan
 
-                  {
-                    this.state.role === "murid" &&
-                    <Timer
-                    durationInSeconds={7200}
-                    formatted={true}
+                        {
+                          this.state.role === "murid" &&
+                          <Timer
+                            durationInSeconds={7200}
+                            formatted={true}
 
-                    onStart = {()=> {
-                      console.log('Triggered when the timer starts')
-                    }}
+                            onStart = {()=> {
+                              console.log('Triggered when the timer starts')
+                            }}
 
-                    onFinish = {()=> {
-                      console.log('Triggered when the timer finishes')
-                    }}
+                            onFinish = {()=> {
+                              console.log('Triggered when the timer finishes')
+                              this.props.socket.emit('send', {
+                                event: 'selesai',
+                                isStart: !this.state.startPertemuan,
+                                jadwalId: this.state.jadwalId,
+                                companyId: Storage.get('user').data.company_id
+                              })
+                            }}
 
-                    />
-                  }
+                            />
+                        }
 
-                  </h4>
-                  </div>
-                  </div>
+                        </h4>
+                      </div>
+                    </div>
                   </div>
                 }
 

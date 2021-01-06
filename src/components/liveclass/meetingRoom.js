@@ -500,8 +500,8 @@ export default class MeetingRoom extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_end: new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
@@ -785,8 +785,8 @@ export default class MeetingRoom extends Component {
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
 
-    let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
-    let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
+    let infoDateStart = new Date(this.state.infoClass.schedule_start);
+    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
 
     return (
       <div className="pcoded-main-container">
@@ -912,10 +912,10 @@ export default class MeetingRoom extends Component {
                                 { this.state.infoClass.is_scheduled ?
                                 <div className="col-sm-6">
                                   <h3 className="f-14">
-                                                    Mulai : {infoDateStart}
+                                                    Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
                                                   </h3>
                                   <h3 className="f-14">
-                                                    Selesai : {infoDateEnd}
+                                                    Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
                                                   </h3>
                                 </div>
                                 : null }
@@ -1060,7 +1060,7 @@ export default class MeetingRoom extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-
+            
           <div>
                 <div className="col-sm-12">
                   <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
@@ -1069,10 +1069,10 @@ export default class MeetingRoom extends Component {
                         return (
                           <div className='box-chat-send-left'>
                             <span className="m-b-5"><b>{item.name} </b></span><br/>
-                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
                             <small >
-                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
+                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
                             </small>
                             {
                               classRooms.moderator == Storage.get("user").data.user_id &&

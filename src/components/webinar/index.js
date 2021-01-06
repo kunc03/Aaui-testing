@@ -32,14 +32,15 @@ class Meeting extends Component {
                     </div>
                     <div className="row">
                       <div className="col-xl-12">
-                        {access_project_admin ?
+                        {
+                        // access_project_admin ?
                           <div>
                             <TableWebinar access_project_admin={access_project_admin}/>
                           </div>
-                          : 
-                            <div>
-                              <MuridWebinar/>
-                            </div>
+                          // : 
+                          //   <div>
+                          //     <MuridWebinar/>
+                          //   </div>
                         }
                       </div>
                     </div>

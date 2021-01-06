@@ -307,6 +307,7 @@ class NotificationClass extends Component {
           </div>
         </div>
 
+
       </div>
 
     );

@@ -4,10 +4,11 @@ import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIS
 import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
 
 import Storage from '../../repository/storage';
-import SocketContext from '../../socket';
 import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
+import SocketContext from '../../socket';
+
 const bbb = require('bigbluebutton-js')
 
 class FilesTableClass extends Component {
@@ -63,20 +64,20 @@ class FilesTableClass extends Component {
     this.setState({ limited: !this.state.limited });
   }
 
-  handleCheck(role) {
-    if (role == 'sekretaris') {
+  handleCheck (role) {
+    if (role == 'sekretaris'){
       this.setState({ aSekretaris: !this.state.aSekretaris });
     }
-    else if (role == 'moderator') {
+    else if (role == 'moderator'){
       this.setState({ aModerator: !this.state.aModerator });
     }
-    else if (role == 'pembicara') {
+    else if (role == 'pembicara'){
       this.setState({ aPembicara: !this.state.aPembicara });
     }
-    else if (role == 'owner') {
+    else if (role == 'owner'){
       this.setState({ aOwner: !this.state.aOwner });
     }
-    else if (role == 'peserta') {
+    else if (role == 'peserta'){
       this.setState({ aPeserta: !this.state.aPeserta });
     }
   }
@@ -123,9 +124,6 @@ class FilesTableClass extends Component {
             this.setState({ uploading: false, attachmentId: [] });
             toast.error('Error : ' + res.data.result)
           }
-          // else {
-          //   toast.success('Berhasil upload file')
-          // }
         }
       })
     }
@@ -152,7 +150,6 @@ class FilesTableClass extends Component {
     })
     this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
   }
-
   onChangeInput = e => {
     // const target = e.target;
     const name = e.target.name;
@@ -252,10 +249,10 @@ class FilesTableClass extends Component {
       await API.get(apiUrl).then(res => {
         if (res.data.error) toast.warning("Gagal fetch API");
         form = {
-          aSekretaris: userId == res.data.result.sekretaris[0].user_id ? 1 : 0,
-          aModerator: userId == res.data.result.moderator[0].user_id ? 1 : 0,
-          aPembicara: userId == res.data.result.pembicara[0].user_id ? 1 : 0,
-          aOwner: userId == res.data.result.owner[0].user_id ? 1 : 0,
+          aSekretaris: res.data.result.sekretaris.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aModerator: res.data.result.moderator.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aPembicara: res.data.result.pembicara.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
+          aOwner: res.data.result.owner.filter((item) => item.user_id == userId).length >= 1 ? 1 : 0,
           aPeserta: res.data.result.peserta.filter((item) => item.user_id == userId).length || res.data.result.tamu.filter((item) => item.voucher == this.props.voucherTamu).length ? 1 : 0,
         }
       })
@@ -329,38 +326,39 @@ class FilesTableClass extends Component {
     }
   }
 
-  fetchRekamanBBB(folder) {
-    let levelUser = Storage.get('user').data.level;
-    let userId = Storage.get('user').data.user_id;
-    if (folder == 0) {
-      this.setState({ dataRecordings: [], isLoading: false })
-    }
-    else {
-      API.get(
-        `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${folder}`
-      ).then((res) => {
-        if (res.status === 200) {
-          let data = res.data.result;
-          // BBB GET MEETING RECORD
-          let api = bbb.api(BBB_URL, BBB_KEY)
-          let http = bbb.http
-          if (data.length > 0) {
-            data.map((item) => {
-              BBB_SERVER_LIST.map((items) => {
-                let api = bbb.api(items.server, items.key)
-                let http = bbb.http
-                let getRecordingsUrl = api.recording.getRecordings({ meetingID: item.class_id })
-                http(getRecordingsUrl).then((result) => {
-                  if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
-                    this.state.dataRecordings.push(result.recordings)
-                    this.forceUpdate()
-                  }
-                  else {
-                    console.log('GAGAL', result)
-                  }
+fetchRekamanBBB(folder){
+  let levelUser = Storage.get('user').data.level;
+  let userId = Storage.get('user').data.user_id;
+  if (folder == 0){
+    this.setState({dataRecordings:[], isLoading: false})
+  }
+  else{
+        API.get(
+          `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${folder}`
+        ).then((res) => {
+          if (res.status === 200) {
+            let data = res.data.result;
+            // BBB GET MEETING RECORD
+            let api = bbb.api(BBB_URL, BBB_KEY)
+            let http = bbb.http
+            if (data.length > 0){
+              data.map((item) => {
+                BBB_SERVER_LIST.map((items) => {
+                  let api = bbb.api(items.server, items.key)
+                  let http = bbb.http
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id, state: 'any'})
+                  http(getRecordingsUrl).then((result) => {
+                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.state.dataRecordings.push(result.recordings)
+                      this.forceUpdate()
+                    }
+                    else{
+                      console.log('GAGAL', result)
+                    }
+                  })
                 })
               })
-            })
+            }
           }
           else {
             this.setState({ dataRecordings: this.state.dataRecordings })
@@ -370,7 +368,6 @@ class FilesTableClass extends Component {
           this.setState({
             isLoading: false
           })
-        }
       });
     }
   }
@@ -395,7 +392,7 @@ class FilesTableClass extends Component {
                 BBB_SERVER_LIST.map((items) => {
                   let api = bbb.api(items.server, items.key)
                   let http = bbb.http
-                  let getRecordingsUrl = api.recording.getRecordings({ meetingID: item.id })
+                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id, state: 'any'})
                   http(getRecordingsUrl).then((result) => {
                     if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
                       this.state.dataRecordings.push(result.recordings)
@@ -738,30 +735,30 @@ class FilesTableClass extends Component {
                             </td>
                           </tr>
                         )
-                      )
-                    }
-                    {
-                      this.state.dataRecordings.map((item) =>
-                        item.recording.length ? item.recording.map((item) =>
-                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                              <span class="btn-group dropleft col-sm-1">
-                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i
-                                    className="fa fa-ellipsis-v"
-                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                  />
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                  <button
-                                    style={{ cursor: 'pointer' }}
-                                    class="dropdown-item"
-                                    type="button"
-                                    onClick={e => window.open(item.playback.format.url, 'Rekaman Meeting')}
-                                  >
-                                    Lihat
+                        )
+                        }
+                        {
+                        this.state.dataRecordings.map((item) =>
+                            item.recording.length ? item.recording.map((item) =>
+                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                  <span class="btn-group dropleft col-sm-1">
+                                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <i
+                                        className="fa fa-ellipsis-v"
+                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                      />
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      <button
+                                        style={{cursor:'pointer'}}
+                                        class="dropdown-item"
+                                        type="button"
+                                        onClick={e=>window.open(item.playback.format.url, 'Rekaman Meeting')}
+                                      >
+                                          Lihat
                                       </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>

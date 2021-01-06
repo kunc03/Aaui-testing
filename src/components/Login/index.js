@@ -95,8 +95,6 @@ class Login extends Component {
               level: res.data.result.level,
               grup_id: res.data.result.grup_id,
               grup_name: res.data.result.grup_name,
-              company_id: res.data.result.company_id,
-              company_type: res.data.result.company_type,
             }
           });
 
@@ -108,8 +106,6 @@ class Login extends Component {
             group_meeting: res.data.result.group_meeting,
             manage_group_meeting: res.data.result.manage_group_meeting
           });
-
-          Storage.set('token', { data: res.data.result.token });
 
           Storage.set('token', { data: res.data.result.token });
 
@@ -168,11 +164,20 @@ class Login extends Component {
               level: res.data.result.level,
               grup_id: res.data.result.grup_id,
               grup_name: res.data.result.grup_name,
-              company_id: res.data.result.company_id,
-              company_type: res.data.result.company_type,
             }
           });
+
+          Storage.set('access', {
+            activity: res.data.result.activity,
+            course: res.data.result.course,
+            manage_course: res.data.result.manage_course,
+            forum: res.data.result.forum,
+            group_meeting: res.data.result.group_meeting,
+            manage_group_meeting: res.data.result.manage_group_meeting
+          });
+
           Storage.set('token', { data: res.data.result.token });
+          
           if (this.props.redirectUrl) {
             window.location.href = window.location.origin + this.props.redirectUrl
           }

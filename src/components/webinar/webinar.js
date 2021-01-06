@@ -142,88 +142,108 @@ class WebinarTable extends Component {
                     <i className="fa fa-cog"></i>
                     Roles
                 </Link> */}
-        </span>
-        <div className="table-responsive">
-          <table className="table table-hover">
-            <thead>
-              <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                <td>Name Webinar</td>
-                {
-                  headerTabble.map((item, i) => {
-                    return (
-                      <td align="center" width={item.width}>{item.title}</td>
-                    )
-                  })
-                }
-                <td colSpan="2" align="center">Action</td>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                bodyTabble.length == 0 ?
-                  <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>There is no</td>
-                  </tr>
-                  :
-                  bodyTabble.map((item, i) => {
-                    let levelUser = Storage.get('user').data.level;
-                    return (
-                      <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
-                          <StatusBadge value={item.status} />
-                        </td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length + item.tamu.length}</td>
-                        {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
+            </span>
+            <div className="table-responsive">
+                <table className="table table-hover">
+                <thead>
+                    <tr style={{borderBottom: '1px solid #C7C7C7'}}>
+                    <td>Nama Webinar</td>
+                    {
+                        headerTabble.map((item, i) => {
+                            return (
+                            <td align="center" width={item.width}>{item.title}</td>
+                            )
+                        })
+                    }
+                    <td align="center"></td>
+                    <td align="center">Aksi</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        bodyTabble.length == 0 ?
+                        <tr>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
+                        </tr>
+                        :
+                        bodyTabble.map((item, i) => {
+                            let levelUser = Storage.get('user').data.level;
+                            return (
+                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
+                                    <StatusBadge value={item.status} />
+                                </td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length+item.tamu.length}</td>
+                                {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
                                         <i className="fa fa-download fc-skyblue"></i> Download File
                                     </button>
                                 </td> */}
-                        <td className="fc-muted f-14 f-w-300 " align="center">
-                          {
-                            access_project_admin &&
-                            <Link onClick={this.dialogDelete.bind(this, item.id)} className="btn btn-v2 btn-primary mr-2" style={{ backgroundColor: '#9f4040', border: 'none', color: '#FFF' }}> Delete </Link>
-                          }
-                          {
-                            ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
-                            <Link to={`/webinar/add/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Detail</Link>
-                          }
-                          {
-                            (access_project_admin && item.status != 3) &&
-                            <Link to={`/webinar/edit/${item.project_id}/${item.id}`} className="btn btn-v2 btn-info mr-2">Edit</Link>
-                          }
-                          {
-                            ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
-                            <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">History</Link>
-                          }
-                          {
-                            ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                            <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Entry</Link>
-                          }
-                          {
-                            (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
-                            <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Start</Link>
-                          }
-                        </td>
-                      </tr>
-                    )
-                  })
-              }
+                                <td className="fc-muted f-14 f-w-300" align="center">
+                                    <span class="btn-group dropleft">
+                                      <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i
+                                          className="fa fa-ellipsis-v"
+                                          style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
+                                        />
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                        {
+                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
+                                          <Link to={`/webinar/add/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Detail
+                                          </Link>
+                                        }
+                                        {
+                                          (access_project_admin && item.status !=3) &&
+                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Edit
+                                          </Link>
+                                        }
+                                        {
+                                          access_project_admin &&
+                                          <Link onClick={this.dialogDelete.bind(this, item.id)} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                            Delete
+                                          </Link>
+                                        }
 
-            </tbody>
-          </table>
-        </div>
-        <Modal
-          show={this.state.modalDelete}
-          onHide={this.closeModalDelete}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+                                      </div>
+                                    </span>
+                                </td>
+                                <td className="fc-muted f-14 f-w-300 " align="center">
+                                    {
+                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
+                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                    }
+                                    {
+                                        ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
+                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
+                                    }
+                                    {
+                                        (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
+                                        <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
+                                    }
+                                </td>
+                            </tr>
+                            )
+                        })
+                    }
+
+                </tbody>
+                </table>
+            </div>
+              <Modal
+                show={this.state.modalDelete}
+                onHide={this.closeModalDelete}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                  Konfirmasi
                   </Modal.Title>
           </Modal.Header>
           <Modal.Body>
