@@ -95,6 +95,8 @@ class Login extends Component {
               level: res.data.result.level,
               grup_id: res.data.result.grup_id,
               grup_name: res.data.result.grup_name,
+              company_id: res.data.result.company_id,
+              company_type: res.data.result.company_type,
             }
           });
 
@@ -166,6 +168,8 @@ class Login extends Component {
               level: res.data.result.level,
               grup_id: res.data.result.grup_id,
               grup_name: res.data.result.grup_name,
+              company_id: res.data.result.company_id,
+              company_type: res.data.result.company_type,
             }
           });
           Storage.set('token', { data: res.data.result.token });

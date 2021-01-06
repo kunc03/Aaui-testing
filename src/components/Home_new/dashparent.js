@@ -8,6 +8,8 @@ import CalenderNew from '../kalender/kalender';
 import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
+import moment from 'moment-timezone';
+
 import { toast } from 'react-toastify'
 
 class DashParent extends Component {

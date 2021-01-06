@@ -47,6 +47,7 @@ class SidebarClass extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let groupUser = Storage.get('user').data.grup_name;
+    let companyType = Storage.get('user').data.company_type;
 
     // console.log('Storage: ', Storage.get('user'));
 
