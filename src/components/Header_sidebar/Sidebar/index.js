@@ -4,7 +4,6 @@ import Storage from '../../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
-
 class SidebarClass extends Component {
   constructor(props) {
     super(props);
@@ -55,9 +54,9 @@ class SidebarClass extends Component {
         submenu: [
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Subjects', link: '/murid/mata-pelajaran' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Task', link: '/murid/tugas' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Quiz', link: '/murid/kuis' },
           { iconOn: 'info-on.svg', iconOff: 'ujianoff.svg', label: 'Exam', link: '/murid/ujian' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'liveclasswebinaroff.svg', label: 'Liveclass/Webinar', link: '/webinar-murid' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
