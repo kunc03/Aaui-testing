@@ -494,7 +494,7 @@ fetchRekamanBBB(folder){
   }
 
   selectFileShow = (type, val) => {
-    if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg'){
+    if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
       this.props.selectedFileShow(val)
     }
     else{

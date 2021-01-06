@@ -26,6 +26,7 @@ import Iframe from 'react-iframe';
 import Gantt from '../Gantt';
 import TableFiles from '../files/_files';
 import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
+import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
@@ -835,11 +836,20 @@ export default class MeetingRoom extends Component {
         }
         else if (ektension === "pdf") {
           return (
-            <div style={{ height: 850 }}>
+            <div>
             <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
               <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
             </Worker>
             </div>
+          )
+        }
+        else{
+          return (
+          <div>
+          <FileViewer
+            fileType={ektension}
+            filePath={media}/>
+          </div>
           )
         }
       }
