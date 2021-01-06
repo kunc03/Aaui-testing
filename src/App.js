@@ -106,11 +106,14 @@ import LearningMurid from './components/learning/murid';
 import GuruPersonalia from './components/guruPersonalia/index';
 import GuruKurusus from './components/guruKursus/index';
 import GuruUjian from './components/guruUjian/index';
+import GuruJadwal from './components/jadwal_mengajar/guru';
 import InformasiKelas from './components/guruInformasiKelas/index';
 import GuruKPI from './components/guruKPI/index';
 import DetailMurid from './components/detail_murid/index';
 import DetailKelas from './components/detail_kelas/index';
 import DetailRapor from './components/detail_rapor/index';
+import LaporanForGuru from './components/laporan/laporanguru';
+
 
 // ======= IMPORT COMPONENT MURID ======== //
 import MuridLaporanRapor from './components/muridLaporanRapor/index';
@@ -470,6 +473,8 @@ export class ClientSwitch extends React.Component {
         <Route path="/forum" component={Forum} />
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
 
+        <Route path="/jadwal-mengajar" component={GuruJadwal} />
+
         <Route path="/aktivitas" component={Activity} />
 
         <Route path="/pengumuman" component={Pengumuman} />
@@ -520,6 +525,8 @@ export class ClientSwitch extends React.Component {
         {/* ROUTE MURID */}
         <Route path='/rapor' component={MuridLaporanRapor} />
         <Route path="/webinar-murid" component={Webinar} />
+        <Route path='/guru-laporan' component={LaporanForGuru} />
+        
 
         {/* ROUTE PARENT */}
         <Route path='/parent-learning' component={LaporanPembelajaranMurid} />
