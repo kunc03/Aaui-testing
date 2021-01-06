@@ -1,17 +1,15 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
 
+import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ParentRapor from "./parentRapor";
-
+import LaporanPembelajaranMurid from '../Home_new/laporanPembelajaranMurid';
 
 class GuruUjian extends Component {
-  constructor(props) {
-    super(props);
-    this.goBack = this.goBack.bind(this);
-  }
-  goBack() {
-    this.props.history.goBack();
+
+  state = {
+    project: [],
   }
 
   render() {
@@ -37,7 +35,11 @@ class GuruUjian extends Component {
 
                   <div className="row">
                     <div className="col-xl-12">
-                      <ParentRapor />
+                      <Card>
+                        <Card.Body>
+                          <LaporanPembelajaranMurid lists={this.state.project} />
+                        </Card.Body>
+                      </Card>
                     </div>
                   </div>
                 </div>
