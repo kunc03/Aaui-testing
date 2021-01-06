@@ -4,11 +4,11 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
- 
+
 export default class Gantt extends Component {
     constructor(props) {
       super(props);
-  
+
       this.state = {
         users:[]
         // tasks: {
@@ -52,38 +52,98 @@ export default class Gantt extends Component {
             //     if (task.type == gantt.config.types.project) {
             //         return "";
             //     }
-    
+
             //     var result = "";
             //     var store = gantt.getDatastore("resource");
             //     var owners = task[gantt.config.resource_property];
-    
+
             //     if (!owners || !owners.length) {
             //         return "Unassigned";
             //     }
-    
+
             //     if(owners.length == 1){
             //         return store.getItem(owners[0]).text;
             //     }
-    
+
             //     owners.forEach(function(ownerId) {
             //         var owner = store.getItem(ownerId);
             //         if (!owner)
             //             return;
             //         result += "<div class='owner-label' title='" + owner.text + "'>" + owner.text.substr(0, 1) + "</div>";
-    
+
             //     });
-    
+
             //     return result;
             //     }, resize: true
             // },
             {name: "add", width: 44}
         ];
-        
+
 	gantt.attachEvent("onTaskCreated", function(task){
 		if(task.type == gantt.config.types.placeholder){
 			task.text = "Create a new task";
 		}
 		return true;
+    });
+    // var statusOpen = this.state.statusOpen;
+    // var statusProgress = this.state.statusProgress;
+    // var statusDone = this.state.statusDone;
+    // var statusClosed = this.state.statusClosed;
+    // gantt.attachEvent("onBeforeTaskDisplay", function(id, task){
+    //     console.log('ALVIN OPEN', ( statusOpen && task.type !== 'project' && (task.status === "Open" || task.status === "")))
+    //     if ( statusOpen && task.type !== 'project' && (task.status === "Open" || task.status === "")){
+    //         return true;
+    //     }
+    //     // else if ( statusProgress && task.type !== 'project' && task.status === "In Progress"){
+    //     //     return true;
+    //     // }
+    //     // else if ( statusDone && task.type !== 'project' && task.status === "Done"){
+    //     //     return true;
+    //     // }
+    //     // else if ( statusClosed && task.type !== 'project' && task.status === "Closed"){
+    //     //     return true;
+    //     // }
+    //     return false;
+    // });
+    gantt.attachEvent("onLightboxSave", function(id, task, is_new){
+        if (task.status==='Done'){
+            task.progress=1;
+        }
+        return true;
+    })
+    gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
+        if (mode === 'progress'){
+            if (gantt.getTask(id).progress === 1){
+                gantt.getTask(id).status = 'Done';
+                gantt.getTask(id).done_time = new Date();
+                gantt.updateTask(id);
+            }
+            else if (gantt.getTask(id).progress !== 1){
+                gantt.getTask(id).status = 'In Progress';
+                gantt.updateTask(id);
+            }
+        }
+        return;
+    });
+    gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+		if (item.parent == 0) {
+			return;
+		}
+
+		var parentTask = gantt.getTask(item.parent); //console.log(parent.id);return;
+
+		var childs = gantt.getChildren(parentTask.id);
+		var totProgress = 0;
+
+		var tempTask;
+		for (var i = 0; i < childs.length; i++) { //console.log(childs[i]);
+			tempTask = gantt.getTask(childs[i]);
+			totProgress += parseFloat(tempTask.progress);
+		}
+		//console.log(totProgress);
+
+		parentTask.progress = (totProgress / childs.length).toFixed(2);
+		gantt.updateTask(parentTask.id);
 	});
 
 	gantt.ext.inlineEditors.attachEvent("onSave", function(state){
@@ -92,7 +152,7 @@ export default class Gantt extends Component {
 			gantt.autoSchedule();
 		}
     });
-    
+
 	gantt.plugins({
 		multiselect: true,
 		auto_scheduling: true,
@@ -120,7 +180,7 @@ export default class Gantt extends Component {
     };
     gantt.config.scroll_size = 12;
     gantt.config.min_grid_column_width = 200;
-	gantt.config.sort = true;  
+	gantt.config.sort = true;
 	gantt.config.keyboard_navigation_cells = true;
 	gantt.config.auto_scheduling = true;
 	gantt.config.auto_scheduling_strict = true;
@@ -170,8 +230,8 @@ export default class Gantt extends Component {
             {unit: "week", step: 1, format: weekScaleTemplate},
             {unit: "day", step:1, format: "%d", css:daysStyle }
         ];
-    
-        
+
+
         gantt.plugins({
             tooltip: true,
             marker: true
@@ -182,7 +242,7 @@ export default class Gantt extends Component {
         });
         const { tasks } = this.state;
         // today
-        
+
         var dateToStr = gantt.date.date_to_str(gantt.config.task_date);
         var today = new Date();
         gantt.addMarker({
@@ -191,7 +251,7 @@ export default class Gantt extends Component {
             text: "Today",
             title: "Today: " + dateToStr(today)
         });
-        
+
 	var resourcesStore = gantt.createDatastore({
 		name: gantt.config.resource_store,
 		type: "treeDatastore",
@@ -202,7 +262,7 @@ export default class Gantt extends Component {
 			return item;
 		}
     });
-    
+
 	resourcesStore.attachEvent("onParse", function(){
 		var people = [];
 		resourcesStore.eachItem(function(res){
@@ -229,7 +289,7 @@ export default class Gantt extends Component {
         dp.init(gantt);
         dp.setTransactionMode("REST");
 
-        
+
 		gantt.sort("start_date", true);
     }
 

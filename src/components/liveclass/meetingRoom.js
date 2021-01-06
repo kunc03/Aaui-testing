@@ -474,8 +474,8 @@ export default class MeetingRoom extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
-        schedule_end: new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_end: MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
@@ -735,8 +735,8 @@ export default class MeetingRoom extends Component {
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
 
-    let infoDateStart = new Date(this.state.infoClass.schedule_start);
-    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+    let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
+    let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
 
     return (
       <div className="pcoded-main-container">
@@ -866,11 +866,51 @@ export default class MeetingRoom extends Component {
                               <div class="row">
                                 <div className="col-sm-6">
                                   <h3 className="f-14">
-                                    Moderator : {this.state.infoClass.name}
-                                  </h3>
+                                                Moderator : {this.state.infoClass.name}
+                                              </h3>
                                   <h3 className="f-14">
-                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                                  </h3>
+                                                Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                              </h3>
+                                </div>
+                                { this.state.infoClass.is_scheduled ?
+                                <div className="col-sm-6">
+                                  <h3 className="f-14">
+                                                    Mulai : {infoDateStart}
+                                                  </h3>
+                                  <h3 className="f-14">
+                                                    Selesai : {infoDateEnd}
+                                                  </h3>
+                                </div>
+                                : null }
+                              </div>
+                              { this.state.infoClass.is_private ?
+                              <div>
+                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                  Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                                </div>
+                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  <div className='legend-kehadiran hadir'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                                  <div className='legend-kehadiran tidak-hadir'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                                  <div className='legend-kehadiran tentative'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                </div>
+                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  { this.state.infoParticipant.map(item =>
+                                  <div className={item.confirmation==='Hadir' ? 'peserta hadir' : item.confirmation==='Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                                  ) }
+                                </div>
+                              </div>
+                              : null } { this.state.infoClass.is_private ?
+                              <div>
+                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                  Kehadiran Aktual
+                                </div>
+                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  { this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
+                                  <div className='peserta aktual-hadir'>{item.name}</div>
+                                  ) }
                                 </div>
                                 {
                                   this.state.infoClass.is_scheduled ?
