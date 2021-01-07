@@ -44,6 +44,12 @@ class DashParent extends Component {
     getPtc: {},
     optionsName: [],
     pesertaId: [],
+
+    pelajaran: [],
+    openSilabus: false,
+    pelajaranId: '',
+    pelajaranNama: '',
+    silabus: [],
   }
 
   openParticipants = e => {
@@ -170,6 +176,7 @@ class DashParent extends Component {
     this.fetchPengumuman();
     this.fetchJadwal();
     this.fetchPtc()
+    this.fetchPelajaran()
   }
 
   fetchPengumuman() {
@@ -185,6 +192,36 @@ class DashParent extends Component {
     }).catch(function (error) {
       console.log(error);
     });
+  }
+
+  openSilabus = e => {
+    e.preventDefault();
+    let target = e.target;
+    this.setState({ pelajaranNama: target.getAttribute('data-title'), pelajaranId: target.getAttribute('data-id'), openSilabus: true })
+    this.fetchSilabus(target.getAttribute('data-id'))
+  }
+
+  fetchSilabus(pelajaranId) {
+    API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
+      if(res.data.error) toast.info(`Error: fetch silabus`)
+
+      this.setState({ silabus: res.data.result })
+    })
+  }
+
+  fetchPelajaran() {
+    API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
+      this.setState({ pelajaran: res.data.result })
+    })
+  }
+
+  closeSilabus() {
+    this.setState({
+      openSilabus: false,
+      pelajaranId: '',
+      pelajaranNama: '',
+      silabus: [],
+    })
   }
 
   render() {
@@ -281,17 +318,168 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Materi Pelajaran</h4>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Mata Pelajaran</th><th style={{width: '40px'}}>Aksi</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.pelajaran.map((item,i) => (
+                                  <tr key={i}>
+                                    <td>{item.nama_pelajaran}</td>
+                                    <td style={{width: '40px'}}>
+                                      <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
+                                    </td>
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        </Card.Body>
+                      </Card>
+
+                      <Modal
+                        show={this.state.openSilabus}
+                        onHide={this.closeSilabus.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                            Silabus {this.state.pelajaranNama}
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Sesi</th>
+                                <th>Topik</th>
+                                <th>Tujuan</th>
+                                <th>Deskripsi</th>
+                                <th>Files</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.silabus.map((item, i) => {
+                                  if(item.jenis === 0) {
+                                    return (
+                                        <tr key={i}>
+                                          <td>{item.sesi}</td>
+                                          <td>{item.topik}</td>
+                                          <td>{item.tujuan}</td>
+                                          <td>{item.deskripsi}</td>
+                                          <td style={{padding: '12px'}}>
+                                            {
+                                              item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                                            }
+                                          </td>
+                                        </tr>
+                                      )
+                                  } else {
+                                    return (
+                                      <tr key={i}>
+                                        <td>{item.sesi}</td>
+                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                                      </tr>
+                                    )
+                                  }
+                                })
+                              }
+                              </tbody>
+                            </table>
+                        </Modal.Body>
+                      </Modal>
+                    </div>
+
+                    <div className="col-sm-6">
                       <CalenderNew lists={this.state.calendar} />
                     </div>
 
-                    <div class="col-sm-6">
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>
-                          <ListToDoNew lists={this.state.toDo} />
+                          <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
+                          <table className="table">
+                            <tbody>
+                              {
+                                this.state.pengumuman.map((item,i) => (
+                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                    <td>{item.isi}</td>
+                                    <td style={{width: '40px'}}>
+                                      <a href="#"
+                                        onClick={this.openPengumuman}
+                                        data-title={item.title}
+                                        data-file={item.attachments}
+                                        data-id={item.id_pengumuman}
+                                        data-isi={item.isi}>Lihat</a>
+                                    </td>
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
                         </Card.Body>
                       </Card>
+
+                      <Modal
+                        show={this.state.openPengumuman}
+                        onHide={this.closePengumuman.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                            Pengumuman
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form>
+                            <Form.Group controlId="formJudul">
+                              <FormControl
+                                type="text"
+                                name="judul"
+                                value={this.state.pengumumanNama}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            <Form.Group controlId="formisi">
+                              <textarea
+                                className="form-control" id="exampleFormControlTextarea1" rows="8"
+                                name="isi"
+                                value={this.state.pengumumanIsi}
+                                disabled
+                              />
+                            </Form.Group>
+
+                            {
+                              this.state.pengumumanFile.length > 0 &&
+                              <Form.Group>
+                              <Form.Label>Attachments</Form.Label>
+                              <ul className="list-group">
+                              {
+                                this.state.pengumumanFile.map(item => (
+                                  <li className="list-group-item">
+                                  <a href={item} target="_blank">{item}</a>
+                                  </li>
+                                ))
+                              }
+                              </ul>
+                              </Form.Group>
+                            }
+
+                          </Form>
+
+                        </Modal.Body>
+                      </Modal>
                     </div>
+
+
 
                     <div class="col-sm-6">
                       <Card>
