@@ -479,8 +479,6 @@ class DashParent extends Component {
                       </Modal>
                     </div>
 
-
-
                     <div class="col-sm-6">
                       <Card>
                         <Card.Body>

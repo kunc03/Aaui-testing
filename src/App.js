@@ -123,6 +123,10 @@ import LaporanPembelajaranMurid from './components/parentLearning/index';
 import ParentSylabus from './components/parentSilabus/index';
 import ParentRapor from './components/parentRapor/index';
 
+
+import PembelajaranPrincipal from './components/principalPembelajaran/index';
+import LaporanPrincipal from './components/principalLaporan/index';
+
 // ======= IMPORT COMPONENT RUANGAN ======== //
 import LearningRuangan from './components/learning/ruangan';
 
@@ -526,12 +530,16 @@ export class ClientSwitch extends React.Component {
         <Route path='/rapor' component={MuridLaporanRapor} />
         <Route path="/webinar-murid" component={Webinar} />
         <Route path='/guru-laporan' component={LaporanForGuru} />
-        
+
 
         {/* ROUTE PARENT */}
         <Route path='/parent-learning' component={LaporanPembelajaranMurid} />
         <Route path='/parent-syllabus' component={ParentSylabus} />
         <Route path='/parent-rapor' component={ParentRapor} />
+
+        {/* ROUTE PRINVIPAL */}
+        <Route path='/principal-pelajaran' component={PembelajaranPrincipal} />
+        <Route path='/principal-rapor' component={LaporanPrincipal} />
 
         <Route path="/logout" component={Logout} />
       </Switch>

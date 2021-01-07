@@ -86,11 +86,11 @@ class SidebarClass extends Component {
       principal: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/parent-rapor' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/parent-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/principal-pelajaran' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/principal-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/principal-kinerja' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
