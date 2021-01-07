@@ -85,18 +85,24 @@ class SidebarClass extends Component {
 
       principal: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
 
       management: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/parent-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -139,6 +145,17 @@ class SidebarClass extends Component {
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+      ],
+      submenuPendidikan : [
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Registration", link: '/learning/registrasi' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'List of Lessons', link: '/learning/daftar-pelajaran' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Teaching Room', link: '/learning/ruangan-mengajar' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Teaching Schedule', link: '/learning/jadwal-mengajar' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas: [
@@ -209,7 +226,11 @@ class SidebarClass extends Component {
       menuAtas = tempAtasSuper;
       menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      menuContent = menuAdmins.submenu;
+      if(companyType === "pendidikan") {
+        menuContent = menuAdmins.submenuPendidikan;
+      } else {
+        menuContent = menuAdmins.submenu;
+      }
       menuAtas = tempAtasAdmin;
       menuBawah = tempBawahAdmin;
     } else {
