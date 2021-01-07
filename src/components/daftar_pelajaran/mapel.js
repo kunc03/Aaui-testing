@@ -184,7 +184,7 @@ class MataPelajaran extends React.Component {
             </form>
           </Modal.Header>
           <Modal.Body>
-          <table className="table table-striped">
+            <table className="table table-striped">
             <thead>
               <tr>
                 <th>Session</th>

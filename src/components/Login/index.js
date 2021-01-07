@@ -177,7 +177,7 @@ class Login extends Component {
           });
 
           Storage.set('token', { data: res.data.result.token });
-          
+
           if (this.props.redirectUrl) {
             window.location.href = window.location.origin + this.props.redirectUrl
           }

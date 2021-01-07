@@ -1,15 +1,18 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
 
-import { Card, Modal, Form, FormControl } from 'react-bootstrap';
+import Evaluasi from './evaluasi';
 import { Link } from 'react-router-dom'
-import ParentRapor from "./parentRapor";
-import LaporanPembelajaranMurid from '../Home_new/laporanPembelajaranMurid';
 
-class GuruUjian extends Component {
 
-  state = {
-    project: [],
+
+class EvaluasiPrincipal extends Component {
+  constructor(props) {
+    super(props);
+    this.goBack = this.goBack.bind(this);
+  }
+  goBack() {
+    this.props.history.goBack();
   }
 
   render() {
@@ -24,22 +27,19 @@ class GuruUjian extends Component {
                 <div className="page-wrapper">
 
                   {/* <div className="floating-back">
-                      <Link to={`/kursus-new`}>
+                    <Link to='' >
                       <img
                         src={`newasset/back-button.svg`}
                         alt=""
                         width={90}
+                        onClick={this.goBack()}
                       ></img>
-                      </Link>
-                    </div> */}
+                    </Link>
+                  </div> */}
 
                   <div className="row">
                     <div className="col-xl-12">
-                      <Card>
-                        <Card.Body>
-                          <LaporanPembelajaranMurid lists={this.state.project} />
-                        </Card.Body>
-                      </Card>
+                      <Evaluasi />
                     </div>
                   </div>
                 </div>
@@ -52,4 +52,4 @@ class GuruUjian extends Component {
   }
 }
 
-export default GuruUjian;
+export default EvaluasiPrincipal;
