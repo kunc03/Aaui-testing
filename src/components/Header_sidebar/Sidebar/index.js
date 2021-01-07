@@ -76,7 +76,7 @@ class SidebarClass extends Component {
 
       parents: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning', link: '/parent-learning' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
