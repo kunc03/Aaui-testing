@@ -736,7 +736,7 @@ class MeetingTable extends Component {
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt,
-      akses: isakses
+      akses: isakses == 1 ? true : false
     })
 
     this.fetchMeetingInfo(classId)
