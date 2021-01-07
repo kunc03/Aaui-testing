@@ -112,19 +112,9 @@ class GuruKursus extends Component {
 
     let dd = [...this.state.jadwalKu];
     let unique = [...new Map(dd.map(item => [item['kelas_id'], item])).values()];
-    let filter = unique.filter(item => item.semester_id === parseInt(semesterId));
-    this.setState({ semesterId: semesterId, listKelas: filter })
 
     API.get(`${API_SERVER}v1/semester/${semesterId}`).then(res => {
-      this.setState({ semesterId, semesterInfo: res.data.result, listKelas: filter })
-    })
-  }
-
-  fetchKelas(semesterId) {
-    API.get(`${API_SERVER}v2/kelas/semester/${Storage.get('user').data.company_id}/${semesterId}`).then(res => {
-      if (res.data.error) toast.warning("Error fetch data semester");
-
-      this.setState({ listKelas: res.data.result })
+      this.setState({ semesterId, semesterInfo: res.data.result, listKelas: unique })
     })
   }
 
@@ -133,8 +123,8 @@ class GuruKursus extends Component {
     let kelasId = e.target.value;
     API.get(`${API_SERVER}v2/kelas/one/${kelasId}`).then(res => {
       this.setState({ kelasId, kelasInfo: res.data.result })
+      this.fetchNilaiMurid(this.state.semesterId, this.state.kelasId, Storage.get('user').data.user_id);
     })
-    this.fetchMurid(kelasId);
   }
 
   fetchNilaiMurid(semesterId, kelasId, userId) {
@@ -144,14 +134,22 @@ class GuruKursus extends Component {
     })
   }
 
+  fetchInfoKu() {
+    API.get(`${API_SERVER}v2/murid/user-id/${Storage.get('user').data.user_id}`).then(res => {
+      this.setState({ muridInfo: res.data.result })
+    })
+  }
+
   componentDidMount() {
     this.fetchJadwal()
     this.fetchSemester()
+    this.fetchInfoKu()
   }
 
   render() {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+
     return(
         <div className="pcoded-main-container">
           <div className="pcoded-wrapper">
@@ -221,7 +219,7 @@ class GuruKursus extends Component {
                                   <div className="form-group row">
                                     <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
                                     <div className="col-sm-4">
-                                      <input type="text" value={this.state.muridId[0]} disabled className="form-control" />
+                                      <input type="text" value={this.state.muridInfo.no_induk} disabled className="form-control" />
                                     </div>
 
                                     <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
