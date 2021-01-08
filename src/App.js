@@ -465,6 +465,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />
         <Route path="/guru-info" component={LearningGuruInfo} />
+        <Route path="/webinar" component={WebinarClient} />
 
         <Route path="/ruangan" component={LearningRuangan} />
 
