@@ -8,6 +8,9 @@ import CalenderNew from '../kalender/kalender';
 import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
+import ListToDoNew from './listToDo';
+import RecentDocs from './recentDocs';
+
 import { toast } from 'react-toastify'
 
 class DashParent extends Component {
@@ -108,19 +111,28 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
+                      <CalenderNew lists={this.state.calendar} />
+                    </div>
+
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <LaporanPembelajaranMurid lists={this.state.project} />
+                          <h4 className="f-w-900 f-18 fc-blue">Dokumen Terakhir Akses</h4>
+                          <RecentDocs lists={this.state.toDo} />
                         </Card.Body>
                       </Card>
                     </div>
 
                     <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>
+                          <ListToDoNew lists={this.state.toDo} />
+                        </Card.Body>
+                      </Card>
                     </div>
 
                   </div>
-
                 </div>
               </div>
             </div>
