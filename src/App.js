@@ -23,6 +23,11 @@ import Files from "./components/files/files";
 import DetailProject from "./components/detail_project/index";
 // import WebinarDetail from "./components/webinar/index";
 
+//gantt public
+import GanttPublic from "./components/Gantt/GanttPublic";
+
+import GanttReport from "./components/Gantt/report"
+
 import Project from "./components/project/index";
 
 import User from "./components/Users/User/index";
@@ -192,6 +197,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
+          <Route path="/gantt/:projectId" exact component={GanttPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
@@ -289,6 +295,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -379,6 +386,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -471,6 +479,7 @@ export class ClientSwitch extends React.Component {
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         <Route path="/project" component={Project} />
+        <Route path="/gantt/report" component={GanttReport} />
 
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
