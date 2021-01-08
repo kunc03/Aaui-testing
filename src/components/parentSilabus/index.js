@@ -17,13 +17,19 @@ class GuruUjian extends Component {
     myMurid: {},
   }
 
-  fetchJadwal(muridId) {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${muridId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+  // fetchPelajaran() {
+  //   API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
+  //     if (res.data.error) toast.warning("Error fetch data kelas");
+  //
+  //     this.setState({ listPelajaran: res.data.result })
+  //   })
+  // }
 
-      this.setState({
-        jadwalPelajaran: res.data.result.jadwal,
-      })
+  fetchJadwal() {
+    API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data kelas");
+
+      this.setState({ jadwalPelajaran: res.data.result })
     })
   }
 
