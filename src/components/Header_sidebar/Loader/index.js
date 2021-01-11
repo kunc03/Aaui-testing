@@ -12,5 +12,4 @@ class Loader extends Component {
   }
 }
 
-
 export default Loader;

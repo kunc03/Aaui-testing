@@ -24,6 +24,9 @@ import { Editor } from '@tinymce/tinymce-react';
 import { isMobile } from 'react-device-detect';
 import Iframe from 'react-iframe';
 import Gantt from '../Gantt';
+import TableFiles from '../files/_files';
+import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
+import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
 const bbb = require('bigbluebutton-js')
@@ -86,6 +89,7 @@ export default class MeetingRoom extends Component {
 
     shareGantt: '',
     newShareGantt: false,
+    newFileShow: false,
 
     //kehadiran
     isModalConfirmation: false,
@@ -98,15 +102,20 @@ export default class MeetingRoom extends Component {
     joinUrl: '',
     modalEnd: false,
     loadingFileSharing: false,
+    selectedFileShow: '',
 
     //modal
     modalFileSharing: false,
     modalMOM: false,
-    modalGantt: false
+    modalGantt: false,
+    modalFileShow: false,
   }
 
   closeModalGantt = e => {
     this.setState({ modalGantt: false });
+  }
+  closeModalFileShow = e => {
+    this.setState({ modalFileShow: false });
   }
   closeModalConfirmation = e => {
     this.setState({ isModalConfirmation: false });
@@ -119,6 +128,26 @@ export default class MeetingRoom extends Component {
   }
   closeModalMOM = e => {
     this.setState({ modalMOM: false });
+  }
+  handleSelectFileShow = (val) => {
+    let form = {
+      selectedFileShow: val
+    }
+    API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.class_id}`, form).then(res => {
+      if(res.status === 200) {
+        if(!res.data.error){
+          this.setState({selectedFileShow: val})
+          socket.emit('send', {
+            socketAction: 'fileShow',
+            userId: this.state.user.user_id,
+            meetingId: this.state.classRooms.class_id,
+            selectedFileShow: val
+          })
+        }else{
+          alert('Error update share timeline')
+        }
+      }
+    })
   }
   fetchMOM(folder) {
     if (folder == 0) {
@@ -276,6 +305,9 @@ export default class MeetingRoom extends Component {
       if(data.socketAction == 'shareGantt' && data.meetingId===this.state.classRooms.class_id && data.userId!==this.state.user.user_id) {
         this.setState({newShareGantt: true, shareGantt: data.projectId})
       }
+      if(data.socketAction == 'fileShow' && data.meetingId===this.state.classRooms.class_id && data.userId!==this.state.user.user_id) {
+        this.setState({newFileShow: true, selectedFileShow: data.selectedFileShow})
+      }
     });
     this.fetchData();
 
@@ -354,7 +386,8 @@ export default class MeetingRoom extends Component {
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
-          shareGantt: liveClass.data.result.share_gantt
+          shareGantt: liveClass.data.result.share_gantt,
+          selectedFileShow: liveClass.data.result.file_show === null ? '' : liveClass.data.result.file_show
           // jwt: token.data.token
         });
         // BBB JOIN START
@@ -475,6 +508,7 @@ export default class MeetingRoom extends Component {
         API.delete(`${API_SERVER}v1/liveclass/file/delete/${this.state.classRooms.class_id}`).then(res => {
           if (res.status === 200) {
             toast.success('Menghapus semua file sharing.')
+            window.close()
           }
         })
       }
@@ -785,8 +819,43 @@ export default class MeetingRoom extends Component {
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
 
-    let infoDateStart = new Date(this.state.infoClass.schedule_start);
-    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+    let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
+    let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
+    
+    // unutk banner photo, responsive center image FILE SHOW
+    const CheckMedia = ({ media }) => {
+      if (media) {
+        let ekSplit = media.split('.');
+        let ektension = ekSplit[ekSplit.length - 1];
+        if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
+          return (
+            <div>
+              <img src={media} style={{ maxWidth:'100%' }} />
+            </div>
+          )
+        }
+        else if (ektension === "pdf") {
+          return (
+            <div>
+            <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
+              <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
+            </Worker>
+            </div>
+          )
+        }
+        else{
+          return (
+          <div>
+          <FileViewer
+            fileType={ektension}
+            filePath={media}/>
+          </div>
+          )
+        }
+      }
+
+      return null
+    };
 
     return (
       <div className="pcoded-main-container">
@@ -849,6 +918,9 @@ export default class MeetingRoom extends Component {
                             </button>
                             <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalGantt: true, newShareGantt: false})} className="float-right btn btn-icademy-primary">
                               <i className="fa fa-tasks" style={{marginRight: '0px !important'}}></i>Task & Timeline
+                            </button>
+                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newFileShow ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalFileShow: true, newFileShow: false})} className="float-right btn btn-icademy-primary">
+                              <i className="fa fa-file" style={{marginRight: '0px !important'}}></i>File Show
                             </button>
                             {/*
                             <a target='_blank' href={this.state.joinUrl}>
@@ -1275,6 +1347,27 @@ export default class MeetingRoom extends Component {
                         <div className="gantt-container">
                           { this.state.shareGantt != 0 &&
                           <Gantt projectId={this.state.shareGantt}/> }
+                        </div>
+                      </Modal.Body>
+                    </Modal>
+                    
+                    <Modal show={this.state.modalFileShow} onHide={this.closeModalFileShow} dialogClassName='modal-2xl' centered>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
+                          Files on project {classRooms.project_name}
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="wrap" style={{marginTop: '10px', overflowY:'scroll'}}>
+                          { this.state.selectedFileShow === '' && <TableFiles access_project_admin={false} projectId={classRooms.folder_id} selectedFileShow={this.handleSelectFileShow}/>}
+                          { this.state.selectedFileShow !== '' &&
+                          <div>
+                            <button to={ "#"} onClick={this.handleSelectFileShow.bind(this, '')} className="btn btn-icademy-primary ml-2 col-2 f-14">
+                              <i className="fa fa-stop" style={{marginRight:10}}></i> Stop File Show
+                            </button>
+                            <CheckMedia media={this.state.selectedFileShow} />
+                          </div>
+                          }
                         </div>
                       </Modal.Body>
                     </Modal>
