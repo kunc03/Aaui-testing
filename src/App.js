@@ -131,6 +131,7 @@ import ParentRapor from './components/parentRapor/index';
 
 import PembelajaranPrincipal from './components/principalPembelajaran/index';
 import LaporanPrincipal from './components/principalLaporan/index';
+import KinerjaPrincipal from './components/principalKpi/index';
 
 // ======= IMPORT COMPONENT RUANGAN ======== //
 import LearningRuangan from './components/learning/ruangan';
@@ -550,6 +551,7 @@ export class ClientSwitch extends React.Component {
         {/* ROUTE PRINVIPAL */}
         <Route path='/principal-pelajaran' component={PembelajaranPrincipal} />
         <Route path='/principal-rapor' component={LaporanPrincipal} />
+        <Route path='/principal-kinerja' component={KinerjaPrincipal} />
 
         <Route path="/logout" component={Logout} />
       </Switch>
