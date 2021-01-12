@@ -55,6 +55,26 @@ class ModalAdd extends Component {
       let linkURL = `${API_SERVER}v1/company`;
       API.post(linkURL, formData).then(res => {
         triggerUpdate(res.data.result);
+
+        // if pendidikan auto generate role
+        if(this.state.tipe === "pendidikan") {
+          let aturan = ["Admin", "Guru", "Murid", "Parents", "Principal", "Management"];
+          for(var i=0; i<aturan.length; i++) {
+            let formData = {
+              company_id: res.data.result.company_id,
+        			grup_name: aturan[i],
+        			activity: 0,
+        			course: 0,
+        			manage_course: 0,
+        			forum: 0,
+        			group_meeting: 0,
+        			manage_group_meeting: 0,
+            }
+            API.post(`${API_SERVER}v1/grup`, formData)
+          }
+        }
+        // end if
+
         this.setState({ nama: '', status: '', logo: '' });
         window.$('#modalAdd').modal('hide');
         console.log('resss', res.data.result)
