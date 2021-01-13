@@ -105,6 +105,16 @@ class DetailMurid extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
+                  <div className="floating-back">
+                    <Link to={`/`}>
+                      <img
+                        src={`newasset/back-button.svg`}
+                        alt=""
+                        width={90}
+                      />
+                    </Link>
+                  </div>
+
                   <div className="row mt-3">
                     <div className="col-xl-12">
                       <div className="card">

@@ -5,6 +5,7 @@ import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import { Modal } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
 class PembelajaranPrincipal extends React.Component {
   state = {
@@ -312,16 +313,15 @@ class PembelajaranPrincipal extends React.Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  {/* <div className="floating-back">
-                    <Link to='' >
-                      <img
-                        src={`newasset/back-button.svg`}
-                        alt=""
-                        width={90}
-                        onClick={this.goBack()}
-                      ></img>
-                    </Link>
-                  </div> */}
+                <div className="floating-back">
+                  <Link to={`/`}>
+                    <img
+                      src={`newasset/back-button.svg`}
+                      alt=""
+                      width={90}
+                    />
+                  </Link>
+                </div>
 
                   <div className="row mt-3">
                     <div className="col-sm-12">
