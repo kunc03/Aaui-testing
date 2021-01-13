@@ -534,8 +534,8 @@ export default class MeetingRoom extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
-        schedule_end: new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_end: MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
@@ -984,10 +984,10 @@ export default class MeetingRoom extends Component {
                                 { this.state.infoClass.is_scheduled ?
                                 <div className="col-sm-6">
                                   <h3 className="f-14">
-                                                    Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
+                                                    Mulai : {infoDateStart}
                                                   </h3>
                                   <h3 className="f-14">
-                                                    Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
+                                                    Selesai : {infoDateEnd}
                                                   </h3>
                                 </div>
                                 : null }
