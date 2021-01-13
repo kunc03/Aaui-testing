@@ -494,7 +494,7 @@ export default class Gantt extends Component {
         :
         `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
         gantt.load(api)
-        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.userId}/${this.props.projectId ? this.props.projectId : '0'}`);
+        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${Storage.get("user").data.user_id}/${this.props.projectId ? this.props.projectId : '0'}`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
 
