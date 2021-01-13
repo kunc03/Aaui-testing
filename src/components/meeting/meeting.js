@@ -139,8 +139,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: Moment.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: Moment.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_end: new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -396,6 +396,8 @@ class MeetingTable extends Component {
     API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.infoClass.class_id}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
         this.fetchMeetingInfo(this.state.infoClass.class_id)
+        let start = new Date(this.state.infoClass.schedule_start);
+        let end = new Date(this.state.infoClass.schedule_end);
         let form = {
           confirmation: confirmation,
           user: Storage.get('user').data.user,
@@ -403,8 +405,8 @@ class MeetingTable extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: Moment.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-          schedule_end: Moment.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+          schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+          schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -532,14 +534,16 @@ class MeetingTable extends Component {
             }
             if (res.data.result.is_private == 1) {
               this.setState({ sendingEmail: true })
+              let start = new Date(res.data.result.schedule_start);
+              let end = new Date(res.data.result.schedule_end);
               let form = {
                 user: Storage.get('user').data.user,
                 email: [],
                 room_name: res.data.result.room_name,
                 is_private: res.data.result.is_private,
                 is_scheduled: res.data.result.is_scheduled,
-                schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+                schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
                 userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -618,14 +622,16 @@ class MeetingTable extends Component {
             }
             if (res.data.result.is_private == 1) {
               this.setState({ sendingEmail: true })
+              let start = new Date(res.data.result.schedule_start);
+              let end = new Date(res.data.result.schedule_end);
               let form = {
                 user: Storage.get('user').data.user,
                 email: [],
                 room_name: res.data.result.room_name,
                 is_private: res.data.result.is_private,
                 is_scheduled: res.data.result.is_scheduled,
-                schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
+                schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
                 userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                 //url
                 message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -720,8 +726,8 @@ class MeetingTable extends Component {
     const schedule_start = new Date(e.target.getAttribute('data-start'));
     const schedule_end = new Date(e.target.getAttribute('data-end'));
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
-    const schedule_start_jkt = new Date(Moment.tz(schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
-    const schedule_end_jkt = new Date(Moment.tz(schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+    const schedule_start_jkt = new Date(schedule_start.toISOString().slice(0, 16).replace('T', ' '));
+    const schedule_end_jkt = new Date(schedule_end.toISOString().slice(0, 16).replace('T', ' '));
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -901,7 +907,7 @@ class MeetingTable extends Component {
             />
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickJadwal.bind(this, row.class_id, row.room_name)}>Schedule & Booking</button>
+            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickJadwal.bind(this, row.class_id, row.room_name)}>Date</button>
             <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Invite</button>
             {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Lock' : 'Unlock'}</button>}
             {access_project_admin && <button
@@ -1363,10 +1369,10 @@ class MeetingTable extends Component {
                   { this.state.infoClass.is_scheduled ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
-                                  Mulai : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                                  Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
                                 </h3>
                     <h3 className="f-14">
-                                  Selesai : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                                  Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
                                 </h3>
                   </div>
                   : null }
@@ -1410,8 +1416,8 @@ class MeetingTable extends Component {
           </div>
           </Modal.Body>
           <Modal.Footer>
-            { (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-            <=new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
+            { (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date()
+            <=new Date(infoDateEnd.toISOString().slice(0, 16).replace( 'T', ' '))))
             && (this.state.infoClass.is_required_confirmation==0 || (this.state.infoClass.is_required_confirmation==1 && this.state.attendanceConfirmation[0].confirmation=='Hadir' )) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
               <button className="btn btn-icademy-primary" onClick={e=> this.closeModalConfirmation()}
                 // style={{width:'100%'}}

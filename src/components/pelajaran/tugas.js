@@ -150,11 +150,14 @@ class Tugas extends React.Component {
         title: this.state.title,
         quizAt: this.state.quizAt,
         tanggalMulai: this.state.tanggalMulai,
-        tanggalAkhir: this.state.tanggalAkhir
+        tanggalAkhir: this.state.tanggalAkhir,
+        tatapmuka: 0,
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
         if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
+
+        toast.success(`Sukses mengubah ${this.state.tipe}`)
 
         this.fetchKuis();
       })
@@ -166,12 +169,14 @@ class Tugas extends React.Component {
         title: this.state.title,
         quizAt: this.state.quizAt,
         tanggalMulai: this.state.tanggalMulai,
-        tanggalAkhir: this.state.tanggalAkhir
+        tanggalAkhir: this.state.tanggalAkhir,
+        tatapmuka: 0,
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
         if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
 
+        toast.success(`Sukses menyimpan ${this.state.tipe}`)
         this.fetchKuis();
         this.clearForm();
       })

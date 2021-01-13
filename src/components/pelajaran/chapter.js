@@ -26,6 +26,7 @@ class Chapter extends React.Component {
     content: '',
     tanggal: new Date(),
     waktu: '',
+    tatapmuka: '',
     attachments: [],
 
     files: null,
@@ -47,6 +48,7 @@ class Chapter extends React.Component {
       number: this.state.number,
       title: this.state.title,
       content: this.state.content,
+      tatapmuka: this.state.tatapmuka,
       tanggal: this.state.tanggal + ' ' + this.state.waktu
     }
 
@@ -70,6 +72,7 @@ class Chapter extends React.Component {
       number: this.state.number,
       title: this.state.title,
       content: this.state.content,
+      tatapmuka: this.state.tatapmuka,
       tanggal: this.state.tanggal + ' ' + this.state.waktu
     }
 
@@ -105,6 +108,7 @@ class Chapter extends React.Component {
       content: '',
       tanggal: new Date(),
       waktu: '',
+      tatapmuka: '',
       attachments: [],
 
       files: null,
@@ -135,6 +139,7 @@ class Chapter extends React.Component {
         content: res.data.result.content,
         tanggal: moment(res.data.result.tanggal).format('YYYY-MM-DD'),
         waktu: moment(res.data.result.tanggal).format('HH:mm'),
+        tatapmuka: res.data.result.tatapmuka,
         attachments: res.data.result.attachments
       })
     })
@@ -275,6 +280,17 @@ class Chapter extends React.Component {
                         ))
                       }
                     </select>
+                  </div>
+                  <div className="col-sm-4">
+                    <label className="mb-3">Tatap Muka</label><br/>
+                    <div class="form-check form-check-inline">
+                      <input checked={this.state.tatapmuka == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                      <label class="form-check-label" for="inlineRadio1">Ya</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input checked={this.state.tatapmuka == "0"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                      <label class="form-check-label" for="inlineRadio2">Tidak</label>
+                    </div>
                   </div>
                 </div>
 

@@ -203,14 +203,23 @@ class NotificationClass extends Component {
                                         <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
                                       }
                                       <b className="fc-blue ">
-                                        {item.type == 1 ? "Course" : item.type == 2 ? "Forum" : item.type == 3 ? "Meeting" :
-                                          item.type == 4 ? "Pengumuman" : item.type == 5 ? "Task" : item.type == 6 ? "Files" :
-                                            item.type == 7 ? "Training" : item.type == 8 ? "PTC" : "Notifikasi"}
+                                        {item.type == 1 ? "Course" :
+                                          item.type == 2 ? "Forum" :
+                                          item.type == 3 ? "Meeting" :
+                                          item.type == 4 ? "Pengumuman" :
+                                          item.type == 5 ? "Task" :
+                                          item.type == 6 ? "Files" :
+                                          item.type == 7 ? "Training" :
+                                          item.type == 8 ? "PTC" :
+                                          item.type == 9 ? "Tugas" :
+                                          item.type == 10 ? "Kuis" :
+                                          item.type == 11 ? "Ujian" :
+                                          "Notifikasi"}
                                       </b>
-                                              &nbsp; &nbsp;
-                                              <small>
+                                      &nbsp; &nbsp;
+                                      <small>
                                         {moment.utc(item.created_at).format('HH:mm')} &nbsp;
-                                                {moment.utc(item.created_at).format('DD/MM/YYYY')}
+                                        {moment.utc(item.created_at).format('DD/MM/YYYY')}
                                       </small>
                                       <p className="fc-muted mt-1">
                                         {item.description}
@@ -256,14 +265,23 @@ class NotificationClass extends Component {
                                           <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
                                         }
                                         <b className="fc-blue ">
-                                          {item.type == 1 ? "Course" : item.type == 2 ? "Forum" : item.type == 3 ? "Meeting" :
-                                            item.type == 4 ? "Pengumuman" : item.type == 5 ? "Task" : item.type == 6 ? "Files" :
-                                              item.type == 7 ? "Training" : "Notifikasi"}
+                                        {item.type == 1 ? "Course" :
+                                          item.type == 2 ? "Forum" :
+                                          item.type == 3 ? "Meeting" :
+                                          item.type == 4 ? "Pengumuman" :
+                                          item.type == 5 ? "Task" :
+                                          item.type == 6 ? "Files" :
+                                          item.type == 7 ? "Training" :
+                                          item.type == 8 ? "PTC" :
+                                          item.type == 9 ? "Tugas" :
+                                          item.type == 10 ? "Kuis" :
+                                          item.type == 11 ? "Ujian" :
+                                          "Notifikasi"}
                                         </b>
-                                              &nbsp; &nbsp;
-                                              <small>
+                                        &nbsp; &nbsp;
+                                        <small>
                                           {moment.utc(item.created_at).format('HH:mm')} &nbsp;
-                                                {moment.utc(item.created_at).format('DD/MM/YYYY')}
+                                          {moment.utc(item.created_at).format('DD/MM/YYYY')}
                                         </small>
                                         <p className="fc-muted mt-1">
                                           {item.description}
