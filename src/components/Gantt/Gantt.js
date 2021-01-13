@@ -137,6 +137,32 @@ export default class Gantt extends Component {
     //     // }
     //     return false;
     // });
+    gantt.attachEvent("onLightboxSave", function(id, task, is_new){
+        if (task.status==='Done'){
+            task.progress=1;
+        }
+        let d = task.end_date
+        let time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        if (time === '0:0:0'){
+            let new_end_date = d.setHours(23, 0, 0);
+            task.end_date = new Date(new_end_date);
+        }
+        return true;
+    })
+    gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
+        if (mode === 'progress'){
+            if (gantt.getTask(id).progress === 1){
+                gantt.getTask(id).status = 'Done';
+                gantt.getTask(id).done_time = new Date();
+                gantt.updateTask(id);
+            }
+            else if (gantt.getTask(id).progress !== 1){
+                gantt.getTask(id).status = 'In Progress';
+                gantt.updateTask(id);
+            }
+        }
+        return;
+    });
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
 		if (item.parent == 0) {
 			return;
