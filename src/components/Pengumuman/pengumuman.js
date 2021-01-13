@@ -283,7 +283,7 @@ class PengumumanTableClass extends Component {
                   Tanggal
                 </div>
                 <div className="col-sm-1 text-right">
-                  
+
                 </div>
               </div>
             </div>
@@ -294,6 +294,9 @@ class PengumumanTableClass extends Component {
         ))}
       </ul>
     );
+
+    const levelUser = ["admin","superadmin"];
+    const grupUser = ["principal", "management"];
 
     return (
 
@@ -307,16 +310,15 @@ class PengumumanTableClass extends Component {
         <div className="col-sm-12 mb-3 mt-2">
 
           {
-            (this.state.level === "admin" || this.state.level === "superadmin") &&
+            (levelUser.includes(this.state.level) || grupUser.includes(Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : 'admin')) &&
             <button
               className="btn btn-icademy-primary"
               style={{ padding: "7px 8px !important", marginLeft: 14 }}
               onClick={this.createModalPengumuman.bind(this)}
             >
               <i className="fa fa-plus"></i>
-
               Make Announcement
-                </button>
+            </button>
           }
 
           <span className="float-right">{this.state.grup.length} Announcement</span>
@@ -343,7 +345,7 @@ class PengumumanTableClass extends Component {
             <Form>
               <Form.Group controlId="formJudul">
                 <Form.Label className="fc-skyblue f-w-bold">
-                  Announcement Title
+                  Title
                   </Form.Label>
                 <FormControl
                   type="text"
@@ -358,7 +360,7 @@ class PengumumanTableClass extends Component {
 
               <Form.Group controlId="formisi">
                 <Form.Label className="fc-skyblue f-w-bold">
-                  contents of the Announcement
+                  Contents
 
                   </Form.Label>
                 <textarea
@@ -429,7 +431,7 @@ class PengumumanTableClass extends Component {
                 onClick={this.onSubmitForm}
               >
                 <i className="fa fa-paper-plane"></i>
-              Kirim Pengumuman
+                Send Announcement
               </button>
             }
           </Modal.Footer>

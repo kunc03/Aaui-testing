@@ -326,7 +326,9 @@ class PembelajaranPrincipal extends React.Component {
                   <div className="row mt-3">
                     <div className="col-sm-12">
                       <div className="card">
-                        <div className="card-header">Pelajaran</div>
+                        <div className="card-header">
+                          <h4 className="f-w-900 f-18 fc-blue">Pelajaran</h4>
+                        </div>
                         <div className="card-body" style={{ padding: '5px' }}>
                           <table className="table table-striped">
                             <thead>

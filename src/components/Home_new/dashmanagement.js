@@ -7,10 +7,12 @@ import {toast} from 'react-toastify'
 
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
+import moment from 'moment-timezone';
 
 class DashGuru extends Component {
 
   state = {
+    role: '',
     companyId: Storage.get('user').data.company_id,
     toDo: [],
     calendar: [],
@@ -40,6 +42,36 @@ class DashGuru extends Component {
     ],
 
     jadwal: [],
+
+    ptc: [],
+    openParticipants: false,
+    ptcId: '',
+    participants: [],
+    getPtc: {},
+    optionsName: [],
+    pesertaId: [],
+  }
+
+  fetchPtc() {
+    let url = ``;
+
+    if(this.state.role.toLowerCase() === "guru") {
+      if(Storage.get('user').data.level !== "client") {
+        url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+      } else {
+        url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+      }
+    } else if(this.state.role.toLowerCase() === "parents") {
+      url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
+    } else {
+      url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+    }
+
+    API.get(url).then(res => {
+      if (res.data.error) console.log('Error: ', res.data.result);
+
+      this.setState({ ptc: res.data.result.reverse().slice(0,5) })
+    });
   }
 
   openSilabus = e => {
@@ -69,6 +101,30 @@ class DashGuru extends Component {
     })
   }
 
+  openParticipants = e => {
+    e.preventDefault()
+    let dataId = e.target.getAttribute('data-id');
+    console.log('ptcId: ', dataId)
+    let getPtc = this.state.ptc.filter(item => item.ptc_id === parseInt(dataId));
+    this.fetchParticipants(dataId);
+    this.setState({ openParticipants: true, ptcId: dataId })
+  }
+
+  fetchParticipants(id) {
+    API.get(`${API_SERVER}v1/ptc-room/peserta/${id}`).then(res => {
+      if (res.data.error) console.log('Error: fetch peserta')
+
+      this.setState({ participants: res.data.result })
+    })
+  }
+
+  closeModal() {
+    this.setState({
+      openParticipants: false,
+      ptcId: '',
+    })
+  }
+
   closePengumuman() {
     this.setState({
       openPengumuman: false,
@@ -91,7 +147,9 @@ class DashGuru extends Component {
     this.fetchPelajaran();
     this.fetchPengumuman();
     this.fetchJadwal();
+    this.fetchPtc();
   }
+
 
   fetchPelajaran() {
     API.get(`${API_SERVER}v2/pelajaran/company/${this.state.companyId}`).then(res => {
@@ -133,96 +191,84 @@ class DashGuru extends Component {
 
                   <div className="row">
 
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Mengajar Hari Ini</h4>
+                  <div class="col-sm-6">
+                      <div className="card">
+                        <div className="card-header header-kartu">
+                          Parent Teacher Conference (PTC)
+                        </div>
+                        <div className="card-body" style={{ padding: 0 }}>
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
+                                <th>Room Name</th>
+                                <th>Moderator</th>
+                                <th>Time </th>
+                                <th> Date </th>
+                                { this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th> }
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.jadwal.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
-                                    <td>{item.kelas_nama}</td>
-                                    <td>
-                                      <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
-                                        <i className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
+                                this.state.ptc.map((item, i) => (
+                                  <tr>
+                                    <td>{item.nama_ruangan}</td>
+                                    <td>{item.name}</td>
+                                    <td>{item.waktu_mulai}</td>
+                                    <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
+                                    {
+                                      this.state.role.toLowerCase() !== "parents" &&
+                                      <td className="text-center">
+                                        <button data-id={item.ptc_id} onClick={this.openParticipants} className="btn btn-v2 btn-default ml-2">{item.peserta.length} Participants</button>
+                                      </td>
+                                    }
+
                                   </tr>
                                 ))
                               }
                             </tbody>
                           </table>
-                        </Card.Body>
-                      </Card>
-                    </div>
+                        </div>
+                      </div>
 
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Tugas Yang Akan Datang</h4>
+                      <Modal show={this.state.openParticipants} onHide={() => this.closeModal()} dialogClassName="modal-lg">
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                            All Participants
+                        </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th>Batas Waktu</th><th>Terkumpul</th><th>Aksi</th>
+                                <th>
+                                  No
+                              </th>
+                                <th> Name </th>
+                                <th>Email</th>
+                                <th> Attendance</th>
+                                <th> Date </th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.tugas.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.mapel}</td>
-                                    <td>{item.batas}</td>
-                                    <td>{item.terkumpul}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
-                        </Card.Body>
-                      </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
-                    </div>
-
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Pertemuan Yang Akan Datang</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tanggal</th><th>Waktu</th><th>Mata Pelajaran</th><th>Durasi</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ujian.map((item,i) => (
+                                this.state.participants.map((item, i) => (
                                   <tr key={i}>
-                                    <td>{item.tanggal}</td>
-                                    <td>{item.waktu}</td>
-                                    <td>{item.mapel}</td>
-                                    <td>{item.durasi}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    <td>
+                                      {i + 1}
+                                    </td>
+                                    <td>{item.name}</td>
+                                    <td>{item.email}</td>
+                                    <td>{item.is_confirm ? "Sudah Konfirmasi" : "Belum Konfirmasi"}</td>
+                                    <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
+
                                   </tr>
                                 ))
                               }
                             </tbody>
                           </table>
-                        </Card.Body>
-                      </Card>
-                    </div>
+                        </Modal.Body>
+                      </Modal>
+                  </div>
 
                     <div className="col-sm-6">
                       <Card>
@@ -302,111 +348,9 @@ class DashGuru extends Component {
                       </Modal>
                     </div>
 
-                    <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Laporan Yang Harus Diselesaikan</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tanggal</th><th>Waktu</th><th>Mata Pelajaran</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ujian.map((item,i) => (
-                                  <tr key={i}>
-                                    <td>{item.tanggal}</td>
-                                    <td>{item.waktu}</td>
-                                    <td>{item.mapel}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
-                        </Card.Body>
-                      </Card>
-                    </div>
 
                     <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Materi Pelajaran</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th style={{width: '40px'}}>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.pelajaran.map((item,i) => (
-                                  <tr key={i}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td style={{width: '40px'}}>
-                                      <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
-                        </Card.Body>
-                      </Card>
-
-                      <Modal
-                        show={this.state.openSilabus}
-                        onHide={this.closeSilabus.bind(this)}
-                        dialogClassName="modal-lg"
-                      >
-                        <Modal.Header closeButton>
-                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                            Silabus {this.state.pelajaranNama}
-                          </Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Sesi</th>
-                                <th>Topik</th>
-                                <th>Tujuan</th>
-                                <th>Deskripsi</th>
-                                <th>Files</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.silabus.map((item, i) => {
-                                  if(item.jenis === 0) {
-                                    return (
-                                        <tr key={i}>
-                                          <td>{item.sesi}</td>
-                                          <td>{item.topik}</td>
-                                          <td>{item.tujuan}</td>
-                                          <td>{item.deskripsi}</td>
-                                          <td style={{padding: '12px'}}>
-                                            {
-                                              item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
-                                            }
-                                          </td>
-                                        </tr>
-                                      )
-                                  } else {
-                                    return (
-                                      <tr key={i}>
-                                        <td>{item.sesi}</td>
-                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                                      </tr>
-                                    )
-                                  }
-                                })
-                              }
-                              </tbody>
-                            </table>
-                        </Modal.Body>
-                      </Modal>
+                      <CalenderNew lists={this.state.calendar} />
                     </div>
 
                     <div className="col-sm-6">

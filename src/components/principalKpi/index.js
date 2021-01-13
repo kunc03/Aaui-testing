@@ -16,6 +16,7 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 class LaporanKpi extends Component {
 
   state = {
+    grupName: Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : '',
     kinerja: [],
 
     guru: [],
@@ -260,20 +261,23 @@ class LaporanKpi extends Component {
                                     <td>{item.semester}</td>
                                     <td>{item.kelas}</td>
                                     <td>{item.pelajaran}</td>
-                                    <td>{item.file ? 'KPI terkumpul' : 'Unggah KPI'}</td>
-                                    <td>
+                                    <td class="text-center">{item.file ? <span class="label label-success">KPI terkumpul</span> : <span class="label label-danger">Belum ada KPI</span>}</td>
+                                    <td class="text-center">
                                       {
                                         item.file ?
                                         <button onClick={this.openPreview} data-index={i} class="btn btn-sm btn-v2 btn-primary">Selengkapnya</button>
                                         :
-                                        <button
-                                          onClick={this.openModal}
-                                          data-guru={item.pengajar}
-                                          data-jadwal={item.jadwal_id}
-                                          data-semester={item.semester_id}
-                                          data-kelas={item.kelas_id}
-                                          data-pelajaran={item.pelajaran_id}
-                                          class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
+                                        this.state.grupName === "principal" ?
+                                          <button
+                                            onClick={this.openModal}
+                                            data-guru={item.pengajar}
+                                            data-jadwal={item.jadwal_id}
+                                            data-semester={item.semester_id}
+                                            data-kelas={item.kelas_id}
+                                            data-pelajaran={item.pelajaran_id}
+                                            class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
+                                          :
+                                          ""
                                       }
                                     </td>
                                   </tr>

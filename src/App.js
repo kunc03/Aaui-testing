@@ -548,10 +548,17 @@ export class ClientSwitch extends React.Component {
         <Route path='/parent-syllabus' component={ParentSylabus} />
         <Route path='/parent-rapor' component={ParentRapor} />
 
-        {/* ROUTE PRINVIPAL */}
+        {/* ROUTE PRINCIPAL */}
+        <Route path='/principal-syllabus' component={ParentSylabus} />
         <Route path='/principal-pelajaran' component={PembelajaranPrincipal} />
         <Route path='/principal-rapor' component={LaporanPrincipal} />
         <Route path='/principal-kinerja' component={KinerjaPrincipal} />
+
+        {/* ROUTE MANAGEMENT */}
+        <Route path='/management-syllabus' component={ParentSylabus} />
+        <Route path='/management-pelajaran' component={PembelajaranPrincipal} />
+        <Route path='/management-rapor' component={LaporanPrincipal} />
+        <Route path='/management-kinerja' component={KinerjaPrincipal} />
 
         <Route path="/logout" component={Logout} />
       </Switch>

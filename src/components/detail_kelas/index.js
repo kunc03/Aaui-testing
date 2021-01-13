@@ -159,6 +159,7 @@ class DetailMurid extends Component {
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NAMA </td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI AKHIR</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">STATUS</td>
                   </tr>
                   <tr className="text-center">
                     <td>TASK</td>
@@ -171,7 +172,7 @@ class DetailMurid extends Component {
                   {
                     this.state.isLoading &&
                     <tr>
-                      <td className="text-center" colSpan='7'>
+                      <td className="text-center" colSpan='8'>
                         <span>Loading...</span>
                       </td>
                     </tr>
@@ -186,6 +187,7 @@ class DetailMurid extends Component {
                         <td>{item.quiz}</td>
                         <td>{item.exam}</td>
                         <td>{item.task+item.quiz+item.exam}</td>
+                        <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
                   }
