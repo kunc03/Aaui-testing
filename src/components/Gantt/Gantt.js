@@ -154,6 +154,12 @@ export default class Gantt extends Component {
         if (task.status==='Done'){
             task.progress=1;
         }
+        let d = task.end_date
+        let time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        if (time === '0:0:0'){
+            let new_end_date = d.setHours(23, 0, 0);
+            task.end_date = new Date(new_end_date);
+        }
         return true;
     })
     gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
