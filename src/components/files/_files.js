@@ -298,7 +298,7 @@ class FilesTableClass extends Component {
     })
   }
   fetchMOM(folder) {
-    if (folder == 0) {
+    if (folder == 0 || this.props.webinarId) {
       this.setState({ mom: [] })
     }
     else {
@@ -312,7 +312,7 @@ class FilesTableClass extends Component {
     }
   }
   fetchRekaman(folder) {
-    if (folder == 0) {
+    if (folder == 0 || this.props.webinarId) {
       this.setState({ recordedMeeting: [], isLoading: false })
     }
     else {
@@ -329,7 +329,7 @@ class FilesTableClass extends Component {
 fetchRekamanBBB(folder){
   let levelUser = Storage.get('user').data.level;
   let userId = Storage.get('user').data.user_id;
-  if (folder == 0){
+  if (folder == 0 || this.props.webinarId){
     this.setState({dataRecordings:[], isLoading: false})
   }
   else{
@@ -375,7 +375,7 @@ fetchRekamanBBB(folder){
   fetchRekamanBBBWebinar(folder) {
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
-    if (folder == 0) {
+    if (folder == 0 || this.props.webinarId) {
       this.setState({ dataRecordings: [], isLoading: false })
     }
     else {

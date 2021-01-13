@@ -180,6 +180,8 @@ class DetailMurid extends Component {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
+    console.log('state: ', this.state)
+
     return (
       <div className="row mt-3">
         <div className="col-xl-12">
@@ -336,7 +338,7 @@ class DetailMurid extends Component {
                               <br/>
                               {item.kumpulUjian.length}/{item.totalUjian.length}
                             </td>
-                            <td>{item.persensi}</td>
+                            <td>{item.persensi ? item.persensi + '%' : '0%'}</td>
                           </tr>
                         ))
                       }

@@ -80,6 +80,8 @@ class Header extends Component {
           logo: res.data.result.logo,
           company_id: res.data.result.company_id,
           company_type: res.data.result.company_type,
+          grup_id: res.data.result.grup_id,
+          grup_name: res.data.result.grup_name,
           user: res.data.result.name,
           avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png'
         };

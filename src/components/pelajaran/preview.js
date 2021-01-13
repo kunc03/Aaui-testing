@@ -15,7 +15,6 @@ import SocketContext from '../../socket';
 
 // Core viewer
 import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
-
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
 class Overview extends React.Component {

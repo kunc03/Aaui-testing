@@ -4,7 +4,6 @@ import Storage from '../../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
-
 class SidebarClass extends Component {
   constructor(props) {
     super(props);
@@ -55,9 +54,9 @@ class SidebarClass extends Component {
         submenu: [
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Subjects', link: '/murid/mata-pelajaran' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Task', link: '/murid/tugas' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Quiz', link: '/murid/kuis' },
           { iconOn: 'info-on.svg', iconOff: 'ujianoff.svg', label: 'Exam', link: '/murid/ujian' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'liveclasswebinaroff.svg', label: 'Liveclass/Webinar', link: '/webinar-murid' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -77,7 +76,7 @@ class SidebarClass extends Component {
 
       parents: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
+          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning', link: '/parent-learning' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
@@ -86,18 +85,23 @@ class SidebarClass extends Component {
 
       principal: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/principal-pelajaran' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/principal-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/principal-kinerja' },
+          // { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
 
       management: {
         submenu: [
-          { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Student Learning Report', link: '/parent-learning' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Syllabus', link: '/parent-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Report/Raport', link: '/parent-rapor' },
+          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/management-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/management-pelajaran' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/management-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/management-kinerja' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -140,6 +144,18 @@ class SidebarClass extends Component {
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+      ],
+      submenuPendidikan : [
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Registration", link: '/learning/registrasi' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'List of Lessons', link: '/learning/daftar-pelajaran' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Teaching Room', link: '/learning/ruangan-mengajar' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Teaching Schedule', link: '/learning/jadwal-mengajar' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Format KPI', link: '/learning/kpi' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas: [
@@ -188,26 +204,37 @@ class SidebarClass extends Component {
     let menuAtas = [];
     let menuBawah = [];
 
+    let tempAtasSuper = [], tempBawahSuper = [];
+    let tempAtasAdmin = [], tempBawahAdmin = [];
+
+    if(companyType === "perusahaan") {
+      tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+      tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
+
+      tempAtasAdmin = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
+      tempBawahAdmin = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
+    } else {
+      tempAtasSuper = menuSuperAdmins.menuAtas;
+      tempBawahSuper = menuSuperAdmins.menuBawah;
+
+      tempAtasAdmin = menuAdmins.menuAtas;
+      tempBawahAdmin = menuAdmins.menuBawah;
+    }
+
     if (levelUser === 'superadmin') {
       menuContent = menuSuperAdmins.submenu;
-      if(companyType === "perusahaan") {
-        menuAtas = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-        menuBawah = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
-      } else {
-        menuAtas = menuSuperAdmins.menuAtas;
-        menuBawah = menuSuperAdmins.menuBawah;
-      }
+      menuAtas = tempAtasSuper;
+      menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      menuContent = menuAdmins.submenu;
-      if(companyType === "perusahaan") {
-        menuAtas = menuAdmins.menuAtas.filter(item => item.link != "/pengumuman");
-        menuBawah = menuAdmins.menuBawah.filter(item => item.link != "/ptc");
+      if(companyType === "pendidikan") {
+        menuContent = menuAdmins.submenuPendidikan;
       } else {
-        menuAtas = menuAdmins.menuAtas;
-        menuBawah = menuAdmins.menuBawah;
+        menuContent = menuAdmins.submenu;
       }
+      menuAtas = tempAtasAdmin;
+      menuBawah = tempBawahAdmin;
     } else {
-      let subMenuClient = Storage.get('user').data.grup_name.toString().toLowerCase();
+      let subMenuClient =  Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
       if (subMenuClient === "guru"
             || subMenuClient === "murid"
             || subMenuClient === "parents"
