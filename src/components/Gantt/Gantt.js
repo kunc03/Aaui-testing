@@ -28,7 +28,7 @@ export default class Gantt extends Component {
         statusDone: true,
         statusClosed: true,
         modalHistory: false,
-        history: []
+        history: [],
         // tasks: {
         //     tasks : [],
         //     links : []
@@ -150,6 +150,38 @@ export default class Gantt extends Component {
     //     // }
     //     return false;
     // });
+    let editable = this.props.access_project_admin;
+    gantt.attachEvent("onBeforeLightbox", function(id){
+        var task = gantt.getTask(id);
+        if (editable === false && task.lock_data === 'Locked'){
+            for (let i = 0; i < 9; i++){
+                gantt.getLightboxSection("period").node.children[i].disabled = true;
+            }
+            gantt.getLightboxSection("owner").node.children[0].disabled = true;
+            gantt.getLightboxSection("visibility").node.children[0].disabled = true;
+            gantt.getLightboxSection("company").node.children[0].disabled = true;
+        }
+        gantt.getLightboxSection("lock_data").node.children[0].disabled = !editable;
+        return true;
+    });
+    gantt.attachEvent("onAfterLightbox", function (){
+        for (let i = 0; i < 9; i++){
+            gantt.getLightboxSection("period").node.children[i].disabled = false;
+        }
+        gantt.getLightboxSection("owner").node.children[0].disabled = false;
+        gantt.getLightboxSection("visibility").node.children[0].disabled = false;
+        gantt.getLightboxSection("company").node.children[0].disabled = false;
+        gantt.getLightboxSection("lock_data").node.children[0].disabled = false;
+    });
+    gantt.attachEvent("onBeforeTaskDrag", function(id, mode, e){
+        if (mode === 'resize' || mode === 'move' || mode === 'ignore'){
+            var task = gantt.getTask(id);
+            return editable || task.lock_data === 'Unlocked';
+        }
+        else{
+            return true;
+        }
+    })
     gantt.attachEvent("onLightboxSave", function(id, task, is_new){
         if (task.status==='Done'){
             task.progress=1;
@@ -173,6 +205,13 @@ export default class Gantt extends Component {
                 gantt.getTask(id).status = 'In Progress';
                 gantt.updateTask(id);
             }
+        }
+        
+        else if (mode === 'resize' || mode === 'move'){
+            let d = gantt.getTask(id).end_date;
+            d = new Date(d.setDate(d.getDate()-1));
+            gantt.getTask(id).end_date = new Date(d.setHours(23,0,0));
+            gantt.updateTask(id);
         }
         return;
     });
@@ -307,6 +346,7 @@ export default class Gantt extends Component {
         gantt.locale.labels.section_period = "Time period";
         gantt.locale.labels.section_status = "Status";
         gantt.locale.labels.section_visibility = "Visibility";
+        gantt.locale.labels.section_lock_data = "Lock Data";
         gantt.locale.labels["logs_button"] = "History";
         gantt.config.resource_store = "resource";
         gantt.config.resource_property = "owner_id";
@@ -333,6 +373,12 @@ export default class Gantt extends Component {
                 name: "visibility", height: 38, map_to: "visibility", type: "select", options: [
                     {key: "Public", label: "Public"},
                     {key: "Private", label: "Private"}
+                ]
+            },
+            {
+                name: "lock_data", height: 38, map_to: "lock_data", type: "select", options: [
+                    {key: "Unlocked", label: "Unlocked"},
+                    {key: "Locked", label: "Locked"}
                 ]
             }
         ];
