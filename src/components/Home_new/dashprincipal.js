@@ -13,7 +13,6 @@ import moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
-import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
 
 import { toast } from 'react-toastify'
@@ -488,11 +487,7 @@ class DashParent extends Component {
                       </Modal>
                     </div>
 
-<<<<<<< HEAD
-                  <div className="col-sm-6">
-=======
                     <div class="col-sm-6">
->>>>>>> production
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>

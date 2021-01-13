@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Bar } from 'react-chartjs-2';
-import { dataBar } from '../../modul/data';
+import { dataEvaluasi } from '../../modul/data';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
@@ -56,29 +56,29 @@ class Evaluasi extends Component {
             style={{ padding: "12px 35px" }}
           >
             <table className="table">
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Responden</span></td>
-                <td>Siswa</td>
+              {/* <tr>
+                <td style={{ background: '#FAFAFA', border: '4px solid white' }}><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Responden</span></td>
+                <td style={{ background: '#F5F5F5', border: '4px solid white' }}><b className="fc-skyblue">Siswa</b></td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                <td style={{ background: '#FAFAFA', border: '4px solid white' }}><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
                   Jumlah Responden</span></td>
-                <td>54</td>
-              </tr>
+                <td style={{ background: '#F5F5F5', border: '4px solid white' }}><b className="fc-skyblue">54</b></td>
+              </tr> */}
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                <td style={{ background: '#FAFAFA', border: '4px solid white' }}><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
                   Mata Pelajaran</span></td>
-                <td>Matematika</td>
+                <td style={{ background: '#F5F5F5', border: '4px solid white' }}><b className="fc-skyblue">Matematika</b></td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                <td style={{ background: '#FAFAFA', border: '4px solid white' }}><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
                   Guru</span></td>
-                <td>54</td>
+                <td style={{ background: '#F5F5F5', border: '4px solid white' }}><b className="fc-skyblue">Adrian Simatupluo</b></td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
+                <td style={{ background: '#FAFAFA', border: '4px solid white' }}><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
                   Ringkasan Evaluasi</span></td>
-                <td>54</td>
+                <td style={{ background: '#F5F5F5', border: '4px solid white' }}><b className="fc-skyblue">1. Anak anak ips xii</b></td>
               </tr>
             </table>
           </div>
@@ -149,12 +149,19 @@ class Evaluasi extends Component {
                       </select>
                     </div>
                   </div>
+                  <div className="col-sm-3">
+                    <label>Download Laporan</label>
+                    <a href='' target="_blank" className="btn btn-v2 btn-primary">
+                      <i className="fa fa-download"></i>
+                          Download
+                        </a>
+                  </div>
                 </div>
 
               </div>
 
               <div className="col-sm-6 pl-5">
-                <Bar data={dataBar} />
+                <Bar data={dataEvaluasi} />
               </div>
 
               <div className="col-sm-6 p-l-5">

@@ -88,9 +88,9 @@ class SidebarClass extends Component {
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/parent-syllabus' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/principal-pelajaran' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/principal-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/principal-kinerja' },
-          // { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
+          { iconOn: '', iconOff: '', label: 'Pembelajaran Murid', link: '/principal-rapor' },
+          { iconOn: '', iconOff: '', label: 'Kinerja Guru', link: '/principal-kinerja' },
+          { iconOn: '', iconOff: '', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -134,7 +134,7 @@ class SidebarClass extends Component {
     };
 
     let menuAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -147,7 +147,7 @@ class SidebarClass extends Component {
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
-      submenuPendidikan : [
+      submenuPendidikan: [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Registration", link: '/learning/registrasi' },
@@ -172,7 +172,7 @@ class SidebarClass extends Component {
     };
 
     let menuSuperAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -207,7 +207,7 @@ class SidebarClass extends Component {
     let tempAtasSuper = [], tempBawahSuper = [];
     let tempAtasAdmin = [], tempBawahAdmin = [];
 
-    if(companyType === "perusahaan") {
+    if (companyType === "perusahaan") {
       tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
       tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
 
@@ -226,7 +226,7 @@ class SidebarClass extends Component {
       menuAtas = tempAtasSuper;
       menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      if(companyType === "pendidikan") {
+      if (companyType === "pendidikan") {
         menuContent = menuAdmins.submenuPendidikan;
       } else {
         menuContent = menuAdmins.submenu;
@@ -234,13 +234,13 @@ class SidebarClass extends Component {
       menuAtas = tempAtasAdmin;
       menuBawah = tempBawahAdmin;
     } else {
-      let subMenuClient =  Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
+      let subMenuClient = Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
       if (subMenuClient === "guru"
-            || subMenuClient === "murid"
-            || subMenuClient === "parents"
-            || subMenuClient === "principal"
-            || subMenuClient === "management"
-          ) {
+        || subMenuClient === "murid"
+        || subMenuClient === "parents"
+        || subMenuClient === "principal"
+        || subMenuClient === "management"
+      ) {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;
