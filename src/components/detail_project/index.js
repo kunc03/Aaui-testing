@@ -165,7 +165,7 @@ export default class User extends Component {
                       {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
                       <div className="gantt-container">
                         <div className="m-t-10 m-b-10">
-                          <select value={this.state.visibility} onChange={this.changeVisibility} style={{float:'right', marginBottom: 10, width:200, height:40, marginLeft: 10}}>
+                          <select value={this.state.visibility} onChange={this.changeVisibility} style={{float:'right', marginBottom: 10, width:200, height:40, marginLeft: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
                               {levelUser !== 'client' && <option value='all'>All</option>}
                               <option value='public'>Public</option>
                               <option value='private'>Private</option>
@@ -186,7 +186,7 @@ export default class User extends Component {
                           </div>
                           }
                         </div>
-                      <Gantt projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility}/>
+                      <Gantt access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility}/>
                       </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
