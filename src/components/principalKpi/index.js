@@ -42,7 +42,9 @@ class LaporanKpi extends Component {
     tempFile: Math.random().toString(36),
 
     isPreview: false,
-    detailKinerja: {}
+    detailKinerja: {},
+
+    formatKpi: '',
   }
 
   changeGuru = e => {
@@ -108,6 +110,7 @@ class LaporanKpi extends Component {
 
   componentDidMount() {
     this.fetchKinerja()
+    this.fetchNewestFormat()
   }
 
   clearPreview() {
@@ -136,6 +139,16 @@ class LaporanKpi extends Component {
       let pelajaran = this.findUnique(res.data.result, d => d.pelajaran_id)
 
       this.setState({ kinerja: res.data.result, guru, semester, kelas, pelajaran })
+    })
+  }
+
+  fetchNewestFormat() {
+    API.get(`${API_SERVER}v2/learning-kpi/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.result.length) {
+        this.setState({ formatKpi: res.data.result[res.data.result.length-1].file })
+      } else {
+        toast.info(`Format KPI belum di upload oleh Admin.`)
+      }
     })
   }
 
@@ -236,6 +249,11 @@ class LaporanKpi extends Component {
                     <div className="col-xl-12">
                       <div className="card">
                         <div className="card-body">
+
+                          {
+                            this.state.formatKpi !== "" &&
+                            <a href={this.state.formatKpi} target="_blank" class="btn btn-v2 btn-primary">Download Format KPI</a>
+                          }
 
                           <table className="table table-striped mt-4 table-bordered">
                             <thead>

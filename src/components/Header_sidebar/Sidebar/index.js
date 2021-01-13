@@ -154,6 +154,7 @@ class SidebarClass extends Component {
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Teaching Room', link: '/learning/ruangan-mengajar' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Teaching Schedule', link: '/learning/jadwal-mengajar' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Format KPI', link: '/learning/kpi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
