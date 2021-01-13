@@ -201,3 +201,9 @@ html, body, #root,#root div:only-child, .gantt-container {
 .gantt-status-legend:hover{
     text-decoration: underline;
 } */
+.logs_button{
+    background: '#666'
+}
+.MultiSelect .Header {
+    background-color: #FFF !important;
+}

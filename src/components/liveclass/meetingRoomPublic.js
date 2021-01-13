@@ -132,7 +132,7 @@ export default class MeetingRoomPublic extends Component {
     http(meetingInfo).then((result) => {
       if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
         // Jika belum ada, create room nya.
-        let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
+        let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.is_class_id, {
           attendeePW: 'peserta',
           moderatorPW: 'moderator',
           allowModsToUnmuteUsers: true,

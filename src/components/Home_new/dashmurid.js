@@ -36,8 +36,12 @@ class DashMurid extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
+      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let tglIni = new Date();
+      let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
+
       this.setState({
-        jadwal: res.data.result.jadwal,
+        jadwal: hariIni,
         tugas: res.data.result.tugas,
         ujian: res.data.result.ujian,
       })
@@ -117,7 +121,11 @@ class DashMurid extends Component {
                                     <td>{item.hari}</td>
                                     <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                     <td>{item.sesi}</td>
-                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
+                                    <td>
+                                      <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
+                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }
@@ -144,7 +152,11 @@ class DashMurid extends Component {
                                     <td>{item.title}</td>
                                     <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
+                                    <td>
+                                      <Link to={`/murid/tugas`}>
+                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }
@@ -249,7 +261,11 @@ class DashMurid extends Component {
                                     <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
                                     <td>{item.title}</td>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td><i style={{ cursor: 'pointer' }} className="fa fa-search"></i></td>
+                                    <td>
+                                      <Link to={`/murid/ujian`}>
+                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                      </Link>
+                                    </td>
                                   </tr>
                                 ))
                               }

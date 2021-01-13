@@ -211,12 +211,6 @@ class PengumumanTableClass extends Component {
             style={{ padding: "10px 25px" }}
           >
             <div className="row d-flex align-items-center">
-              <div className="col-sm-1">
-                <input type="checkbox" /> &nbsp; &nbsp;
-                    <img
-                  src='newasset/flag-active.svg'
-                />
-              </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-16 text-c-grey2 ">
                   <ul>
@@ -263,11 +257,46 @@ class PengumumanTableClass extends Component {
 
     const Lists = ({ lists }) => (
       <ul className="list-cabang">
+        <li>
+          <div className="card" style={{ marginBottom: 10 }}>
+            <div
+              className="card-block"
+              style={{ padding: "10px 25px" }}
+            >
+              <div className="row d-flex align-items-center">
+                <div className="col-sm-2">
+                  <small className="f-w-600 f-16 text-c-grey2 ">
+                    Penerima
+                  </small>
+                </div>
+                <div className="col-sm-3">
+                  <small className="f-w-600 f-14 text-c-grey2 ">
+                    Judul
+                  </small>
+                </div>
+                <div className="col-sm-3">
+                  <small className="f-w-600 f-14 text-c-grey-t ">
+                    Deskripsi
+                  </small>
+                </div>
+                <div className="col-sm-2 text-right">
+                  Tanggal
+                </div>
+                <div className="col-sm-1 text-right">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
         {lists.map(list => (
           <Item key={list.pengumuman_id} item={list} />
         ))}
       </ul>
     );
+
+    const levelUser = ["admin","superadmin"];
+    const grupUser = ["principal", "management"];
 
     return (
 
@@ -281,23 +310,16 @@ class PengumumanTableClass extends Component {
         <div className="col-sm-12 mb-3 mt-2">
 
           {
-            (this.state.level === "admin" || this.state.level === "superadmin") &&
+            (levelUser.includes(this.state.level) || grupUser.includes(Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : 'admin')) &&
             <button
               className="btn btn-icademy-primary"
               style={{ padding: "7px 8px !important", marginLeft: 14 }}
               onClick={this.createModalPengumuman.bind(this)}
             >
               <i className="fa fa-plus"></i>
-
               Make Announcement
-                </button>
+            </button>
           }
-
-          <button className="btn btn-transparent"> Unread </button>
-          <button className="btn btn-transparent-disabled">Unread  </button>
-          <button className="btn btn-transparent-disabled"> All messages </button>
-          <button className="btn btn-transparent-disabled"> Flagging </button>
-
 
           <span className="float-right">{this.state.grup.length} Announcement</span>
 
@@ -323,7 +345,7 @@ class PengumumanTableClass extends Component {
             <Form>
               <Form.Group controlId="formJudul">
                 <Form.Label className="fc-skyblue f-w-bold">
-                  Announcement Title
+                  Title
                   </Form.Label>
                 <FormControl
                   type="text"
@@ -338,7 +360,7 @@ class PengumumanTableClass extends Component {
 
               <Form.Group controlId="formisi">
                 <Form.Label className="fc-skyblue f-w-bold">
-                  contents of the Announcement
+                  Contents
 
                   </Form.Label>
                 <textarea
@@ -409,7 +431,7 @@ class PengumumanTableClass extends Component {
                 onClick={this.onSubmitForm}
               >
                 <i className="fa fa-paper-plane"></i>
-              Kirim Pengumuman
+                Send Announcement
               </button>
             }
           </Modal.Footer>

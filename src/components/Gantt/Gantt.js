@@ -4,10 +4,7 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
-import equal from 'fast-deep-equal';
-import Storage from '../../repository/storage';
-import {Modal} from 'react-bootstrap';
-import MomentTZ from 'moment-timezone';
+import equal from 'fast-deep-equal'
  
 export default class Gantt extends Component {
     constructor(props) {
@@ -36,10 +33,6 @@ export default class Gantt extends Component {
       };
       this.fetchGanttData = this.fetchGanttData.bind(this)
       this.renderGantt = this.renderGantt.bind(this)
-    }
-
-    closeModalHistory = e => {
-        this.setState({modalHistory: false})
     }
 
     renderGantt(){
@@ -94,14 +87,10 @@ export default class Gantt extends Component {
             }
         };
         gantt.templates.task_text=function(start,end,task){
-                return "";
+            return "";
         };
         gantt.templates.progress_text=function(start,end,task){
-            let done = '';
-            if (task.status==='Done'){
-                done = task.done_time !== null ? ' - Done : '+MomentTZ.tz(task.done_time, 'Asia/Jakarta').format("DD/MM/YYYY HH:mm") : '';
-            }
-            return Math.round(task.progress*100)+"%"+done;
+            return Math.round(task.progress*100)+"%";
         };
         gantt.config.columns = [
             {
@@ -456,15 +445,7 @@ export default class Gantt extends Component {
         gantt.attachEvent("onGanttReady", function(){
             var tooltips = gantt.ext.tooltips;
             tooltips.tooltip.setViewport(gantt.$task_data);
-            gantt.config.buttons_left = ["gantt_save_btn","gantt_cancel_btn","logs_button"];   
-            gantt.config.buttons_right = ["gantt_delete_btn"];  
         });
-        gantt.attachEvent("onLightboxButton", function(button_id, node, e){
-            if(button_id == "logs_button"){
-                var id = gantt.getState().lightbox;
-                this.getHistory(id)
-            }
-        }.bind(this));
         const { tasks } = this.state;
         // today
         
@@ -513,7 +494,7 @@ export default class Gantt extends Component {
         :
         `${API_SERVER}v2/gantt/${this.props.projectId}/${this.props.visibility}`;
         gantt.load(api)
-        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${Storage.get("user").data.user_id}/${this.props.projectId ? this.props.projectId : '0'}`);
+        var dp = new gantt.dataProcessor(`${API_SERVER}v2/gantt/${this.props.projectId ? this.props.projectId : '0'}`);
         dp.init(gantt);
         dp.setTransactionMode("REST");
 
@@ -620,18 +601,6 @@ export default class Gantt extends Component {
       }
     }
 
-    getHistory(id){        
-        API.get(`${API_SERVER}v2/gantt-history/${id}`).then(res => {
-            if (res.status === 200) {
-                this.setState({
-                    history: res.data.result,
-                    modalHistory: true
-                })
-                gantt.hideLightbox();
-            }
-        })
-    }
-
     // filterOpen(){
     //     this.setState({statusOpen: !this.state.statusOpen}, function() {
     //         gantt.refreshData();
@@ -724,25 +693,7 @@ export default class Gantt extends Component {
                 <input type="button" name="delete" value="Delete"/>
             </div> */}
             </div>
-        </div>        
-        <Modal show={this.state.modalHistory} onHide={this.closeModalHistory} dialogClassName='modal-lg'>
-            <Modal.Header closeButton>
-                <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
-                    History
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <div>
-                    {
-                        this.state.history.map(item =>
-                            <div>
-                                <div>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")} - {item.description} by {item.name}</div>
-                            </div>    
-                        )
-                    }
-                </div>
-            </Modal.Body>
-        </Modal>
+        </div>
         </div>
        );
     }
