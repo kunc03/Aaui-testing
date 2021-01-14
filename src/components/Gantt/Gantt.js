@@ -111,6 +111,9 @@ export default class Gantt extends Component {
                         if (deadline && new Date() > deadline && obj.status!='Done' && obj.status!='Closed' && obj.type!='project') {
                             return '<div class="overdue-indicator">!</div>';
                         }
+                        else if (obj.status==='Done'){
+                            return '<div class="done-indicator">&check;</div>';
+                        }
                     }
                     return '<div></div>';
                 }
