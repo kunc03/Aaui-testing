@@ -43,6 +43,7 @@ export default class WebinarLive extends Component {
     joinUrl:'',
     user: [],
     projectId: '',
+    modalConfirmClose: false,
     modalEnd: false,
     modalKuesioner: false,
     modalKuesionerPeserta: false,
@@ -94,7 +95,11 @@ export default class WebinarLive extends Component {
     this.setState({ modalResultPretest: false, modalResultPosttest: false });
   }
   closeModalKuesionerPeserta = e => {
-    this.setState({ modalKuesionerPeserta: false });
+    this.setState({ modalKuesionerPeserta: false, });
+    this.closeModalConfirmClose();
+  }
+  closeModalConfirmClose = e => {
+    this.setState({ modalConfirmClose: false });
   }
 
   findArray(array, attr, value) {
@@ -1168,8 +1173,39 @@ export default class WebinarLive extends Component {
           </Modal.Footer>
         </Modal>
         <Modal
+          show={this.state.modalConfirmClose}
+          onHide={this.closeModalConfirmClose}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Confirmation
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              Are you sure want to close questioner ?
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+              <button
+                className="btn btn-icademy-primary"
+                onClick={this.closeModalKuesionerPeserta.bind(this)}
+              >
+                Close
+              </button>
+              <button
+                className="btn btn-icademy-grey"
+                onClick={this.closeModalConfirmClose.bind(this)}
+              >
+                Cancel
+              </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={this.state.modalKuesionerPeserta && (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1)}
-          onHide={this.closeModalKuesionerPeserta}
+          onHide={()=> this.setState({modalConfirmClose: true})}
           dialogClassName="modal-lg"
           centered
         >
