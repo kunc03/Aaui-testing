@@ -48,6 +48,11 @@ class FilesTableClass extends Component {
       deleteFileName: '',
       deleteFileId: '',
 
+      modalRename: false,
+      renameFileId: '',
+      renameFileName: '',
+      renameFileNameNew: '',
+
       //access role webinar
       aSekretaris: true,
       aModerator: true,
@@ -80,6 +85,14 @@ class FilesTableClass extends Component {
     else if (role == 'peserta'){
       this.setState({ aPeserta: !this.state.aPeserta });
     }
+  }
+  closeModalRename = e => {
+    this.setState({
+      modalRename: false,
+      renameFileName: '',
+      renameFileId: '',
+      renameFileNameNew: ''
+    })
   }
   closeModalAdd = e => {
     this.setState({
@@ -160,6 +173,26 @@ class FilesTableClass extends Component {
     } else {
       this.setState({ [name]: value });
     }
+  }
+  renameFile = e => {
+    let form = {
+      name: this.state.renameFileNameNew
+    }
+    API.put(`${API_SERVER}v1/project-file/${this.state.renameFileId}`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Failed to modify the file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
+        } else {
+          let msg = `${Storage.get('user').data.user} change the file name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
+          this.sendNotifToAll(msg);
+
+          toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
+          this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
+          this.fetchFile(this.state.folderId);
+          this.closeModalRename();
+        }
+      }
+    })
   }
   saveFolder = e => {
     e.preventDefault();
@@ -579,7 +612,7 @@ fetchRekamanBBB(folder){
               bodyTabble.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
                 <tbody>
                   <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no</td>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no files</td>
                   </tr>
                 </tbody>
                 :
@@ -674,6 +707,12 @@ fetchRekamanBBB(folder){
                                 >
                                   Download
                                       </button>
+                                {
+                                  access_project_admin ?
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={()=> this.setState({modalRename : true, renameFileId: item.id, renameFileName: item.name, renameFileNameNew: item.name})}> Rename </button>
+                                    :
+                                    null
+                                }
                                 {
                                   access_project_admin ?
                                     <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
@@ -1107,7 +1146,54 @@ fetchRekamanBBB(folder){
                   onClick={this.editFolder.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Simpan
+                        Save
+                      </button>
+              </Modal.Footer>
+            </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalRename}
+          onHide={this.closeModalRename}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Rename File
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Card className="cardku">
+              <Card.Body>
+                <Row>
+                  <Col>
+                    <div className="input-group mb-4">
+                      <input
+                        type="text"
+                        name="renameFileNameNew"
+                        value={this.state.renameFileNameNew}
+                        className="form-control"
+                        placeholder="Nama File"
+                        onChange={this.onChangeInput}
+                        required
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+              <Modal.Footer>
+                <button
+                  className="btn btm-icademy-primary btn-icademy-grey"
+                  onClick={this.closeModalRename.bind(this)}
+                >
+                  Cancel
+                      </button>
+                <button
+                  className="btn btn-icademy-primary"
+                  onClick={this.renameFile.bind(this)}
+                >
+                  <i className="fa fa-save"></i>
+                        Save
                       </button>
               </Modal.Footer>
             </Card>
