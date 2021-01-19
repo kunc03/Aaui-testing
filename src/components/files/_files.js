@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
+import Moment from 'moment-timezone';
 
 const bbb = require('bigbluebutton-js')
 
@@ -555,6 +556,7 @@ fetchRekamanBBB(folder){
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
       // {title : 'Size', width: null, status: true},
+      { title: 'Created', width: null, status: true },
       { title: '', width: null, status: true },
     ];
     const bodyTabble = this.state.folder;
@@ -645,6 +647,7 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               {
                                 access_project_admin ?
@@ -687,6 +690,9 @@ fetchRekamanBBB(folder){
                                 ? `assets/images/files/${item.type}.svg`
                                 : 'assets/images/files/file.svg'
                             } width="32" /> &nbsp;{item.name}</td>
+                          <td className="fc-muted f-12 f-w-300 p-t-10" align="center">
+                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -730,6 +736,7 @@ fetchRekamanBBB(folder){
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
+                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -761,6 +768,7 @@ fetchRekamanBBB(folder){
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;{item.substring(40)}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -793,6 +801,7 @@ fetchRekamanBBB(folder){
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
                                     <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -820,6 +829,7 @@ fetchRekamanBBB(folder){
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
