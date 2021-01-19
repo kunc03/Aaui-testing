@@ -262,12 +262,15 @@ export default class WebinarRiwayat extends Component {
   }
 
   downloadPDF(){
-    var doc = new jsPDF();
+    // var doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: "landscape"
+    });
     doc.setFontSize(18);
-    doc.text("Webinar Report", 80, 20);
+    doc.text("Webinar Report", 120, 20);
     
     doc.setFontSize(11);
-    doc.text("Topic", 20, 30);
+    doc.text("Title", 20, 30);
     doc.text(`: ${this.state.judul}`, 50, 30);
     doc.text("Speaker", 20, 35);
     doc.text(`: ${this.state.pembicara.toString()}`, 50, 35);
