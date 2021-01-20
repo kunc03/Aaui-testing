@@ -134,7 +134,7 @@ class DashGuru extends Component {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
 
-      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let hari = [ "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.filter(item => item.hari === hari[tglIni.getDay()]);
       let jadwalBesok = res.data.result.filter(item => item.hari === hari[tglIni.getDay()+1]);

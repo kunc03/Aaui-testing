@@ -94,6 +94,20 @@ class DetailMurid extends Component {
     this.fetchSemester()
   }
 
+  convertNilaiToAbjad(value) {
+    if(0 <= value && 26 > value) {
+      return "D";
+    } else if(26 <= value && 51 > value) {
+      return "C";
+    } else if(51 <= value && 76 > value) {
+      return "B";
+    } else if(76 <= value && 101 > value) {
+      return "A";
+    } else {
+      return "-";
+    }
+  }
+
   render() {
     console.log('state: ', this.state)
 
@@ -158,7 +172,7 @@ class DetailMurid extends Component {
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NIK </td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NAMA </td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI AKHIR</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">STATUS</td>
                   </tr>
                   <tr className="text-center">
@@ -186,7 +200,7 @@ class DetailMurid extends Component {
                         <td>{item.task}</td>
                         <td>{item.quiz}</td>
                         <td>{item.exam}</td>
-                        <td>{item.task+item.quiz+item.exam}</td>
+                        <td>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</td>
                         <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
