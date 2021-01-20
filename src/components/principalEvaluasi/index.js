@@ -26,16 +26,15 @@ class EvaluasiPrincipal extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  {/* <div className="floating-back">
-                    <Link to='' >
+                  <div className="floating-back">
+                    <Link to={`/`}>
                       <img
                         src={`newasset/back-button.svg`}
                         alt=""
                         width={90}
-                        onClick={this.goBack()}
                       ></img>
                     </Link>
-                  </div> */}
+                  </div>
 
                   <div className="row">
                     <div className="col-xl-12">

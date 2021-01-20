@@ -137,7 +137,7 @@ class DashParent extends Component {
     API.get(url).then(res => {
       if (res.data.error) console.log('Error: ', res.data.result);
 
-      this.setState({ ptc: res.data.result })
+      this.setState({ ptc: res.data.result.reverse().slice(0,5) })
     });
   }
 

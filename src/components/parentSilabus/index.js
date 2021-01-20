@@ -94,15 +94,15 @@ class GuruUjian extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
-                  {/* <div className="floating-back">
-                      <Link to={`/kursus-new`}>
+                  <div className="floating-back">
+                    <Link to={`/`}>
                       <img
                         src={`newasset/back-button.svg`}
                         alt=""
                         width={90}
-                      ></img>
-                      </Link>
-                    </div> */}
+                      />
+                    </Link>
+                  </div>
 
                   <div className="row">
 

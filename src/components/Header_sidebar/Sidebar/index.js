@@ -86,11 +86,11 @@ class SidebarClass extends Component {
       principal: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/parent-syllabus' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/principal-pelajaran' },
-          { iconOn: '', iconOff: '', label: 'Pembelajaran Murid', link: '/principal-rapor' },
-          { iconOn: '', iconOff: '', label: 'Kinerja Guru', link: '/principal-kinerja' },
-          { iconOn: '', iconOff: '', label: 'Evaluasi', link: '/principal-evaluasi' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/principal-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/principal-kinerja' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -98,11 +98,11 @@ class SidebarClass extends Component {
       management: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/parent-rapor' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/parent-rapor' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/management-syllabus' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/management-pelajaran' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/management-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/management-kinerja' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi ', link: '/management-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -128,7 +128,7 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -155,6 +155,7 @@ class SidebarClass extends Component {
         { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Teaching Room', link: '/learning/ruangan-mengajar' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Teaching Schedule', link: '/learning/jadwal-mengajar' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
+        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Format KPI', link: '/learning/kpi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
@@ -166,7 +167,7 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -193,7 +194,7 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -273,7 +274,7 @@ class SidebarClass extends Component {
                   <label />
                 </li> */}
 
-              <li id="mobile-collapse" data-username="Sample Page"
+              <li id="mobile-collapse"
                 className={`nav-item`}
                 style={this.state.sideMenu ? { width: 59, cursor: 'pointer' } : { marginTop: 12, cursor: 'pointer' }}  >
                 <Tooltip title="Menu" arrow placement="right">
@@ -350,23 +351,25 @@ class SidebarClass extends Component {
                   }
                 })
               }
+
               {/* <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}
+                className={`nav-item mt-4 `}
+                style={this.state.sideMenu ? { width: 59 } : { marginTop: 25 }}
+              >
+                <Link to="/logout" className="nav-link"
+                  style={this.state.sideMenu ? { padding: '7px 0px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } : { padding: "7px 20px" }}
                 >
-                  <Link to="/logout" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`assets/images/component/Icon Logout.png`}
-                        alt=""
-                        width={20}
-                        height={20}
-                      ></img>
-                    </span>
-                  </Link>
-                </li> */}
+                  <span className="pcoded-micon" style={this.state.sideMenu ? { marginRight: 0 } : null}>
+                    <img
+                      src={`assets/images/component/Icon Logout.png`}
+                      alt=""
+                      width={20}
+                      height={20}
+                    ></img>
+                  </span>
+                </Link>
+              </li> */}
+
             </ul>
           </div>
         </div>
@@ -394,10 +397,8 @@ class SidebarClass extends Component {
               })
             }
           </div>
-
-
-
         </div>
+
       </nav>
     );
   }

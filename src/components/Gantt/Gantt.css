@@ -38,6 +38,19 @@ html, body, #root,#root div:only-child, .gantt-container {
     text-align: center;
     font-size: 24px;
 }
+.done-indicator {
+    width: 24px;
+    margin-top: 5px;
+    height: 24px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 17px;
+    color: white;
+    background: rgb(65, 190, 34);
+    line-height: 25px;
+    text-align: center;
+    font-size: 20px;
+}
 
 .dhx_calendar_cont input {
     width: 96px;
@@ -201,3 +214,9 @@ html, body, #root,#root div:only-child, .gantt-container {
 .gantt-status-legend:hover{
     text-decoration: underline;
 } */
+.logs_button{
+    background: '#666'
+}
+.MultiSelect .Header {
+    background-color: #FFF !important;
+}

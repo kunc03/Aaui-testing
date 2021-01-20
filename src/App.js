@@ -15,9 +15,10 @@ import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
-import Pengaturan from "./components/Pengaturan/index";
+import Pengaturan from "./components/Global_setting/index";
+// import Pengaturan from "./components/Pengaturan/index";
 import Profile from "./components/Profile/index";
-import Files from "./components/files/files";
+// import Files from "./components/files/files";
 
 // Dashboard New Home Detail
 import DetailProject from "./components/detail_project/index";
@@ -132,7 +133,7 @@ import ParentRapor from './components/parentRapor/index';
 import PembelajaranPrincipal from './components/principalPembelajaran/index';
 import LaporanPrincipal from './components/principalLaporan/index';
 import KinerjaPrincipal from './components/principalKpi/index';
-import EvaluasiPrincipal from './components/principalEvaluasi';
+import EvaluasiPrincipal from './components/principalEvaluasi/index';
 
 // ======= IMPORT COMPONENT RUANGAN ======== //
 import LearningRuangan from './components/learning/ruangan';
@@ -314,7 +315,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
         <Route path="/notification" component={Notification} />
         <Route path="/pengumuman" component={Pengumuman} />
 
@@ -401,7 +402,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
-        <Route path="/files" component={Files} />
+        {/* <Route path="/files" component={Files} /> */}
 
         <Route path="/user" exact component={User} />
         <Route path="/user-create" exact component={UserAdd} />
@@ -549,14 +550,22 @@ export class ClientSwitch extends React.Component {
         <Route path='/parent-syllabus' component={ParentSylabus} />
         <Route path='/parent-rapor' component={ParentRapor} />
 
-        {/* ROUTE PRINVIPAL */}
+        {/* ROUTE PRINCIPAL */}
+        <Route path='/principal-syllabus' component={ParentSylabus} />
         <Route path='/principal-pelajaran' component={PembelajaranPrincipal} />
         <Route path='/principal-rapor' component={LaporanPrincipal} />
         <Route path='/principal-kinerja' component={KinerjaPrincipal} />
         <Route path='/principal-evaluasi' component={EvaluasiPrincipal} />
 
+        {/* ROUTE MANAGEMENT */}
+        <Route path='/management-syllabus' component={ParentSylabus} />
+        <Route path='/management-pelajaran' component={PembelajaranPrincipal} />
+        <Route path='/management-rapor' component={LaporanPrincipal} />
+        <Route path='/management-kinerja' component={KinerjaPrincipal} />
+        <Route path='/management-evaluasi' component={EvaluasiPrincipal} />
+
         <Route path="/logout" component={Logout} />
-      </Switch>
+      </Switch >
     );
   }
 }

@@ -16,6 +16,7 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 class LaporanKpi extends Component {
 
   state = {
+    grupName: Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : '',
     kinerja: [],
 
     guru: [],
@@ -41,7 +42,9 @@ class LaporanKpi extends Component {
     tempFile: Math.random().toString(36),
 
     isPreview: false,
-    detailKinerja: {}
+    detailKinerja: {},
+
+    formatKpi: '',
   }
 
   changeGuru = e => {
@@ -107,6 +110,7 @@ class LaporanKpi extends Component {
 
   componentDidMount() {
     this.fetchKinerja()
+    this.fetchNewestFormat()
   }
 
   clearPreview() {
@@ -135,6 +139,16 @@ class LaporanKpi extends Component {
       let pelajaran = this.findUnique(res.data.result, d => d.pelajaran_id)
 
       this.setState({ kinerja: res.data.result, guru, semester, kelas, pelajaran })
+    })
+  }
+
+  fetchNewestFormat() {
+    API.get(`${API_SERVER}v2/learning-kpi/company/${Storage.get('user').data.company_id}`).then(res => {
+      if(res.data.result.length) {
+        this.setState({ formatKpi: res.data.result[res.data.result.length-1].file })
+      } else {
+        toast.info(`Format KPI belum di upload oleh Admin.`)
+      }
     })
   }
 
@@ -236,6 +250,11 @@ class LaporanKpi extends Component {
                       <div className="card">
                         <div className="card-body">
 
+                          {
+                            this.state.formatKpi !== "" &&
+                            <a href={this.state.formatKpi} target="_blank" class="btn btn-v2 btn-primary">Download Format KPI</a>
+                          }
+
                           <table className="table table-striped mt-4 table-bordered">
                             <thead>
                               <tr className="text-center">
@@ -260,20 +279,23 @@ class LaporanKpi extends Component {
                                     <td>{item.semester}</td>
                                     <td>{item.kelas}</td>
                                     <td>{item.pelajaran}</td>
-                                    <td>{item.file ? 'KPI terkumpul' : 'Unggah KPI'}</td>
-                                    <td>
+                                    <td class="text-center">{item.file ? <span class="label label-success">KPI terkumpul</span> : <span class="label label-danger">Belum ada KPI</span>}</td>
+                                    <td class="text-center">
                                       {
                                         item.file ?
                                         <button onClick={this.openPreview} data-index={i} class="btn btn-sm btn-v2 btn-primary">Selengkapnya</button>
                                         :
-                                        <button
-                                          onClick={this.openModal}
-                                          data-guru={item.pengajar}
-                                          data-jadwal={item.jadwal_id}
-                                          data-semester={item.semester_id}
-                                          data-kelas={item.kelas_id}
-                                          data-pelajaran={item.pelajaran_id}
-                                          class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
+                                        this.state.grupName === "principal" ?
+                                          <button
+                                            onClick={this.openModal}
+                                            data-guru={item.pengajar}
+                                            data-jadwal={item.jadwal_id}
+                                            data-semester={item.semester_id}
+                                            data-kelas={item.kelas_id}
+                                            data-pelajaran={item.pelajaran_id}
+                                            class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
+                                          :
+                                          ""
                                       }
                                     </td>
                                   </tr>

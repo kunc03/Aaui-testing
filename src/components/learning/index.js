@@ -13,6 +13,7 @@ import Evaluasi from '../evaluasi/index';
 import EvaluasiDetail from '../evaluasi/detail';
 import Folder from './folder';
 import Laporan from '../laporan/index';
+import Kpi from '../laporan/kpi';
 
 const titleTabs = [
   { name: 'Registration', link: '/registrasi', component: Registrasi },
@@ -21,6 +22,7 @@ const titleTabs = [
   { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
   { name: 'Personnel', link: '/personalia', component: Personalia },
   { name: 'Report', link: '/laporan', component: Laporan },
+  { name: 'KPI', link: '/kpi', component: Kpi },
   { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
 ]
 
