@@ -1,10 +1,14 @@
-
-import React, { Component } from "react";
+import React, { Component,useState } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
+import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import API, {API_SERVER, APPS_SERVER} from '../../repository/api';
-import {Modal} from 'react-bootstrap';
+import moment from 'moment';
+import {dataKalender} from '../../modul/data';
+import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import {OverlayTrigger, Modal} from 'react-bootstrap';
+import {Popover} from 'react-bootstrap';
+const localizer = momentLocalizer(moment);
 
 class Event extends Component {
   state = {
@@ -23,7 +27,7 @@ class Event extends Component {
       console.log(this.props.event, 'asdassdasd');
     this.setState({setShow:true});
   }
-  
+
   handleClose(){
     this.setState({setShow:false});
   }
@@ -90,7 +94,7 @@ class Event extends Component {
               countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
               countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
               countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-              needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length, 
+              needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length,
               attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
           })
       }
@@ -102,7 +106,7 @@ class Event extends Component {
       this.fetchMeetingInfo(this.props.event.activity_id);
     }
   }
-  
+
   render() {
     const access_project_admin = this.props.access_project_admin;
     let access = Storage.get('access');
@@ -167,7 +171,7 @@ class Event extends Component {
                 <div className="col-sm-12" style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                     <div className="card">
                         <div className="responsive-image-content radius-top-l-r-5" style={{backgroundImage:`url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})`}}></div>
-                        
+
                         <div className="card-carousel">
                         <div className="title-head f-w-900 f-16 mb-2">
                             {this.state.infoClass.room_name}
@@ -245,7 +249,7 @@ class Event extends Component {
             </Modal.Body>
             <Modal.Footer>
             {
-                (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ? 
+                (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(infoDateStart.toISOString().slice(0, 16).replace('T', ' ')) && new Date() <= new Date(infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')))) && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ?
                 <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
                 <button
                     className="btn btn-icademy-primary"
@@ -263,7 +267,7 @@ class Event extends Component {
         </div>
     );
 
-    
+
   }
 }
 
