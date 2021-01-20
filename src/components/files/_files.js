@@ -383,6 +383,7 @@ fetchRekamanBBB(folder){
                   let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id, state: 'any'})
                   http(getRecordingsUrl).then((result) => {
                     if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
+                      this.setState({dataRecordings:[]})
                       this.state.dataRecordings.push(result.recordings)
                       this.forceUpdate()
                     }
@@ -630,7 +631,7 @@ fetchRekamanBBB(folder){
                       this.state.folderId !== 0 &&
                       this.state.selectFolder &&
                       <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td colspan='2' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
+                        <td colspan='3' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
                           <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Kembali</td>
                       </tr>
                     }
