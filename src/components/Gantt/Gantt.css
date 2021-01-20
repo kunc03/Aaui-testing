@@ -224,3 +224,7 @@ html, body, #root,#root div:only-child, .gantt-container {
 .gantt_cell{
     font-size: 11px !important;
 }
+
+.gantt_container{
+    font-size: 11px !important;
+}
