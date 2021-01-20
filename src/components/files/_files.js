@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
+import Moment from 'moment-timezone';
 
 const bbb = require('bigbluebutton-js')
 
@@ -48,6 +49,11 @@ class FilesTableClass extends Component {
       deleteFileName: '',
       deleteFileId: '',
 
+      modalRename: false,
+      renameFileId: '',
+      renameFileName: '',
+      renameFileNameNew: '',
+
       //access role webinar
       aSekretaris: true,
       aModerator: true,
@@ -80,6 +86,14 @@ class FilesTableClass extends Component {
     else if (role == 'peserta'){
       this.setState({ aPeserta: !this.state.aPeserta });
     }
+  }
+  closeModalRename = e => {
+    this.setState({
+      modalRename: false,
+      renameFileName: '',
+      renameFileId: '',
+      renameFileNameNew: ''
+    })
   }
   closeModalAdd = e => {
     this.setState({
@@ -160,6 +174,26 @@ class FilesTableClass extends Component {
     } else {
       this.setState({ [name]: value });
     }
+  }
+  renameFile = e => {
+    let form = {
+      name: this.state.renameFileNameNew
+    }
+    API.put(`${API_SERVER}v1/project-file/${this.state.renameFileId}`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error(`Failed to modify the file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
+        } else {
+          let msg = `${Storage.get('user').data.user} change the file name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
+          this.sendNotifToAll(msg);
+
+          toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
+          this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
+          this.fetchFile(this.state.folderId);
+          this.closeModalRename();
+        }
+      }
+    })
   }
   saveFolder = e => {
     e.preventDefault();
@@ -523,6 +557,7 @@ fetchRekamanBBB(folder){
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
       // {title : 'Size', width: null, status: true},
+      { title: 'Created', width: null, status: true },
       { title: '', width: null, status: true },
     ];
     const bodyTabble = this.state.folder;
@@ -580,7 +615,7 @@ fetchRekamanBBB(folder){
               bodyTabble.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
                 <tbody>
                   <tr>
-                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no</td>
+                    <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no files</td>
                   </tr>
                 </tbody>
                 :
@@ -596,7 +631,7 @@ fetchRekamanBBB(folder){
                       this.state.folderId !== 0 &&
                       this.state.selectFolder &&
                       <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td colspan='2' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
+                        <td colspan='3' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
                           <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Kembali</td>
                       </tr>
                     }
@@ -613,6 +648,7 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               {
                                 access_project_admin ?
@@ -655,6 +691,9 @@ fetchRekamanBBB(folder){
                                 ? `assets/images/files/${item.type}.svg`
                                 : 'assets/images/files/file.svg'
                             } width="32" /> &nbsp;{item.name}</td>
+                          <td className="fc-muted f-12 f-w-300 p-t-10" align="center">
+                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -677,6 +716,12 @@ fetchRekamanBBB(folder){
                                       </button>
                                 {
                                   access_project_admin ?
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={()=> this.setState({modalRename : true, renameFileId: item.id, renameFileName: item.name, renameFileNameNew: item.name})}> Rename </button>
+                                    :
+                                    null
+                                }
+                                {
+                                  access_project_admin ?
                                     <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
                                     :
                                     null
@@ -692,6 +737,7 @@ fetchRekamanBBB(folder){
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
+                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -723,6 +769,7 @@ fetchRekamanBBB(folder){
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;{item.substring(40)}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -755,6 +802,7 @@ fetchRekamanBBB(folder){
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
                                     <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -782,6 +830,7 @@ fetchRekamanBBB(folder){
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1108,7 +1157,54 @@ fetchRekamanBBB(folder){
                   onClick={this.editFolder.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Simpan
+                        Save
+                      </button>
+              </Modal.Footer>
+            </Card>
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.modalRename}
+          onHide={this.closeModalRename}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Rename File
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Card className="cardku">
+              <Card.Body>
+                <Row>
+                  <Col>
+                    <div className="input-group mb-4">
+                      <input
+                        type="text"
+                        name="renameFileNameNew"
+                        value={this.state.renameFileNameNew}
+                        className="form-control"
+                        placeholder="Nama File"
+                        onChange={this.onChangeInput}
+                        required
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+              <Modal.Footer>
+                <button
+                  className="btn btm-icademy-primary btn-icademy-grey"
+                  onClick={this.closeModalRename.bind(this)}
+                >
+                  Cancel
+                      </button>
+                <button
+                  className="btn btn-icademy-primary"
+                  onClick={this.renameFile.bind(this)}
+                >
+                  <i className="fa fa-save"></i>
+                        Save
                       </button>
               </Modal.Footer>
             </Card>

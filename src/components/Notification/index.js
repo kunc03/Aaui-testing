@@ -17,8 +17,13 @@ class NotificationClass extends Component {
       tabIndex: 1,
       badgeNotif: 0,
       badgeRemind: 0,
+      filterType: ''
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
+  }
+
+  changeFilterType = e =>{
+    this.setState({filterType: e.target.value})
   }
 
   tabAktivitas(a, b) {
@@ -139,8 +144,11 @@ class NotificationClass extends Component {
   }
 
   render() {
-    const { notificationData } = this.state;
+    let { notificationData, filterType } = this.state;
 
+    if (filterType != "") {
+      notificationData = notificationData.filter(item => item.type == filterType);
+    }
     const dataNotif = notificationData.filter(item => item.tag == 1);
     const dataRemind = notificationData.filter(item => item.tag == 2);
     // console.log(dataNotif, 'dadadadadadads')
@@ -185,10 +193,17 @@ class NotificationClass extends Component {
                     {this.state.tabIndex === 1 ? (
                       // TAB NOTIFICATIOIN
                       <div className="col-sm-12" style={{ margin: '10px 10px 10px 0' }}>
+                        <select value={this.state.filterType} onChange={this.changeFilterType} style={{width:200, height:40, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
+                            <option value=''>All</option>
+                            <option value='3'>Meeting</option>
+                            <option value='4'>Announcement</option>
+                            <option value='5'>Task</option>
+                            <option value='6'>Files</option>
+                        </select>
                         {dataNotif.length === 0 ?
-                          <span style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
+                          <div style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
                             <b className="fc-blue ">No notifications at this time ...</b>
-                          </span>
+                          </div>
                           :
                           <span>
                             <button onClick={this.deleteAllNotif} className="btn btn-transparent ml-4"> Remove all</button>
@@ -246,10 +261,17 @@ class NotificationClass extends Component {
                       (
                         // TABS REMINDER
                         <div className="col-sm-12" style={{ margin: '10px 10px 10px 0' }}>
+                          <select value={this.state.filterType} onChange={this.changeFilterType} style={{width:200, height:40, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
+                              <option value=''>All</option>
+                              <option value='3'>Meeting</option>
+                              <option value='4'>Announcement</option>
+                              <option value='5'>Task</option>
+                              <option value='6'>Files</option>
+                          </select>
                           {dataRemind.length === 0 ?
-                            <span style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
+                            <div style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
                               <b className="fc-blue ">There is no reminder at this time ...</b>
-                            </span>
+                            </div>
                             :
                             <span>
                               <button onClick={this.deleteAllReminder} className="btn btn-transparent ml-4"> Remove all</button>
