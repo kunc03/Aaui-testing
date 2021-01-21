@@ -319,6 +319,14 @@ class MeetingTable extends Component {
                   item.status = 'Aktif'
                 }
 
+                if (item.is_akses == 0){
+                  item.name = '-';
+                }
+
+                if (item.name === null){
+                  item.name = '-';
+                }
+
                 this.forceUpdate()
               }
             else {
