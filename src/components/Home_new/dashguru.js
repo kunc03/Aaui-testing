@@ -254,7 +254,7 @@ class DashGuru extends Component {
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Ruangan</th><th>Moderator</th><th>Tanggal</th><th>Jam</th><th>Aksi</th>
+                                <th>Judul</th><th>Moderator</th><th>Tanggal</th><th>Jam</th><th>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
