@@ -37,6 +37,21 @@ class DaftarPelajaran extends React.Component {
     nilaiUjian: 0,
     openProsentase: false,
 
+    fileSilabus: '',
+    keyFileSilabus: Math.random().toString(36),
+  }
+
+  importSilabus = e => {
+    let form = new FormData();
+    form.append('pelajaranId', this.state.pelajaranId)
+    form.append('files', this.state.fileSilabus)
+
+    API.post(`${API_SERVER}v2/silabus/import`, form).then(res => {
+      if(res.status === 200) {
+        this.fetchSilabus(this.state.pelajaranId)
+        this.setState({ keyFileSilabus: Math.random().toString(36) })
+      }
+    })
   }
 
   openProsentase = e => {
@@ -393,6 +408,22 @@ class DaftarPelajaran extends React.Component {
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <div class="form-group">
+                        <label>Import</label>
+                        <input key={this.state.keyFileSilabus} onChange={e => this.setState({ fileSilabus: e.target.files[0] })} type="file" class="form-control" />
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="form-group">
+                        <label>Action</label><br/>
+                        <button onClick={this.importSilabus} class="btn btn-v2 btn-primary">Import</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr/>
                   <form onSubmit={this.saveSilabus}>
                     <div className="form-group row">
                       <div className="col-sm-2">

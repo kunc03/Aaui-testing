@@ -21,40 +21,35 @@ class KalenderNew extends Component {
   }
 
   fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/${Storage.get('user').data.grup_name.toLowerCase()}/${Storage.get('user').data.user_id}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+    API.get(`${API_SERVER}v2/events/${Storage.get('user').data.grup_name.toLowerCase()}/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch events`)
 
+      let mengajar = res.data.result.mengajar.map(item => {
+        let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
 
-      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-      let tglIni = new Date();
-      let hariIni = res.data.result.filter(item => item.hari === hari[tglIni.getDay()]);
-
-      // var curr = new Date;
-      // var first = curr.getDate() - curr.getDay();
-      // var last = first + 6;
-      //
-      // var firstday = new Date(curr.setDate(first));
-      // var lastday = new Date(curr.setDate(last));
-
-      let events = hariIni.map(item => {
         return {
-          title: `${item.kelas_nama} - ${item.nama_pelajaran}`,
-          start: tglIni,
-          end: tglIni
+          title: `${item.kelas_nama} - ${item.nama_pelajaran} - ${item.chapter_title}`,
+          start: tglSt,
+          end: tglSt
         }
       })
 
+      let ptc = res.data.result.ptc.map(item => {
+        let stTgl = moment(item.tanggal_mulai).format('YYYY-MM-DD') + ' ' + item.waktu_mulai;
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.nama_ruangan}`,
+          start: tglSt,
+          end: tglSt
+        }
+      })
+
+      let events = mengajar.concat(ptc);
+
       this.setState({ event: events })
     })
-  }
-
-  fetchKalender() {
-    let event = [
-      // {title: 'Metting 1', start: new Date(), end: new Date()},
-      // {title: 'Metting 2', start: new Date(), end: new Date()},
-    ];
-
-    this.setState({ event })
   }
 
   render() {
@@ -87,7 +82,7 @@ class KalenderNew extends Component {
                   }
                   return {};
                 }}
-                views={['month']}
+                views={['month', 'week', 'day', 'agenda']}
                 components={{ event: Event }}
               />
 
