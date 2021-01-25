@@ -226,8 +226,9 @@ class Chapter extends React.Component {
                         {title: 'Responsive', value: 'img-responsive'},
                         {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
                       ],
-                      file_browser_callback_types: 'image',
+                      file_browser_callback_types: 'image file media',
                       file_picker_callback: function (callback, value, meta) {
+                        // console.log(meta)
                         if (meta.filetype == 'image') {
                           var input = document.getElementById('my-file');
                           input.click();
@@ -247,7 +248,6 @@ class Chapter extends React.Component {
                                 this.value = '';
                               }
                             })
-
                           };
                         }
                       },
@@ -259,7 +259,7 @@ class Chapter extends React.Component {
                       toolbar:
                         // eslint-disable-next-line no-multi-str
                         "undo redo | insertfile formatselect | bold italic backcolor | \
-                       alignleft aligncenter alignright alignjustify | image | \
+                       alignleft aligncenter alignright alignjustify | image media | \
                         bullist numlist outdent indent | removeformat | help"
                     }}
                     onEditorChange={e => this.setState({ content: e })}
