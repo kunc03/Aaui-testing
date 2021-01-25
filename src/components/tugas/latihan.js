@@ -5,6 +5,60 @@ import { toast } from 'react-toastify'
 import moment from 'moment-timezone'
 import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
+import ReactToPrint from 'react-to-print';
+
+class ListSoal extends React.PureComponent {
+  render() {
+    return (
+      <div style={{padding: '24px'}}>
+      {
+        this.props.lists.map((item,i) => (
+          <div className="mb-2">
+            <label>Pertanyaan <b>{i+1}</b></label>
+            <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+
+            {
+              item.a &&
+              <tr>
+                <td style={{width: '24px'}}>A.</td>
+                <td>{item.a}</td>
+              </tr>
+            }
+            {
+              item.b &&
+              <tr>
+                <td style={{width: '24px'}}>B.</td>
+                <td>{item.b}</td>
+              </tr>
+            }
+            {
+              item.c &&
+              <tr>
+                <td style={{width: '24px'}}>C.</td>
+                <td>{item.c}</td>
+              </tr>
+            }
+            {
+              item.d &&
+              <tr>
+                <td style={{width: '24px'}}>D.</td>
+                <td>{item.d}</td>
+              </tr>
+            }
+            {
+              item.e &&
+              <tr>
+                <td style={{width: '24px'}}>E.</td>
+                <td>{item.e}</td>
+              </tr>
+            }
+          </div>
+        ))
+      }
+      </div>
+    )
+  }
+}
 
 class Latihan extends React.Component {
 
@@ -117,52 +171,18 @@ class Latihan extends React.Component {
                 <Modal.Body>
                   <h4 className="mb-3">{this.state.examTitle}</h4>
 
-                  {
-                    this.state.examSoal.map((item,i) => (
-                      <div className="mb-2">
-                        <label>Pertanyaan <b>{i+1}</b></label>
-                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
-
-                        {
-                          item.a &&
-                          <tr>
-                            <td style={{width: '24px'}}>A.</td>
-                            <td>{item.a}</td>
-                          </tr>
-                        }
-                        {
-                          item.b &&
-                          <tr>
-                            <td style={{width: '24px'}}>B.</td>
-                            <td>{item.b}</td>
-                          </tr>
-                        }
-                        {
-                          item.c &&
-                          <tr>
-                            <td style={{width: '24px'}}>C.</td>
-                            <td>{item.c}</td>
-                          </tr>
-                        }
-                        {
-                          item.d &&
-                          <tr>
-                            <td style={{width: '24px'}}>D.</td>
-                            <td>{item.d}</td>
-                          </tr>
-                        }
-                        {
-                          item.e &&
-                          <tr>
-                            <td style={{width: '24px'}}>E.</td>
-                            <td>{item.e}</td>
-                          </tr>
-                        }
-                      </div>
-                    ))
-                  }
+                  <ListSoal lists={this.state.examSoal} ref={e => (this.componentRef = e)} />
 
                   <button onClick={() => this.clearForm()} className="btn btn-v2 btn-primary mt-3">Close</button>
+
+                  <ReactToPrint
+                    trigger={() => {
+                      // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+                      // to the root node of the returned component as it will be overwritten.
+                      return <button className="btn btn-v2 btn-primary mt-3 ml-2">Print this out!</button>;
+                    }}
+                    content={() => this.componentRef}
+                  />
 
                 </Modal.Body>
               </Modal>
