@@ -10,6 +10,8 @@ import TableSilabus from "./table";
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import { Modal } from 'react-bootstrap'
+
 class DetailMurid extends Component {
 
   state = {
@@ -28,7 +30,9 @@ class DetailMurid extends Component {
     pelajaranInfo: {},
 
     isLoading: false,
-    nilaiMurid: []
+    nilaiMurid: [],
+
+    isKeteranganNilai: false
   }
 
   fetchJadwal() {
@@ -92,6 +96,24 @@ class DetailMurid extends Component {
   componentDidMount() {
     this.fetchJadwal()
     this.fetchSemester()
+  }
+
+  convertNilaiToAbjad(value) {
+    if(0 <= value && 26 > value) {
+      return "D";
+    } else if(26 <= value && 51 > value) {
+      return "C";
+    } else if(51 <= value && 76 > value) {
+      return "B";
+    } else if(76 <= value && 101 > value) {
+      return "A";
+    } else {
+      return "-";
+    }
+  }
+
+  openKeteranganNilai = e => {
+    this.setState({ isKeteranganNilai: true })
   }
 
   render() {
@@ -158,7 +180,7 @@ class DetailMurid extends Component {
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NIK </td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NAMA </td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI AKHIR</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">STATUS</td>
                   </tr>
                   <tr className="text-center">
@@ -186,13 +208,41 @@ class DetailMurid extends Component {
                         <td>{item.task}</td>
                         <td>{item.quiz}</td>
                         <td>{item.exam}</td>
-                        <td>{item.task+item.quiz+item.exam}</td>
+                        <td>{item.exam+item.quiz+item.task}<p style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>
                         <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
                   }
                 </tbody>
               </table>
+
+              <Modal show={this.state.isKeteranganNilai} onHide={() => this.setState({ isKeteranganNilai: false })} dialogClassName="modal-lg">
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Keterangan Nilai
+                </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <table>
+                    <tr>
+                      <td width="40px"><b>A</b></td>
+                      <td>75-100</td>
+                    </tr>
+                    <tr>
+                      <td><b>B</b></td>
+                      <td>50-74</td>
+                    </tr>
+                    <tr>
+                      <td><b>C</b></td>
+                      <td>25-49</td>
+                    </tr>
+                    <tr>
+                      <td><b>D</b></td>
+                      <td>0-24</td>
+                    </tr>
+                  </table>
+                </Modal.Body>
+              </Modal>
             </div>
           </div>
 

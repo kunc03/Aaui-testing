@@ -26,30 +26,30 @@ html, body, #root,#root div:only-child, .gantt-container {
 }
 
 .overdue-indicator {
-    width: 24px;
+    width: 20px;
     margin-top: 5px;
-    height: 24px;
+    height: 20px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 17px;
     color: white;
     background: rgb(255, 60, 60);
-    line-height: 25px;
+    line-height: 22px;
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
 }
 .done-indicator {
-    width: 24px;
+    width: 20px;
     margin-top: 5px;
-    height: 24px;
+    height: 20px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 17px;
     color: white;
     background: rgb(65, 190, 34);
-    line-height: 25px;
+    line-height: 22px;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .dhx_calendar_cont input {
@@ -219,4 +219,12 @@ html, body, #root,#root div:only-child, .gantt-container {
 }
 .MultiSelect .Header {
     background-color: #FFF !important;
+}
+
+.gantt_cell{
+    font-size: 11px !important;
+}
+
+.gantt_container{
+    font-size: 11px !important;
 }

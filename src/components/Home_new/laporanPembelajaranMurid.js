@@ -46,6 +46,20 @@ class LaporanPembelajaranMurid extends Component {
     })
   }
 
+  convertNilaiToAbjad(value) {
+    if(0 <= value && 26 > value) {
+      return "D";
+    } else if(26 <= value && 51 > value) {
+      return "C";
+    } else if(51 <= value && 76 > value) {
+      return "B";
+    } else if(76 <= value && 101 > value) {
+      return "A";
+    } else {
+      return "-";
+    }
+  }
+
   render() {
     return (
       <div className="row">
@@ -125,7 +139,7 @@ class LaporanPembelajaranMurid extends Component {
                   <tr className="text-center">
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NILAI</td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
                   </tr>
@@ -150,7 +164,7 @@ class LaporanPembelajaranMurid extends Component {
                       <tr className="text-center">
                         <td>{i + 1}</td>
                         <td>{item.nama_pelajaran}</td>
-                        <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
+                        <td>{this.convertNilaiToAbjad(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian)}</td>
                         <td>
                           {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
                           <br/>

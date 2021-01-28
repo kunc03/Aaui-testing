@@ -405,7 +405,7 @@ class Tugas extends React.Component {
             <div className="form-group mt-4">
               <label>Nilai</label>
               <div class="input-group mb-3">
-                <input value={this.state.nilaiTugas} onChange={e => this.setState({ nilaiTugas: e.target.value })} type="text" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
+                <input value={this.state.nilaiTugas} pattern="[0-9]*" onChange={e => this.setState({ nilaiTugas: e.target.value > 100 ? 0 : e.target.value })} type="number" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
                 <div class="input-group-append">
                   <button onClick={this.setNilaiTugas} class="btn btn-outline-secondary" type="button">Beri Nilai</button>
                 </div>
