@@ -134,7 +134,15 @@ export default class MeetingRoom extends Component {
     let http = bbb.http
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
-      if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'MODERATOR') {
+      let role = 'VIEWER';
+      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      }
+      else{
+        role = result.attendees.attendee.role
+      }
+
+      if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
         let form = {
           selectedFileShow: val
         }
@@ -154,7 +162,7 @@ export default class MeetingRoom extends Component {
           }
         })
       }
-      else if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'VIEWER') {
+      else if (result.returncode == 'SUCCESS' && role === 'VIEWER') {
         toast.warning('You are not moderator');
       }
     })
@@ -619,7 +627,15 @@ export default class MeetingRoom extends Component {
     let http = bbb.http
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
-      if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'MODERATOR') {
+      let role = 'VIEWER';
+      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      }
+      else{
+        role = result.attendees.attendee.role
+      }
+
+      if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
         let projectId = e.target.value;
         let form = {
           projectId: projectId
@@ -642,7 +658,7 @@ export default class MeetingRoom extends Component {
           }
         })
       }
-      else if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'VIEWER') {
+      else if (result.returncode == 'SUCCESS' && role === 'VIEWER') {
         toast.warning('You are not moderator');
       }
     })
