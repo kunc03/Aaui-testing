@@ -450,6 +450,7 @@ export default class MeetingRoomPublic extends Component {
                   <Modal
                     show={this.state.modalStart}
                     onHide={this.handleCloseStart}
+                    backdropClassName='modal-no-bg'
                   >
                     <Modal.Header>
                       <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>

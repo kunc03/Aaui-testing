@@ -312,11 +312,15 @@ class MeetingTable extends Component {
                 }
 
                 if (item.is_live == 0){
-                  item.status = 'Terkunci'
+                  item.status = 'Locked'
                 }
 
                 if (item.running){
-                  item.status = 'Aktif'
+                  item.status = 'Active'
+                }
+
+                if (item.running && item.is_live === 0){
+                  item.status = 'Active & Locked'
                 }
 
                 if (item.is_akses == 0){
@@ -866,7 +870,7 @@ class MeetingTable extends Component {
         sortable: true,
         center: true,
         cell: row =>
-          <div style={{color: row.status == 'Open' ? '#FA6400': row.status == 'Terkunci' ? '#F00' : row.status == 'Aktif' ? '#1b9a1b' : '#0091FF'}}>
+          <div style={{color: row.status === 'Open' ? '#FA6400': row.status === 'Locked' ? '#F00' : row.status === 'Active' || row.status === 'Active & Locked' ? '#1b9a1b' : '#0091FF'}}>
             {row.status}
           </div>,
         style: {
@@ -952,9 +956,12 @@ class MeetingTable extends Component {
         },
       },
     ];
-    let bodyTabble = this.state.meeting;
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
+    let bodyTabble = this.state.meeting;
+    if (access_project_admin === false){
+      bodyTabble = bodyTabble.filter(item=> item.status !== 'Locked')
+    }
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -1371,10 +1378,10 @@ class MeetingTable extends Component {
                   { this.state.infoClass.is_scheduled ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
-                                  Mulai : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                                  Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                                 </h3>
                     <h3 className="f-14">
-                                  Selesai : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                                  End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                                 </h3>
                   </div>
                   : null }
