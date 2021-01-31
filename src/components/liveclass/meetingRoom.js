@@ -615,25 +615,35 @@ export default class MeetingRoom extends Component {
   }
 
   changeShareGantt = (e) => {
-    let projectId = e.target.value;
-    let form = {
-      projectId: projectId
-    }
-    API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error){
-          this.setState({
-            shareGantt: projectId
-          })
-          socket.emit('send', {
-            socketAction: 'shareGantt',
-            userId: this.state.user.user_id,
-            meetingId: this.state.classRooms.class_id,
-            projectId: projectId
-          })
-        }else{
-          alert('Error update share timeline')
+    let api = bbb.api(BBB_URL, BBB_KEY)
+    let http = bbb.http
+    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+    http(meetingInfo).then((result) => {
+      if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'MODERATOR') {
+        let projectId = e.target.value;
+        let form = {
+          projectId: projectId
         }
+        API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
+          if(res.status === 200) {
+            if(!res.data.error){
+              this.setState({
+                shareGantt: projectId
+              })
+              socket.emit('send', {
+                socketAction: 'shareGantt',
+                userId: this.state.user.user_id,
+                meetingId: this.state.classRooms.class_id,
+                projectId: projectId
+              })
+            }else{
+              alert('Error update share timeline')
+            }
+          }
+        })
+      }
+      else if (result.returncode == 'SUCCESS' && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role === 'VIEWER') {
+        toast.warning('You are not moderator');
       }
     })
   }
