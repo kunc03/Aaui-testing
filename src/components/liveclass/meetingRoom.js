@@ -455,13 +455,14 @@ export default class MeetingRoom extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
           this.setState({
             fileChat: res.data.result
           })
+          console.log('ALVIN FILENAME', this.state.fileChat)
 
           API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
             if (res.status === 200) {
@@ -633,7 +634,6 @@ export default class MeetingRoom extends Component {
           let splitTags;
 
           let datas = res.data.result;
-          console.log(datas, 'datass kirim filesssss')
 
           splitTags = datas.attachment.split("/")[4];
           datas.filenameattac = splitTags;

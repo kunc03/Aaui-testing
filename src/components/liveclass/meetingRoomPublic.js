@@ -86,6 +86,7 @@ export default class MeetingRoomPublic extends Component {
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if (data.room == this.state.classId) {
+        this.fetchData();
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
     });
@@ -104,7 +105,7 @@ export default class MeetingRoomPublic extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
