@@ -4,6 +4,7 @@ import Storage from '../../repository/storage';
 import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
+import Moment from 'moment-timezone';
 import {dataKalender} from '../../modul/data';
 import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
 import {OverlayTrigger, Modal} from 'react-bootstrap';
@@ -196,10 +197,10 @@ class Event extends Component {
                             this.state.infoClass.is_scheduled ?
                             <div className="col-sm-6">
                                 <h3 className="f-14">
-                                Mulai : {infoDateStart.toISOString().slice(0, 16).replace('T', ' ')}
+                                Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                                 </h3>
                                 <h3 className="f-14">
-                                Selesai : {infoDateEnd.toISOString().slice(0, 16).replace('T', ' ')}
+                                End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                                 </h3>
                             </div>
                             : null

@@ -62,8 +62,20 @@ class FilesTableClass extends Component {
       aPeserta: true,
       optionsUser: [],
       valueUser: [],
-      limited: false
+      limited: false,
+
+      filterFile: 'all',
+      searchFile: ''
     };
+  }
+
+  changeFilter = e => {
+    this.setState({filterFile: e.target.value})
+  }
+
+  searchFile = (e) => {
+    e.preventDefault();
+    this.setState({ searchFile: e.target.value });
   }
 
   toggleSwitch(checked) {
@@ -560,12 +572,39 @@ fetchRekamanBBB(folder){
       { title: 'Created', width: null, status: true },
       { title: '', width: null, status: true },
     ];
-    const bodyTabble = this.state.folder;
     const access_project_admin = this.props.access_project_admin;
     // let access = Storage.get('access');
     // let levelUser = Storage.get('user').data.level;
 
-    console.log('state: ', this.state)
+    let { searchFile, folder, mom, files, recordedMeeting, dataRecordings } = this.state;
+    if (searchFile != "") {
+      folder = folder.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(searchFile, "gmi"))
+      )
+      files = files.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(searchFile, "gmi"))
+      )
+      mom = mom.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(searchFile, "gmi"))
+      )
+      recordedMeeting = recordedMeeting.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(searchFile, "gmi"))
+      )
+      dataRecordings = dataRecordings.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(searchFile, "gmi"))
+      )
+    }
+
     return (
       <div className="card p-20">
         <span className="mb-4">
@@ -596,6 +635,21 @@ fetchRekamanBBB(folder){
                     type="text"
                     placeholder="Search"
                     className="form-control float-right col-sm-3"/> */}
+          
+          <select value={this.state.filterFile} onChange={this.changeFilter} style={{float:'right', marginBottom: 10, width:200, height:40, paddingLeft:10, marginRight: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
+            <option value='all'>All</option>
+            <option value='folder'>Folder</option>
+            <option value='files'>Files Uploaded</option>
+            <option value='mom'>MOM</option>
+            <option value='recorded'>Recorded Meeting</option>
+          </select>
+          
+          <input
+                type="text"
+                placeholder="Search"
+                onChange={this.searchFile}
+                style={{marginRight: 10}}
+                className="form-control float-right col-sm-3"/>
         </span>
         <div className="table-responsive" style={{ overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto' }}>
           <table className="table table-hover">
@@ -612,7 +666,7 @@ fetchRekamanBBB(folder){
               </tr>
             </thead>
             {
-              bodyTabble.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
+              folder.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
                 <tbody>
                   <tr>
                     <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no files</td>
@@ -636,12 +690,13 @@ fetchRekamanBBB(folder){
                       </tr>
                     }
                     {
-                      bodyTabble.map(item => {
-                        if ((item.sekretaris == 1 && item.sekretaris == this.state.role.aSekretaris) ||
+                      folder.map(item => {
+                        if (((item.sekretaris == 1 && item.sekretaris == this.state.role.aSekretaris) ||
                           (item.moderator == 1 && item.moderator == this.state.role.aModerator) ||
                           (item.pembicara == 1 && item.pembicara == this.state.role.aPembicara) ||
                           (item.owner == 1 && item.owner == this.state.role.aOwner) ||
-                          (item.peserta == 1 && item.peserta == this.state.role.aPeserta)) {
+                          (item.peserta == 1 && item.peserta == this.state.role.aPeserta)) &&
+                          (this.state.filterFile === 'all' || this.state.filterFile === 'folder')) {
                           return (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, item.id, item.name)}>
                               <img src='assets/images/component/folder.png' width="32" /> &nbsp;{item.name}</td>
@@ -683,7 +738,7 @@ fetchRekamanBBB(folder){
                       })
                     }
                     {
-                      this.state.files.map(item =>
+                      (this.state.filterFile === 'all' || this.state.filterFile === 'files') && files.map(item =>
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20" style={{cursor:'pointer'}} onClick={this.selectFileShow.bind(this, item.type, item.location)}>
                             <img src={
@@ -733,7 +788,7 @@ fetchRekamanBBB(folder){
                       )
                     }
                     {
-                      this.state.mom.map(item =>
+                      (this.state.filterFile === 'all' || this.state.filterFile === 'mom') && mom.map(item =>
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
@@ -763,8 +818,8 @@ fetchRekamanBBB(folder){
                       )
                     }
                     {
-                      this.state.selectFolder === false &&
-                      this.state.recordedMeeting.map(item =>
+                      (this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded')) &&
+                      recordedMeeting.map(item =>
                         item.record && item.record.split(',').map(item =>
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
@@ -796,8 +851,8 @@ fetchRekamanBBB(folder){
                         )
                         }
                         {
-                        this.state.selectFolder === false &&
-                        this.state.dataRecordings.map((item) =>
+                        this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded') &&
+                        dataRecordings.map((item) =>
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
