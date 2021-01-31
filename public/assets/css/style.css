@@ -11853,3 +11853,8 @@ div.code-toolbar > .toolbar span:hover {
 .modal-2xl{
   max-width:1200px !important;
 }
+
+.modal-no-bg{
+  background-color: #FFF;
+  opacity: 1 !important;
+}

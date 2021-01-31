@@ -348,6 +348,14 @@ export default class MeetingRoom extends Component {
       }
     })
   }
+  onSubmitLock(classId, isLive) {
+    API.put(`${API_SERVER}v1/liveclass/live/${classId}`, { is_live: isLive == 0 ? '1' : '0' }).then(res => {
+      if (res.status === 200) {
+        this.fetchData();
+        toast.success(`Success ${isLive == 0 ? 'unlock' : 'lock'} meeting`)
+      }
+    })
+  }
   fetchData() {
     // this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
@@ -455,13 +463,14 @@ export default class MeetingRoom extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
           this.setState({
             fileChat: res.data.result
           })
+          console.log('ALVIN FILENAME', this.state.fileChat)
 
           API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
             if (res.status === 200) {
@@ -633,7 +642,6 @@ export default class MeetingRoom extends Component {
           let splitTags;
 
           let datas = res.data.result;
-          console.log(datas, 'datass kirim filesssss')
 
           splitTags = datas.attachment.split("/")[4];
           datas.filenameattac = splitTags;
@@ -900,6 +908,12 @@ export default class MeetingRoom extends Component {
                                 <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite}>
                                   <i className="fa fa-user-plus" style={{marginRight:10}}></i> Invite People
                                 </button>
+                                {
+                                  user.user_id == classRooms.moderator &&
+                                  <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
+                                    <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{marginRight:10}}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                  </button>
+                                }
                                 { user.user_id == classRooms.moderator &&
                                 <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={()=> this.setState({modalEnd: true})}>
                                   <i className="fa fa-stop-circle" style={{marginRight:10}}></i> End Meeting
