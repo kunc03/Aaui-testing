@@ -8,6 +8,8 @@ import Speaker from './speaker';
 import Participant from './participant';
 
 import Pengaturan from '../Pengaturan/index';
+import NotificationSetting from './notification';
+
 
 const titleTabs = [
   { name: 'Project Admin', link: '/project-admin', component: ProjectAdmin },
@@ -80,6 +82,7 @@ export default class GlobalSetting extends Component {
                 </div>
               </div>
 
+              <NotificationSetting />
               <Pengaturan />
 
             </div>

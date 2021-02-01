@@ -102,12 +102,12 @@ class Pengaturan extends Component {
           <div className="row">
             <div className="col-sm-8">
               {/* <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3> */}
+              <div className="col-xl-2">
+                <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
+              </div>
               <div className="card">
                 <div className="card-block">
                   <div className="row m-b-100">
-                    <div className="col-xl-2">
-                      <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
-                    </div>
                     <div className="col-xl-10">
                       <form>
                         <div className="form-group">
