@@ -390,7 +390,7 @@ export default class MeetingRoomPublic extends Component {
                       return (
                         <div className='box-chat-send-left'>
                           <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
-                          <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                          <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
                           <small >
                             {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
                     {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}

@@ -29,6 +29,8 @@ import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
 import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
+
+import Dictation from './dictation';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -856,6 +858,11 @@ export default class MeetingRoom extends Component {
     this.setState({ join: true, modalStart: false });
   }
 
+
+  handleTranscript = (value) => {
+    window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
+  }
+
   render() {
 
     const { classRooms, user } = this.state;
@@ -945,7 +952,7 @@ export default class MeetingRoom extends Component {
                                   <i className="fa fa-user-plus" style={{marginRight:10}}></i> Invite People
                                 </button>
                                 {
-                                  user.user_id == classRooms.moderator &&
+                                  (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
                                   <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
                                     <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{marginRight:10}}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
                                   </button>
@@ -1143,71 +1150,6 @@ export default class MeetingRoom extends Component {
             </button>
           </Modal.Body>
         </Modal>
-        <Modal
-          show={this.state.modalEnd}
-          onHide={this.closeModalEnd}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Konfirmasi
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
-          </Modal.Body>
-          <Modal.Footer>
-                      <button
-                        className="btn btm-icademy-primary btn-icademy-grey"
-                        onClick={this.closeModalEnd.bind(this)}
-                      >
-                        Batal
-                      </button>
-                      <button
-                        className="btn btn-icademy-primary btn-icademy-red"
-                        onClick={this.endMeeting.bind(this)}
-                      >
-                        <i className="fa fa-trash"></i>
-                        Akhiri Meeting
-                      </button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={this.state.modalFileSharing}
-          onHide={this.closeModalFileSharing}
-          centered>
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            File Sharing
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            
-          <div>
-                <div className="col-sm-12">
-                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
-                      <div style={{height:'100%', overflowY:'scroll'}}>
-                      { this.state.fileChat.map((item, i)=>{
-                        return (
-                          <div className='box-chat-send-left'>
-                            <span className="m-b-5"><b>{item.name} </b></span><br/>
-                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
-                            <small >
-                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
-                            </small>
-                            {
-                              classRooms.moderator == Storage.get("user").data.user_id &&
-                              <i style={{marginLeft:10, cursor:'pointer'}} data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i>
-                            }
-                          </div>                        )
-                      })}
-                      </div>
-                  </div>
-                      </div>
-                  </div>
-                      </Modal.Body>
-                    </Modal>
 
                     <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
                       <Modal.Header closeButton>
@@ -1244,7 +1186,7 @@ export default class MeetingRoom extends Component {
                                 <div className='box-chat-send-left'>
                                   <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
                                   <br />
-                                  <p className="fc-skyblue"> {item.filenameattac}
+                                  <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
                                     <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
                                   </p>
                                   <small>
@@ -1328,7 +1270,7 @@ export default class MeetingRoom extends Component {
                               <h4 className="p-10">{classRooms.room_name}</h4>
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
-                                  Judul MOM
+                                  Title MOM
                                 </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="isi judul MOM..." onChange={this.onChangeInputMOM} />
@@ -1336,13 +1278,13 @@ export default class MeetingRoom extends Component {
                               </Form.Group>
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
-                                  Waktu Meeting
+                                  Time
                                 </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
                                 </div>
                               </Form.Group>
-                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                              {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
                                   Text Dari Subtitle
                                 </Form.Label>
@@ -1359,6 +1301,14 @@ export default class MeetingRoom extends Component {
                                     Add to MOM
                                   </button>
                                 </div>
+                              </Form.Group> */}
+
+                              
+                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                <Form.Label className="f-w-bold">
+                                  Speech recognition
+                                </Form.Label>
+                                <Dictation newTranscript={this.handleTranscript} />
                               </Form.Group>
 
                               <div className="chart-container" style={{ position: "relative", margin: 20 }}>
@@ -1371,7 +1321,7 @@ export default class MeetingRoom extends Component {
                               </div>
                               <div>
                                 <button to={ "#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                                  Simpan
+                                  Save
                                 </button>
                               </div>
                             </div>
