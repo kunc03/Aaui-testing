@@ -823,7 +823,7 @@ fetchRekamanBBB(folder){
                         item.record && item.record.split(',').map(item =>
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;{item.substring(40)}</td>
+                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.substring(40).replace(/%2520/g, " ")}</td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
@@ -856,8 +856,10 @@ fetchRekamanBBB(folder){
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {new Date(item.endTime).toISOString().slice(0, 16).replace('T', ' ')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
-                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                <td className="fc-muted f-12 f-w-300 p-t-10" align="center">
+                                  {Moment.tz(item.endTime, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                                </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1">
                                     <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -884,7 +886,7 @@ fetchRekamanBBB(folder){
                           :
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.recording.name} {new Date(item.recording.endTime).toISOString().slice(0, 16).replace('T', ' ')}</td>
+                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.recording.name} {Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('HH:mm')}</td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1">
