@@ -53,6 +53,8 @@ class FilesTableClass extends Component {
       renameFileId: '',
       renameFileName: '',
       renameFileNameNew: '',
+      renameMode: '',
+      recordName: [],
 
       //access role webinar
       aSekretaris: true,
@@ -71,6 +73,10 @@ class FilesTableClass extends Component {
       filterMOM: true,
       filterRecord: true
     };
+  }
+
+  rename (id, name, mode){
+    this.setState({modalRename : true, renameFileId: id, renameFileName: name, renameFileNameNew: name, renameMode: mode})
   }
 
   changeFilter = e => {
@@ -192,24 +198,69 @@ class FilesTableClass extends Component {
     }
   }
   renameFile = e => {
-    let form = {
-      name: this.state.renameFileNameNew
-    }
-    API.put(`${API_SERVER}v1/project-file/${this.state.renameFileId}`, form).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          toast.error(`Failed to modify the file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
-        } else {
-          let msg = `${Storage.get('user').data.user} change the file name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
-          this.sendNotifToAll(msg);
-
-          toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
-          this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
-          this.fetchFile(this.state.folderId);
-          this.closeModalRename();
-        }
+    if (this.state.renameMode === 'file'){
+      let form = {
+        name: this.state.renameFileNameNew
       }
-    })
+      API.put(`${API_SERVER}v1/project-file/${this.state.renameFileId}`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error(`Failed to modify the file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
+          } else {
+            let msg = `${Storage.get('user').data.user} change the file name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
+            this.sendNotifToAll(msg);
+  
+            toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
+            this.fetchFile(this.state.folderId);
+            this.closeModalRename();
+          }
+        }
+      })
+    }
+    else if (this.state.renameMode === 'mom'){
+      let form = {
+        title: this.state.renameFileNameNew
+      }
+      API.put(`${API_SERVER}v1/liveclass/title-mom/${this.state.renameFileId}`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error(`Failed to modify the MOM name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
+          } else {
+            let msg = `${Storage.get('user').data.user} change the MOM name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
+            this.sendNotifToAll(msg);
+  
+            toast.success(`Successfully modified MOM name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
+            this.fetchMOM(this.state.folderId);
+            this.closeModalRename();
+          }
+        }
+      })
+    }
+    else if (this.state.renameMode === 'record'){
+      let form = {
+        name: this.state.renameFileNameNew,
+        project_id: this.state.folderId
+      }
+      API.put(`${API_SERVER}v1/record/${this.state.renameFileId}`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error(`Failed to modify the record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`)
+          } else {
+            let msg = `${Storage.get('user').data.user} change the record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
+            this.sendNotifToAll(msg);
+  
+            toast.success(`Successfully modified record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
+            this.fetchRekamanBBB(this.state.folderId);
+            this.fetchRekamanBBBWebinar(this.state.folderId);
+            this.fetchRecordName(this.state.folderId)
+            this.closeModalRename();
+          }
+        }
+      })
+    }
   }
   saveFolder = e => {
     e.preventDefault();
@@ -337,6 +388,7 @@ class FilesTableClass extends Component {
       this.fetchRekaman(id)
       this.fetchRekamanBBB(id)
       this.fetchRekamanBBBWebinar(id)
+      this.fetchRecordName(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
   }
@@ -375,6 +427,14 @@ class FilesTableClass extends Component {
       })
     }
   }
+
+fetchRecordName(folder){
+  API.get(`${API_SERVER}v1/record/${folder}`).then(res => {
+    if (res.status === 200) {
+      this.setState({recordName: res.data.result})
+    }
+  })
+}
 
 fetchRekamanBBB(folder){
   let levelUser = Storage.get('user').data.level;
@@ -819,6 +879,12 @@ fetchRekamanBBB(folder){
                                 />
                               </button>
                               <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                {
+                                  access_project_admin ?
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.title, 'mom')}> Rename </button>
+                                    :
+                                    null
+                                }
                                 <button
                                   style={{ cursor: 'pointer' }}
                                   class="dropdown-item"
@@ -873,7 +939,7 @@ fetchRekamanBBB(folder){
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Rekaman : {item.name} {Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {this.state.recordName.filter(rec=>rec.record_id === item.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                                   {Moment.tz(item.endTime, 'Asia/Jakarta').format('DD-MM-YYYY')}
                                 </td>
@@ -886,13 +952,19 @@ fetchRekamanBBB(folder){
                                       />
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
+                                      {
+                                        access_project_admin ?
+                                          <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.recordID, this.state.recordName.filter(rec=>rec.record_id === item.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm'), 'record')}> Rename </button>
+                                          :
+                                          null
+                                      }
                                       <button
                                         style={{cursor:'pointer'}}
                                         class="dropdown-item"
                                         type="button"
                                         onClick={e=>window.open(item.playback.format.url, 'Rekaman Meeting')}
                                       >
-                                          Lihat
+                                          Open
                                       </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>
@@ -903,7 +975,7 @@ fetchRekamanBBB(folder){
                           :
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.recording.name} {Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('HH:mm')}</td>
+                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Record : {this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID)[0].name : item.name + ' ' + Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.recording.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                                   {Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('DD-MM-YYYY')}
                                 </td>
@@ -916,13 +988,19 @@ fetchRekamanBBB(folder){
                                   />
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                  {
+                                    access_project_admin ?
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.recording.recordID, this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm'), 'record')}> Rename </button>
+                                    :
+                                    null
+                                  }
                                   <button
                                     style={{ cursor: 'pointer' }}
                                     class="dropdown-item"
                                     type="button"
                                     onClick={e => window.open(item.recording.playback.format.url, 'Rekaman Meeting')}
                                   >
-                                    Lihat
+                                    Open
                                       </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>
