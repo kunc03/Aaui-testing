@@ -12,13 +12,14 @@ const Dictation = ({newTranscript}) => {
   }
   
   function start (){
+    resetTranscript();
     SpeechRecognition.startListening({ continuous: true, language: 'id' });
     setListening(true);
   }
   function stop (){
+    SpeechRecognition.stopListening();
     newTranscript(transcript)
     resetTranscript();
-    SpeechRecognition.stopListening();
     setListening(false);
   }
   return (
