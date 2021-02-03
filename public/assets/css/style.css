@@ -11858,3 +11858,37 @@ div.code-toolbar > .toolbar span:hover {
   background-color: #FFF;
   opacity: 1 !important;
 }
+
+.l-h-30{
+  line-height:30px !important;
+}
+.tag-filter-container{
+  float:right;
+  max-width:220px;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.tag-filter{
+  float:left;
+  margin:3px;
+  border-radius:4px;
+  cursor:pointer;
+  background:#ededed;
+  color:#000;
+  font-size:10px;
+  padding:3px;
+}
+
+.tag-filter-selected{
+  background:#5696c7 !important;
+  color:#FFF !important;
+}
+
+.btn-12{
+  font-size: 12px !important;
+}
+
+.riwayat th, td{
+  font-size: 12px !important;
+}
