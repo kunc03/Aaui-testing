@@ -64,8 +64,12 @@ class FilesTableClass extends Component {
       valueUser: [],
       limited: false,
 
-      filterFile: 'all',
-      searchFile: ''
+      filterFile: '',
+      searchFile: '',
+      filterFolder: true,
+      filterFiles: true,
+      filterMOM: true,
+      filterRecord: true
     };
   }
 
@@ -564,6 +568,12 @@ fetchRekamanBBB(folder){
     this.fetchData()
   }
 
+  handleChangeFilter = (filter) => {
+    this.setState({
+      [filter]: !this.state[filter]
+    });
+  }
+
   render() {
     const headerTabble = [
       // {title : 'Date', width: null, status: true},
@@ -636,13 +646,20 @@ fetchRekamanBBB(folder){
                     placeholder="Search"
                     className="form-control float-right col-sm-3"/> */}
           
-          <select value={this.state.filterFile} onChange={this.changeFilter} style={{float:'right', marginBottom: 10, width:200, height:40, paddingLeft:10, marginRight: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
+          <div className='tag-filter-container'>
+            <div className={`tag-filter ${this.state.filterFolder && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterFolder')}>{this.state.filterFolder ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } Folder</div>
+            <div className={`tag-filter ${this.state.filterFiles && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterFiles')}>{this.state.filterFiles ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } File</div>
+            <div className={`tag-filter ${this.state.filterMOM && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterMOM')}>{this.state.filterMOM ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } MOM</div>
+            <div className={`tag-filter ${this.state.filterRecord && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterRecord')}>{this.state.filterRecord ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } Record</div>
+          </div>
+
+          {/* <select value={this.state.filterFile} onChange={this.changeFilter} style={{float:'right', marginBottom: 10, width:200, height:40, paddingLeft:10, marginRight: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
             <option value='all'>All</option>
             <option value='folder'>Folder</option>
             <option value='files'>Files Uploaded</option>
             <option value='mom'>MOM</option>
             <option value='recorded'>Recorded Meeting</option>
-          </select>
+          </select> */}
           
           <input
                 type="text"
@@ -696,7 +713,7 @@ fetchRekamanBBB(folder){
                           (item.pembicara == 1 && item.pembicara == this.state.role.aPembicara) ||
                           (item.owner == 1 && item.owner == this.state.role.aOwner) ||
                           (item.peserta == 1 && item.peserta == this.state.role.aPeserta)) &&
-                          (this.state.filterFile === 'all' || this.state.filterFile === 'folder')) {
+                          (this.state.filterFile === 'all' || this.state.filterFile === 'folder' || this.state.filterFolder === true)) {
                           return (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, item.id, item.name)}>
                               <img src='assets/images/component/folder.png' width="32" /> &nbsp;{item.name}</td>
@@ -738,7 +755,7 @@ fetchRekamanBBB(folder){
                       })
                     }
                     {
-                      (this.state.filterFile === 'all' || this.state.filterFile === 'files') && files.map(item =>
+                      (this.state.filterFile === 'all' || this.state.filterFile === 'files' || this.state.filterFiles === true) && files.map(item =>
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20" style={{cursor:'pointer'}} onClick={this.selectFileShow.bind(this, item.type, item.location)}>
                             <img src={
@@ -788,7 +805,7 @@ fetchRekamanBBB(folder){
                       )
                     }
                     {
-                      (this.state.filterFile === 'all' || this.state.filterFile === 'mom') && mom.map(item =>
+                      (this.state.filterFile === 'all' || this.state.filterFile === 'mom' || this.state.filterMOM === true) && mom.map(item =>
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
@@ -818,7 +835,7 @@ fetchRekamanBBB(folder){
                       )
                     }
                     {
-                      (this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded')) &&
+                      (this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true)) &&
                       recordedMeeting.map(item =>
                         item.record && item.record.split(',').map(item =>
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -851,7 +868,7 @@ fetchRekamanBBB(folder){
                         )
                         }
                         {
-                        this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded') &&
+                        this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true) &&
                         dataRecordings.map((item) =>
                             item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
