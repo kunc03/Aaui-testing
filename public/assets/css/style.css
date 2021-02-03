@@ -11858,3 +11858,7 @@ div.code-toolbar > .toolbar span:hover {
   background-color: #FFF;
   opacity: 1 !important;
 }
+
+.l-h-30{
+  line-height:30px !important;
+}
