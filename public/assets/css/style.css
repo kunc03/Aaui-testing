@@ -11884,3 +11884,11 @@ div.code-toolbar > .toolbar span:hover {
   background:#5696c7 !important;
   color:#FFF !important;
 }
+
+.btn-12{
+  font-size: 12px !important;
+}
+
+.riwayat th, td{
+  font-size: 12px !important;
+}
