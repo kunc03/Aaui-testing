@@ -60,7 +60,7 @@ export default class MeetingRoomPublic extends Component {
 
   joinChime = async (e) => {
     const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
-    const name      = Storage.get('user').data.user;
+    const name      = this.state.user.name;
     const region    = `ap-southeast-1`;
 
     axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
@@ -120,7 +120,6 @@ export default class MeetingRoomPublic extends Component {
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
       console.log('RESSS', response)
       this.setState({ classRooms: response.data.result })
-      this.joinChime()
       API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
         let splitTags;
         let datas = res.data.result;
@@ -144,6 +143,9 @@ export default class MeetingRoomPublic extends Component {
   }
 
   joinMeeting() {
+
+    this.joinChime()
+
     // BBB JOIN START
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
@@ -334,6 +336,9 @@ export default class MeetingRoomPublic extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
+                  <ThemeProvider theme={lightTheme}>
+                    <MeetingProvider>
+
                   <Row>
 
                     {/* <div className="col-md-4 col-xl-4 mb-3">
@@ -376,15 +381,14 @@ export default class MeetingRoomPublic extends Component {
                       {
                         user.name && classRooms.room_name && this.state.join ?
 
-                        <ThemeProvider theme={lightTheme}>
-                          <MeetingProvider>
+
                             <ChimeMeeting
+                              attendee={this.state.attendee}
                               ref={`child`}
-                              name={Storage.get('user').data.user}
+                              name={user.name}
                               title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
                               region={`ap-southeast-1`} />
-                          </MeetingProvider>
-                        </ThemeProvider>
+
 
 
 
@@ -405,6 +409,9 @@ export default class MeetingRoomPublic extends Component {
                     </Col>
 
                   </Row>
+
+                </MeetingProvider>
+              </ThemeProvider>
 
                   {/* CHATING SEND FILE */}
                   <h3 className="f-20 f-w-800">

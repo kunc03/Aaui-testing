@@ -18,7 +18,7 @@ import { Timer } from 'react-countdown-clock-timer';
 import SocketContext from '../../socket';
 import axios from 'axios';
 
-import MyApp from './chime-join'
+import ChimeMeeting from '../meeting/chime'
 const bbb = require('bigbluebutton-js')
 
 class Mengajar extends React.Component {
@@ -331,7 +331,7 @@ class Mengajar extends React.Component {
                   <span>Moderator : {this.state.infoPtc.name}</span>
                 </div>
 
-                <MyApp attendee={this.state.attendee} />
+                <ChimeMeeting attendee={this.state.attendee} />
 
                 {
                   /**
