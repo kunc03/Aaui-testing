@@ -11,11 +11,17 @@ import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import { toast } from "react-toastify";
 
-import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
 import { isMobile } from 'react-device-detect';
+
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+import ChimeMeeting from '../meeting/chime'
+import axios from 'axios'
+
 const bbb = require('bigbluebutton-js')
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -47,6 +53,19 @@ export default class MeetingRoomPublic extends Component {
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
     modalStart: true,
     joinUrl: '',
+
+    attendee: {}
+
+  }
+
+  joinChime = async (e) => {
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const name      = Storage.get('user').data.user;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
   }
 
   toggleSwitchMic(checked) {
@@ -101,6 +120,7 @@ export default class MeetingRoomPublic extends Component {
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
       console.log('RESSS', response)
       this.setState({ classRooms: response.data.result })
+      this.joinChime()
       API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
         let splitTags;
         let datas = res.data.result;
@@ -355,19 +375,25 @@ export default class MeetingRoomPublic extends Component {
                       </h3>
                       {
                         user.name && classRooms.room_name && this.state.join ?
-                          <Iframe url={this.state.joinUrl}
-                            width="100%"
-                            height="600px"
-                            display="initial"
-                            frameBorder="0"
-                            allow="fullscreen *;geolocation *; microphone *; camera *"
-                            position="relative" />
-                          //   <JitsiMeetComponent 
-                          //     roomName={classRooms.room_name} 
-                          //     roomId={classRooms.class_id} 
-                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                          //     userId={user.user_id} 
-                          //     userName={user.name} 
+
+                        <ThemeProvider theme={lightTheme}>
+                          <MeetingProvider>
+                            <ChimeMeeting
+                              ref={`child`}
+                              name={Storage.get('user').data.user}
+                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                              region={`ap-southeast-1`} />
+                          </MeetingProvider>
+                        </ThemeProvider>
+
+
+
+                          //   <JitsiMeetComponent
+                          //     roomName={classRooms.room_name}
+                          //     roomId={classRooms.class_id}
+                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
+                          //     userId={user.user_id}
+                          //     userName={user.name}
                           //     userEmail={user.email}
                           //     userAvatar={user.avatar}
                           //     startMic={this.state.startMic}

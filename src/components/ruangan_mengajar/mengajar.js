@@ -69,37 +69,9 @@ class Mengajar extends React.Component {
     const name      = Storage.get('user').data.user;
     const region    = `ap-southeast-1`;
 
-    let json = {
-      "Meeting": {
-        "Meeting": {
-          "MeetingId": "53623b2c-d557-4154-834e-3be92aae7d9f",
-          "ExternalMeetingId": "testing7",
-          "MediaPlacement": {
-            "AudioHostUrl": "adbb9026dda8448816a9a60b5dba10a2.k.m3.as1.app.chime.aws:3478",
-            "AudioFallbackUrl": "wss://haxrp.m3.as1.app.chime.aws:443/calls/53623b2c-d557-4154-834e-3be92aae7d9f",
-            "ScreenDataUrl": "wss://bitpw.m3.as1.app.chime.aws:443/v2/screen/53623b2c-d557-4154-834e-3be92aae7d9f",
-            "ScreenSharingUrl": "wss://bitpw.m3.as1.app.chime.aws:443/v2/screen/53623b2c-d557-4154-834e-3be92aae7d9f",
-            "ScreenViewingUrl": "wss://bitpw.m3.as1.app.chime.aws:443/ws/connect?passcode=null&viewer_uuid=null&X-BitHub-Call-Id=53623b2c-d557-4154-834e-3be92aae7d9f",
-            "SignalingUrl": "wss://signal.m3.as1.app.chime.aws/control/53623b2c-d557-4154-834e-3be92aae7d9f",
-            "TurnControlUrl": "https://ccp.cp.ue1.app.chime.aws/v2/turn_sessions"
-          },
-          "MediaRegion": "ap-southeast-1"
-        }
-      },
-      "Attendee": {
-        "Attendee": {
-          "ExternalUserId": "dfd8a12a#user1",
-          "AttendeeId": "afcb1bda-2728-ddba-cee7-9676a35d5f74",
-          "JoinToken": "YWZjYjFiZGEtMjcyOC1kZGJhLWNlZTctOTY3NmEzNWQ1Zjc0OjljNTIxODBhLTI1MDMtNGMwMS05N2Y5LTc2ZDhmNzQ5OWM2Ng"
-        }
-      }
-    }
-
-    await this.setState({ attendee: json })
-
-    // axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
-    //   this.setState({ attendee: res.data.JoinInfo })
-    // })
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
   }
 
   endMeeting() {

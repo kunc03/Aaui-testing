@@ -17,7 +17,7 @@ import moment from 'moment-timezone';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
@@ -29,6 +29,11 @@ import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
 import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
+
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+import ChimeMeeting from '../meeting/chime'
+import axios from 'axios'
 
 import Dictation from './dictation';
 const bbb = require('bigbluebutton-js')
@@ -111,6 +116,8 @@ export default class MeetingRoom extends Component {
     modalMOM: false,
     modalGantt: false,
     modalFileShow: false,
+
+    attendee: {}
   }
 
   closeModalGantt = e => {
@@ -301,6 +308,16 @@ export default class MeetingRoom extends Component {
     this.setState({ isLive: false, liveURL: '' })
   }
 
+  joinChime = async (e) => {
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const name      = Storage.get('user').data.user;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
+  }
+
   fetchProject(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
@@ -418,6 +435,8 @@ export default class MeetingRoom extends Component {
           selectedFileShow: liveClass.data.result.file_show === null ? '' : liveClass.data.result.file_show
           // jwt: token.data.token
         });
+
+        this.joinChime()
         // BBB JOIN START
         let api = bbb.api(BBB_URL, BBB_KEY)
         let http = bbb.http
@@ -872,7 +891,7 @@ export default class MeetingRoom extends Component {
 
     let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
     let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
-    
+
     // unutk banner photo, responsive center image FILE SHOW
     const CheckMedia = ({ media }) => {
       if (media) {
@@ -989,7 +1008,17 @@ export default class MeetingRoom extends Component {
                           {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
 
-                          <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                          {/** <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" /> */}
+
+                          <ThemeProvider theme={lightTheme}>
+                            <MeetingProvider>
+                              <ChimeMeeting
+                                ref={`child`}
+                                name={Storage.get('user').data.user}
+                                title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                                region={`ap-southeast-1`} />
+                            </MeetingProvider>
+                          </ThemeProvider>
 
                         </div>
                         : null }
@@ -1303,7 +1332,7 @@ export default class MeetingRoom extends Component {
                                 </div>
                               </Form.Group> */}
 
-                              
+
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
                                   Speech recognition
@@ -1350,7 +1379,7 @@ export default class MeetingRoom extends Component {
                         </div>
                       </Modal.Body>
                     </Modal>
-                    
+
                     <Modal show={this.state.modalFileShow} onHide={this.closeModalFileShow} dialogClassName='modal-2xl' centered>
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
