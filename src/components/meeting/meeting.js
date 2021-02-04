@@ -1313,7 +1313,7 @@ class MeetingTable extends Component {
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeClassModal}>
               Cancel
             </button>
-            <button className="btn btn-icademy-primary" onClick={this.onSubmitForm}>
+            <button className={`btn btn-icademy-primary ${this.state.sendingEmail && 'btn-icademy-grey'}`} onClick={this.onSubmitForm} disabled={this.state.sendingEmail}>
               <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
             </button>
           </Modal.Footer>
