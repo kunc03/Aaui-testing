@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL } from '../../repository/api';
+
 import {
   MeetingProvider,
   lightTheme,
@@ -48,8 +50,6 @@ const MyChild = () => {
   const { roster } = useRosterState();
   const attendees = Object.values(roster);
 
-  console.log(attendees)
-
   const attendeeItems = attendees.map(attendee => {
     const { chimeAttendeeId, externalUserId } = attendee;
     let split = externalUserId.split('#')
@@ -65,16 +65,16 @@ const MyChild = () => {
   );
 };
 
-const MyApp = async (props) => {
+const ChimeMeeting = (props) => {
+
   const meetingManager = useMeetingManager();
   const { toggleVideo } = useLocalVideo();
   const { toggleContentShare } = useContentShareControls();
 
-  const dataAttendee = props.attendee;
+  const data = props.attendee;
+  const { title, name, region } = props;
 
   const joinMeeting = async () => {
-    const data = dataAttendee;
-
     const joinData = {
       meetingInfo: data.Meeting,
       attendeeInfo: data.Attendee
@@ -85,7 +85,7 @@ const MyApp = async (props) => {
 
     // At this point you can let users setup their devices, or start the session immediately
     await meetingManager.start();
-  };
+  }
 
   const [muted, setMuted] = useState(false);
 
@@ -120,4 +120,4 @@ const MyApp = async (props) => {
   );
 };
 
-export default MyApp;
+export default ChimeMeeting;
