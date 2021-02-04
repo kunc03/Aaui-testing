@@ -4,6 +4,9 @@ import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import { Switch, Route } from 'react-router-dom';
 
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+
 import PtcClass from './ptc';
 import PtcCreate from './create';
 import PtcMasuk from './masuk';
@@ -35,6 +38,9 @@ class Ptc extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
+                <ThemeProvider theme={lightTheme}>
+                  <MeetingProvider>
+
                   <Switch>
                     <Route path="/ptc" exact component={PtcComponent} />
                     {
@@ -43,6 +49,9 @@ class Ptc extends Component {
                       ))
                     }
                   </Switch>
+
+                  </MeetingProvider>
+                </ThemeProvider>
 
                 </div>
               </div>

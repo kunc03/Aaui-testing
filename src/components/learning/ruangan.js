@@ -3,6 +3,9 @@ import { NavLink, Switch, Route, Link } from 'react-router-dom';
 import API, { API_SERVER, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+
 import Mengajar from '../ruangan_mengajar/mengajar'
 
 const MengajarComponent = props => <Mengajar {...props} role={Storage.get('user').data.grup_name} />;
@@ -21,15 +24,20 @@ class LearningRuangan extends React.Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
 
-                <Switch>
-                  {
-                    titleTabs.map(item => (
-                      <Route path={`/ruangan${item.link}`} component={item.component} />
-                    ))
-                  }
+                <ThemeProvider theme={lightTheme}>
+                  <MeetingProvider>
 
+                    <Switch>
+                      {
+                        titleTabs.map(item => (
+                          <Route path={`/ruangan${item.link}`} component={item.component} />
+                        ))
+                      }
+                    </Switch>
 
-                </Switch>
+                  </MeetingProvider>
+                </ThemeProvider>
+
 
               </div>
             </div>

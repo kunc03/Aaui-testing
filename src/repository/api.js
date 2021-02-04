@@ -27,6 +27,8 @@ export const BBB_SERVER_LIST = [
   { server: 'https://con1.icademy.id/bigbluebutton/', key: 'bemKTwkzELgFHhrmy0YstNLhBIvHumXJAK8s8DZrvYc' }
 ]
 
+export const CHIME_URL = `https://ftabz8v877.execute-api.ap-southeast-1.amazonaws.com/Prod`;
+
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
 export const VOUCHER_LOGIN = `${API_SERVER}v1/auth/voucher`;
 export const USER_ME = `${API_SERVER}v1/auth/me/`;
