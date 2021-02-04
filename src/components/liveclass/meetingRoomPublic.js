@@ -59,7 +59,7 @@ export default class MeetingRoomPublic extends Component {
   }
 
   joinChime = async (e) => {
-    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
     const name      = this.state.user.name;
     const region    = `ap-southeast-1`;
 
@@ -386,7 +386,7 @@ export default class MeetingRoomPublic extends Component {
                               attendee={this.state.attendee}
                               ref={`child`}
                               name={user.name}
-                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0)}
                               region={`ap-southeast-1`} />
 
 

@@ -65,7 +65,7 @@ class Mengajar extends React.Component {
   }
 
   joinChime = async (e) => {
-    const title     = this.state.infoJadwal.nama_pelajaran.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const title     = this.state.infoJadwal.nama_pelajaran.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
     const name      = Storage.get('user').data.user;
     const region    = `ap-southeast-1`;
 

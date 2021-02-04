@@ -280,7 +280,7 @@ class Mengajar extends React.Component {
   }
 
   joinChime = e => {
-    const title     = this.state.infoPtc.nama_ruangan.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const title     = this.state.infoPtc.nama_ruangan.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
     const name      = Storage.get('user').data.user;
     const region    = `ap-southeast-1`;
 
