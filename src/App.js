@@ -200,7 +200,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
-          <Route path="/gantt/:projectId" exact component={GanttPublic} />
+          <Route path="/gantt/:companyId/:projectId/:userId" exact component={GanttPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />

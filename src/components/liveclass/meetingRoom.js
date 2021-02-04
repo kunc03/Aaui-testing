@@ -29,6 +29,8 @@ import Viewer, { Worker, SpecialZoomLevel } from '@phuocng/react-pdf-viewer';
 import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
+
+import Dictation from './dictation';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -130,22 +132,40 @@ export default class MeetingRoom extends Component {
     this.setState({ modalMOM: false });
   }
   handleSelectFileShow = (val) => {
-    let form = {
-      selectedFileShow: val
-    }
-    API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.class_id}`, form).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error){
-          this.setState({selectedFileShow: val})
-          socket.emit('send', {
-            socketAction: 'fileShow',
-            userId: this.state.user.user_id,
-            meetingId: this.state.classRooms.class_id,
-            selectedFileShow: val
-          })
-        }else{
-          alert('Error update share timeline')
+    let api = bbb.api(BBB_URL, BBB_KEY)
+    let http = bbb.http
+    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+    http(meetingInfo).then((result) => {
+      let role = 'VIEWER';
+      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      }
+      else{
+        role = result.attendees.attendee.role
+      }
+
+      if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
+        let form = {
+          selectedFileShow: val
         }
+        API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.class_id}`, form).then(res => {
+          if(res.status === 200) {
+            if(!res.data.error){
+              this.setState({selectedFileShow: val})
+              socket.emit('send', {
+                socketAction: 'fileShow',
+                userId: this.state.user.user_id,
+                meetingId: this.state.classRooms.class_id,
+                selectedFileShow: val
+              })
+            }else{
+              toast.error('Error update share file');
+            }
+          }
+        })
+      }
+      else if (result.returncode == 'SUCCESS' && role === 'VIEWER') {
+        toast.warning('You are not moderator');
       }
     })
   }
@@ -348,6 +368,14 @@ export default class MeetingRoom extends Component {
       }
     })
   }
+  onSubmitLock(classId, isLive) {
+    API.put(`${API_SERVER}v1/liveclass/live/${classId}`, { is_live: isLive == 0 ? '1' : '0' }).then(res => {
+      if (res.status === 200) {
+        this.fetchData();
+        toast.success(`Success ${isLive == 0 ? 'unlock' : 'lock'} meeting`)
+      }
+    })
+  }
   fetchData() {
     // this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
@@ -455,13 +483,14 @@ export default class MeetingRoom extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
           this.setState({
             fileChat: res.data.result
           })
+          console.log('ALVIN FILENAME', this.state.fileChat)
 
           API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
             if (res.status === 200) {
@@ -596,25 +625,43 @@ export default class MeetingRoom extends Component {
   }
 
   changeShareGantt = (e) => {
-    let projectId = e.target.value;
-    let form = {
-      projectId: projectId
-    }
-    API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
-      if(res.status === 200) {
-        if(!res.data.error){
-          this.setState({
-            shareGantt: projectId
-          })
-          socket.emit('send', {
-            socketAction: 'shareGantt',
-            userId: this.state.user.user_id,
-            meetingId: this.state.classRooms.class_id,
-            projectId: projectId
-          })
-        }else{
-          alert('Error update share timeline')
+    let api = bbb.api(BBB_URL, BBB_KEY)
+    let http = bbb.http
+    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+    http(meetingInfo).then((result) => {
+      let role = 'VIEWER';
+      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      }
+      else{
+        role = result.attendees.attendee.role
+      }
+
+      if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
+        let projectId = e.target.value;
+        let form = {
+          projectId: projectId
         }
+        API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
+          if(res.status === 200) {
+            if(!res.data.error){
+              this.setState({
+                shareGantt: projectId
+              })
+              socket.emit('send', {
+                socketAction: 'shareGantt',
+                userId: this.state.user.user_id,
+                meetingId: this.state.classRooms.class_id,
+                projectId: projectId
+              })
+            }else{
+              alert('Error update share timeline')
+            }
+          }
+        })
+      }
+      else if (result.returncode == 'SUCCESS' && role === 'VIEWER') {
+        toast.warning('You are not moderator');
       }
     })
   }
@@ -633,7 +680,6 @@ export default class MeetingRoom extends Component {
           let splitTags;
 
           let datas = res.data.result;
-          console.log(datas, 'datass kirim filesssss')
 
           splitTags = datas.attachment.split("/")[4];
           datas.filenameattac = splitTags;
@@ -812,6 +858,11 @@ export default class MeetingRoom extends Component {
     this.setState({ join: true, modalStart: false });
   }
 
+
+  handleTranscript = (value) => {
+    window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
+  }
+
   render() {
 
     const { classRooms, user } = this.state;
@@ -900,6 +951,12 @@ export default class MeetingRoom extends Component {
                                 <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite}>
                                   <i className="fa fa-user-plus" style={{marginRight:10}}></i> Invite People
                                 </button>
+                                {
+                                  (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
+                                  <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
+                                    <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{marginRight:10}}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                  </button>
+                                }
                                 { user.user_id == classRooms.moderator &&
                                 <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={()=> this.setState({modalEnd: true})}>
                                   <i className="fa fa-stop-circle" style={{marginRight:10}}></i> End Meeting
@@ -1093,71 +1150,6 @@ export default class MeetingRoom extends Component {
             </button>
           </Modal.Body>
         </Modal>
-        <Modal
-          show={this.state.modalEnd}
-          onHide={this.closeModalEnd}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            Konfirmasi
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
-          </Modal.Body>
-          <Modal.Footer>
-                      <button
-                        className="btn btm-icademy-primary btn-icademy-grey"
-                        onClick={this.closeModalEnd.bind(this)}
-                      >
-                        Batal
-                      </button>
-                      <button
-                        className="btn btn-icademy-primary btn-icademy-red"
-                        onClick={this.endMeeting.bind(this)}
-                      >
-                        <i className="fa fa-trash"></i>
-                        Akhiri Meeting
-                      </button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={this.state.modalFileSharing}
-          onHide={this.closeModalFileSharing}
-          centered>
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-            File Sharing
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            
-          <div>
-                <div className="col-sm-12">
-                  <div id="scrollin" className='card ' style={{height:'400px', marginBottom: '0px'}}>
-                      <div style={{height:'100%', overflowY:'scroll'}}>
-                      { this.state.fileChat.map((item, i)=>{
-                        return (
-                          <div className='box-chat-send-left'>
-                            <span className="m-b-5"><b>{item.name} </b></span><br/>
-                            <p className="fc-skyblue"> {item.attachment.split('attachment/')[1]} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>                            
-                            <small >
-                              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp; 
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')} 
-                            </small>
-                            {
-                              classRooms.moderator == Storage.get("user").data.user_id &&
-                              <i style={{marginLeft:10, cursor:'pointer'}} data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i>
-                            }
-                          </div>                        )
-                      })}
-                      </div>
-                  </div>
-                      </div>
-                  </div>
-                      </Modal.Body>
-                    </Modal>
 
                     <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
                       <Modal.Header closeButton>
@@ -1194,7 +1186,7 @@ export default class MeetingRoom extends Component {
                                 <div className='box-chat-send-left'>
                                   <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
                                   <br />
-                                  <p className="fc-skyblue"> {item.filenameattac}
+                                  <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
                                     <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
                                   </p>
                                   <small>
@@ -1278,7 +1270,7 @@ export default class MeetingRoom extends Component {
                               <h4 className="p-10">{classRooms.room_name}</h4>
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
-                                  Judul MOM
+                                  Title MOM
                                 </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="isi judul MOM..." onChange={this.onChangeInputMOM} />
@@ -1286,13 +1278,13 @@ export default class MeetingRoom extends Component {
                               </Form.Group>
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
-                                  Waktu Meeting
+                                  Time
                                 </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
                                 </div>
                               </Form.Group>
-                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                              {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
                                   Text Dari Subtitle
                                 </Form.Label>
@@ -1309,6 +1301,14 @@ export default class MeetingRoom extends Component {
                                     Add to MOM
                                   </button>
                                 </div>
+                              </Form.Group> */}
+
+                              
+                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                <Form.Label className="f-w-bold">
+                                  Speech recognition
+                                </Form.Label>
+                                <Dictation newTranscript={this.handleTranscript} />
                               </Form.Group>
 
                               <div className="chart-container" style={{ position: "relative", margin: 20 }}>
@@ -1321,7 +1321,7 @@ export default class MeetingRoom extends Component {
                               </div>
                               <div>
                                 <button to={ "#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                                  Simpan
+                                  Save
                                 </button>
                               </div>
                             </div>

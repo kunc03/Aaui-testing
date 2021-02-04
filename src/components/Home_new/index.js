@@ -367,6 +367,15 @@ class HomeNew extends Component {
                         <div className="col-sm-12">
                           <CalenderNew lists={kursusTerbaru} />
                         </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <ProjekNew lists={projekDashboard} />
+                            </Card.Body>
+                          </Card>
+                        </div>
                         <div className="col-sm-12">
                           <Card>
                             <Card.Body>
@@ -388,16 +397,7 @@ class HomeNew extends Component {
                             </Card.Body>
                           </Card>
                         </div>
-                      </div>
-                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                        <div className="col-sm-12">
-                          <Card>
-                            <Card.Body>
-                              <ProjekNew lists={projekDashboard} />
-                            </Card.Body>
-                          </Card>
-                        </div>
-                        <div className="col-sm-12">
+                        {/* <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <div className="row">
@@ -408,7 +408,7 @@ class HomeNew extends Component {
                                 </div>
                                 <div className="col-sm-6 text-right">
                                   <p className="m-b-0">
-                                    {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
+                                    <span className="f-w-600 f-16">Lihat Semua</span>
                                   </p>
                                 </div>
                               </div>
@@ -417,7 +417,7 @@ class HomeNew extends Component {
                               </div>
                             </Card.Body>
                           </Card>
-                        </div>
+                        </div> */}
 
                         {/* <div className="col-sm-12">
                           <Card style={{ backgroundColor: '#F3F3F3' }}>

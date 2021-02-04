@@ -86,6 +86,7 @@ export default class MeetingRoomPublic extends Component {
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if (data.room == this.state.classId) {
+        this.fetchData();
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
     });
@@ -104,7 +105,7 @@ export default class MeetingRoomPublic extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
@@ -389,7 +390,7 @@ export default class MeetingRoomPublic extends Component {
                       return (
                         <div className='box-chat-send-left'>
                           <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
-                          <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                          <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
                           <small >
                             {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
                     {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
@@ -449,6 +450,7 @@ export default class MeetingRoomPublic extends Component {
                   <Modal
                     show={this.state.modalStart}
                     onHide={this.handleCloseStart}
+                    backdropClassName='modal-no-bg'
                   >
                     <Modal.Header>
                       <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>

@@ -43,11 +43,14 @@ export default class WebinarLive extends Component {
     joinUrl:'',
     user: [],
     projectId: '',
+    modalConfirmClose: false,
     modalEnd: false,
     modalKuesioner: false,
     modalKuesionerPeserta: false,
+    modalSendPosttest: false,
     waitingKuesioner: false,
     startKuesioner: false,
+    startPosttest: false,
     isWebinarStartDate: false,
     access_project_admin: false,
     pertanyaanQNA: '',
@@ -85,11 +88,18 @@ export default class WebinarLive extends Component {
   closeModalKuesioner = e => {
     this.setState({ modalKuesioner: false });
   }
+  closeModalSendPosttest = e => {
+    this.setState({ modalSendPosttest: false });
+  }
   closeModalResult = e => {
     this.setState({ modalResultPretest: false, modalResultPosttest: false });
   }
   closeModalKuesionerPeserta = e => {
-    this.setState({ modalKuesionerPeserta: false });
+    this.setState({ modalKuesionerPeserta: false, });
+    this.closeModalConfirmClose();
+  }
+  closeModalConfirmClose = e => {
+    this.setState({ modalConfirmClose: false });
   }
 
   findArray(array, attr, value) {
@@ -340,7 +350,8 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
-              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startPosttest: res.data.result.posttest_sent === 1 ? true : false
             })
             this.setState({pembicara: []})
             res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
@@ -445,7 +456,8 @@ export default class WebinarLive extends Component {
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
-              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false
+              startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startPosttest: res.data.result.posttest_sent === 1 ? true : false
             })
             this.setState({pembicara: []})
             res.data.result.pembicara.map(item=> this.state.pembicara.push(item.name))
@@ -611,6 +623,10 @@ export default class WebinarLive extends Component {
         this.setState({startKuesioner: true, modalKuesionerPeserta: true})
         this.fetchKuesioner()
       }
+      if(data.socketAction == 'sendPosttest' && data.webinar_id===this.state.webinarId) {
+        this.setState({startPosttest: true});
+        this.fetchPostTest();
+      }
       if(data.socketAction == 'jawabKuesioner' && data.webinar_id===this.state.webinarId) {
         this.fetchKuesionerSender()
         this.forceUpdate()
@@ -690,7 +706,6 @@ export default class WebinarLive extends Component {
   }
 
   sendKuesioner(){
-
     API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
       if (res.status === 200) {
         socket.emit('send', {
@@ -699,6 +714,19 @@ export default class WebinarLive extends Component {
         })
         toast.success('Kuesioner dikirim ke peserta');
         this.setState({waitingKuesioner: true})
+      }
+    })
+  }
+
+  sendPosttest(){
+    API.put(`${API_SERVER}v2/webinar/send-posttest/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendPosttest',
+          webinar_id: this.state.webinarId
+        })
+        toast.success('Post test sent');
+        this.closeModalSendPosttest();
       }
     })
   }
@@ -781,6 +809,14 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={()=> this.setState({modalKuesioner: true})} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Kuesioner & Doorprize
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
+                      <button onClick={()=> this.setState({modalSendPosttest: true})} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Post Test
                       </button>
                       :
                       null
@@ -877,10 +913,10 @@ export default class WebinarLive extends Component {
                         </div>
                       }
                 {
-                this.state.status == 3 && this.state.enablePosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                 <div>
                   <h4>Silahkan jawab post test</h4>
-                  <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
+                  <div className="fc-blue" style={{fontSize:'18px', fontWeight:'bold', marginBottom:20}}>
                   <Timer
                       initialTime={this.state.waktuPosttest*60000}
                       direction="backward"
@@ -1067,6 +1103,30 @@ export default class WebinarLive extends Component {
           </Modal.Footer>
         </Modal>
         <Modal
+          show={this.state.modalSendPosttest}
+          onHide={this.closeModalSendPosttest}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Send Post Test
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>There are <b>{this.state.posttest.length}</b> question with <b>{this.state.waktuPosttest} minutes</b> time limit.</div>
+            <div>Are you sure want to send post test to attendences ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+              <button
+                className="btn btn-icademy-primary"
+                onClick={this.sendPosttest.bind(this)}
+              >
+                <i className="fa fa-paper-plane"></i>
+                Send Post Test
+              </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={this.state.modalKuesioner}
           onHide={this.closeModalKuesioner}
           centered
@@ -1113,8 +1173,39 @@ export default class WebinarLive extends Component {
           </Modal.Footer>
         </Modal>
         <Modal
+          show={this.state.modalConfirmClose}
+          onHide={this.closeModalConfirmClose}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+            Confirmation
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              Are you sure want to close questioner ?
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+              <button
+                className="btn btn-icademy-primary"
+                onClick={this.closeModalKuesionerPeserta.bind(this)}
+              >
+                Close
+              </button>
+              <button
+                className="btn btn-icademy-grey"
+                onClick={this.closeModalConfirmClose.bind(this)}
+              >
+                Cancel
+              </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={this.state.modalKuesionerPeserta && (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1)}
-          onHide={this.closeModalKuesionerPeserta}
+          onHide={()=> this.setState({modalConfirmClose: true})}
           dialogClassName="modal-lg"
           centered
         >

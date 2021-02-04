@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import TableFiles from '../../files/_files';
 import Storage from './../../../repository/storage';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import * as jsPDF from 'jspdf';
+import 'jspdf-autotable'
 
 import { Doughnut } from 'react-chartjs-2';
 
@@ -259,6 +261,43 @@ export default class WebinarRiwayat extends Component {
     }
   }
 
+  downloadPDF(){
+    // var doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: "landscape"
+    });
+    doc.setFontSize(18);
+    doc.text("Webinar Report", 120, 20);
+    
+    doc.setFontSize(11);
+    doc.text("Title", 20, 30);
+    doc.text(`: ${this.state.judul}`, 50, 30);
+    doc.text("Speaker", 20, 35);
+    doc.text(`: ${this.state.pembicara.toString()}`, 50, 35);
+    doc.text("Description", 20, 40);
+    doc.text(`: ${this.state.isi}`, 50, 40);
+    doc.text("Time", 20, 45);
+    doc.text(`: ${this.state.tanggal}, ${this.state.jamMulai} - ${this.state.jamSelesai}`, 50, 45);
+    doc.text("Total Invitation", 20, 50);
+    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 50);
+    doc.text("Present", 20, 55);
+    doc.text(`: ${this.state.jumlahHadir}`, 50, 55);
+    doc.text("Not Present", 20, 60);
+    doc.text(`: ${this.state.jumlahTidakHadir}`, 50, 60);
+
+    doc.setFontSize(12);
+    doc.text("Attendences", 20, 70);
+    doc.autoTable({ html: '#table-peserta', startY: 75, styles: {fontSize: 8}})
+    doc.text("Questions", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.text("Questioner", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-kuesioner', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.text("Pre Test & Post Test", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-test', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+
+    doc.save(`${this.state.judul}.pdf`);
+  }
+
   render() {
 
     // let access_project_admin = this.state.access_project_admin
@@ -298,7 +337,7 @@ export default class WebinarRiwayat extends Component {
       return (
         <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
           <div className="float-right" style={{ width: 200 }}>
-            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" onChange={(e) => this.filterPeserta(e)}>
+            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{fontSize:12}} onChange={(e) => this.filterPeserta(e)}>
               <option value="Semua" selected> All</option>
               <option value="Hadir"> Present</option>
               <option value="Tidak Hadir"> No Present</option>
@@ -307,14 +346,16 @@ export default class WebinarRiwayat extends Component {
           <table id="table-peserta" className="table table-striped">
             <thead>
               <tr>
-                <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} />&nbsp;Sertifikat</th>
-                <th> Participant's Name</th>
+                <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} /> Certificate</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th> Attendance</th>
-                <th> Entry Hours</th>
+                <th>Attendance</th>
+                <th>Entry Hours</th>
                 <th>Status</th>
-                <th> Duration </th>
+                <th>Duration</th>
+                <th>Audio</th>
+                <th>Camera</th>
               </tr>
             </thead>
             <tbody>
@@ -326,9 +367,9 @@ export default class WebinarRiwayat extends Component {
                   let diff = Math.abs(jamSl - jamMl);
                   let diffHour = Math.floor((diff % 86400000) / 3600000);
                   let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
-                  let durasi = item.jam_mulai ? diffHour + ' Jam ' + diffMin + ' Menit' : '-';
+                  let durasi = item.jam_mulai ? diffHour + ' hr ' + diffMin + ' min' : '-';
                   return (<tr key={i}>
-                    <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat && 'Terkirim'}</td>
+                    <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                     <td>{item.name}</td>
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
@@ -336,12 +377,14 @@ export default class WebinarRiwayat extends Component {
                     <td>{jamMulai}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
+                    <td>{item.audio}</td>
+                    <td>{item.camera}</td>
                   </tr>)
                 })
               }
             </tbody>
           </table>
-          <Button className="btn btn-icademy-primary" onClick={this.modalSertifikat.bind(this)}>Buat Sertifikat</Button>
+          <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Buat Sertifikat</Button>
         </div>
       )
     };
@@ -351,11 +394,11 @@ export default class WebinarRiwayat extends Component {
         <table id="table-pertanyaan" className="table table-striped">
           <thead>
             <tr>
-              <th> Participant's Name</th>
+              <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
               <th>Status</th>
-              <th>Pertanyaan</th>
+              <th>Question</th>
             </tr>
           </thead>
           <tbody>
@@ -379,7 +422,7 @@ export default class WebinarRiwayat extends Component {
         <table id="table-kuesioner" className="table table-striped">
           <thead>
             <tr>
-              <th> Participant's Name</th>
+              <th>Name</th>
               {
                 items.pertanyaan.map((item) => (
                   <th key={item}>{item}</th>
@@ -411,10 +454,10 @@ export default class WebinarRiwayat extends Component {
         <table id="table-test" className="table table-striped">
           <thead>
             <tr>
-              <th> Participant's Name</th>
-              <th>Nilai Pre Test</th>
-              <th>Nilai Post Test</th>
-              <th>Selisih</th>
+              <th>Name</th>
+              <th>Pre Test Score</th>
+              <th>Post Test Score</th>
+              <th>Deviation</th>
             </tr>
           </thead>
           <tbody>
@@ -492,7 +535,7 @@ export default class WebinarRiwayat extends Component {
     );
 
     return (
-      <div className="row">
+      <div className="row riwayat">
         <div className="col-sm-12">
           <Card>
             <Card.Body>
@@ -516,8 +559,8 @@ export default class WebinarRiwayat extends Component {
               </div>
               <div style={{ marginTop: '10px' }}>
                 <div className="row">
-                  <div className="col-sm-10">
-                    <h5>{this.state.judul}</h5>
+                  <div className="col-sm-8">
+                    <h5 style={{fontSize:17}}>{this.state.judul}</h5>
                     <h6>Pembicara : {this.state.pembicara.toString()}</h6>
                     <p>
                       {this.state.isi}
@@ -525,9 +568,17 @@ export default class WebinarRiwayat extends Component {
                     <h6>{this.state.tanggal}, &nbsp; {this.state.jamMulai} - {this.state.jamSelesai}</h6>
                   </div>
 
-                  <div className="col-sm-2">
+                  <div className="col-sm-4">
                     <button
-                      className="btn btn-icademy-primary"
+                      className="btn btn-icademy-primary btn-12"
+                      onClick={this.downloadPDF.bind(this)}
+                      style={{ marginRight: 14 }}
+                    >
+                      <i className="fa fa-file-pdf"></i>
+                        Download PDF Report
+                      </button>
+                    <button
+                      className="btn btn-icademy-primary btn-12"
                       onClick={e => this.setState({ isModalDownloadFileWebinar: true })}
                       style={{ marginRight: 14 }}
                     >
@@ -557,7 +608,7 @@ export default class WebinarRiwayat extends Component {
               <div className="row mt-5">
                 <div className="col-sm-12">
                   <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning"
+                    className="btn btn-icademy-warning btn-12"
                     table="table-peserta"
                     filename={'Kehadiran ' + this.state.judul}
                     sheet="Kehadiran"
@@ -569,7 +620,7 @@ export default class WebinarRiwayat extends Component {
               <div className="row mt-5">
                 <div className="col-sm-12">
                   <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning"
+                    className="btn btn-icademy-warning btn-12"
                     table="table-pertanyaan"
                     filename={'Pertanyaan ' + this.state.judul}
                     sheet="Kehadiran"
@@ -581,7 +632,7 @@ export default class WebinarRiwayat extends Component {
               <div className="row mt-5">
                 <div className="col-sm-12">
                   <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning"
+                    className="btn btn-icademy-warning btn-12"
                     table="table-kuesioner"
                     filename={'Jawaban Kuesioner ' + this.state.judul}
                     sheet="Kehadiran"
@@ -593,7 +644,7 @@ export default class WebinarRiwayat extends Component {
               <div className="row mt-5">
                 <div className="col-sm-12">
                   <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning"
+                    className="btn btn-icademy-warning btn-12"
                     table="table-test"
                     filename={'Hasil Test ' + this.state.judul}
                     sheet="Kehadiran"

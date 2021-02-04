@@ -225,7 +225,8 @@ class WebinarAddClass extends Component {
         tamu: res.data.result.tamu,
         status: res.data.result.status,
         userId: Storage.get('user').data.user_id,
-        sekretarisId: res.data.result.sekretaris
+        sekretarisId: res.data.result.sekretaris,
+        pembicara: []
       })
       res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)

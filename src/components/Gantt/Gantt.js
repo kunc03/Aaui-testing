@@ -358,7 +358,7 @@ export default class Gantt extends Component {
 	gantt.config.show_unscheduled = true;
 	gantt.config.placeholder_task = true;
 	gantt.config.auto_types = true;
-	gantt.config.row_height = 30;
+	gantt.config.row_height = 28;
         gantt.config.min_column_width = 40;
         gantt.config.smart_scales = false;
         gantt.config.scale_height = 90;
