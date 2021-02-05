@@ -60,7 +60,7 @@ export default class MeetingRoomPublic extends Component {
 
   joinChime = async (e) => {
     const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
-    const name      = Storage.get('user').data.user;
+    const name      = this.state.user.name;
     const region    = `ap-southeast-1`;
 
     axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
@@ -120,7 +120,6 @@ export default class MeetingRoomPublic extends Component {
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
       console.log('RESSS', response)
       this.setState({ classRooms: response.data.result })
-      this.joinChime()
       API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
         let splitTags;
         let datas = res.data.result;
@@ -315,6 +314,9 @@ export default class MeetingRoomPublic extends Component {
   joinRoom() {
     if (this.state.user.name) {
       this.joinMeeting()
+
+      this.joinChime()
+
       this.setState({ join: true, modalStart: false });
     }
     else {
@@ -371,40 +373,41 @@ export default class MeetingRoomPublic extends Component {
                         {classRooms.room_name}
                         <button style={{ marginRight: 14 }} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
                           <i className="fa fa-user"></i>Undang Peserta
-                  </button>
+                        </button>
                       </h3>
-                      {
-                        user.name && classRooms.room_name && this.state.join ?
-
-                        <ThemeProvider theme={lightTheme}>
-                          <MeetingProvider>
-                            <ChimeMeeting
-                              ref={`child`}
-                              name={Storage.get('user').data.user}
-                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
-                              region={`ap-southeast-1`} />
-                          </MeetingProvider>
-                        </ThemeProvider>
-
-
-
-                          //   <JitsiMeetComponent
-                          //     roomName={classRooms.room_name}
-                          //     roomId={classRooms.class_id}
-                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
-                          //     userId={user.user_id}
-                          //     userName={user.name}
-                          //     userEmail={user.email}
-                          //     userAvatar={user.avatar}
-                          //     startMic={this.state.startMic}
-                          //     startCam={this.state.startCam}
-                          //   />
-                          :
-                          null
-                      }
                     </Col>
-
                   </Row>
+
+                  {
+                    user.name && classRooms.room_name && this.state.join ?
+
+                    <ThemeProvider theme={lightTheme}>
+                      <MeetingProvider>
+                        <ChimeMeeting
+                          ref={`child`}
+                          attendee={this.state.attendee}
+                          name={Storage.get('user').data.user}
+                          title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                          region={`ap-southeast-1`} />
+                      </MeetingProvider>
+                    </ThemeProvider>
+
+
+
+                      //   <JitsiMeetComponent
+                      //     roomName={classRooms.room_name}
+                      //     roomId={classRooms.class_id}
+                      //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
+                      //     userId={user.user_id}
+                      //     userName={user.name}
+                      //     userEmail={user.email}
+                      //     userAvatar={user.avatar}
+                      //     startMic={this.state.startMic}
+                      //     startCam={this.state.startCam}
+                      //   />
+                      :
+                      null
+                  }
 
                   {/* CHATING SEND FILE */}
                   <h3 className="f-20 f-w-800">
