@@ -459,7 +459,7 @@ fetchRekamanBBB(folder){
                   let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id, state: 'any'})
                   http(getRecordingsUrl).then((result) => {
                     if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-                      this.setState({dataRecordings:[]})
+		      this.setState({dataRecordings:[]});
                       this.state.dataRecordings.push(result.recordings)
                       this.forceUpdate()
                     }

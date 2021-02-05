@@ -10,6 +10,8 @@ import TableSilabus from "./table";
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import { Modal } from 'react-bootstrap'
+
 class DetailMurid extends Component {
 
   state = {
@@ -28,7 +30,20 @@ class DetailMurid extends Component {
     pelajaranInfo: {},
 
     isLoading: false,
-    nilaiMurid: []
+    nilaiMurid: [],
+
+    isKeteranganNilai: false,
+
+    rangeNilai: [],
+
+    isDetailTugas: false,
+    detailTask: []
+  }
+
+  fetchRangeNilai() {
+    API.get(`${API_SERVER}v2/range-nilai/company/${Storage.get('user').data.company_id}`).then(res => {
+      this.setState({ rangeNilai: res.data.result })
+    })
   }
 
   fetchJadwal() {
@@ -92,6 +107,30 @@ class DetailMurid extends Component {
   componentDidMount() {
     this.fetchJadwal()
     this.fetchSemester()
+    this.fetchRangeNilai()
+  }
+
+  convertNilaiToAbjad(value) {
+    let hr = "-";
+    this.state.rangeNilai.map(item => {
+      if(this.checkRangeNilai(value, item.min, item.max)) {
+        hr = item.huruf;
+      }
+    })
+
+    return hr;
+  }
+
+  checkRangeNilai(x, min, max) {
+    return x >= min && x <= max;
+  }
+
+  openKeteranganNilai = e => {
+    this.setState({ isKeteranganNilai: true })
+  }
+
+  openDetail(item) {
+    this.setState({ detailTask: item, isDetailTugas: true })
   }
 
   render() {
@@ -158,7 +197,7 @@ class DetailMurid extends Component {
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NIK </td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NAMA </td>
                     <td colSpan="3">NILAI HASIL BELAJAR</td>
-                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI AKHIR</td>
+                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NILAI</td>
                     <td style={{ verticalAlign: 'middle' }} rowSpan="2">STATUS</td>
                   </tr>
                   <tr className="text-center">
@@ -183,16 +222,84 @@ class DetailMurid extends Component {
                         <td>{i + 1}</td>
                         <td>{item.no_induk}</td>
                         <td>{item.nama}</td>
-                        <td>{item.task}</td>
-                        <td>{item.quiz}</td>
-                        <td>{item.exam}</td>
-                        <td>{item.task+item.quiz+item.exam}</td>
+                        <td>
+                          {item.task.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dTask)}>{item.dTask.length}</p>
+                        </td>
+                        <td>
+                          {item.quiz.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dQuiz)}>{item.dQuiz.length}</p>
+                        </td>
+                        <td>
+                          {item.exam.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dExam)}>{item.dExam.length}</p>
+                        </td>
+                        <td>{(item.exam+item.quiz+item.task).toFixed(2)}<p title="More detail" style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>
                         <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
                   }
                 </tbody>
               </table>
+
+              <Modal show={this.state.isKeteranganNilai} onHide={() => this.setState({ isKeteranganNilai: false })} dialogClassName="modal-lg">
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Keterangan Nilai
+                </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                      <td width="40px"><b>Nilai</b></td>
+                      <td><b>Range</b></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      this.state.rangeNilai.map(item => (
+                        <tr>
+                          <td><b>{item.huruf}</b></td>
+                          <td>{item.min} - {item.max}</td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
+                  </table>
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={this.state.isDetailTugas} onHide={() => this.setState({ isDetailTugas: false })} dialogClassName="modal-lg">
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Detail
+                </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <td><b>INFORMASI</b></td>
+                        <td><b>STATUS</b></td>
+                        <td><b>SCORE</b></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      this.state.detailTask.map(item => (
+                        <tr>
+                          <td>{item.exam_title}</td>
+                          <td>{item.user_id ? <span class="label label-success">Sudah mengerjakan</span> : <span class="label label-danger">Belum mengerjakan</span>}</td>
+                          <td>{item.score}</td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
+                  </table>
+                </Modal.Body>
+              </Modal>
+
             </div>
           </div>
 

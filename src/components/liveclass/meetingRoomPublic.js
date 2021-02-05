@@ -11,11 +11,17 @@ import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import { toast } from "react-toastify";
 
-import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
 import { isMobile } from 'react-device-detect';
+
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+import ChimeMeeting from '../meeting/chime'
+import axios from 'axios'
+
 const bbb = require('bigbluebutton-js')
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -47,6 +53,19 @@ export default class MeetingRoomPublic extends Component {
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
     modalStart: true,
     joinUrl: '',
+
+    attendee: {}
+
+  }
+
+  joinChime = async (e) => {
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const name      = this.state.user.name;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
   }
 
   toggleSwitchMic(checked) {
@@ -124,6 +143,9 @@ export default class MeetingRoomPublic extends Component {
   }
 
   joinMeeting() {
+
+    this.joinChime()
+
     // BBB JOIN START
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
@@ -314,6 +336,9 @@ export default class MeetingRoomPublic extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
 
+                  <ThemeProvider theme={lightTheme}>
+                    <MeetingProvider>
+
                   <Row>
 
                     {/* <div className="col-md-4 col-xl-4 mb-3">
@@ -355,19 +380,24 @@ export default class MeetingRoomPublic extends Component {
                       </h3>
                       {
                         user.name && classRooms.room_name && this.state.join ?
-                          <Iframe url={this.state.joinUrl}
-                            width="100%"
-                            height="600px"
-                            display="initial"
-                            frameBorder="0"
-                            allow="fullscreen *;geolocation *; microphone *; camera *"
-                            position="relative" />
-                          //   <JitsiMeetComponent 
-                          //     roomName={classRooms.room_name} 
-                          //     roomId={classRooms.class_id} 
-                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                          //     userId={user.user_id} 
-                          //     userName={user.name} 
+
+
+                            <ChimeMeeting
+                              attendee={this.state.attendee}
+                              ref={`child`}
+                              name={user.name}
+                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0)}
+                              region={`ap-southeast-1`} />
+
+
+
+
+                          //   <JitsiMeetComponent
+                          //     roomName={classRooms.room_name}
+                          //     roomId={classRooms.class_id}
+                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
+                          //     userId={user.user_id}
+                          //     userName={user.name}
                           //     userEmail={user.email}
                           //     userAvatar={user.avatar}
                           //     startMic={this.state.startMic}
@@ -379,6 +409,9 @@ export default class MeetingRoomPublic extends Component {
                     </Col>
 
                   </Row>
+
+                </MeetingProvider>
+              </ThemeProvider>
 
                   {/* CHATING SEND FILE */}
                   <h3 className="f-20 f-w-800">

@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactFullScreenElement from "react-fullscreen-element";
 import Iframe from 'react-iframe';
+import axios from 'axios'
 
-import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
 import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
@@ -17,9 +18,14 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 import { Timer } from 'react-countdown-clock-timer';
 import SocketContext from '../../socket';
 
+import ChimeMeeting from '../meeting/chime'
 const bbb = require('bigbluebutton-js')
 
 class Mengajar extends React.Component {
+
+  constructor(props, context) {
+    super(props, context)
+  }
 
   state = {
     role: this.props.role.toString().toLowerCase(),
@@ -54,6 +60,18 @@ class Mengajar extends React.Component {
     isSubmit: false,
 
     isTatapMuka: 0,
+
+    attendee: {},
+  }
+
+  joinChime = async (e) => {
+    const title     = this.state.infoJadwal.nama_pelajaran.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const name      = Storage.get('user').data.user;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
   }
 
   endMeeting() {
@@ -103,6 +121,8 @@ class Mengajar extends React.Component {
 
       this.fetchFiles(res.data.result.folder)
       this.fetchBBB()
+
+      this.joinChime()
     })
   }
 
@@ -387,24 +407,24 @@ class Mengajar extends React.Component {
                     <div className="card-body p-1">
                       {
                         this.state.infoChapter.tatapmuka == 1 &&
-                        <Iframe url={this.state.joinUrl}
-                          width="100%"
-                          height="600px"
-                          display="initial"
-                          frameBorder="0"
-                          allow="fullscreen *; geolocation *; microphone *; camera *"
-                          position="relative" />
+
+                        <ChimeMeeting
+                          ref={`child`}
+                          attendee={this.state.attendee}
+                          name={Storage.get('user').data.user}
+                          title={this.state.infoJadwal.nama_pelajaran+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                          region={`ap-southeast-1`} />
                       }
 
                       {
                         this.state.isTatapMuka == 1 &&
-                        <Iframe url={this.state.joinUrl}
-                          width="100%"
-                          height="600px"
-                          display="initial"
-                          frameBorder="0"
-                          allow="fullscreen *; geolocation *; microphone *; camera *"
-                          position="relative" />
+
+                        <ChimeMeeting
+                          ref={`child`}
+                          attendee={this.state.attendee}
+                          name={Storage.get('user').data.user}
+                          title={this.state.infoJadwal.nama_pelajaran+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                          region={`ap-southeast-1`} />
                       }
 
                       <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />

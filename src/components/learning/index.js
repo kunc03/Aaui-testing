@@ -22,7 +22,7 @@ const titleTabs = [
   { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
   { name: 'Personnel', link: '/personalia', component: Personalia },
   { name: 'Report', link: '/laporan', component: Laporan },
-  { name: 'KPI', link: '/kpi', component: Kpi },
+  { name: 'Preference', link: '/kpi', component: Kpi },
   { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
 ]
 

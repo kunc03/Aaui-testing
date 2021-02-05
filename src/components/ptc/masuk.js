@@ -2,7 +2,7 @@ import React from 'react'
 import ReactFullScreenElement from "react-fullscreen-element";
 import Iframe from 'react-iframe';
 
-import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
 import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
@@ -16,7 +16,9 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
 import { Timer } from 'react-countdown-clock-timer';
 import SocketContext from '../../socket';
+import axios from 'axios';
 
+import ChimeMeeting from '../meeting/chime'
 const bbb = require('bigbluebutton-js')
 
 class Mengajar extends React.Component {
@@ -44,6 +46,8 @@ class Mengajar extends React.Component {
     modalDeleteFile: false,
 
     openKehadiran: false,
+
+    attendee: {},
   }
 
   hadirMurid = e => {
@@ -195,7 +199,7 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
-    if(this.state.role !== "guru") {
+    if(this.state.role === "murid") {
       API.get(`${API_SERVER}v1/ptc-room/cek-hadir/${this.state.ptcId}/${Storage.get('user').data.user_id}`).then(res => {
         if(res.data.error) toast.warning(`Warning: cek kehadiran`)
 
@@ -224,6 +228,7 @@ class Mengajar extends React.Component {
 
       this.fetchFiles(res.data.result.folder_id)
       this.fetchBBB()
+      this.joinChime()
     })
   }
 
@@ -274,6 +279,16 @@ class Mengajar extends React.Component {
     })
   }
 
+  joinChime = e => {
+    const title     = this.state.infoPtc.nama_ruangan.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const name      = Storage.get('user').data.user;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
+  }
+
   render() {
 
     console.log('state: ', this.state);
@@ -310,11 +325,16 @@ class Mengajar extends React.Component {
                         <i className={'fa fa-list-alt'}></i> Info
                       </button>
                     }
+
+
                   </h4>
                   <span>Moderator : {this.state.infoPtc.name}</span>
                 </div>
 
+                <ChimeMeeting attendee={this.state.attendee} />
+
                 {
+                  /**
                   <div className="card-body p-1">
                     <Iframe url={this.state.joinUrl}
                     width="100%"
@@ -324,6 +344,7 @@ class Mengajar extends React.Component {
                     allow="fullscreen *; geolocation *; microphone *; camera *"
                     position="relative" />
                   </div>
+                  */
                 }
               </div>
             </div>
