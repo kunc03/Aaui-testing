@@ -96,25 +96,23 @@ const ChimeMeeting = (props) => {
   };
 
   return (
-    <div>
-      <div class="row">
-        <div class="col-sm-12" style={{ zIndex: '1', paddingTop: '5px', paddingLeft: '20px', paddingRight: '20px' }}>
-          <ControlBar style={{width: '100%'}}>
-            <button onClick={joinMeeting} className={'btn btn-icademy-primary mr-2 mt-2'}>Join Video</button>
-            <AudioInputControl />
-            <AudioOutputControl />
-            <VideoInputControl />
-            <button onClick={toggleContentShare} className={'btn btn-icademy-primary mr-2 mt-2'}>Screenshare</button>
-          </ControlBar>
-        </div>
+    <div class="row">
+      <div class="col-sm-12" style={{ zIndex: '1', paddingTop: '5px', paddingLeft: '20px', paddingRight: '20px' }}>
+        <ControlBar style={{width: '100%'}}>
+          <button onClick={joinMeeting} className={'btn btn-icademy-primary mr-2 mt-2'}>Join Video</button>
+          <AudioInputControl />
+          <AudioOutputControl />
+          <VideoInputControl />
+          <button onClick={toggleContentShare} className={'btn btn-icademy-primary mr-2 mt-2'}>Screenshare</button>
+        </ControlBar>
+      </div>
 
-        <div class="col-sm-3" style={{ paddingLeft: '20px', paddingTop: '5px', marginRight: '-20px', marginBottom: '5px'}}>
-          <MyChild />
-        </div>
+      <div class="col-sm-3" style={{ paddingLeft: '20px', paddingTop: '5px', marginRight: '-20px', marginBottom: '5px'}}>
+        <MyChild />
+      </div>
 
-        <div class="col-sm-9" style={{ paddingLeft: '10px', paddingTop: '5px', paddingRight: '0px', marginBottom: '5px'}}>
-          <VideoTileGrid style={{width: '100%', height: '540px', border: '1px solid #e9e9e9', padding: '5px'}} />
-        </div>
+      <div class="col-sm-9" style={{ paddingLeft: '10px', paddingTop: '5px', paddingRight: '0px', marginBottom: '5px'}}>
+        <VideoTileGrid style={{width: '100%', height: '540px', border: '1px solid #e9e9e9', padding: '5px'}} />
       </div>
     </div>
   );
