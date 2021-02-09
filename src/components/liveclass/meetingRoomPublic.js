@@ -59,7 +59,7 @@ export default class MeetingRoomPublic extends Component {
   }
 
   joinChime = async (e) => {
-    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
     const name      = this.state.user.name;
     const region    = `ap-southeast-1`;
 
@@ -317,6 +317,9 @@ export default class MeetingRoomPublic extends Component {
   joinRoom() {
     if (this.state.user.name) {
       this.joinMeeting()
+
+      this.joinChime()
+
       this.setState({ join: true, modalStart: false });
     }
     else {
@@ -337,7 +340,8 @@ export default class MeetingRoomPublic extends Component {
                 <div className="page-wrapper">
                   <Row>
 
-                    {/* <div className="col-md-4 col-xl-4 mb-3">
+                    {/*
+          <div className="col-md-4 col-xl-4 mb-3">
             <Link to={`/`} className="menu-mati">
               <div className="kategori title-disabled">
               <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
@@ -365,14 +369,15 @@ export default class MeetingRoomPublic extends Component {
               Group Meeting
               </div>
             </Link>
-          </div> */}
+          </div>
+          */}
 
                     <Col sm={12} style={{ marginBottom: '20px' }}>
                       <h3 className="f-20 f-w-800">
                         {classRooms.room_name}
                         <button style={{ marginRight: 14 }} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
                           <i className="fa fa-user"></i>Undang Peserta
-                  </button>
+                        </button>
                       </h3>
                       {
                         user.name && classRooms.room_name && this.state.join ?
@@ -385,8 +390,16 @@ export default class MeetingRoomPublic extends Component {
                             allow="fullscreen *;geolocation *; microphone *; camera *"
                             position="relative" />
 
-
-
+                          // <ThemeProvider theme={lightTheme}>
+                          //   <MeetingProvider>
+                          //     <ChimeMeeting
+                          //       ref={`child`}
+                          //       attendee={this.state.attendee}
+                          //       name={Storage.get('user').data.user}
+                          //       title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                          //       region={`ap-southeast-1`} />
+                          //   </MeetingProvider>
+                          // </ThemeProvider>
 
                           //   <JitsiMeetComponent
                           //     roomName={classRooms.room_name}
@@ -403,7 +416,6 @@ export default class MeetingRoomPublic extends Component {
                           null
                       }
                     </Col>
-
                   </Row>
 
                   {/* CHATING SEND FILE */}
