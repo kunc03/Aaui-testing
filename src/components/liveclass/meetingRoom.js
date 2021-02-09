@@ -1008,9 +1008,9 @@ export default class MeetingRoom extends Component {
                           {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
 
-                          {/** <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" /> */}
+                          <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
 
-                          <ThemeProvider theme={lightTheme}>
+                          {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>
                               <ChimeMeeting
                                 ref={`child`}
@@ -1018,7 +1018,7 @@ export default class MeetingRoom extends Component {
                                 title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0)}
                                 region={`ap-southeast-1`} />
                             </MeetingProvider>
-                          </ThemeProvider>
+                          </ThemeProvider> */}
 
                         </div>
                         : null }
