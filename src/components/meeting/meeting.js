@@ -354,6 +354,7 @@ class MeetingTable extends Component {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         this.fetchMeeting();
+        this.checkLimitCompany();
 
         //get and push multiselect option
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
@@ -821,7 +822,6 @@ class MeetingTable extends Component {
 
   componentDidMount() {
     this.fetchOtherData();
-    this.checkLimitCompany();
 
     if (this.props.informationId){
       this.fetchMeetingInfo(this.props.informationId)
