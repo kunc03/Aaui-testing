@@ -15,8 +15,8 @@ import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
-// import Pengaturan from "./components/Pengaturan/index";
-import Pengaturan from "./components/Global_setting/index";
+import Pengaturan from "./components/Pengaturan/index";
+// import Pengaturan from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
 // import Files from "./components/files/files";
 
