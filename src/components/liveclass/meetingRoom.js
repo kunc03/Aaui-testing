@@ -1014,6 +1014,7 @@ export default class MeetingRoom extends Component {
                             <MeetingProvider>
                               <ChimeMeeting
                                 ref={`child`}
+                                attendee={this.state.attendee}
                                 name={Storage.get('user').data.user}
                                 title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0)}
                                 region={`ap-southeast-1`} />
