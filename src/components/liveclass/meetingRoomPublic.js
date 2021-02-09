@@ -335,10 +335,6 @@ export default class MeetingRoomPublic extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-
-                  <ThemeProvider theme={lightTheme}>
-                    <MeetingProvider>
-
                   <Row>
 
                     {/* <div className="col-md-4 col-xl-4 mb-3">
@@ -381,13 +377,13 @@ export default class MeetingRoomPublic extends Component {
                       {
                         user.name && classRooms.room_name && this.state.join ?
 
-
-                            <ChimeMeeting
-                              attendee={this.state.attendee}
-                              ref={`child`}
-                              name={user.name}
-                              title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0)}
-                              region={`ap-southeast-1`} />
+                          <Iframe url={this.state.joinUrl}
+                            width="100%"
+                            height="600px"
+                            display="initial"
+                            frameBorder="0"
+                            allow="fullscreen *;geolocation *; microphone *; camera *"
+                            position="relative" />
 
 
 
@@ -409,9 +405,6 @@ export default class MeetingRoomPublic extends Component {
                     </Col>
 
                   </Row>
-
-                </MeetingProvider>
-              </ThemeProvider>
 
                   {/* CHATING SEND FILE */}
                   <h3 className="f-20 f-w-800">
