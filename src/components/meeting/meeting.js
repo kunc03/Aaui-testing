@@ -104,6 +104,8 @@ class MeetingTable extends Component {
 
       oldStartDate: new Date(),
       oldEndDate: new Date(),
+
+      limitCompany: []
     };
   }
   handleChangeEmail(emailInvite) {
@@ -805,8 +807,21 @@ class MeetingTable extends Component {
     })
   }
 
+  checkLimitCompany(){
+    API.get(`${API_SERVER}v2/company-limit/${this.state.companyId}`).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.setState({limitCompany: res.data.result});
+        } else {
+          toast.error("Error, gagal check limit company")
+        }
+      }
+    })
+  }
+
   componentDidMount() {
     this.fetchOtherData();
+    this.checkLimitCompany();
 
     if (this.props.informationId){
       this.fetchMeetingInfo(this.props.informationId)
@@ -978,14 +993,14 @@ class MeetingTable extends Component {
       <div className="card p-20">
         <span className="">
             <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
-            {access_project_admin == true ? <button
+            {access_project_admin == true && this.state.limitCompany.meeting ? <button
             onClick={this.handleCreateMeeting.bind(this)}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important", marginLeft:14 }}
             >
             <i className="fa fa-plus"></i>
 
-            Tambah
+            Create New
             </button> : null}
             <input
                 type="text"
@@ -993,6 +1008,12 @@ class MeetingTable extends Component {
                 onChange={this.filterMeeting}
                 className="form-control float-right col-sm-3"/>
         </span>
+        {
+          !this.state.limitCompany.meeting &&
+          <span>
+            You cannot create a new meeting because you have reached the limit.
+          </span>
+        }
         <DataTable
           style={{marginTop:20}} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
           />

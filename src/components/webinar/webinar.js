@@ -25,6 +25,7 @@ class WebinarTable extends Component {
       isLoading: [],
       deleteWebinarId: '',
       modalDelete: false,
+      limitCompany: [],
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
         { title: 'Moderator', width: null, status: true },
@@ -37,8 +38,20 @@ class WebinarTable extends Component {
     };
   }
 
+  checkLimitCompany(){
+    API.get(`${API_SERVER}v2/company-limit/${this.state.companyId}`).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.setState({limitCompany: res.data.result});
+        } else {
+          toast.error("Error, gagal check limit company")
+        }
+      }
+    })
+  }
   componentDidMount() {
     this.fetchData();
+    this.checkLimitCompany();
   }
 
   fetchData() {
@@ -119,7 +132,7 @@ class WebinarTable extends Component {
           <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
 
 
-          {access_project_admin == true ?
+          {access_project_admin == true && this.state.limitCompany.webinar ?
             <Link
               to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}`}
             >
@@ -129,7 +142,7 @@ class WebinarTable extends Component {
               >
                 <i className="fa fa-plus"></i>
 
-                    Add
+                    Create New
                     </button>
             </Link>
             : null
@@ -143,6 +156,12 @@ class WebinarTable extends Component {
                     Roles
                 </Link> */}
             </span>
+            {
+              !this.state.limitCompany.webinar &&
+              <span>
+                You cannot create a new webinar because you have reached the limit.
+              </span>
+            }
             <div className="table-responsive">
                 <table className="table table-hover">
                 <thead>

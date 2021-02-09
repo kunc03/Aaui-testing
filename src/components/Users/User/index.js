@@ -41,7 +41,8 @@ export default class User extends Component {
       isModalImport: false,
       excel: '',
       nameFile: '',
-      direction: 'descending'
+      direction: 'descending',
+      limitCompany:[]
     };
   }
 
@@ -108,6 +109,18 @@ export default class User extends Component {
     this.setState({ isModalPassword: false, userIdPassword: '' });
   }
 
+  checkLimitCompany(){
+    API.get(`${API_SERVER}v2/company-limit/${this.state.myCompanyId}`).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.setState({limitCompany: res.data.result});
+        } else {
+          console.log("Error, gagal check limit company")
+        }
+      }
+    })
+  }
+
   componentDidMount() {
     this.fetchData();
   }
@@ -161,8 +174,7 @@ export default class User extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        console.log('STORAGENYA', Storage.get('user').data);
-
+        this.checkLimitCompany();
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
           console.log('resss', response)
           response.data.result.map(item => {
@@ -421,26 +433,35 @@ export default class User extends Component {
                           </InputGroup.Append>
                         </InputGroup>
                       </div>
-                      <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
-                        <i className="fa fa-plus"></i>
-                        Import User
-                      </Link>
+                      {
+                        this.state.limitCompany.user &&
+                        <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
+                          <i className="fa fa-plus"></i>
+                          Import User
+                        </Link>
+                      }
+                      {
+                        this.state.limitCompany.user &&
                       <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
                         <i className="fa fa-download"></i>
                         Download Format
                       </a>
-                      <Link
-                        to='/user-create'
-                        className="btn btn-ideku float-right"
-                        style={{ padding: "7px 8px !important" }}
-                      >
-                        <img
-                          src="assets/images/component/person_add.png"
-                          className="button-img"
-                          alt=""
-                        />
-                                  Add New
-                                </Link>
+                      }
+                      {
+                        this.state.limitCompany.user &&
+                        <Link
+                          to='/user-create'
+                          className="btn btn-ideku float-right"
+                          style={{ padding: "7px 8px !important" }}
+                        >
+                          <img
+                            src="assets/images/component/person_add.png"
+                            className="button-img"
+                            alt=""
+                          />
+                                    Create New
+                        </Link>
+                      }
 
                       {/* <div style={{ overflow: "auto", maxHeight:'71vh' }}>
                         <table
@@ -469,6 +490,12 @@ export default class User extends Component {
 
 
                       </div> */}
+                      {
+                        !this.state.limitCompany.user &&
+                        <div>
+                          You cannot create a new user because you have reached the limit.
+                        </div>
+                      }
                       <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
                         <Modal.Body>
                           <Modal.Title className="text-c-purple3 f-w-bold">Hapus User</Modal.Title>

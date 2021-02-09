@@ -24,7 +24,10 @@ class ModalAdd extends Component {
       logo: "",
       notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
       unlimited: false,
-      validity: new Date()
+      validity: new Date(),
+      limituser: null,
+      limitmeeting: null,
+      limitwebinar: null
     };
   }
 
@@ -34,6 +37,15 @@ class ModalAdd extends Component {
     });
   };
 
+  onChangeInput = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+      this.setState({
+        [name]: value
+      });
+  }
   toggleSwitch(checked) {
     this.setState({ unlimited: !this.state.unlimited });
   }
@@ -51,6 +63,9 @@ class ModalAdd extends Component {
       formData.append('unlimited', unlimited);
       formData.append('logo', this.state.logo);
       formData.append('validity', this.state.validity.toISOString().split('T')[0]);
+      formData.append('limituser', this.state.limituser);
+      formData.append('limitmeeting', this.state.limitmeeting);
+      formData.append('limitwebinar', this.state.limitwebinar);
 
       let linkURL = `${API_SERVER}v1/company`;
       API.post(linkURL, formData).then(res => {
@@ -141,7 +156,7 @@ class ModalAdd extends Component {
               <Form>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Type Company
+                    Type
                   </label>
                   <select onChange={this.onChangeTipe} className="form-control" style={{ textTransform: "capitalize" }}>
                     <option value="">Pilih tipe company</option>
@@ -151,7 +166,7 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Nama Company
+                    Company Name
                   </label>
                   <input
                     type="text"
@@ -163,7 +178,7 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Logo Company
+                    Company Logo
                   </label>
                   <input
                     type="file"
@@ -175,7 +190,7 @@ class ModalAdd extends Component {
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Batasi Waktu
+                    Time Limit
                   </label>
                   <div style={{ width: '100%' }}>
                     <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
@@ -199,6 +214,48 @@ class ModalAdd extends Component {
 
                   </div>
                 }
+                
+                <div className="form-group">
+                                <label className="label-input" htmlFor>
+                                  Product Limitation
+                                </label>
+                                <table>
+                                  <tr>
+                                    <th>User</th>
+                                    <th>Meeting</th>
+                                    <th>Webinar</th>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limituser"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limituser}
+                                      />
+                                    </td>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limitmeeting"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limitmeeting}
+                                      />
+                                    </td>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limitwebinar"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limitwebinar}
+                                      />
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
                 {/* <div className="form-group">
                   <label className="label-input" htmlFor>
                     Status Company

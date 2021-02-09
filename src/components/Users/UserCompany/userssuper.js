@@ -40,7 +40,8 @@ export default class User extends Component {
       nameFile: '',
       direction: 'descending',
 
-      isLoading: false
+      isLoading: false,
+      limitCompany: []
     };
   }
 
@@ -149,6 +150,19 @@ export default class User extends Component {
 
   componentDidMount() {
     this.fetchData();
+    this.checkLimitCompany();
+  }
+
+  checkLimitCompany(){
+    API.get(`${API_SERVER}v2/company-limit/${this.state.myCompanyId}`).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          this.setState({limitCompany: res.data.result});
+        } else {
+          console.log("Error, gagal check limit company")
+        }
+      }
+    })
   }
 
   onClickModalVoucher = e => {
@@ -443,26 +457,35 @@ export default class User extends Component {
             </InputGroup.Append>
           </InputGroup>
         </div>
-        <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
-          <i className="fa fa-plus"></i>
-          Import User
-        </Link>
-        <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
-          <i className="fa fa-download"></i>
-          Download Format
-        </a>
-        <Link
-          to='/user-create'
-          className="btn btn-ideku float-right"
-          style={{ padding: "7px 8px !important" }}
-        >
-          <img
-            src="assets/images/component/person_add.png"
-            className="button-img"
-            alt=""
-          />
-                                  Add New
-                                </Link>
+        {
+          this.state.limitCompany.user &&
+          <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
+            <i className="fa fa-plus"></i>
+            Import User
+          </Link>
+        }
+        {
+          this.state.limitCompany.user &&
+          <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
+            <i className="fa fa-download"></i>
+            Download Format
+          </a>
+        }
+        {
+          this.state.limitCompany.user &&
+          <Link
+            to='/user-create'
+            className="btn btn-ideku float-right"
+            style={{ padding: "7px 8px !important" }}
+          >
+            <img
+              src="assets/images/component/person_add.png"
+              className="button-img"
+              alt=""
+            />
+                                    Create New
+                                  </Link>
+        }
 
         {/* <div style={{ overflow: "auto", maxHeight:'71vh' }}>
           <table className="table-curved" style={{ width: "100%",whiteSpace: "nowrap" }}>
@@ -484,6 +507,12 @@ export default class User extends Component {
             </thead>
             <Lists lists={users} />
           </table> */}
+                      {
+                        !this.state.limitCompany.user &&
+                        <div>
+                          You cannot create a new user because you have reached the limit.
+                        </div>
+                      }
 
         <div style={{ backgroundColor: '#FFF' }}>
           <DataTable
