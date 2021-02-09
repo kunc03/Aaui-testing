@@ -331,10 +331,8 @@ class Mengajar extends React.Component {
                   <span>Moderator : {this.state.infoPtc.name}</span>
                 </div>
 
-                <ChimeMeeting attendee={this.state.attendee} />
+                {/* <ChimeMeeting attendee={this.state.attendee} /> */}
 
-                {
-                  /**
                   <div className="card-body p-1">
                     <Iframe url={this.state.joinUrl}
                     width="100%"
@@ -344,8 +342,6 @@ class Mengajar extends React.Component {
                     allow="fullscreen *; geolocation *; microphone *; camera *"
                     position="relative" />
                   </div>
-                  */
-                }
               </div>
             </div>
 
