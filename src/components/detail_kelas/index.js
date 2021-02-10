@@ -32,7 +32,18 @@ class DetailMurid extends Component {
     isLoading: false,
     nilaiMurid: [],
 
-    isKeteranganNilai: false
+    isKeteranganNilai: false,
+
+    rangeNilai: [],
+
+    isDetailTugas: false,
+    detailTask: []
+  }
+
+  fetchRangeNilai() {
+    API.get(`${API_SERVER}v2/range-nilai/company/${Storage.get('user').data.company_id}`).then(res => {
+      this.setState({ rangeNilai: res.data.result })
+    })
   }
 
   fetchJadwal() {
@@ -96,24 +107,30 @@ class DetailMurid extends Component {
   componentDidMount() {
     this.fetchJadwal()
     this.fetchSemester()
+    this.fetchRangeNilai()
   }
 
   convertNilaiToAbjad(value) {
-    if(0 <= value && 26 > value) {
-      return "D";
-    } else if(26 <= value && 51 > value) {
-      return "C";
-    } else if(51 <= value && 76 > value) {
-      return "B";
-    } else if(76 <= value && 101 > value) {
-      return "A";
-    } else {
-      return "-";
-    }
+    let hr = "-";
+    this.state.rangeNilai.map(item => {
+      if(this.checkRangeNilai(value, item.min, item.max)) {
+        hr = item.huruf;
+      }
+    })
+
+    return hr;
+  }
+
+  checkRangeNilai(x, min, max) {
+    return x >= min && x <= max;
   }
 
   openKeteranganNilai = e => {
     this.setState({ isKeteranganNilai: true })
+  }
+
+  openDetail(item) {
+    this.setState({ detailTask: item, isDetailTugas: true })
   }
 
   render() {
@@ -205,10 +222,19 @@ class DetailMurid extends Component {
                         <td>{i + 1}</td>
                         <td>{item.no_induk}</td>
                         <td>{item.nama}</td>
-                        <td>{item.task}</td>
-                        <td>{item.quiz}</td>
-                        <td>{item.exam}</td>
-                        <td>{item.exam+item.quiz+item.task}<p style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>
+                        <td>
+                          {item.task.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dTask)}>{item.dTask.length}</p>
+                        </td>
+                        <td>
+                          {item.quiz.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dQuiz)}>{item.dQuiz.length}</p>
+                        </td>
+                        <td>
+                          {item.exam.toFixed(2)}
+                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dExam)}>{item.dExam.length}</p>
+                        </td>
+                        <td>{(item.exam+item.quiz+item.task).toFixed(2)}<p title="More detail" style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>
                         <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
@@ -223,26 +249,57 @@ class DetailMurid extends Component {
                 </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <table>
+                  <table class="table table-bordered table-striped">
+                    <thead>
                     <tr>
-                      <td width="40px"><b>A</b></td>
-                      <td>75-100</td>
+                      <td width="40px"><b>Nilai</b></td>
+                      <td><b>Range</b></td>
                     </tr>
-                    <tr>
-                      <td><b>B</b></td>
-                      <td>50-74</td>
-                    </tr>
-                    <tr>
-                      <td><b>C</b></td>
-                      <td>25-49</td>
-                    </tr>
-                    <tr>
-                      <td><b>D</b></td>
-                      <td>0-24</td>
-                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      this.state.rangeNilai.map(item => (
+                        <tr>
+                          <td><b>{item.huruf}</b></td>
+                          <td>{item.min} - {item.max}</td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
                   </table>
                 </Modal.Body>
               </Modal>
+
+              <Modal show={this.state.isDetailTugas} onHide={() => this.setState({ isDetailTugas: false })} dialogClassName="modal-lg">
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Detail
+                </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <td><b>INFORMASI</b></td>
+                        <td><b>STATUS</b></td>
+                        <td><b>SCORE</b></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      this.state.detailTask.map(item => (
+                        <tr>
+                          <td>{item.exam_title}</td>
+                          <td>{item.user_id ? <span class="label label-success">Sudah mengerjakan</span> : <span class="label label-danger">Belum mengerjakan</span>}</td>
+                          <td>{item.score}</td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
+                  </table>
+                </Modal.Body>
+              </Modal>
+
             </div>
           </div>
 

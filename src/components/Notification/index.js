@@ -17,13 +17,21 @@ class NotificationClass extends Component {
       tabIndex: 1,
       badgeNotif: 0,
       badgeRemind: 0,
-      filterType: ''
+      filterType: '',
+      filterNotification: ''
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
 
-  changeFilterType = e =>{
-    this.setState({filterType: e.target.value})
+  filterNotification = (e) => {
+    e.preventDefault();
+    console.log(e, 'SS')
+    this.setState({ filterNotification: e.target.value });
+  }
+
+  changeFilterType = e => {
+    console.log(e, 'SS')
+    this.setState({ filterType: e.target.value })
   }
 
   tabAktivitas(a, b) {
@@ -162,7 +170,7 @@ class NotificationClass extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    {tabs.map((tab, index) => {
+                    {/* {tabs.map((tab, index) => {
                       return (
                         <div className="col-xl-6 mb-3">
                           <Link
@@ -187,27 +195,53 @@ class NotificationClass extends Component {
 
                         </div>
                       );
-                    })}
+                    })} */}
 
                     {/* {console.log(this.state.tabIndex)} */}
                     {this.state.tabIndex === 1 ? (
                       // TAB NOTIFICATIOIN
                       <div className="col-sm-12" style={{ margin: '10px 10px 10px 0' }}>
-                        <select value={this.state.filterType} onChange={this.changeFilterType} style={{width:200, height:40, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
-                            <option value=''>All</option>
-                            <option value='3'>Meeting</option>
-                            <option value='4'>Announcement</option>
-                            <option value='5'>Task</option>
-                            <option value='6'>Files</option>
-                        </select>
+                        <div className="row">
+                          <div className="col-sm-3">
+
+                            <select value={this.state.filterType} onChange={this.changeFilterType} style={{ width: '100%', height: 40, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6' }}>
+                              <option value=''>All</option>
+                              <option value='3'>Meeting</option>
+                              <option value='4'>Announcement</option>
+                              <option value='5'>Task</option>
+                              <option value='6'>Files</option>
+                            </select>
+                          </div>
+
+                          <div className="col-sm-2">
+                            <select value={this.state.filterType} onChange={this.changeFilterType} style={{ width: '100%', height: 40, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6' }}>
+                              <option value=''>Filter</option>
+                              <option value='3'>Meeting</option>
+                              <option value='6'>Files</option>
+                            </select>
+                          </div>
+                          <div className="col-sm-3">
+                            <input
+                              type="text"
+                              placeholder="Search"
+                              onChange={this.filterNotification}
+                              className="form-control" />
+                          </div>
+                          <div className="float-right">
+                            <a href="" onClick={this.readAllNotif} className="btn btn-v2 btn-primary "> Read all</a>
+                            <a href="" onClick={this.deleteAllNotif} className="btn btn-v2 btn-danger ml-3"> Remove all</a>
+                          </div>
+                        </div>
                         {dataNotif.length === 0 ?
                           <div style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
                             <b className="fc-blue ">No notifications at this time ...</b>
                           </div>
                           :
                           <span>
-                            <button onClick={this.deleteAllNotif} className="btn btn-transparent ml-4"> Remove all</button>
-                            <button onClick={this.readAllNotif} className="btn btn-transparent ml-2"> Read all</button>
+
+
+
+
                             {
                               dataNotif.map((item, i) => {
                                 return (
@@ -220,16 +254,16 @@ class NotificationClass extends Component {
                                       <b className="fc-blue ">
                                         {item.type == 1 ? "Course" :
                                           item.type == 2 ? "Forum" :
-                                          item.type == 3 ? "Meeting" :
-                                          item.type == 4 ? "Pengumuman" :
-                                          item.type == 5 ? "Task" :
-                                          item.type == 6 ? "Files" :
-                                          item.type == 7 ? "Training" :
-                                          item.type == 8 ? "PTC" :
-                                          item.type == 9 ? "Tugas" :
-                                          item.type == 10 ? "Kuis" :
-                                          item.type == 11 ? "Ujian" :
-                                          "Notifikasi"}
+                                            item.type == 3 ? "Meeting" :
+                                              item.type == 4 ? "Pengumuman" :
+                                                item.type == 5 ? "Task" :
+                                                  item.type == 6 ? "Files" :
+                                                    item.type == 7 ? "Training" :
+                                                      item.type == 8 ? "PTC" :
+                                                        item.type == 9 ? "Tugas" :
+                                                          item.type == 10 ? "Kuis" :
+                                                            item.type == 11 ? "Ujian" :
+                                                              "Notifikasi"}
                                       </b>
                                       &nbsp; &nbsp;
                                       <small>
@@ -261,12 +295,12 @@ class NotificationClass extends Component {
                       (
                         // TABS REMINDER
                         <div className="col-sm-12" style={{ margin: '10px 10px 10px 0' }}>
-                          <select value={this.state.filterType} onChange={this.changeFilterType} style={{width:200, height:40, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
-                              <option value=''>All</option>
-                              <option value='3'>Meeting</option>
-                              <option value='4'>Announcement</option>
-                              <option value='5'>Task</option>
-                              <option value='6'>Files</option>
+                          <select value={this.state.filterType} onChange={this.changeFilterType} style={{ width: 200, height: 40, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6' }}>
+                            <option value=''>All</option>
+                            <option value='3'>Meeting</option>
+                            <option value='4'>Announcement</option>
+                            <option value='5'>Task</option>
+                            <option value='6'>Files</option>
                           </select>
                           {dataRemind.length === 0 ?
                             <div style={{ width: '-webkit-fill-available', marginTop: '15px', padding: 20 }}>
@@ -287,18 +321,18 @@ class NotificationClass extends Component {
                                           <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
                                         }
                                         <b className="fc-blue ">
-                                        {item.type == 1 ? "Course" :
-                                          item.type == 2 ? "Forum" :
-                                          item.type == 3 ? "Meeting" :
-                                          item.type == 4 ? "Pengumuman" :
-                                          item.type == 5 ? "Task" :
-                                          item.type == 6 ? "Files" :
-                                          item.type == 7 ? "Training" :
-                                          item.type == 8 ? "PTC" :
-                                          item.type == 9 ? "Tugas" :
-                                          item.type == 10 ? "Kuis" :
-                                          item.type == 11 ? "Ujian" :
-                                          "Notifikasi"}
+                                          {item.type == 1 ? "Course" :
+                                            item.type == 2 ? "Forum" :
+                                              item.type == 3 ? "Meeting" :
+                                                item.type == 4 ? "Pengumuman" :
+                                                  item.type == 5 ? "Task" :
+                                                    item.type == 6 ? "Files" :
+                                                      item.type == 7 ? "Training" :
+                                                        item.type == 8 ? "PTC" :
+                                                          item.type == 9 ? "Tugas" :
+                                                            item.type == 10 ? "Kuis" :
+                                                              item.type == 11 ? "Ujian" :
+                                                                "Notifikasi"}
                                         </b>
                                         &nbsp; &nbsp;
                                         <small>

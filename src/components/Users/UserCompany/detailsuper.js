@@ -61,7 +61,11 @@ export default class CompanyDetail extends Component {
 
     isKonfirmasi: false,
     jenisKonfirmasi: "",
-    idKonfirmasi: ""
+    idKonfirmasi: "",
+
+    limituser: null,
+    limitmeeting: null,
+    limitwebinar: null
   }
 
   toggleSwitch(checked) {
@@ -121,6 +125,9 @@ export default class CompanyDetail extends Component {
       status: this.state.status,
       validity: this.state.validity.split('T')[0],
       unlimited: unlimited,
+      limituser: this.state.limituser,
+      limitmeeting: this.state.limitmeeting,
+      limitwebinar: this.state.limitwebinar
     };
 
     const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
@@ -410,7 +417,10 @@ export default class CompanyDetail extends Component {
           status: res.data.result.status,
           validity: res.data.result.validity,
           logo: res.data.result.logo,
-          unlimited: unlimited
+          unlimited: unlimited,
+          limituser: res.data.result.limit_user,
+          limitmeeting: res.data.result.limit_meeting,
+          limitwebinar: res.data.result.limit_webinar
         });
 
         let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
@@ -658,7 +668,7 @@ export default class CompanyDetail extends Component {
                               </div>
                               <div className="form-group">
                                 <label className="label-input" htmlFor>
-                                  Batasi Waktu
+                                  Time Limit
                                 </label>
                                 <div style={{ width: '100%' }}>
                                   <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />
@@ -734,12 +744,53 @@ export default class CompanyDetail extends Component {
                                   gif and size not exceeding 500KB
                                 </Form.Text>
                               </div>
+                              <div className="form-group">
+                                <label className="label-input" htmlFor>
+                                  Product Limitation
+                                </label>
+                                <table>
+                                  <tr>
+                                    <th>User</th>
+                                    <th>Meeting</th>
+                                    <th>Webinar</th>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limituser"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limituser}
+                                      />
+                                    </td>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limitmeeting"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limitmeeting}
+                                      />
+                                    </td>
+                                    <td>
+                                      <Form.Control
+                                        type="number"
+                                        name="limitwebinar"
+                                        onChange={this.onChangeInput}
+                                        placeholder="Unlimited"
+                                        value={this.state.limitwebinar}
+                                      />
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
                               <button
                                 className="btn btn-sm btn-ideku"
                                 onClick={this.onClickUpdate}
                               >
-                                <i className="fa fa-edit"></i>
-                                Edit
+                                <i className="fa fa-save"></i>
+                                Save
                               </button>
                             </Col>
                           </Row>

@@ -11,11 +11,17 @@ import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import { toast } from "react-toastify";
 
-import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
 import { isMobile } from 'react-device-detect';
+
+import { ThemeProvider } from 'styled-components';
+import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+import ChimeMeeting from '../meeting/chime'
+import axios from 'axios'
+
 const bbb = require('bigbluebutton-js')
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -47,6 +53,19 @@ export default class MeetingRoomPublic extends Component {
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
     modalStart: true,
     joinUrl: '',
+
+    attendee: {}
+
+  }
+
+  joinChime = async (e) => {
+    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
+    const name      = this.state.user.name;
+    const region    = `ap-southeast-1`;
+
+    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
+      this.setState({ attendee: res.data.JoinInfo })
+    })
   }
 
   toggleSwitchMic(checked) {
@@ -86,6 +105,7 @@ export default class MeetingRoomPublic extends Component {
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
       if (data.room == this.state.classId) {
+        this.fetchData();
         this.setState({ fileChat: [...this.state.fileChat, data] })
       }
     });
@@ -104,7 +124,7 @@ export default class MeetingRoomPublic extends Component {
         let splitTags;
         let datas = res.data.result;
         for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[4];
+          splitTags = datas[a].attachment.split("/")[5];
           datas[a].filenameattac = splitTags;
         }
         if (res.status === 200) {
@@ -123,6 +143,9 @@ export default class MeetingRoomPublic extends Component {
   }
 
   joinMeeting() {
+
+    this.joinChime()
+
     // BBB JOIN START
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
@@ -294,6 +317,9 @@ export default class MeetingRoomPublic extends Component {
   joinRoom() {
     if (this.state.user.name) {
       this.joinMeeting()
+
+      this.joinChime()
+
       this.setState({ join: true, modalStart: false });
     }
     else {
@@ -312,10 +338,10 @@ export default class MeetingRoomPublic extends Component {
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
-
                   <Row>
 
-                    {/* <div className="col-md-4 col-xl-4 mb-3">
+                    {/*
+          <div className="col-md-4 col-xl-4 mb-3">
             <Link to={`/`} className="menu-mati">
               <div className="kategori title-disabled">
               <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
@@ -343,17 +369,19 @@ export default class MeetingRoomPublic extends Component {
               Group Meeting
               </div>
             </Link>
-          </div> */}
+          </div>
+          */}
 
                     <Col sm={12} style={{ marginBottom: '20px' }}>
                       <h3 className="f-20 f-w-800">
                         {classRooms.room_name}
                         <button style={{ marginRight: 14 }} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
                           <i className="fa fa-user"></i>Undang Peserta
-                  </button>
+                        </button>
                       </h3>
                       {
                         user.name && classRooms.room_name && this.state.join ?
+
                           <Iframe url={this.state.joinUrl}
                             width="100%"
                             height="600px"
@@ -361,12 +389,24 @@ export default class MeetingRoomPublic extends Component {
                             frameBorder="0"
                             allow="fullscreen *;geolocation *; microphone *; camera *"
                             position="relative" />
-                          //   <JitsiMeetComponent 
-                          //     roomName={classRooms.room_name} 
-                          //     roomId={classRooms.class_id} 
-                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false} 
-                          //     userId={user.user_id} 
-                          //     userName={user.name} 
+
+                          // <ThemeProvider theme={lightTheme}>
+                          //   <MeetingProvider>
+                          //     <ChimeMeeting
+                          //       ref={`child`}
+                          //       attendee={this.state.attendee}
+                          //       name={Storage.get('user').data.user}
+                          //       title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                          //       region={`ap-southeast-1`} />
+                          //   </MeetingProvider>
+                          // </ThemeProvider>
+
+                          //   <JitsiMeetComponent
+                          //     roomName={classRooms.room_name}
+                          //     roomId={classRooms.class_id}
+                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
+                          //     userId={user.user_id}
+                          //     userName={user.name}
                           //     userEmail={user.email}
                           //     userAvatar={user.avatar}
                           //     startMic={this.state.startMic}
@@ -376,7 +416,6 @@ export default class MeetingRoomPublic extends Component {
                           null
                       }
                     </Col>
-
                   </Row>
 
                   {/* CHATING SEND FILE */}
@@ -389,7 +428,7 @@ export default class MeetingRoomPublic extends Component {
                       return (
                         <div className='box-chat-send-left'>
                           <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
-                          <p className="fc-skyblue"> {item.filenameattac} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                          <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
                           <small >
                             {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
                     {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
@@ -449,6 +488,7 @@ export default class MeetingRoomPublic extends Component {
                   <Modal
                     show={this.state.modalStart}
                     onHide={this.handleCloseStart}
+                    backdropClassName='modal-no-bg'
                   >
                     <Modal.Header>
                       <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
