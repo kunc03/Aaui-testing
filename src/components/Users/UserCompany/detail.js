@@ -184,7 +184,7 @@ export default class CompanyDetail extends Component {
 		const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
 		API.put(linkURL, formData).then(res => {
 			if (res.status === 200) {
-				this.setState({ nama: formData.company_name, status: formData.status, validity: formData.validity });
+				this.setState({ nama: formData.name, status: formData.status, validity: formData.validity });
 			}
 		});
 
