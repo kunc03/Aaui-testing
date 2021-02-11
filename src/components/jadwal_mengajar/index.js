@@ -212,16 +212,18 @@ class JadwalMengajar extends React.Component {
                 Add Teaching Schedule
               </button>
             </div>
-            <div className="card-body">
+            <div className="card-body p-0">
               <table className="table table-striped">
                 <thead>
                   <tr>
                     <th>No</th>
                     <th>Pelajaran</th>
+                    <th>Hari</th>
+                    <th>Jam</th>
                     <th>Kelas</th>
                     <th>Pengajar</th>
                     <th>Ruangan</th>
-                    <th>Pertemuan</th>
+                    <th>Sesi</th>
                     <th>Kapasitas</th>
                     <th>Status</th>
                     <th className="text-center"> Action </th>
@@ -233,6 +235,8 @@ class JadwalMengajar extends React.Component {
                       <tr>
                         <td>{i + 1}</td>
                         <td>{item.nama_pelajaran}</td>
+                        <td>{item.hari}</td>
+                        <td>{item.jam_mulai}-{item.jam_selesai}</td>
                         <td>{item.kelas_nama}</td>
                         <td>{item.pengajar}</td>
                         <td>{item.nama_ruangan}</td>

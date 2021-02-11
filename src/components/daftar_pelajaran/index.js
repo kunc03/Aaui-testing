@@ -400,7 +400,7 @@ class DaftarPelajaran extends React.Component {
               <Modal
                 show={this.state.openSilabus}
                 onHide={this.closeModal.bind(this)}
-                dialogClassName="modal-lg"
+                dialogClassName="modal-xlg"
               >
                 <Modal.Header closeButton>
                   <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
