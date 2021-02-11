@@ -4,6 +4,26 @@ import Storage from '../../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
+import { toast } from 'react-toastify'
+
+const Msg = ({ id, desc, socket }) => {
+  const readReminder = (id) => {
+    API.put(`${API_SERVER}v1/notification/read`, { id }).then(res => {
+      if (res.data.error) console.log('Gagal read')
+
+      socket.emit('send', { companyId: Storage.get('user').data.company_id })
+    })
+  }
+
+  return (
+    <div>
+      {desc}
+      <br/>
+      <button style={{marginTop: '8px'}} onClick={e => readReminder(id)}>OK</button>
+    </div>
+  )
+}
+
 class SidebarClass extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +33,7 @@ class SidebarClass extends Component {
       sideMenuCollapse: false,
 
       notifUnread: 0,
+
     }
   }
 
@@ -24,6 +45,7 @@ class SidebarClass extends Component {
     this.setState({ menuAktif: window.location.pathname })
 
     this.fetchNotif()
+    this.fetchReminder()
 
     this.props.socket.on('broadcast', data => {
       console.log('broadcast sidebar ', data)
@@ -31,6 +53,16 @@ class SidebarClass extends Component {
         this.fetchNotif()
       }
     })
+  }
+
+  fetchReminder() {
+    API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
+      const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
+      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2);
+      Remind.map((item,i) => {
+        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
+      })
+    });
   }
 
   fetchNotif() {
@@ -395,9 +427,6 @@ class SidebarClass extends Component {
               })
             }
           </div>
-
-
-
         </div>
       </nav>
     );
