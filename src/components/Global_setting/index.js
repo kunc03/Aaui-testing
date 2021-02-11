@@ -28,6 +28,7 @@ export default class GlobalSetting extends Component {
         <div className="pcoded-wrapper">
           <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
             <div className="pcoded-inner-content">
+
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
@@ -47,6 +48,7 @@ export default class GlobalSetting extends Component {
                       </label>
                     </div>
                   </div>
+
                   <div className="row">
                     <div className="col-xl-12">
 
@@ -78,9 +80,10 @@ export default class GlobalSetting extends Component {
                   </Switch>
 
                 </div>
-              </div>
 
-              <Pengaturan />
+                <Pengaturan />
+
+              </div>
 
             </div>
           </div>

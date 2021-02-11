@@ -415,10 +415,16 @@ class DaftarPelajaran extends React.Component {
                         <input key={this.state.keyFileSilabus} onChange={e => this.setState({ fileSilabus: e.target.files[0] })} type="file" class="form-control" />
                       </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-2">
                       <div class="form-group">
                         <label>Action</label><br/>
                         <button onClick={this.importSilabus} class="btn btn-v2 btn-primary">Import</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label>Template</label><br/>
+                        <a target="_blank" href={`${API_SERVER}attachment/silabus-template.xlsx`} class="btn btn-v2 btn-primary">Download</a>
                       </div>
                     </div>
                   </div>

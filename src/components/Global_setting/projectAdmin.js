@@ -5,7 +5,7 @@ import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 
 const datas = [
-  { title: 'Create and delete projects', width: null, status: true },
+  { title: 'Create and delete projects', width: null, status: false },
   { title: 'Creatting and deleting meeting room', width: null, status: true },
   { title: 'Status', width: null, status: false },
   { title: 'Time', width: null, status: false },
