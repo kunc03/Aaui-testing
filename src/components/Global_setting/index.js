@@ -31,6 +31,7 @@ export default class GlobalSetting extends Component {
 
               <div className="main-body">
                 <div className="page-wrapper">
+
                   <div className="row">
                     <div className="col-sm-3">
                       <h3 className="f-w-bold f-18 fc-blue mb-4">Global Settings</h3>
@@ -59,7 +60,7 @@ export default class GlobalSetting extends Component {
                               <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
                                 activeClassName='active'
                                 className={`nav-link`}
-                                to={`/pengaturan${item.link}`}>
+                                to={`/global-settings${item.link}`}>
                                 <b>{item.name}</b>
                               </NavLink>
                             </li>
@@ -71,17 +72,15 @@ export default class GlobalSetting extends Component {
                   </div>
 
                   <Switch>
-                    <Route path="/pengaturan" exact component={ProjectAdmin} />
+                    <Route path="/global-settings" exact component={ProjectAdmin} />
                     {
                       titleTabs.map(item => (
-                        <Route key={item.link} path={`/pengaturan${item.link}`} component={item.component} />
+                        <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
                       ))
                     }
                   </Switch>
 
                 </div>
-
-                <Pengaturan />
 
               </div>
 
