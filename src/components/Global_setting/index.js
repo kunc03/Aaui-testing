@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 
+import API, { USER_ME, API_SERVER } from '../../repository/api';
+import Storage from '../../repository/storage';
+
 import ProjectAdmin from './projectAdmin';
 import Secretary from './secretary';
 import Moderator from './moderator';
 import Speaker from './speaker';
 import Participant from './participant';
 
-import Pengaturan from '../Pengaturan/index';
+import List from './list';
 
 const titleTabs = [
   { name: 'Project Admin', link: '/project-admin', component: ProjectAdmin },
@@ -20,9 +23,34 @@ const titleTabs = [
 export default class GlobalSetting extends Component {
 
   state = {
+    cType: Storage.get('user').data.company_type,
+    roles: [],
+  }
+
+  componentDidMount() {
+    this.fetchRoles()
+
+    if(this.state.cType === 'pendidikan') {
+      this.props.history.push('/global-settings/access/0')
+    }
+  }
+
+  fetchRoles() {
+    if(this.state.cType === 'pendidikan') {
+      API.get(`${API_SERVER}v1/grup/company/${Storage.get('user').data.company_id}`).then(res => {
+        if(res.status === 200) {
+          this.setState({ roles: res.data.result })
+        }
+      })
+    }
+    else {
+      this.setState({ roles: titleTabs })
+    }
   }
 
   render() {
+    const { roles } = this.state;
+    
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -55,28 +83,68 @@ export default class GlobalSetting extends Component {
 
                       <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
                         {
-                          titleTabs.map((item, i) => (
-                            <li key={i} className={`nav-item`}>
+                          this.state.cType === 'perusahaan' &&
+                          <>
+                          {
+                            roles.map((item, i) => (
+                              <li key={i} className={`nav-item`}>
+                                <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                  activeClassName='active'
+                                  className={`nav-link`}
+                                  to={`/global-settings${item.link}`}>
+                                  <b>{item.name}</b>
+                                </NavLink>
+                              </li>
+                            ))
+                          }
+                          </>
+                        }
+
+                        {
+                          this.state.cType === 'pendidikan' &&
+                          <>
+                            <li className={`nav-item`}>
                               <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
-                                activeClassName='active'
                                 className={`nav-link`}
-                                to={`/global-settings${item.link}`}>
-                                <b>{item.name}</b>
+                                to={`/global-settings/access/0`}>
+                                <b>{`Admin`}</b>
                               </NavLink>
                             </li>
-                          ))
+                            {
+                              roles.map((item, i) => (
+                                <li key={i} className={`nav-item`}>
+                                  <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                    className={`nav-link`}
+                                    to={`/global-settings/access/${item.grup_id}`}>
+                                    <b>{item.grup_name}</b>
+                                  </NavLink>
+                                </li>
+                              ))
+                            }
+                          </>
                         }
+
                       </ul>
 
                     </div>
                   </div>
 
                   <Switch>
-                    <Route path="/global-settings" exact component={ProjectAdmin} />
                     {
-                      titleTabs.map(item => (
-                        <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
-                      ))
+                      this.state.cType === 'perusahaan' &&
+                      <>
+                      <Route path={`/global-settings`} exact component={ProjectAdmin} />
+                      {
+                        roles.map(item => (
+                          <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
+                        ))
+                      }
+                      </>
+                    }
+
+                    {
+                      this.state.cType === 'pendidikan' &&
+                      <Route path={`/global-settings/access/:grup_id`} component={(props) => <List {...props} />} />
                     }
                   </Switch>
 
