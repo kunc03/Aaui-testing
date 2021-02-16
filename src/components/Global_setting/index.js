@@ -50,7 +50,7 @@ export default class GlobalSetting extends Component {
 
   render() {
     const { roles } = this.state;
-    
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -62,8 +62,9 @@ export default class GlobalSetting extends Component {
 
                   <div className="row">
                     <div className="col-sm-3">
-                      <h3 className="f-w-bold f-18 fc-blue mb-4">Global Settings</h3>
+                      <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
                     </div>
+                    {/*
                     <div className="col-sm-2">
                       <label class="container">Webinar
                       <input type="radio" checked="checked" name="radio"></input>
@@ -76,6 +77,7 @@ export default class GlobalSetting extends Component {
                         <span class="checkmark"></span>
                       </label>
                     </div>
+                    */}
                   </div>
 
                   <div className="row">
