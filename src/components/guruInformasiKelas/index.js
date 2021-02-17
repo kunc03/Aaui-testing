@@ -104,7 +104,7 @@ class MataPelajaran extends React.Component {
 
                             <tbody>
                               {
-                                this.state.mataPelajaran.map((item, i) => (
+                                this.state.mataPelajaran.map((row, i) => (
                                   <tr>
                                     <td className="text-center" style={{verticalAlign: 'middle'}}>{row.kelas_nama}</td>
                                     <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_ruangan}</td>
@@ -120,16 +120,6 @@ class MataPelajaran extends React.Component {
                               }
                             </tbody>
 
-                            <tfoot>
-                              <tr>
-                                <th className="text-center">Date</th>
-                                <th className="text-center">Class</th>
-                                <th className="text-center">Room</th>
-                                <th className="text-center">Subject</th>
-                                <th className="text-center">Time</th>
-                                <th className="text-center">Action</th>
-                              </tr>
-                            </tfoot>
                           </table>
                         </div>
                       </div>
