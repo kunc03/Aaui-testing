@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import SocketContext from '../../socket';
 const tabs = [
   { title: 'Notification' },
-  { title: 'Reminder' },
+  // { title: 'Reminder' },
 ];
 class NotificationClass extends Component {
 
@@ -162,33 +162,7 @@ class NotificationClass extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    {tabs.map((tab, index) => {
-                      return (
-                        <div className="col-xl-6 mb-3">
-                          <Link
-                            onClick={this.tabAktivitas.bind(this, tab, index)}
-                          >
-                            <div
-                              className={
-                                this.state.tabIndex === index + 1
-                                  ? 'kategori-aktif'
-                                  : 'kategori title-disabled'
-                              }
-                            >
-                              {tab.title}
-                            </div>
-                          </Link>
-                          {
-                            tab.title === "Notification" ?
-                              <span className="badge-notif" style={this.state.badgeNotif > 9 ? { padding: '1px 3px' } : { padding: '1px 6px' }}>{this.state.badgeNotif}</span>
-                              :
-                              <span className="badge-notif" style={this.state.badgeRemind > 9 ? { padding: '1px 3px' } : { padding: '1px 6px' }}>{this.state.badgeRemind}</span>
-                          }
-
-                        </div>
-                      );
-                    })}
-
+                    <h3>Notifications</h3>
                     {/* {console.log(this.state.tabIndex)} */}
                     {this.state.tabIndex === 1 ? (
                       // TAB NOTIFICATIOIN
