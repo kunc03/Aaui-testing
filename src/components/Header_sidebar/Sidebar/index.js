@@ -5,6 +5,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
 import { toast } from 'react-toastify'
+import moment from 'moment-timezone'
 
 const Msg = ({ id, desc, socket }) => {
   const readReminder = (id) => {
@@ -58,7 +59,10 @@ class SidebarClass extends Component {
   fetchReminder() {
     API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
       const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
-      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2);
+
+      let now = moment(new Date()).format('YYYY-MM-DD')
+      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0,10) === now);
+      console.log('Remind: ', Remind);
       Remind.map((item,i) => {
         toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
       })
