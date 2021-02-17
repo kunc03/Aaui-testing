@@ -62,7 +62,6 @@ class SidebarClass extends Component {
 
       let now = moment(new Date()).format('YYYY-MM-DD')
       const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0,10) === now);
-      console.log('Remind: ', Remind);
       Remind.map((item,i) => {
         toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
       })
