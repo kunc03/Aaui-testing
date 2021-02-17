@@ -4,49 +4,77 @@ import { Hidden } from '@material-ui/core';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
-class MataPelajaran extends Component {
-  constructor(props) {
-    super(props);
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
-    this.state = {
-      grup: [],
-      isCreateModal: false,
-      delete: {
-        modal: false,
-        id: ''
-      }
-    };
+class MataPelajaran extends Component {
+
+  state = {
+    mataPelajaran: [],
+
+    isModalBuka: false,
+
+    isModalSilabus: false,
+    jadwalPelajaran: [],
+    pelajaranId: '',
+    dataSilabus: [],
+
+    jadwalKu: [],
+
   }
 
+  fetchJadwalKu() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch pelajaran`)
 
-  triggerUpdate = e => this.setState({
-    grup: [...this.state.grup, e]
-  })
+      let dd = res.data.result;
+      let unique = [...new Map(dd.map(item => [item['pelajaran_id'], item])).values()];
 
-  /* action for delete */
+      this.setState({ mataPelajaran: dd, jadwalPelajaran: unique, jadwalKu: res.data.result })
+    })
+  }
 
+  fetchJadwal() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+
+      this.setState({
+        jadwalPelajaran: res.data.result,
+      })
+    })
+  }
+
+  fetchSilabus(pelajaranId) {
+    API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch overview`)
+
+      this.setState({ dataSilabus: res.data.result });
+    })
+  }
 
   componentDidMount() {
-    let link = `${API_SERVER}v1/company`;
-    API.get(link).then(response => {
-      this.setState({ grup: response.data.result });
-    }).catch(function (error) {
-      console.log(error);
-    });
+    this.fetchJadwal();
+    this.fetchJadwalKu();
   }
 
+  clearForm() {
+    this.setState({
+      isModalSilabus: false,
+      isModalBuka: false,
+      pelajaranId: '',
+      dataSilabus: [],
+    })
+  }
+
+  selectPelajaran = e => {
+    e.preventDefault();
+    let pelajaranId = e.target.value;
+    this.setState({ isModalSilabus: true, pelajaranId })
+    this.fetchSilabus(pelajaranId);
+  }
 
 
   render() {
-    let { grup } = this.state;
-    let statusCompany = ['active', 'nonactive'];
-
-    let linkCompany = '';
-    if (Storage.get('user').data.level === 'superadmin') {
-      linkCompany = '/company-detail-super';
-    } else {
-      linkCompany = '/company-detail';
-    }
 
     const Item = ({ item }) => (
       <li>
@@ -58,32 +86,34 @@ class MataPelajaran extends Component {
             <div className="row d-flex text-center">
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  Matematika
+                  {item.nama_pelajaran}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  85
+                  {item.kelas_nama}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  85
+                  {item.nama_ruangan}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  85
+                  {item.hari}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  85
+                  {item.jam_mulai} - {item.jam_selesai}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  85
+                  <Link to={`/guru/chapter/${item.jadwal_id}`} className="btn btn-v2 btn-primary">
+                    <i className="fa fa-upload"></i> Upload Materi
+                  </Link>
                 </small>
               </div>
             </div>
@@ -101,33 +131,30 @@ class MataPelajaran extends Component {
           >
             <table className="table">
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Subject </span></td>
-                <td>Matematika</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Pelajaran </span></td>
+                <td>{item.nama_pelajaran}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang mengikuti mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Kelas</span></td>
+                <td>{item.kelas_nama}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah 50% in progress mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Ruangan</span></td>
+                <td>{item.nama_ruangan}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah selesai mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Hari</span></td>
+                <td>{item.hari}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Jam</span></td>
+                <td>{item.jam_mulai} - {item.jam_selesai}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per session</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Action</span></td>
+                <td><Link to={`/guru/chapter/${item.jadwal_id}`} className="btn btn-v2 btn-primary">
+                  <i className="fa fa-upload"></i> Upload Materi
+                </Link></td>
               </tr>
             </table>
           </div>
@@ -138,7 +165,7 @@ class MataPelajaran extends Component {
     const Lists = ({ lists }) => (
       <ul className="list-cabang">
         {lists.map(list => (
-          <Item key={list.company_id} item={list} />
+          <Item key={list.tanngal} item={list} />
         ))}
       </ul>
     );
@@ -146,7 +173,7 @@ class MataPelajaran extends Component {
     const ListMobile = ({ lists }) => (
       <ul className="list-cabang">
         {lists.map(list => (
-          <MobileItem key={list.company_id} item={list} />
+          <MobileItem key={list.tanggal} item={list} />
         ))}
       </ul>
     );
@@ -154,7 +181,7 @@ class MataPelajaran extends Component {
     return (
       <div className="row">
         <div className="col-sm-12">
-          <div className="card" style={{ height: '650px', paddingBottom: 10 }}>
+          <div className="card" style={{ height: '550px', paddingBottom: 10 }}>
             <h3 className="f-24 fc-skyblue f-w-800 mb-3 mt-3 p-l-20">
               Mata Pelajaran
               </h3>
@@ -165,44 +192,39 @@ class MataPelajaran extends Component {
               <div className="row d-flex text-center" style={{ padding: "12px 25px" }}>
                 <div className="col-sm-2">
                   <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    Mata Pelajaran
-                      </span>
+                    Pelajaran
+                  </span>
                 </div>
                 <div className="col-sm-2">
                   <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    jumlah user yang mengikuti mata pelajaran
-                      </span>
+                    Kelas
+                  </span>
                 </div>
                 <div className="col-sm-2">
                   <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    jumlah user yang sudah 50% in progress mata pelajaran
-                      </span>
+                    Ruangan
+                  </span>
                 </div>
                 <div className="col-sm-2">
                   <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    jumlah user yang sudah selesai mata pelajaran
-                      </span>
+                    Hari
+                  </span>
                 </div>
                 <div className="col-sm-2">
                   <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    jumlah user yang lulus exercise per mata pelajaran
-                      </span>
-                </div>
-                <div className="col-sm-2">
-                  <span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                    jumlah user yang lulus exercise per session
-                      </span>
+                    Jam
+                  </span>
                 </div>
               </div>
               <div style={{ overflowX: "hidden" }}>
-                <Lists lists={grup} />
+                <Lists lists={this.state.mataPelajaran} />
               </div>
             </Hidden>
 
             {/*RESPONSIVE IN THE CENTER 'MOBILE VIEW'*/}
             <Hidden only={['lg', 'md', 'sm', 'xl']}>
               <div style={{ overflowX: "auto" }}>
-                <ListMobile lists={grup} />
+                <ListMobile lists={this.state.mataPelajaran} />
               </div>
             </Hidden>
           </div>

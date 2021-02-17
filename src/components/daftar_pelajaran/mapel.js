@@ -32,8 +32,10 @@ class MataPelajaran extends React.Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal`)
 
+      let uniq = [...new Map(res.data.result.jadwal.map(item => [item['nama_pelajaran'], item])).values()];
+
       this.setState({
-        jadwalPelajaran: res.data.result.jadwal,
+        jadwalPelajaran: uniq,
       })
     })
   }

@@ -41,12 +41,6 @@ class GuruUjian extends Component {
                       <div className="col-xl-12">
                         <UjianAktif />
                       </div>
-                      <div className="col-xl-12">
-                        <RincianExercise />
-                      </div>
-                      <div className="col-xl-12">
-                        <Peforma />
-                      </div>
                     </div>
                   </div>
                 </div>

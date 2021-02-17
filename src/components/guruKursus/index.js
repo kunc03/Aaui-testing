@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom'
 import Storage from '../../repository/storage';
 
+
 import MataPelajaran from './mataPelajaran';
 import LesonTerbaikTerburuk from './lesonTerbaikTerburuk';
 import Jadwals from './jadwal';
@@ -42,18 +43,6 @@ class GuruKursus extends Component {
                     <div className="row">
                       <div className="col-xl-12">
                         <MataPelajaran />
-                      </div>
-                      <div className="col-xl-12">
-                        <LesonTerbaikTerburuk />
-                      </div>
-                      <div className="col-xl-12">
-                        <Jadwals />
-                      </div>
-                      <div className="col-xl-12">
-                        <Kategoris />
-                      </div>
-                      <div className="col-xl-12">
-                        <PemblajaranUser />
                       </div>
                     </div>
                   </div>
