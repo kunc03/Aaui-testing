@@ -15,8 +15,8 @@ import Home from "./components/Home_new/index";
 import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
-import Pengaturan from "./components/Global_setting/index";
-// import Pengaturan from "./components/Pengaturan/index";
+import Pengaturan from "./components/Pengaturan/index";
+import GlobalSettings from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
 // import Files from "./components/files/files";
 
@@ -399,6 +399,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
 
         <Route path="/pengaturan" exact component={Pengaturan} />
+        <Route path="/global-settings" component={GlobalSettings} />
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}

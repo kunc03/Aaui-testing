@@ -2,11 +2,13 @@ import React from 'react';
 import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { Link } from 'react-router-dom';
-import { Modal } from 'react-bootstrap';
+import { Modal, Toast } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 import SocketContext from '../../socket';
+
+import { toast } from 'react-toastify'
 
 class PtcClasses extends React.Component {
 
@@ -21,6 +23,8 @@ class PtcClasses extends React.Component {
     getPtc: {},
     optionsName: [],
     pesertaId: [],
+
+    show: false,
 
   };
 
@@ -129,6 +133,10 @@ class PtcClasses extends React.Component {
     })
   }
 
+  openToast = () => {
+    toast.success('okee')
+  }
+
   render() {
 
     console.log('state: ', this.state);
@@ -151,12 +159,13 @@ class PtcClasses extends React.Component {
               <div className="card-header header-kartu">
                 Parent Teacher Conference (PTC)
 
-              {
-                this.state.role.toLowerCase() !== "parents" &&
-                <Link to={`/ptc/create/ptc`} className="btn btn-v2 btn-primary float-right" style={{ margin: 0 }}>
-                  <i className="fa fa-plus"></i> Add
-                </Link>
-              }
+                {
+                  this.state.role.toLowerCase() !== "parents" &&
+                  <Link to={`/ptc/create/ptc`} className="btn btn-v2 btn-primary float-right" style={{ margin: 0 }}>
+                    <i className="fa fa-plus"></i> Add
+                  </Link>
+                }
+
               </div>
               <div className="card-body" style={{ padding: 0 }}>
                 <table className="table table-striped">

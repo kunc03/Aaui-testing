@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 class Guru extends React.Component {
 
   state = {
+    userId: '',
     noInduk: '',
     nama: '',
     tempatLahir: '',
@@ -20,7 +21,25 @@ class Guru extends React.Component {
 
     isModalTambah: false,
 
-    dataMurid: []
+    dataMurid: [],
+
+    userGuru: [],
+    exists: false
+  }
+
+  fetchGuru() {
+    API.get(`${API_SERVER}v1/user/company/${Storage.get('user').data.company_id}`).then(response => {
+      let idGuru = this.state.dataMurid.map(item => { return item.user_id })
+
+      const guru = response.data.result
+                    .filter(item => (item.grup_name ? item.grup_name : "-").toLowerCase() === "guru")
+                    .filter(item => !idGuru.includes(item.user_id));
+
+      this.setState({ userGuru: guru })
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   saveMurid = e => {
@@ -30,9 +49,19 @@ class Guru extends React.Component {
       let form = {
         companyId: Storage.get('user').data.company_id,
         nama: this.state.nama, noInduk: this.state.noInduk, tempatLahir: this.state.tempatLahir,
-        tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin, email: this.state.email
+        tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin, email: this.state.email,
+        userId: this.state.userId
       };
-      API.post(`${API_SERVER}v2/guru/create`, form).then(res => {
+
+      let url = '';
+      if(this.state.exists) {
+        url = `${API_SERVER}v2/guru/create?exists=true`
+      }
+      else {
+        url = `${API_SERVER}v2/guru/create`;
+      }
+
+      API.post(url, form).then(res => {
         if (res.data.error) toast.warning("Error create guru");
 
         toast.success("Guru baru berhasil disimpan")
@@ -56,6 +85,7 @@ class Guru extends React.Component {
 
   clearForm() {
     this.setState({
+      userId: '',
       noInduk: '',
       nama: '',
       tempatLahir: '',
@@ -82,10 +112,27 @@ class Guru extends React.Component {
       if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ dataMurid: res.data.result })
+      this.fetchGuru()
+    })
+  }
+
+  showName = e => {
+    let copy = [...this.state.userGuru];
+    let getName = copy.filter(item => item.user_id == e.target.value)
+    this.setState({
+      userId: getName.length ? getName[0].user_id : '',
+      noInduk: getName.length ? getName[0].identity : '',
+      nama: getName.length ? getName[0].name : '',
+      tempatLahir: '',
+      tanggalLahir: '',
+      jenisKelamin: '',
+      email: getName.length ? getName[0].email : '',
+      exists: getName.length ? true : false
     })
   }
 
   render() {
+    console.log('state', this.state);
 
     return (
       <>
@@ -169,6 +216,19 @@ class Guru extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                   <form onSubmit={this.saveMurid}>
+                    <div className="form-group row">
+                      <div className="col-sm-6">
+                        <select onChange={this.showName} class="form-control">
+                          <option value="" selected disabled>Find teacher if user exists</option>
+                          {
+                            this.state.userGuru.map((item,i) => (
+                              <option value={item.user_id}>{item.name}</option>
+                            ))
+                          }
+                          <option value="tambah">Add new</option>
+                        </select>
+                      </div>
+                    </div>
                     <div className="form-group row">
                       <div className="col-sm-6">
                         <label>Nama Guru</label>

@@ -4,66 +4,72 @@ import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
 
-const datas = [
-  { title: 'Create and delete projects', width: null, status: true },
-  { title: 'Creatting and deleting meeting room', width: null, status: true },
-  { title: 'Status', width: null, status: false },
-  { title: 'Time', width: null, status: false },
-  { title: 'Date', width: null, status: true },
-  { title: 'Participants', width: null, status: true },
-  { title: 'File Project', width: null, status: false },
-];
-
 class ProjectAdmin extends React.Component {
 
   state = {
     projectAdmin: Storage.get('user').data.level === "admin" ? true : false,
-    projectId: 0
+    projectId: 0,
+
+    general: [],
+    report: []
   }
 
   componentDidMount() {
-    API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${Storage.get('user').data.company_id}`).then(response => {
-      if (response.data.result.length) {
-        this.setState({ projectId: response.data.result[0].id })
-      } else {
-        toast.warning(`Buat project terlebih dahulu.`)
+    this.fetchAccess()
+  }
+
+  fetchAccess() {
+    API.get(`${API_SERVER}v2/global-settings/${Storage.get('user').data.company_id}/sekretaris`).then(res => {
+      if (res.status === 200) {
+        const general = res.data.result.filter(item => item.sub === 'general')
+        const report = res.data.result.filter(item => item.sub === 'report')
+        this.setState({ general, report })
       }
     })
   }
 
+  changeStatus = e => {
+    let id = e.target.getAttribute('data-id')
+    let val = e.target.value
+    API.put(`${API_SERVER}v2/global-settings/${id}`, {status: val === "1" ? 0 : 1}).then(res => {
+      this.fetchAccess()
+    })
+  }
+
   render() {
+    const { general, report } = this.state;
 
     return (
-
 
       <div className="pcoded-inner-content mt-3">
         <div className="card">
           <div className="card-body">
             <div class="row ">
+
               <div className="col-sm-12" style={{ marginTop: '10px' }}>
-                <h3 className="f-w-bold f-18 mb-4 p-l-20 ">Secretary</h3>
+                <h3 className="f-w-bold f-18 mb-4 p-l-20 ">General</h3>
 
                 <div className="wrap">
                   {
-                    datas.length == 0 ?
+                    general.length == 0 ?
                       <div className="col-sm-12 mb-1">
                         Not available
-                  </div>
+                      </div>
                       :
-                      datas.map((item, i) => (
+                      general.map((item, i) => (
                         <div className="col-sm-12 mb-1">
                           <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
-                            <span to={`detail-project/${item.id}`} className={"col-sm-5"}>
+                            <span to={`detail-project/${item.id}`} className={"col-sm-10"}>
                               <div className="box-project">
                                 <div className=" f-w-800 f-16 fc-black">
-                                  {item.title}
+                                  {item.name}
                                 </div>
                                 {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
                               </div>
                             </span>
-                            <span className="col-sm-7">
+                            <span className="col-sm-2">
                               <label class="switch float-right">
-                                <input type="checkbox" checked={item.status}></input>
+                                <input type="checkbox" onChange={this.changeStatus} data-id={item.id_access} value={item.status} checked={item.status}></input>
                                 <span class="slider round"></span>
                               </label>
                             </span>
@@ -75,32 +81,30 @@ class ProjectAdmin extends React.Component {
                 </div>
               </div>
 
-              <div className="col-sm-12" style={{ marginTop: '10px' }}>
-                <h3 className="f-w-bold f-18 mb-4 mt-4 p-l-20 " style={{ borderBottom: '1px solid #000', padding: '10px' }}>Report
-                 &nbsp; <i className="fa fa-caret-down"></i>
-                </h3>
+              <div className="col-sm-12" style={{ marginTop: '30px' }}>
+                <h3 className="f-w-bold f-18 mb-4 p-l-20 ">Report</h3>
 
                 <div className="wrap">
                   {
-                    datas.length == 0 ?
+                    report.length == 0 ?
                       <div className="col-sm-12 mb-1">
                         Not available
                   </div>
                       :
-                      datas.map((item, i) => (
+                      report.map((item, i) => (
                         <div className="col-sm-12 mb-1">
                           <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
-                            <span to={`detail-project/${item.id}`} className={"col-sm-5"}>
+                            <span to={`detail-project/${item.id}`} className={"col-sm-10"}>
                               <div className="box-project">
                                 <div className=" f-w-800 f-16 fc-black">
-                                  {item.title}
+                                  {item.name}
                                 </div>
                                 {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
                               </div>
                             </span>
-                            <span className="col-sm-7">
+                            <span className="col-sm-2">
                               <label class="switch float-right">
-                                <input type="checkbox" checked={item.status}></input>
+                                <input type="checkbox" onChange={this.changeStatus} data-id={item.id_access} value={item.status} checked={item.status}></input>
                                 <span class="slider round"></span>
                               </label>
                             </span>
@@ -111,6 +115,7 @@ class ProjectAdmin extends React.Component {
 
                 </div>
               </div>
+
             </div>
 
           </div>

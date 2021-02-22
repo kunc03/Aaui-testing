@@ -4,6 +4,27 @@ import Storage from '../../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../../repository/api';
 import SocketContext from '../../../socket';
+import { toast } from 'react-toastify'
+import moment from 'moment-timezone'
+
+const Msg = ({ id, desc, socket }) => {
+  const readReminder = (id) => {
+    API.put(`${API_SERVER}v1/notification/read`, { id }).then(res => {
+      if (res.data.error) console.log('Gagal read')
+
+      socket.emit('send', { companyId: Storage.get('user').data.company_id })
+    })
+  }
+
+  return (
+    <div>
+      {desc}
+      <br/>
+      <button style={{marginTop: '8px'}} onClick={e => readReminder(id)}>OK</button>
+    </div>
+  )
+}
+
 class SidebarClass extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +34,7 @@ class SidebarClass extends Component {
       sideMenuCollapse: false,
 
       notifUnread: 0,
+
     }
   }
 
@@ -24,6 +46,7 @@ class SidebarClass extends Component {
     this.setState({ menuAktif: window.location.pathname })
 
     this.fetchNotif()
+    this.fetchReminder()
 
     this.props.socket.on('broadcast', data => {
       console.log('broadcast sidebar ', data)
@@ -31,6 +54,18 @@ class SidebarClass extends Component {
         this.fetchNotif()
       }
     })
+  }
+
+  fetchReminder() {
+    API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
+      const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
+
+      let now = moment(new Date()).format('YYYY-MM-DD')
+      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0,10) === now);
+      Remind.map((item,i) => {
+        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
+      })
+    });
   }
 
   fetchNotif() {
@@ -65,7 +100,6 @@ class SidebarClass extends Component {
         submenu: [
           { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Jadwal Mengajar', link: '/jadwal-mengajar' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Laporan Murid', link: '/guru-laporan/ratakelas' },
-          { iconOn: 'people-on.svg', iconOff: 'people.svg', label: 'Personnel', link: '/guru-info/personalia' },
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Courses', link: '/guru-info/kursus' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Exercise & Exam', link: '/guru-info/ujian' },
           { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Class Information', link: '/guru-info/informasi-kelas' },
@@ -145,6 +179,7 @@ class SidebarClass extends Component {
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       submenuPendidikan: [
@@ -157,6 +192,7 @@ class SidebarClass extends Component {
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Preference', link: '/learning/kpi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas: [

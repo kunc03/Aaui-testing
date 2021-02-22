@@ -95,83 +95,87 @@ class Pengaturan extends Component {
     console.log('response: ', this.state);
 
     return (
+      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
+        <div className="pcoded-wrapper">
+          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
+            <div className="pcoded-inner-content">
 
+              <div className="main-body">
+                <div className="page-wrapper">
 
-      <div className="main-body">
-        <div className="page-wrapper">
-          <div className="row">
-            <div className="col-sm-8">
-              {/* <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3> */}
-              <div className="col-xl-2">
-                <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
-              </div>
-              <div className="card">
-                <div className="card-block">
-                  <div className="row m-b-100">
-                    <div className="col-xl-10">
-                      <form>
-                        <div className="form-group">
-                          <label className="label-input" htmlFor>
-                            Email
-                                  </label>
-                          <div className="input-group">
-                            <input
-                              type="email"
-                              disabled
-                              value={this.state.email}
-                              className="form-control"
-                              placeholder="Enter your Old Email"
-                              aria-label="emailModel"
-                              aria-describedby="basic-addon2"
-                            />
-                            <div className="input-group-append">
-                              <button
-                                className="btn btn-icademy-primary ml-2"
-                                data-toggle="modal"
-                                data-target="#modalEmail"
-                                type="button"
-                              >
-                                Edit
-                                      </button>
+                  <div className="row">
+                    <div className="col-sm-12">
+                      {/* <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3> */}
+                      <div className="card">
+                        <div className="card-block">
+                          <div className="row m-b-100">
+                            <div className="col-xl-2">
+                              <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
                             </div>
-                          </div>
-                        </div>
-                        <div className="form-group">
-                          <label className="label-input" htmlFor>
-                            New Password
+                            <div className="col-xl-10">
+                              <form>
+                                <div className="form-group">
+                                  <label className="label-input" htmlFor>
+                                    Email
                                   </label>
-                          <div className="input-group">
-                            <input
-                              type="password"
-                              className="form-control"
-                              placeholder="**********"
-                              aria-label="**********"
-                              aria-describedby="basic-addon2"
-                            />
-                            <div className="input-group-append">
-                              {/* <span
+                                  <div className="input-group">
+                                    <input
+                                      type="email"
+                                      disabled
+                                      value={this.state.email}
+                                      className="form-control"
+                                      placeholder="Enter your Old Email"
+                                      aria-label="emailModel"
+                                      aria-describedby="basic-addon2"
+                                    />
+                                    <div className="input-group-append">
+                                      <button
+                                        className="btn btn-icademy-primary ml-2"
+                                        data-toggle="modal"
+                                        data-target="#modalEmail"
+                                        type="button"
+                                      >
+                                        Edit
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="form-group">
+                                  <label className="label-input" htmlFor>
+                                    New Password
+                                  </label>
+                                  <div className="input-group">
+                                    <input
+                                      type="password"
+                                      className="form-control"
+                                      placeholder="**********"
+                                      aria-label="**********"
+                                      aria-describedby="basic-addon2"
+                                    />
+                                    <div className="input-group-append">
+                                      {/* <span
                                         className="input-group-text"
                                         id="basic-addon2"
                                       >
                                         <i className="fa fa-eye text-c-grey" />
                                       </span> */}
-                              <button
-                                className="btn btn-icademy-primary ml-2"
-                                data-toggle="modal"
-                                data-target="#modalPassword"
-                                type="button"
-                                id="changePass"
-                              >
-                                Edit
+                                      <button
+                                        className="btn btn-icademy-primary ml-2"
+                                        data-toggle="modal"
+                                        data-target="#modalPassword"
+                                        type="button"
+                                        id="changePass"
+                                      >
+                                        Edit
                                       </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
                             </div>
                           </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
 
-                  {/* <div className="row">
+                          {/* <div className="row">
                             <div className="col-xl-2 col-md-12">
                               <h3 className="pengaturan-title f-24 f-w-bold">
                                 Notifikasi
@@ -337,33 +341,38 @@ class Pengaturan extends Component {
                             className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
                             Simpan
                           </button> */}
-                </div>
+                        </div>
 
-                <ModalEmail
-                  show={this.state.isOpen}
-                  onClose={this.toggleModal}
-                  handleClose={this.toggleModal}
-                >
-                  `Here's some content for the modal`
+                        <ModalEmail
+                          show={this.state.isOpen}
+                          onClose={this.toggleModal}
+                          handleClose={this.toggleModal}
+                        >
+                          `Here's some content for the modal`
                         </ModalEmail>
-                <ModalPassword
-                  show={this.state.isOpen}
-                  onClose={this.toggleModal}
-                >
-                  `Here's some content for the modal`
+                        <ModalPassword
+                          show={this.state.isOpen}
+                          onClose={this.toggleModal}
+                        >
+                          `Here's some content for the modal`
                         </ModalPassword>
 
-                <Modal show={this.state.isModalResponse} onHide={this.handleModalResponse}>
-                  <Modal.Body>
-                    <Modal.Title className="text-c-purple3 f-w-bold">Confirmation</Modal.Title>
-                    <p className="f-w-bold">Change user settings have been saved.</p>
-                    <button style={{ marginTop: '50px' }} type="button"
-                      className="btn btn-block f-w-bold"
-                      onClick={this.handleModalResponse}>
-                      Close
+                        <Modal show={this.state.isModalResponse} onHide={this.handleModalResponse}>
+                          <Modal.Body>
+                            <Modal.Title className="text-c-purple3 f-w-bold">Confirmation</Modal.Title>
+                            <p className="f-w-bold">Change user settings have been saved.</p>
+                            <button style={{ marginTop: '50px' }} type="button"
+                              className="btn btn-block f-w-bold"
+                              onClick={this.handleModalResponse}>
+                              Close
                             </button>
-                  </Modal.Body>
-                </Modal>
+                          </Modal.Body>
+                        </Modal>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
           </div>

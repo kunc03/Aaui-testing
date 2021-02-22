@@ -51,11 +51,11 @@ class MataPelajaran extends React.Component {
   }
 
   fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
-        jadwalPelajaran: res.data.result.jadwal,
+        jadwalPelajaran: res.data.result,
       })
     })
   }
@@ -90,8 +90,6 @@ class MataPelajaran extends React.Component {
   }
 
   render() {
-
-    console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container">

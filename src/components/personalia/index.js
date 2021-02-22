@@ -7,6 +7,7 @@ class Personalia extends React.Component {
 
   state = {
     tab: 'murid'
+    // tab: 'guru'
   }
 
   selectTab = e => {
