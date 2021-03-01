@@ -395,7 +395,7 @@ export default class MeetingRoomPublic extends Component {
                       {
                         user.name && classRooms.room_name && this.state.join ?
 
-                          <Iframe url={this.state.zoomUrl}
+                          <Iframe url={this.state.joinUrl}
                             width="100%"
                             height="600px"
                             display="initial"
