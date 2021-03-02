@@ -47,9 +47,15 @@ class WebinarAddClass extends Component {
     kirimEmailPeserta: [],
     kirimEmailTamu: [],
     userId: '',
+    companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
 
     // form peserta
     pesertaId: [],
+
+    //import from other webinar
+    importId: [],
+    optionsImport: [],
+    loadingImport: false,
 
     // form tamu
     nama: '',
@@ -241,6 +247,21 @@ class WebinarAddClass extends Component {
         });
       });
     })
+    
+    API.get(`${API_SERVER}v2/webinar/list-by-company-plain/${this.state.companyId}`).then(res => {
+      if (res.data.error) {
+        // toast.warning("Error fetch API");
+      }
+      else {
+        this.setState({ optionsImport: [] })
+        res.data.result.map(item => {
+          this.state.optionsImport.push({
+            value: item.id,
+            label: `${item.judul} = ${item.peserta.length} participant, ${item.tamu.length} guest`
+          });
+        });
+      }
+    })
   }
 
   showTambahPeserta() {
@@ -333,13 +354,37 @@ class WebinarAddClass extends Component {
       toast.warning('Silahkan pilih peserta terlebih dahulu')
   }
 
+  importPeserta = e => {
+    e.preventDefault();
+    const formData = {
+      webinarId: this.state.webinarId,
+      importId: this.state.importId.toString(),
+    };
+    this.setState({loadingImport: true});
+    formData.importId ?
+      API.post(`${API_SERVER}v2/webinar/import-participant`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Copy participant & guest failed')
+            this.setState({loadingImport: false});
+          } else {
+            toast.success(`Success copy participant & guest`)
+            this.setState({ importId: [], loadingImport: false });
+            this.fetchData();
+          }
+        }
+      })
+      :
+      toast.warning('Silahkan pilih webinar terlebih dahulu')
+  }
+
   deletePeserta(id) {
     API.delete(`${API_SERVER}v2/webinar/peserta/${id}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error('Gagal menghapus peserta')
+          toast.error('Delete participant failed')
         } else {
-          toast.success(`Berhasil menghapus peserta`)
+          toast.success(`Success delete participant`)
           this.fetchData();
         }
       }
@@ -358,9 +403,9 @@ class WebinarAddClass extends Component {
       API.post(`${API_SERVER}v2/webinar/tamu`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
-            toast.error('Gagal menambah tamu')
+            toast.error('Add guest failed')
           } else {
-            toast.success(`Berhasil menambah tamu`)
+            toast.success(`Success add guest`)
             this.setState({ nama: '', email: '', telepon: '' })
             this.fetchData();
           }
@@ -422,6 +467,12 @@ class WebinarAddClass extends Component {
         </thead>
         <tbody>
           {
+            items.length === 0 &&
+            <tr>
+              <td colspan='6'>there's no participant</td>
+            </tr>
+          }
+          {
             items.map((item, i) => (
               <tr key={i}>
                 <td>
@@ -454,6 +505,12 @@ class WebinarAddClass extends Component {
           </tr>
         </thead>
         <tbody>
+          {
+            items.length === 0 &&
+            <tr>
+              <td colspan='6'>there's no guest</td>
+            </tr>
+          }
           {
             items.map((item, i) => (
               <tr key={i}>
@@ -711,11 +768,33 @@ class WebinarAddClass extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
+              <div style={{ marginTop: "20px" }} className="form-group">
+                <div className="form-group">
+                  <label>Copy from other webinar</label>
+                  <div class="input-group" style={{background: 'none'}}>
+                    <MultiSelect
+                      id={`userId`}
+                      options={this.state.optionsImport}
+                      value={this.state.importId}
+                      onChange={importId => this.setState({ importId })}
+                      mode="single"
+                      enableSearch={true}
+                      resetable={true}
+                      valuePlaceholder="Pilih Webinar"
+                    />
+                    <span className="input-group-btn">
+                      <button disabled={this.state.loadingImport} className="btn btn-default" onClick={this.importPeserta.bind(this)}>
+                        <i className="fa fa-plus"></i> {this.state.loadingImport ? '....' : 'Import'}
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
               <h5> Participants </h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
                   <label> Find Participants</label>
-                  <div class="input-group">
+                  <div class="input-group" style={{background: 'none'}}>
                     <MultiSelect
                       id={`userId`}
                       options={this.state.optionsName}
