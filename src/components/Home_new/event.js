@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 class EventNew extends Component {
@@ -61,33 +62,58 @@ class EventNew extends Component {
     return (
       <div className="row">
         {
-          lists.length == 0 ?
-            <div className="col-sm-12 mb-1">
-              There is no
+          listEvents.length == 0 ?
+            <div className="col-sm-6 mt-4">
+              There is no available event
             </div>
             :
-            lists.map((item, i) => (
-              <div className="col-sm-12 mb-3" key={item.course_id} style={{
+            listEvents.map((item, i) => {
+              let url = '#';
+              function checkURL(param){
+                switch (param){
+                  case 'Meeting' : return urlMeeting;
+                  case 'Learning' : return urlLearning;
+                  case 'Webinar' : return 'webinars';
+                  case 'Training' : return '#';
+                  default : return '#';
+                }
+              }
+              if (item.status === false){
+                url = '#';
+              }
+              else{
+                url = checkURL(item.title)
+              }
+              return(
+              <div className="col-sm-6 mt-4" key={item.course_id} style={{
                 display:
                   levelUser == 'client' && access.group_meeting == 0 && item.title == 'Meeting' ? 'none' :
                     levelUser == 'client' && (access.course == 0 && access.manage_course == 0) && item.title == 'Learning' ? 'none' :
                       'block'
               }}>
-                <Link to={item.title == 'Meeting' ? urlMeeting : item.title == 'Learning' ? urlLearning : 'webinars'}>
-                  <div className={item.status ? 'border-blue-2 ' : 'box-disabled border-disabled'}>
+                <Link to={url}>
+                  <div className={`box-event-${item.title.toLowerCase()}`}>
+                    {item.status === false && <Tooltip title="This event is not available" arrow placement="top"><div className="event-disabled"/></Tooltip>}
                     <div className="box-event ">
-                      <div className="title-head f-w-900 f-16 fc-skyblue">
-                        <img
-                          src={item.status ? `${item.title === 'Meeting' ? 'newasset/video-conference.svg' : item.title === 'Learning' ? 'newasset/book 2.svg' : 'newasset/webinar.svg'}` : ''}
-                          alt=""
-                          width={22}
-                        ></img> &nbsp; {item.status ? item.title : ''} <small className="float-right">{item.status ? item.total : ''}</small>
+                      <div className="d-flex justify-content-center">
+                          <img
+                            src={`newasset/${item.title.toLowerCase()}-new.svg`}
+                            alt=""
+                            height={50}
+                          ></img>
                       </div>
+                      <div className="d-flex justify-content-center">
+                          <div className={`title-head f-w-900 f-16 color-event-${item.title.toLowerCase()}`} style={{lineHeight:'42px'}}>
+                            {item.title}
+                          </div>
+                      </div>
+                        <small className={`float-right color-event-${item.title.toLowerCase()}`} style={{fontSize:'16px', paddingRight:14}}>{item.total}</small>
                     </div>
                   </div>
                 </Link>
               </div>
-            ))
+              )
+            })
         }
       </div>
     );
