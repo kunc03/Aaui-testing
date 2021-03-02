@@ -358,7 +358,7 @@ class HomeNew extends Component {
                                   </p>
                                 </div>
                               </div>
-                              <div style={{ marginTop: '35px' }}>
+                              <div>
                                 <EventNew lists={eventDashboard} />
                               </div>
                             </Card.Body>
