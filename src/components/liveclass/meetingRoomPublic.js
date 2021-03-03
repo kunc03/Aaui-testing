@@ -11,7 +11,7 @@ import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 import { toast } from "react-toastify";
 
-import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL, ZOOM_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
@@ -54,8 +54,8 @@ export default class MeetingRoomPublic extends Component {
     modalStart: true,
     joinUrl: '',
 
-    attendee: {}
-
+    attendee: {},
+    zoomUrl: ''
   }
 
   joinChime = async (e) => {
@@ -119,6 +119,7 @@ export default class MeetingRoomPublic extends Component {
     this.onBotoomScroll();
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
       console.log('RESSS', response)
+
       this.setState({ classRooms: response.data.result })
       API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
         let splitTags;
@@ -152,7 +153,7 @@ export default class MeetingRoomPublic extends Component {
 
     // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
-    http(meetingInfo).then((result) => {
+    http(meetingInfo).then(async (result) => {
       if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
         // Jika belum ada, create room nya.
         let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
@@ -161,7 +162,7 @@ export default class MeetingRoomPublic extends Component {
           allowModsToUnmuteUsers: true,
           record: true
         })
-        http(meetingCreateUrl).then((result) => {
+        http(meetingCreateUrl).then(async (result) => {
           if (result.returncode = 'SUCCESS') {
             // Setelah create, join
             let joinUrl = api.administration.join(
@@ -173,7 +174,12 @@ export default class MeetingRoomPublic extends Component {
                 guest: true
               }
             )
-            this.setState({ joinUrl: joinUrl })
+
+            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
+            let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+            let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+
+            this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
               window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
             }
@@ -194,7 +200,12 @@ export default class MeetingRoomPublic extends Component {
             guest: true
           }
         )
-        this.setState({ joinUrl: joinUrl })
+
+        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.class_id}`);
+        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+        let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+
+        this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
         if (isMobile) {
           window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
         }
@@ -382,7 +393,7 @@ export default class MeetingRoomPublic extends Component {
                       {
                         user.name && classRooms.room_name && this.state.join ?
 
-                          <Iframe url={this.state.joinUrl}
+                          <Iframe url={[279].includes(parseInt(this.state.classId)) ? this.state.zoomUrl : this.state.joinUrl}
                             width="100%"
                             height="600px"
                             display="initial"
