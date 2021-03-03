@@ -408,23 +408,15 @@ class Mengajar extends React.Component {
                       {
                         this.state.infoChapter.tatapmuka == 1 &&
 
-                        <ChimeMeeting
-                          ref={`child`}
-                          attendee={this.state.attendee}
-                          name={Storage.get('user').data.user}
-                          title={this.state.infoJadwal.nama_pelajaran+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
-                          region={`ap-southeast-1`} />
+                        <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+
                       }
 
                       {
                         this.state.isTatapMuka == 1 &&
 
-                        <ChimeMeeting
-                          ref={`child`}
-                          attendee={this.state.attendee}
-                          name={Storage.get('user').data.user}
-                          title={this.state.infoJadwal.nama_pelajaran+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
-                          region={`ap-southeast-1`} />
+                        <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+
                       }
 
                       <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
