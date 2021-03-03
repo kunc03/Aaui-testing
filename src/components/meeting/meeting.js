@@ -1041,7 +1041,7 @@ class MeetingTable extends Component {
         </span>
 
         {
-          !this.state.limitCompany.meeting &&
+          this.state.limitCompany.meeting === false &&
           <span>
             You cannot create a new meeting because you have reached the limit.
           </span>

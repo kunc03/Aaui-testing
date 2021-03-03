@@ -11623,7 +11623,51 @@ div.code-toolbar > .toolbar span:hover {
 
 /* Boxed */
 .box-event {
-  padding: 25px 15px;
+  height:146px;
+  padding: 25px 0px 10px 0px;
+}
+
+.event-disabled{
+  border-radius: 10px;
+  background: url(img/disabled.png) #f8f8f8 !important;
+  position:absolute;
+  top:0px;
+  width:calc(100% - 30px);
+  height:100%;
+  opacity:0.7;
+  cursor:default;
+}
+
+.box-event-meeting{
+  border-radius: 10px;
+  background: #E7F8FF;
+}
+.box-event-webinar{
+  border-radius: 10px;
+  background: #FFF6F8;
+}
+.box-event-learning{
+  border-radius: 10px;
+  background: #FFF3ED;
+}
+.box-event-training{
+  border-radius: 10px;
+  background: #DEFFF0;
+}
+
+.color-event-meeting{
+  color: #52A2C3;
+}
+
+.color-event-webinar{
+  color: #D87C96;
+}
+
+.color-event-learning{
+  color: #EC9B73;
+}
+.color-event-training{
+  color: #52A2C3;
 }
 
 .box-project {
