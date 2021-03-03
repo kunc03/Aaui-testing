@@ -14,6 +14,8 @@ class GuruUjian extends Component {
     toDo: [],
     calendar: [],
 
+    muridId: '',
+
     pengumuman: [],
     openPengumuman: false,
     pengumumanId: '',
@@ -52,11 +54,15 @@ class GuruUjian extends Component {
         let tglSt = new Date(stTgl)
 
         return {
-          title: `${item.kelas_nama} - ${item.nama_pelajaran} - ${item.chapter_title}`,
+          title: `${item.chapter_title}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          event: 'materi',
+          absen: item.absen_jam
         }
       })
+
+      // console.log('events: ', res.data.result.mengajar)
 
       let ptc = res.data.result.ptc
       .map(item => {
@@ -66,9 +72,12 @@ class GuruUjian extends Component {
         return {
           title: `${item.nama_ruangan}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          event: 'ptc'
         }
       })
+      // console.log('events: ', ptc)
+
 
       let tugas = res.data.result.tugas
       .map(item => {
@@ -78,9 +87,13 @@ class GuruUjian extends Component {
         return {
           title: `${item.exam_title}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          event: 'tugas',
+          submitted: item.submitted
         }
       })
+      console.log('events: ', res.data.result.tugas)
+
 
       let quiz = res.data.result.quiz
       .map(item => {
@@ -90,9 +103,14 @@ class GuruUjian extends Component {
         return {
           title: `${item.exam_title}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          event: 'kuis',
+          absen: item.absen_jam,
+          score: item.score
         }
       })
+      console.log('events: ', res.data.result.quiz)
+
 
       let ujian = res.data.result.ujian
       .map(item => {
@@ -102,9 +120,14 @@ class GuruUjian extends Component {
         return {
           title: `${item.exam_title}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          event: 'ujian',
+          absen: item.absen_jam,
+          score: item.score
         }
       })
+      // console.log('events: ', ujian)
+
 
       let events = mengajar.concat(ptc.concat(tugas.concat(quiz.concat(ujian))));
 
@@ -136,6 +159,7 @@ class GuruUjian extends Component {
   fetchAnakSaya(userId) {
     API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
       this.fetchJadwal(res.data.result.user_id_murid)
+      this.setState({ muridId: res.data.result.user_id_murid })
       this.fetchEvents(res.data.result.user_id_murid)
     })
   }
@@ -160,6 +184,21 @@ class GuruUjian extends Component {
     });
   }
 
+  filterKegiatan = e => {
+    let {value} = e.target;
+    if(value === 'all') {
+      this.fetchEvents(this.state.muridId)
+    }
+    else {
+
+      let event = [...this.state.event].filter(item => item.event === value);
+      this.setState({ event })
+    }
+  }
+
+  filterClear = e => {
+    this.fetchEvents(this.state.muridId)
+  }
 
   render() {
     let levelUser = Storage.get('user').data.level;
@@ -194,21 +233,51 @@ class GuruUjian extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Timeline</h4>
+                          <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
+                            <option value="all">All</option>
+                            <option value="materi">Materi</option>
+                            <option value="tugas">Tugas</option>
+                            <option value="kuis">Kuis</option>
+                            <option value="ujian">Ujian</option>
+                          </select>
+                          <button class="ml-2" onClick={this.filterClear}>clear</button>
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Events</th><th>Date</th><th>Waktu</th><th>Sesi</th><th>Aksi</th>
+                                <th>Kegiatan</th>
+                                <th>Judul</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Nilai</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
                                 sort.map(item => (
                                   <tr key={item.title+'-'+item.start}>
+                                    <td style={{textTransform: 'capitalize'}}>{item.event}</td>
                                     <td>{item.title}</td>
-                                    <td>{moment(item.start).format('DD/MM/YYYY')}</td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>1</td>
+                                    <td>{moment(item.start).format('DD/MM/YYYY HH:mm')}</td>
+                                    <td>
+                                      {
+                                        item.hasOwnProperty('absen') ?
+                                        (item.absen ? <span class="label label-success">Selesai</span> : <span class="label label-danger">Belum</span>)
+                                        :
+                                        ((item.hasOwnProperty('submitted') && item.submitted.length === 1) ? <span class="label label-success">Selesai</span> : <span class="label label-danger">Belum</span>)
+                                      }
+                                    </td>
+                                    {
+                                      item.hasOwnProperty('submitted') &&
+                                      <td>{item.submitted.length === 1 ? item.submitted[0].score : '-'}</td>
+                                    }
+                                    {
+                                      item.hasOwnProperty('score') &&
+                                      <td>{item.score ? item.score : '-'}</td>
+                                    }
+                                    {
+                                      item.event === 'materi' &&
+                                      <td>-</td>
+                                    }
                                   </tr>
                                 ))
                               }
