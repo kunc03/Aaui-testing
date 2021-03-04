@@ -146,11 +146,16 @@ export default class MeetingRoom extends Component {
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      if (this.state.isZoom){
+        role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
       else{
-        role = result.attendees.attendee.role
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+        }
+        else{
+          role = result.attendees.attendee.role
+        }
       }
 
       if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
@@ -437,7 +442,6 @@ export default class MeetingRoom extends Component {
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
-          zoomUrl: zoomUrl.data.result,
           shareGantt: liveClass.data.result.share_gantt,
           selectedFileShow: liveClass.data.result.file_show === null ? '' : liveClass.data.result.file_show
           // jwt: token.data.token
