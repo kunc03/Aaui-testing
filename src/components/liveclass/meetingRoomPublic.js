@@ -55,7 +55,8 @@ export default class MeetingRoomPublic extends Component {
     joinUrl: '',
 
     attendee: {},
-    zoomUrl: ''
+    zoomUrl: '',
+    isZoom: false
   }
 
   joinChime = async (e) => {
@@ -177,6 +178,7 @@ export default class MeetingRoomPublic extends Component {
 
             let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
             let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+            this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
@@ -203,6 +205,7 @@ export default class MeetingRoomPublic extends Component {
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.class_id}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+        this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
         let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
 
         this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
@@ -393,7 +396,7 @@ export default class MeetingRoomPublic extends Component {
                       {
                         user.name && classRooms.room_name && this.state.join ?
 
-                          <Iframe url={[279].includes(parseInt(this.state.classId)) ? this.state.zoomUrl : this.state.joinUrl}
+                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
                             width="100%"
                             height="600px"
                             display="initial"
