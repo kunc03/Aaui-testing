@@ -45,6 +45,8 @@ class DashGuru extends Component {
     jadwal: [],
 
     jadwalBesok: [],
+
+    event: []
   }
 
   openSilabus = e => {
@@ -98,6 +100,83 @@ class DashGuru extends Component {
     this.fetchJadwal();
     this.fetchPtc();
     this.fetchTugas();
+    this.fetchEvents()
+  }
+
+  fetchEvents(){
+    API.get(`${API_SERVER}v2/events/guru/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch events`)
+
+      // console.log('mengajar: ', res.data.result.mengajar);
+      let mengajar = res.data.result.mengajar.map(item => {
+        let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.chapter_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'materi',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.chapter_id
+        }
+      })
+
+      // console.log('mengajar: ', res.data.result.tugas);
+      let tugas = res.data.result.tugas.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'tugas',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let quiz = res.data.result.quiz.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'kuis',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let ujian = res.data.result.ujian.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'ujian',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let events = mengajar.concat(tugas.concat(quiz.concat(ujian)));
+
+      this.setState({ event: events })
+    })
   }
 
   fetchTugas() {
@@ -166,6 +245,10 @@ class DashGuru extends Component {
   }
 
   render() {
+    console.log(`event1: `, this.state.event)
+
+    let sort = this.state.event.sort((a, b) => a.start - b.start)
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -175,6 +258,66 @@ class DashGuru extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
+
+                    <div className="col-sm-6">
+                      <CalenderNew />
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Aktivitas Mengajar
+                            <Link to='/jadwal-mengajar' className="float-right f-12">See all</Link>
+                          </h4>
+                          <div className="wrap" style={{ height: '400px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>Kelas</th>
+                                  <th>Kegiatan</th>
+                                  <th>Mapel</th>
+                                  <th>Topik</th>
+                                  <th>Timeline</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  sort.map(item => (
+                                    <tr>
+                                      <td>{item.kelas}</td>
+                                      <td style={{textTransform: 'capitalize'}}>{item.event}</td>
+                                      <td>{item.mapel}</td>
+                                      <td>{item.title}</td>
+                                      <td>{moment(item.start).format('DD/MM/YYYY HH:mm')}</td>
+                                      <td>
+                                        {
+                                          item.event === 'materi' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'info'}`} to={`/ruangan/mengajar/${item.jadwal}/materi/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'tugas' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-tugas/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Open' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'kuis' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-kuis/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'ujian' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-ujian/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </div>
 
                     <div className="col-sm-6">
                       <Card>
@@ -247,10 +390,6 @@ class DashGuru extends Component {
                           </div>
                         </Card.Body>
                       </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                      <CalenderNew />
                     </div>
 
                     <div className="col-sm-6">

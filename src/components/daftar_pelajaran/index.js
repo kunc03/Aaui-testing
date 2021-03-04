@@ -23,6 +23,8 @@ class DaftarPelajaran extends React.Component {
     silabusId: '',
     pelajaranNama: '',
     sesi: '',
+    periode: '',
+    durasi: 0,
     topik: '',
     tujuan: '',
     deskripsi: '',
@@ -108,6 +110,8 @@ class DaftarPelajaran extends React.Component {
       pelajaranId: '',
       pelajaranNama: '',
       sesi: '',
+      periode: '',
+      durasi: 0,
       topik: '',
       tujuan: '',
       deskripsi: '',
@@ -119,6 +123,8 @@ class DaftarPelajaran extends React.Component {
     this.setState({
       silabusId: '',
       sesi: '',
+      periode: '',
+      durasi: 0,
       topik: '',
       tujuan: '',
       deskripsi: '',
@@ -243,6 +249,8 @@ class DaftarPelajaran extends React.Component {
     let form = {
       pelajaranId: this.state.pelajaranId,
       sesi: this.state.sesi,
+      periode: this.state.periode,
+      durasi: this.state.durasi,
       topik: this.state.topik,
       tujuan: this.state.tujuan,
       deskripsi: this.state.deskripsi,
@@ -301,6 +309,8 @@ class DaftarPelajaran extends React.Component {
         silabusId: res.data.result.id,
         sesi: res.data.result.sesi,
         topik: res.data.result.topik,
+        periode: res.data.result.periode,
+        durasi: res.data.result.durasi,
         tujuan: res.data.result.tujuan,
         deskripsi: res.data.result.deskripsi,
         jenis: parseInt(res.data.result.jenis),
@@ -444,6 +454,19 @@ class DaftarPelajaran extends React.Component {
                           <option value="2">Ujian</option>
                         </select>
                       </div>
+                      {
+                        this.state.jenis <= 0 &&
+                        <>
+                          <div className="col-sm-2">
+                            <label>Periode</label>
+                            <input required name="periode" value={this.state.periode} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" placeholder="Enter" className="form-control" />
+                          </div>
+                          <div className="col-sm-2">
+                            <label>Durasi</label>
+                            <input required name="durasi" value={this.state.durasi} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="number" placeholder="10, 20, 30, ..." className="form-control" />
+                          </div>
+                        </>
+                      }
                     </div>
                     {
                       this.state.jenis <= 0 &&
@@ -484,6 +507,8 @@ class DaftarPelajaran extends React.Component {
                         <th>Sesi</th>
                         <th>Topik</th>
                         <th>Tujuan</th>
+                        <th>Periode</th>
+                        <th>Durasi</th>
                         <th>Deskripsi</th>
                         <th>Files</th>
                         <th className="text-center">Aksi</th>
@@ -498,6 +523,8 @@ class DaftarPelajaran extends React.Component {
                                 <td>{item.sesi}</td>
                                 <td>{item.topik}</td>
                                 <td>{item.tujuan}</td>
+                                <td>{item.periode}</td>
+                                <td>{item.durasi} menit</td>
                                 <td>{item.deskripsi}</td>
                                 <td style={{ padding: '12px' }}>
                                   {
@@ -514,7 +541,7 @@ class DaftarPelajaran extends React.Component {
                             return (
                               <tr key={i}>
                                 <td>{item.sesi}</td>
-                                <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                                <td colSpan="6" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
                                 <td className="text-center">
                                   <i style={{ cursor: 'pointer' }} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
                                   <i style={{ cursor: 'pointer' }} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
