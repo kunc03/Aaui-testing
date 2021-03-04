@@ -655,20 +655,25 @@ export default class MeetingRoom extends Component {
   }
 
   changeShareGantt = (e) => {
+    let projectId = e.target.value;
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      if (this.state.isZoom){
+        role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
       else{
-        role = result.attendees.attendee.role
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+        }
+        else{
+          role = result.attendees.attendee.role
+        }
       }
 
       if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
-        let projectId = e.target.value;
         let form = {
           projectId: projectId
         }
