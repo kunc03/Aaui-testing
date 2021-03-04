@@ -17,7 +17,7 @@ import moment from 'moment-timezone';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL } from '../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, API_SOCKET, BBB_KEY, BBB_URL, CHIME_URL, ZOOM_URL } from '../../repository/api';
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import { Editor } from '@tinymce/tinymce-react';
@@ -117,7 +117,9 @@ export default class MeetingRoom extends Component {
     modalGantt: false,
     modalFileShow: false,
 
-    attendee: {}
+    attendee: {},
+    zoomUrl: '',
+    isZoom: false
   }
 
   closeModalGantt = e => {
@@ -399,6 +401,10 @@ export default class MeetingRoom extends Component {
       if (res.status === 200) {
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
 
+        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
+        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+        this.setState({isZoom:  zoomUrl.data.result.length ? true : false});
+
         var data = liveClass.data.result
         /*mark api get new history course*/
         let form = {
@@ -431,6 +437,7 @@ export default class MeetingRoom extends Component {
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
+          zoomUrl: zoomUrl.data.result,
           shareGantt: liveClass.data.result.share_gantt,
           selectedFileShow: liveClass.data.result.file_show === null ? '' : liveClass.data.result.file_show
           // jwt: token.data.token
@@ -464,8 +471,11 @@ export default class MeetingRoom extends Component {
                   this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
                   { userID: this.state.user.user_id }
                 )
+
+                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${Storage.get('user').data.user}&email=${Storage.get('user').data.email}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+
                 console.log('joinUrl: ', joinUrl)
-                this.setState({ joinUrl: joinUrl })
+                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
                 if (isMobile) {
                   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
                 }
@@ -484,8 +494,9 @@ export default class MeetingRoom extends Component {
               { userID: this.state.user.user_id }
             )
 
-            console.log('joinUrl: ', joinUrl);
-            this.setState({ joinUrl: joinUrl })
+            let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${Storage.get('user').data.user}&email=${Storage.get('user').data.email}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+
+            this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
               window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
             }
@@ -1008,7 +1019,7 @@ export default class MeetingRoom extends Component {
                           {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
 
-                          <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
 
                           {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>
