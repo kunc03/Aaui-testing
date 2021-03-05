@@ -218,6 +218,8 @@ class MataPelajaran extends React.Component {
                             <th>Topic</th>
                             <th>Goal</th>
                             <th>Description</th>
+                            <th>Periode</th>
+                            <th>Duration</th>
                             <th>Files</th>
                           </tr>
                         </thead>
@@ -231,6 +233,8 @@ class MataPelajaran extends React.Component {
                                       <td>{item.topik}</td>
                                       <td>{item.tujuan}</td>
                                       <td>{item.deskripsi}</td>
+                                      <td>{item.periode}</td>
+                                      <td>{item.durasi}</td>
                                       <td style={{padding: '12px'}}>
                                         {
                                           item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'

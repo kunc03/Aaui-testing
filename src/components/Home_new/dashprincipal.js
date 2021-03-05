@@ -244,6 +244,8 @@ class DashParent extends Component {
                             Parent Teacher Conference (PTC)
                           </div>
                           <div className="card-body" style={{ padding: 0 }}>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
                             <table className="table table-striped">
                               <thead>
                                 <tr>
@@ -274,6 +276,7 @@ class DashParent extends Component {
                                 }
                               </tbody>
                             </table>
+                          </div>
                           </div>
                         </div>
 
@@ -321,6 +324,8 @@ class DashParent extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Materi Pelajaran</h4>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
                           <table className="table table-striped">
                             <thead>
                               <tr>
@@ -340,6 +345,7 @@ class DashParent extends Component {
                               }
                             </tbody>
                           </table>
+                        </div>
                         </Card.Body>
                       </Card>
 
@@ -405,6 +411,8 @@ class DashParent extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
                           <table className="table">
                             <tbody>
                               {
@@ -424,6 +432,7 @@ class DashParent extends Component {
                               }
                             </tbody>
                           </table>
+                        </div>
                         </Card.Body>
                       </Card>
 

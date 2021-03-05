@@ -197,36 +197,39 @@ class DashGuru extends Component {
                           Parent Teacher Conference (PTC)
                         </div>
                         <div className="card-body" style={{ padding: 0 }}>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Room Name</th>
-                                <th>Moderator</th>
-                                <th>Time </th>
-                                <th> Date </th>
-                                { this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th> }
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ptc.map((item, i) => (
-                                  <tr>
-                                    <td>{item.nama_ruangan}</td>
-                                    <td>{item.name}</td>
-                                    <td>{item.waktu_mulai}</td>
-                                    <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
-                                    {
-                                      this.state.role.toLowerCase() !== "parents" &&
-                                      <td className="text-center">
-                                        <button data-id={item.ptc_id} onClick={this.openParticipants} className="btn btn-v2 btn-default ml-2">{item.peserta.length} Participants</button>
-                                      </td>
-                                    }
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
 
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Room Name</th>
+                                  <th>Moderator</th>
+                                  <th>Time </th>
+                                  <th> Date </th>
+                                  { this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th> }
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ptc.map((item, i) => (
+                                    <tr>
+                                      <td>{item.nama_ruangan}</td>
+                                      <td>{item.name}</td>
+                                      <td>{item.waktu_mulai}</td>
+                                      <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
+                                      {
+                                        this.state.role.toLowerCase() !== "parents" &&
+                                        <td className="text-center">
+                                          <button data-id={item.ptc_id} onClick={this.openParticipants} className="btn btn-v2 btn-default ml-2">{item.peserta.length} Participants</button>
+                                        </td>
+                                      }
+
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
 
@@ -274,6 +277,8 @@ class DashGuru extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
                           <table className="table">
                             <tbody>
                               {
@@ -293,6 +298,7 @@ class DashGuru extends Component {
                               }
                             </tbody>
                           </table>
+                        </div>
                         </Card.Body>
                       </Card>
 

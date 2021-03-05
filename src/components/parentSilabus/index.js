@@ -132,6 +132,8 @@ class GuruUjian extends Component {
                           <thead>
                             <tr>
                               <th>Session</th>
+                              <th>Periode</th>
+                              <th>Duration</th>
                               <th>Topic</th>
                               <th>Goal</th>
                               <th>Description</th>
@@ -145,6 +147,8 @@ class GuruUjian extends Component {
                                   return (
                                       <tr key={i}>
                                         <td>{item.sesi}</td>
+                                        <td>{item.periode}</td>
+                                        <td>{item.durasi} menit</td>
                                         <td>{item.topik}</td>
                                         <td>{item.tujuan}</td>
                                         <td>{item.deskripsi}</td>

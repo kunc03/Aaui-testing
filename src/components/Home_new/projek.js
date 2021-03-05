@@ -32,7 +32,9 @@ class ProjekNew extends Component {
     valueProjectAdmin: [],
     valueUser: [],
     share: [],
-    projectShareId: ''
+    projectShareId: '',
+
+    gb: []
   }
 
   onChangeInput = e => {
@@ -229,8 +231,18 @@ class ProjekNew extends Component {
   componentDidMount() {
     this.fetchProject()
     this.fetchOtherData()
+
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level)
+
   }
 
+  fetchCheckAccess(role, companyId, level) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level}).then(res => {
+      if(res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
 
   render() {
     // let access = Storage.get('access');
@@ -238,6 +250,9 @@ class ProjekNew extends Component {
     let accessProjectManager = levelUser == 'client' ? false : true;
     //  console.log(this.props, 'props evenntttt')
     const lists = this.state.project;
+
+    let createDeleteProject = this.state.gb.filter(item => item.name === 'Create and delete project');
+
     return (
       <div className="row">
         <div className="col-sm-8">
@@ -247,22 +262,27 @@ class ProjekNew extends Component {
                 Project
             </h3>
             </div>
-            <div>
-              {
-                accessProjectManager ?
-                  <button
-                    className="btn btn-icademy-primary float-left"
-                    style={{ padding: "7px 8px !important" }}
-                    onClick={e => this.setState({ modalNewFolder: true })}
-                  >
-                    <i className="fa fa-plus"></i>
 
-            Add
-            </button>
+            {
+              createDeleteProject.length === 1 && createDeleteProject[0].status === 1 &&
+
+              <div>
+                {
+                  accessProjectManager ?
+                    <button
+                      className="btn btn-icademy-primary float-left"
+                      style={{ padding: "7px 8px !important" }}
+                      onClick={e => this.setState({ modalNewFolder: true })}
+                    >
+                      <i className="fa fa-plus"></i> Add
+                    </button>
                   :
                   null
-              }
-            </div>
+                }
+              </div>
+            }
+
+
           </div>
         </div>
         <div className="col-sm-4 text-right">
@@ -308,7 +328,10 @@ class ProjekNew extends Component {
                             <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
                               <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
                               <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
-                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
+                                {
+                                  createDeleteProject.length === 1 && createDeleteProject[0].status === 1 &&
+                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
+                                }
                             </div>
                           </span>
                           : null
