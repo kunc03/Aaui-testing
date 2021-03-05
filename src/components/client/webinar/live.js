@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import API, { APPS_SERVER, API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET } from '../../../repository/api';
+import API, { APPS_SERVER, API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET, ZOOM_URL } from '../../../repository/api';
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
@@ -61,6 +61,8 @@ export default class WebinarLive extends Component {
     jawaban: [],
     companyId: '',
     qnaPeserta: '',
+
+		zoomUrl: '',
 
     //webinar role
     pembicara: [],
@@ -380,7 +382,7 @@ export default class WebinarLive extends Component {
 
               // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
               let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
-              http(meetingInfo).then((result) => {
+              http(meetingInfo).then(async (result) => {
                   if (result.returncode == 'FAILED' && result.messageKey == 'notFound'){
                       // Jika belum ada, create room nya.
                       let meetingCreateUrl = api.administration.create(this.state.webinar.judul, this.state.webinar.id, {
@@ -389,7 +391,7 @@ export default class WebinarLive extends Component {
                           allowModsToUnmuteUsers: true,
                           record: true
                       })
-                      http(meetingCreateUrl).then((result) => {
+                      http(meetingCreateUrl).then(async (result) => {
                           if (result.returncode='SUCCESS'){
                               // Setelah create, join
                               let joinUrl = api.administration.join(
@@ -398,7 +400,13 @@ export default class WebinarLive extends Component {
                                   this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                                   {userID: this.state.user.user_id}
                               )
-                              this.setState({joinUrl: joinUrl})
+
+															let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.webinar.id}`);
+															let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+															let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
+
+                              this.setState({joinUrl: joinUrl, zoomUrl: zoomJoinUrl})
+
                               this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                               if (isMobile){
                                 window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
@@ -417,7 +425,13 @@ export default class WebinarLive extends Component {
                         this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                         {userID: this.state.user.user_id}
                       )
-                      this.setState({joinUrl: joinUrl})
+
+											let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.webinar.id}`);
+											let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+											let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
+
+											this.setState({joinUrl: joinUrl, zoomUrl: zoomJoinUrl})
+
                       this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                       if (isMobile){
                         window.location.replace(APPS_SERVER+'mobile-meeting/'+encodeURIComponent(this.state.joinUrl))
@@ -732,6 +746,7 @@ export default class WebinarLive extends Component {
   }
 
 	render() {
+		console.log('state: ', this.state)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -892,6 +907,7 @@ export default class WebinarLive extends Component {
                     <div className="col-sm-12">
                       {
                         this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+												{/*JIKA MAU PAKE ZOOM tinggal ganti url iframe ke state => zoomUrl */}
                         <Iframe url={this.state.joinUrl}
                           width="100%"
                           height="600px"
