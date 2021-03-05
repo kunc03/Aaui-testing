@@ -212,7 +212,6 @@ class DashGuru extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
-
       let hari = [ "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.filter(item => item.hari === hari[tglIni.getDay()]);
