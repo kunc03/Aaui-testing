@@ -174,8 +174,10 @@ export default class Gantt extends Component {
         return;
     });
     let editable = this.props.access_project_admin;
+    let taskType = '';
     gantt.attachEvent("onBeforeLightbox", function(id){
         var task = gantt.getTask(id);
+        taskType = task.type;
         if (editable === false && task.lock_data === 'Locked'){
             for (let i = 0; i < 9; i++){
                 gantt.getLightboxSection("period").node.children[i].disabled = true;
@@ -188,13 +190,15 @@ export default class Gantt extends Component {
         return true;
     });
     gantt.attachEvent("onAfterLightbox", function (){
-        for (let i = 0; i < 9; i++){
-            gantt.getLightboxSection("period").node.children[i].disabled = false;
+        if (taskType !== 'project' && taskType !== 'milestone'){
+            for (let i = 0; i < 9; i++){
+                gantt.getLightboxSection("period").node.children[i].disabled = false;
+            }
+            gantt.getLightboxSection("owner").node.children[0].disabled = false;
+            gantt.getLightboxSection("visibility").node.children[0].disabled = false;
+            gantt.getLightboxSection("company").node.children[0].disabled = false;
+            gantt.getLightboxSection("lock_data").node.children[0].disabled = false;
         }
-        gantt.getLightboxSection("owner").node.children[0].disabled = false;
-        gantt.getLightboxSection("visibility").node.children[0].disabled = false;
-        gantt.getLightboxSection("company").node.children[0].disabled = false;
-        gantt.getLightboxSection("lock_data").node.children[0].disabled = false;
     });
     gantt.attachEvent("onBeforeTaskDrag", function(id, mode, e){
         if (mode === 'resize' || mode === 'move' || mode === 'ignore'){
@@ -398,6 +402,28 @@ export default class Gantt extends Component {
                     {key: "Private", label: "Private"}
                 ]
             },
+            {
+                name: "lock_data", height: 38, map_to: "lock_data", type: "select", options: [
+                    {key: "Unlocked", label: "Unlocked"},
+                    {key: "Locked", label: "Locked"}
+                ]
+            }
+        ];
+        gantt.config.lightbox.project_sections = [
+            {name: "description", height: 38, map_to: "text", type: "textarea", focus: true},
+            {name: "type", height: 38, map_to: "text", type: "text"},
+            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]},
+            {
+                name: "lock_data", height: 38, map_to: "lock_data", type: "select", options: [
+                    {key: "Unlocked", label: "Unlocked"},
+                    {key: "Locked", label: "Locked"}
+                ]
+            }
+        ];
+        gantt.config.lightbox.milestone_sections = [
+            {name: "description", height: 38, map_to: "text", type: "textarea", focus: true},
+            {name: "type", height: 38, map_to: "text", type: "text"},
+            {name: "period", type: "time", map_to: "auto", time_format:["%d","%m","%Y","%H:%i"]},
             {
                 name: "lock_data", height: 38, map_to: "lock_data", type: "select", options: [
                     {key: "Unlocked", label: "Unlocked"},

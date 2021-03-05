@@ -119,6 +119,7 @@ export default class MeetingRoom extends Component {
 
     attendee: {},
     zoomUrl: '',
+    isZoom: false
   }
 
   closeModalGantt = e => {
@@ -145,11 +146,16 @@ export default class MeetingRoom extends Component {
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      if (this.state.isZoom){
+        role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
       else{
-        role = result.attendees.attendee.role
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+        }
+        else{
+          role = result.attendees.attendee.role
+        }
       }
 
       if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
@@ -404,6 +410,10 @@ export default class MeetingRoom extends Component {
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
         // console.log(zoomUrl);
 
+        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
+        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+        this.setState({isZoom:  zoomUrl.data.result.length ? true : false});
+
         var data = liveClass.data.result
         /*mark api get new history course*/
         let form = {
@@ -472,10 +482,9 @@ export default class MeetingRoom extends Component {
                 )
 
                 let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${Storage.get('user').data.user}&email=${Storage.get('user').data.email}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+
                 console.log('joinUrl: ', joinUrl)
-
                 this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-
                 if (isMobile) {
                   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
                 }
@@ -496,7 +505,6 @@ export default class MeetingRoom extends Component {
 
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${Storage.get('user').data.user}&email=${Storage.get('user').data.email}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
 
-            console.log('joinUrl: ', joinUrl);
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
               window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
@@ -656,20 +664,25 @@ export default class MeetingRoom extends Component {
   }
 
   changeShareGantt = (e) => {
+    let projectId = e.target.value;
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-        role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      if (this.state.isZoom){
+        role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
       else{
-        role = result.attendees.attendee.role
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+        }
+        else{
+          role = result.attendees.attendee.role
+        }
       }
 
       if (result.returncode == 'SUCCESS' && role === 'MODERATOR') {
-        let projectId = e.target.value;
         let form = {
           projectId: projectId
         }
@@ -1020,7 +1033,7 @@ export default class MeetingRoom extends Component {
                           {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
 
-                          <Iframe url={this.state.zoomUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
 
                           {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>

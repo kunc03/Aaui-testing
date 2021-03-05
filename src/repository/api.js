@@ -28,6 +28,7 @@ export const BBB_SERVER_LIST = [
 ]
 
 export const CHIME_URL = `https://ftabz8v877.execute-api.ap-southeast-1.amazonaws.com/Prod`;
+export const ZOOM_URL = `https://z.icademy.stg.kelola.co.id`;
 
 export const ZOOM_URL = `https://z.icademy.stg.kelola.co.id`;
 
