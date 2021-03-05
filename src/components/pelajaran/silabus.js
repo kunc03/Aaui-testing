@@ -54,6 +54,8 @@ class Overview extends React.Component {
                 <thead>
                   <tr>
                     <th>Sesi</th>
+                    <th>Periode</th>
+                    <th>Durasi</th>
                     <th>Topik</th>
                     <th>Tujuan</th>
                     <th>Deskripsi</th>
@@ -67,6 +69,8 @@ class Overview extends React.Component {
                         return (
                             <tr key={i}>
                               <td>{item.sesi}</td>
+                              <td>{item.periode}</td>
+                              <td>{item.durasi} menit</td>
                               <td>{item.topik}</td>
                               <td>{item.tujuan}</td>
                               <td>{item.deskripsi}</td>

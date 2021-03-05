@@ -40,9 +40,9 @@ class HomeNew extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
-    recentDocs: []
-  }
+    recentDocs: [],
 
+  }
 
   onChangeInput = e => {
     const name = e.target.name;

@@ -29,6 +29,8 @@ class JadwalMengajar extends React.Component {
     dataPelajaran: [],
     dataKelas: [],
     dataGuru: [],
+
+    kurikulums: [],
   }
 
   selectPelajaran = e => {
@@ -106,7 +108,7 @@ class JadwalMengajar extends React.Component {
       this.setState({
         idJadwal: id,
         namaPelajaran: res.data.result.pelajaran_id + '_' + res.data.result.silabus,
-        kelasJadwal: res.data.result.kelas_id + '_' + res.data.result.kapasitas,
+        kelasJadwal: res.data.result.kelas_id + '_' + res.data.result.kapasitas + '_' + res.data.result.kurikulum,
 
         ruanganJadwal: `${res.data.result.ruangan_id}_${res.data.result.pengajar_id}`,
         namaPengajar: res.data.result.pengajar_id,
@@ -144,6 +146,7 @@ class JadwalMengajar extends React.Component {
     this.fetchPelajaran(companyId)
     this.fetchRuangan(companyId)
     this.fetchJadwal(companyId)
+    this.fetchKurikulum()
   }
 
   fetchJadwal(companyId) {
@@ -173,6 +176,36 @@ class JadwalMengajar extends React.Component {
     API.get(`${API_SERVER}v2/guru/company/${companyId}`).then(res => {
       if (res.data.error) toast.warning("Error fetch guru")
       this.setState({ dataGuru: res.data.result })
+    })
+  }
+
+  fetchKurikulum() {
+    API.get(`${API_SERVER}v2/kurikulum/company/${Storage.get('user').data.company_id}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data kurikulum");
+
+      this.setState({ kurikulums: res.data.result })
+    })
+  }
+
+  selectKelasJadwal  = e => {
+    let { value } = e.target;
+    let kId = value.split('_')[2];
+
+    let filter = this.state.kurikulums.filter(item => item.id == parseInt(kId));
+    API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
+      let mapelFromClass = [];
+      if(filter.length) {
+        for(var i=0; i<filter[0].mapel.length; i++) {
+          let ff = res.data.result.filter(item => item.pelajaran_id == filter[0].mapel[i].pelajaran_id)
+          mapelFromClass.push(ff[0])
+        }
+      }
+
+      this.setState({
+        kelasJadwal: value,
+        kapasitasMurid: value.split('_')[1],
+        dataPelajaran: mapelFromClass
+      })
     })
   }
 
@@ -270,6 +303,18 @@ class JadwalMengajar extends React.Component {
             <form onSubmit={this.saveJadwal}>
               <div className="form-group row">
                 <div className="col-sm-6">
+                  <label>Class</label>
+                  <select value={this.state.kelasJadwal} onChange={this.selectKelasJadwal} className="form-control">
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataKelas.map((item, i) => (
+                        <option value={`${item.kelas_id}_${item.kapasitas}_${item.kurikulum}`}>{item.kelas_nama}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+
+                <div className="col-sm-6">
                   <label>Nama Pelajaran</label>
                   <select value={this.state.namaPelajaran} onChange={this.selectPelajaran} required className="form-control">
                     <option value="">Pilih</option>
@@ -280,17 +325,7 @@ class JadwalMengajar extends React.Component {
                     }
                   </select>
                 </div>
-                <div className="col-sm-6">
-                  <label>Class</label>
-                  <select value={this.state.kelasJadwal} onChange={e => this.setState({ kelasJadwal: e.target.value, kapasitasMurid: e.target.value.split('_')[1] })} className="form-control">
-                    <option value="">Pilih</option>
-                    {
-                      this.state.dataKelas.map((item, i) => (
-                        <option value={`${item.kelas_id}_${item.kapasitas}`}>{item.kelas_nama}</option>
-                      ))
-                    }
-                  </select>
-                </div>
+
               </div>
 
               <div className="form-group row">

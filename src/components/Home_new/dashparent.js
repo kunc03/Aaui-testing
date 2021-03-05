@@ -4,7 +4,7 @@ import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
-import CalenderNew from '../kalender/kalender';
+import CalenderNew from '../kalender/kalenderlearning';
 import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
 
@@ -14,6 +14,8 @@ import moment from 'moment-timezone'
 class DashParent extends Component {
 
   state = {
+    role: this.props.role ? this.props.role : 'parents',
+
     toDo: [],
     calendar: [],
 
@@ -25,14 +27,12 @@ class DashParent extends Component {
     pengumumanFile: [],
 
     tugas: [],
-
     ujian: [],
-
     jadwal: [],
-
     project: [],
-
     myMurid: {},
+    ptc: [],
+    event: [],
   }
 
   fetchJadwal(muridId) {
@@ -74,6 +74,7 @@ class DashParent extends Component {
 
   componentDidMount() {
     this.fetchPengumuman();
+    this.fetchPtc()
     this.fetchMyMurid(Storage.get('user').data.user_id);
   }
 
@@ -83,7 +84,7 @@ class DashParent extends Component {
 
       this.setState({ myMurid: res.data.result })
 
-      this.fetchJadwal(res.data.result.user_id_murid)
+      this.fetchJadwal(res.data.result.user_id_murid);
     })
   }
 
@@ -102,9 +103,29 @@ class DashParent extends Component {
     });
   }
 
-  render() {
+  fetchPtc() {
+    let url = ``;
 
-    console.log('state: ', this.state)
+    if(this.state.role.toLowerCase() === "guru") {
+      if(Storage.get('user').data.level !== "client") {
+        url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+      } else {
+        url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
+      }
+    } else if(this.state.role.toLowerCase() === "parents") {
+      url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
+    } else {
+      url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
+    }
+
+    API.get(url).then(res => {
+      if (res.data.error) console.log('Error: ', res.data.result);
+
+      this.setState({ ptc: res.data.result })
+    });
+  }
+
+  render() {
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
@@ -120,26 +141,70 @@ class DashParent extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.jadwal.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai}-{item.jam_selesai}</td>
-                                    <td>{item.sesi}</td>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.jadwal.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>{item.hari}</td>
+                                      <td>{item.jam_mulai}-{item.jam_selesai}</td>
+                                      <td>{item.sesi}</td>
 
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Parent - Teacher Conference</h4>
+
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Room Name</th><th>Date</th><th>Moderator</th><th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ptc.map((item, i) => (
+                                    <tr>
+                                      <td>{item.nama_ruangan}</td>
+                                      <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')} {item.waktu_mulai}</td>
+                                      <td>{item.name}</td>
+                                      <td className="text-center">
+                                        {
+                                          Date.parse(item.tanggal_mulai) >= new Date() &&
+                                          <a target="_blank" className="btn btn-v2 btn-primary" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
+                                            <i className="fa fa-video"></i> Masuk
+                                          </a>
+                                        }
+                                        {
+                                          Date.parse(item.tanggal_mulai) <= new Date() &&
+                                          <button className="btn btn-v2 btn-default ml-2">Riwayat</button>
+                                        }
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+
+                          </div>
                         </Card.Body>
                       </Card>
                     </div>
@@ -148,24 +213,61 @@ class DashParent extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Tugas Yang Harus Dikerjakan</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tugas</th><th>Batas Waktu</th><th>Mata Pelajaran</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.tugas.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.title}</td>
-                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
-                                    <td>{item.nama_pelajaran}</td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Tugas</th><th>Batas Waktu</th><th>Mata Pelajaran</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.tugas.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.title}</td>
+                                      <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                      <td>{item.nama_pelajaran}</td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Ujian Yang Akan Datang</h4>
+
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Tanggal</th><th>Ujian</th><th>Mata Pelajaran</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ujian.map((item, i) => (
+                                    <tr key={i}>
+                                      <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                      <td>{item.title}</td>
+                                      <td>{item.nama_pelajaran}</td>
+
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+
+                          </div>
+
                         </Card.Body>
                       </Card>
                     </div>
@@ -179,37 +281,11 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Ujian Yang Akan Datang</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tanggal</th><th>Ujian</th><th>Mata Pelajaran</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ujian.map((item, i) => (
-                                  <tr key={i}>
-                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
-                                    <td>{item.title}</td>
-                                    <td>{item.nama_pelajaran}</td>
-
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
-                        </Card.Body>
-                      </Card>
-                    </div>
-
-                    <div className="col-sm-6">
                     <Card>
                       <Card.Body>
                         <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
-                        <div className="wrap" style={{ height: '200px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                        <div className="wrap" style={{ height: '400px', overflowY: 'scroll', overflowX: 'hidden' }}>
                           <table className="table">
                           <tbody>
                           {
@@ -230,6 +306,7 @@ class DashParent extends Component {
                           </tbody>
                           </table>
                         </div>
+
                       </Card.Body>
                     </Card>
 
@@ -286,7 +363,10 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
+                      {
+                        this.state.myMurid.hasOwnProperty('user_id_murid') &&
+                        <CalenderNew grupName="murid" muridId={this.state.myMurid.user_id_murid} lists={this.state.event} />
+                      }
                     </div>
 
                   </div>
