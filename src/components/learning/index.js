@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 
 import Registrasi from '../registrasi/index';
+import Curriculum from '../kurikulum/index';
 import DaftarPelajaran from '../daftar_pelajaran/index';
 
 import Personalia from '../personalia/index';
@@ -16,8 +17,9 @@ import Laporan from '../laporan/index';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
-  { name: 'Registration', link: '/registrasi', component: Registrasi },
   { name: 'List of Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran },
+  { name: 'Curriculum', link: '/kurikulum', component: Curriculum },
+  { name: 'Registration', link: '/registrasi', component: Registrasi },
   { name: 'Teaching Room', link: '/ruangan-mengajar', component: RuanganMengajar },
   { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
   { name: 'Personnel', link: '/personalia', component: Personalia },

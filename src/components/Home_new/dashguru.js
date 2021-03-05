@@ -45,6 +45,8 @@ class DashGuru extends Component {
     jadwal: [],
 
     jadwalBesok: [],
+
+    event: []
   }
 
   openSilabus = e => {
@@ -98,6 +100,83 @@ class DashGuru extends Component {
     this.fetchJadwal();
     this.fetchPtc();
     this.fetchTugas();
+    this.fetchEvents()
+  }
+
+  fetchEvents(){
+    API.get(`${API_SERVER}v2/events/guru/${Storage.get('user').data.user_id}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch events`)
+
+      // console.log('mengajar: ', res.data.result.mengajar);
+      let mengajar = res.data.result.mengajar.map(item => {
+        let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.chapter_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'materi',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.chapter_id
+        }
+      })
+
+      // console.log('mengajar: ', res.data.result.tugas);
+      let tugas = res.data.result.tugas.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'tugas',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let quiz = res.data.result.quiz.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'kuis',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let ujian = res.data.result.ujian.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt,
+          event: 'ujian',
+          kelas: item.kelas_nama,
+          mapel: item.nama_pelajaran,
+          jadwal: item.jadwal_id,
+          sesi: item.exam_id
+        }
+      })
+
+      let events = mengajar.concat(tugas.concat(quiz.concat(ujian)));
+
+      this.setState({ event: events })
+    })
   }
 
   fetchTugas() {
@@ -133,7 +212,6 @@ class DashGuru extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
-
       let hari = [ "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.filter(item => item.hari === hari[tglIni.getDay()]);
@@ -166,6 +244,10 @@ class DashGuru extends Component {
   }
 
   render() {
+    console.log(`event1: `, this.state.event)
+
+    let sort = this.state.event.sort((a, b) => a.start - b.start)
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -177,36 +259,99 @@ class DashGuru extends Component {
                   <div className="row">
 
                     <div className="col-sm-6">
+                      <CalenderNew />
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Aktivitas Mengajar
+                            <Link to='/jadwal-mengajar' className="float-right f-12">See all</Link>
+                          </h4>
+                          <div className="wrap" style={{ height: '400px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>Kelas</th>
+                                  <th>Kegiatan</th>
+                                  <th>Mapel</th>
+                                  <th>Topik</th>
+                                  <th>Timeline</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  sort.map(item => (
+                                    <tr>
+                                      <td>{item.kelas}</td>
+                                      <td style={{textTransform: 'capitalize'}}>{item.event}</td>
+                                      <td>{item.mapel}</td>
+                                      <td>{item.title}</td>
+                                      <td>{moment(item.start).format('DD/MM/YYYY HH:mm')}</td>
+                                      <td>
+                                        {
+                                          item.event === 'materi' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'info'}`} to={`/ruangan/mengajar/${item.jadwal}/materi/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'tugas' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-tugas/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Open' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'kuis' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-kuis/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                        {
+                                          item.event === 'ujian' &&
+                                          <Link style={{padding: '2px 8px'}} class={`btn btn-${item.start >= new Date() ? 'success' : 'danger'}`} to={`/guru/detail-ujian/${item.jadwal}/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                        }
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">
                             Jadwal Mengajar Hari Ini
                             <Link to='/jadwal-mengajar' className="float-right f-12">See all</Link>
                           </h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.jadwal.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
-                                    <td>{item.kelas_nama}</td>
-                                    <td>
-                                      <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
-                                        <i className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.jadwal.map((item,i) => (
+                                    <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>{item.hari}</td>
+                                      <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                      <td>{item.kelas_nama}</td>
+                                      <td>
+                                        <Link to={`/guru/pelajaran/${item.jadwal_id}`}>
+                                          <i className="fa fa-search"></i>
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </Card.Body>
                       </Card>
                     </div>
@@ -215,69 +360,72 @@ class DashGuru extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Tugas</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th>Judul</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.tugas.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.exam_title}</td>
-                                    <td>{moment(item.time_finish).format('DD/MM/YYYY')}</td>
-                                    <td>{item.kelas_nama}</td>
-                                    <td>
-                                      <Link to={`/guru/detail-tugas/${item.jadwal_id}/${item.exam_id}`}>
-                                        <i className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th>Judul</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.tugas.map((item,i) => (
+                                    <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>{item.exam_title}</td>
+                                      <td>{moment(item.time_finish).format('DD/MM/YYYY')}</td>
+                                      <td>{item.kelas_nama}</td>
+                                      <td>
+                                        <Link to={`/guru/detail-tugas/${item.jadwal_id}/${item.exam_id}`}>
+                                          <i className="fa fa-search"></i>
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </Card.Body>
                       </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                      <CalenderNew />
                     </div>
 
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pertemuan Yang Akan Datang</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Judul</th><th>Moderator</th><th>Tanggal</th><th>Jam</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ptc.map((item,i) => (
-                                  <tr key={i}>
-                                    <td>{item.nama_ruangan}</td>
-                                    <td>{item.name}</td>
-                                    <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
-                                    <td>{item.waktu_mulai}</td>
-                                    <td>
-                                      {
-                                        Date.parse(item.tanggal_mulai) >= new Date() &&
-                                        <a target="_blank" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
-                                          <i className="fa fa-video"></i>
-                                        </a>
-                                      }
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Judul</th><th>Moderator</th><th>Tanggal</th><th>Jam</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ptc.map((item,i) => (
+                                    <tr key={i}>
+                                      <td>{item.nama_ruangan}</td>
+                                      <td>{item.name}</td>
+                                      <td>{moment(item.tanggal_mulai).format('DD/MM/YYYY')}</td>
+                                      <td>{item.waktu_mulai}</td>
+                                      <td>
+                                        {
+                                          Date.parse(item.tanggal_mulai) >= new Date() &&
+                                          <a target="_blank" href={`/ptc/masuk/ptc/${item.ptc_id}`}>
+                                            <i className="fa fa-video"></i>
+                                          </a>
+                                        }
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+
                         </Card.Body>
                       </Card>
                     </div>
@@ -286,25 +434,29 @@ class DashGuru extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
-                          <table className="table">
-                            <tbody>
-                              {
-                                this.state.pengumuman.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
-                                    <td>{item.isi}</td>
-                                    <td style={{width: '40px'}}>
-                                      <a href="#"
-                                        onClick={this.openPengumuman}
-                                        data-title={item.title}
-                                        data-file={item.attachments}
-                                        data-id={item.id_pengumuman}
-                                        data-isi={item.isi}>Lihat</a>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                              <table className="table">
+                                <tbody>
+                                  {
+                                    this.state.pengumuman.map((item,i) => (
+                                      <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                        <td>{item.isi}</td>
+                                        <td style={{width: '40px'}}>
+                                          <a href="#"
+                                            onClick={this.openPengumuman}
+                                            data-title={item.title}
+                                            data-file={item.attachments}
+                                            data-id={item.id_pengumuman}
+                                            data-isi={item.isi}>Lihat</a>
+                                        </td>
+                                      </tr>
+                                    ))
+                                  }
+                                </tbody>
+                              </table>
+
+                            </div>
                         </Card.Body>
                       </Card>
 
@@ -364,25 +516,29 @@ class DashGuru extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Laporan Yang Harus Diselesaikan</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tanggal</th><th>Waktu</th><th>Mata Pelajaran</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ujian.map((item,i) => (
-                                  <tr key={i}>
-                                    <td>{item.tanggal}</td>
-                                    <td>{item.waktu}</td>
-                                    <td>{item.mapel}</td>
-                                    <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                            <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Tanggal</th><th>Waktu</th><th>Mata Pelajaran</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ujian.map((item,i) => (
+                                    <tr key={i}>
+                                      <td>{item.tanggal}</td>
+                                      <td>{item.waktu}</td>
+                                      <td>{item.mapel}</td>
+                                      <td><i style={{cursor: 'pointer'}} className="fa fa-search"></i></td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+
                         </Card.Body>
                       </Card>
                     </div>
@@ -391,25 +547,31 @@ class DashGuru extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Materi Pelajaran</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th style={{width: '40px'}}>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.pelajaran.map((item,i) => (
-                                  <tr key={i}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td style={{width: '40px'}}>
-                                      <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th style={{width: '40px'}}>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.pelajaran.map((item,i) => (
+                                    <tr key={i}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td style={{width: '40px'}}>
+                                        <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+
+                          </div>
+
                         </Card.Body>
                       </Card>
 

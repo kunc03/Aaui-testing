@@ -11,17 +11,21 @@ const localizer = momentLocalizer(moment);
 class KalenderNew extends Component {
   state = {
     jadwal: [],
-    event: [],
+    event: this.props.lists ? this.props.lists : [],
     fullscreen: false,
+    grupName: this.props.grupName ? this.props.grupName : Storage.get('user').data.grup_name.toLowerCase(),
+    muridId: this.props.muridId ? this.props.muridId : Storage.get('user').data.user_id,
   }
 
   componentDidMount() {
     // this.fetchKalender();
-    this.fetchJadwal();
+    if(this.state.event.length === 0) {
+      this.fetchJadwal();
+    }
   }
 
   fetchJadwal() {
-    API.get(`${API_SERVER}v2/events/${Storage.get('user').data.grup_name.toLowerCase()}/${Storage.get('user').data.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/events/${this.state.grupName}/${this.state.muridId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch events`)
 
       let mengajar = res.data.result.mengajar.map(item => {
@@ -46,14 +50,46 @@ class KalenderNew extends Component {
         }
       })
 
-      let events = mengajar.concat(ptc);
+      let tugas = res.data.result.tugas.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt
+        }
+      })
+
+      let quiz = res.data.result.quiz.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt
+        }
+      })
+
+      let ujian = res.data.result.ujian.map(item => {
+        let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
+        let tglSt = new Date(stTgl)
+
+        return {
+          title: `${item.exam_title}`,
+          start: tglSt,
+          end: tglSt
+        }
+      })
+
+      let events = mengajar.concat(ptc.concat(tugas.concat(quiz.concat(ujian))));
 
       this.setState({ event: events })
     })
   }
 
   render() {
-    console.log('state: ', this.state)
     const { event } = this.state;
 
     return (

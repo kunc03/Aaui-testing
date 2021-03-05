@@ -208,7 +208,7 @@ class PtcClasses extends React.Component {
                             }
 
                             {
-                              this.state.role.toLowerCase() !== "parents" &&
+                              (["admin","guru"].includes(this.state.role.toLowerCase()) || ["admin","superadmin"].includes(Storage.get('user').data.level)) &&
                               <>
                               <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
                                 <i className="fa fa-edit ml-2"></i>

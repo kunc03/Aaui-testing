@@ -404,7 +404,11 @@ export default class MeetingRoom extends Component {
     // this.onBotoomScroll();
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if (res.status === 200) {
+
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
+        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
+        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+        // console.log(zoomUrl);
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
@@ -442,6 +446,7 @@ export default class MeetingRoom extends Component {
         this.setState({
           user: res.data.result,
           classRooms: liveClass.data.result,
+          zoomUrl: zoomUrl.data.result,
           shareGantt: liveClass.data.result.share_gantt,
           selectedFileShow: liveClass.data.result.file_show === null ? '' : liveClass.data.result.file_show
           // jwt: token.data.token

@@ -4,7 +4,7 @@ import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
-import CalenderNew from '../kalender/kalender';
+import CalenderNew from '../kalender/kalenderlearning';
 import ListToDoNew from './listToDo';
 
 import { toast } from 'react-toastify'
@@ -106,62 +106,79 @@ class DashMurid extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.jadwal.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>{item.hari}</td>
-                                    <td>{item.jam_mulai}-{item.jam_selesai}</td>
-                                    <td>{item.sesi}</td>
-                                    <td>
-                                      <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Jadwal Hari Ini
+                            <Link to='/murid/mata-pelajaran' className="float-right f-12">See all</Link>
+                          </h4>
+                          <div className="wrap" style={{ height: '400px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.jadwal.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>{item.hari}</td>
+                                      <td>{item.jam_mulai}-{item.jam_selesai}</td>
+                                      <td>{item.sesi}</td>
+                                      <td>
+                                        <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
+                                          <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+
                         </Card.Body>
                       </Card>
                     </div>
 
                     <div className="col-sm-6">
+                      <CalenderNew lists={this.state.calendar} />
+                    </div>
+
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Tugas Yang Harus Dikerjakan</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tugas</th><th>Batas Waktu</th><th>Mata Pelajaran</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.tugas.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.title}</td>
-                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>
-                                      <Link to={`/murid/tugas`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Tugas Yang Harus Dikerjakan
+                            <Link to='/murid/tugas' className="float-right f-12">See all</Link>
+                          </h4>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Tugas</th><th>Batas Waktu</th><th>Mata Pelajaran</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.tugas.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.title}</td>
+                                      <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>
+                                        <Link to={`/murid/tugas`}>
+                                          <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </Card.Body>
                       </Card>
                     </div>
@@ -170,25 +187,29 @@ class DashMurid extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
-                          <table className="table">
-                            <tbody>
-                              {
-                                this.state.pengumuman.map((item, i) => (
-                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                    <td>{item.isi}</td>
-                                    <td style={{ width: '40px' }}>
-                                      <a href="#"
-                                        onClick={this.openPengumuman}
-                                        data-title={item.title}
-                                        data-file={item.attachments}
-                                        data-id={item.id_pengumuman}
-                                        data-isi={item.isi}>Lihat</a>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table">
+                              <tbody>
+                                {
+                                  this.state.pengumuman.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.isi}</td>
+                                      <td style={{ width: '40px' }}>
+                                        <a href="#"
+                                          onClick={this.openPengumuman}
+                                          data-title={item.title}
+                                          data-file={item.attachments}
+                                          data-id={item.id_pengumuman}
+                                          data-isi={item.isi}>Lihat</a>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </Card.Body>
                       </Card>
 
@@ -247,36 +268,39 @@ class DashMurid extends Component {
                     <div className="col-sm-6">
                       <Card>
                         <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Ujian Yang Akan Datang</h4>
-                          <table className="table table-striped">
-                            <thead>
-                              <tr>
-                                <th>Tanggal</th><th>Ujian</th><th>Mata Pelajaran</th><th>Aksi</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                this.state.ujian.map((item, i) => (
-                                  <tr key={i}>
-                                    <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
-                                    <td>{item.title}</td>
-                                    <td>{item.nama_pelajaran}</td>
-                                    <td>
-                                      <Link to={`/murid/ujian`}>
-                                        <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))
-                              }
-                            </tbody>
-                          </table>
+                          <h4 className="f-w-900 f-18 fc-blue">
+                            Ujian Yang Akan Datang
+                            <Link to='/murid/ujian' className="float-right f-12">See all</Link>
+
+                          </h4>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Tanggal</th><th>Ujian</th><th>Mata Pelajaran</th><th>Aksi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.ujian.map((item, i) => (
+                                    <tr key={i}>
+                                      <td>{moment(item.time_finish).format('DD-MM-YYYY')}</td>
+                                      <td>{item.title}</td>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>
+                                        <Link to={`/murid/ujian`}>
+                                          <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
+                                        </Link>
+                                      </td>
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
+                          </div>
                         </Card.Body>
                       </Card>
-                    </div>
-
-                    <div className="col-sm-6">
-                      <CalenderNew lists={this.state.calendar} />
                     </div>
 
                     <div className="col-sm-6">

@@ -18,8 +18,8 @@ export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MO
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.id";
 
-export const BBB_URL = "https://con1.icademy.id/bigbluebutton/";
-export const BBB_KEY = "bemKTwkzELgFHhrmy0YstNLhBIvHumXJAK8s8DZrvYc";
+export const BBB_URL = "https://me.carspay.id/bigbluebutton/";
+export const BBB_KEY = "rRUkWKNOZRwGHceqm3ffGypbFQ5peV0SmSBYSkJfI";
 
 export const BBB_SERVER_LIST = [
   // { server: 'https://bbb.kelola.co.id/bigbluebutton/', key: '19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d' },
@@ -28,6 +28,8 @@ export const BBB_SERVER_LIST = [
 ]
 
 export const CHIME_URL = `https://ftabz8v877.execute-api.ap-southeast-1.amazonaws.com/Prod`;
+export const ZOOM_URL = `https://z.icademy.stg.kelola.co.id`;
+
 export const ZOOM_URL = `https://z.icademy.stg.kelola.co.id`;
 
 export const USER_LOGIN = `${API_SERVER}v1/auth`;
