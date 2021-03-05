@@ -970,7 +970,7 @@ class MeetingTable extends Component {
                         </button>}
 
             {
-              createDeleteMeeting.length === 1 && createDeleteMeeting[0].status === 1 &&
+              (createDeleteMeeting.length && createDeleteMeeting[0].status === 1) || (!createDeleteMeeting.length) &&
               <>
                 {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}> Delete </button>}
               </>
@@ -1022,7 +1022,7 @@ class MeetingTable extends Component {
             <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
 
             {
-              createDeleteMeeting.length === 1 && createDeleteMeeting[0].status === 1 &&
+              (createDeleteMeeting.length && createDeleteMeeting[0].status === 1) || (!createDeleteMeeting.length) &&
               <>
               {access_project_admin == true && this.state.limitCompany.meeting ? <button
               onClick={this.handleCreateMeeting.bind(this)}
