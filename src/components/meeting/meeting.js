@@ -1448,7 +1448,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             { (this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
             <=new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-            && (this.state.infoClass.is_required_confirmation==0) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
+            && (this.state.infoClass.is_required_confirmation==0 || (this.state.infoClass.is_required_confirmation==1 && this.state.attendanceConfirmation[0].confirmation=='Hadir' )) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
               <button className="btn btn-icademy-primary" onClick={e=> this.closeModalConfirmation()}
                 // style={{width:'100%'}}
                 >
