@@ -144,7 +144,7 @@ class Registasi extends React.Component {
             </Card.Header>
             <Card.Body>
 
-              <Accordion>
+              <Accordion defaultActiveKey={kurikulum.length}>
                 {
                   kurikulum.map((item,i) => (
                     <Card>

@@ -18,6 +18,8 @@ class Registasi extends React.Component {
     tahunAjaran: "",
     kapasitas: "",
 
+    kurikulums: [],
+
     listSemester: [],
     listKelas: [],
 
@@ -70,6 +72,14 @@ class Registasi extends React.Component {
 
     this.clearForm();
 
+  }
+
+  fetchKurikulum() {
+    API.get(`${API_SERVER}v2/kurikulum/company/${Storage.get('user').data.company_id}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data kurikulum");
+
+      this.setState({ kurikulums: res.data.result })
+    })
   }
 
   fetchOptionMurid() {
@@ -138,6 +148,7 @@ class Registasi extends React.Component {
     this.fetchKelas();
     this.fetchSemester();
     this.fetchOptionMurid();
+    this.fetchKurikulum()
   }
 
   fetchSemester() {
@@ -229,7 +240,15 @@ class Registasi extends React.Component {
                     <div className="row mb-3">
                       <div className="col">
                         <label>Kurikulum</label>
-                        <input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />
+                        <select required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} className="form-control" name="kurikulum">
+                          <option value="" disabled selected>Pilih kurikulum</option>
+                          {
+                            this.state.kurikulums.map((item, i) => (
+                              <option value={item.id}>{item.name}</option>
+                            ))
+                          }
+                        </select>
+                        {/*<input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />*/}
                       </div>
                       <div className="col">
                         <label>Academic Year</label>
