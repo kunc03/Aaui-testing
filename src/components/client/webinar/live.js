@@ -907,7 +907,6 @@ export default class WebinarLive extends Component {
                     <div className="col-sm-12">
                       {
                         this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
-												{/*JIKA MAU PAKE ZOOM tinggal ganti url iframe ke state => zoomUrl */}
                         <Iframe url={this.state.joinUrl}
                           width="100%"
                           height="600px"
