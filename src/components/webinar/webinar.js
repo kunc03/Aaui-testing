@@ -61,6 +61,7 @@ class WebinarTable extends Component {
         : `${API_SERVER}v2/webinar/list-by-company/${this.state.companyId}`
     ).then(res => {
       if (res.data.error) {
+        this.setState({ isLoading: false });
         // toast.warning("Error fetch API");
       }
       else {
@@ -157,7 +158,7 @@ class WebinarTable extends Component {
                 </Link> */}
             </span>
             {
-              !this.state.limitCompany.webinar &&
+              this.state.limitCompany.webinar === false &&
               <span>
                 You cannot create a new webinar because you have reached the limit.
               </span>
@@ -179,8 +180,12 @@ class WebinarTable extends Component {
                     </tr>
                 </thead>
                 <tbody>
+                  {this.state.isLoading === true && 
+                        <tr>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Loading...</td>
+                        </tr>}
                     {
-                        bodyTabble.length == 0 ?
+                        bodyTabble.length == 0 && this.state.isLoading === false ?
                         <tr>
                             <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Tidak ada</td>
                         </tr>

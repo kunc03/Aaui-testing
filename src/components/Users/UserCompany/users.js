@@ -464,7 +464,7 @@ export default class Users extends Component {
             <Lists lists={users} />
           </table> */}
                       {
-                        !this.state.limitCompany.user &&
+                        this.state.limitCompany.user === false &&
                         <div>
                           You cannot create a new user because you have reached the limit.
                         </div>

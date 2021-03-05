@@ -71,6 +71,7 @@ class Tugas extends React.Component {
       quizAt: '',
       tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
       tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
+      pertanyaan: [],
 
       mengumpulkan: [],
 
@@ -175,10 +176,11 @@ class Tugas extends React.Component {
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
         if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
-
-        toast.success(`Sukses menyimpan ${this.state.tipe}`)
-        this.fetchKuis();
-        this.clearForm();
+        else{
+          toast.success(`Sukses menyimpan ${this.state.tipe}`)
+          this.fetchKuis();
+          this.clearForm();
+        }
       })
     }
   }

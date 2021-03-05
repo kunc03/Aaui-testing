@@ -631,7 +631,7 @@ class Header extends Component {
                         </b>
                       </h6>
                     </div>
-                    <ul className="noti-body">
+                    <ul className="noti-body" style={{maxHeight:400, overflowY: 'scroll', overflowX: 'hidden'}}>
                       {level == 'admin' && (
                         <li
                           className="notification"

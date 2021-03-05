@@ -216,6 +216,9 @@ class MeetingTable extends Component {
   }
   toggleSwitch(checked) {
     this.setState({ private: !this.state.private });
+    if (!checked){
+      this.setState({requireConfirmation: false});
+    }
   }
   toggleSwitchRequiredConfirmation(checked) {
     this.setState({ requireConfirmation: !this.state.requireConfirmation });
@@ -1008,7 +1011,7 @@ class MeetingTable extends Component {
             className="form-control float-right col-sm-3" />
         </span>
         {
-          !this.state.limitCompany.meeting &&
+          this.state.limitCompany.meeting === false &&
           <span>
             You cannot create a new meeting because you have reached the limit.
           </span>
