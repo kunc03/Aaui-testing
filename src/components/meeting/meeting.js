@@ -218,6 +218,9 @@ class MeetingTable extends Component {
   }
   toggleSwitch(checked) {
     this.setState({ private: !this.state.private });
+    if (!checked){
+      this.setState({requireConfirmation: false});
+    }
   }
   toggleSwitchRequiredConfirmation(checked) {
     this.setState({ requireConfirmation: !this.state.requireConfirmation });
