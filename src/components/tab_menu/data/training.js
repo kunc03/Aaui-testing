@@ -7,8 +7,8 @@ export const Menu = [
     },
     {
         label: 'User',
-        icon: 'company.svg',
-        iconActive: 'user-active.svg',
+        icon: 'users.svg',
+        iconActive: 'users-active.svg',
         route: '/training/user'
     },
     // {
@@ -18,16 +18,16 @@ export const Menu = [
     //     route: '/training'
     // },
     {
-        label: 'Theory',
+        label: 'Course',
         icon: 'theory.svg',
         iconActive: 'theory-active.svg',
-        route: '/training/theory'
+        route: '/training/course'
     },
     {
-        label: 'Practice',
+        label: 'Quiz',
         icon: 'practice.svg',
         iconActive: 'practice-active.svg',
-        route: '/training/practice'
+        route: '/training/quiz'
     },
     {
         label: 'Exam',

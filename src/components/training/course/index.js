@@ -8,22 +8,26 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 
-class Practice extends Component {
+class Course extends Component {
   constructor(props) {
     super(props);
     this.state = {
         data : [
             {
-                title : 'AAUI Training',
-                category : 'Investment',
+                image : 'https://rencanamu.id/assets/file_uploaded/blog/1544666963-uiux-01.png',
+                title : 'Pembuatan UI/UX design',
+                number : '00001',
                 date : '07/03/2021',
-                status : 'Active'
+                content : 'Text, Video',
+                status : 'Active',
             },
             {
-                title : 'Javascript Advance',
-                category : 'Programming',
-                date : '06/03/2021',
-                status : 'Active'
+                image : 'https://4.bp.blogspot.com/-s2EhTt57oeU/XHtQtO1QNLI/AAAAAAAANW8/KYkPQEZUyocSpA2RzqCcVt31imXPi63RACLcBGAs/s1600/Free%2BCourses%2Bto%2Blearn%2BJavaScript.jpg',
+                title : 'Penulisan Coding Javascript',
+                number : '00002',
+                date : '04/03/2021',
+                content : 'PDF, Audio, Practice',
+                status : 'Active',
             },
         ],
         filter:''
@@ -47,22 +51,36 @@ class Practice extends Component {
   render() {
     const columns = [
       {
+        name: 'Thumbnail',
+        selector: 'image',
+        sortable: true,
+        cell: row => <img height="36px" alt={row.name} src={row.image} />
+      },
+      {
         name: 'Title',
         selector: 'title',
         sortable: true,
         grow: 2,
       },
       {
-        name: 'Category',
-        selector: 'category',
+        name: 'Number',
+        selector: 'number',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
       {
-        name: 'Date',
+        name: 'Publish Date',
         selector: 'date',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Content',
+        selector: 'content',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -128,12 +146,12 @@ class Practice extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Practice'/>
+                                        <TabMenu title='Training' selected='Course'/>
                                         <div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Practice List</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Course List</strong>
                                                         <Link
                                                         to={`/training/company/create`}>
                                                             <button
@@ -172,4 +190,4 @@ class Practice extends Component {
   }
 }
 
-export default Practice;
+export default Course;
