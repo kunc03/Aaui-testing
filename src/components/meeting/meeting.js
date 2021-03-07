@@ -832,12 +832,12 @@ class MeetingTable extends Component {
       this.fetchMeetingInfo(this.props.informationId)
     }
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level)
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_MEETING'])
 
   }
 
-  fetchCheckAccess(role, companyId, level) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level}).then(res => {
+  fetchCheckAccess(role, companyId, level, param ) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
       if(res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -871,6 +871,7 @@ class MeetingTable extends Component {
   }
 
   render() {
+    let cdMeeting = this.state.gb.length && this.state.gb.filter(item=> item.code === 'CD_MEETING')[0].status;
     // const headerTabble = [
     //   // {title : 'Meeting Name', width: null, status: true},
     //   {title : 'Moderator', width: null, status: true},
@@ -970,7 +971,7 @@ class MeetingTable extends Component {
                         </button>}
 
             {
-              (createDeleteMeeting.length && createDeleteMeeting[0].status === 1) || (!createDeleteMeeting.length) &&
+              cdMeeting &&
               <>
                 {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.class_id, row.room_name)}> Delete </button>}
               </>
@@ -1012,8 +1013,6 @@ class MeetingTable extends Component {
       )
     }
 
-    let createDeleteMeeting = this.state.gb.filter(item => item.name === 'Create and delete meeting room');
-
     return (
       <div className="card p-20">
 
@@ -1022,7 +1021,7 @@ class MeetingTable extends Component {
             <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
 
             {
-              (createDeleteMeeting.length && createDeleteMeeting[0].status === 1) || (!createDeleteMeeting.length) &&
+              cdMeeting &&
               <>
               {access_project_admin == true && this.state.limitCompany.meeting ? <button
               onClick={this.handleCreateMeeting.bind(this)}
