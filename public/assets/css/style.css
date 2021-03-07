@@ -11936,3 +11936,129 @@ div.code-toolbar > .toolbar span:hover {
 .riwayat th, td{
   font-size: 12px !important;
 }
+
+.tab-menu{
+  display:inline-block;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  float:right;
+}
+
+.tab-menu li{
+  display:inline;
+  padding:10px;
+  padding-top:14px;
+  margin-left:14px;
+  border-radius: 7px 7px 0px 0px;
+  display:inline-block;
+  vertical-align: top;
+  height:62px;
+  font-size:16px;
+  color:#B9B9B9;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.tab-menu .active{
+  background: #F6F6F6;
+  color: #0091FF;
+  font-weight: bold;
+}
+
+.main-tab-container{
+  /* height:80px; */
+  /* overflow:hidden; */
+}
+
+.button-bordered{
+  background: #F5F5F5;
+  border: 1px solid #0091FF;
+  border-radius: 4px;
+  color: #0091FF;
+  font-size: 13px;
+  padding: 6px 12px;
+  cursor:pointer;
+}
+
+.button-bordered-grey{
+  background: #F3F3F3;
+  border: 1px solid #AEAEAE;
+  border-radius: 4px;
+  color: #424242;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor:pointer;
+}
+
+.button-gradient-blue{
+  background: linear-gradient(180deg, #00B1F0 0%, #0079DC 100%);
+  border: none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor:pointer;
+}
+
+.form-section{
+  border-bottom: 1px solid #e6e6e6;
+  padding: 30px 0px;
+}
+
+.no-border{
+  border: none !important;
+}
+
+.form-field-top-label{
+  float:left;
+  clear:both;
+  padding-left:15px;
+  margin-top:10px;
+}
+.form-field-top-label > label{
+  float:left;
+  clear:both;
+  color: #424242;
+  font-size:13px;
+  font-weight:bold;
+}
+.form-field-top-label > input[type=text],input[type=date]{
+  padding:18px 20px;
+  background: rgba(248,248,248,0.5);
+  border: 1px solid #DDDDDD;
+  border-radius:10px;
+  float:left;
+  clear:both;
+}
+.form-field-top-label > input[type=text]:disabled,input[type=date]:disabled{
+  background: #c0c0c080;
+}
+.form-field-top-label > input[type=file]::-webkit-file-upload-button{
+  visibility: hidden;
+}
+.form-field-top-label > input[type=file]{
+  display:none;
+}
+.form-field-top-label > select{
+  padding:18px 20px;
+  background: rgba(248,248,248,0.5);
+  border: 1px solid #DDDDDD;
+  border-radius:10px;
+  float:left;
+  clear:both;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+}
+.form-field-top-label > select:disabled{
+  background: #c0c0c080;
+}
+
+required {
+  font-weight: bold;
+  font-size: 13px;
+  color: #F00;
+  padding:2px;
+}
