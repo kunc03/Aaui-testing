@@ -232,12 +232,12 @@ class ProjekNew extends Component {
     this.fetchProject()
     this.fetchOtherData()
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level)
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_PROJECT'])
 
   }
 
-  fetchCheckAccess(role, companyId, level) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level}).then(res => {
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
       if(res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -251,7 +251,7 @@ class ProjekNew extends Component {
     //  console.log(this.props, 'props evenntttt')
     const lists = this.state.project;
 
-    let createDeleteProject = this.state.gb.filter(item => item.name === 'Create and delete project');
+    let cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
 
     return (
       <div className="row">
@@ -264,7 +264,7 @@ class ProjekNew extends Component {
             </div>
 
             {
-              createDeleteProject.length === 1 && createDeleteProject[0].status === 1 &&
+              cdProject &&
 
               <div>
                 {
@@ -329,7 +329,7 @@ class ProjekNew extends Component {
                               <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
                               <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
                                 {
-                                  createDeleteProject.length === 1 && createDeleteProject[0].status === 1 &&
+                                  cdProject &&
                                   <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
                                 }
                             </div>

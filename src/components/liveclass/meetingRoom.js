@@ -406,9 +406,6 @@ export default class MeetingRoom extends Component {
       if (res.status === 200) {
 
         let liveClass = await API.get(`${API_SERVER}v1/liveclass/id/${this.state.classId}`);
-        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
-        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-        // console.log(zoomUrl);
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
