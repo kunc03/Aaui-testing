@@ -136,6 +136,7 @@ import MuridLaporanRapor from './components/muridLaporanRapor/index';
 
 // ======= IMPORT COMPONENT PARENT ======== //
 import LaporanPembelajaranMurid from './components/parentLearning/index';
+import KurikulumParent from './components/parentLearning/kurikulum';
 import ParentSylabus from './components/parentSilabus/index';
 import ParentRapor from './components/parentRapor/index';
 
@@ -592,6 +593,7 @@ export class ClientSwitch extends React.Component {
 
         {/* ROUTE PARENT */}
         <Route path='/parent-learning' component={LaporanPembelajaranMurid} />
+        <Route path='/parent-curriculum' component={KurikulumParent} />
         <Route path='/parent-syllabus' component={ParentSylabus} />
         <Route path='/parent-rapor' component={ParentRapor} />
 

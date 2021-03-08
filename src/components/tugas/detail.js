@@ -26,7 +26,7 @@ class UjianClass extends React.Component {
     isSubmit: false,
     openConfirm: false,
 
-    isStart: false
+    isStart: this.props.tipe === 'kuis' ? true : false,
   }
 
   clearScore() {
@@ -43,7 +43,12 @@ class UjianClass extends React.Component {
       if(res.data.error) toast.warning(`Warning: fetch exam`);
 
       this.setState({ infoExam: res.data.result })
+      if(res.data.result.is_started) {
+        this.fetchSoal(this.state.examId)
+        this.setState({ isStart: res.data.result.is_started })
+      }
       this.props.getTatapMuka(res.data.result.tatapmuka);
+      this.props.getStarted(res.data.result.is_started ? true : false);
     })
   }
 
@@ -74,12 +79,18 @@ class UjianClass extends React.Component {
         this.props.getNilai(res.data.result.length ? true : false)
       }
 
+      localStorage.removeItem('waktuPengerjaan')
+
     })
   }
 
   componentDidMount() {
     this.fetchSubmit()
     this.fetchExam(this.state.examId)
+
+    if (this.state.tipe === 'kuis') {
+      this.fetchSoal(this.state.examId)
+    }
 
     this.props.socket.on('broadcast', data => {
       console.log('state1: ', data)
@@ -90,7 +101,9 @@ class UjianClass extends React.Component {
         }
         else {
           this.setState({ examSoal: [], isStart: false })
+          localStorage.removeItem('waktuPengerjaan')
         }
+        API.put(`${API_SERVER}v2/exam/${data.isStart ? 'start' : 'stop'}/${this.state.examId}`) 
       }
 
       if (data.event == 'selesai' && data.companyId == Storage.get('user').data.company_id) {
@@ -247,12 +260,12 @@ class UjianClass extends React.Component {
               }
 
               {
-                this.state.isStart && this.state.role === "murid" && !this.state.isSubmit &&
+                (this.state.isStart === 1 && this.state.infoExam.is_started === 1) && this.state.role === "murid" && !this.state.isSubmit &&
                 <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
               }
 
               {
-                this.state.isSubmit &&
+                this.state.isSubmit === 1 &&
                 <button onClick={this.lihatHasil} className="btn btn-v2 btn-primary mt-3">Lihat Hasil</button>
               }
 

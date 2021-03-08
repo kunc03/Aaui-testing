@@ -277,7 +277,7 @@ class DashGuru extends Component {
                                   <th>Kegiatan</th>
                                   <th>Mapel</th>
                                   <th>Topik</th>
-                                  <th>Timeline</th>
+                                  <th>Jadwal</th>
                                   <th></th>
                                 </tr>
                               </thead>
@@ -330,7 +330,7 @@ class DashGuru extends Component {
                             <table className="table table-striped">
                               <thead>
                                 <tr>
-                                  <th>Mata Pelajaran</th><th>Hari</th><th>Timeline</th><th>Kelas</th><th>Aksi</th>
+                                  <th>Mata Pelajaran</th><th>Hari</th><th>Jadwal</th><th>Kelas</th><th>Aksi</th>
                                 </tr>
                               </thead>
                               <tbody>

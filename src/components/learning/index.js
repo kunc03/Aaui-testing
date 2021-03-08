@@ -17,11 +17,11 @@ import Laporan from '../laporan/index';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
-  { name: 'List of Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran },
+  { name: 'Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran },
   { name: 'Curriculum', link: '/kurikulum', component: Curriculum },
-  { name: 'Registration', link: '/registrasi', component: Registrasi },
-  { name: 'Teaching Room', link: '/ruangan-mengajar', component: RuanganMengajar },
-  { name: 'Teaching Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
+  { name: 'Class', link: '/registrasi', component: Registrasi },
+  { name: 'Room', link: '/ruangan-mengajar', component: RuanganMengajar },
+  { name: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
   { name: 'Personnel', link: '/personalia', component: Personalia },
   { name: 'Report', link: '/laporan', component: Laporan },
   { name: 'Preference', link: '/kpi', component: Kpi },
