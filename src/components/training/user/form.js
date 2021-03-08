@@ -1,12 +1,27 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 class FormUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
         image:[],
-        imagePreview:'assets/images/no-profile-picture.jpg'
+        imagePreview:'assets/images/no-profile-picture.jpg',
+        training_company_id:'',
+        name:'',
+        born_place:'',
+        born_date:'',
+        gender:'',
+        identity:'',
+        tin:'',
+        address:'',
+        city:'',
+        phone:'',
+        email:'',
+        optionCompany:[],
+        companyId:''
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -20,14 +35,64 @@ class FormUser extends Component {
     }
   }
 
-  save(){
-      if (this.props.match.params.id){
-        toast.success('User edited')
-      }
-      else{
-        toast.success('New user added')
-      }
-      this.props.history.push(`/training/user`)
+  save = e => {
+    if (!this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+        toast.warning('Some field is required, please check your data.')
+    }
+    else{
+        if (this.props.match.params.id){
+          let form = {
+              training_company_id: this.state.training_company_id,
+              image: this.state.image,
+              name: this.state.name,
+              born_place: this.state.born_place,
+              born_date: this.state.born_date,
+              gender: this.state.gender,
+              identity: this.state.identity,
+              tin: this.state.tin,
+              address: this.state.address,
+              city: this.state.city,
+              phone: this.state.phone,
+              email: this.state.email,
+              created_by: Storage.get('user').data.user_id
+          }
+          API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then(res => {
+              if (res.data.error){
+                  toast.error('Error edit user')
+              }
+              else{
+                  toast.success('User edited')
+                  this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+              }
+          })
+        }
+        else{
+          let form = {
+              training_company_id: this.state.training_company_id,
+              image: this.state.image,
+              name: this.state.name,
+              born_place: this.state.born_place,
+              born_date: this.state.born_date,
+              gender: this.state.gender,
+              identity: this.state.identity,
+              tin: this.state.tin,
+              address: this.state.address,
+              city: this.state.city,
+              phone: this.state.phone,
+              email: this.state.email,
+              created_by: Storage.get('user').data.user_id
+          }
+          API.post(`${API_SERVER}v2/training/user`, form).then(res => {
+              if (res.data.error){
+                  toast.error('Error create user')
+              }
+              else{
+                  toast.success('New user added')
+                  this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+              }
+          })
+        }
+    }
   }
 
   handleChange = e => {
@@ -43,18 +108,74 @@ class FormUser extends Component {
           toast.warning('Image size cannot larger than 5MB')
         }
       }
+      else{
+          this.setState({[name]: value})
+      }
+  }
+
+  getUser(id){
+    API.get(`${API_SERVER}v2/training/user/read/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read user')
+        }
+        else{
+            this.setState({
+                training_company_id: res.data.result.training_company_id,
+                name: res.data.result.name,
+                born_place: res.data.result.born_place,
+                born_date: res.data.result.born_date,
+                gender: res.data.result.gender,
+                identity: res.data.result.identity,
+                tin: res.data.result.tin,
+                address: res.data.result.address,
+                city: res.data.result.city,
+                phone: res.data.result.phone,
+                email: res.data.result.email,
+                imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview
+            })
+        }
+    })
+  }
+
+  getUserData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          this.getCompany(this.state.companyId)
+        }
+    })
+  }
+
+  getCompany(id){
+    API.get(`${API_SERVER}v2/training/company/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read company')
+        }
+        else{
+            this.setState({optionCompany: res.data.result})
+        }
+    })
   }
 
   componentDidMount(){
-    if (this.props.disabledForm){
+    this.getUserData()
+    if (this.props.disabledForm && this.props.id){
         var inputs = document.getElementsByTagName("input");
+        var textareas = document.getElementsByTagName("textarea");
+        var selects = document.getElementsByTagName("select");
         for (var i = 0; i < inputs.length; i++) {
             inputs[i].disabled = true;
         }
-        var selects = document.getElementsByTagName("select");
+        for (var i = 0; i < textareas.length; i++) {
+            textareas[i].disabled = true;
+        }
         for (var i = 0; i < selects.length; i++) {
             selects[i].disabled = true;
         }
+        this.getUser(this.props.id);
+    }
+    else if (this.props.match.params.id){
+        this.getUser(this.props.match.params.id);
     }
   }
 
@@ -79,8 +200,20 @@ class FormUser extends Component {
                                         <div>
                                             <div className="card p-20">
                                                 <div className="row">
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Create New User</strong>
+                                                    <div className="col-sm-10 m-b-20">
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.props.id ? 'Detail' : this.props.match.params.id ? 'Edit' : 'Create New'} User</strong>
+                                                    </div>
+                                                    <div className="col-sm-2 m-b-20">
+                                                        {
+                                                        this.props.disabledForm &&
+                                                        <button
+                                                        onClick={this.props.goEdit}
+                                                        className="btn btn-icademy-primary float-right"
+                                                        style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                            <i className="fa fa-edit"></i>
+                                                            Edit
+                                                        </button>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="form-section">
@@ -99,27 +232,40 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="name">Name<required>*</required></label>
-                                                            <input type="text" name="name" id="name" placeholder="XXXX XXXX"/>
+                                                            <input type="text" name="name" id="name" placeholder="XXXX XXXX" value={this.state.name} onChange={this.handleChange}/>
                                                         </div>
                                                         <div className="form-field-top-label">
-                                                            <label for="date">Born Date</label>
-                                                            <input type="date" name="born" id="born"/>
+                                                            <label for="born_place">Born Place</label>
+                                                            <input type="text" name="born_place" id="born_place" placeholder="Jakarta" value={this.state.born_place} onChange={this.handleChange}/>
                                                         </div>
                                                         <div className="form-field-top-label">
-                                                            <label for="gender">Gender</label>
-                                                            <select name="gender" id="gender">
+                                                            <label for="born_date">Born Date<required>*</required></label>
+                                                            <input type="date" name="born_date" id="born_date" value={this.state.born_date} onChange={this.handleChange}/>
+                                                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="gender">Gender<required>*</required></label>
+                                                            <select name="gender" id="gender" onChange={this.handleChange}>
                                                                 <option value="">Select Gender</option>
-                                                                <option value="male">Male</option>
-                                                                <option value="male">Female</option>
+                                                                <option value="Male" selected={this.state.gender==='Male'}>Male</option>
+                                                                <option value="Female" selected={this.state.gender==='Female'}>Female</option>
                                                             </select>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-section">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Identification</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="identity">Identity Number<required>*</required></label>
-                                                            <input type="text" name="identity" id="identity" placeholder="1234567890"/>
+                                                            <label for="identity">Identity Card Number<required>*</required></label>
+                                                            <input type="text" name="identity" id="identity" placeholder="1234567890" value={this.state.identity} onChange={this.handleChange}/>
                                                         </div>
                                                         <div className="form-field-top-label">
-                                                            <label for="tax">Tax Identification Number</label>
-                                                            <input type="text" name="tax" id="tax" placeholder="1234567890"/>
+                                                            <label for="tin">Tax Identification Number</label>
+                                                            <input type="text" name="tin" id="tin" placeholder="1234567890" value={this.state.tin} onChange={this.handleChange}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -131,6 +277,14 @@ class FormUser extends Component {
                                                     </div>
                                                     <div className="row">
                                                         <div className="form-field-top-label">
+                                                            <label for="address">Address<required>*</required></label>
+                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder="Jl.Pahlawan Seribu, BSD City, Tangerang, 15322" value={this.state.address} onChange={this.handleChange}></textarea>
+                                                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="city">City<required>*</required></label>
+                                                            <input type="text" name="city" id="city" placeholder="Jakarta" value={this.state.city} onChange={this.handleChange}/>
+                                                        </div>
+                                                        {/* <div className="form-field-top-label">
                                                             <label for="street">Street<required>*</required></label>
                                                             <input type="text" name="street" id="street" placeholder="Jl. Pahlawan Seribu"/>
                                                         </div>
@@ -147,13 +301,13 @@ class FormUser extends Component {
                                                             <input type="text" name="district" id="district" placeholder="Serpong"/>
                                                         </div>
                                                         <div className="form-field-top-label">
-                                                            <label for="subdistrict">Sub-istrict</label>
+                                                            <label for="subdistrict">Sub-district</label>
                                                             <input type="text" name="subdistrict" id="subdistrict" placeholder="Lengkong Gudang"/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="postal">Postal Code</label>
                                                             <input type="text" name="postal" id="postal" placeholder="15327"/>
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </div>
                                                 <div className="form-section no-border">
@@ -165,11 +319,31 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="phone">Phone Number<required>*</required></label>
-                                                            <input type="text" name="phone" id="phone" placeholder="081234567890"/>
+                                                            <input type="number" name="phone" id="phone" placeholder="081234567890" value={this.state.phone} onChange={this.handleChange}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
-                                                            <input type="text" name="email" id="email" placeholder="email@host.com"/>
+                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange}/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-section no-border">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="training_company_id">Company Name<required>*</required></label>
+                                                            <select name="training_company_id" id="training_company_id" onChange={this.handleChange}>
+                                                                <option value="">Select Company</option>
+                                                                {
+                                                                    this.state.optionCompany.map(item=>
+                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
+                                                                    )
+                                                                }
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -177,7 +351,7 @@ class FormUser extends Component {
                                                     {
                                                     !this.props.disabledForm &&
                                                     <button
-                                                    onClick={this.save.bind(this)}
+                                                    onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>

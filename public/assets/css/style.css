@@ -12024,7 +12024,7 @@ div.code-toolbar > .toolbar span:hover {
   font-size:13px;
   font-weight:bold;
 }
-.form-field-top-label > input[type=text],input[type=date]{
+.form-field-top-label > input[type=text], input[type=date], input[type=number], textarea{
   padding:18px 20px;
   background: rgba(248,248,248,0.5);
   border: 1px solid #DDDDDD;
@@ -12032,7 +12032,7 @@ div.code-toolbar > .toolbar span:hover {
   float:left;
   clear:both;
 }
-.form-field-top-label > input[type=text]:disabled,input[type=date]:disabled{
+.form-field-top-label > input[type=text]:disabled, input[type=date]:disabled, input[type=number]:disabled, textarea:disabled{
   background: #c0c0c080;
 }
 .form-field-top-label > input[type=file]::-webkit-file-upload-button{
