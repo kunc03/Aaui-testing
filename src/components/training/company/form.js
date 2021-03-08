@@ -9,6 +9,7 @@ class FormCompany extends Component {
     this.state = {
         companyId:'',
         image:'',
+        logo:'',
         imagePreview:'assets/images/no-logo.jpg',
         name: '',
         address: '',
@@ -30,13 +31,13 @@ class FormCompany extends Component {
   }
 
   save = (e) =>{
+    e.preventDefault();
     if (!this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
         toast.warning('Some field is required, please check your data.')
     }
     else{
         if (this.props.match.params.id){
             let form = {
-                image: this.state.image,
                 name: this.state.name,
                 address: this.state.address,
                 telephone: this.state.telephone,
@@ -50,15 +51,29 @@ class FormCompany extends Component {
                     toast.error('Error edit company')
                 }
                 else{
-                    toast.success('Company edited')
-                    this.props.history.push(`/training/company/detail/${this.props.match.params.id}`)
+                    if (this.state.image){
+                        let formData = new FormData();
+                        formData.append("image", this.state.image)
+                        API.put(`${API_SERVER}v2/training/company/image/${this.props.match.params.id}`, formData).then(res2 => {
+                            if (res2.data.error){
+                                toast.warning('Company edited but fail to upload image')
+                            }
+                            else{
+                                toast.success('Company edited')
+                                this.props.history.push(`/training/company/detail/${this.props.match.params.id}`)
+                            }
+                        })
+                    }
+                    else{
+                        toast.success('Company edited')
+                        this.props.history.push(`/training/company/detail/${this.props.match.params.id}`)
+                    }
                 }
             })
         }
         else{
             let form = {
                 company_id: this.state.companyId,
-                image: this.state.image,
                 name: this.state.name,
                 address: this.state.address,
                 telephone: this.state.telephone,
@@ -72,8 +87,23 @@ class FormCompany extends Component {
                     toast.error('Error create company')
                 }
                 else{
-                    toast.success('New company added')
-                    this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
+                    if (this.state.image){
+                        let formData = new FormData();
+                        formData.append("image", this.state.image)
+                        API.put(`${API_SERVER}v2/training/company/image/${res.data.result.insertId}`, formData).then(res2 => {
+                            if (res2.data.error){
+                                toast.warning('Company edited but fail to upload image')
+                            }
+                            else{
+                                toast.success('New company added')
+                                this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
+                            }
+                        })
+                    }
+                    else{
+                        toast.success('New company added')
+                        this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
+                    }
                 }
             })
         }
@@ -83,16 +113,17 @@ class FormCompany extends Component {
   handleChange = e => {
       let {name, value} = e.target;
       if (name==='image'){
-        if (e.target.files[0].size <= 5000000) {
-            let image = {
-                image: e.target.files[0],
-                imagePreview: URL.createObjectURL(e.target.files[0])
+        if (e.target.files.length){
+            if (e.target.files[0].size <= 5000000) {
+                let image = {
+                    image: e.target.files[0],
+                    imagePreview: URL.createObjectURL(e.target.files[0])
+                }
+                this.setState(image)
+            } else {
+              e.target.value = null;
+              toast.warning('Image size cannot larger than 5MB and must be an image file')
             }
-            this.setState(image)
-            console.log('ALVIN STATE', this.state)
-        } else {
-          e.target.value = null;
-          toast.warning('Image size cannot larger than 5MB and must be an image file')
         }
       }
       else{

@@ -12017,12 +12017,16 @@ div.code-toolbar > .toolbar span:hover {
   padding-left:15px;
   margin-top:10px;
 }
-.form-field-top-label > label{
+.form-field-top-label > label, .label-sm{
   float:left;
   clear:both;
   color: #424242;
   font-size:13px;
   font-weight:bold;
+}
+.label-sm{
+  width:400px;
+  margin-bottom:10px;
 }
 .form-field-top-label > input[type=text], input[type=date], input[type=number], textarea{
   padding:18px 20px;
