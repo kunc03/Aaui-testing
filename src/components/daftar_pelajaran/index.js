@@ -454,35 +454,27 @@ class DaftarPelajaran extends React.Component {
                           <option value="2">Ujian</option>
                         </select>
                       </div>
-                      {
-                        this.state.jenis <= 0 &&
-                        <>
-                          <div className="col-sm-2">
-                            <label>Periode</label>
-                            <input required name="periode" value={this.state.periode} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" placeholder="Enter" className="form-control" />
-                          </div>
-                          <div className="col-sm-2">
-                            <label>Durasi</label>
-                            <input required name="durasi" value={this.state.durasi} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="number" placeholder="10, 20, 30, ..." className="form-control" />
-                          </div>
-                        </>
-                      }
+                      <div className="col-sm-2">
+                        <label>Periode</label>
+                        <input required name="periode" value={this.state.periode} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" placeholder="Enter" className="form-control" />
+                      </div>
+                      <div className="col-sm-2">
+                        <label>Durasi</label>
+                        <input required name="durasi" value={this.state.durasi} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="number" placeholder="10, 20, 30, ..." className="form-control" />
+                      </div>
                     </div>
+
                     {
                       this.state.jenis <= 0 &&
                       <>
-                        <div className="form-group">
-                          <label>Topik</label>
-                          <input name="topik" value={this.state.topik} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" placeholder="Enter" className="form-control" />
-                        </div>
                         <div className="form-group row">
+                          <div className="col-sm-6">
+                            <label>Topik</label>
+                            <input name="topik" value={this.state.topik} onChange={e => this.setState({ [e.target.name]: e.target.value })} type="text" placeholder="Enter" className="form-control" />
+                          </div>
                           <div className="col-sm-6">
                             <label>Tujuan</label>
                             <textarea name="tujuan" rows="3" value={this.state.tujuan} onChange={e => this.setState({ [e.target.name]: e.target.value })} placeholder="Enter" className="form-control" />
-                          </div>
-                          <div className="col-sm-6">
-                            <label>Deskripsi</label>
-                            <textarea name="deskripsi" rows="3" value={this.state.deskripsi} onChange={e => this.setState({ [e.target.name]: e.target.value })} placeholder="Enter" className="form-control" />
                           </div>
                         </div>
                         <div className="form-group">
@@ -491,6 +483,11 @@ class DaftarPelajaran extends React.Component {
                         </div>
                       </>
                     }
+
+                    <div className="form-group">
+                      <label>Deskripsi</label>
+                      <textarea name="deskripsi" rows="3" value={this.state.deskripsi} onChange={e => this.setState({ [e.target.name]: e.target.value })} placeholder="Enter" className="form-control" />
+                    </div>
 
                     <div className="form-group">
                       <button type="submit" className="btn btn-v2 btn-success mr-2">
@@ -507,10 +504,10 @@ class DaftarPelajaran extends React.Component {
                         <th>Sesi</th>
                         <th>Topik</th>
                         <th>Tujuan</th>
+                        <th>Files</th>
                         <th>Periode</th>
                         <th>Durasi</th>
                         <th>Deskripsi</th>
-                        <th>Files</th>
                         <th className="text-center">Aksi</th>
                       </tr>
                     </thead>
@@ -523,14 +520,14 @@ class DaftarPelajaran extends React.Component {
                                 <td>{item.sesi}</td>
                                 <td>{item.topik}</td>
                                 <td>{item.tujuan}</td>
-                                <td>{item.periode}</td>
-                                <td>{item.durasi} menit</td>
-                                <td>{item.deskripsi}</td>
                                 <td style={{ padding: '12px' }}>
                                   {
                                     item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
                                   }
                                 </td>
+                                <td>{item.periode}</td>
+                                <td>{item.durasi} menit</td>
+                                <td>{item.deskripsi}</td>
                                 <td className="text-center">
                                   <i style={{ cursor: 'pointer' }} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
                                   <i style={{ cursor: 'pointer' }} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
@@ -541,7 +538,10 @@ class DaftarPelajaran extends React.Component {
                             return (
                               <tr key={i}>
                                 <td>{item.sesi}</td>
-                                <td colSpan="6" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                                <td colSpan="3" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                                <td>{item.periode}</td>
+                                <td>{item.durasi} menit</td>
+                                <td>{item.deskripsi}</td>
                                 <td className="text-center">
                                   <i style={{ cursor: 'pointer' }} onClick={this.selectSilabus} data-id={item.id} className="fa fa-edit mr-2"></i>
                                   <i style={{ cursor: 'pointer' }} onClick={this.deleteSilabus} data-id={item.id} className="fa fa-trash"></i>
