@@ -15,7 +15,8 @@ import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
 
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
-import { Timer } from 'react-countdown-clock-timer';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+
 import SocketContext from '../../socket';
 
 import ChimeMeeting from '../meeting/chime'
@@ -56,12 +57,31 @@ class Mengajar extends React.Component {
     joinUrl: '',
     modalEnd: false,
 
-    startPertemuan: false,
+    startPertemuan: this.props.match.params.jenis === 'kuis' ? true : false,
     isSubmit: false,
 
     isTatapMuka: 0,
 
+    isStarted: 0,
+
     attendee: {},
+
+    waktuPengerjaan: 0
+  }
+
+  fetchSilabus() {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${this.state.jadwalId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+
+      this.setState({ pelajaranId: res.data.result.pelajaran_id })
+      API.get(`${API_SERVER}v2/silabus/pelajaran/${res.data.result.pelajaran_id}`).then(res => {
+        if(res.data.error) console.log(`Error: fetch overview`)
+
+        const { result } = res.data;
+        const filterKuis = result.filter(item => item.jenis === (this.state.jenis === 'kuis' ? 1 : 2));
+        this.setState({ waktuPengerjaan: (filterKuis.length ? filterKuis[0].durasi : 120) * 60 });
+      })
+    })
   }
 
   joinChime = async (e) => {
@@ -217,6 +237,12 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
+    if(localStorage.getItem('waktuPengerjaan')) {
+      this.setState({ waktuPengerjaan: parseInt(localStorage.getItem('waktuPengerjaan'))})
+    } else {
+      this.fetchSilabus();
+    }
+    
     if(this.state.role === "murid") {
       this.cekKehadiran(Storage.get('user').data.user_id)
     }
@@ -355,6 +381,10 @@ class Mengajar extends React.Component {
     this.setState({ isTatapMuka: nilai })
   }
 
+  getStarted = (nilai) => {
+    this.setState({ isStarted: nilai, startPertemuan: nilai })
+  }
+
   render() {
 
     console.log('state: ', this.state);
@@ -393,9 +423,9 @@ class Mengajar extends React.Component {
                     }
 
                     {
-                      this.state.role === "guru" && (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
+                      this.state.role === "guru" && (this.state.jenis === "ujian") &&
                       <button onClick={this.startPertemuan} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
-                        <i className={`fa fa-${this.state.startPertemuan ? 'pause':'play'}`}></i> {this.state.startPertemuan ? 'Stop' : 'Start'}
+                        <i className={`fa fa-${this.state.startPertemuan ? 'stop':'play'}`}></i> {this.state.startPertemuan ? 'Stop' : 'Start'}
                       </button>
                     }
                   </h4>
@@ -525,43 +555,92 @@ class Mengajar extends React.Component {
               (this.state.jenis === "kuis" || this.state.jenis === "ujian") &&
               <>
                 {
-                  this.state.role === "murid" && !this.state.isSubmit && this.state.startPertemuan &&
+                  this.state.role === "murid" && !this.state.isSubmit === true && this.state.startPertemuan === true &&
                   <div className="col-sm-12">
                     <div className="card">
                       <div className="card-header">
                         <h4 className="header-kartu">
                         Waktu Pengerjaan
-
+                        </h4>
                         {
-                          this.state.role === "murid" &&
-                          <Timer
-                            durationInSeconds={7200}
-                            formatted={true}
-
-                            onStart = {()=> {
-                              console.log('Triggered when the timer starts')
-                            }}
-
-                            onFinish = {()=> {
-                              console.log('Triggered when the timer finishes')
-                              this.props.socket.emit('send', {
-                                event: 'selesai',
-                                isStart: !this.state.startPertemuan,
-                                jadwalId: this.state.jadwalId,
-                                companyId: Storage.get('user').data.company_id
-                              })
-                            }}
-
+                          this.state.role === "murid" && this.state.waktuPengerjaan !== 0 &&
+                            <CountdownCircleTimer
+                              isPlaying
+                              duration={this.state.waktuPengerjaan}
+                              colors={[
+                                ['#004777', 0.33],
+                                ['#F7B801', 0.33],
+                                ['#A30000', 0.33],
+                              ]}
+                              renderAriaTime={(remainingTime, elapsedTime) => {
+                                localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
+                              }}
+                              children={({ remainingTime }) => {
+                                const hours = Math.floor(remainingTime / 3600)
+                                const minutes = Math.floor((remainingTime % 3600) / 60)
+                                const seconds = remainingTime % 60
+                              
+                                return `${hours}:${minutes}:${seconds}`
+                              }}
+                              size={80}
+                              strokeWidth={4}
+                              onComplete={() => {
+                                localStorage.removeItem('waktuPengerjaan')
+                                this.props.socket.emit('send', {
+                                  event: 'selesai',
+                                  isStart: !this.state.startPertemuan,
+                                  jadwalId: this.state.jadwalId,
+                                  companyId: Storage.get('user').data.company_id
+                                })
+                              }}
                             />
                         }
-
-                        </h4>
                       </div>
                     </div>
                   </div>
                 }
 
-                <Detail getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+                {
+                  this.state.role === "guru" && this.state.startPertemuan === true &&
+                  <div className="col-sm-12">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="header-kartu">
+                        Waktu Pengerjaan
+                        </h4>
+                        {
+                          this.state.waktuPengerjaan !== 0 &&
+                            <CountdownCircleTimer
+                              isPlaying
+                              duration={this.state.waktuPengerjaan}
+                              colors={[
+                                ['#004777', 0.33],
+                                ['#F7B801', 0.33],
+                                ['#A30000', 0.33],
+                              ]}
+                              renderAriaTime={(remainingTime, elapsedTime) => {
+                                localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
+                              }}
+                              children={({ remainingTime }) => {
+                                const hours = Math.floor(remainingTime / 3600)
+                                const minutes = Math.floor((remainingTime % 3600) / 60)
+                                const seconds = remainingTime % 60
+                              
+                                return `${hours}:${minutes}:${seconds}`
+                              }}
+                              size={80}
+                              strokeWidth={4}
+                              onComplete={() => {
+                                console.log('selesai')
+                              }}
+                            />
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <Detail getStarted={this.getStarted} getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
               </>
             }
 
