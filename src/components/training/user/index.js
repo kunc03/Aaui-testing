@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
@@ -7,53 +9,73 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
+import { Modal } from 'react-bootstrap';
 
 class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data : [
-            {
-                id : 1,
-                image : 'https://www.kelola.co.id/wp-content/uploads/2021/03/alvin-kurnia-kamal.png',
-                name : 'Alvin Kurnia Kamal',
-                company : 'PT Asuransi Kelola Teknologi Digital',
-                number : '23487519512332',
-                status : 'Active',
-            },
-            {
-                id : 2,
-                image : 'https://www.kelola.co.id/wp-content/uploads/2019/10/milzam.png',
-                name : 'Milzam Hibatullah',
-                company : 'PT Asuransi Kelola Teknologi Digital',
-                number : '23487519512333',
-                status : 'Active',
-            },
-            {
-                id : 3,
-                image : 'https://www.kelola.co.id/wp-content/uploads/2021/03/joaldrik-f-wawolumaja.png',
-                name : 'Joaldrik F. Wawolumaja',
-                company : 'Asuransi Infovesta Utama',
-                number : '23487519576964',
-                status : 'Active',
-            },
-        ],
-        filter:''
+        companyId:'',
+        data : [],
+        filter:'',
+        modalDelete:'',
+        deleteId:'',
     };
     this.goBack = this.goBack.bind(this);
   }
   
-  goBack() {
-    this.props.history.goBack();
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteId: '' })
+  }
+  
+  onClickHapus(id){
+    this.setState({modalDelete: true, deleteId: id})
   }
 
-  onClickHapus(){
-      toast.warning('Delete button clicked');
+  delete (id){
+    API.delete(`${API_SERVER}v2/training/user/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error delete user')
+        }
+        else{
+          this.getUserData();
+          this.closeModalDelete();
+          toast.warning('User deleted');
+        }
+    })
+  }
+
+  goBack() {
+    this.props.history.goBack();
   }
   
   filter = (e) => {
     e.preventDefault();
     this.setState({ filter: e.target.value });
+  }
+
+  getUserData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          this.getUser(this.state.companyId)
+        }
+    })
+  }
+
+  getUser(id){
+    API.get(`${API_SERVER}v2/training/user/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read company')
+        }
+        else{
+            this.setState({data: res.data.result})
+        }
+    })
+  }
+
+  componentDidMount(){
+    this.getUserData();
   }
 
   render() {
@@ -62,7 +84,7 @@ class User extends Component {
         name: 'Image',
         selector: 'image',
         sortable: true,
-        cell: row => <img height="36px" alt={row.name} src={row.image} />
+        cell: row => <img height="36px" alt={row.name} src={row.image ? row.image : 'assets/images/no-profile-picture.jpg'} />
       },
       {
         name: 'Name',
@@ -80,7 +102,7 @@ class User extends Component {
       },
       {
         name: 'Registration Number',
-        selector: 'number',
+        selector: 'id',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -102,6 +124,7 @@ class User extends Component {
             switch (eventKey){
               case 1 : this.props.history.push('/training/user/detail/'+row.id);break;
               case 2 : this.props.history.push('/training/user/edit/'+row.id);break;
+              case 3 : this.onClickHapus(row.id);break;
               default : this.props.history.push('/training/user');break;
             }
           }}
@@ -116,7 +139,7 @@ class User extends Component {
           <Dropdown.Menu>
             <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
             <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-            <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Delete</MenuItem>
+              <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
           </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
@@ -219,6 +242,24 @@ class User extends Component {
                     </div>
                 </div>
             </div>
+          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this user ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
         </div>
     )
   }

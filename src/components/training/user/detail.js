@@ -10,9 +10,12 @@ class DetailUser extends Component {
   goBack() {
     this.props.history.push('/training/user');
   }
+  goEdit() {
+    this.props.history.push(`/training/user/edit/${this.props.match.params.id}`);
+  }
   render() {
     return(
-        <FormUser disabledForm={true} goBack={this.goBack.bind(this)}/>
+        <FormUser disabledForm={true} id={this.props.match.params.id} goEdit={this.goEdit.bind(this)} goBack={this.goBack.bind(this)}/>
     )
   }
 }

@@ -53,13 +53,13 @@ class Overview extends React.Component {
               <table className="table table-striped">
                 <thead>
                   <tr>
-                    <th>Sesi</th>
-                    <th>Periode</th>
-                    <th>Durasi</th>
-                    <th>Topik</th>
-                    <th>Tujuan</th>
-                    <th>Deskripsi</th>
-                    <th>Files</th>
+                    <th style={{color: 'black'}} className="text-center">Sesi</th>
+                    <th style={{color: 'black'}} className="text-center">Topik</th>
+                    <th style={{color: 'black'}} className="text-center">Tujuan</th>
+                    <th style={{color: 'black'}} className="text-center">Files</th>
+                    <th style={{color: 'black'}} className="text-center">Periode</th>
+                    <th style={{color: 'black'}} className="text-center">Durasi</th>
+                    <th style={{color: 'black'}} className="text-center">Deskripsi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -69,23 +69,26 @@ class Overview extends React.Component {
                         return (
                             <tr key={i}>
                               <td>{item.sesi}</td>
-                              <td>{item.periode}</td>
-                              <td>{item.durasi} menit</td>
                               <td>{item.topik}</td>
                               <td>{item.tujuan}</td>
-                              <td>{item.deskripsi}</td>
-                              <td style={{padding: '12px'}}>
+                              <td style={{padding: '12px'}} className="text-center">
                                 {
-                                  item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                                  item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : '-'
                                 }
                               </td>
+                              <td>{item.periode}</td>
+                              <td>{item.durasi} menit</td>
+                              <td>{item.deskripsi}</td>
                             </tr>
                           )
                       } else {
                         return (
                           <tr key={i}>
                             <td>{item.sesi}</td>
-                            <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                            <td colSpan="3" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                            <td>{item.periode}</td>
+                            <td>{item.durasi} menit</td>
+                            <td>{item.deskripsi}</td>
                           </tr>
                         )
                       }
