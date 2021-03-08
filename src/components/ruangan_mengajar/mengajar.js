@@ -10,9 +10,10 @@ import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify'
 import { isMobile } from 'react-device-detect';
 import Detail from '../tugas/detail';
+
+import { PDFReader, MobilePDFReader } from 'reactjs-pdf-view';
 // Core viewer
 import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
-
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
@@ -535,11 +536,7 @@ class Mengajar extends React.Component {
                         {
                           this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id.split(',').map(item => (
                             <li className="list-group-item p-0">
-                              <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-                                <div style={{ height: '750px' }}>
-                                    <Viewer fileUrl={item} />
-                                </div>
-                              </Worker>
+                              <PDFReader url={item} scale={1} showAllPage={true} />
                             </li>
                           ))
                         }
