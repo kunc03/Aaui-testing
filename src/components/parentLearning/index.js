@@ -32,7 +32,7 @@ class GuruUjian extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${userIdMurid}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
-      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
 
@@ -309,7 +309,7 @@ class GuruUjian extends Component {
                                         <td>{item.jam_mulai}-{item.jam_selesai}</td>
                                         <td>{item.sesi}</td>
                                         <td>
-                                          <Link to={`/murid/detail-mapel/${item.jadwal_id}`}>
+                                          <Link>
                                             <i style={{ cursor: 'pointer' }} className="fa fa-search"></i>
                                           </Link>
                                         </td>
