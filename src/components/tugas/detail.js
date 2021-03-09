@@ -149,6 +149,7 @@ class UjianClass extends React.Component {
         salah: res.data.result.salah,
         score: res.data.result.score
       })
+      this.fetchSubmit();
 
       window.location.reload();
     })
@@ -260,12 +261,13 @@ class UjianClass extends React.Component {
               }
 
               {
-                (this.state.isStart === 1 && this.state.infoExam.is_started === 1) && this.state.role === "murid" && !this.state.isSubmit &&
+                (this.state.isStart) && this.state.role === "murid" && !this.state.isSubmit ?
                 <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
+                : null
               }
 
               {
-                this.state.isSubmit === 1 &&
+                this.state.isSubmit &&
                 <button onClick={this.lihatHasil} className="btn btn-v2 btn-primary mt-3">Lihat Hasil</button>
               }
 
