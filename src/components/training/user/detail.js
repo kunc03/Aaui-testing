@@ -15,7 +15,7 @@ class DetailUser extends Component {
   }
   render() {
     return(
-        <FormUser disabledForm={true} id={this.props.match.params.id} goEdit={this.goEdit.bind(this)} goBack={this.goBack.bind(this)}/>
+        <FormUser match={{params:{level: ''}}} disabledForm={true} id={this.props.match.params.id} goEdit={this.goEdit.bind(this)} goBack={this.goBack.bind(this)}/>
     )
   }
 }

@@ -35,7 +35,8 @@ class DetailCompany extends Component {
                               <div className="row">
                                   <div className="col-xl-12">
                                       <div>
-                                        <ListData trainingCompany={this.props.match.params.id}/>
+                                        <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="admin" import={true}/>
+                                        <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="user" import={true}/>
                                       </div>
                                   </div>
                               </div>

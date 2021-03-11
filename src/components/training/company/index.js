@@ -38,7 +38,7 @@ class Company extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Company'/>
                                         <div>
-                                          <ListData goTo={this.goTo.bind(this)}/>
+                                          <ListData goTo={this.goTo.bind(this)} level="user" import={true}/>
                                         </div>
                                     </div>
                                 </div>

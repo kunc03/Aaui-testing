@@ -20,8 +20,10 @@ class FormUser extends Component {
         city:'',
         phone:'',
         email:'',
+        level: '',
         optionCompany:[],
-        companyId:''
+        companyId:'',
+        disabledForm: this.props.disabledForm && this.props.id
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -59,7 +61,7 @@ class FormUser extends Component {
           }
           API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then(res => {
               if (res.data.error){
-                  toast.error('Error edit user')
+                  toast.error(`Error edit ${this.state.level} : ${res.data.result}`)
               }
               else{
                 if (this.state.image){
@@ -67,16 +69,16 @@ class FormUser extends Component {
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${this.props.match.params.id}`, formData).then(res2 => {
                         if (res2.data.error){
-                            toast.warning('Company edited but fail to upload image')
+                            toast.warning(`${this.state.level} edited but fail to upload image`)
                         }
                         else{
-                            toast.success('Company edited')
+                            toast.success(`${this.state.level} edited`)
                             this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                         }
                     })
                 }
                 else{
-                    toast.success('User edited')
+                    toast.success(`${this.state.level} edited`)
                     this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                 }
               }
@@ -96,11 +98,12 @@ class FormUser extends Component {
               city: this.state.city,
               phone: this.state.phone,
               email: this.state.email,
+              level: this.props.match.params.level,
               created_by: Storage.get('user').data.user_id
           }
           API.post(`${API_SERVER}v2/training/user`, form).then(res => {
               if (res.data.error){
-                  toast.error('Error create user')
+                  toast.error(`Error create ${this.state.level} : ${res.data.result}`)
               }
               else{
                 if (this.state.image){
@@ -108,16 +111,16 @@ class FormUser extends Component {
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${res.data.result.insertId}`, formData).then(res2 => {
                         if (res2.data.error){
-                            toast.warning('Company edited but fail to upload image')
+                            toast.warning(`${this.state.level} created but fail to upload image`)
                         }
                         else{
-                            toast.success('New user added')
+                            toast.success(`New ${this.state.level} added`)
                             this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                         }
                     })
                 }
                 else{
-                    toast.success('New user added')
+                    toast.success(`New ${this.state.level} added`)
                     this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                 }
               }
@@ -193,23 +196,15 @@ class FormUser extends Component {
   componentDidMount(){
     this.getUserData()
     if (this.props.disabledForm && this.props.id){
-        var inputs = document.getElementsByTagName("input");
-        var textareas = document.getElementsByTagName("textarea");
-        var selects = document.getElementsByTagName("select");
-        for (var i = 0; i < inputs.length; i++) {
-            inputs[i].disabled = true;
-        }
-        for (var i = 0; i < textareas.length; i++) {
-            textareas[i].disabled = true;
-        }
-        for (var i = 0; i < selects.length; i++) {
-            selects[i].disabled = true;
-        }
         this.getUser(this.props.id);
     }
     else if (this.props.match.params.id){
         this.getUser(this.props.match.params.id);
     }
+    this.setState({
+        level: this.props.match.params.level ? this.props.match.params.level : 'user',
+        training_company_id: this.props.match.params.company !== '0' ? this.props.match.params.company : ''
+    })
   }
 
   render() {
@@ -234,7 +229,7 @@ class FormUser extends Component {
                                             <div className="card p-20">
                                                 <div className="row">
                                                     <div className="col-sm-10 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.props.id ? 'Detail' : this.props.match.params.id ? 'Edit' : 'Create New'} User</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.props.id ? 'Detail' : this.props.match.params.id ? 'Edit' : 'Create New'} {this.state.level === 'admin' ? 'Admin' : 'User'}</strong>
                                                     </div>
                                                     <div className="col-sm-2 m-b-20">
                                                         {
@@ -261,23 +256,23 @@ class FormUser extends Component {
                                                             <label for="image" style={{cursor:'pointer', borderRadius:'50px', overflow:'hidden'}}>
                                                                 <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
                                                             </label>
-                                                            <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange}/>
+                                                            <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="name">Name<required>*</required></label>
-                                                            <input type="text" name="name" id="name" placeholder="XXXX XXXX" value={this.state.name} onChange={this.handleChange}/>
+                                                            <input type="text" name="name" id="name" placeholder="XXXX XXXX" value={this.state.name} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="born_place">Born Place</label>
-                                                            <input type="text" name="born_place" id="born_place" placeholder="Jakarta" value={this.state.born_place} onChange={this.handleChange}/>
+                                                            <input type="text" name="born_place" id="born_place" placeholder="Jakarta" value={this.state.born_place} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="born_date">Born Date<required>*</required></label>
-                                                            <input type="date" name="born_date" id="born_date" value={this.state.born_date} onChange={this.handleChange}/>
+                                                            <input type="date" name="born_date" id="born_date" value={this.state.born_date} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="gender">Gender<required>*</required></label>
-                                                            <select name="gender" id="gender" onChange={this.handleChange}>
+                                                            <select name="gender" id="gender" onChange={this.handleChange} disabled={this.state.disabledForm}>
                                                                 <option value="">Select Gender</option>
                                                                 <option value="Male" selected={this.state.gender==='Male'}>Male</option>
                                                                 <option value="Female" selected={this.state.gender==='Female'}>Female</option>
@@ -294,11 +289,11 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="identity">Identity Card Number<required>*</required></label>
-                                                            <input type="text" name="identity" id="identity" placeholder="1234567890" value={this.state.identity} onChange={this.handleChange}/>
+                                                            <input type="text" name="identity" id="identity" placeholder="1234567890" value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="tin">Tax Identification Number</label>
-                                                            <input type="text" name="tin" id="tin" placeholder="1234567890" value={this.state.tin} onChange={this.handleChange}/>
+                                                            <input type="text" name="tin" id="tin" placeholder="1234567890" value={this.state.tin} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -311,11 +306,11 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="address">Address<required>*</required></label>
-                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder="Jl.Pahlawan Seribu, BSD City, Tangerang, 15322" value={this.state.address} onChange={this.handleChange}></textarea>
+                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder="Jl.Pahlawan Seribu, BSD City, Tangerang, 15322" value={this.state.address} onChange={this.handleChange} disabled={this.state.disabledForm}></textarea>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="city">City<required>*</required></label>
-                                                            <input type="text" name="city" id="city" placeholder="Jakarta" value={this.state.city} onChange={this.handleChange}/>
+                                                            <input type="text" name="city" id="city" placeholder="Jakarta" value={this.state.city} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         {/* <div className="form-field-top-label">
                                                             <label for="street">Street<required>*</required></label>
@@ -352,11 +347,11 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="phone">Phone Number<required>*</required></label>
-                                                            <input type="number" name="phone" id="phone" placeholder="081234567890" value={this.state.phone} onChange={this.handleChange}/>
+                                                            <input type="number" name="phone" id="phone" placeholder="081234567890" value={this.state.phone} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
-                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange}/>
+                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -369,7 +364,7 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="training_company_id">Company Name<required>*</required></label>
-                                                            <select name="training_company_id" id="training_company_id" onChange={this.handleChange}>
+                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
                                                                 <option value="">Select Company</option>
                                                                 {
                                                                     this.state.optionCompany.map(item=>
