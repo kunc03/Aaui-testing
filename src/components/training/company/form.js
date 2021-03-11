@@ -92,7 +92,7 @@ class FormCompany extends Component {
                         formData.append("image", this.state.image)
                         API.put(`${API_SERVER}v2/training/company/image/${res.data.result.insertId}`, formData).then(res2 => {
                             if (res2.data.error){
-                                toast.warning('Company edited but fail to upload image')
+                                toast.warning('Company created but fail to upload image')
                             }
                             else{
                                 toast.success('New company added')

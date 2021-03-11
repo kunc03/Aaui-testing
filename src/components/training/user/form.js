@@ -20,6 +20,7 @@ class FormUser extends Component {
         city:'',
         phone:'',
         email:'',
+        level: '',
         optionCompany:[],
         companyId:''
     };
@@ -59,7 +60,7 @@ class FormUser extends Component {
           }
           API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then(res => {
               if (res.data.error){
-                  toast.error('Error edit user')
+                  toast.error(`Error edit ${this.state.level}`)
               }
               else{
                 if (this.state.image){
@@ -67,16 +68,16 @@ class FormUser extends Component {
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${this.props.match.params.id}`, formData).then(res2 => {
                         if (res2.data.error){
-                            toast.warning('Company edited but fail to upload image')
+                            toast.warning(`${this.state.level} edited but fail to upload image`)
                         }
                         else{
-                            toast.success('Company edited')
+                            toast.success(`${this.state.level} edited`)
                             this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                         }
                     })
                 }
                 else{
-                    toast.success('User edited')
+                    toast.success(`${this.state.level} edited`)
                     this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                 }
               }
@@ -96,11 +97,12 @@ class FormUser extends Component {
               city: this.state.city,
               phone: this.state.phone,
               email: this.state.email,
+              level: this.props.match.params.level,
               created_by: Storage.get('user').data.user_id
           }
           API.post(`${API_SERVER}v2/training/user`, form).then(res => {
               if (res.data.error){
-                  toast.error('Error create user')
+                  toast.error(`Error create ${this.state.level}`)
               }
               else{
                 if (this.state.image){
@@ -108,16 +110,16 @@ class FormUser extends Component {
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${res.data.result.insertId}`, formData).then(res2 => {
                         if (res2.data.error){
-                            toast.warning('Company edited but fail to upload image')
+                            toast.warning(`${this.state.level} created but fail to upload image`)
                         }
                         else{
-                            toast.success('New user added')
+                            toast.success(`New ${this.state.level} added`)
                             this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                         }
                     })
                 }
                 else{
-                    toast.success('New user added')
+                    toast.success(`New ${this.state.level} added`)
                     this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                 }
               }
@@ -210,6 +212,10 @@ class FormUser extends Component {
     else if (this.props.match.params.id){
         this.getUser(this.props.match.params.id);
     }
+    this.setState({
+        level: this.props.match.params.level ? this.props.match.params.level : 'user',
+        training_company_id: this.props.match.params.company !== '0' ? this.props.match.params.company : ''
+    })
   }
 
   render() {
@@ -234,7 +240,7 @@ class FormUser extends Component {
                                             <div className="card p-20">
                                                 <div className="row">
                                                     <div className="col-sm-10 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.props.id ? 'Detail' : this.props.match.params.id ? 'Edit' : 'Create New'} User</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.props.id ? 'Detail' : this.props.match.params.id ? 'Edit' : 'Create New'} {this.state.level === 'admin' ? 'Admin' : 'User'}</strong>
                                                     </div>
                                                     <div className="col-sm-2 m-b-20">
                                                         {
@@ -369,7 +375,7 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="training_company_id">Company Name<required>*</required></label>
-                                                            <select name="training_company_id" id="training_company_id" onChange={this.handleChange}>
+                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange}>
                                                                 <option value="">Select Company</option>
                                                                 {
                                                                     this.state.optionCompany.map(item=>

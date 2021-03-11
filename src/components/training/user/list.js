@@ -19,6 +19,7 @@ class User extends Component {
         filter:'',
         modalDelete:'',
         deleteId:'',
+        level:''
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -34,12 +35,12 @@ class User extends Component {
   delete (id){
     API.delete(`${API_SERVER}v2/training/user/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error delete user')
+            toast.error(`Error delete ${this.state.level}`)
         }
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.warning('User deleted');
+          toast.warning(`${this.state.level} deleted`);
         }
     })
   }
@@ -68,9 +69,9 @@ class User extends Component {
   }
 
   getUser(id){
-    API.get(`${API_SERVER}v2/training/user/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/training/user/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error read company')
+            toast.error(`Error read ${this.state.level}`)
         }
         else{
             this.setState({data: res.data.result})
@@ -79,9 +80,9 @@ class User extends Component {
   }
 
   getUserTrainingCompany(id){
-    API.get(`${API_SERVER}v2/training/user/training-company/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/training/user/training-company/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error read company')
+            toast.error(`Error read ${this.state.level}`)
         }
         else{
             this.setState({data: res.data.result})
@@ -91,6 +92,7 @@ class User extends Component {
 
   componentDidMount(){
     this.getUserData();
+    this.setState({level: this.props.level ? this.props.level : 'user'})
   }
 
   render() {
@@ -174,9 +176,9 @@ class User extends Component {
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>User List</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.state.level === 'admin' ? 'Admins' : 'Users'}</strong>
                                                         <Link
-                                                        to={`/training/user/create`}>
+                                                        to={`/training/user/create/${this.state.level}/${this.props.trainingCompany ? this.props.trainingCompany : '0'}`}>
                                                             <button
                                                             className="btn btn-icademy-primary float-right"
                                                             style={{ padding: "7px 8px !important", marginLeft: 14 }}>
@@ -206,7 +208,7 @@ class User extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this user ?</div>
+              <div>Are you sure want to delete this {this.state.level} ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
