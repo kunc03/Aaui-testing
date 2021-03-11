@@ -14,12 +14,16 @@ class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        userId:'',
         companyId:'',
         data : [],
         filter:'',
         modalDelete:'',
         deleteId:'',
-        level:''
+        level:'',
+        import: true,
+        file:'',
+        isUploading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -40,7 +44,7 @@ class User extends Component {
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.warning(`${this.state.level} deleted`);
+          toast.success(`${this.state.level} deleted`);
         }
     })
   }
@@ -57,7 +61,7 @@ class User extends Component {
   getUserData(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
-          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
           if (this.props.trainingCompany){
             this.getUserTrainingCompany(this.props.trainingCompany)
           }
@@ -89,10 +93,47 @@ class User extends Component {
         }
     })
   }
+  
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
+  }
+
+  uploadData = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('company_id', this.state.companyId);
+      form.append('level', this.state.level);
+      form.append('created_by', this.state.userId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/training/user/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Data import failed')
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            this.getUserData();
+            toast.success('Data import success')
+            this.setState({ isUploading: false, file: '' });
+          }
+        }
+      })
+    }
+  }
 
   componentDidMount(){
     this.getUserData();
-    this.setState({level: this.props.level ? this.props.level : 'user'})
+    this.setState({
+      level: this.props.level ? this.props.level : 'user',
+      import: this.props.import ? this.props.import : false
+    })
   }
 
   render() {
@@ -126,8 +167,16 @@ class User extends Component {
         },
       },
       {
-        name: 'Status',
-        selector: 'status',
+        name: 'Phone',
+        selector: 'phone',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Email',
+        selector: 'email',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -173,6 +222,43 @@ class User extends Component {
       )
     }
     return(
+      <div>
+        {
+          this.state.import &&
+                                            <div className="card p-20 main-tab-container">
+                                                <div className="row">
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Import {this.state.level === 'admin' ? 'Admins' : 'Users'}</strong>
+                                                    </div>
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <a href={`${API_SERVER}template-excel/template-import-training-user.xlsx`}>
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
+                                                    </div>
+                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
+                                                        <label for="file-import" style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                            <i
+                                                                className="fa fa-upload"
+                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                            />
+                                                            {this.state.isUploading ? 'Uploading...' : 'Upload File'}
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+        }
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -220,6 +306,7 @@ class User extends Component {
             </Modal.Footer>
           </Modal>
                                             </div>
+      </div>
     )
   }
 }

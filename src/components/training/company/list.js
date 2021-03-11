@@ -14,11 +14,14 @@ class Company extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        userId: '',
         companyId: '',
         data : [],
         filter:'',
         modalDelete: false,
-        deleteId: ''
+        deleteId: '',
+        file:'',
+        isUploading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -43,7 +46,7 @@ class Company extends Component {
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.warning('Company deleted');
+          toast.success('Company deleted');
         }
     })
   }
@@ -56,7 +59,7 @@ class Company extends Component {
   getUserData(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
-          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
           this.getCompany(this.state.companyId)
         }
     })
@@ -75,6 +78,39 @@ class Company extends Component {
 
   componentDidMount(){
     this.getUserData();
+  }
+
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
+  }
+
+  uploadData = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('company_id', this.state.companyId);
+      form.append('created_by', this.state.userId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/training/company/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Data import failed')
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            this.getCompany(this.state.companyId)
+            toast.success('Data import success')
+            this.setState({ isUploading: false, file: '' });
+          }
+        }
+      })
+    }
   }
 
   render() {
@@ -170,29 +206,34 @@ class Company extends Component {
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Import Company</strong>
                                                     </div>
                                                     <div className="col-sm-12 m-b-20">
-                                                        <button className="button-bordered">
-                                                            <i
-                                                                className="fa fa-download"
-                                                                style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
-                                                            />
-                                                            Download Template
-                                                        </button>
+                                                        <a href={`${API_SERVER}template-excel/template-import-training-company.xlsx`}>
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
                                                     </div>
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-13" style={{color:'#000'}}>Select a file</strong>
                                                     </div>
-                                                    <div className="col-sm-12">
-                                                        <button className="button-bordered-grey">
-                                                            Choose
-                                                        </button>
-                                                        <button className="button-gradient-blue" style={{marginLeft:20}}>
+                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
+                                                        <label for="file-import" style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
                                                             <i
                                                                 className="fa fa-upload"
                                                                 style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
                                                             />
-                                                            Upload File
+                                                            {this.state.isUploading ? 'Uploading...' : 'Upload File'}
                                                         </button>
-                                                    </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                             <div className="card p-20 main-tab-container">
