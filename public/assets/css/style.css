@@ -12068,4 +12068,5 @@ required {
 }
 .pcoded-main-container > .pcoded-main-container{
   margin-left:0px !important;
+  min-height:0px !important;
 }

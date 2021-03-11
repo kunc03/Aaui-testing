@@ -40,38 +40,7 @@ class User extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='User'/>
                                         <div>
-                                            <div className="card p-20 main-tab-container">
-                                                <div className="row">
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Import User</strong>
-                                                    </div>
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <button className="button-bordered">
-                                                            <i
-                                                                className="fa fa-download"
-                                                                style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
-                                                            />
-                                                            Download Template
-                                                        </button>
-                                                    </div>
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-13" style={{color:'#000'}}>Select a file</strong>
-                                                    </div>
-                                                    <div className="col-sm-12">
-                                                        <button className="button-bordered-grey">
-                                                            Choose
-                                                        </button>
-                                                        <button className="button-gradient-blue" style={{marginLeft:20}}>
-                                                            <i
-                                                                className="fa fa-upload"
-                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
-                                                            />
-                                                            Upload File
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <ListData goTo={this.goTo.bind(this)}/>
+                                            <ListData goTo={this.goTo.bind(this)} import={true}/>
                                         </div>
                                     </div>
                                 </div>
