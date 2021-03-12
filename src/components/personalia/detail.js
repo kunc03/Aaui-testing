@@ -1,6 +1,7 @@
 import React from 'react';
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
+import axios from 'axios'
 
 import { toast } from "react-toastify";
 import { Link } from 'react-router-dom';
@@ -21,6 +22,7 @@ class PersonaliaDetail extends React.Component {
     email: '',
 
     parents: [],
+    userId: '',
     parentsId: '',
     muridId: '',
     noKtp: '',
@@ -31,6 +33,20 @@ class PersonaliaDetail extends React.Component {
     alamatOrtu: '',
     teleponOrtu: '',
     emailOrtu: '',
+
+    userParents: [],
+    exists: false
+  }
+
+  fetchUsers() {
+    API.get(`${API_SERVER}v2/parents/cek-user/${Storage.get('user').data.company_id}`).then(response => {
+      let guru = response.data.result.filter(item => item.id == null)
+
+      this.setState({ userParents: guru })
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   simpanData = e => {
@@ -90,9 +106,18 @@ class PersonaliaDetail extends React.Component {
         alamat: this.state.alamatOrtu,
         telepon: this.state.teleponOrtu,
         email: this.state.emailOrtu,
+        userId: this.state.userId
       }
 
-      API.post(`${API_SERVER}v2/parents/create`, form).then(res => {
+      let url = '';
+      if(this.state.exists) {
+        url = `${API_SERVER}v2/murid/create?exists=true`
+      }
+      else {
+        url = `${API_SERVER}v2/murid/create`;
+      }
+
+      API.post(url, form).then(res => {
         if (res.data.error) toast.warning("Error update data");
 
         toast.success("Data berhasil ditambahkan")
@@ -128,6 +153,7 @@ class PersonaliaDetail extends React.Component {
 
   clearFormOrtu() {
     this.setState({
+      userId: '',
       parentsId: '',
       noKtp: '',
       namaOrtu: '',
@@ -165,9 +191,25 @@ class PersonaliaDetail extends React.Component {
         this.setState({
           parents: res.data.result
         })
+        this.fetchUsers()
       })
     })
 
+  }
+
+  showName = e => {
+    let copy = [...this.state.userParents];
+    let getName = copy.filter(item => item.user_id == e.target.value)
+    this.setState({
+      userId: getName.length ? getName[0].user_id : '',
+      noInduk: getName.length ? getName[0].identity : '',
+      nama: getName.length ? getName[0].name : '',
+      tempatLahir: '',
+      tanggalLahir: '',
+      jenisKelamin: '',
+      email: getName.length ? getName[0].email : '',
+      exists: getName.length ? true : false
+    })
   }
 
   render() {
@@ -265,6 +307,20 @@ class PersonaliaDetail extends React.Component {
             <div className="card-body" style={{ padding: '5px' }}>
               <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanDataOrtu}>
+                <div className="form-group row">
+                  <label className="col-sm-2 col-form-label text-right">Choose</label>
+                  <div className="col-sm-4">
+                    <select onChange={this.showName} class="form-control">
+                      <option value="" selected disabled>Find parent if user exists</option>
+                      {
+                        this.state.userParents.map((item,i) => (
+                          <option value={item.user_id}>{item.name}</option>
+                        ))
+                      }
+                      <option value="tambah">Add new</option>
+                    </select>
+                  </div>
+                </div>
                 <div className="form-group row">
                   <label className="col-sm-2 col-form-label text-right">ID card number</label>
                   <div className="col-sm-4">

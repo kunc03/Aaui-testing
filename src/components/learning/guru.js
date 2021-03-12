@@ -13,6 +13,8 @@ import GuruKPI from '../guruKPI/index';
 import Overview from '../pelajaran/overview';
 import Silabus from '../pelajaran/silabus';
 import Chapter from '../pelajaran/chapter';
+import Materi from '../pelajaran/materi';
+
 import Kuis from '../pelajaran/kuis';
 import KuisDetail from '../pelajaran/kuisdetail';
 import Tugas from '../pelajaran/tugas';
@@ -28,9 +30,9 @@ const TugasDetailComponent = props => (<KuisDetail {...props} tipe="tugas" />);
 
 const titleTabs = [
   { name: 'Overview', link: '/pelajaran', component: Overview },
-  { name: 'Silabus', link: '/silabus', component: Silabus },
   { name: 'Murid', link: '/murid', component: Murid },
-  { name: 'Sesi', link: '/chapter', component: Chapter },
+  // { name: 'Silabus', link: '/silabus', component: Silabus },
+  { name: 'Sesi', link: '/chapter', component: Materi },
   { name: 'Tugas', link: '/tugas', component: Tugas },
   { name: 'Kuis', link: '/kuis', component: KuisComponent },
   { name: 'Ujian', link: '/ujian', component: UjianComponent },
