@@ -11,7 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { Link } from 'react-router-dom';
 
-import { Modal, OverlayTrigger, Tooltip, Tabs, Tab, Button } from 'react-bootstrap';
+import { Modal, OverlayTrigger, Tooltip, Tabs, Tab, Button, Spinner } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
@@ -23,11 +23,28 @@ class Overview extends React.Component {
     jadwalId: this.props.match.params.id,
     pelajaranId: '',
 
-    silabus: []
+    silabus: [],
+
+    materi: Math.random().toString(36),
+    files: null,
+
+    tugas: [],
+    setTugas: [],
+
+    kuis: [],
+    setKuis: [],
+
+    ujian: [],
+    setUjian: [],
+
   };
 
   componentDidMount() {
     this.fetchOverview();
+
+    this.fetchPenugasan('tugas');
+    this.fetchPenugasan('kuis');
+    this.fetchPenugasan('ujian');
   }
 
   fetchOverview() {
@@ -72,27 +89,11 @@ class Overview extends React.Component {
     API.put(`${API_SERVER}v2/pelajaran/chapter/update/${item[0].chapter_id}`, form).then(res => {
       if (res.data.error) toast.warning(`Error: create chapter`)
 
-      // if (this.state.files) {
-      //   this.uplaodFiles(this.state.id)
-      // }
-
-      toast.success(`Materi berhasil diupdate.`)
-      this.fetchOverview()
-    })
-  }
-
-  uplaodFiles(id) {
-    let form = new FormData();
-    for (var i = 0; i < this.state.files.length; i++) {
-      form.append('files', this.state.files[i]);
-    }
-
-    API.put(`${API_SERVER}v2/pelajaran/chapter/files/${id}`, form).then(res => {
-      if (res.data.error) {
-        toast.warning(`Error: upload files`)
+      if (this.state.files) {
+        this.uplaodFiles(item[0].chapter_id, this.state.files)
       } else {
-        toast.success(`Attachments berhasil di upload.`);
-        this.setState({ attachments: res.data.result.split(','), materi: Math.random().toString(36), files: null })
+        toast.success(`Materi berhasil diupdate.`)
+        this.fetchOverview()
       }
     })
   }
@@ -118,25 +119,75 @@ class Overview extends React.Component {
     API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
       if (res.data.error) toast.warning(`Error: create chapter`)
 
-      // if (this.state.files) {
-      //   this.uplaodFiles(res.data.result.id)
-      // }
-      //
-      // this.fetchChapters();
-      // this.fetchOneChapter(res.data.result.id)
-      toast.success(`Materi berhasil disimpan.`)
-      this.fetchOverview()
+      if (this.state.files) {
+        this.uplaodFiles(res.data.result.id, this.state.files)
+      } else {
+        toast.success(`Materi berhasil disimpan.`)
+        this.fetchOverview()
+      }
+    })
+  }
+
+  uplaodFiles(id, files) {
+    let form = new FormData();
+    for (var i = 0; i < files.length; i++) {
+      form.append('files', files[i]);
+    }
+
+    API.put(`${API_SERVER}v2/pelajaran/chapter/files/${id}`, form).then(res => {
+      if (res.data.error) {
+        toast.warning(`Error: upload files`)
+      } else {
+        toast.success(`Materi dan Attachments berhasil di upload.`);
+        this.fetchOverview()
+        this.setState({ materi: Math.random().toString(36), files: null })
+      }
+    })
+  }
+
+  fetchPenugasan(tipe) {
+    API.get(`${API_SERVER}v2/pelajaran/${tipe}/all/${this.state.jadwalId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch ${tipe}`)
+
+      let temp = [];
+      res.data.result.map((item) => {
+        let obj = {value: item.id, label: item.title}
+        temp.push(obj)
+        return true
+      })
+      this.setState({ [tipe]: temp })
+    })
+  }
+
+  addPenugasan(tipe, event, index) {
+    let cc = [...this.state.silabus].filter((item, i) => i === index);
+    if(cc[0].chapter_id) {
+      let form = {
+        chapterId: cc[0].chapter_id,
+        examId: tipe === 'tugas' ? this.state.setTugas[0] : this.state.setKuis[0]
+      };
+      API.post(`${API_SERVER}v2/chapter/exam`, form).then(res => {
+        if(res.status === 200) {
+          this.fetchOverview()
+        }
+      })
+    }
+    else {
+      toast.info(`Upload materi terlebih dahulu, setelah itu bisa memilih tugas ataupun kuis.`)
+    }
+    this.setState({ setTugas: [], setKuis: [] })
+  }
+
+  deletePenugasan(id) {
+    API.delete(`${API_SERVER}v2/chapter/exam/${id}`).then(res => {
+      if(res.status === 200) {
+        this.fetchOverview()
+      }
     })
   }
 
   render() {
     console.log('state: ', this.state);
-
-    const renderTooltip = (props) => (
-      <Tooltip id="button-tooltip" {...props}>
-        {props.desc}
-      </Tooltip>
-    );
 
     return (
       <div className="row mt-3">
@@ -145,7 +196,7 @@ class Overview extends React.Component {
             <div className="card-header">
               <h4 className="f-w-900 f-18 fc-blue">Silabus</h4>
             </div>
-            <div className="card-body">
+            <div className="card-body p-1">
 
               <table className="table table-bordered" id="myTableSilabus">
                 <thead>
@@ -283,9 +334,9 @@ class Overview extends React.Component {
                                         </ul>
 
                                         <div className="form-group mt-4">
-                                          <button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }} type="button" className="btn btn-v2 btn-success">
-                                            <i className="fa fa-save"></i> Simpan
-                                          </button>
+                                          <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
+                                            <Spinner animation="border" /> Simpan
+                                          </Button>
                                         </div>
 
                                       </div>
@@ -293,8 +344,23 @@ class Overview extends React.Component {
                                   </Tab>
 
                                   <Tab eventKey="tugas" title="Tugas" style={{padding: '8px'}}>
-                                    <Button variant="primary">Tambah Tugas</Button>
-                                    <table className="table mt-2">
+                                    <div className="form-group row">
+                                      <div className="col-sm-4">
+                                        <MultiSelect
+                                          mode="single"
+                                          id="tugasSingle"
+                                          options={this.state.tugas}
+                                          value={this.state.setTugas}
+                                          onChange={setTugas => this.setState({ setTugas })}
+                                        />
+                                      </div>
+                                      <div className="col-sm-4">
+                                        <Button onClick={e => this.addPenugasan('tugas', e, i)} variant="primary" size="sm">Tambah Tugas</Button>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/tugas/${this.state.jadwalId}`}>Buat Tugas</Link>
+                                      </div>
+                                    </div>
+
+                                    <table className="table mt-2 table-bordered">
                                       <tr>
                                         <th>No</th>
                                         <th>Judul</th>
@@ -302,38 +368,213 @@ class Overview extends React.Component {
                                         <th>End</th>
                                         <th>Action</th>
                                       </tr>
+                                      {
+                                        item.tugas.map((row, j) => (
+                                          <tr>
+                                            <td>{j+1}</td>
+                                            <td><Link to={`/guru/detail-tugas/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
+                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
+                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
+                                          </tr>
+                                        ))
+                                      }
                                     </table>
                                   </Tab>
 
                                   <Tab eventKey="kuis" title="Kuis" style={{padding: '8px'}}>
-                                    <Button variant="primary">Tambah Kuis</Button>
-                                      <table className="table mt-2">
-                                        <tr>
-                                          <th>No</th>
-                                          <th>Judul</th>
-                                          <th>Start</th>
-                                          <th>End</th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </table>
+                                    <div className="form-group row">
+                                      <div className="col-sm-4">
+                                        <MultiSelect
+                                          mode="single"
+                                          id="kuisSingle"
+                                          options={this.state.kuis}
+                                          value={this.state.setKuis}
+                                          onChange={setKuis => this.setState({ setKuis })}
+                                        />
+                                      </div>
+                                      <div className="col-sm-4">
+                                        <Button onClick={e => this.addPenugasan('kuis', e, i)} variant="primary" size="sm">Tambah Kuis</Button>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/kuis/${this.state.jadwalId}`}>Buat Kuis</Link>
+                                      </div>
+                                    </div>
+                                    <table className="table mt-2 table-bordered">
+                                      <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Action</th>
+                                      </tr>
+                                      {
+                                        item.kuis.map((row, j) => (
+                                          <tr>
+                                            <td>{j+1}</td>
+                                            <td><Link to={`/guru/detail-kuis/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
+                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
+                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
+                                          </tr>
+                                        ))
+                                      }
+                                    </table>
                                   </Tab>
                                 </Tabs>
                               </td>
                             </tr>
                           </>
                         )
-                      } else {
+                      }
+                      else {
                         return (
-                          <tr key={i}>
-                            <td className="text-center">{item.sesi}</td>
-                            <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                            <td className="text-center">-</td>
-                            <td className="text-center">{item.periode}</td>
-                            <td className="text-center">{item.durasi} menit</td>
-                            <td className="text-center">-</td>
-                          </tr>
+                          <>
+                            <tr key={i} style={{ cursor: 'pointer' }} data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">
+                              <td className="text-center">{item.sesi}</td>
+                              <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                              <td className="text-center">{item.periode}</td>
+                              <td className="text-center">{item.durasi} menit</td>
+                              <td className="text-center">
+                                {
+                                  item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : '-'
+                                }
+                              </td>
+                            </tr>
+                            <tr className="collapse" id={`collapse${i}`}>
+                              <td colSpan="7">
+                                <Tabs defaultActiveKey="materi" id="uncontrolled-tab-example">
+                                  <Tab eventKey="materi" title="Materi" style={{padding: '8px'}}>
+                                    <form className="row">
+                                      <div className="col-sm-8 bordered">
+                                        <div className="form-group">
+                                          <input required value={item.chapter_title} name="chapter_title" onChange={e => this.handleDynamicInput(e, i)} type="text" className="form-control" placeholder="Title" />
+                                        </div>
+                                        <div className="form-group">
+                                          <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
+                                          <Editor
+                                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                            initialValue={item.chapter_body}
+                                            value={item.chapter_body}
+                                            init={{
+                                              height: 460,
+                                              menubar: false,
+                                              convert_urls: false,
+                                              image_class_list: [
+                                                {title: 'None', value: ''},
+                                                {title: 'Responsive', value: 'img-responsive'},
+                                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                              ],
+                                              file_browser_callback_types: 'image file media',
+                                              file_picker_callback: function (callback, value, meta) {
+                                                // console.log(meta)
+                                                if (meta.filetype == 'image') {
+                                                  var input = document.getElementById('my-file');
+                                                  input.click();
+                                                  input.onchange = function () {
+
+                                                    var dataForm = new FormData();
+                                                    dataForm.append('file', this.files[0]);
+
+                                                    window.$.ajax({
+                                                      url: `${API_SERVER}v2/media/upload`,
+                                                      type: 'POST',
+                                                      data: dataForm,
+                                                      processData: false,
+                                                      contentType: false,
+                                                      success: (data)=>{
+                                                        callback(data.result.url);
+                                                        this.value = '';
+                                                      }
+                                                    })
+                                                  };
+                                                }
+                                              },
+                                              plugins: [
+                                                "advlist autolink lists link image charmap print preview anchor",
+                                                "searchreplace visualblocks code fullscreen",
+                                                "insertdatetime media table paste code help wordcount"
+                                              ],
+                                              toolbar:
+                                                // eslint-disable-next-line no-multi-str
+                                                "undo redo | insertfile formatselect | bold italic backcolor | \
+                                               alignleft aligncenter alignright alignjustify | image media | \
+                                                bullist numlist outdent indent | removeformat | help"
+                                            }}
+                                            onEditorChange={e => this.handleDynamicInput(e, i)}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="col-sm-4 bordered">
+                                        <div className="form-group">
+                                          <label>Date</label><br/>
+                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                        </div>
+                                        <div className="form-group">
+                                          <label className="mb-3">Webcam</label><br/>
+                                          <div class="form-check form-check-inline">
+                                            <input checked={item.tatapmuka == "1"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                                            <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                          </div>
+                                          <div class="form-check form-check-inline">
+                                            <input checked={item.tatapmuka == "0"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                                            <label class="form-check-label" for="inlineRadio2">No</label>
+                                          </div>
+                                        </div>
+
+                                        <div className="form-group mt-4">
+                                          <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
+                                            <Spinner animation="border" /> Simpan
+                                          </Button>
+                                        </div>
+
+                                      </div>
+                                    </form>
+                                  </Tab>
+
+                                  <Tab eventKey={`${item.jenis === 1 ? 'kuis' : 'ujian'}`} title={`${item.jenis === 1 ? 'Kuis' : 'Ujian'}`} style={{padding: '8px'}}>
+                                    <div className="form-group row">
+                                      <div className="col-sm-4">
+                                        <MultiSelect
+                                          mode="single"
+                                          id="ujianSingle"
+                                          options={item.jenis == 1 ? this.state.kuis : this.state.ujian}
+                                          value={item.jenis == 1 ? this.state.setKuis : this.state.setUjian}
+                                          onChange={set => this.setState({ [item.jenis === 1 ? 'setKuis' : 'setUjian']: set })}
+                                        />
+                                      </div>
+                                      <div className="col-sm-4">
+                                        <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+                                      </div>
+                                    </div>
+                                    <table className="table mt-2 table-bordered">
+                                      <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Action</th>
+                                      </tr>
+                                      {
+                                        item.kuis.map((row, j) => (
+                                          <tr>
+                                            <td>{j+1}</td>
+                                            <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
+                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
+                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
+                                          </tr>
+                                        ))
+                                      }
+                                    </table>
+                                  </Tab>
+
+                                </Tabs>
+                              </td>
+                            </tr>
+                          </>
                         )
                       }
+
                     })
                   }
                   </tbody>

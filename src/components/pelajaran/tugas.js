@@ -295,21 +295,24 @@ class Tugas extends React.Component {
                 </div>
                 <div className="card-body">
                   <form>
-                    <div className="form-group">
-                      <label>Nama {this.state.tipe}</label>
-                      <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
+                    <div className="form-group row">
+                      <div className="col-sm-8">
+                        <label>Nama {this.state.tipe}</label>
+                        <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
+                      </div>
+                      <div className="col-sm-4">
+                        <label className="mb-3">Jenis Tugas</label><br/>
+                        <div class="form-check form-check-inline">
+                          <input checked={this.state.tatapmuka == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                          <label class="form-check-label" for="inlineRadio1">Upload</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input checked={this.state.tatapmuka == "0"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                          <label class="form-check-label" for="inlineRadio2">Jawab Langsung</label>
+                        </div>
+                      </div>
                     </div>
-                    <div className="form-group">
-                      <label>{this.state.tipe.charAt(0).toUpperCase() + this.state.tipe.slice(1)} akan dilaksanakan pada sesi</label>
-                      <select value={this.state.quizAt} onChange={e => this.setState({ [e.target.name]: e.target.value })} name="quizAt" className="form-control col-sm-6">
-                        <option value="" disabled selected>Pilih</option>
-                        {
-                          this.state.chapters.map(item => (
-                            <option value={item.id}>{item.title}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
+
                     <div className="form-group row">
                       <div className="col-sm-4">
                         <label>Tanggal Mulai</label>
@@ -339,10 +342,10 @@ class Tugas extends React.Component {
 
             <div className="col-sm-12">
               <div className="card">
-                <div className="card-header header-kartu">
+                <div className="card-header header-kartu" data-toggle="collapse" data-target="#collapseImport">
                   2. Import Pertanyaan
                 </div>
-                <div className="card-body">
+                <div className="card-body collapse" id="collapseImport">
                   <form onSubmit={this.submitImport} role="form" className="form-vertical">
                     <div className="form-group row">
                       <div className="col-sm-3">
@@ -370,7 +373,7 @@ class Tugas extends React.Component {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-header header-kartu">
-                  3. Semua Pertanyaan
+                  3. List Pertanyaan
                 </div>
                 <div className="card-body">
                   {
