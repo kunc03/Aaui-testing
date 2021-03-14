@@ -12070,3 +12070,23 @@ required {
   margin-left:0px !important;
   min-height:0px !important;
 }
+
+.button-table-plus{
+  padding:2px 8px;
+  border:none;
+  background:#0091ff;
+  color:#FFF;
+  border-radius:4px;
+  margin:4px;
+  cursor:pointer;
+}
+
+.button-table-min{
+  padding:2px 8px;
+  border:1px solid #0091ff;
+  background:#FFF;
+  color:#0091ff;
+  border-radius:4px;
+  margin:4px;
+  cursor:pointer;
+}
