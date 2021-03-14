@@ -46,5 +46,11 @@ export const Menu = [
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
         route: '/training/membership'
+    },
+    {
+        label: 'Settings',
+        icon: 'settings.png',
+        iconActive: 'settings-active.png',
+        route: '/training/settings'
     }
 ]
