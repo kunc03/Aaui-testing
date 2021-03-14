@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { toast } from "react-toastify";
 import FormCompany from "./form";
+import Allocation from "./allocation";
 import ListData from "../user/list"
 
 class DetailCompany extends Component {
@@ -34,9 +34,18 @@ class DetailCompany extends Component {
                           <div className="page-wrapper">
                               <div className="row">
                                   <div className="col-xl-12">
-                                      <div>
-                                        <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="admin" import={true}/>
-                                        <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="user" import={true}/>
+                                      <div className="row">
+                                        <div className="col-sm-6">
+                                          <Allocation trainingCompany={this.props.match.params.id} />
+                                        </div>
+                                        <div className="col-sm-6">
+                                          <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="admin" import={true}/>
+                                          <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.match.params.id} level="user" import={true}/>
+                                        </div>
+                                      </div>
+                                      <div className="row">
+                                        <div className="col-sm-12">
+                                        </div>
                                       </div>
                                   </div>
                               </div>
