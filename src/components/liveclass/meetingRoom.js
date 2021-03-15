@@ -1035,7 +1035,7 @@ export default class MeetingRoom extends Component {
                               </Tooltip>
                               <Tooltip title="Task & Timeline" arrow placement="top">
 
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-task.svg`}
                                     alt=""
@@ -1046,7 +1046,7 @@ export default class MeetingRoom extends Component {
                               </Tooltip>
                               <Tooltip title="File Show" arrow placement="top">
 
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false })} className="float-right m-b-10">
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false })} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-file.svg`}
                                     alt=""
