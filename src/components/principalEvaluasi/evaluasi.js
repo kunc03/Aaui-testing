@@ -103,7 +103,7 @@ class Evaluasi extends Component {
     console.log('state: ', this.state)
     API.post(`${API_SERVER}v2/principal/upload`, form).then(res => {
       console.log('res: ', res.data);
-      if(res.data.error) toast.warning(`Error: upload KPI`)
+      if (res.data.error) toast.warning(`Error: upload KPI`)
 
       toast.success(`Berhasil upload KPI Guru`);
       this.clearFilter();
@@ -155,8 +155,8 @@ class Evaluasi extends Component {
 
     API.get(`${API_SERVER}v2/guru/nilai-kelas/${kelasId}/${pelajaranId}`).then(res => {
 
-      let lulus = res.data.result.filter(item => (item.quiz+item.exam+item.task) >= 50).length;
-      let belum = res.data.result.filter(item => (item.quiz+item.exam+item.task) < 50).length;
+      let lulus = res.data.result.filter(item => (item.quiz + item.exam + item.task) >= 50).length;
+      let belum = res.data.result.filter(item => (item.quiz + item.exam + item.task) < 50).length;
 
       this.setState({ nilaiMurid: res.data.result, menguasai: lulus, tidak: belum })
     })
@@ -164,8 +164,8 @@ class Evaluasi extends Component {
 
   fetchNewestFormat() {
     API.get(`${API_SERVER}v2/learning-kpi/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.result.length) {
-        this.setState({ formatKpi: res.data.result[res.data.result.length-1].file })
+      if (res.data.result.length) {
+        this.setState({ formatKpi: res.data.result[res.data.result.length - 1].file })
       } else {
         toast.info(`Format KPI belum di upload oleh Admin.`)
       }
@@ -226,64 +226,64 @@ class Evaluasi extends Component {
             <div className="row">
 
               <div className="col-xl-12 pl-5 mb-4">
-                  <h3 className="f-24 fc-skyblue f-w-800 mb-3 mt-3">
-                    Laporan Evaluasi
+                <h3 className="f-24 fc-skyblue f-w-800 mb-3 mt-3">
+                  Laporan Evaluasi
                   </h3>
-                  <div className="form-group row">
-                    <div className="col-sm-3">
-                      <label>Guru</label>
-                      <select onChange={this.changeGuru} value={this.state.guruId} className="form-control">
-                        <option value="" selected disabled>Select</option>
-                        {
-                          this.state.guru.map(item => (
-                            <option value={item.pengajar}>{item.nama}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
-
-                    <div className="col-sm-2">
-                      <label>Semester</label>
-                      <select onChange={this.changeSemester} value={this.state.semesterId} className="form-control">
-                        <option value="" selected disabled>Select</option>
-                        {
-                          this.state.semester.map(item => (
-                            <option value={item.semester_id}>{item.semester}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
-
-                    <div className="col-sm-2">
-                      <label>Kelas</label>
-                      <select onChange={this.changeKelas} value={this.state.kelasId} className="form-control" >
-                        <option value="" selected disabled>Select</option>
-                        {
-                          this.state.kelas.map(item => (
-                            <option value={item.kelas_id}>{item.kelas}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
-
-                    <div className="col-sm-2">
-                      <label>Pelajaran</label>
-                      <select onChange={this.changePelajaran} value={this.state.pelajaranId} className="form-control" >
-                        <option value="" selected disabled>Select</option>
-                        {
-                          this.state.pelajaran.map(item => (
-                            <option value={item.pelajaran_id}>{item.pelajaran}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
-
-                    <div className="col-sm-2">
-                      <button className="btn btn-v2 btn-success mt-4" onClick={() => this.clearFilter()}>
-                        Reset Filter
-                      </button>
-                    </div>
+                <div className="form-group row">
+                  <div className="col-sm-3">
+                    <label>Guru</label>
+                    <select onChange={this.changeGuru} value={this.state.guruId} className="form-control">
+                      <option value="" selected disabled>Select</option>
+                      {
+                        this.state.guru.map(item => (
+                          <option value={item.pengajar}>{item.nama}</option>
+                        ))
+                      }
+                    </select>
                   </div>
+
+                  <div className="col-sm-2">
+                    <label>Semester</label>
+                    <select onChange={this.changeSemester} value={this.state.semesterId} className="form-control">
+                      <option value="" selected disabled>Select</option>
+                      {
+                        this.state.semester.map(item => (
+                          <option value={item.semester_id}>{item.semester}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+
+                  <div className="col-sm-2">
+                    <label>Kelas</label>
+                    <select onChange={this.changeKelas} value={this.state.kelasId} className="form-control" >
+                      <option value="" selected disabled>Select</option>
+                      {
+                        this.state.kelas.map(item => (
+                          <option value={item.kelas_id}>{item.kelas}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+
+                  <div className="col-sm-2">
+                    <label>Pelajaran</label>
+                    <select onChange={this.changePelajaran} value={this.state.pelajaranId} className="form-control" >
+                      <option value="" selected disabled>Select</option>
+                      {
+                        this.state.pelajaran.map(item => (
+                          <option value={item.pelajaran_id}>{item.pelajaran}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+
+                  <div className="col-sm-2">
+                    <button className="btn btn-v2 btn-success mt-4" onClick={() => this.clearFilter()}>
+                      Reset Filter
+                      </button>
+                  </div>
+                </div>
               </div>
 
               <div className="col-xl-6 p-5">
@@ -360,8 +360,8 @@ class Evaluasi extends Component {
                           <td>{item.task}</td>
                           <td>{item.quiz}</td>
                           <td>{item.exam}</td>
-                          <td>{item.task+item.quiz+item.exam}</td>
-                          <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
+                          <td>{item.task + item.quiz + item.exam}</td>
+                          <td>{(item.task + item.quiz + item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                         </tr>
                       ))
                     }
