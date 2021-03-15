@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 
 import Registrasi from '../registrasi/index';
+import Curriculum from '../kurikulum/index';
 import DaftarPelajaran from '../daftar_pelajaran/index';
 
 import Personalia from '../personalia/index';
@@ -16,14 +17,15 @@ import Laporan from '../laporan/index';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
-  { name: 'Registrasi', link: '/registrasi', component: Registrasi, icon: 'learning-add-1' },
-  { name: 'Daftar Pelajaran', link: '/daftar-pelajaran', component: DaftarPelajaran, icon: 'learning-clipboard-2' },
-  { name: 'Ruang Mengajar', link: '/ruangan-mengajar', component: RuanganMengajar, icon: 'learning-webinar-1' },
-  { name: 'Jadwal Mengajar', link: '/jadwal-mengajar', component: JadwalMengajar, icon: 'learning-calendar-1' },
-  { name: 'Personalia', link: '/personalia', component: Personalia, icon: 'learning-teamwork-1' },
-  { name: 'Evaluasi', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
-  { name: 'Laporan', link: '/laporan', component: Laporan, icon: 'learning-report-1' },
-  { name: 'Preference', link: '/kpi', component: Kpi, icon: 'learning-report-1' },
+  { name: 'Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran },
+  { name: 'Curriculum', link: '/kurikulum', component: Curriculum },
+  { name: 'Class', link: '/registrasi', component: Registrasi },
+  { name: 'Room', link: '/ruangan-mengajar', component: RuanganMengajar },
+  { name: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar },
+  { name: 'Personnel', link: '/personalia', component: Personalia },
+  { name: 'Report', link: '/laporan', component: Laporan },
+  { name: 'Preference', link: '/kpi', component: Kpi },
+  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi },
 ]
 
 const switchTambahan = [
