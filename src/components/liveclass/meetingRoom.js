@@ -927,15 +927,15 @@ export default class MeetingRoom extends Component {
             </div>
           )
         }
-        else if (ektension === "pdf") {
-          return (
-            <div>
-              <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
-                <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
-              </Worker>
-            </div>
-          )
-        }
+        // else if (ektension === "pdf") {
+        //   return (
+        //     <div>
+        //       <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
+        //         <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
+        //       </Worker>
+        //     </div>
+        //   )
+        // }
         else {
           return (
             <div>
