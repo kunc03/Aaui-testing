@@ -311,6 +311,7 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
         <Route path="/gantt/report" component={GanttReport} />
+        <Route path="/global-settings" component={GlobalSettings} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -624,7 +625,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/management-evaluasi' component={EvaluasiPrincipal} />
 
         <Route path="/logout" component={Logout} />
-      </Switch>
+      </Switch >
     );
   }
 }
