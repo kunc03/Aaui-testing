@@ -378,6 +378,8 @@ class Pengaturan extends Component {
           </div>
         </div>
       </div>
+
+
     );
   }
 }

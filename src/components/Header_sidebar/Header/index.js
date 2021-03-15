@@ -76,7 +76,8 @@ class Header extends Component {
         }
 
         let userStorage = Storage.get('user').data;
-        let addStorage = {...userStorage,
+        let addStorage = {
+          ...userStorage,
           logo: res.data.result.logo,
           company_id: res.data.result.company_id,
           company_type: res.data.result.company_type,
@@ -97,8 +98,8 @@ class Header extends Component {
           role: res.data.result.grup_name,
           level: res.data.result.level,
           avatar: res.data.result.avatar
-          ? res.data.result.avatar
-          : '/assets/images/user/avatar-1.png',
+            ? res.data.result.avatar
+            : '/assets/images/user/avatar-1.png',
         });
 
         if (this.state.level === 'client') {
@@ -430,7 +431,7 @@ class Header extends Component {
         <div className="m-header">
           <a
             className="mobile-menu"
-            id="mobile-collapse1"
+            id="mobile-collapse"
             href="javascript:"
             onClick={(a) => {
               this.setState({
@@ -631,7 +632,7 @@ class Header extends Component {
                         </b>
                       </h6>
                     </div>
-                    <ul className="noti-body" style={{maxHeight:400, overflowY: 'scroll', overflowX: 'hidden'}}>
+                    <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
                       {level == 'admin' && (
                         <li
                           className="notification"

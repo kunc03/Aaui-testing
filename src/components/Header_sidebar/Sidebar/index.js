@@ -19,8 +19,8 @@ const Msg = ({ id, desc, socket }) => {
   return (
     <div>
       {desc}
-      <br/>
-      <button style={{marginTop: '8px'}} onClick={e => readReminder(id)}>OK</button>
+      <br />
+      <button style={{ marginTop: '8px' }} onClick={e => readReminder(id)}>OK</button>
     </div>
   )
 }
@@ -31,6 +31,7 @@ class SidebarClass extends Component {
     this.state = {
       menuAktif: '/',
       sideMenu: true,
+      sideMenu1: true,
       sideMenuCollapse: false,
 
       notifUnread: 0,
@@ -61,9 +62,9 @@ class SidebarClass extends Component {
       const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
 
       let now = moment(new Date()).format('YYYY-MM-DD')
-      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0,10) === now);
-      Remind.map((item,i) => {
-        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
+      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0, 10) === now);
+      Remind.map((item, i) => {
+        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, { autoClose: false, type: toast.TYPE.INFO })
       })
     });
   }
@@ -163,13 +164,13 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
 
     let menuAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -183,7 +184,7 @@ class SidebarClass extends Component {
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
-      submenuPendidikan : [
+      submenuPendidikan: [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Registration", link: '/learning/registrasi' },
@@ -204,13 +205,13 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
 
     let menuSuperAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
@@ -231,7 +232,7 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
-        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan/project-admin' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
     };
@@ -245,7 +246,7 @@ class SidebarClass extends Component {
     let tempAtasSuper = [], tempBawahSuper = [];
     let tempAtasAdmin = [], tempBawahAdmin = [];
 
-    if(companyType === "perusahaan") {
+    if (companyType === "perusahaan") {
       tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
       tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
 
@@ -264,7 +265,7 @@ class SidebarClass extends Component {
       menuAtas = tempAtasSuper;
       menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      if(companyType === "pendidikan") {
+      if (companyType === "pendidikan") {
         menuContent = menuAdmins.submenuPendidikan;
       } else {
         menuContent = menuAdmins.submenu;
@@ -272,13 +273,13 @@ class SidebarClass extends Component {
       menuAtas = tempAtasAdmin;
       menuBawah = tempBawahAdmin;
     } else {
-      let subMenuClient =  Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
+      let subMenuClient = Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
       if (subMenuClient === "guru"
-            || subMenuClient === "murid"
-            || subMenuClient === "parents"
-            || subMenuClient === "principal"
-            || subMenuClient === "management"
-          ) {
+        || subMenuClient === "murid"
+        || subMenuClient === "parents"
+        || subMenuClient === "principal"
+        || subMenuClient === "management"
+      ) {
         menuContent = menuClients[subMenuClient].submenu;
       } else {
         menuContent = menuClients.other.submenu;
@@ -311,7 +312,7 @@ class SidebarClass extends Component {
                   <label />
                 </li> */}
 
-              <li id="mobile-collapse" data-username="Sample Page"
+              <li id="mobile-collapse"
                 className={`nav-item`}
                 style={this.state.sideMenu ? { width: 59, cursor: 'pointer' } : { marginTop: 12, cursor: 'pointer' }}  >
                 <Tooltip title="Menu" arrow placement="right">
@@ -319,6 +320,24 @@ class SidebarClass extends Component {
                     style={this.state.sideMenu ? { padding: '7px 0px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } : { padding: "7px 20px" }}
                   >
                     <span className="pcoded-micon" style={this.state.sideMenu ? { marginRight: 0, padding: 0, width: 'auto' } : null}>
+                      <img
+                        src={`newasset/burger-menu.svg`}
+                        alt=""
+                        width={25}
+                      ></img>
+                    </span>
+                  </div>
+                </Tooltip>
+              </li>
+
+              <li id="mobile-collapse1"
+                className={`nav-item`}
+                style={this.state.sideMenu1 ? { width: 59, cursor: 'pointer' } : { marginTop: 12, cursor: 'pointer' }}  >
+                <Tooltip title="Menu" arrow placement="right">
+                  <div className="nav-link"
+                    style={this.state.sideMenu1 ? { padding: '7px 0px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } : { padding: "7px 20px" }}
+                  >
+                    <span className="pcoded-micon" style={this.state.sideMenu1 ? { marginRight: 0, padding: 0, width: 'auto' } : null}>
                       <img
                         src={`newasset/burger-menu.svg`}
                         alt=""
@@ -388,23 +407,25 @@ class SidebarClass extends Component {
                   }
                 })
               }
+
               {/* <li data-username="Sample Page"
-                  className={`nav-item mt-4 `}
-                  style={this.state.sideMenu ? {width:59} : {marginTop:25}}
+                className={`nav-item mt-4 `}
+                style={this.state.sideMenu ? { width: 59 } : { marginTop: 25 }}
+              >
+                <Link to="/logout" className="nav-link"
+                  style={this.state.sideMenu ? { padding: '7px 0px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } : { padding: "7px 20px" }}
                 >
-                  <Link to="/logout" className="nav-link"
-                    style={this.state.sideMenu ? {padding:'7px 0px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' } : {padding:"7px 20px"}}
-                  >
-                    <span className="pcoded-micon" style={this.state.sideMenu ? {marginRight: 0} : null}>
-                      <img
-                        src={`assets/images/component/Icon Logout.png`}
-                        alt=""
-                        width={20}
-                        height={20}
-                      ></img>
-                    </span>
-                  </Link>
-                </li> */}
+                  <span className="pcoded-micon" style={this.state.sideMenu ? { marginRight: 0 } : null}>
+                    <img
+                      src={`assets/images/component/Icon Logout.png`}
+                      alt=""
+                      width={20}
+                      height={20}
+                    ></img>
+                  </span>
+                </Link>
+              </li> */}
+
             </ul>
           </div>
         </div>
@@ -433,6 +454,32 @@ class SidebarClass extends Component {
             }
           </div>
         </div>
+
+        <div className="custom-side-bar">
+          <h4 className="p-20 mt-5" style={{ borderBottom: '1px solid #E6E6E6' }}><strong> Menu </strong></h4>
+          <div>
+            {
+              menuContent.map((item, i) => {
+                if (item.access == undefined || access[item.access]) {
+                  return (
+                    <Link to={item.link} style={{ color: '#797979' }}>
+                      <div className="p-10" style={{ borderBottom: '1px solid #E6E6E6', paddingLeft: 28 }}>
+                        <img
+                          src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                          style={{ marginRight: 15 }}
+                          alt=""
+                          height={15}
+                        ></img>
+                        {item.label}
+                      </div>
+                    </Link>
+                  )
+                }
+              })
+            }
+          </div>
+        </div>
+
       </nav>
     );
   }

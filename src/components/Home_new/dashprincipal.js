@@ -13,6 +13,8 @@ import moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
+import RecentDocs from './recentDocs';
+
 import { toast } from 'react-toastify'
 
 class DashParent extends Component {
@@ -120,13 +122,13 @@ class DashParent extends Component {
   fetchPtc() {
     let url = ``;
 
-    if(this.state.role.toLowerCase() === "guru") {
-      if(Storage.get('user').data.level !== "client") {
+    if (this.state.role.toLowerCase() === "guru") {
+      if (Storage.get('user').data.level !== "client") {
         url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
       } else {
         url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
       }
-    } else if(this.state.role.toLowerCase() === "parents") {
+    } else if (this.state.role.toLowerCase() === "parents") {
       url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
     } else {
       url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
@@ -203,7 +205,7 @@ class DashParent extends Component {
 
   fetchSilabus(pelajaranId) {
     API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) toast.info(`Error: fetch silabus`)
+      if (res.data.error) toast.info(`Error: fetch silabus`)
 
       this.setState({ silabus: res.data.result })
     })
@@ -239,9 +241,9 @@ class DashParent extends Component {
                   <div className="row">
 
                     <div class="col-sm-6">
-                        <div className="card">
-                          <div className="card-header header-kartu">
-                            Parent Teacher Conference (PTC)
+                      <div className="card">
+                        <div className="card-header header-kartu">
+                          Parent Teacher Conference (PTC)
                           </div>
                           <div className="card-body" style={{ padding: 0 }}>
                             <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
@@ -279,45 +281,46 @@ class DashParent extends Component {
                           </div>
                           </div>
                         </div>
+                      </div>
 
-                        <Modal show={this.state.openParticipants} onHide={() => this.closeModal()} dialogClassName="modal-lg">
-                          <Modal.Header closeButton>
-                            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                              All Participants
+                      <Modal show={this.state.openParticipants} onHide={() => this.closeModal()} dialogClassName="modal-lg">
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                            All Participants
                           </Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body>
-                            <table className="table table-striped">
-                              <thead>
-                                <tr>
-                                  <th>
-                                    No
+                        </Modal.Header>
+                        <Modal.Body>
+                          <table className="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>
+                                  No
                                 </th>
-                                  <th> Name </th>
-                                  <th>Email</th>
-                                  <th> Attendance</th>
-                                  <th> Date </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {
-                                  this.state.participants.map((item, i) => (
-                                    <tr key={i}>
-                                      <td>
-                                        {i + 1}
-                                      </td>
-                                      <td>{item.name}</td>
-                                      <td>{item.email}</td>
-                                      <td>{item.is_confirm ? "Sudah Konfirmasi" : "Belum Konfirmasi"}</td>
-                                      <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
+                                <th> Name </th>
+                                <th>Email</th>
+                                <th> Attendance</th>
+                                <th> Date </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.participants.map((item, i) => (
+                                  <tr key={i}>
+                                    <td>
+                                      {i + 1}
+                                    </td>
+                                    <td>{item.name}</td>
+                                    <td>{item.email}</td>
+                                    <td>{item.is_confirm ? "Sudah Konfirmasi" : "Belum Konfirmasi"}</td>
+                                    <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
 
-                                    </tr>
-                                  ))
-                                }
-                              </tbody>
-                            </table>
-                          </Modal.Body>
-                        </Modal>
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        </Modal.Body>
+                      </Modal>
                     </div>
 
                     <div className="col-sm-6">
@@ -329,15 +332,15 @@ class DashParent extends Component {
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th>Mata Pelajaran</th><th style={{width: '40px'}}>Aksi</th>
+                                <th>Mata Pelajaran</th><th style={{ width: '40px' }}>Aksi</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.pelajaran.map((item,i) => (
+                                this.state.pelajaran.map((item, i) => (
                                   <tr key={i}>
                                     <td>{item.nama_pelajaran}</td>
-                                    <td style={{width: '40px'}}>
+                                    <td style={{ width: '40px' }}>
                                       <a href="#" onClick={this.openSilabus} data-title={item.nama_pelajaran} data-id={item.pelajaran_id}>Lihat</a>
                                     </td>
                                   </tr>
@@ -355,7 +358,7 @@ class DashParent extends Component {
                         dialogClassName="modal-lg"
                       >
                         <Modal.Header closeButton>
-                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                             Silabus {this.state.pelajaranNama}
                           </Modal.Title>
                         </Modal.Header>
@@ -373,32 +376,32 @@ class DashParent extends Component {
                             <tbody>
                               {
                                 this.state.silabus.map((item, i) => {
-                                  if(item.jenis === 0) {
+                                  if (item.jenis === 0) {
                                     return (
-                                        <tr key={i}>
-                                          <td>{item.sesi}</td>
-                                          <td>{item.topik}</td>
-                                          <td>{item.tujuan}</td>
-                                          <td>{item.deskripsi}</td>
-                                          <td style={{padding: '12px'}}>
-                                            {
-                                              item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
-                                            }
-                                          </td>
-                                        </tr>
-                                      )
+                                      <tr key={i}>
+                                        <td>{item.sesi}</td>
+                                        <td>{item.topik}</td>
+                                        <td>{item.tujuan}</td>
+                                        <td>{item.deskripsi}</td>
+                                        <td style={{ padding: '12px' }}>
+                                          {
+                                            item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
+                                          }
+                                        </td>
+                                      </tr>
+                                    )
                                   } else {
                                     return (
                                       <tr key={i}>
                                         <td>{item.sesi}</td>
-                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
+                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
                                       </tr>
                                     )
                                   }
                                 })
                               }
-                              </tbody>
-                            </table>
+                            </tbody>
+                          </table>
                         </Modal.Body>
                       </Modal>
                     </div>
@@ -408,18 +411,24 @@ class DashParent extends Component {
                     </div>
 
                     <div className="col-sm-6">
+                      <CalenderNew lists={this.state.calendar} />
+                    </div>
+
+                    <div className="col-sm-6">
                       <Card>
                         <Card.Body>
+                          {/* <h4 className="f-w-900 f-18 fc-blue">Dokumen Terakhir Akses</h4>
+                          <RecentDocs lists={this.state.toDo} /> */}
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
                             <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
 
                           <table className="table">
                             <tbody>
                               {
-                                this.state.pengumuman.map((item,i) => (
-                                  <tr key={i} style={{borderBottom: '1px solid #e9e9e9'}}>
+                                this.state.pengumuman.map((item, i) => (
+                                  <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
                                     <td>{item.isi}</td>
-                                    <td style={{width: '40px'}}>
+                                    <td style={{ width: '40px' }}>
                                       <a href="#"
                                         onClick={this.openPengumuman}
                                         data-title={item.title}
@@ -442,7 +451,7 @@ class DashParent extends Component {
                         dialogClassName="modal-lg"
                       >
                         <Modal.Header closeButton>
-                          <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                             Pengumuman
                           </Modal.Title>
                         </Modal.Header>
@@ -469,16 +478,16 @@ class DashParent extends Component {
                             {
                               this.state.pengumumanFile.length > 0 &&
                               <Form.Group>
-                              <Form.Label>Attachments</Form.Label>
-                              <ul className="list-group">
-                              {
-                                this.state.pengumumanFile.map(item => (
-                                  <li className="list-group-item">
-                                  <a href={item} target="_blank">{item}</a>
-                                  </li>
-                                ))
-                              }
-                              </ul>
+                                <Form.Label>Attachments</Form.Label>
+                                <ul className="list-group">
+                                  {
+                                    this.state.pengumumanFile.map(item => (
+                                      <li className="list-group-item">
+                                        <a href={item} target="_blank">{item}</a>
+                                      </li>
+                                    ))
+                                  }
+                                </ul>
                               </Form.Group>
                             }
 
@@ -498,7 +507,6 @@ class DashParent extends Component {
                     </div>
 
                   </div>
-
                 </div>
               </div>
             </div>

@@ -67,7 +67,7 @@ export default class LearningAdmin extends Component {
                                 activeClassName='active'
                                 className={`nav-link`}
                                 to={`/learning${item.link}`}>
-                                <img src="/newasset/webinar.svg" className="mr-2" />
+                                <img src={`/newasset/learning/${item.icon}.svg`} className="mr-2" />
                                 {item.name}
                               </NavLink>
                             </li>

@@ -624,7 +624,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/management-evaluasi' component={EvaluasiPrincipal} />
 
         <Route path="/logout" component={Logout} />
-      </Switch>
+      </Switch >
     );
   }
 }
