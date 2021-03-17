@@ -23,6 +23,7 @@ class Overview extends React.Component {
     jadwalId: this.props.match.params.id,
     pelajaranId: '',
 
+    loading: true,
     silabus: [],
 
     materi: Math.random().toString(36),
@@ -51,7 +52,7 @@ class Overview extends React.Component {
     API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.jadwalId}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal one`)
       console.log('silabus: ', res.data.result);
-      this.setState({ silabus: res.data.result });
+      this.setState({ silabus: res.data.result, loading: false, });
     })
   }
 
@@ -117,13 +118,16 @@ class Overview extends React.Component {
     console.log('state: ', form)
 
     API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
-      if (res.data.error) toast.warning(`Error: create chapter`)
-
-      if (this.state.files) {
-        this.uplaodFiles(res.data.result.id, this.state.files)
-      } else {
-        toast.success(`Materi berhasil disimpan.`)
-        this.fetchOverview()
+      if (res.data.error) {
+        toast.warning(`Error: create chapter`)
+      }
+      else {
+        if (this.state.files) {
+          this.uplaodFiles(res.data.result.id, this.state.files)
+        } else {
+          toast.success(`Materi berhasil disimpan.`)
+          this.fetchOverview()
+        }
       }
     })
   }
@@ -212,6 +216,12 @@ class Overview extends React.Component {
                 </thead>
                 <tbody>
                   {
+                    this.state.loading &&
+                    <tr>
+                      <td className="text-center" colSpan="7">fetching data...</td>
+                    </tr>
+                  }
+                  {
                     this.state.silabus.map((item, i) => {
                       if(item.jenis === 0) {
                         return (
@@ -228,7 +238,7 @@ class Overview extends React.Component {
                                 </OverlayTrigger>
                               </td>
                               <td>{item.tujuan}</td>
-                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Upload Materi</span>}</td>
                               <td  className="text-center">{item.periode}</td>
                               <td  className="text-center">{item.durasi} menit</td>
                               <td style={{padding: '12px'}} className="text-center">
@@ -431,7 +441,7 @@ class Overview extends React.Component {
                             <tr key={i} style={{ cursor: 'pointer' }} data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">
                               <td className="text-center">{item.sesi}</td>
                               <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
                               <td className="text-center">{item.durasi} menit</td>
                               <td className="text-center">
@@ -442,98 +452,93 @@ class Overview extends React.Component {
                             </tr>
                             <tr className="collapse" id={`collapse${i}`}>
                               <td colSpan="7">
-                                <Tabs defaultActiveKey="materi" id="uncontrolled-tab-example">
-                                  <Tab eventKey="materi" title="Materi" style={{padding: '8px'}}>
-                                    <form className="row">
-                                      <div className="col-sm-8 bordered">
-                                        <div className="form-group">
-                                          <input required value={item.chapter_title} name="chapter_title" onChange={e => this.handleDynamicInput(e, i)} type="text" className="form-control" placeholder="Title" />
-                                        </div>
-                                        <div className="form-group">
-                                          <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
-                                          <Editor
-                                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                                            initialValue={item.chapter_body}
-                                            value={item.chapter_body}
-                                            init={{
-                                              height: 460,
-                                              menubar: false,
-                                              convert_urls: false,
-                                              image_class_list: [
-                                                {title: 'None', value: ''},
-                                                {title: 'Responsive', value: 'img-responsive'},
-                                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                                              ],
-                                              file_browser_callback_types: 'image file media',
-                                              file_picker_callback: function (callback, value, meta) {
-                                                // console.log(meta)
-                                                if (meta.filetype == 'image') {
-                                                  var input = document.getElementById('my-file');
-                                                  input.click();
-                                                  input.onchange = function () {
 
-                                                    var dataForm = new FormData();
-                                                    dataForm.append('file', this.files[0]);
+                                <form className="row">
+                                  <div className="col-sm-6 bordered">
+                                    <div className="form-group">
+                                      <input required value={item.chapter_title} name="chapter_title" onChange={e => this.handleDynamicInput(e, i)} type="text" className="form-control" placeholder="Title" />
+                                    </div>
+                                    <div className="form-group">
+                                      <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
+                                      <Editor
+                                        apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                        initialValue={item.chapter_body}
+                                        value={item.chapter_body}
+                                        init={{
+                                          height: 460,
+                                          menubar: false,
+                                          convert_urls: false,
+                                          image_class_list: [
+                                            {title: 'None', value: ''},
+                                            {title: 'Responsive', value: 'img-responsive'},
+                                            {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                          ],
+                                          file_browser_callback_types: 'image file media',
+                                          file_picker_callback: function (callback, value, meta) {
+                                            // console.log(meta)
+                                            if (meta.filetype == 'image') {
+                                              var input = document.getElementById('my-file');
+                                              input.click();
+                                              input.onchange = function () {
 
-                                                    window.$.ajax({
-                                                      url: `${API_SERVER}v2/media/upload`,
-                                                      type: 'POST',
-                                                      data: dataForm,
-                                                      processData: false,
-                                                      contentType: false,
-                                                      success: (data)=>{
-                                                        callback(data.result.url);
-                                                        this.value = '';
-                                                      }
-                                                    })
-                                                  };
-                                                }
-                                              },
-                                              plugins: [
-                                                "advlist autolink lists link image charmap print preview anchor",
-                                                "searchreplace visualblocks code fullscreen",
-                                                "insertdatetime media table paste code help wordcount"
-                                              ],
-                                              toolbar:
-                                                // eslint-disable-next-line no-multi-str
-                                                "undo redo | insertfile formatselect | bold italic backcolor | \
-                                               alignleft aligncenter alignright alignjustify | image media | \
-                                                bullist numlist outdent indent | removeformat | help"
-                                            }}
-                                            onEditorChange={e => this.handleDynamicInput(e, i)}
-                                          />
-                                        </div>
+                                                var dataForm = new FormData();
+                                                dataForm.append('file', this.files[0]);
+
+                                                window.$.ajax({
+                                                  url: `${API_SERVER}v2/media/upload`,
+                                                  type: 'POST',
+                                                  data: dataForm,
+                                                  processData: false,
+                                                  contentType: false,
+                                                  success: (data)=>{
+                                                    callback(data.result.url);
+                                                    this.value = '';
+                                                  }
+                                                })
+                                              };
+                                            }
+                                          },
+                                          plugins: [
+                                            "advlist autolink lists link image charmap print preview anchor",
+                                            "searchreplace visualblocks code fullscreen",
+                                            "insertdatetime media table paste code help wordcount"
+                                          ],
+                                          toolbar:
+                                            // eslint-disable-next-line no-multi-str
+                                            "undo redo | insertfile formatselect | bold italic backcolor | \
+                                           alignleft aligncenter alignright alignjustify | image media | \
+                                            bullist numlist outdent indent | removeformat | help"
+                                        }}
+                                        onEditorChange={e => this.handleDynamicInput(e, i)}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="col-sm-6 bordered">
+                                    <div className="form-group">
+                                      <label>Date</label><br/>
+                                      <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                    </div>
+                                    <div className="form-group">
+                                      <label className="mb-3">Webcam</label><br/>
+                                      <div class="form-check form-check-inline">
+                                        <input checked={item.tatapmuka == "1"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                                        <label class="form-check-label" for="inlineRadio1">Yes</label>
                                       </div>
-                                      <div className="col-sm-4 bordered">
-                                        <div className="form-group">
-                                          <label>Date</label><br/>
-                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
-                                        </div>
-                                        <div className="form-group">
-                                          <label className="mb-3">Webcam</label><br/>
-                                          <div class="form-check form-check-inline">
-                                            <input checked={item.tatapmuka == "1"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="1" />
-                                            <label class="form-check-label" for="inlineRadio1">Yes</label>
-                                          </div>
-                                          <div class="form-check form-check-inline">
-                                            <input checked={item.tatapmuka == "0"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="0" />
-                                            <label class="form-check-label" for="inlineRadio2">No</label>
-                                          </div>
-                                        </div>
-
-                                        <div className="form-group mt-4">
-                                          <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
-                                            <Spinner animation="border" /> Simpan
-                                          </Button>
-                                        </div>
-
+                                      <div class="form-check form-check-inline">
+                                        <input checked={item.tatapmuka == "0"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                                        <label class="form-check-label" for="inlineRadio2">No</label>
                                       </div>
-                                    </form>
-                                  </Tab>
+                                    </div>
 
-                                  <Tab eventKey={`${item.jenis === 1 ? 'kuis' : 'ujian'}`} title={`${item.jenis === 1 ? 'Kuis' : 'Ujian'}`} style={{padding: '8px'}}>
+                                    <div className="form-group mt-4">
+                                      <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
+                                        <Spinner animation="border" /> Simpan
+                                      </Button>
+                                    </div>
+
+                                    <h4>{item.jenis === 1 ? 'Kuis' : 'Ujian'}</h4>
                                     <div className="form-group row">
-                                      <div className="col-sm-4">
+                                      <div className="col-sm-6">
                                         <MultiSelect
                                           mode="single"
                                           id="ujianSingle"
@@ -542,8 +547,9 @@ class Overview extends React.Component {
                                           onChange={set => this.setState({ [item.jenis === 1 ? 'setKuis' : 'setUjian']: set })}
                                         />
                                       </div>
-                                      <div className="col-sm-4">
+                                      <div className="col-sm-6">
                                         <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kui':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
                                       </div>
                                     </div>
                                     <table className="table mt-2 table-bordered">
@@ -566,9 +572,10 @@ class Overview extends React.Component {
                                         ))
                                       }
                                     </table>
-                                  </Tab>
 
-                                </Tabs>
+                                  </div>
+                                </form>
+
                               </td>
                             </tr>
                           </>

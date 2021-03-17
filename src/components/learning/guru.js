@@ -12,7 +12,7 @@ import GuruKPI from '../guruKPI/index';
 
 import Overview from '../pelajaran/overview';
 import Silabus from '../pelajaran/silabus';
-import Chapter from '../pelajaran/chapter';
+// import Chapter from '../pelajaran/chapter';
 import Materi from '../pelajaran/materi';
 
 import Kuis from '../pelajaran/kuis';
