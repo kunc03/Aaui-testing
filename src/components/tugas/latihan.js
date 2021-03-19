@@ -126,8 +126,10 @@ class Latihan extends React.Component {
                   <tr>
                     <th>Subject</th>
                     <th>Description</th>
-                    <th>Deadline</th>
                     <th>Question</th>
+                    <th>Deadline</th>
+                    <th>Date Submit</th>
+                    <th>Score</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -138,12 +140,14 @@ class Latihan extends React.Component {
                       <tr>
                         <td>{item.nama_pelajaran}</td>
                         <td>
-                          <a href="#" onClick={this.openDetail} data-id={item.exam_id} data-title={item.title}>{item.title}</a>
+                          <a href="#" onClick={this.openDetail} data-id={item.exam_id} data-title={item.title}>{item.exam_title}</a>
                         </td>
-                        <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                         <td>{item.soal}</td>
+                        <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
+                        <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
+                        <td>{item.score}</td>
                         <td>
-                          <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/${this.state.tipe}/${item.exam_id}`} className="btn btn-v2 btn-primary">
+                          <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`} className="btn btn-v2 btn-primary">
                             <i className="fa fa-share"></i> Open
                           </a>
 

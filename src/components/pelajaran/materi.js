@@ -168,7 +168,7 @@ class Overview extends React.Component {
     if(cc[0].chapter_id) {
       let form = {
         chapterId: cc[0].chapter_id,
-        examId: tipe === 'tugas' ? this.state.setTugas[0] : this.state.setKuis[0]
+        examId: tipe === 'tugas' ? this.state.setTugas[0] : tipe == 'kuis' ? this.state.setKuis[0] : this.state.setUjian[0]
       };
       API.post(`${API_SERVER}v2/chapter/exam`, form).then(res => {
         if(res.status === 200) {
@@ -179,7 +179,7 @@ class Overview extends React.Component {
     else {
       toast.info(`Upload materi terlebih dahulu, setelah itu bisa memilih tugas ataupun kuis.`)
     }
-    this.setState({ setTugas: [], setKuis: [] })
+    this.setState({ setTugas: [], setKuis: [], setUjian: [] })
   }
 
   deletePenugasan(id) {
@@ -561,7 +561,7 @@ class Overview extends React.Component {
                                         <th>Action</th>
                                       </tr>
                                       {
-                                        item.kuis.map((row, j) => (
+                                        item.ujian.map((row, j) => (
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>

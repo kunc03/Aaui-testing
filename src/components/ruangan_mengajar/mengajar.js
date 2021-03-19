@@ -87,6 +87,8 @@ class Mengajar extends React.Component {
 
     jawaban: '',
     submitted: false,
+
+    scoreTugas: 0,
   }
 
   fetchPertanyaan(examId) {
@@ -412,12 +414,38 @@ class Mengajar extends React.Component {
     })
   }
 
+  fetchScore(examId) {
+    API.get(`${API_SERVER}v2/guru/score-murid/${examId}`).then(res => {
+      if(res.data.error) {
+        toast.warning(`Warning: fetch mengumpulkan tugas`)
+      }
+      else {
+        this.setState({ mengumpulkan: res.data.result })
+      }
+    })
+  }
+
   answerTugas = e => {
     e.preventDefault()
     let examId = e.target.getAttribute('data-id')
     let tipeJawab = e.target.getAttribute('data-tipe')
-    this.fetchPertanyaan(examId)
-    this.setState({ isModalTugas: true, examId, tipeJawab })
+    API.get(`${API_SERVER}v2/guru/tugas/${examId}`).then(res => {
+      if(res.data.error) {
+        toast.warning(`Warning: fetch mengumpulkan tugas`)
+      }
+      else {
+        let { result } = res.data;
+        let find = result.filter(item => item.user_id == Storage.get('user').data.user_id);
+        if(find.length == 1) {
+          toast.success(`Kamu sudah mengerjakan tugas ini.`)
+          this.setState({ scoreTugas: find[0].score })
+        }
+        else {
+          this.fetchPertanyaan(examId)
+          this.setState({ isModalTugas: true, examId, tipeJawab })
+        }
+      }
+    })
   }
 
   submitTugas = e => {
@@ -489,7 +517,9 @@ class Mengajar extends React.Component {
 
   openReportKuis = e => {
     e.preventDefault()
-    console.log('openReportKuis')
+    let examId = e.target.getAttribute('data-id')
+    this.setState({ openReportTugas: true })
+    this.fetchScore(examId)
   }
 
   handleDynamicInput = (e, i) => {
@@ -556,12 +586,6 @@ class Mengajar extends React.Component {
                       </button>
                     }
 
-                    {
-                      this.state.role === "guru" && (this.state.jenis === "ujian") &&
-                      <button onClick={this.startPertemuan} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
-                        <i className={`fa fa-${this.state.startPertemuan ? 'stop':'play'}`}></i> {this.state.startPertemuan ? 'Stop' : 'Start'}
-                      </button>
-                    }
                   </h4>
                   <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
                 </div>
@@ -669,18 +693,24 @@ class Mengajar extends React.Component {
                       Content
 
                       {
+                        (this.state.infoChapter.hasOwnProperty('ujian') && this.state.infoChapter.ujian.length) ?
+                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Ujian</button>
+                        : null
+                      }
+
+                      {
                         (this.state.infoChapter.hasOwnProperty('kuis') && this.state.infoChapter.kuis.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'kuis' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Kuis</button>
+                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Kuis</button>
                         : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('tugas') && this.state.infoChapter.tugas.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'tugas' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Tugas</button>
+                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Tugas</button>
                         : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Materi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
@@ -737,6 +767,15 @@ class Mengajar extends React.Component {
                                 <tr>
                                   <td colSpan="2">
                                     {/* <button className="btn btn-v2 btn-info mr-2">More</button> */}
+
+                                    {
+                                      this.state.role == 'murid' && this.state.scoreTugas ?
+                                      <div className="text-center" style={{padding: '8px 26px'}}>
+                                        <span>Score</span>
+                                        <h1>{this.state.scoreTugas}</h1>
+                                      </div>
+                                      : null
+                                    }
 
                                     {
                                       this.state.role == 'guru' ?
@@ -810,8 +849,57 @@ class Mengajar extends React.Component {
                     }
 
                     {
-                      this.state.contentSesi == 'kuis' && this.state.examId ?
-                      <Detail getNilai={this.cekNilai} role={this.state.role} tipe={'kuis'} examId={this.state.examId} />
+                      this.state.contentSesi == 'ujian' ?
+                        <div>
+                          {
+                            this.state.infoChapter.ujian.map((item,i) => (
+                              <table className="table table-bordered">
+                                <tr>
+                                  <td width="140px">Title</td>
+                                  <td><b>{item.exam_title}</b></td>
+                                </tr>
+                                <tr>
+                                  <td>Start Date</td>
+                                  <td><b>{moment(item.time_start).format('DD/MM/YYYY')}</b></td>
+                                </tr>
+                                <tr>
+                                  <td>Finish Date</td>
+                                  <td><b>{moment(item.time_finish).format('DD/MM/YYYY')}</b></td>
+                                </tr>
+                                {
+                                  item.quiz == '2' ?
+                                  <tr>
+                                    <td>Type</td>
+                                    <td><b>{item.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
+                                  </tr>
+                                  : null
+                                }
+                                <tr>
+                                  <td colSpan="2">
+                                    {
+                                      this.state.role == 'guru' ?
+                                      <button onClick={this.openReportKuis} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
+                                      : null
+                                    }
+
+                                    {
+                                      this.state.role == 'murid' ?
+                                      <button onClick={e => this.kerjakanKuis(item.exam_id)} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                      : null
+                                    }
+                                  </td>
+                                </tr>
+                              </table>
+                            ))
+                          }
+                        </div>
+                      :
+                      null
+                    }
+
+                    {
+                      (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.examId ?
+                      <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
                       : null
                     }
                   </div>
@@ -1044,7 +1132,7 @@ class Mengajar extends React.Component {
               onHide={() => this.setState({ openReportTugas: false })}
               dialogClassName="modal-lg">
               <Modal.Body>
-                <h4 className="f-w-900 f-18 fc-blue">Report Tugas</h4>
+                <h4 className="f-w-900 f-18 fc-blue">Report</h4>
 
                 <table className="table table-striped">
                   <thead>
@@ -1053,15 +1141,21 @@ class Mengajar extends React.Component {
                       <th>Nama</th>
                       <th>Tanggal</th>
                       <th>Jam</th>
-                      <th>Catatan</th>
-                      <th>Jawaban</th>
+                      {
+                        this.state.contentSesi == 'tugas' ?
+                          <>
+                            <th>Catatan</th>
+                            <th>Jawaban</th>
+                          </>
+                        : null
+                      }
                       <th>Status</th>
                       <th>Score</th>
                     </tr>
                   </thead>
                   <tbody>
                     {
-                      this.state.mengumpulkan.map((item, i) => (
+                      this.state.contentSesi == 'tugas' && this.state.mengumpulkan.map((item, i) => (
                         <tr>
                           <td>{i+1}</td>
                           <td>{item.nama}</td>
@@ -1080,6 +1174,21 @@ class Mengajar extends React.Component {
                             <span className={`label label-${item.pengumpulan ? 'success' : 'danger'}`}>{item.pengumpulan ? 'Sudah' : 'Belum'}</span>
                           </td>
                           <td><input style={{padding: '2px', width: '50px'}} onChange={e => this.handleDynamicInput(e,i)} onBlur={e => this.setNilaiTugas(e, item.answer_id)} name="score" type="number" value={item.pengumpulan ? item.score : 0} /></td>
+                        </tr>
+                      ))
+                    }
+
+                    {
+                      (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.mengumpulkan.map((item, i) => (
+                        <tr>
+                          <td>{i+1}</td>
+                          <td>{item.nama}</td>
+                          <td>{item.pengumpulan ? moment(item.pengumpulan).format('DD/MM/YYYY') : '-'}</td>
+                          <td>{item.pengumpulan ? moment(item.pengumpulan).format('HH:mm') : '-'}</td>
+                          <td>
+                            <span className={`label label-${item.pengumpulan ? 'success' : 'danger'}`}>{item.pengumpulan ? 'Sudah' : 'Belum'}</span>
+                          </td>
+                          <td>{item.score ? item.score : '-'}</td>
                         </tr>
                       ))
                     }

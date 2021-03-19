@@ -154,6 +154,7 @@ class Tugas extends React.Component {
                     <th>Time of Collection</th>
                     <th className="text-center">Status</th>
                     <th className="text-center">Date Submit </th>
+                    <th className="text-center">Score </th>
                     <th className="text-center"> Action </th>
                   </tr>
                 </thead>
@@ -168,6 +169,9 @@ class Tugas extends React.Component {
                           <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                           <td className="text-center">{item.submitted.length === 1 ? <span className="label label-success">Sudah Mengumpulkan</span> : <span className="label label-warning">Belum Mengumpulkan</span>}</td>
                           <td className="text-center">{item.submitted.length === 1 ? moment(item.submitted[0].created_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                          <td className="text-center">
+                            {item.submitted.length ? item.submitted[0].score : '-'}
+                          </td>
                           <td className="text-center">
                             {
                               item.submitted.length === 1 && item.submitted[0].answer_file ?

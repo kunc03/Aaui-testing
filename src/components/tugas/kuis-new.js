@@ -82,9 +82,9 @@ class UjianClass extends React.Component {
     this.fetchSubmit()
     this.fetchExam(this.state.examId)
 
-    if (this.state.tipe === 'kuis') {
+    // if (this.state.tipe === 'kuis') {
       this.fetchSoal(this.state.examId)
-    }
+    // }
 
     this.props.socket.on('broadcast', data => {
       console.log('state1: ', data)
@@ -137,10 +137,12 @@ class UjianClass extends React.Component {
       if(res.data.error) toast.warning(`Warning: submit jawaban`);
 
       this.setState({
+        openConfirm: false,
         benar: res.data.result.benar,
         salah: res.data.result.salah,
         score: res.data.result.score
       })
+
       this.fetchSubmit();
     })
   }
@@ -189,14 +191,15 @@ class UjianClass extends React.Component {
                     <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
                     {
-                      this.state.isSubmit &&
+                      this.state.isSubmit && item.myJawaban.length ?
                       <ul class="list-group">
-                        { item.a && <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> }
-                        { item.b && <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> }
-                        { item.c && <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> }
-                        { item.d && <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': item.myJawaban[0].answer_option === "D" ? 'danger' : ''}`}><b>D.</b> {item.d}</li> }
-                        { item.e && <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': item.myJawaban[0].answer_option === "E" ? 'danger' : ''}`}><b>E.</b> {item.e}</li> }
+                        { item.a ? <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success': item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> : null }
+                        { item.b ? <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success': item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> : null }
+                        { item.c ? <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success': item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> : null }
+                        { item.d ? <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success': item.myJawaban[0].answer_option === "D" ? 'danger' : ''}`}><b>D.</b> {item.d}</li> : null }
+                        { item.e ? <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success': item.myJawaban[0].answer_option === "E" ? 'danger' : ''}`}><b>E.</b> {item.e}</li> : null }
                       </ul>
+                      : null
                     }
 
                     {
@@ -270,7 +273,7 @@ class UjianClass extends React.Component {
               }
 
               {
-                (this.state.isStart) && this.state.role === "murid" && !this.state.isSubmit ?
+                this.state.role === "murid" && !this.state.isSubmit ?
                 <button onClick={e => this.setState({ openConfirm: true })} className="btn btn-v2 btn-primary mt-3">Submit</button>
                 : null
               }

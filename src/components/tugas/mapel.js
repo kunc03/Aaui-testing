@@ -218,6 +218,14 @@ class Overview extends React.Component {
                                         }
 
                                         {
+                                          (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
+                                            <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
+                                              <i className="fa fa-tasks"></i> {row.exam_title}
+                                            </button>
+                                          ))
+                                        }
+
+                                        {
                                           item.hasOwnProperty('chapter_id') &&
                                           <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
                                             <i className="fa fa-video"></i> Open
