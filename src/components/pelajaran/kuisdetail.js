@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
 import { Editor } from '@tinymce/tinymce-react';
 
-import { Modal } from 'react-bootstrap';
+import { Modal, Row, Col } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
@@ -169,7 +169,7 @@ class Tugas extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    // console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -192,6 +192,10 @@ class Tugas extends React.Component {
                 <tr>
                   <td>Deadline</td>
                   <td><b>{moment(this.state.infoExam.time_finish).format('DD-MM-YYYY')}</b></td>
+                </tr>
+                <tr>
+                  <td>Jenis Tugas</td>
+                  <td><b>{this.state.infoExam.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
                 </tr>
                 <tr>
                   <td>Pertanyaan</td>
@@ -271,7 +275,7 @@ class Tugas extends React.Component {
                   <th>Nama</th>
                   <th>Deskripsi</th>
                   <th>Tanggal Submit</th>
-                  <th>File</th>
+                  <th>Jawaban</th>
                   <th>Score</th>
                 </tr>
                 {
@@ -283,10 +287,25 @@ class Tugas extends React.Component {
                           {item.nama}
                         </Link>
                       </td>
-                      <td>{item.answer_deskripsi}</td>
+                      <td>{item.answer_deskripsi ? item.answer_deskripsi : '-'}</td>
                       <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
-                      <td><a href={item.answer_file} target="_blank" className="silabus">Open</a></td>
-                      <td>{item.score}</td>
+                      <td>
+                        {
+                          this.state.infoExam.tipe_jawab == '1' ?
+                            <a href={item.answer_file} target="_blank" className="silabus">Open</a>
+                          :
+                            <div dangerouslySetInnerHTML={{ __html: item.answer_file }} />
+                        }
+                      </td>
+                      <td>{
+                            item.score == 0 ?
+                              <span className="silabus" onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i}>
+                                Beri Nilai
+                              </span>
+                            :
+                              <p>{item.score}</p>
+                          }
+                      </td>
                     </tr>
                   ))
                 }
@@ -324,26 +343,49 @@ class Tugas extends React.Component {
           <Modal.Body>
             <h4 className="mb-3">{this.state.detail.name}</h4>
 
-            <p style={{marginLef: '160px'}}>{this.state.detail.answer_deskripsi}</p>
-
-            <div className="score-exam text-center">
-              <span>Score</span>
-              <h1>{this.state.nilaiTugas}</h1>
-            </div>
-
-            <a href={this.state.detail.answer_file} target="_blank" className="btn btn-v2 btn-default btn-info">
-              <i className="fa fa-download"></i> Download
-            </a>
-
-            <div className="form-group mt-4">
-              <label>Nilai</label>
-              <div class="input-group mb-3">
-                <input value={this.state.nilaiTugas} pattern="[0-9]*" onChange={e => this.setState({ nilaiTugas: e.target.value > 100 ? 0 : e.target.value })} type="number" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                  <button onClick={this.setNilaiTugas} class="btn btn-outline-secondary" type="button">Beri Nilai</button>
+            <Row>
+              <Col sm="8">
+                {
+                  this.state.detail.answer_deskripsi ?
+                  <textarea disabled style={{width: '346px'}} rows="6" value={this.state.detail.answer_deskripsi} />
+                  :
+                  <textarea disabled style={{width: '346px'}} rows="6" value={this.state.detail.answer_file} />
+                }
+              </Col>
+              <Col sm="4">
+                <div className="text-center">
+                  <span>Score</span>
+                  <h1>{this.state.nilaiTugas}</h1>
                 </div>
-              </div>
-            </div>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col sm="12">
+                <div className="mt-2">
+                {
+                  this.state.infoExam.tipe_jawab == '1' ?
+                    <a href={this.state.detail.answer_file} target="_blank" className="btn btn-v2 btn-default btn-info">
+                      <i className="fa fa-download"></i> Download
+                    </a>
+                  :
+                    null
+                }
+                </div>
+              </Col>
+
+              <Col sm="12">
+                <div className="form-group mt-2">
+                  <label>Nilai</label>
+                  <div class="input-group mb-3">
+                    <input value={this.state.nilaiTugas} pattern="[0-9]*" onChange={e => this.setState({ nilaiTugas: e.target.value > 100 ? 0 : e.target.value })} type="number" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
+                    <div class="input-group-append">
+                      <button onClick={this.setNilaiTugas} class="btn btn-success" type="button">Beri Nilai</button>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
           </Modal.Body>
         </Modal>
 
