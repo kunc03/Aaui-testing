@@ -211,7 +211,7 @@ class GuruUjian extends Component {
       <div class="col-sm-12 mt-2">
         <Card>
           <Card.Body>
-            <h4 className="f-w-900 f-18 fc-blue">Timeline</h4>
+            <h4 className="f-w-900 f-18 fc-blue">Progress</h4>
             <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
               <option value="all">All</option>
               <option value="materi">Materi</option>

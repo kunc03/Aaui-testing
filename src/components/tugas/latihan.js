@@ -142,10 +142,10 @@ class Latihan extends React.Component {
                         <td>
                           <a href="#" onClick={this.openDetail} data-id={item.exam_id} data-title={item.title}>{item.exam_title}</a>
                         </td>
-                        <td>{item.soal}</td>
+                        <td>{item.soal.length}</td>
                         <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
-                        <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
-                        <td>{item.score}</td>
+                        <td>{item.submitted.length ? moment(item.submitted[0].created_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                        <td>{item.submitted.length ? item.submitted[0].score : '-'}</td>
                         <td>
                           <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`} className="btn btn-v2 btn-primary">
                             <i className="fa fa-share"></i> Open

@@ -544,7 +544,7 @@ export class ClientSwitch extends React.Component {
 
         {/* <Route path="/liveclass" exact component={LiveClass} /> */}
         {/* <Route path="/liveclass" component={LiveClass} /> */}
-        
+
         {/* Training */}
         <Route path="/training" exact component={Training} />
         <Route path="/training/course" exact component={TrainingUser} />

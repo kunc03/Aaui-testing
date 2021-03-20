@@ -591,7 +591,7 @@ class Mengajar extends React.Component {
                 </div>
 
                 {
-                  (this.state.infoChapter.tatapmuka == 100 || this.state.isTatapMuka == 100) ?
+                  (this.state.infoChapter.tatapmuka == 1 || this.state.isTatapMuka == 1) ?
                     <div className="card-body p-1">
                       {
                         this.state.infoChapter.tatapmuka == 1 &&
