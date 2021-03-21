@@ -42,7 +42,7 @@ class Lists extends Component {
 											borderRadius: '25px',
 											padding: '5px 12px'
 										}}>
-											<i className="fa fa-share"></i> Entry
+											<i className="fa fa-share"></i> Enter
 									</Link>
 									}
 									{

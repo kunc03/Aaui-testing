@@ -218,8 +218,8 @@ class MeetingTable extends Component {
   }
   toggleSwitch(checked) {
     this.setState({ private: !this.state.private });
-    if (!checked){
-      this.setState({requireConfirmation: false});
+    if (!checked) {
+      this.setState({ requireConfirmation: false });
     }
   }
   toggleSwitchRequiredConfirmation(checked) {
@@ -835,9 +835,9 @@ class MeetingTable extends Component {
 
   }
 
-  fetchCheckAccess(role, companyId, level, param ) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
-      if(res.status === 200) {
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+      if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
     })
@@ -870,7 +870,7 @@ class MeetingTable extends Component {
   }
 
   render() {
-    let cdMeeting = this.state.gb.length && this.state.gb.filter(item=> item.code === 'CD_MEETING')[0].status;
+    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
     // const headerTabble = [
     //   // {title : 'Meeting Name', width: null, status: true},
     //   {title : 'Moderator', width: null, status: true},
@@ -984,7 +984,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Active' ? 'Entry' : 'Information'}</button>,
+          onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1017,28 +1017,28 @@ class MeetingTable extends Component {
 
 
         <span className="">
-            <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
+          <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
 
-            {
-              cdMeeting &&
-              <>
+          {
+            cdMeeting &&
+            <>
               {access_project_admin == true && this.state.limitCompany.meeting ? <button
-              onClick={this.handleCreateMeeting.bind(this)}
-              className="btn btn-icademy-primary float-right"
-              style={{ padding: "7px 8px !important", marginLeft:14 }}
+                onClick={this.handleCreateMeeting.bind(this)}
+                className="btn btn-icademy-primary float-right"
+                style={{ padding: "7px 8px !important", marginLeft: 14 }}
               >
-              <i className="fa fa-plus"></i>
+                <i className="fa fa-plus"></i>
 
               Create New
               </button> : null}
-              </>
-            }
+            </>
+          }
 
-            <input
-                type="text"
-                placeholder="Search"
-                onChange={this.filterMeeting}
-                className="form-control float-right col-sm-3"/>
+          <input
+            type="text"
+            placeholder="Search"
+            onChange={this.filterMeeting}
+            className="form-control float-right col-sm-3" />
         </span>
 
         {
