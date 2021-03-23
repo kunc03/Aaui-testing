@@ -111,10 +111,10 @@ class PersonaliaDetail extends React.Component {
 
       let url = '';
       if(this.state.exists) {
-        url = `${API_SERVER}v2/murid/create?exists=true`
+        url = `${API_SERVER}v2/parents/create?exists=true`
       }
       else {
-        url = `${API_SERVER}v2/murid/create`;
+        url = `${API_SERVER}v2/parents/create`;
       }
 
       API.post(url, form).then(res => {
@@ -226,7 +226,7 @@ class PersonaliaDetail extends React.Component {
               <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanData}>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Parent No.</label>
+                  <label className="col-sm-2 col-form-label text-right">No Induk</label>
                   <div className="col-sm-4">
                     <input type="text" value={this.state.noInduk} disabled className="form-control" />
                   </div>
@@ -307,20 +307,6 @@ class PersonaliaDetail extends React.Component {
             <div className="card-body" style={{ padding: '5px' }}>
               <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanDataOrtu}>
-                <div className="form-group row">
-                  <label className="col-sm-2 col-form-label text-right">Choose</label>
-                  <div className="col-sm-4">
-                    <select onChange={this.showName} class="form-control">
-                      <option value="" selected disabled>Find parent if user exists</option>
-                      {
-                        this.state.userParents.map((item,i) => (
-                          <option value={item.user_id}>{item.name}</option>
-                        ))
-                      }
-                      <option value="tambah">Add new</option>
-                    </select>
-                  </div>
-                </div>
                 <div className="form-group row">
                   <label className="col-sm-2 col-form-label text-right">ID card number</label>
                   <div className="col-sm-4">
