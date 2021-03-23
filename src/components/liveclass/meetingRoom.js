@@ -1319,7 +1319,7 @@ export default class MeetingRoom extends Component {
                                 </Col>
                                 <Col sm={2}>
                                   <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                                    {this.state.loadingFileSharing ? 'Loading...' : 'Kirim'}
+                                    {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
                                   </button>
                                   {/*
                                   <button onClick={this.onBotoomScroll}>coba</button> */}
