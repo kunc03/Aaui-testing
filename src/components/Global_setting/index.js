@@ -30,15 +30,15 @@ export default class GlobalSetting extends Component {
   componentDidMount() {
     this.fetchRoles()
 
-    if(this.state.cType === 'pendidikan') {
+    if (this.state.cType === 'pendidikan') {
       this.props.history.push('/global-settings/access/0')
     }
   }
 
   fetchRoles() {
-    if(this.state.cType === 'pendidikan') {
+    if (this.state.cType === 'pendidikan') {
       API.get(`${API_SERVER}v1/grup/company/${Storage.get('user').data.company_id}`).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.setState({ roles: res.data.result })
         }
       })
@@ -87,18 +87,18 @@ export default class GlobalSetting extends Component {
                         {
                           this.state.cType === 'perusahaan' &&
                           <>
-                          {
-                            roles.map((item, i) => (
-                              <li key={i} className={`nav-item`}>
-                                <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
-                                  activeClassName='active'
-                                  className={`nav-link`}
-                                  to={`/global-settings${item.link}`}>
-                                  <b>{item.name}</b>
-                                </NavLink>
-                              </li>
-                            ))
-                          }
+                            {
+                              roles.map((item, i) => (
+                                <li key={i} className={`nav-item`}>
+                                  <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+                                    activeClassName='active'
+                                    className={`nav-link`}
+                                    to={`/global-settings${item.link}`}>
+                                    <b>{item.name}</b>
+                                  </NavLink>
+                                </li>
+                              ))
+                            }
                           </>
                         }
 
@@ -135,12 +135,12 @@ export default class GlobalSetting extends Component {
                     {
                       this.state.cType === 'perusahaan' &&
                       <>
-                      <Route path={`/global-settings`} exact component={ProjectAdmin} />
-                      {
-                        roles.map(item => (
-                          <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
-                        ))
-                      }
+                        <Route path={`/global-settings`} exact component={ProjectAdmin} />
+                        {
+                          roles.map(item => (
+                            <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
+                          ))
+                        }
                       </>
                     }
 

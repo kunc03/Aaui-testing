@@ -4,6 +4,7 @@ import {
   Form, Col, Row, Modal
 } from 'react-bootstrap';
 import ReactFullScreenElement from "react-fullscreen-element";
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
@@ -146,14 +147,14 @@ export default class MeetingRoom extends Component {
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (this.state.isZoom){
+      if (this.state.isZoom) {
         role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
-      else{
-        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      else {
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id)[0].role
         }
-        else{
+        else {
           role = result.attendees.attendee.role
         }
       }
@@ -163,16 +164,16 @@ export default class MeetingRoom extends Component {
           selectedFileShow: val
         }
         API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.class_id}`, form).then(res => {
-          if(res.status === 200) {
-            if(!res.data.error){
-              this.setState({selectedFileShow: val})
+          if (res.status === 200) {
+            if (!res.data.error) {
+              this.setState({ selectedFileShow: val })
               socket.emit('send', {
                 socketAction: 'fileShow',
                 userId: this.state.user.user_id,
                 meetingId: this.state.classRooms.class_id,
                 selectedFileShow: val
               })
-            }else{
+            } else {
               toast.error('Error update share file');
             }
           }
@@ -316,22 +317,22 @@ export default class MeetingRoom extends Component {
   }
 
   joinChime = async (e) => {
-    const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
-    const name      = Storage.get('user').data.user;
-    const region    = `ap-southeast-1`;
+    const title = this.state.classRooms.room_name + '-' + moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const name = Storage.get('user').data.user;
+    const region = `ap-southeast-1`;
 
     axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
       this.setState({ attendee: res.data.JoinInfo })
     })
   }
 
-  fetchProject(){
+  fetchProject() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
           this.setState({ project: response.data.result });
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log(error);
         });
       }
@@ -342,15 +343,15 @@ export default class MeetingRoom extends Component {
     // this.onBotoomScroll();
     this.fetchProject()
     socket.on("broadcast", data => {
-      if(data.room == this.state.classId) {
+      if (data.room == this.state.classId) {
         this.fetchData();
         this.setState({ loadingFileSharing: false, fileChat: [...this.state.fileChat, data] })
       }
-      if(data.socketAction == 'shareGantt' && data.meetingId===this.state.classRooms.class_id && data.userId!==this.state.user.user_id) {
-        this.setState({newShareGantt: true, shareGantt: data.projectId})
+      if (data.socketAction == 'shareGantt' && data.meetingId === this.state.classRooms.class_id && data.userId !== this.state.user.user_id) {
+        this.setState({ newShareGantt: true, shareGantt: data.projectId })
       }
-      if(data.socketAction == 'fileShow' && data.meetingId===this.state.classRooms.class_id && data.userId!==this.state.user.user_id) {
-        this.setState({newFileShow: true, selectedFileShow: data.selectedFileShow})
+      if (data.socketAction == 'fileShow' && data.meetingId === this.state.classRooms.class_id && data.userId !== this.state.user.user_id) {
+        this.setState({ newFileShow: true, selectedFileShow: data.selectedFileShow })
       }
     });
     this.fetchData();
@@ -409,7 +410,7 @@ export default class MeetingRoom extends Component {
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-        this.setState({isZoom:  zoomUrl.data.result.length ? true : false});
+        this.setState({ isZoom: zoomUrl.data.result.length ? true : false });
 
         var data = liveClass.data.result
         /*mark api get new history course*/
@@ -667,14 +668,14 @@ export default class MeetingRoom extends Component {
     let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
-      if (this.state.isZoom){
+      if (this.state.isZoom) {
         role = this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'MODERATOR' : 'VIEWER';
       }
-      else{
-        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id ).length) {
-          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id )[0].role
+      else {
+        if (Array.isArray(result.attendees.attendee) && result.attendees.attendee.filter(item => item.userID === this.state.user.user_id).length) {
+          role = result.attendees.attendee.filter(item => item.userID === this.state.user.user_id)[0].role
         }
-        else{
+        else {
           role = result.attendees.attendee.role
         }
       }
@@ -684,8 +685,8 @@ export default class MeetingRoom extends Component {
           projectId: projectId
         }
         API.put(`${API_SERVER}v1/liveclass/share-gantt/${this.state.classRooms.class_id}`, form).then(res => {
-          if(res.status === 200) {
-            if(!res.data.error){
+          if (res.status === 200) {
+            if (!res.data.error) {
               this.setState({
                 shareGantt: projectId
               })
@@ -695,7 +696,7 @@ export default class MeetingRoom extends Component {
                 meetingId: this.state.classRooms.class_id,
                 projectId: projectId
               })
-            }else{
+            } else {
               alert('Error update share timeline')
             }
           }
@@ -707,7 +708,7 @@ export default class MeetingRoom extends Component {
     })
   }
 
-  sendFileNew(){
+  sendFileNew() {
 
     let form = new FormData();
     form.append('class_id', this.state.classId);
@@ -922,26 +923,26 @@ export default class MeetingRoom extends Component {
         if (ektension === "jpg" || ektension === "png" || ektension === "jpeg") {
           return (
             <div>
-              <img src={media} style={{ maxWidth:'100%' }} />
+              <img src={media} style={{ maxWidth: '100%' }} />
             </div>
           )
         }
-        else if (ektension === "pdf") {
+        // else if (ektension === "pdf") {
+        //   return (
+        //     <div>
+        //       <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
+        //         <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
+        //       </Worker>
+        //     </div>
+        //   )
+        // }
+        else {
           return (
             <div>
-            <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
-              <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
-            </Worker>
+              <FileViewer
+                fileType={ektension}
+                filePath={media} />
             </div>
-          )
-        }
-        else{
-          return (
-          <div>
-          <FileViewer
-            fileType={ektension}
-            filePath={media}/>
-          </div>
           )
         }
       }
@@ -976,63 +977,112 @@ export default class MeetingRoom extends Component {
                             :
                             null
                           }
-                        </h3> */} { user.name && classRooms.room_name ?
-                        <div className="card p-20">
-                          <div>
-                            <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+                        </h3> */} {user.name && classRooms.room_name ?
+                          <div className="card p-20">
+                            <div>
+                              <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
 
-                            <div className="float-right dropleft">
-                              <button style={{padding: '6px 18px', border: 'none', marginBottom:0, background: 'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight:0, color: 'rgb(148 148 148)' }} />
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                                <button style={{cursor: 'pointer'}} onClick={()=> this.setState({fullscreen: !this.state.fullscreen})} type="button" class="dropdown-item">
-                                  <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{marginRight:10}}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
+                              <div className="float-right dropleft">
+                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight: 0, color: 'rgb(148 148 148)' }} />
                                 </button>
-                                <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onClickInvite}>
-                                  <i className="fa fa-user-plus" style={{marginRight:10}}></i> Invite People
-                                </button>
-                                {
-                                  (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
-                                  <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
-                                    <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{marginRight:10}}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                  <button style={{ cursor: 'pointer' }} onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} type="button" class="dropdown-item">
+                                    <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: 10 }}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
                                   </button>
-                                }
-                                { user.user_id == classRooms.moderator &&
-                                <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={()=> this.setState({modalEnd: true})}>
-                                  <i className="fa fa-stop-circle" style={{marginRight:10}}></i> End Meeting
+                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite}>
+                                    <i className="fa fa-user-plus" style={{ marginRight: 10 }}></i> Invite People
                                 </button>
-                                }
-                                <button style={{cursor: 'pointer'}} class="dropdown-item" type="button" onClick={()=> window.close()}>
-                                  <i className="fa fa-sign-out-alt" style={{marginRight:10}}></i> Exit Meeting
+                                  {
+                                    (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
+                                      <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{ marginRight: 10 }}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                    </button>
+                                  }
+                                  {user.user_id == classRooms.moderator &&
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => this.setState({ modalEnd: true })}>
+                                      <i className="fa fa-stop-circle" style={{ marginRight: 10 }}></i> End Meeting
                                 </button>
+                                  }
+                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => window.close()}>
+                                    <i className="fa fa-sign-out-alt" style={{ marginRight: 10 }}></i> Exit Meeting
+                                </button>
+                                </div>
                               </div>
-                            </div>
-                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={()=> this.setState({modalMOM: true})} className="float-right btn btn-icademy-primary">
-                              <i className="fa fa-clipboard-list" style={{marginRight: '0px !important'}}></i>MOM
+
+                              <Tooltip title="MOM" arrow placement="top">
+
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalMOM: true })} className="float-right m-b-10">
+                                  <img
+                                    src={`newasset/room/room-mom.svg`}
+                                    alt=""
+                                    width={32}
+                                  ></img>
+                                </span>
+
+                              </Tooltip>
+
+                              <Tooltip title="File Sharing" arrow placement="top">
+
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalFileSharing: true })} className="float-right m-b-10">
+                                  <img
+                                    src={`newasset/room/room-share.svg`}
+                                    alt=""
+                                    width={32}
+                                  ></img>
+                                </span>
+
+                              </Tooltip>
+                              <Tooltip title="Task & Timeline" arrow placement="top">
+
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
+                                  <img
+                                    src={`newasset/room/room-task.svg`}
+                                    alt=""
+                                    width={32}
+                                  ></img>
+                                </span>
+
+                              </Tooltip>
+                              <Tooltip title="File Show" arrow placement="top">
+
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false })} className="float-right m-b-10">
+                                  <img
+                                    src={`newasset/room/room-file.svg`}
+                                    alt=""
+                                    width={32}
+                                  ></img>
+                                </span>
+
+                              </Tooltip>
+
+
+                              {/* <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important' }} onClick={() => this.setState({ modalMOM: true })} className="float-right btn btn-icademy-primary">
+                                <i className="fa fa-clipboard-list" style={{ marginRight: '0px !important' }}></i>MOM
                             </button>
-                            <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important' }} onClick={()=> this.setState({ modalFileSharing: true })} className="float-right btn btn-icademy-primary">
-                              <i className="fa fa-file" style={{ marginRight: '0px !important' }}></i>File Sharing
+                              <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important' }} onClick={() => this.setState({ modalFileSharing: true })} className="float-right btn btn-icademy-primary">
+                                <i className="fa fa-file" style={{ marginRight: '0px !important' }}></i>File Sharing
                             </button>
-                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalGantt: true, newShareGantt: false})} className="float-right btn btn-icademy-primary">
-                              <i className="fa fa-tasks" style={{marginRight: '0px !important'}}></i>Task & Timeline
+                              <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right btn btn-icademy-primary">
+                                <i className="fa fa-tasks" style={{ marginRight: '0px !important' }}></i>Task & Timeline
                             </button>
-                            <button style={{marginRight:14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newFileShow ? '4px solid #12db9f' : 'none'}} onClick={()=> this.setState({modalFileShow: true, newFileShow: false})} className="float-right btn btn-icademy-primary">
-                              <i className="fa fa-file" style={{marginRight: '0px !important'}}></i>File Show
-                            </button>
-                            {/*
+                              <button style={{ marginRight: 14, padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false })} className="float-right btn btn-icademy-primary">
+                                <i className="fa fa-file" style={{ marginRight: '0px !important' }}></i>File Show
+                              </button> */}
+
+                              {/*
                             <a target='_blank' href={this.state.joinUrl}>
                               <button className="float-right btn btn-icademy-primary">
                                 <i className="fa fa-external-link-alt"></i>Buka di Tab Baru
                               </button>
-                            </a> */}
-                          </div>
-                          {/*
+                            </a> MOM*/}
+                            </div>
+                            {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
 
-                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                            <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
 
-                          {/* <ThemeProvider theme={lightTheme}>
+                            {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>
                               <ChimeMeeting
                                 ref={`child`}
@@ -1043,8 +1093,8 @@ export default class MeetingRoom extends Component {
                             </MeetingProvider>
                           </ThemeProvider> */}
 
-                        </div>
-                        : null }
+                          </div>
+                          : null}
                       </Col>
 
                     </Row>
@@ -1055,24 +1105,24 @@ export default class MeetingRoom extends Component {
                           Meeting and Attendance Information
                         </Modal.Title>
 
-                        { this.state.needConfirmation >= 1 ?
-                        <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                          <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
-                            <div className="card-carousel col-sm-8">
-                              <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                Konfirmasi Kehadiran
+                        {this.state.needConfirmation >= 1 ?
+                          <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                              <div className="card-carousel col-sm-8">
+                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                  Konfirmasi Kehadiran
                               </div>
-                              <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
-                            </div>
-                            <div className="card-carousel col-sm-4">
-                              <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
+                                <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                              </div>
+                              <div className="card-carousel col-sm-4">
+                                <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
                               </Link>
-                              <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
+                                <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
                               </Link>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        : null }
+                          : null}
                         <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                           <div className="card">
                             <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
@@ -1084,57 +1134,57 @@ export default class MeetingRoom extends Component {
                               <div class="row">
                                 <div className="col-sm-6">
                                   <h3 className="f-14">
-                                                Moderator : {this.state.infoClass.name}
-                                              </h3>
+                                    Moderator : {this.state.infoClass.name}
+                                  </h3>
                                   <h3 className="f-14">
-                                                Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                                              </h3>
+                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                  </h3>
                                 </div>
-                                { this.state.infoClass.is_scheduled ?
-                                <div className="col-sm-6">
-                                  <h3 className="f-14">
-                                                    Mulai : {infoDateStart}
-                                                  </h3>
-                                  <h3 className="f-14">
-                                                    Selesai : {infoDateEnd}
-                                                  </h3>
-                                </div>
-                                : null }
+                                {this.state.infoClass.is_scheduled ?
+                                  <div className="col-sm-6">
+                                    <h3 className="f-14">
+                                      Mulai : {infoDateStart}
+                                    </h3>
+                                    <h3 className="f-14">
+                                      Selesai : {infoDateEnd}
+                                    </h3>
+                                  </div>
+                                  : null}
                               </div>
-                              { this.state.infoClass.is_private ?
-                              <div>
-                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                  Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                              {this.state.infoClass.is_private ?
+                                <div>
+                                  <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
                                 </div>
-                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                  <div className='legend-kehadiran hadir'></div>
-                                  <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                  <div className='legend-kehadiran tidak-hadir'></div>
-                                  <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                  <div className='legend-kehadiran tentative'></div>
-                                  <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                    <div className='legend-kehadiran hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                                    <div className='legend-kehadiran tidak-hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                                    <div className='legend-kehadiran tentative'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                  </div>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                    {this.state.infoParticipant.map(item =>
+                                      <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                  { this.state.infoParticipant.map(item =>
-                                  <div className={item.confirmation==='Hadir' ? 'peserta hadir' : item.confirmation==='Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                                  ) }
+                                : null} {this.state.infoClass.is_private ?
+                                  <div>
+                                    <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                      Kehadiran Aktual
                                 </div>
-                              </div>
-                              : null } { this.state.infoClass.is_private ?
-                              <div>
-                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                  Kehadiran Aktual
-                                </div>
-                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                  { this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
-                                  <div className='peserta aktual-hadir'>{item.name}</div>
-                                  ) }
-                                </div>
-                              </div>
-                              : null }
+                                    <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                      {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
+                                        <div className='peserta aktual-hadir'>{item.name}</div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  : null}
                             </div>
                           </div>
-                          <button type="button" className="btn btn-block f-w-bold" onClick={e=> this.closeModalConfirmation()} > Close
+                          <button type="button" className="btn btn-block f-w-bold" onClick={e => this.closeModalConfirmation()} > Close
                           </button>
                         </div>
                       </Modal.Body>
@@ -1149,59 +1199,59 @@ export default class MeetingRoom extends Component {
                       <Modal.Body>
                         <div className="form-vertical">
                           <Form.Group controlId="formJudul">
-                          <Form.Label className="f-w-bold">
-                            Invite User
+                            <Form.Label className="f-w-bold">
+                              Invite User
                           </Form.Label>
-                          <MultiSelect
-                            id="peserta"
-                            options={this.state.optionsInvite}
-                            value={this.state.valueInvite}
-                            onChange={valueInvite => this.setState({ valueInvite })}
-                            mode="tags"
-                            removableTags={true}
-                            hasSelectAll={true}
-                            selectAllLabel="Pilih Semua"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Pilih"
-                          />
-                          <Form.Text className="text-muted">
-                            Pilih user yang ingin diundang.
+                            <MultiSelect
+                              id="peserta"
+                              options={this.state.optionsInvite}
+                              value={this.state.valueInvite}
+                              onChange={valueInvite => this.setState({ valueInvite })}
+                              mode="tags"
+                              removableTags={true}
+                              hasSelectAll={true}
+                              selectAllLabel="Pilih Semua"
+                              enableSearch={true}
+                              resetable={true}
+                              valuePlaceholder="Pilih"
+                            />
+                            <Form.Text className="text-muted">
+                              Pilih user yang ingin diundang.
                           </Form.Text>
-                        </Form.Group>
-              <div className="form-group">
-                <label style={{ fontWeight: "bold" }}>Email</label>
-                <TagsInput
-                  value={this.state.emailInvite}
-                  onChange={this.handleChange.bind(this)}
-                  addOnPaste={true}
-                  addOnBlur={true}
-                  inputProps={{placeholder:'Email Peserta'}}
-                />
-                <Form.Text>
-                  Masukkan email yang ingin di invite.
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChange.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: 'Email Peserta' }}
+                            />
+                            <Form.Text>
+                              Masukkan email yang ingin di invite.
                 </Form.Text>
-              </div>
-            </div>
+                          </div>
+                        </div>
 
-            <button
-              style={{ marginTop: "30px" }}
-              disabled={this.state.sendingEmail}
-              type="button"
-              onClick={this.onClickSubmitInvite}
-              className="btn btn-block btn-ideku f-w-bold"
-            >
-              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                        <button
+                          style={{ marginTop: "30px" }}
+                          disabled={this.state.sendingEmail}
+                          type="button"
+                          onClick={this.onClickSubmitInvite}
+                          className="btn btn-block btn-ideku f-w-bold"
+                        >
+                          {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-block f-w-bold"
+                          onClick={this.handleCloseInvite}
+                        >
+                          Tidak
             </button>
-            <button
-              type="button"
-              className="btn btn-block f-w-bold"
-              onClick={this.handleCloseInvite}
-            >
-              Tidak
-            </button>
-          </Modal.Body>
-        </Modal>
+                      </Modal.Body>
+                    </Modal>
 
                     <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
                       <Modal.Header closeButton>
@@ -1234,21 +1284,23 @@ export default class MeetingRoom extends Component {
                           <div className="col-sm-12">
                             <div id="scrollin" className='card ' style={{ height: '400px', marginBottom: '0px' }}>
                               <div style={{ height: '100%', overflowY: 'scroll' }}>
-                                {this.state.fileChat.map((item, i) => { return (
-                                <div className='box-chat-send-left'>
-                                  <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
-                                  <br />
-                                  <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
-                                    <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
-                                  </p>
-                                  <small>
-                                                    {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
+                                {this.state.fileChat.map((item, i) => {
+                                  return (
+                                    <div className='box-chat-send-left'>
+                                      <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
+                                      <br />
+                                      <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
+                                        <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
+                                      </p>
+                                      <small>
+                                        {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
                                           {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
-                                                  </small> { classRooms.moderator == Storage.get("user").data.user_id &&
-                                  <button style={{ cursor: 'pointer' }} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
-                                  }
-                                </div>
-                                ) })}
+                                      </small> { classRooms.moderator == Storage.get("user").data.user_id &&
+                                        <button style={{ cursor: 'pointer' }} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                                      }
+                                    </div>
+                                  )
+                                })}
                               </div>
                             </div>
 
@@ -1285,58 +1337,58 @@ export default class MeetingRoom extends Component {
                         <div className="col-sm-12">{/* CHATING SEND FILE */}
                           <div id="scrollin" className="card" style={{ padding: 10 }}>
                             <div className={this.state.editMOM ? 'hidden' : ''}>
-                              <button to={ "#"} onClick={(a)=> { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
+                              <button to={"#"} onClick={(a) => { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
                               </button>
                             </div>
                             {!this.state.editMOM ?
-                            <div className="card">
-                              <div className="col-sm-12">
-                                {this.state.listMOM.map((item, i) => (
-                                <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
-                                  <h3 className="f-18 f-w-bold f-w-800">
-                                                      {item.title}
-                                                      <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
-                                                        <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
-                                                          Export PDF
+                              <div className="card">
+                                <div className="col-sm-12">
+                                  {this.state.listMOM.map((item, i) => (
+                                    <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
+                                      <h3 className="f-18 f-w-bold f-w-800">
+                                        {item.title}
+                                        <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
+                                          <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
+                                            Export PDF
                                                     </Link>
-                                                        <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
-                                                          <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
-                                                        </Link>
-                                                        <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
-                                                          <i data-id={item.id} className="fa fa-trash"></i>
-                                                        </Link>
-                                                      </span>
-                                                    </h3>
-                                  <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
+                                          <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
+                                            <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
+                                          </Link>
+                                          <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
+                                            <i data-id={item.id} className="fa fa-trash"></i>
+                                          </Link>
+                                        </span>
+                                      </h3>
+                                      <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
+                                    </div>
+                                  ))}
                                 </div>
-                                )) }
                               </div>
-                            </div>
-                            :
-                            <div>
-                              <Link to='#' title="Kembali" onClick={this.backMOM}>
-                              <h4 className="f-20 f-w-800 p-10">
-                                                    <i className="fa fa-arrow-left"></i> Kembali
+                              :
+                              <div>
+                                <Link to='#' title="Kembali" onClick={this.backMOM}>
+                                  <h4 className="f-20 f-w-800 p-10">
+                                    <i className="fa fa-arrow-left"></i> Kembali
                                         </h4>
-                              </Link>
-                              <h4 className="p-10">{classRooms.room_name}</h4>
-                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                <Form.Label className="f-w-bold">
-                                  Title MOM
+                                </Link>
+                                <h4 className="p-10">{classRooms.room_name}</h4>
+                                <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                  <Form.Label className="f-w-bold">
+                                    Title MOM
                                 </Form.Label>
-                                <div style={{ width: '100%' }}>
-                                  <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="isi judul MOM..." onChange={this.onChangeInputMOM} />
-                                </div>
-                              </Form.Group>
-                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                <Form.Label className="f-w-bold">
-                                  Time
+                                  <div style={{ width: '100%' }}>
+                                    <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="isi judul MOM..." onChange={this.onChangeInputMOM} />
+                                  </div>
+                                </Form.Group>
+                                <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                  <Form.Label className="f-w-bold">
+                                    Time
                                 </Form.Label>
-                                <div style={{ width: '100%' }}>
-                                  <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
-                                </div>
-                              </Form.Group>
-                              {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                  <div style={{ width: '100%' }}>
+                                    <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
+                                  </div>
+                                </Form.Group>
+                                {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
                                   Text Dari Subtitle
                                 </Form.Label>
@@ -1356,27 +1408,28 @@ export default class MeetingRoom extends Component {
                               </Form.Group> */}
 
 
-                              <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                <Form.Label className="f-w-bold">
-                                  Speech recognition
+                                <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                                  <Form.Label className="f-w-bold">
+                                    Speech recognition
                                 </Form.Label>
-                                <Dictation newTranscript={this.handleTranscript} />
-                              </Form.Group>
+                                  <Dictation newTranscript={this.handleTranscript} />
+                                </Form.Group>
 
-                              <div className="chart-container" style={{ position: "relative", margin: 20 }}>
-                                <div className="form-group">
-                                  <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{ height: 400, menubar: true, plugins: [
-                                  "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount" ], toolbar: "undo redo | formatselect | bold italic backcolor | \
+                                <div className="chart-container" style={{ position: "relative", margin: 20 }}>
+                                  <div className="form-group">
+                                    <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{
+                                      height: 400, menubar: true, plugins: [
+                                        "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount"], toolbar: "undo redo | formatselect | bold italic backcolor | \
                                             alignleft aligncenter alignright alignjustify | \
                                             bullist numlist outdent indent | removeformat | help" }} />
+                                  </div>
+                                </div>
+                                <div>
+                                  <button to={"#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                                    Save
+                                </button>
                                 </div>
                               </div>
-                              <div>
-                                <button to={ "#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                                  Save
-                                </button>
-                              </div>
-                            </div>
                             }
                           </div>
                         </div>
@@ -1385,40 +1438,40 @@ export default class MeetingRoom extends Component {
 
                     <Modal show={this.state.modalGantt} onHide={this.closeModalGantt} dialogClassName='modal-2xl' centered>
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                           Task & Timeline - &nbsp;
                           <select className="select-project" name="shareGantt" value={this.state.shareGantt} onChange={this.changeShareGantt}>
                             <option value={0}>Project Not Selected</option>
-                            {this.state.project.map(item=>
-                            <option value={item.id}>{item.title}</option>
+                            {this.state.project.map(item =>
+                              <option value={item.id}>{item.title}</option>
                             )}
                           </select>
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <div className="gantt-container">
-                          { this.state.shareGantt != 0 &&
-                          <Gantt projectId={this.state.shareGantt}/> }
+                          {this.state.shareGantt != 0 &&
+                            <Gantt projectId={this.state.shareGantt} />}
                         </div>
                       </Modal.Body>
                     </Modal>
 
                     <Modal show={this.state.modalFileShow} onHide={this.closeModalFileShow} dialogClassName='modal-2xl' centered>
                       <Modal.Header closeButton>
-                        <Modal.Title className="text-c-purple3 f-w-bold" style={{color: '#00478C'}}>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                           Files on project {classRooms.project_name}
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <div className="wrap" style={{marginTop: '10px', overflowY:'scroll'}}>
-                          { this.state.selectedFileShow === '' && <TableFiles access_project_admin={false} projectId={classRooms.folder_id} selectedFileShow={this.handleSelectFileShow}/>}
-                          { this.state.selectedFileShow !== '' &&
-                          <div>
-                            <button to={ "#"} onClick={this.handleSelectFileShow.bind(this, '')} className="btn btn-icademy-primary ml-2 col-2 f-14">
-                              <i className="fa fa-stop" style={{marginRight:10}}></i> Stop File Show
+                        <div className="wrap" style={{ marginTop: '10px', overflowY: 'scroll' }}>
+                          {this.state.selectedFileShow === '' && <TableFiles access_project_admin={false} projectId={classRooms.folder_id} selectedFileShow={this.handleSelectFileShow} />}
+                          {this.state.selectedFileShow !== '' &&
+                            <div>
+                              <button to={"#"} onClick={this.handleSelectFileShow.bind(this, '')} className="btn btn-icademy-primary ml-2 col-2 f-14">
+                                <i className="fa fa-stop" style={{ marginRight: 10 }}></i> Stop File Show
                             </button>
-                            <CheckMedia media={this.state.selectedFileShow} />
-                          </div>
+                              <CheckMedia media={this.state.selectedFileShow} />
+                            </div>
                           }
                         </div>
                       </Modal.Body>
@@ -1432,6 +1485,6 @@ export default class MeetingRoom extends Component {
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 }

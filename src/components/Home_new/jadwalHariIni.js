@@ -66,7 +66,7 @@ class JadwalHariIni extends Component {
                         <td className="fc-muted f-14 f-w-300 p-t-20" align="center">200</td>
                         <td className="fc-muted f-14 f-w-300" align="center">
                           <button className="btn btn-v2 btn-primary" >
-                            Entry
+                            Enter
                                 </button>
                         </td>
                       </tr>

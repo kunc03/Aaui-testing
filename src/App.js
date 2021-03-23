@@ -79,6 +79,7 @@ import ForumDetail from "./components/forum/forum-detail";
 // import LiveStreamPublic from "./components/liveclass/livestreamPublic";
 import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
+import TrainingSettings from "./components/training/settings";
 import Training from "./components/training/company";
 import TrainingUser from "./components/training/user";
 import TrainingCourse from "./components/training/course";
@@ -310,6 +311,7 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
         <Route path="/gantt/report" component={GanttReport} />
+        <Route path="/global-settings" component={GlobalSettings} />
 
         <Route path="/ptc" component={Ptc} />
 
@@ -317,6 +319,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} />
         <Route path="/aktivitas" component={Activity} />
         {/* Training */}
+        <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training" exact component={Training} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
@@ -326,7 +329,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
         <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
         <Route path="/training/company/detail/:id" exact component={TrainingCompanyDetail} />
-        <Route path="/training/user/create" exact component={TrainingUserForm} />
+        <Route path="/training/user/create/:level/:company" exact component={TrainingUserForm} />
         <Route path="/training/user/edit/:id" exact component={TrainingUserForm} />
         <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
@@ -466,6 +469,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
 
         {/* Training */}
+        <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training" exact component={Training} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
@@ -473,7 +477,11 @@ export class AdminSwitch extends React.Component {
         <Route path="/training/exam" exact component={TrainingExam} />
         <Route path="/training/membership" exact component={TrainingMembership} />
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
-        <Route path="/training/user/create" exact component={TrainingUserForm} />
+        <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
+        <Route path="/training/company/detail/:id" exact component={TrainingCompanyDetail} />
+        <Route path="/training/user/create/:level/:company" exact component={TrainingUserForm} />
+        <Route path="/training/user/edit/:id" exact component={TrainingUserForm} />
+        <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
         <Route path="/meeting" exact component={Meeting} />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
@@ -546,14 +554,19 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass" component={LiveClass} /> */}
 
         {/* Training */}
+        <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training" exact component={Training} />
-        <Route path="/training/course" exact component={TrainingUser} />
+        <Route path="/training/user" exact component={TrainingUser} />
+        <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
-        <Route path="/training/practice" exact component={TrainingCourse} />
         <Route path="/training/exam" exact component={TrainingExam} />
         <Route path="/training/membership" exact component={TrainingMembership} />
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
-        <Route path="/training/user/create" exact component={TrainingUserForm} />
+        <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
+        <Route path="/training/company/detail/:id" exact component={TrainingCompanyDetail} />
+        <Route path="/training/user/create/:level/:company" exact component={TrainingUserForm} />
+        <Route path="/training/user/edit/:id" exact component={TrainingUserForm} />
+        <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
         <Route path="/meeting" exact component={Meeting} />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
@@ -612,7 +625,7 @@ export class ClientSwitch extends React.Component {
         <Route path='/management-evaluasi' component={EvaluasiPrincipal} />
 
         <Route path="/logout" component={Logout} />
-      </Switch>
+      </Switch >
     );
   }
 }
