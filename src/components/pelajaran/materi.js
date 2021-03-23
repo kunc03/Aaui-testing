@@ -620,7 +620,7 @@ class Overview extends React.Component {
                                       </tr>
 
                                       {
-                                        item.jenis == 1 && item.kuis.map(row, j) => (
+                                        item.jenis == 1 && item.kuis.map((row, j) => (
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
