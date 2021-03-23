@@ -38,7 +38,12 @@ class GuruUjian extends Component {
       if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({ pelajaran: res.data.result })
-      this.fetchSilabus(res.data.result[0].jadwal_id, userId)
+      if(res.data.result.length) {
+        this.fetchSilabus(res.data.result[0].jadwal_id , userId)
+      }
+      else {
+        toast.info(`Belum ada jadwal.`)
+      }
     })
   }
 
@@ -61,6 +66,8 @@ class GuruUjian extends Component {
   render() {
 
     const { pelajaran, silabus } = this.state;
+
+    console.log('state: ', this.state);
 
     return (
       <div class="col-sm-12 mt-2">

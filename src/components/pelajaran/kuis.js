@@ -93,11 +93,16 @@ class Tugas extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if(res.data.error) {
+        toast.warning(`Error: fetch pertanyaan`)
+      }
 
-      console.log('state: ', res.data.result)
+      else {
 
-      this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+        console.log('state: ', res.data.result)
+
+        this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      }
     })
   }
 
@@ -115,24 +120,28 @@ class Tugas extends React.Component {
 
   selectOne(examId) {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${examId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
+      if(res.data.error) {
+        toast.warning(`Error: fetch ${this.state.tipe}`)
+      }
+      else {
+        this.setState({
+          formAdd: true,
 
-      this.setState({
-        formAdd: true,
+          examId: examId,
+          title: res.data.result.title,
+          quizAt: res.data.result.quiz_at,
+          tatapmuka: res.data.result.tatapmuka,
+          tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
+          tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
 
-        examId: examId,
-        title: res.data.result.title,
-        quizAt: res.data.result.quiz_at,
-        tatapmuka: res.data.result.tatapmuka,
-        tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
-        tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
+          fileExcel: Math.random().toString(36)
+        })
 
-        fileExcel: Math.random().toString(36)
-      })
+        this.fetchPertanyaan(examId);
 
-      this.fetchPertanyaan(examId);
+        this.fetchMengumpulkan(examId);
+      }
 
-      this.fetchMengumpulkan(examId);
     })
   }
 
@@ -149,17 +158,21 @@ class Tugas extends React.Component {
 
   fetchChapters() {
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch chapters`)
-
-      this.setState({ chapters: res.data.result })
+      if(res.data.error)
+        toast.warning(`Error: fetch chapters`)
+      else
+        this.setState({ chapters: res.data.result })
     })
   }
 
   fetchKuis() {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
-
-      this.setState({ kuis: res.data.result })
+      if(res.data.error) {
+        toast.warning(`Error: fetch ${this.state.tipe}`)
+      }
+      else {
+        this.setState({ kuis: res.data.result })
+      }
     })
   }
 
@@ -168,38 +181,46 @@ class Tugas extends React.Component {
     if(this.state.examId) {
       let form = {
         title: this.state.title,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tatapmuka: this.state.tatapmuka,
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
+        if(res.data.error) {
+          toast.warning(`Error: update ${this.state.tipe}`)
+        }
+        else {
+          toast.success(`Sukses mengubah ${this.state.tipe}`)
+          this.fetchKuis();
+          this.selectOne(this.state.examId)
+        }
 
-        toast.success(`Sukses mengubah ${this.state.tipe}`)
-        this.fetchKuis();
-        this.selectOne(this.state.examId)
       })
     } else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.pelajaranId,
+        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
 
         title: this.state.title,
         tatapmuka: this.state.tatapmuka,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
+        if(res.data.error) {
+          toast.warning(`Error: create ${this.state.tipe}`)
+        }
+        else {
+          toast.success(`Sukses menyimpan ${this.state.tipe}`)
+          this.fetchKuis();
+          this.selectOne(res.data.result.id)
+          this.clearForm();
+        }
 
-        toast.success(`Sukses menyimpan ${this.state.tipe}`)
-        this.fetchKuis();
-        this.selectOne(res.data.result.id)
-        this.clearForm();
       })
     }
   }
