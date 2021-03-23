@@ -39,7 +39,7 @@ class DashParent extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${muridId}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
-      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
 

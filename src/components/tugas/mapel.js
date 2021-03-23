@@ -8,7 +8,7 @@ import { Editor } from '@tinymce/tinymce-react';
 
 import { Link } from 'react-router-dom';
 
-import { Modal } from 'react-bootstrap';
+import { Modal, Tooltip, Tabs, Tab, OverlayTrigger } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
@@ -27,6 +27,8 @@ class Overview extends React.Component {
     preview: [],
     kuis: [],
 
+    silabus: [],
+
     isModalDetail: false,
     examId: '',
     examTitle: '',
@@ -35,18 +37,37 @@ class Overview extends React.Component {
     openTugas: false,
     infoTugas: {},
     pertanyaan: [],
+
+    informasiJadwal: {},
   };
 
   componentDidMount() {
     this.fetchOverview();
+    this.fetchSilabus();
+    this.fetchPelajaranByJadwal();
+  }
+
+  fetchPelajaranByJadwal() {
+    API.get(`${API_SERVER}v2/pelajaran/jadwal/${this.state.jadwalId}`).then(res => {
+      if(res.status === 200) {
+        this.setState({ informasiJadwal: res.data.result.length ? res.data.result[0] : {} })
+      }
+    })
+  }
+
+  fetchSilabus() {
+    API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.jadwalId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      this.setState({ silabus: res.data.result, loading: false, });
+    })
   }
 
   fetchOverview() {
-    API.get(`${API_SERVER}v2/pelajaran/preview/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
-
-      this.setState({ preview: res.data.result })
-    })
+    // API.get(`${API_SERVER}v2/pelajaran/preview/${this.state.jadwalId}`).then(res => {
+    //   if(res.data.error) toast.warning("Error fetch murid");
+    //
+    //   this.setState({ preview: res.data.result })
+    // })
 
     API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch overview`)
@@ -54,11 +75,11 @@ class Overview extends React.Component {
       this.setState({ overview: res.data.result.deskripsi });
     })
 
-    API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/all/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
-
-      this.setState({ kuis: res.data.result })
-    })
+    // API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/all/${this.state.jadwalId}`).then(res => {
+    //   if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
+    //
+    //   this.setState({ kuis: res.data.result })
+    // })
   }
 
   selectTugas(item) {
@@ -92,10 +113,24 @@ class Overview extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-body">
+              <h4 className="f-w-900 f-18 fc-blue">Informasi Jadwal</h4>
+              <table className="table table-bordered">
+                <tr>
+                  <td width="240px">Pelajaran</td>
+                  <td><b>{this.state.informasiJadwal.nama_pelajaran}</b></td>
+                </tr>
+                <tr>
+                  <td>Pengajar</td>
+                  <td><b>{this.state.informasiJadwal.nama}</b></td>
+                </tr>
+                <tr>
+                  <td>Jumlah Pertemuan</td>
+                  <td><b>{this.state.silabus.length}</b></td>
+                </tr>
+              </table>
+
               <h4 className="f-w-900 f-18 fc-blue">Preview</h4>
-
-              <div class="container py-2">
-
+              <div class="container py-2" style={{marginLeft: '24px'}}>
                 <div class="row">
                     <div class="col-auto text-center flex-column d-none d-sm-flex">
                         <div class="row h-50">
@@ -123,129 +158,94 @@ class Overview extends React.Component {
                 </div>
 
                 {
-                  this.state.preview.map((item, i) => {
+                  this.state.silabus.map((item, i) => {
 
-                      return (
-                        <div class="row">
-                            <div class="col-auto text-center flex-column d-none d-sm-flex">
-                                <div class="row h-50">
-                                    <div class="col border-right">&nbsp;</div>
-                                    <div class="col">&nbsp;</div>
-                                </div>
-                                <h5 class="m-2">
-                                    <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
-                                </h5>
-                                <div class="row h-50">
-                                    <div class="col border-right">&nbsp;</div>
-                                    <div class="col">&nbsp;</div>
-                                </div>
-                            </div>
-                            <div class="col py-2">
-                                <div class={`card ${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
-                                    <div class="card-body">
-                                        <div class="float-right text-muted f-12">{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</div>
-                                        <h4 data-target={`#t${i}`} data-toggle={`${item.hasOwnProperty('exam_id') ? (moment(item.time_start) < moment(new Date()) ? 'collapse' : '') : (moment(item.start_date) < moment(new Date()) ? 'collapse' : '')}`} style={{marginBottom: '8px'}} class="card-title">
-                                          {
-                                            item.hasOwnProperty('exam_id') ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
-                                          }
-                                          {item.chapter_title ? item.chapter_title : item.exam_title}
-                                        </h4>
-                                        <div class="collapse" id={`t${i}`}>
-                                          <div dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
-
-                                          {
-                                            /**
-                                            item.hasOwnProperty('attachment_id') && item.attachment_id !== null &&
-                                            <ul className="list-group f-12">
-                                              {
-                                                item.hasOwnProperty('attachment_id') && item.attachment_id.split(',').map(item => (
-                                                  <li className="list-group-item">
-                                                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-                                                      <div style={{ height: '750px' }}>
-                                                          <Viewer fileUrl={item} />
-                                                      </div>
-                                                    </Worker>
-                                                  </li>
-                                                ))
-                                              }
-                                            </ul>
-                                            */
-                                          }
-
-                                          {
-                                            (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="mt-2 btn btn-v2 btn-info mr-2">
-                                                <i className="fa fa-tasks"></i> {row.exam_title}
-                                              </button>
-                                            ))
-                                          }
-
-                                          {
-                                            item.hasOwnProperty('chapter_id') &&
-                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2 mt-2">
-                                              <i className="fa fa-play"></i> Open
-                                            </a>
-                                          }
-
-                                          {
-                                            item.hasOwnProperty('exam_id') &&
-                                            <>
-                                            <button onClick={() => this.selectKuis(item)} className="btn btn-v2 btn-info mr-2">
-                                              <i className="fa fa-tasks"></i> Detail
-                                            </button>
-                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
-                                              <i className="fa fa-play"></i> Open
-                                            </a>
-                                            </>
-                                          }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                      )
-                  })
-                }
-
-                {
-                  this.state.kuis.map((item,i) => (
-                    <div class="row">
-                      <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                          <div class="col border-right">&nbsp;</div>
-                          <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                          <span class="badge badge-pill bg-light border">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                          <div class="col">&nbsp;</div>
-                          <div class="col">&nbsp;</div>
-                        </div>
-                      </div>
-                      <div class="col py-2">
-                        <div class="card shadow">
-                          <div class="card-body">
-                            <div class="float-right text-muted f-12">{moment(item.time_start).format('DD/MM/YYYY HH:mm')}</div>
-                            <h4 class="card-title" data-target={`#tU${i}`}
-                              data-toggle={`${(moment(item.time_start) < moment(new Date()) ? 'collapse' : '')}`}
-                              >
-                              <i className="fa fa-flag mr-3"></i>
-                              {item.title}
-                            </h4>
-                            <div className="collapse" id={`tU${i}`}>
-                              <button onClick={() => this.selectUjian(item)} className="btn btn-v2 btn-info mr-2">
-                                <i className="fa fa-tasks"></i> Detail
-                              </button>
-                              <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/ujian/${item.id}`} className="btn btn-v2 btn-success mr-2">
-                                <i className="fa fa-play"></i> Open
-                              </a>
-                            </div>
+                    return (
+                      <div class="row">
+                          <div class="col-auto text-center flex-column d-none d-sm-flex">
+                              <div class="row h-50">
+                                <div class="col border-right">&nbsp;</div>
+                                <div class="col">&nbsp;</div>
+                              </div>
+                              <h5 class="m-2">
+                                <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
+                              </h5>
+                              <div class="row h-50">
+                                <div class={`col ${i == (this.state.silabus.length-1) ? '' : 'border-right'}`}>&nbsp;</div>
+                                <div class="col">&nbsp;</div>
+                              </div>
                           </div>
-                        </div>
+                          <div class="col py-2">
+                              <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
+                                  <div class="card-body">
+                                      <div class="float-right text-muted f-12">
+                                        {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                      </div>
+                                      <OverlayTrigger
+                                        placement="top"
+                                        delay={{ show: 250, hide: 400 }}
+                                        overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Tunggu guru meng-upload materi dan memilih tanggal mengajar.'}</Tooltip>}
+                                      >
+                                        <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title">
+                                          {
+                                            [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                          }
+                                          {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                        </h4>
+                                      </OverlayTrigger>
+
+                                      {
+                                        item.topik &&
+                                        <span>Topik : {item.topik}</span>
+                                      }
+                                      <div class="collapse mt-4" id={`t${i}`}>
+                                        <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
+
+                                        {
+                                          (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
+                                            <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
+                                              <i className="fa fa-tasks"></i> {row.exam_title}
+                                            </button>
+                                          ))
+                                        }
+
+                                        {
+                                          (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
+                                            <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
+                                              <i className="fa fa-tasks"></i> {row.exam_title}
+                                            </button>
+                                          ))
+                                        }
+
+                                        {
+                                          (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
+                                            <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
+                                              <i className="fa fa-tasks"></i> {row.exam_title}
+                                            </button>
+                                          ))
+                                        }
+
+                                        {
+                                          item.hasOwnProperty('chapter_id') &&
+                                          <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                            <i className="fa fa-video"></i> Open
+                                          </a>
+                                        }
+
+                                        {
+                                          item.hasOwnProperty('exam_id') &&
+                                          <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
+                                            <i className="fa fa-video"></i> Open
+                                          </a>
+                                        }
+
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
-                    </div>
-                  ))
+                    )
+                  })
                 }
 
               </div>

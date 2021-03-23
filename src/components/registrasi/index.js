@@ -189,6 +189,15 @@ class Registasi extends React.Component {
     })
   }
 
+  handleAcademicYear = e => {
+    if(e.target.value.length === 9) {
+      return true
+    } else {
+      toast.warning(`Academic must be yyyy/yyyy ex. 2021/2022`)
+      this.setState({ tahunAjaran: '' })
+    }
+  }
+
   render() {
     // console.log('state: ', this.state)
     return (
@@ -252,7 +261,7 @@ class Registasi extends React.Component {
                       </div>
                       <div className="col">
                         <label>Academic Year</label>
-                        <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} type="text" className="form-control" placeholder="Enter" name="tahunAjaran" />
+                        <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} onBlur={this.handleAcademicYear} type="text" className="form-control" placeholder="Enter" name="tahunAjaran" />
                       </div>
                       <div className="col">
                         <label>Capacity</label>

@@ -4,7 +4,8 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import API, { API_SERVER } from '../../repository/api';
-import Event from './_itemModal';
+import Event from './_itemModalLearning';
+import Agendas from './_agenda';
 import ReactFullScreenElement from "react-fullscreen-element";
 const localizer = momentLocalizer(moment);
 
@@ -19,15 +20,15 @@ class KalenderNew extends Component {
 
   componentDidMount() {
     // this.fetchKalender();
-    if(this.state.event.length === 0) {
+    if (this.state.event.length === 0) {
       this.fetchJadwal();
     }
   }
 
   fetchJadwal() {
     API.get(`${API_SERVER}v2/events/${this.state.grupName}/${this.state.muridId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch events`)
-
+      if (res.data.error) console.log(`Error: fetch events`)
+      console.log(res.data, 'resssssss');
       let mengajar = res.data.result.mengajar.map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
@@ -35,7 +36,9 @@ class KalenderNew extends Component {
         return {
           title: `${item.kelas_nama} - ${item.nama_pelajaran} - ${item.chapter_title}`,
           start: tglSt,
-          end: tglSt
+          end: tglSt,
+          chapter_id: item.chapter_id,
+          jadwal_id: item.jadwal_id
         }
       })
 
@@ -100,7 +103,7 @@ class KalenderNew extends Component {
         >
           <div className="card">
             <div className="card-body">
-              <h3 className="f-w-900 f-18 fc-blue">Calendar & Schedule</h3>
+              <h3 className="f-w-900 f-18 fc-blue">Kalender & Jadwal</h3>
               <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
                 <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
               </div>
@@ -119,7 +122,7 @@ class KalenderNew extends Component {
                   return {};
                 }}
                 views={['month', 'week', 'day', 'agenda']}
-                components={{ event: Event }}
+                components={{ event: Event, agenda: { event: Agendas } }}
               />
 
             </div>
