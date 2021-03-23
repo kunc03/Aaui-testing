@@ -474,9 +474,10 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     console.log('ALVIN MEET', this.state.valueFolder)
     e.preventDefault();
-    if (this.state.roomName === '' || this.state.valueFolder == 0) {
-      toast.warning('Judul meeting, moderator, dan folder project wajib diisi')
-    } else {
+    if (this.state.roomName === '') {
+      toast.warning('Judul meeting wajib diisi')
+    }
+    else {
       if (this.state.classId) {
         let isPrivate = this.state.private == true ? 1 : 0;
         let isAkses = this.state.akses == true ? 1 : 0;
