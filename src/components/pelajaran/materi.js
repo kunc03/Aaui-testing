@@ -628,7 +628,7 @@ class Overview extends React.Component {
                                             <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
-                                        )
+                                        ))
                                       }
 
                                       {
