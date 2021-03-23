@@ -600,7 +600,13 @@ class Overview extends React.Component {
                                         />
                                       </div>
                                       <div className="col-sm-6">
-                                        <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+
+                                        {
+                                          item.jenis == 1 ?
+                                          <Button onClick={e => this.addPenugasan('kuis', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+                                          :
+                                          <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+                                        }
                                         <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kui':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
                                       </div>
                                     </div>
@@ -612,8 +618,21 @@ class Overview extends React.Component {
                                         <th>End</th>
                                         <th>Action</th>
                                       </tr>
+
                                       {
-                                        item.ujian.map((row, j) => (
+                                        item.jenis == 1 && item.kuis.map(row, j) => (
+                                          <tr>
+                                            <td>{j+1}</td>
+                                            <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
+                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
+                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
+                                          </tr>
+                                        )
+                                      }
+
+                                      {
+                                        item.jenis == 2 && item.ujian.map((row, j) => (
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
