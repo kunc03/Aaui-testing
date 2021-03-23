@@ -91,11 +91,13 @@ class Tugas extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`, {tugas: true}).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
-
-      console.log('state: ', res.data.result)
-
-      this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      if(res.data.error) {
+        toast.warning(`Error: fetch pertanyaan`)
+      }
+      else {
+        console.log('state: ', res.data.result)
+        this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      }
     })
   }
 
@@ -113,25 +115,30 @@ class Tugas extends React.Component {
 
   selectOne(id) {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
+      if(res.data.error){
+        toast.warning(`Error: fetch ${this.state.tipe}`)
+      }
+      else {
 
-      this.setState({
-        formAdd: true,
+        this.setState({
+          formAdd: true,
 
-        examId: id,
-        title: res.data.result.title,
-        quizAt: res.data.result.quiz_at,
-        tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
-        tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
+          examId: id,
+          title: res.data.result.title,
+          quizAt: res.data.result.quiz_at,
+          tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
+          tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
 
-        tipeJawab: res.data.result.tipe_jawab,
+          tipeJawab: res.data.result.tipe_jawab,
 
-        fileExcel: Math.random().toString(36)
-      })
+          fileExcel: Math.random().toString(36)
+        })
 
-      this.fetchPertanyaan(id);
+        this.fetchPertanyaan(id);
 
-      this.fetchMengumpulkan(id);
+        this.fetchMengumpulkan(id);
+      }
+
     })
   }
 
@@ -148,9 +155,14 @@ class Tugas extends React.Component {
 
   fetchChapters() {
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch chapters`)
+      if(res.data.error) {
+        toast.warning(`Error: fetch chapters`)
+      }
+      else {
 
-      this.setState({ chapters: res.data.result })
+        this.setState({ chapters: res.data.result })
+      }
+
     })
   }
 
@@ -175,12 +187,16 @@ class Tugas extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
+        if(res.data.error) {
+          toast.warning(`Error: update ${this.state.tipe}`)
+        }
+        else {
+          toast.success(`Sukses mengubah ${this.state.tipe}`)
 
-        toast.success(`Sukses mengubah ${this.state.tipe}`)
+          this.fetchKuis();
+          this.selectOne(res.data.result.id);
+        }
 
-        this.fetchKuis();
-        this.selectOne(res.data.result.id);
       })
     } else {
       let form = {
@@ -196,7 +212,9 @@ class Tugas extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
+        if(res.data.error)  {
+          toast.warning(`Error: create ${this.state.tipe}`)
+        }
         else{
           toast.success(`Sukses menyimpan ${this.state.tipe}`)
           this.selectOne(res.data.result.id);
@@ -210,10 +228,13 @@ class Tugas extends React.Component {
   deleteKuis = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/pelajaran/${this.state.tipe}/delete/${this.state.examId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete ${this.state.tipe}`)
-
-      this.fetchKuis();
-      this.clearForm();
+      if(res.data.error) {
+        toast.warning(`Error: delete ${this.state.tipe}`)
+      }
+      else {
+        this.fetchKuis();
+        this.clearForm();
+      }
     })
   }
 
@@ -221,10 +242,14 @@ class Tugas extends React.Component {
 		let dataIndex = e.target.getAttribute('data-id');
 		let dataID = e.target.getAttribute('data-index');
 		API.delete(`${API_SERVER}v2/pelajaran/pertanyaan/hapus/${dataIndex}`).then(res => {
-			if(res.data.error) toast.warning("Gagal menghapus data");
+			if(res.data.error) {
+        toast.warning("Gagal menghapus data");
+      }
+      else {
+        toast.success("Data pertanyaan terhapus")
+        this.fetchPertanyaan(this.state.examId)
 
-			toast.success("Data pertanyaan terhapus")
-      this.fetchPertanyaan(this.state.examId)
+      }
 		})
   }
 
@@ -264,11 +289,15 @@ class Tugas extends React.Component {
   		form.append('files', this.state.formFile);
 
   		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import`, form).then(res => {
-  			if(res.data.error) toast.warning("Error import data");
+  			if(res.data.error) {
+          toast.warning("Error import data");
+        }
+        else {
+          toast.success("Berhasil import pertanyaan")
+          this.setState({ loading: false })
+          this.fetchPertanyaan(this.state.examId);
+        }
 
-  			toast.success("Berhasil import pertanyaan")
-  			this.setState({ loading: false })
-  			this.fetchPertanyaan(this.state.examId);
   		})
     } else {
       toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
