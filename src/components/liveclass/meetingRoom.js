@@ -1135,9 +1135,12 @@ export default class MeetingRoom extends Component {
                               </div>
                               <div class="row">
                                 <div className="col-sm-6">
+                                  {this.state.infoClass.is_akses ?
                                   <h3 className="f-14">
                                     Moderator : {this.state.infoClass.name}
                                   </h3>
+                                  :null
+                                  }
                                   <h3 className="f-14">
                                     Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                   </h3>
