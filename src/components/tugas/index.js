@@ -32,7 +32,7 @@ class Tugas extends React.Component {
       if(res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
-        semuaTugas: res.data.result.tugas,
+        semuaTugas: res.data.result.tugas.filter(item => item.quiz == 2),
       })
     })
   }
