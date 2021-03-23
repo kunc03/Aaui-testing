@@ -686,7 +686,9 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               {
                                 access_project_admin ?
@@ -775,7 +777,9 @@ fetchRekamanBBB(folder){
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
-                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.time, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1 m-t-10">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
