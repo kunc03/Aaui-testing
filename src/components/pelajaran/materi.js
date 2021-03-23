@@ -190,6 +190,50 @@ class Overview extends React.Component {
     })
   }
 
+  copySesi(e, row, index) {
+    let cc = [...this.state.silabus];
+    let item = cc.filter((item, i) => i === index);
+
+    let form = {
+      companyId: Storage.get('user').data.company_id,
+      pelajaranId: item[0].pelajaran_id,
+      number: item[0].sesi,
+      title: item[0].chapter_title,
+      content: item[0].chapter_body,
+      tatapmuka: item[0].tatapmuka,
+      tanggal: moment(item[0].start_date).format('YYYY-MM-DD HH:mm'),
+      silabusId: item[0].id
+    }
+
+    API.post(`${API_SERVER}v2/pelajaran/chapter/create`, form).then(res => {
+      if (res.data.error) {
+        toast.warning(`Error: create chapter`)
+      }
+      else {
+        if (this.state.files) {
+          this.uplaodFiles(res.data.result.id, this.state.files)
+        } else {
+          toast.success(`Materi berhasil disimpan.`)
+          this.fetchOverview()
+        }
+      }
+    })
+  }
+
+  deleteSesi(e, row, index) {
+    let cc = [...this.state.silabus];
+    let item = cc.filter((item, i) => i === index);
+
+    API.delete(`${API_SERVER}v2/pelajaran/chapter/delete/${item[0].chapter_id}`).then(res => {
+      if (res.data.error) {
+        toast.warning(`Error: delete chapter`)
+      }
+      else {
+        this.fetchOverview()
+      }
+    })
+  }
+
   render() {
     console.log('state: ', this.state);
 
@@ -227,7 +271,11 @@ class Overview extends React.Component {
                         return (
                           <>
                             <tr key={i} style={{ cursor: 'pointer' }} data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">
-                              <td className="text-center">{item.sesi}</td>
+                              <td className="text-center">
+                                {item.sesi} <br/>
+                                <i onClick={e => this.copySesi(e, item, i)} style={{cursor: 'pointer'}} className="fa fa-copy mr-2" title="Copy"></i>
+                                <i onClick={e => this.deleteSesi(e, item, i)} style={{cursor: 'pointer'}} className="fa fa-trash mr-2" title="Delete"></i>
+                              </td>
                               <td>
                                 <OverlayTrigger
                                   placement="top"
@@ -439,7 +487,11 @@ class Overview extends React.Component {
                         return (
                           <>
                             <tr key={i} style={{ cursor: 'pointer' }} data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">
-                              <td className="text-center">{item.sesi}</td>
+                              <td className="text-center">
+                                {item.sesi} <br/>
+                                <i onClick={e => this.copySesi(e, item, i)} style={{cursor: 'pointer'}} className="fa fa-copy" title="Copy"></i>
+                                <i onClick={e => this.deleteSesi(e, item, i)} style={{cursor: 'pointer'}} className="fa fa-trash mr-2" title="Delete"></i>
+                              </td>
                               <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
                               <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
