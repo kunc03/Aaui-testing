@@ -920,7 +920,7 @@ class MeetingTable extends Component {
       {
         name: 'Date',
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
-        cell: row => <div>{row.is_scheduled == 1 ? row.tanggal : '-'}</div>,
+        cell: row => <div>{row.is_scheduled == 1 ? Moment(row.tanggal).tz('Asia/Jakarta').format('DD/MM/YYYY') : '-'}</div>,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
