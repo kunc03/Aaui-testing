@@ -781,7 +781,8 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
 
@@ -807,7 +808,8 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
 
