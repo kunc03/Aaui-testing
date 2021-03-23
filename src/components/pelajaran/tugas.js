@@ -201,7 +201,7 @@ class Tugas extends React.Component {
     } else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.pelajaranId,
+        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
 
         title: this.state.title,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
