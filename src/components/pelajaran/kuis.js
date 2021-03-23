@@ -181,7 +181,7 @@ class Tugas extends React.Component {
     if(this.state.examId) {
       let form = {
         title: this.state.title,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tatapmuka: this.state.tatapmuka,
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
@@ -205,7 +205,7 @@ class Tugas extends React.Component {
 
         title: this.state.title,
         tatapmuka: this.state.tatapmuka,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir
       }
