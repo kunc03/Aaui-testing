@@ -351,7 +351,9 @@ export default class MeetingRoom extends Component {
         this.setState({ newShareGantt: true, shareGantt: data.projectId })
       }
       if (data.socketAction == 'fileShow' && data.meetingId === this.state.classRooms.class_id && data.userId !== this.state.user.user_id) {
-        this.setState({ newFileShow: true, selectedFileShow: data.selectedFileShow })
+        this.setState({ newFileShow: true, modalFileShow: true }, () => {
+          this.setState({selectedFileShow: data.selectedFileShow})
+        })
       }
     });
     this.fetchData();
@@ -779,7 +781,8 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
 
@@ -805,7 +808,8 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
 
@@ -930,7 +934,7 @@ export default class MeetingRoom extends Component {
         // else if (ektension === "pdf") {
         //   return (
         //     <div>
-        //       <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js">
+        //       <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js">
         //         <Viewer fileUrl={media} defaultScale={SpecialZoomLevel.PageFit} />
         //       </Worker>
         //     </div>
@@ -1046,7 +1050,7 @@ export default class MeetingRoom extends Component {
                               </Tooltip>
                               <Tooltip title="File Show" arrow placement="top">
 
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false })} className="float-right m-b-10">
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false }, () => {this.setState({selectedFileShow: this.state.selectedFileShow})})} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-file.svg`}
                                     alt=""
@@ -1133,9 +1137,12 @@ export default class MeetingRoom extends Component {
                               </div>
                               <div class="row">
                                 <div className="col-sm-6">
+                                  {this.state.infoClass.is_akses ?
                                   <h3 className="f-14">
                                     Moderator : {this.state.infoClass.name}
                                   </h3>
+                                  :null
+                                  }
                                   <h3 className="f-14">
                                     Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                   </h3>
@@ -1314,7 +1321,7 @@ export default class MeetingRoom extends Component {
                                 </Col>
                                 <Col sm={2}>
                                   <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                                    {this.state.loadingFileSharing ? 'Loading...' : 'Kirim'}
+                                    {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
                                   </button>
                                   {/*
                                   <button onClick={this.onBotoomScroll}>coba</button> */}

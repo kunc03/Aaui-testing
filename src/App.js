@@ -334,6 +334,13 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
         <Route path="/meeting" exact component={Meeting} />
+        <Route
+          exact
+          path="/meeting/:roomid" 
+          render={props => (
+            <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
+          )}
+        />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
@@ -484,6 +491,13 @@ export class AdminSwitch extends React.Component {
         <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
         <Route path="/meeting" exact component={Meeting} />
+        <Route
+          exact
+          path="/meeting/:roomid" 
+          render={props => (
+            <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
+          )}
+        />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
         {/* <Route path="/liveclass-room/:roomid" exact component={LiveClassAdminJoin} /> */}
         {/* <Route path="/liveclass-room/:roomid" exact component={LiveStream} /> */}
@@ -569,6 +583,13 @@ export class ClientSwitch extends React.Component {
         <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
 
         <Route path="/meeting" exact component={Meeting} />
+        <Route
+          exact
+          path="/meeting/:roomid" 
+          render={props => (
+            <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
+          )}
+        />
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />

@@ -474,9 +474,10 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     console.log('ALVIN MEET', this.state.valueFolder)
     e.preventDefault();
-    if (this.state.roomName === '' || this.state.valueFolder == 0) {
-      toast.warning('Judul meeting, moderator, dan folder project wajib diisi')
-    } else {
+    if (this.state.roomName === '') {
+      toast.warning('Judul meeting wajib diisi')
+    }
+    else {
       if (this.state.classId) {
         let isPrivate = this.state.private == true ? 1 : 0;
         let isAkses = this.state.akses == true ? 1 : 0;
@@ -920,7 +921,7 @@ class MeetingTable extends Component {
       {
         name: 'Date',
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
-        cell: row => <div>{row.is_scheduled == 1 ? row.tanggal : '-'}</div>,
+        cell: row => <div>{row.is_scheduled == 1 ? Moment(row.tanggal).tz('Asia/Jakarta').format('DD/MM/YYYY') : '-'}</div>,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -1419,9 +1420,12 @@ class MeetingTable extends Component {
 
                   <div class="row">
                     <div className="col-sm-6">
+                      {this.state.infoClass.is_akses ?
                       <h3 className="f-14">
                         Moderator : {this.state.infoClass.name}
                       </h3>
+                      :null
+                      }
                       <h3 className="f-14">
                         Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                       </h3> {this.state.infoClass.is_private ?
@@ -1481,7 +1485,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation[0].confirmation == 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
+              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
                 // style={{width:'100%'}}
                 >
