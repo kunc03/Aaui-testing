@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import API, { API_SERVER, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIST } from '../../repository/api';
+import API, { API_SERVER, API_SOCKET, APPS_SERVER, USER_ME, BBB_KEY, BBB_URL, BBB_SERVER_LIST } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { Modal, Form, Card, Row, Col } from 'react-bootstrap';
 
@@ -9,6 +9,11 @@ import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
 import Moment from 'moment-timezone';
+import io from 'socket.io-client';
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect ganihhhhhhh");
+});
 
 const bbb = require('bigbluebutton-js')
 
@@ -168,6 +173,7 @@ class FilesTableClass extends Component {
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
+    socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
     this.fetchFile(this.state.folderId)
   }
 
@@ -213,6 +219,7 @@ class FilesTableClass extends Component {
             toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
             this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
             this.fetchFile(this.state.folderId);
+            socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
             this.closeModalRename();
           }
         }
@@ -286,6 +293,7 @@ class FilesTableClass extends Component {
 
           this.closeModalAdd()
           this.fetchFolder(this.state.folderId);
+          socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
           toast.success('Berhasil menambah folder baru')
         }
       }
@@ -387,6 +395,9 @@ class FilesTableClass extends Component {
       this.fetchRekamanBBB(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
+    if (this.props.selectedFolder){
+      this.props.selectedFolder(id)
+    }
   }
   fetchFile(folder) {
     API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
@@ -439,15 +450,16 @@ fetchRekamanBBB(folder){
 }
 
   fetchData() {
+    let initialFolder = this.props.initialFolder ? this.props.initialFolder : this.props.projectId;
     if (this.props.companyId) {
       this.setState({ companyId: this.props.companyId })
-      this.selectFolder(this.props.projectId)
+      this.selectFolder(initialFolder)
     }
     else {
       API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-          this.selectFolder(this.props.projectId)
+          this.selectFolder(initialFolder)
         }
       })
     }
@@ -513,11 +525,13 @@ fetchRekamanBBB(folder){
   }
 
   selectFileShow = (type, val) => {
-    if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
-      this.props.selectedFileShow(val)
-    }
-    else{
-      toast.warning('Sorry, this file type not support yet to show')
+    if (this.props.selectedFileShow){
+      if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
+        this.props.selectedFileShow(val)
+      }
+      else{
+        toast.warning('Sorry, this file type not support yet to show')
+      }
     }
   }
 
@@ -534,6 +548,11 @@ fetchRekamanBBB(folder){
 
   componentDidMount() {
     this.fetchData()
+    socket.on("broadcast", data => {
+      if (data.socketAction == 'newFileUploaded' && data.folderId === this.state.folderId) {
+        this.selectFolder(data.folderId);
+      }
+    });
   }
 
   handleChangeFilter = (filter) => {
@@ -583,13 +602,13 @@ fetchRekamanBBB(folder){
         ).match(new RegExp(searchFile, "gmi"))
       )
     }
-
+    
     return (
       <div className="card p-20">
         <span className="mb-4">
           <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
           {
-            this.props.guest === false || !this.props.guest &&
+            this.props.guest === false || !this.props.guest ?
             <button
               onClick={e => this.setState({ modalUpload: true })}
               className="btn btn-icademy-primary float-right"
@@ -598,7 +617,7 @@ fetchRekamanBBB(folder){
               <i className="fa fa-upload"></i>
 
                   Upload
-                  </button>
+                  </button>:null
           }
 
           {access_project_admin == true ? <button
