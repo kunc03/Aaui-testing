@@ -153,7 +153,8 @@ export default class WebinarLive extends Component {
       }
   }
   kirimJawabanPosttest(){
-    if (this.state.jawabanPosttest.length === this.state.posttest.length){
+    // if (this.state.jawabanPosttest.length === this.state.posttest.length){
+    if (this.state.jawabanPosttest.length > 0){
       let form = {
         id: this.state.webinarId,
         user_id: this.state.user.user_id,
@@ -176,11 +177,12 @@ export default class WebinarLive extends Component {
       })
     }
     else{
-      toast.warning('Wajib menjawab semua pertanyaan')
+      toast.warning('Wajib menjawab post-test')
     }
   }
   kirimJawabanPretest(){
-    if (this.state.jawabanPretest.length === this.state.pretest.length){
+    // if (this.state.jawabanPretest.length === this.state.pretest.length){
+    if (this.state.jawabanPretest.length > 0){
       let form = {
         id: this.state.webinarId,
         user_id: this.state.user.user_id,
@@ -198,7 +200,7 @@ export default class WebinarLive extends Component {
       })
     }
     else{
-      toast.warning('Wajib menjawab semua pertanyaan')
+      toast.warning('Wajib menjawab pre-test')
     }
   }
   waktuPretestHabis(){
@@ -208,16 +210,18 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPretest
       }
-      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error)
-          toast.error('Gagal mengirim jawaban pre test webinar')
-        else
-          toast.warning('Waktu habis')
-          toast.success('Mengirim jawaban pre test webinar')
-          this.fetchPreTest()
-          this.fetchResultPretest();
-          this.openModalPretest();
-      })
+      if (this.state.resultPretest.list.length === 0){
+        API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+          if(res.data.error)
+            toast.error('Gagal mengirim jawaban pre test webinar')
+          else
+            toast.warning('Waktu habis')
+            toast.success('Mengirim jawaban pre test webinar')
+            this.fetchPreTest()
+            this.fetchResultPretest();
+            this.openModalPretest();
+        })
+      }
   }
   waktuPosttestHabis(){
       let form = {
@@ -226,14 +230,16 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPosttest
       }
-      API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if(res.data.error)
-          toast.error('Gagal mengirim jawaban post test webinar')
-        else
-        toast.warning('Waktu habis')
-          toast.success('Mengirim jawaban post test webinar')
-          this.fetchPostTest()
-      })
+      if (this.state.resultPosttest.list.length === 0){
+        API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
+          if(res.data.error)
+            toast.error('Gagal mengirim jawaban post test webinar')
+          else
+          toast.warning('Waktu habis')
+            toast.success('Mengirim jawaban post test webinar')
+            this.fetchPostTest()
+        })
+      }
   }
   kirimJawabanKuesioner(){
     if (this.state.jawaban.length >= this.state.pertanyaan.length){
