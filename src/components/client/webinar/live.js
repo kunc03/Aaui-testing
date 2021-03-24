@@ -43,6 +43,7 @@ export default class WebinarLive extends Component {
     joinUrl:'',
     user: [],
     projectId: '',
+    dokumenId: '',
     modalConfirmClose: false,
     modalEnd: false,
     modalKuesioner: false,
@@ -355,6 +356,7 @@ export default class WebinarLive extends Component {
               pembicaraId: res.data.result.pembicara,
               ownerId: res.data.result.owner,
               projectId: res.data.result.project_id,
+              dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
@@ -474,6 +476,7 @@ export default class WebinarLive extends Component {
               sekretarisId: res.data.result.sekretaris,
               pembicaraId: res.data.result.pembicara,
               projectId: res.data.result.project_id,
+              dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
@@ -1020,7 +1023,7 @@ export default class WebinarLive extends Component {
                   </div>
                 </div>
                 <div className="wrap" style={{marginTop: '10px', maxHeight:400, overflowY:'scroll'}}>
-                    <TableFiles voucherTamu={this.state.user.user_id} guest={this.props.voucher ? true : false} access_project_admin={this.state.access_project_admin} webinarId={this.state.webinarId} projectId={this.state.projectId} companyId={this.state.companyId}/>
+                    <TableFiles voucherTamu={this.state.user.user_id} guest={this.props.voucher ? true : false} access_project_admin={this.state.access_project_admin} webinarId={this.state.webinarId} projectId={this.state.dokumenId ? this.state.dokumenId : this.state.projectId} companyId={this.state.companyId}/>
                 </div>
               </Card.Body>
             </Card>

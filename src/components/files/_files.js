@@ -395,6 +395,9 @@ class FilesTableClass extends Component {
       this.fetchRekamanBBB(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
+    if (this.props.selectedFolder){
+      this.props.selectedFolder(id)
+    }
   }
   fetchFile(folder) {
     API.get(`${API_SERVER}v1/files/${folder}`).then(res => {
@@ -447,15 +450,16 @@ fetchRekamanBBB(folder){
 }
 
   fetchData() {
+    let initialFolder = this.props.initialFolder ? this.props.initialFolder : this.props.projectId;
     if (this.props.companyId) {
       this.setState({ companyId: this.props.companyId })
-      this.selectFolder(this.props.projectId)
+      this.selectFolder(initialFolder)
     }
     else {
       API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-          this.selectFolder(this.props.projectId)
+          this.selectFolder(initialFolder)
         }
       })
     }
@@ -521,11 +525,13 @@ fetchRekamanBBB(folder){
   }
 
   selectFileShow = (type, val) => {
-    if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
-      this.props.selectedFileShow(val)
-    }
-    else{
-      toast.warning('Sorry, this file type not support yet to show')
+    if (this.props.selectedFileShow){
+      if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
+        this.props.selectedFileShow(val)
+      }
+      else{
+        toast.warning('Sorry, this file type not support yet to show')
+      }
     }
   }
 
