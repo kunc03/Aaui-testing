@@ -153,6 +153,7 @@ class FilesTableClass extends Component {
       let form = new FormData();
       form.append('folder', this.state.folderId);
       form.append('file', this.state.attachmentId[i]);
+      form.append('created_by', Storage.get('user').data.user_id);
       await API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
@@ -271,7 +272,8 @@ class FilesTableClass extends Component {
       aOwner: this.state.aOwner ? 1 : 0,
       aPeserta: this.state.aPeserta ? 1 : 0,
       is_limit: this.state.limited ? 1 : 0,
-      user: this.state.valueUser
+      user: this.state.valueUser,
+      created_by: Storage.get('user').data.user_id
     };
 
     API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -545,7 +547,8 @@ fetchRekamanBBB(folder){
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
       // {title : 'Size', width: null, status: true},
-      { title: 'Created', width: null, status: true },
+      { title: 'Created at', width: null, status: true },
+      { title: 'By', width: null, status: true },
       { title: '', width: null, status: true },
     ];
     const access_project_admin = this.props.access_project_admin;
@@ -668,8 +671,8 @@ fetchRekamanBBB(folder){
                       this.state.folderId !== 0 &&
                       this.state.selectFolder &&
                       <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td colspan='3' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
-                          <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Kembali</td>
+                        <td colspan='4' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
+                          <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Back</td>
                       </tr>
                     }
                     {
@@ -686,7 +689,12 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               {
                                 access_project_admin ?
@@ -732,6 +740,9 @@ fetchRekamanBBB(folder){
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
                           </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1 m-t-10">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -775,7 +786,12 @@ fetchRekamanBBB(folder){
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
-                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.time, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1 m-t-10">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -847,6 +863,9 @@ fetchRekamanBBB(folder){
                                     <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {item.name} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                                   {item.date}
+                                </td>
+                                <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                                  {item.creator ? item.creator : '-'}
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1 m-t-10">

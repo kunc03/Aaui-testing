@@ -31,7 +31,7 @@ class GuruUjian extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${userIdMurid}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
-      let hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+      let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
 
@@ -47,6 +47,8 @@ class GuruUjian extends Component {
     API.get(`${API_SERVER}v2/events/murid/${muridId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch events`)
 
+      console.log('events: ', res.data.result);
+
       let mengajar = res.data.result.mengajar
       .map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
@@ -57,7 +59,8 @@ class GuruUjian extends Component {
           start: tglSt,
           end: tglSt,
           event: 'materi',
-          absen: item.absen_jam
+          absen: item.absen_jam,
+          mapel: item.nama_pelajaran
         }
       })
 
@@ -88,7 +91,8 @@ class GuruUjian extends Component {
           start: tglSt,
           end: tglSt,
           event: 'tugas',
-          submitted: item.submitted
+          submitted: item.submitted,
+          mapel: item.nama_pelajaran
         }
       })
       console.log('events: ', res.data.result.tugas)
@@ -105,7 +109,8 @@ class GuruUjian extends Component {
           end: tglSt,
           event: 'kuis',
           absen: item.absen_jam,
-          score: item.score
+          score: item.score,
+          mapel: item.nama_pelajaran
         }
       })
       console.log('events: ', res.data.result.quiz)
@@ -122,7 +127,8 @@ class GuruUjian extends Component {
           end: tglSt,
           event: 'ujian',
           absen: item.absen_jam,
-          score: item.score
+          score: item.score,
+          mapel: item.nama_pelajaran
         }
       })
       // console.log('events: ', ujian)
@@ -205,7 +211,7 @@ class GuruUjian extends Component {
       <div class="col-sm-12 mt-2">
         <Card>
           <Card.Body>
-            <h4 className="f-w-900 f-18 fc-blue">Timeline</h4>
+            <h4 className="f-w-900 f-18 fc-blue">Progress</h4>
             <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
               <option value="all">All</option>
               <option value="materi">Materi</option>
@@ -218,6 +224,7 @@ class GuruUjian extends Component {
               <thead>
                 <tr>
                   <th>Kegiatan</th>
+                  <th>Mata Pelajaran</th>
                   <th>Judul</th>
                   <th>Date</th>
                   <th>Status</th>
@@ -229,6 +236,7 @@ class GuruUjian extends Component {
                   sort.map(item => (
                     <tr key={item.title+'-'+item.start}>
                       <td style={{textTransform: 'capitalize'}}>{item.event}</td>
+                      <td>{item.mapel}</td>
                       <td>{item.title}</td>
                       <td>{moment(item.start).format('DD/MM/YYYY HH:mm')}</td>
                       <td>

@@ -7,6 +7,9 @@ import { Editor } from '@tinymce/tinymce-react';
 import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import { Modal } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
@@ -27,6 +30,8 @@ class Tugas extends React.Component {
     tanggalMulai: moment(new Date()).format('YYYY-MM-DD'),
     tanggalAkhir: moment((new Date()).setDate(new Date().getDate() + 7)).format('YYYY-MM-DD'),
 
+    tipeJawab: '1',
+
     chapters: [],
 
     pertanyaan: [],
@@ -35,7 +40,9 @@ class Tugas extends React.Component {
 
     formFile: null,
     loading: false,
-    fileExcel: Math.random().toString(36)
+    fileExcel: Math.random().toString(36),
+
+    formAdd: false
   };
 
   onClickTambahPertanyaan = () => {
@@ -66,6 +73,9 @@ class Tugas extends React.Component {
 
   clearForm() {
     this.setState({
+      formAdd: false,
+      tipeJawab: '1',
+
       examId: '',
       title: '',
       quizAt: '',
@@ -81,11 +91,13 @@ class Tugas extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`, {tugas: true}).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
-
-      console.log('state: ', res.data.result)
-
-      this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      if(res.data.error) {
+        toast.warning(`Error: fetch pertanyaan`)
+      }
+      else {
+        console.log('state: ', res.data.result)
+        this.setState({ pertanyaan: res.data.result, fileExcel: Math.random().toString(36) })
+      }
     })
   }
 
@@ -101,26 +113,39 @@ class Tugas extends React.Component {
     })
   }
 
+  selectOne(id) {
+    API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${id}`).then(res => {
+      if(res.data.error){
+        toast.warning(`Error: fetch ${this.state.tipe}`)
+      }
+      else {
+
+        this.setState({
+          formAdd: true,
+
+          examId: id,
+          title: res.data.result.title,
+          quizAt: res.data.result.quiz_at,
+          tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
+          tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
+
+          tipeJawab: res.data.result.tipe_jawab,
+
+          fileExcel: Math.random().toString(36)
+        })
+
+        this.fetchPertanyaan(id);
+
+        this.fetchMengumpulkan(id);
+      }
+
+    })
+  }
+
   selectKuis = e => {
     e.preventDefault();
     let examId = e.target.getAttribute('data-id');
-    API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${examId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
-
-      this.setState({
-        examId: examId,
-        title: res.data.result.title,
-        quizAt: res.data.result.quiz_at,
-        tanggalMulai: moment(res.data.result.time_start).format('YYYY-MM-DD'),
-        tanggalAkhir: moment(res.data.result.time_finish).format('YYYY-MM-DD'),
-
-        fileExcel: Math.random().toString(36)
-      })
-
-      this.fetchPertanyaan(examId);
-
-      this.fetchMengumpulkan(examId);
-    })
+    this.selectOne(examId);
   }
 
   componentDidMount() {
@@ -130,9 +155,14 @@ class Tugas extends React.Component {
 
   fetchChapters() {
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch chapters`)
+      if(res.data.error) {
+        toast.warning(`Error: fetch chapters`)
+      }
+      else {
 
-      this.setState({ chapters: res.data.result })
+        this.setState({ chapters: res.data.result })
+      }
+
     })
   }
 
@@ -149,35 +179,45 @@ class Tugas extends React.Component {
     if(this.state.examId) {
       let form = {
         title: this.state.title,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
+        tipeJawab: this.state.tipeJawab
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: update ${this.state.tipe}`)
+        if(res.data.error) {
+          toast.warning(`Error: update ${this.state.tipe}`)
+        }
+        else {
+          toast.success(`Sukses mengubah ${this.state.tipe}`)
 
-        toast.success(`Sukses mengubah ${this.state.tipe}`)
+          this.fetchKuis();
+          this.selectOne(res.data.result.id);
+        }
 
-        this.fetchKuis();
       })
     } else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.pelajaranId,
+        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
 
         title: this.state.title,
-        quizAt: this.state.quizAt,
+        quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
+        tipeJawab: this.state.tipeJawab
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
-        if(res.data.error) toast.warning(`Error: create ${this.state.tipe}`)
+        if(res.data.error)  {
+          toast.warning(`Error: create ${this.state.tipe}`)
+        }
         else{
           toast.success(`Sukses menyimpan ${this.state.tipe}`)
+          this.selectOne(res.data.result.id);
           this.fetchKuis();
           this.clearForm();
         }
@@ -188,10 +228,13 @@ class Tugas extends React.Component {
   deleteKuis = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/pelajaran/${this.state.tipe}/delete/${this.state.examId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: delete ${this.state.tipe}`)
-
-      this.fetchKuis();
-      this.clearForm();
+      if(res.data.error) {
+        toast.warning(`Error: delete ${this.state.tipe}`)
+      }
+      else {
+        this.fetchKuis();
+        this.clearForm();
+      }
     })
   }
 
@@ -199,10 +242,14 @@ class Tugas extends React.Component {
 		let dataIndex = e.target.getAttribute('data-id');
 		let dataID = e.target.getAttribute('data-index');
 		API.delete(`${API_SERVER}v2/pelajaran/pertanyaan/hapus/${dataIndex}`).then(res => {
-			if(res.data.error) toast.warning("Gagal menghapus data");
+			if(res.data.error) {
+        toast.warning("Gagal menghapus data");
+      }
+      else {
+        toast.success("Data pertanyaan terhapus")
+        this.fetchPertanyaan(this.state.examId)
 
-			toast.success("Data pertanyaan terhapus")
-      this.fetchPertanyaan(this.state.examId)
+      }
 		})
   }
 
@@ -242,11 +289,15 @@ class Tugas extends React.Component {
   		form.append('files', this.state.formFile);
 
   		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import`, form).then(res => {
-  			if(res.data.error) toast.warning("Error import data");
+  			if(res.data.error) {
+          toast.warning("Error import data");
+        }
+        else {
+          toast.success("Berhasil import pertanyaan")
+          this.setState({ loading: false })
+          this.fetchPertanyaan(this.state.examId);
+        }
 
-  			toast.success("Berhasil import pertanyaan")
-  			this.setState({ loading: false })
-  			this.fetchPertanyaan(this.state.examId);
   		})
     } else {
       toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
@@ -259,7 +310,8 @@ class Tugas extends React.Component {
 
     return (
       <div className="row mt-3">
-        <div className="col-sm-4">
+
+        <div className="col-sm-6">
           <div className="card">
             <div className="card-header header-kartu">
               Semua {this.state.tipe}
@@ -277,7 +329,7 @@ class Tugas extends React.Component {
               </div>
 
               <div style={{padding: '12px'}}>
-                <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true }) }} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
                   <i className="fa fa-plus"></i> Tambah
                 </button>
               </div>
@@ -285,174 +337,189 @@ class Tugas extends React.Component {
           </div>
         </div>
 
-        <div className="col-sm-8">
-          <div className="row">
+        {
+          this.state.formAdd &&
 
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  1. Informasi {this.state.tipe}
-                </div>
-                <div className="card-body">
-                  <form>
-                    <div className="form-group">
-                      <label>Nama {this.state.tipe}</label>
-                      <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
-                    </div>
-                    <div className="form-group">
-                      <label>{this.state.tipe.charAt(0).toUpperCase() + this.state.tipe.slice(1)} akan dilaksanakan pada sesi</label>
-                      <select value={this.state.quizAt} onChange={e => this.setState({ [e.target.name]: e.target.value })} name="quizAt" className="form-control col-sm-6">
-                        <option value="" disabled selected>Pilih</option>
+          <div className="col-sm-6">
+            <div className="row">
+
+              <div className="col-sm-12">
+                <div className="card">
+                  <div className="card-header header-kartu">
+                    1. Informasi {this.state.tipe}
+                  </div>
+                  <div className="card-body">
+                    <form>
+                      <div className="form-group row">
+                        <div className="col-sm-8">
+                          <label>Nama {this.state.tipe}</label>
+                          <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
+                        </div>
+                        <div className="col-sm-4">
+                          <label className="mb-3">Jenis Tugas</label><br/>
+                          <div class="form-check form-check-inline">
+                            <input checked={this.state.tipeJawab == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tipeJawab" value="1" />
+                            <label class="form-check-label" for="inlineRadio1">Upload File</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input checked={this.state.tipeJawab == "2"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tipeJawab" value="2" />
+                            <label class="form-check-label" for="inlineRadio2">Jawab Langsung</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <div className="col-sm-4">
+                          <label>Tanggal Mulai</label>
+                          <input className="form-control" type="date" value={this.state.tanggalMulai} name="tanggalMulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
+                        </div>
+                        <div className="col-sm-4">
+                          <label>Tanggal Akhir</label>
+                          <input className="form-control" type="date" value={this.state.tanggalAkhir} name="tanggalAkhir" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
+                        </div>
+                      </div>
+
+                      <div className="form-group mt-4">
+                        <button onClick={this.saveKuis} type="button" className="btn btn-v2 btn-success">
+                          <i className="fa fa-save"></i> Simpan
+                        </button>
                         {
-                          this.state.chapters.map(item => (
-                            <option value={item.id}>{item.title}</option>
-                          ))
+                          this.state.examId &&
+                          <button onClick={this.deleteKuis} type="button" className="btn btn-v2 btn-danger float-right">
+                            <i className="fa fa-trash"></i> Hapus
+                          </button>
                         }
-                      </select>
-                    </div>
-                    <div className="form-group row">
-                      <div className="col-sm-4">
-                        <label>Tanggal Mulai</label>
-                        <input className="form-control" type="date" value={this.state.tanggalMulai} name="tanggalMulai" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
-                      </div>
-                      <div className="col-sm-4">
-                        <label>Tanggal Akhir</label>
-                        <input className="form-control" type="date" value={this.state.tanggalAkhir} name="tanggalAkhir" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
-                      </div>
-                    </div>
 
-                    <div className="form-group mt-4">
-                      <button onClick={this.saveKuis} type="button" className="btn btn-v2 btn-success">
-                        <i className="fa fa-save"></i> Simpan
-                      </button>
-                      {
-                        this.state.examId &&
-                        <button onClick={this.deleteKuis} type="button" className="btn btn-v2 btn-danger float-right">
-                          <i className="fa fa-trash"></i> Hapus
-                        </button>
-                      }
-                    </div>
-                  </form>
+                        {
+                          this.state.formAdd &&
+                          <button onClick={e => this.setState({ formAdd: false })} type="button" className="mr-2 btn btn-v2 btn-info float-right">
+                            Batal
+                          </button>
+                        }
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  2. Import Pertanyaan
-                </div>
-                <div className="card-body">
-                  <form onSubmit={this.submitImport} role="form" className="form-vertical">
-                    <div className="form-group row">
-                      <div className="col-sm-3">
-                        <label>Template Excel</label>
-                        <a href={`${API_SERVER}attachment/pertanyaan.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
-                          <i className="fa fa-download"></i>
-                          Download
-                        </a>
+              <div className="col-sm-12">
+                <div className="card">
+                  <div className="card-header header-kartu" data-toggle="collapse" data-target="#collapseImport">
+                    2. Import Pertanyaan
+                  </div>
+                  <div className="card-body collapse" id="collapseImport">
+                    <form onSubmit={this.submitImport} role="form" className="form-vertical">
+                      <div className="form-group row">
+                        <div className="col-sm-3">
+                          <label>Template Excel</label>
+                          <a href={`${API_SERVER}attachment/pertanyaan.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
+                            <i className="fa fa-download"></i>
+                            Download
+                          </a>
+                        </div>
+                        <div className="col-sm-6">
+                          <label>Import Excel</label>
+                          <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                        </div>
+                        <div className="col-sm-3">
+                          <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
+                            <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
+                          </button>
+                        </div>
                       </div>
-                      <div className="col-sm-6">
-                        <label>Import Excel</label>
-                        <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
-                      </div>
-                      <div className="col-sm-3">
-                        <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
-                          <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  3. Semua Pertanyaan
-                </div>
-                <div className="card-body">
-                  {
-                    this.state.pertanyaan.map((item,i) => (
-                      <div className="form-group">
-                        <label>Pertanyaan <b>{i+1}</b></label>
-                        <span className="float-right">
-                          <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
-                        </span>
-                        <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
-                        <Editor
-                          apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                          initialValue={item.tanya}
-                          value={item.tanya}
-                          init={{
-                            height: 200,
-                            menubar: false,
-                            convert_urls: false,
-                            image_class_list: [
-                              {title: 'None', value: ''},
-                              {title: 'Responsive', value: 'img-responsive'},
-                              {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                            ],
-                            file_browser_callback_types: 'image',
-                            file_picker_callback: function (callback, value, meta) {
-                              if (meta.filetype == 'image') {
-                                var input = document.getElementById(`myFile${i}`);
-                                input.click();
-                                input.onchange = function () {
-
-                                  var dataForm = new FormData();
-                                  dataForm.append('file', this.files[0]);
-
-                                  window.$.ajax({
-                                    url: `${API_SERVER}v2/media/upload`,
-                                    type: 'POST',
-                                    data: dataForm,
-                                    processData: false,
-                                    contentType: false,
-                                    success: (data)=>{
-                                      callback(data.result.url);
-                                      this.value = '';
-                                    }
-                                  })
-
-                                };
-                              }
-                            },
-                            plugins: [
-                              "advlist autolink lists link image charmap print preview anchor",
-                              "searchreplace visualblocks code fullscreen",
-                              "insertdatetime media table paste code help wordcount"
-                            ],
-                            toolbar:
-                              // eslint-disable-next-line no-multi-str
-                              "undo redo | bold italic backcolor | \
-                             alignleft aligncenter alignright alignjustify | image | \
-                              bullist numlist outdent indent | removeformat | help"
-                          }}
-                          onEditorChange={e => this.handleDynamicInput(e, i)}
-                        />
-                      </div>
-                    ))
-                  }
-
-                  <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
-
-                  <button
-                    type="button"
-                    style={{width: '100%'}}
-                    className="btn btn-icademy-primary mt-2"
-                    onClick={this.saveKuesioner.bind(this)}
-                  >
-                    <i className="fa fa-save"></i>
-                    Simpan
-                  </button>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
 
+              <div className="col-sm-12">
+                <div className="card">
+                  <div className="card-header header-kartu">
+                    3. List Pertanyaan
+                  </div>
+                  <div className="card-body">
+                    {
+                      this.state.pertanyaan.map((item,i) => (
+                        <div className="form-group">
+                          <label>Pertanyaan <b>{i+1}</b></label>
+                          <span className="float-right">
+                            <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                          </span>
+                          <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
+                          <Editor
+                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                            initialValue={item.tanya}
+                            value={item.tanya}
+                            init={{
+                              height: 200,
+                              menubar: false,
+                              convert_urls: false,
+                              image_class_list: [
+                                {title: 'None', value: ''},
+                                {title: 'Responsive', value: 'img-responsive'},
+                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                              ],
+                              file_browser_callback_types: 'image',
+                              file_picker_callback: function (callback, value, meta) {
+                                if (meta.filetype == 'image') {
+                                  var input = document.getElementById(`myFile${i}`);
+                                  input.click();
+                                  input.onchange = function () {
+
+                                    var dataForm = new FormData();
+                                    dataForm.append('file', this.files[0]);
+
+                                    window.$.ajax({
+                                      url: `${API_SERVER}v2/media/upload`,
+                                      type: 'POST',
+                                      data: dataForm,
+                                      processData: false,
+                                      contentType: false,
+                                      success: (data)=>{
+                                        callback(data.result.url);
+                                        this.value = '';
+                                      }
+                                    })
+
+                                  };
+                                }
+                              },
+                              plugins: [
+                                "advlist autolink lists link image charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table paste code help wordcount"
+                              ],
+                              toolbar:
+                                // eslint-disable-next-line no-multi-str
+                                "undo redo | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | image | \
+                                bullist numlist outdent indent | removeformat | help"
+                            }}
+                            onEditorChange={e => this.handleDynamicInput(e, i)}
+                          />
+                        </div>
+                      ))
+                    }
+
+                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
+
+                    <button
+                      type="button"
+                      style={{width: '100%'}}
+                      className="btn btn-icademy-primary mt-2"
+                      onClick={this.saveKuesioner.bind(this)}
+                    >
+                      <i className="fa fa-save"></i>
+                      Simpan
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
+
+        }
 
       </div>
     )

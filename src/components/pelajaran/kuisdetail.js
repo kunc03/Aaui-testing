@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment-timezone';
 import { Editor } from '@tinymce/tinymce-react';
 
-import { Modal } from 'react-bootstrap';
+import { Modal, Row, Col } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
@@ -57,7 +57,10 @@ class Tugas extends React.Component {
     API.get(`${API_SERVER}v2/guru/mengumpulkan-${this.state.tipe}/${this.state.jadwalId}/${id}`).then(res => {
       if(res.data.error) toast.warning(`Warning: fetch mengumpulkan tugas`)
 
-      this.setState({ mengumpulkan: res.data.result.sudahMengumpulkan, belum: res.data.result.belumMengumpulkan })
+      this.setState({
+        mengumpulkan: res.data.result.sudahMengumpulkan,
+        belum: res.data.result.belumMengumpulkan
+      })
     })
   }
 
@@ -136,6 +139,7 @@ class Tugas extends React.Component {
 
       toast.success(`Berasil memberi nilai`)
       this.setState({ nilaiTugas: res.data.result.score })
+      this.fetchMengumpulkan(this.state.examId);
     })
   }
 
@@ -165,223 +169,171 @@ class Tugas extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    // console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
 
-        <div className="col-sm-8">
-          <div className="row">
-
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  Informasi
-                </div>
-                <div className="card-body">
-                  <table>
-                    <tr>
-                      <td style={{width: '180px'}}>Tugas</td>
-                      <td><b>{this.state.infoExam.title}</b></td>
-                    </tr>
-                    <tr>
-                      <td>Tanggal</td>
-                      <td><b>{moment(this.state.infoExam.time_start).format('DD-MM-YYYY')}</b></td>
-                    </tr>
-                    <tr>
-                      <td>Deadline</td>
-                      <td><b>{moment(this.state.infoExam.time_finish).format('DD-MM-YYYY')}</b></td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
+        <div className="col-sm-12">
+          <div className="card">
+            <div className="card-header header-kartu" data-toggle="collapse" data-target={`#collapseInformasi`}>
+              Informasi Penugasan
             </div>
+            <div className="card-body collapse p-1" id={`collapseInformasi`}>
+              <table className="table table-bordered">
+                <tr>
+                  <td style={{width: '180px'}}>Tugas</td>
+                  <td><b>{this.state.infoExam.title}</b></td>
+                </tr>
+                <tr>
+                  <td>Tanggal</td>
+                  <td><b>{moment(this.state.infoExam.time_start).format('DD-MM-YYYY')}</b></td>
+                </tr>
+                <tr>
+                  <td>Deadline</td>
+                  <td><b>{moment(this.state.infoExam.time_finish).format('DD-MM-YYYY')}</b></td>
+                </tr>
+                <tr>
+                  <td>Jenis Tugas</td>
+                  <td><b>{this.state.infoExam.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
+                </tr>
+                <tr>
+                  <td>Pertanyaan</td>
+                  <td>
+                    {
+                      this.state.pertanyaan.map((item,i) => (
+                        <div className="form-group">
+                          <label>Pertanyaan <b>{i+1}</b></label>
+                          <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  Semua Pertanyaan
-                </div>
-                <div className="card-body">
-                  {
-                    this.state.pertanyaan.map((item,i) => (
-                      <div className="form-group">
-                        <label>Pertanyaan <b>{i+1}</b></label>
-                        <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+                          <div className="jawaban mt-3 ml-4">
+                            {
+                              item.a &&
+                              <tr>
+                                <td style={{width: '24px'}}>A.</td>
+                                <td>{item.a}</td>
+                              </tr>
+                            }
+                            {
+                              item.b &&
+                              <tr>
+                                <td style={{width: '24px'}}>B.</td>
+                                <td>{item.b}</td>
+                              </tr>
+                            }
+                            {
+                              item.c &&
+                              <tr>
+                                <td style={{width: '24px'}}>C.</td>
+                                <td>{item.c}</td>
+                              </tr>
+                            }
+                            {
+                              item.d &&
+                              <tr>
+                                <td style={{width: '24px'}}>D.</td>
+                                <td>{item.d}</td>
+                              </tr>
+                            }
+                            {
+                              item.e &&
+                              <tr>
+                                <td style={{width: '24px'}}>E.</td>
+                                <td>{item.e}</td>
+                              </tr>
+                            }
 
-                        <div className="jawaban mt-3 ml-4">
+                          </div>
+
                           {
-                            item.a &&
-                            <tr>
-                              <td style={{width: '24px'}}>A.</td>
-                              <td>{item.a}</td>
-                            </tr>
+                            item.jawaban &&
+                              <div className="jawaban mt-3 ml-4">
+                                Jawaban : <b>{item.jawaban}</b>
+                              </div>
                           }
-                          {
-                            item.b &&
-                            <tr>
-                              <td style={{width: '24px'}}>B.</td>
-                              <td>{item.b}</td>
-                            </tr>
-                          }
-                          {
-                            item.c &&
-                            <tr>
-                              <td style={{width: '24px'}}>C.</td>
-                              <td>{item.c}</td>
-                            </tr>
-                          }
-                          {
-                            item.d &&
-                            <tr>
-                              <td style={{width: '24px'}}>D.</td>
-                              <td>{item.d}</td>
-                            </tr>
-                          }
-                          {
-                            item.e &&
-                            <tr>
-                              <td style={{width: '24px'}}>E.</td>
-                              <td>{item.e}</td>
-                            </tr>
-                          }
+
 
                         </div>
-
-                        {
-                          item.jawaban &&
-                            <div className="jawaban mt-3 ml-4">
-                              Jawaban : <b>{item.jawaban}</b>
-                            </div>
-                        }
-
-                        <div className="penjelasan mt-3">
-                          <label>
-                            Pembahasan
-                          </label>
-                          <span data-id={item.id} onClick={e => this.simpanPenjelasan(e, i)} style={{cursor: 'pointer', color: 'blue'}} className="float-right blue">Simpan</span>
-                          <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
-                          <Editor
-                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                            initialValue={item.penjelasan}
-                            value={item.penjelasan}
-                            init={{
-                              height: 200,
-                              menubar: false,
-                              convert_urls: false,
-                              image_class_list: [
-                                {title: 'None', value: ''},
-                                {title: 'Responsive', value: 'img-responsive'},
-                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                              ],
-                              file_browser_callback_types: 'image',
-                              file_picker_callback: function (callback, value, meta) {
-                                if (meta.filetype == 'image') {
-                                  var input = document.getElementById(`myFile${i}`);
-                                  input.click();
-                                  input.onchange = function () {
-
-                                    var dataForm = new FormData();
-                                    dataForm.append('file', this.files[0]);
-
-                                    window.$.ajax({
-                                      url: `${API_SERVER}v2/media/upload`,
-                                      type: 'POST',
-                                      data: dataForm,
-                                      processData: false,
-                                      contentType: false,
-                                      success: (data)=>{
-                                        callback(data.result.url);
-                                        this.value = '';
-                                      }
-                                    })
-
-                                  };
-                                }
-                              },
-                              plugins: [
-                                "advlist autolink lists link image charmap print preview anchor",
-                                "searchreplace visualblocks code fullscreen",
-                                "insertdatetime media table paste code help wordcount"
-                              ],
-                              toolbar:
-                                // eslint-disable-next-line no-multi-str
-                                "undo redo | bold italic backcolor | \
-                               alignleft aligncenter alignright alignjustify | image | \
-                                bullist numlist outdent indent | removeformat | help"
-                            }}
-                            onEditorChange={e => this.handleDynamicInput(e, i)}
-                          />
-                        </div>
-
-                      </div>
-                    ))
-                  }
-                </div>
-              </div>
+                      ))
+                    }
+                  </td>
+                </tr>
+              </table>
             </div>
-
           </div>
         </div>
 
-
-        <div className="col-sm-4">
-          <div className="row">
-
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  Mengumpulkan
-                </div>
-                <div className="card-body" style={{padding: '5px'}}>
-                  <div className="list-group list-group-flush">
-                    {
-                      this.state.mengumpulkan.map((item, i) => {
-                          return (
-                            <Link onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i} className="list-group-item list-group-item-action">
-                              {item.nama}
-                              <span className="label label-info rounded float-right">{item.score}</span>
-                            </Link>
-                          )
-                      })
-                    }
-                  </div>
-
-                  {
-                    this.state.mengumpulkan > 0 &&
-                    <div style={{padding: '12px'}}>
-                      <button type="button" className="btn btn-v2 btn-primary btn-block mt-2">
-                        <i className="fa fa-download"></i> Unduh Semua
-                      </button>
-                    </div>
-                  }
-                </div>
-              </div>
+        <div className="col-sm-12">
+          <div className="card">
+            <div className="card-header header-kartu">
+              Murid yang Sudah Mengumpulkan / Belum Mengumpulkan
             </div>
+            <div className="card-body" style={{padding: '5px'}}>
+              <table className="table table-bordered">
+                <tr>
+                  <th>Status</th>
+                  <th>Nama</th>
+                  <th>Deskripsi</th>
+                  <th>Tanggal Submit</th>
+                  <th>Jawaban</th>
+                  <th>Score</th>
+                </tr>
+                {
+                  this.state.mengumpulkan.map((item,i) => (
+                    <tr>
+                      <td><span className="label label-success">Sudah</span></td>
+                      <td>
+                        <Link onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i}>
+                          {item.nama}
+                        </Link>
+                      </td>
+                      <td>{item.answer_deskripsi ? item.answer_deskripsi : '-'}</td>
+                      <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
+                      <td>
+                        {
+                          this.state.infoExam.tipe_jawab == '1' ?
+                            <a href={item.answer_file} target="_blank" className="silabus">Open</a>
+                          :
+                            <div dangerouslySetInnerHTML={{ __html: item.answer_file }} />
+                        }
+                      </td>
+                      <td>{
+                            item.score == 0 ?
+                              <span className="silabus" onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i}>
+                                Beri Nilai
+                              </span>
+                            :
+                              <p>{item.score}</p>
+                          }
+                      </td>
+                    </tr>
+                  ))
+                }
 
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header header-kartu">
-                  Belum Mengumpulkan
+                {
+                  this.state.belum.map((item,i) => (
+                    <tr>
+                      <td><span className="label label-danger">Belum</span></td>
+                      <td>{item.nama}</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                    </tr>
+                  ))
+                }
+              </table>
+
+              {
+                this.state.mengumpulkan > 0 &&
+                <div style={{padding: '12px'}}>
+                  <button type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                    <i className="fa fa-download"></i> Unduh Semua
+                  </button>
                 </div>
-                <div className="card-body" style={{padding: '5px'}}>
-                  <div className="list-group list-group-flush">
-                    {
-                      this.state.belum.map((item, i) => {
-                          return (
-                            <Link onClick={this.selectKuis} data-id={item.id} key={i} className="list-group-item list-group-item-action">
-                              {item.nama}
-                            </Link>
-                          )
-                      })
-                    }
-                  </div>
-                </div>
-              </div>
+              }
             </div>
-
           </div>
-
         </div>
 
         <Modal
@@ -391,29 +343,49 @@ class Tugas extends React.Component {
           <Modal.Body>
             <h4 className="mb-3">{this.state.detail.name}</h4>
 
-            <p style={{marginLef: '160px'}}>{this.state.detail.answer_deskripsi}</p>
-
-            <div className="score-exam text-center">
-              <span>Score</span>
-              <h1>{this.state.nilaiTugas}</h1>
-            </div>
-
-            <a href={this.state.detail.answer_file} target="_blank" className="btn btn-v2 btn-default btn-info">
-              <i className="fa fa-download"></i> Download
-            </a>
-
-            <div className="form-group mt-4">
-              <label>Nilai</label>
-              <div class="input-group mb-3">
-                <input value={this.state.nilaiTugas} pattern="[0-9]*" onChange={e => this.setState({ nilaiTugas: e.target.value > 100 ? 0 : e.target.value })} type="number" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                  <button onClick={this.setNilaiTugas} class="btn btn-outline-secondary" type="button">Beri Nilai</button>
+            <Row>
+              <Col sm="8">
+                {
+                  this.state.detail.answer_deskripsi ?
+                  <textarea disabled style={{width: '346px'}} rows="6" value={this.state.detail.answer_deskripsi} />
+                  :
+                  <textarea disabled style={{width: '346px'}} rows="6" value={this.state.detail.answer_file} />
+                }
+              </Col>
+              <Col sm="4">
+                <div className="text-center">
+                  <span>Score</span>
+                  <h1>{this.state.nilaiTugas}</h1>
                 </div>
-              </div>
-            </div>
+              </Col>
+            </Row>
 
-            <button onClick={() => this.setState({ openDetail: false, detail: {} })} className="btn btn-v2 btn-primary mt-2">Close</button>
+            <Row>
+              <Col sm="12">
+                <div className="mt-2">
+                {
+                  this.state.infoExam.tipe_jawab == '1' ?
+                    <a href={this.state.detail.answer_file} target="_blank" className="btn btn-v2 btn-default btn-info">
+                      <i className="fa fa-download"></i> Download
+                    </a>
+                  :
+                    null
+                }
+                </div>
+              </Col>
 
+              <Col sm="12">
+                <div className="form-group mt-2">
+                  <label>Nilai</label>
+                  <div class="input-group mb-3">
+                    <input value={this.state.nilaiTugas} pattern="[0-9]*" onChange={e => this.setState({ nilaiTugas: e.target.value > 100 ? 0 : e.target.value })} type="number" class="form-control" placeholder="0-100" aria-label="0-100" aria-describedby="basic-addon2" />
+                    <div class="input-group-append">
+                      <button onClick={this.setNilaiTugas} class="btn btn-success" type="button">Beri Nilai</button>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
           </Modal.Body>
         </Modal>
 
