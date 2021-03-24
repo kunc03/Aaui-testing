@@ -463,11 +463,9 @@ export default class WebinarRiwayat extends Component {
           <tbody>
             {
               Object.keys(items).map(function (key, index) {
-                let userId = items[key].user_id;
-                let name = peserta.filter((item) => item.user_id == userId || item.voucher == userId);
                 return (
                   <tr>
-                    <td>{name.length && name[0].name}</td>
+                    <td>{items[key].name}</td>
                     <td>{items[key].pretest.toFixed(2)}</td>
                     <td>{items[key].posttest.toFixed(2)}</td>
                     <td>{items[key].selisih.toFixed(2)}</td>
