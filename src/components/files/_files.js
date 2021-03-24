@@ -54,7 +54,6 @@ class FilesTableClass extends Component {
       renameFileName: '',
       renameFileNameNew: '',
       renameMode: '',
-      recordName: [],
 
       //access role webinar
       aSekretaris: true,
@@ -154,6 +153,7 @@ class FilesTableClass extends Component {
       let form = new FormData();
       form.append('folder', this.state.folderId);
       form.append('file', this.state.attachmentId[i]);
+      form.append('created_by', Storage.get('user').data.user_id);
       await API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
@@ -254,8 +254,6 @@ class FilesTableClass extends Component {
             toast.success(`Successfully modified record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
             this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
             this.fetchRekamanBBB(this.state.folderId);
-            this.fetchRekamanBBBWebinar(this.state.folderId);
-            this.fetchRecordName(this.state.folderId)
             this.closeModalRename();
           }
         }
@@ -274,7 +272,8 @@ class FilesTableClass extends Component {
       aOwner: this.state.aOwner ? 1 : 0,
       aPeserta: this.state.aPeserta ? 1 : 0,
       is_limit: this.state.limited ? 1 : 0,
-      user: this.state.valueUser
+      user: this.state.valueUser,
+      created_by: Storage.get('user').data.user_id
     };
 
     API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -385,10 +384,7 @@ class FilesTableClass extends Component {
       this.fetchFolder(id)
       this.fetchFile(id)
       this.fetchMOM(id)
-      this.fetchRekaman(id)
       this.fetchRekamanBBB(id)
-      this.fetchRekamanBBBWebinar(id)
-      this.fetchRecordName(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
   }
@@ -428,107 +424,19 @@ class FilesTableClass extends Component {
     }
   }
 
-fetchRecordName(folder){
-  API.get(`${API_SERVER}v1/record/${folder}`).then(res => {
-    if (res.status === 200) {
-      this.setState({recordName: res.data.result})
-    }
-  })
-}
-
 fetchRekamanBBB(folder){
-  let levelUser = Storage.get('user').data.level;
   let userId = Storage.get('user').data.user_id;
   if (folder == 0 || this.props.webinarId){
     this.setState({dataRecordings:[], isLoading: false})
   }
   else{
-        API.get(
-          `${API_SERVER}v1/liveclass/project/${levelUser}/${userId}/${folder}`
-        ).then((res) => {
-          if (res.status === 200) {
-            let data = res.data.result;
-            // BBB GET MEETING RECORD
-            let api = bbb.api(BBB_URL, BBB_KEY)
-            let http = bbb.http
-            if (data.length > 0){
-              data.map((item) => {
-                BBB_SERVER_LIST.map((items) => {
-                  let api = bbb.api(items.server, items.key)
-                  let http = bbb.http
-                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.class_id, state: 'any'})
-                  http(getRecordingsUrl).then((result) => {
-                    if (result.returncode='SUCCESS' && result.messageKey!='noRecordings'){
-		      this.setState({dataRecordings:[]});
-                      this.state.dataRecordings.push(result.recordings)
-                      this.forceUpdate()
-                    }
-                    else{
-                      console.log('GAGAL', result)
-                    }
-                  })
-                })
-              })
-            }
-          }
-          else {
-            this.setState({ dataRecordings: this.state.dataRecordings })
-            this.forceUpdate()
-          }
-          // BBB END
-          this.setState({
-            isLoading: false
-          })
-      });
-    }
+    API.get(`${API_SERVER}v2/bbb/record/${userId}/${folder}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ dataRecordings: res.data.result, isLoading: false })
+      }
+    })
   }
-
-  fetchRekamanBBBWebinar(folder) {
-    let levelUser = Storage.get('user').data.level;
-    let userId = Storage.get('user').data.user_id;
-    if (folder == 0 || this.props.webinarId) {
-      this.setState({ dataRecordings: [], isLoading: false })
-    }
-    else {
-      API.get(
-        `${API_SERVER}v2/webinar/list/${folder}`
-      ).then((res) => {
-        console.log('resFiles: ', res.data.result)
-        if (res.status === 200) {
-          let data = res.data.result;
-          // BBB GET MEETING RECORD
-          if (data !== "No webinars available") {
-            if(typeof data === "object") {
-              data.map((item) => {
-                BBB_SERVER_LIST.map((items) => {
-                  let api = bbb.api(items.server, items.key)
-                  let http = bbb.http
-                  let getRecordingsUrl = api.recording.getRecordings({meetingID: item.id, state: 'any'})
-                  http(getRecordingsUrl).then((result) => {
-                    if (result.returncode = 'SUCCESS' && result.messageKey != 'noRecordings') {
-                      this.state.dataRecordings.push(result.recordings)
-                      this.forceUpdate()
-                    }
-                    else {
-                      console.log('GAGAL', result)
-                    }
-                  })
-                })
-              })
-            }
-          }
-          else {
-            this.setState({ dataRecordings: this.state.dataRecordings })
-            this.forceUpdate()
-          }
-          // BBB END
-          this.setState({
-            isLoading: false
-          })
-        }
-      });
-    }
-  }
+}
 
   fetchData() {
     if (this.props.companyId) {
@@ -639,7 +547,8 @@ fetchRekamanBBB(folder){
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
       // {title : 'Size', width: null, status: true},
-      { title: 'Created', width: null, status: true },
+      { title: 'Created at', width: null, status: true },
+      { title: 'By', width: null, status: true },
       { title: '', width: null, status: true },
     ];
     const access_project_admin = this.props.access_project_admin;
@@ -762,8 +671,8 @@ fetchRekamanBBB(folder){
                       this.state.folderId !== 0 &&
                       this.state.selectFolder &&
                       <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td colspan='3' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
-                          <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Kembali</td>
+                        <td colspan='4' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
+                          <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Back</td>
                       </tr>
                     }
                     {
@@ -780,7 +689,12 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               {
                                 access_project_admin ?
@@ -826,6 +740,9 @@ fetchRekamanBBB(folder){
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
                           </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1 m-t-10">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -869,7 +786,12 @@ fetchRekamanBBB(folder){
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
-                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {Moment.tz(item.time, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                          </td>
+                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                            {item.creator ? item.creator : '-'}
+                          </td>
                           <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                             <span class="btn-group dropleft col-sm-1 m-t-10">
                               <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -936,12 +858,14 @@ fetchRekamanBBB(folder){
                         {
                         this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true) &&
                         dataRecordings.map((item) =>
-                            item.recording.length ? item.recording.map((item) =>
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {this.state.recordName.filter(rec=>rec.record_id === item.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {item.name} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {Moment.tz(item.endTime, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                                  {item.date}
+                                </td>
+                                <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                                  {item.creator ? item.creator : '-'}
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                                   <span class="btn-group dropleft col-sm-1 m-t-10">
@@ -954,7 +878,7 @@ fetchRekamanBBB(folder){
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                                       {
                                         access_project_admin ?
-                                          <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.recordID, this.state.recordName.filter(rec=>rec.record_id === item.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm'), 'record')}> Rename </button>
+                                          <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.name, 'record')}> Rename </button>
                                           :
                                           null
                                       }
@@ -962,7 +886,7 @@ fetchRekamanBBB(folder){
                                         style={{cursor:'pointer'}}
                                         class="dropdown-item"
                                         type="button"
-                                        onClick={e=>window.open(item.playback.format.url, 'Rekaman Meeting')}
+                                        onClick={e=>window.open(item.link, 'Rekaman Meeting')}
                                       >
                                           Open
                                       </button>
@@ -971,44 +895,6 @@ fetchRekamanBBB(folder){
                               </span>
                             </td>
                           </tr>
-                        )
-                          :
-                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Record : {this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID)[0].name : item.name + ' ' + Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('HH:mm')} <i style={{color:'#da9700', fontSize:'12px'}}>{item.recording.state !== 'published' ? 'Processing' : ''}</i></td>
-                                <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {Moment.tz(item.recording.endTime, 'Asia/Jakarta').format('DD-MM-YYYY')}
-                                </td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                              <span class="btn-group dropleft col-sm-1 m-t-10">
-                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i
-                                    className="fa fa-ellipsis-v"
-                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                  />
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                  {
-                                    access_project_admin ?
-                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.recording.recordID, this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID).length ? this.state.recordName.filter(rec=>rec.record_id === item.recording.recordID)[0].name : item.name + ' ' + Moment.tz(item.endTime, 'Asia/Jakarta').format('HH:mm'), 'record')}> Rename </button>
-                                    :
-                                    null
-                                  }
-                                  <button
-                                    style={{ cursor: 'pointer' }}
-                                    class="dropdown-item"
-                                    type="button"
-                                    onClick={e => window.open(item.recording.playback.format.url, 'Rekaman Meeting')}
-                                  >
-                                    Open
-                                      </button>
-                                  {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
-                                </div>
-                              </span>
-                            </td>
-                          </tr>
-
-
                       )
                     }
                   </tbody>

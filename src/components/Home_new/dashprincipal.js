@@ -143,11 +143,13 @@ class DashParent extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
-      this.setState({
-        jadwal: res.data.result.jadwal,
-        tugas: res.data.result.tugas,
-        ujian: res.data.result.ujian,
-      })
+      if (res.data.result){
+        this.setState({
+          jadwal: res.data.result.jadwal,
+          tugas: res.data.result.tugas,
+          ujian: res.data.result.ujian,
+        })
+      }
     })
   }
 
