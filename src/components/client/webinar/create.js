@@ -170,6 +170,10 @@ export default class WebinarCreate extends Component {
       this.props.history.goBack();
     })
   }
+  
+  selectedFolder = (val) => {
+    this.setState({folderId: val});
+  }
 
   goback() {
     this.props.history.goBack();
@@ -368,7 +372,7 @@ export default class WebinarCreate extends Component {
 
                     <div className="col-sm-12">
                       <div id="scrollin" style={{ height: '492px', marginBottom: '0px', overflowY: 'scroll' }}>
-                        <TableFiles access_project_admin={true} projectId={this.state.projectId} />
+                        <TableFiles access_project_admin={true} projectId={this.state.projectId} selectedFolder={this.selectedFolder} />
                       </div>
                     </div>
                     <div className="col-sm-12">

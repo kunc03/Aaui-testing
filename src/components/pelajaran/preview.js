@@ -117,7 +117,7 @@ class Overview extends React.Component {
                     <div class="col py-2">
                         <div class="card shadow">
                             <div class="card-body timeline-active">
-                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
+                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title collapsed"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
                                 </div>
@@ -155,7 +155,7 @@ class Overview extends React.Component {
                                           delay={{ show: 250, hide: 400 }}
                                           overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Silahkan upload materi dan piilh tanggalnya di Tab Sesi.'}</Tooltip>}
                                         >
-                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title">
+                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
                                             {
                                               [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
                                             }
