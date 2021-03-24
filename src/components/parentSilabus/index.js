@@ -42,9 +42,23 @@ class GuruUjian extends Component {
   }
 
   componentDidMount() {
-    this.fetchPelajaran();
-    this.fetchJadwal();
-    this.fetchMyMurid(Storage.get('user').data.user_id);
+    // this.fetchPelajaran();
+    // this.fetchJadwal();
+    // this.fetchMyMurid(Storage.get('user').data.user_id);
+    this.fetchAnakSaya(Storage.get('user').data.user_id)
+  }
+
+  fetchAnakSaya(userId) {
+    API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
+      let { result } = res.data;
+      this.fetchKurikulum(result.kurikulum)
+    })
+  }
+
+  fetchKurikulum(id) {
+    API.get(`${API_SERVER}v2/kurikulum/id/${id}`).then(res => {
+      this.setState({ jadwalPelajaran: res.data.result })
+    })
   }
 
   clearForm() {
@@ -84,8 +98,9 @@ class GuruUjian extends Component {
   }
 
   render() {
-    let levelUser = Storage.get('user').data.level;
-    let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+
+    console.log('state: ', this.state);
+
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -116,7 +131,7 @@ class GuruUjian extends Component {
                               <option value="" disabled selected>Choose subject</option>
                               {
                                 this.state.jadwalPelajaran.map((item,i) => (
-                                  <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
+                                  <option key={i} value={item.mapel_id}>{item.nama_pelajaran}</option>
                                 ))
                               }
                             </select>

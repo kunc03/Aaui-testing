@@ -144,29 +144,28 @@ class Registasi extends React.Component {
             </Card.Header>
             <Card.Body>
 
-              <Accordion defaultActiveKey={kurikulum.length}>
+              <Accordion defaultActiveKey="0">
                 {
                   kurikulum.map((item,i) => (
                     <Card>
                       <Card.Header>
-                        <Accordion.Toggle as={'h5'} style={{cursor: 'pointer'}} eventKey={i}>
+                        <h5 className="collapsed" data-toggle="collapse" data-target={`#colp${i}`} style={{cursor: 'pointer'}}>
+                          <i className="fa"></i> {' '}
                           {item.name}
-                        </Accordion.Toggle>
+                        </h5>
                         <button onClick={this.formAddMapel} data-id={item.id} className="btn btn-v2 btn-primary float-right">Lesson</button>
                         <i onClick={this.selectKurikulum} data-id={item.id} data-name={item.name} style={{cursor: 'pointer'}} className="fa fa-edit mr-2"></i>
                         <i onClick={this.deleteKurikulum} data-id={item.id} style={{cursor: 'pointer'}} className="fa fa-trash"></i>
                       </Card.Header>
-                      <Accordion.Collapse eventKey={i}>
-                        <Card.Body className="p-2">
-                          <ListGroup>
-                            {
-                              item.mapel.map((row,j) => (
-                                <ListGroup.Item key={j}>{row.nama_pelajaran} <i onClick={this.deleteMapel} data-kurikulum={item.id} data-mapel={row.pelajaran_id} className="fa fa-trash float-right"></i></ListGroup.Item>
-                              ))
-                            }
-                          </ListGroup>
-                        </Card.Body>
-                      </Accordion.Collapse>
+                      <Card.Body className="collapse p-2" id={`colp${i}`}>
+                        <ListGroup>
+                          {
+                            item.mapel.map((row,j) => (
+                              <ListGroup.Item key={j}>{row.nama_pelajaran} <i onClick={this.deleteMapel} data-kurikulum={item.id} data-mapel={row.pelajaran_id} className="fa fa-trash float-right"></i></ListGroup.Item>
+                            ))
+                          }
+                        </ListGroup>
+                      </Card.Body>
                     </Card>
                   ))
                 }
