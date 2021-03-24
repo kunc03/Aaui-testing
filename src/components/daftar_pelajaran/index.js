@@ -358,10 +358,10 @@ class DaftarPelajaran extends React.Component {
                         <td>{item.nama_pelajaran}</td>
                         <td>{item.kategori}</td>
                         <td style={{ padding: '12px' }}>
-                          <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share' : 'plus'}`}></i> {item.silabus > 0 ? 'Open' : 'Setup'}</span>
+                          <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus">{item.silabus > 0 ? 'Open' : 'Setup'}</span>
                         </td>
                         <td style={{ padding: '12px' }}>
-                          <span onClick={this.openProsentase} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-cog`}></i> Set</span>
+                          <span onClick={this.openProsentase} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus">Set</span>
                         </td>
                         <td className="text-center">
                           <i style={{ cursor: 'pointer' }} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>

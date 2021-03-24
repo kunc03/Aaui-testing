@@ -74,17 +74,21 @@ export default class WebinarPretestAdd extends Component {
       waktu: this.state.waktu
     };
 
-    console.log('ALVIN FORM PRETEST', form)
-    API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          toast.error('Error post data')
-        } else {
-          toast.success(`Menyimpan Pre Test`)
-          this.props.closeModal()
+    if (form.webinar_test.filter(item=> !item.jawab).length > 0){
+      toast.warning(`Pertanyaan ${form.webinar_test.filter(item=> !item.jawab)[0].tanya} belum diatur jawabannya`)
+    }
+    else{
+      API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Error post data')
+          } else {
+            toast.success(`Menyimpan Pre Test`)
+            this.props.closeModal()
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   updateKuesioner() {
@@ -95,16 +99,21 @@ export default class WebinarPretestAdd extends Component {
       waktu: this.state.waktu
     };
 
-    API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          toast.error('Error post data')
-        } else {
-          toast.success(`Menyimpan Pre Test`)
-          this.props.closeModal()
+    if (form.webinar_test.filter(item=> !item.jawab).length > 0){
+      toast.warning(`Pertanyaan ${form.webinar_test.filter(item=> !item.jawab)[0].tanya} belum diatur jawabannya`)
+    }
+    else{
+      API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Error post data')
+          } else {
+            toast.success(`Menyimpan Pre Test`)
+            this.props.closeModal()
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   fetchData() {
