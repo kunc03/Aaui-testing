@@ -176,8 +176,8 @@ class Tugas extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-header header-kartu" data-toggle="collapse" data-target={`#collapseInformasi`}>
-              Informasi Penugasan
+            <div className="card-header header-kartu collapsed" data-toggle="collapse" data-target={`#collapseInformasi`}>
+              <i className="fa"></i> Informasi Penugasan
             </div>
             <div className="card-body collapse p-1" id={`collapseInformasi`}>
               <table className="table table-bordered">

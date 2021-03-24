@@ -268,13 +268,14 @@ class Overview extends React.Component {
               <table className="table table-bordered" id="myTableSilabus">
                 <thead>
                   <tr>
+                    <th></th>
                     <th style={{color: 'black'}} className="text-center">Sesi</th>
                     <th style={{color: 'black'}} className="text-center">Topik</th>
                     <th style={{color: 'black'}} className="text-center">Tujuan</th>
                     <th style={{color: 'black'}} className="text-center">Tanggal</th>
                     <th style={{color: 'black'}} className="text-center">Periode</th>
                     <th style={{color: 'black'}} className="text-center">Durasi</th>
-                    <th style={{color: 'black'}} className="text-center">Attachment</th>
+                    <th style={{color: 'black'}} className="text-center">Files</th>
                     <th width="50px"></th>
                   </tr>
                 </thead>
@@ -291,6 +292,13 @@ class Overview extends React.Component {
                         return (
                           <>
                             <tr key={i} style={{ cursor: 'pointer' }}>
+                              <td className="text-center collapsed"
+                                data-toggle="collapse"
+                                data-target={`#collapse${i}`}
+                                aria-expanded="false"
+                                aria-controls={`collapse${i}`}>
+                                <i class="fa" aria-hidden="true"></i>
+                              </td>
                               <td className="text-center">
                                 {item.sesi}
                               </td>
@@ -304,7 +312,16 @@ class Overview extends React.Component {
                                 </OverlayTrigger>
                               </td>
                               <td>{item.tujuan}</td>
-                              <td className="text-center" data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Upload Materi</span>}</td>
+                              <td className="text-center">
+                                {
+                                  item.start_date ?
+                                    <>
+                                      {moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                    </>
+                                  :
+                                    <span className="label label-primary">Upload Materi</span>
+                                }
+                              </td>
                               <td  className="text-center">{item.periode}</td>
                               <td  className="text-center">{item.durasi} menit</td>
                               <td style={{padding: '12px'}} className="text-center">
@@ -325,7 +342,7 @@ class Overview extends React.Component {
                               </td>
                             </tr>
                             <tr className="collapse" id={`collapse${i}`}>
-                              <td colSpan="8">
+                              <td colSpan="9">
                                 <Tabs defaultActiveKey="materi" id="uncontrolled-tab-example">
                                   <Tab eventKey="materi" title="Materi" style={{padding: '8px'}}>
                                     <form className="row">
@@ -516,11 +533,18 @@ class Overview extends React.Component {
                         return (
                           <>
                             <tr key={i} style={{ cursor: 'pointer' }}>
+                              <td className="text-center collapsed"
+                                data-toggle="collapse"
+                                data-target={`#collapse${i}`}
+                                aria-expanded="false"
+                                aria-controls={`collapse${i}`}>
+                                <i class="fa" aria-hidden="true"></i>
+                              </td>
                               <td className="text-center">
                                 {item.sesi}
                               </td>
                               <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                              <td className="text-center" data-toggle="collapse" data-target={`#collapse${i}`} data-parent="#myTableSilabus">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
+                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
                               <td className="text-center">{item.durasi} menit</td>
                               <td className="text-center">
@@ -540,8 +564,8 @@ class Overview extends React.Component {
                                 </Dropdown>
                               </td>
                             </tr>
-                            <tr className="collapse" id={`collapse${i}`}>
-                              <td colSpan="8">
+                            <tr className="collapse" id={`collapse${i}`} data-parent="#myTableSilabus">
+                              <td colSpan="9">
 
                                 <form className="row">
                                   <div className="col-sm-6 bordered">

@@ -310,6 +310,7 @@ class Mengajar extends React.Component {
     for (let i = 0; i <= this.state.attachmentId.length - 1; i++) {
       let form = new FormData();
       form.append('folder', this.state.infoJadwal.folder);
+      form.append('created_by', Storage.get('user').data.user_id);
       form.append('file', this.state.attachmentId[i]);
       await API.post(`${API_SERVER}v1/folder/files`, form).then(res => {
         if (res.status === 200) {
