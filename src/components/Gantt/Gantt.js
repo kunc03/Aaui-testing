@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { gantt } from 'dhtmlx-gantt';
-import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.10';
+import 'dhtmlx-gantt/codebase/dhtmlxgantt.css?v=7.0.13';
 // import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css?v=7.0.10';
 import './Gantt.css';
 import API, { API_SERVER } from '../../repository/api';
@@ -351,7 +351,7 @@ export default class Gantt extends Component {
     //     gantt.deleteTask(taskId);
     //     gantt.hideLightbox();
     // }
-    
+    gantt.config.drag_project = true;
     gantt.config.initial_scroll = false
     gantt.config.scroll_size = 12;
     gantt.config.min_grid_column_width = 200;
@@ -377,7 +377,8 @@ export default class Gantt extends Component {
         gantt.locale.labels["logs_button"] = "History";
         gantt.config.resource_store = "resource";
         gantt.config.resource_property = "owner_id";
-        gantt.config.order_branch = true;
+        gantt.config.order_branch = "marker";
+        gantt.config.order_branch_free = true;
         gantt.config.open_tree_initially = true;
         gantt.config.lightbox.sections = [
             {name: "description", height: 38, map_to: "text", type: "textarea", focus: true},
