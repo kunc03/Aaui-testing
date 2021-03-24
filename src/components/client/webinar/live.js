@@ -174,6 +174,7 @@ export default class WebinarLive extends Component {
           }
           this.fetchPostTest()
           this.fetchResultPosttest();
+          this.setState({modalResultPosttest: true})
       })
     }
     else{
@@ -237,7 +238,8 @@ export default class WebinarLive extends Component {
           else
           toast.warning('Waktu habis')
             toast.success('Mengirim jawaban post test webinar')
-            this.fetchPostTest()
+            this.fetchPostTest();
+            this.fetchResultPosttest();
         })
       }
   }
@@ -369,6 +371,7 @@ export default class WebinarLive extends Component {
             this.fetchQNAByUser()
             this.checkProjectAccess()
             this.fetchResultPretest()
+            this.fetchResultPosttest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -487,6 +490,7 @@ export default class WebinarLive extends Component {
             this.fetchQNAByUser()
             this.checkProjectAccess()
             this.fetchResultPretest()
+            this.fetchResultPosttest()
             let tgl = new Date(res.data.result.tanggal)
             let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0,2)))
             let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3,5)))
@@ -586,7 +590,7 @@ export default class WebinarLive extends Component {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPosttest: res.data.result, modalResultPosttest: true})
+          this.setState({resultPosttest: res.data.result})
         }
       }
     })
