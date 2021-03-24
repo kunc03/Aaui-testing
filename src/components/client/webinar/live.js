@@ -69,6 +69,7 @@ export default class WebinarLive extends Component {
     sekretarisId: [],
     moderatorId: [],
     pembicaraId: [],
+    ownerId: [],
 
     lampirans: [
       {id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com'},
@@ -344,6 +345,7 @@ export default class WebinarLive extends Component {
               moderatorId: res.data.result.moderator,
               sekretarisId: res.data.result.sekretaris,
               pembicaraId: res.data.result.pembicara,
+              ownerId: res.data.result.owner,
               projectId: res.data.result.project_id,
               status: res.data.result.status,
               tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
@@ -858,7 +860,7 @@ export default class WebinarLive extends Component {
                 </div>
               </div>
               {
-                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                 <div>
                   <h4>Sebelum memasuki Webinar, mohon menjawab pertanyaan yang ada di bawah ini sesuai dengan waktu yang telah ditentukan ({this.state.waktuPretest} menit).<br/> Jika sudah selesai menjawab pertanyaan, silakan klik "Kirim Jawaban Pre Test".<br/> Pengerjaan soal melebihi waktu yang telah ditentukan akan mengakibatkan pre test otomatis tertutup dan langsung memasuki ruang Webinar<br/></h4>
                   <div className="fc-blue" style={{position:'absolute', right:20, top:10, fontSize:'18px', fontWeight:'bold'}}>
@@ -928,7 +930,7 @@ export default class WebinarLive extends Component {
                         </div>
                       }
                 {
-                this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                 <div>
                   <h4>Silahkan jawab post test</h4>
                   <div className="fc-blue" style={{fontSize:'18px', fontWeight:'bold', marginBottom:20}}>
@@ -1030,7 +1032,7 @@ export default class WebinarLive extends Component {
             </Card>
           </div>
           :
-          (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0) && this.state.status===2 ?
+          (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) && this.state.status===2 ?
           <div className="col-sm-6">
           <div className="col-sm-12">
             <Card>
