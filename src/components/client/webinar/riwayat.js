@@ -466,8 +466,8 @@ export default class WebinarRiwayat extends Component {
                 return (
                   <tr>
                     <td>{items[key].name}</td>
-                    <td>{items[key].pretest.toFixed(2)}</td>
-                    <td>{items[key].posttest.toFixed(2)}</td>
+                    <td>{items[key].pretest.nilai.toFixed(2)}</td>
+                    <td>{items[key].posttest.nilai.toFixed(2)}</td>
                     <td>{items[key].selisih.toFixed(2)}</td>
                   </tr>)
               })
