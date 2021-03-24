@@ -854,6 +854,14 @@ export default class WebinarLive extends Component {
                       :
                       null
                   }
+                  {
+                      this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >=1 ?
+                      <button onClick={()=>this.setState({modalResultPosttest: true})} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Hasil Post Test
+                      </button>
+                      :
+                      null
+                  }
                   <p className="m-b-0">
                     { /* <span className="f-w-600 f-16">Lihat Semua</span> */ }
                   </p>
