@@ -35,6 +35,8 @@ class Overview extends React.Component {
     loading: true,
     silabus: [],
 
+    uploading: false,
+
     materi: Math.random().toString(36),
     files: null,
 
@@ -100,6 +102,7 @@ class Overview extends React.Component {
       if (res.data.error) toast.warning(`Error: create chapter`)
 
       if (this.state.files) {
+        this.setState({ uploading: true })
         this.uplaodFiles(item[0].chapter_id, this.state.files)
       } else {
         toast.success(`Materi berhasil diupdate.`)
@@ -132,6 +135,7 @@ class Overview extends React.Component {
       }
       else {
         if (this.state.files) {
+          this.setState({ uploading: true })
           this.uplaodFiles(res.data.result.id, this.state.files)
         } else {
           toast.success(`Materi berhasil disimpan.`)
@@ -153,7 +157,7 @@ class Overview extends React.Component {
       } else {
         toast.success(`Materi dan Attachments berhasil di upload.`);
         this.fetchOverview()
-        this.setState({ materi: Math.random().toString(36), files: null })
+        this.setState({ materi: Math.random().toString(36), files: null, uploading: false })
       }
     })
   }
@@ -439,7 +443,7 @@ class Overview extends React.Component {
 
                                         <div className="form-group mt-4">
                                           <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
-                                            <Spinner animation="border" /> Simpan
+                                            <Spinner animation="border" /> {this.state.uploading ? 'Uploading...' : 'Simpan'}
                                           </Button>
                                         </div>
 
