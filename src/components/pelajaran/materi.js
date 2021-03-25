@@ -120,7 +120,7 @@ class Overview extends React.Component {
       title: item[0].chapter_title,
       content: item[0].chapter_body,
       tatapmuka: item[0].tatapmuka,
-      tanggal: moment(item[0].start_date).format('YYYY-MM-DD HH:mm'),
+      tanggal: item[0].start_date ? moment(item[0].start_date).format('YYYY-MM-DD HH:mm') : moment(new Date()).format('YYYY-MM-DD HH:mm'),
       silabusId: item[0].id
     }
 
