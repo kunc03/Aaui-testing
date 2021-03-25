@@ -153,26 +153,6 @@ export default class Gantt extends Component {
     //     // }
     //     return false;
     // });
-    gantt.attachEvent("onLightboxSave", function(id, task, is_new){
-        if (task.status==='Done'){
-            task.progress=1;
-        }
-        return true;
-    })
-    gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
-        if (mode === 'progress'){
-            if (gantt.getTask(id).progress === 1){
-                gantt.getTask(id).status = 'Done';
-                gantt.getTask(id).done_time = new Date();
-                gantt.updateTask(id);
-            }
-            else if (gantt.getTask(id).progress !== 1){
-                gantt.getTask(id).status = 'In Progress';
-                gantt.updateTask(id);
-            }
-        }
-        return;
-    });
     let editable = this.props.access_project_admin;
     let taskType = '';
     gantt.attachEvent("onBeforeLightbox", function(id){
