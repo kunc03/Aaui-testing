@@ -120,7 +120,7 @@ class Overview extends React.Component {
       title: item[0].chapter_title,
       content: item[0].chapter_body,
       tatapmuka: item[0].tatapmuka,
-      tanggal: moment(item[0].start_date).format('YYYY-MM-DD HH:mm'),
+      tanggal: item[0].start_date ? moment(item[0].start_date).format('YYYY-MM-DD HH:mm') : moment(new Date()).format('YYYY-MM-DD HH:mm'),
       silabusId: item[0].id
     }
 
@@ -669,7 +669,7 @@ class Overview extends React.Component {
                                           :
                                           <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
                                         }
-                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kui':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kuis':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
                                       </div>
                                     </div>
                                     <table className="table mt-2 table-bordered">
