@@ -300,7 +300,7 @@ class Tugas extends React.Component {
   		form.append('examId', this.state.examId);
   		form.append('files', this.state.formFile);
 
-  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import`, form).then(res => {
+  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import?tipe=tugas`, form).then(res => {
   			if(res.data.error) {
           toast.warning("Error import data");
         }
@@ -315,6 +315,19 @@ class Tugas extends React.Component {
       toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
     }
 	}
+
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['xlsx', 'xls'].includes(eks)) {
+      this.setState({ formFile: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai`);
+      this.setState({ fileExcel: Math.random().toString(36) })
+    }
+  }
 
   render() {
 
@@ -424,20 +437,40 @@ class Tugas extends React.Component {
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label>Template Excel</label>
-                          <a href={`${API_SERVER}attachment/pertanyaan.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
+                          <a href={`${API_SERVER}attachment/tugas.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
                             <i className="fa fa-download"></i>
                             Download
                           </a>
                         </div>
                         <div className="col-sm-6">
                           <label>Import Excel</label>
-                          <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                          <input key={this.state.fileExcel} required onChange={this.filterType} className="form-control" type="file" />
                         </div>
                         <div className="col-sm-3">
                           <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
                             <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
                           </button>
                         </div>
+                      </div>
+                      <div className="form-group row">
+                        {
+                          this.state.formFile ?
+                          <table className="border" border="1">
+                            <tr>
+                              <td width="90px">Filename</td>
+                              <td>{this.state.formFile.name}</td>
+                            </tr>
+                            <tr>
+                              <td>Size</td>
+                              <td>{this.state.formFile.size/1000}KB</td>
+                            </tr>
+                            <tr>
+                              <td>Type</td>
+                              <td>{this.state.formFile.type}</td>
+                            </tr>
+                          </table>
+                          : null
+                        }
                       </div>
                     </form>
                   </div>
