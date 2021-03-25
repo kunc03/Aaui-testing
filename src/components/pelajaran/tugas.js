@@ -24,6 +24,9 @@ class Tugas extends React.Component {
 
     kuis: [],
 
+    silabus: [],
+    loading: false,
+
     examId: '',
     title: '',
     quizAt: '',
@@ -151,6 +154,7 @@ class Tugas extends React.Component {
   componentDidMount() {
     this.fetchKuis();
     this.fetchChapters();
+    this.fetchOverview()
   }
 
   fetchChapters() {
@@ -171,6 +175,14 @@ class Tugas extends React.Component {
       if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
 
       this.setState({ kuis: res.data.result })
+    })
+  }
+
+  fetchOverview() {
+    API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.pelajaranId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      console.log('silabus: ', res.data.result);
+      this.setState({ silabus: res.data.result, loading: false, });
     })
   }
 
@@ -201,7 +213,7 @@ class Tugas extends React.Component {
     } else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
+        pelajaranId: this.state.silabus.length ? this.state.silabus[0].pelajaran_id : '0',
 
         title: this.state.title,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
