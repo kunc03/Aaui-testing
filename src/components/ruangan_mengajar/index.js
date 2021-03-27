@@ -158,8 +158,6 @@ class RuanganMengajar extends React.Component {
           if (res.status === 200) {
             if (res.data.error) {
               toast.warning("Warning initial project")
-            } else {
-              toast.success(`Inisiasi project berhasil`)
             }
           }
         })
@@ -245,9 +243,9 @@ class RuanganMengajar extends React.Component {
                   </select>
                 </div>
                 <div className="col-sm-6">
-                  <label>Sub-Folder</label>
+                  <label>Folder</label>
                   <select value={this.state.folder} onChange={e => this.setState({ folder: e.target.value })} required className="form-control">
-                    <option value="">Select Sub-Folder</option>
+                    <option value="">Select Folder</option>
                     {
                       this.state.dataFolder.map(item => (
                         <option value={item.id}>{item.name}</option>
