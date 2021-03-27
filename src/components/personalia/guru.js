@@ -24,7 +24,10 @@ class Guru extends React.Component {
     dataMurid: [],
 
     userGuru: [],
-    exists: false
+    exists: false,
+
+    excel: '',
+    fileExcel: Math.random().toString(36)
   }
 
   fetchGuru() {
@@ -94,6 +97,9 @@ class Guru extends React.Component {
       email: '',
 
       action: "tambah",
+
+      excel: '',
+      fileExcel: Math.random().toString(36)
     })
   }
 
@@ -131,6 +137,32 @@ class Guru extends React.Component {
     })
   }
 
+  importMurid = e => {
+    e.preventDefault()
+    let form = new FormData();
+    form.append('companyId', Storage.get('user').data.company_id);
+    form.append('excel', this.state.excel);
+    API.post(`${API_SERVER}v2/guru/import`, form).then(res => {
+      if(res.status === 200) {
+        toast.success('Import guru berhasil semua.')
+        this.fetchMurid()
+      }
+    })
+  }
+
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['xlsx', 'xls'].includes(eks)) {
+      this.setState({ excel: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai`);
+      this.setState({ fileExcel: Math.random().toString(36) })
+    }
+  }
+
   render() {
     console.log('state', this.state);
 
@@ -140,18 +172,18 @@ class Guru extends React.Component {
           <div className="card">
             <div className="card-header">Import Data Guru</div>
             <div className="card-body" style={{ padding: '5px' }}>
-              <form>
+              <form onSubmit={this.importMurid}>
                 <div className="form-group row" style={{ padding: '20px' }}>
                   <div className="col-sm-3">
                     <label>Template Excel</label><br />
-                    <a href={`${API_SERVER}attachments/template-upload.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
+                    <a href={`${API_SERVER}attachments/guru.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
                   </div>
                   <div className="col-sm-6">
                     <label>Pilih File</label>
-                    <input className="form-control" type="file" />
+                    <input key={this.state.fileExcel} onChange={this.filterType} className="form-control" type="file" />
                   </div>
                   <div className="col-sm-3">
-                    <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Upload File</button>
+                    <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Submit</button>
                   </div>
                 </div>
               </form>
