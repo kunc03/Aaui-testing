@@ -144,7 +144,7 @@ class Guru extends React.Component {
                 <div className="form-group row" style={{ padding: '20px' }}>
                   <div className="col-sm-3">
                     <label>Template Excel</label><br />
-                    <a href={`${API_SERVER}attachments/template-upload.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
+                    <a href={`${API_SERVER}template-excel/template-upload.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
                   </div>
                   <div className="col-sm-6">
                     <label>Pilih File</label>
