@@ -10,7 +10,7 @@ class Folder extends React.Component  {
 
   state = {
     projectAdmin: Storage.get('user').data.level === "admin" ? true : false,
-    projectId: 0,
+    projectId: '',
     companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id
   }
 
@@ -29,7 +29,7 @@ class Folder extends React.Component  {
     return (
       <div class="row mt-3">
         <div className="col-sm-12">
-          <TableFiles access_project_admin={this.state.projectAdmin} projectId={this.state.projectId} companyId={this.state.companyId} />
+          {this.state.projectId && <TableFiles access_project_admin={this.state.projectAdmin} projectId={this.state.projectId} companyId={this.state.companyId} />}
         </div>
       </div>
     )
