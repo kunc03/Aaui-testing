@@ -164,7 +164,12 @@ class Tugas extends React.Component {
     API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.pelajaranId}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal one`)
       console.log('silabus: ', res.data.result);
-      this.setState({ silabus: res.data.result, loading: false, });
+      if (res.data.result.length===0){
+        toast.warning('Contact admin to setup syllabus')
+      }
+      else{
+        this.setState({ silabus: res.data.result, loading: false, });
+      }
     })
   }
 
@@ -342,7 +347,7 @@ class Tugas extends React.Component {
               </div>
 
               <div style={{padding: '12px'}}>
-                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true })}} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true })}} type="button" className="btn btn-v2 btn-primary btn-block mt-2" disabled={this.state.silabus.length ? false : true}>
                   <i className="fa fa-plus"></i> Tambah
                 </button>
               </div>
@@ -418,7 +423,8 @@ class Tugas extends React.Component {
                         </div>
                         <div className="col-sm-6">
                           <label>Import Excel</label>
-                          <input key={this.state.fileExcel} required onChange={this.filterType} className="form-control" type="file" />
+                          <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.formFile ? this.state.formFile.name : 'Choose File'}</span></label>
+                          <input key={this.state.fileExcel} required onChange={this.filterType} type="file" id="attachment" class="form-control file-upload-icademy" />
                         </div>
                         <div className="col-sm-3">
                           <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">

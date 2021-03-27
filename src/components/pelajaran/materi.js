@@ -123,7 +123,7 @@ class Overview extends React.Component {
       title: item[0].chapter_title,
       content: item[0].chapter_body,
       tatapmuka: item[0].tatapmuka,
-      tanggal: moment(item[0].start_date).format('YYYY-MM-DD HH:mm'),
+      tanggal: item[0].start_date ? moment(item[0].start_date).format('YYYY-MM-DD HH:mm') : moment(new Date()).format('YYYY-MM-DD HH:mm'),
       silabusId: item[0].id
     }
 
@@ -190,7 +190,7 @@ class Overview extends React.Component {
       })
     }
     else {
-      toast.info(`Upload materi terlebih dahulu, setelah itu bisa memilih tugas ataupun kuis.`)
+      toast.info(`Isi form dan klik tombol Simpan terlebih dahulu, setelah itu dapat memilih tugas ataupun kuis.`)
     }
     this.setState({ setTugas: [], setKuis: [], setUjian: [] })
   }
@@ -428,7 +428,8 @@ class Overview extends React.Component {
 
                                         <h4>Attachments</h4>
                                         <div className="input-group mb-3">
-                                          <input key={this.state.materi} type="file" multiple onChange={e => this.setState({ files: e.target.files })} className="form-control" placeholder="Search" />
+                                          <label key={this.state.materi} for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.files ? this.state.files.length+' Files' : 'Choose File'}</span></label>
+                                          <input required multiple type="file" id="attachment" class="form-control file-upload-icademy" onChange={e => this.setState({ files: e.target.files })}/>
                                         </div>
 
                                         <ul className="list-group">

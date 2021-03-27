@@ -223,15 +223,15 @@ class DetailMurid extends Component {
                         <td>{item.no_induk}</td>
                         <td>{item.nama}</td>
                         <td>
-                          {item.task.toFixed(2)}
+                          {item.task ? item.task.toFixed(2) : '-'}
                           <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dTask)}>{item.dTask.length}</p>
                         </td>
                         <td>
-                          {item.quiz.toFixed(2)}
+                          {item.quiz ? item.quiz.toFixed(2) : '-'}
                           <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dQuiz)}>{item.dQuiz.length}</p>
                         </td>
                         <td>
-                          {item.exam.toFixed(2)}
+                          {item.exam ? item.exam.toFixed(2) : '-'}
                           <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dExam)}>{item.dExam.length}</p>
                         </td>
                         <td>{(item.exam+item.quiz+item.task).toFixed(2)}<p title="More detail" style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>

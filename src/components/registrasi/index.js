@@ -213,10 +213,12 @@ class Registasi extends React.Component {
                   ))
                 }
               </div>
-
+              {this.state.idKelas !== '' ?
               <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary m-3" style={{ width: '88%' }}>
-                <i className="fa fa-plus"></i> Tambahkan
+                <i className="fa fa-plus"></i> Add new
               </button>
+              :null
+              }
             </div>
           </div>
         </div>
@@ -226,7 +228,7 @@ class Registasi extends React.Component {
 
             <div className="col-sm-12">
               <div className="card">
-                <div className="card-header">Class</div>
+                <div className="card-header">{this.state.idKelas === '' ? 'Add new class' : 'Edit class'}</div>
                 <div className="card-body">
                   <form onSubmit={this.saveKelas}>
                     <div className="row mb-3">

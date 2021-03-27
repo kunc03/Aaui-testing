@@ -354,7 +354,7 @@ class DashParent extends Component {
                       <Modal
                         show={this.state.openSilabus}
                         onHide={this.closeSilabus.bind(this)}
-                        dialogClassName="modal-lg"
+                        dialogClassName="modal-lg modal-1000-large"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
@@ -490,14 +490,14 @@ class DashParent extends Component {
                       </Modal>
                     </div>
 
-                    <div class="col-sm-6">
+                    {/* <div class="col-sm-6">
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>
                           <ListToDoNew lists={this.state.toDo} />
                         </Card.Body>
                       </Card>
-                    </div>
+                    </div> */}
 
                   </div>
 

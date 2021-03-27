@@ -16,6 +16,7 @@ class Murid extends React.Component {
     tanggalLahir: '',
     jenisKelamin: '',
     email: '',
+    file:'',
 
     action: "tambah",
 
@@ -175,11 +176,12 @@ class Murid extends React.Component {
                 <div className="form-group row" style={{ padding: '20px' }}>
                   <div className="col-sm-3">
                     <label>Template Excel</label><br />
-                    <a href={`${API_SERVER}attachments/murid.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
+                    <a href={`${API_SERVER}template-excel/murid.xlsx`} className="btn btn-v2 btn-primary">Download File</a>
                   </div>
                   <div className="col-sm-6">
                     <label>Pilih File</label>
-                    <input key={this.state.fileExcel} onChange={this.filterType} className="form-control" type="file" />
+                    <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.excel ? this.state.excel.name : 'Choose File'}</span></label>
+                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.fileExcel} onChange={this.filterType}/>
                   </div>
                   <div className="col-sm-3">
                     <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Submit</button>
