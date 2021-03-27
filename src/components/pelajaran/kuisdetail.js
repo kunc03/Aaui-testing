@@ -300,7 +300,7 @@ class Tugas extends React.Component {
                       <td>{
                             item.score == 0 ?
                               <span className="silabus" onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} key={i}>
-                                Beri Nilai
+                                Hasil
                               </span>
                             :
                               <p>{item.score}</p>

@@ -359,14 +359,14 @@ class DashGuru extends Component {
                       <CalenderNew lists={this.state.calendar} />
                     </div>
 
-                    <div className="col-sm-6">
+                    {/* <div className="col-sm-6">
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>
                           <ListToDoNew lists={this.state.toDo} />
                         </Card.Body>
                       </Card>
-                    </div>
+                    </div> */}
 
                   </div>
 

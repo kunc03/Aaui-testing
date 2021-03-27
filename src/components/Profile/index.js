@@ -75,6 +75,7 @@ class Profile extends Component {
           user_data: { ...this.state.user_data, avatar: res.data.result },
           isModalAvatar: false
         });
+        window.location.reload();
       }
     });
   };
