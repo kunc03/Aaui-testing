@@ -69,7 +69,7 @@ class Overview extends React.Component {
     //   this.setState({ preview: res.data.result })
     // })
 
-    API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/id/${this.state.jadwalId}`).then(res => {
       if(res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ overview: res.data.result.deskripsi });
