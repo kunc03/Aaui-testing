@@ -695,23 +695,23 @@ class Mengajar extends React.Component {
 
                       {
                         (this.state.infoChapter.hasOwnProperty('ujian') && this.state.infoChapter.ujian.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Ujian</button>
+                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='ujian'}>Ujian</button>
                         : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('kuis') && this.state.infoChapter.kuis.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Kuis</button>
+                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='kuis'}>Kuis</button>
                         : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('tugas') && this.state.infoChapter.tugas.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Tugas</button>
+                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='tugas'}>Tugas</button>
                         : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Materi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
