@@ -12091,3 +12091,7 @@ required {
   margin:4px;
   cursor:pointer;
 }
+
+.rdt_TableBody{
+  min-height: 200px !important;
+}
