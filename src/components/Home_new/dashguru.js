@@ -4,17 +4,18 @@ import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 
+import TableMeetings from '../meeting/meeting';
 import CalenderNew from '../kalender/kalenderlearning';
 import ListToDoNew from './listToDo';
 const widgetNew = [
   { idWidget: '1', name: 'Tugas', checked: false },
   { idWidget: '2', name: 'Pertemuan Yang Akan Datang', checked: false },
   { idWidget: '3', name: 'Pengumuman Terbaru', checked: false },
-  { idWidget: '4', name: 'Laporan Yang Harus Diselesaikan', checked: false },
+  // { idWidget: '4', name: 'Laporan Yang Harus Diselesaikan', checked: false },
   { idWidget: '5', name: 'Materi Pelajaran', checked: false },
-  { idWidget: '6', name: 'To Do List', checked: false }
+  { idWidget: '6', name: 'Meeting', checked: false }
 ]
 class DashGuru extends Component {
 
@@ -285,8 +286,9 @@ class DashGuru extends Component {
 
   render() {
     // console.log(`event1: `, this.state.event)
-
-    let sort = this.state.event.sort((a, b) => a.start - b.start)
+    let levelUser = Storage.get('user').data.level;
+    let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+    let sort = this.state.event.sort((a, b) => a.start - b.start);
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
@@ -395,7 +397,6 @@ class DashGuru extends Component {
                         </Card.Body>
                       </Card>
                     </div>
-
 
                     <div className={this.state.dataWidget[0].checked ? "col-sm-6" : "hidden"}>
                       <Card>
@@ -671,12 +672,12 @@ class DashGuru extends Component {
                     </div>
 
                     <div className={this.state.dataWidget[5].checked ? "col-sm-6" : "hidden"}>
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">To Do List</h4>
-                          <ListToDoNew lists={this.state.toDo} />
-                        </Card.Body>
-                      </Card>
+
+
+                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
+
+
+
                     </div>
 
                     <div className="col-sm-6">
