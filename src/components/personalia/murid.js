@@ -149,7 +149,7 @@ class Murid extends React.Component {
                   <div className="col-sm-6">
                     <label>Pilih File</label>
                     <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.file ? this.state.file.name : 'Choose File'}</span></label>
-                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.tempFile} onChange={e => this.setState({ file: e.target.files[0] })}/>
+                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.file} onChange={e => this.setState({ file: e.target.files[0] })}/>
                   </div>
                   <div className="col-sm-3">
                     <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Upload File</button>
