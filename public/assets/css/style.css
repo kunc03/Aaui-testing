@@ -12091,3 +12091,36 @@ required {
   margin:4px;
   cursor:pointer;
 }
+
+.nopad {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/*image gallery*/
+.image-checkbox {
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 4px solid transparent;
+  margin-bottom: 10px;
+  outline: 0;
+}
+.image-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.image-checkbox-checked {
+  border-color: #4db2ff;
+}
+.image-checkbox .fa {
+  position: absolute;
+    color: #4db2ff;
+    background-color: #fff;
+    padding: 7px;
+    top: 0;
+    right: 0;
+}
+.image-checkbox-checked .fa {
+  display: block !important;
+}

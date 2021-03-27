@@ -91,11 +91,44 @@ class KalenderNew extends Component {
     // })
     return (
       <div >
+        <div className="card p-10">
+          <h3 className="f-w-900 f-18 fc-blue">Calendar</h3>
+          <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
+            <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
+          </div>
+          <Calendar
+            popup
+            events={event}
+            // defaultDate={new Date()}
+            localizer={localizer}
+            style={{ height: 400 }}
+            eventPropGetter={(event, start, end, isSelected) => {
+              if (event.bgColor) {
+                return {
+                  style: { backgroundColor: event.type === 3 ? '#0091FF' : '#e2890d' },
+                };
+              }
+              return {};
+            }}
+            views={['month', 'week', 'day', 'agenda']}
+            components={{ event: Event }}
+          />
+          <div className="p-l-20 m-t-10">
+            <span className="p-r-5" style={{ color: '#0091FF' }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Group Meeting
+            <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
+              <i className="fa fa-square"></i>
+            </span>
+            Webinar
+          </div>
+        </div>
         <ReactFullScreenElement
           fullScreen={this.state.fullscreen}
           allowScrollbar={false}
         >
-          <div className="card p-10">
+          <div className="card p-10 hidden">
             <h3 className="f-w-900 f-18 fc-blue">Calendar</h3>
             <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
               <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
