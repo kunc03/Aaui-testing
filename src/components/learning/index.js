@@ -37,7 +37,15 @@ const switchTambahan = [
 
 export default class LearningAdmin extends Component {
 
-  state = {
+  constructor(props) {
+    super(props);
+    this.goBack = this.goBack.bind(this);
+    this.state = {
+    }
+  }
+
+  goBack() {
+    this.props.history.goBack();
   }
 
   render() {
