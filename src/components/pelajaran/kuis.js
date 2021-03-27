@@ -309,6 +309,19 @@ class Tugas extends React.Component {
     }
 	}
 
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['xlsx', 'xls'].includes(eks)) {
+      this.setState({ formFile: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai`);
+      this.setState({ fileExcel: Math.random().toString(36) })
+    }
+  }
+
   render() {
 
     console.log('state: ', this.state)
@@ -411,13 +424,33 @@ class Tugas extends React.Component {
                         <div className="col-sm-6">
                           <label>Import Excel</label>
                           <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.formFile ? this.state.formFile.name : 'Choose File'}</span></label>
-                          <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} type="file" id="attachment" class="form-control file-upload-icademy" />
+                          <input key={this.state.fileExcel} required onChange={this.filterType} type="file" id="attachment" class="form-control file-upload-icademy" />
                         </div>
                         <div className="col-sm-3">
                           <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
                             <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
                           </button>
                         </div>
+                      </div>
+                      <div className="form-group row">
+                        {
+                          this.state.formFile ?
+                          <table className="border" border="1">
+                            <tr>
+                              <td width="90px">Filename</td>
+                              <td>{this.state.formFile.name}</td>
+                            </tr>
+                            <tr>
+                              <td>Size</td>
+                              <td>{this.state.formFile.size/1000}KB</td>
+                            </tr>
+                            <tr>
+                              <td>Type</td>
+                              <td>{this.state.formFile.type}</td>
+                            </tr>
+                          </table>
+                          : null
+                        }
                       </div>
                     </form>
                   </div>

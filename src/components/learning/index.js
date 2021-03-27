@@ -25,7 +25,7 @@ const titleTabs = [
   { name: 'Personnel', link: '/personalia', component: Personalia, icon: 'learning-teamwork-1' },
   { name: 'Report', link: '/laporan', component: Laporan, icon: 'learning-report-1' },
   { name: 'Preference', link: '/kpi', component: Kpi, icon: 'learning-report-1' },
-  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
+  // { name: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
 
 ]
 
