@@ -189,7 +189,7 @@ class LaporanKpi extends Component {
                             <div className="form-group row">
                               <div className="col-sm-3">
                                 <label>Guru</label>
-                                <select onChange={this.changeGuru} value={this.state.guruId} className="form-control">
+                                <select onChange={this.changeGuru} disabled={this.state.guruId} value={this.state.guruId} className="form-control">
                                   <option value="" selected disabled>Select</option>
                                   {
                                     this.state.guru.map(item => (
@@ -201,7 +201,7 @@ class LaporanKpi extends Component {
 
                               <div className="col-sm-2">
                                 <label>Semester</label>
-                                <select onChange={this.changeSemester} value={this.state.semesterId} className="form-control">
+                                <select onChange={this.changeSemester} disabled={this.state.semesterId} value={this.state.semesterId} className="form-control">
                                   <option value="" selected disabled>Select</option>
                                   {
                                     this.state.semester.map(item => (
@@ -213,7 +213,7 @@ class LaporanKpi extends Component {
 
                               <div className="col-sm-2">
                                 <label>Kelas</label>
-                                <select onChange={this.changeKelas} value={this.state.kelasId} className="form-control" >
+                                <select onChange={this.changeKelas} disabled={this.state.kelasId} value={this.state.kelasId} className="form-control" >
                                   <option value="" selected disabled>Select</option>
                                   {
                                     this.state.kelas.map(item => (
@@ -225,7 +225,7 @@ class LaporanKpi extends Component {
 
                               <div className="col-sm-2">
                                 <label>Pelajaran</label>
-                                <select onChange={this.changePelajaran} value={this.state.pelajaranId} className="form-control" >
+                                <select onChange={this.changePelajaran} disabled={this.state.pelajaranId} value={this.state.pelajaranId} className="form-control" >
                                   <option value="" selected disabled>Select</option>
                                   {
                                     this.state.pelajaran.map(item => (
