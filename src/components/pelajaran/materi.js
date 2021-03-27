@@ -424,7 +424,8 @@ class Overview extends React.Component {
 
                                         <h4>Attachments</h4>
                                         <div className="input-group mb-3">
-                                          <input key={this.state.materi} type="file" multiple onChange={e => this.setState({ files: e.target.files })} className="form-control" placeholder="Search" />
+                                          <label key={this.state.materi} for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.files ? this.state.files.name : 'Choose File'}</span></label>
+                                          <input required type="file" id="attachment" class="form-control file-upload-icademy" onChange={e => this.setState({ files: e.target.files[0] })}/>
                                         </div>
 
                                         <ul className="list-group">

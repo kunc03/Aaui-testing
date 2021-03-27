@@ -335,7 +335,7 @@ class Mengajar extends React.Component {
                 {/* <ChimeMeeting attendee={this.state.attendee} /> */}
 
                   <div className="card-body p-1">
-                    <Iframe url={`http://localhost:3002/`}
+                    <Iframe url={this.state.joinUrl}
                     width="100%"
                     height="600px"
                     display="initial"

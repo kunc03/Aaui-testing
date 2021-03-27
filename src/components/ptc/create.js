@@ -7,6 +7,7 @@ import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
 import moment from 'moment-timezone';
+import { toast } from 'react-toastify';
 
 class PtcCreate extends React.Component {
 
@@ -50,7 +51,13 @@ class PtcCreate extends React.Component {
       }
       console.log('form: ', form);
       API.put(`${API_SERVER}v1/ptc-room/update/${this.state.idPtc}`, form).then(res => {
-        if (res.data.error) console.log('Error: ', res.data.result);
+        if (res.data.error){
+          console.log('Error: ', res.data.result)
+        }
+        else{
+          toast.success('new PTC added');
+          this.props.history.goBack();
+        }
 
         this.clearForm();
       })
@@ -71,7 +78,13 @@ class PtcCreate extends React.Component {
 
       console.log('form: ', form);
       API.post(`${API_SERVER}v1/add/ptc-room`, form).then(res => {
-        if (res.data.error) console.log('Error: ', res.data.result);
+        if (res.data.error){
+          console.log('Error: ', res.data.result)
+        }
+        else{
+          toast.success('new PTC added');
+          this.props.history.goBack();
+        }
 
         this.clearForm();
       })

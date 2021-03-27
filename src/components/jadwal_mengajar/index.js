@@ -392,7 +392,7 @@ class JadwalMengajar extends React.Component {
               <div className="form-group row">
                 <div className="col-sm-6">
                   <label>Jumlah Pertemuan</label>
-                  <input required className="form-control" type="number" value={this.state.jumlahPertemuan} onChange={e => this.setState({ jumlahPertemuan: e.target.value })} placeholder="Enter jumlah pertemuan" />
+                  <input required className="form-control" type="number" min="0" value={this.state.jumlahPertemuan} onChange={e => this.setState({ jumlahPertemuan: e.target.value < 0 ? 0 : e.target.value })} placeholder="Enter jumlah pertemuan" />
                 </div>
                 <div className="col-sm-6">
                   <label>Kapasitas Murid</label>
