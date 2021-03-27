@@ -172,7 +172,7 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
@@ -180,7 +180,7 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
@@ -188,21 +188,23 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
                                           }
 
                                           {
-                                            item.hasOwnProperty('chapter_id') &&
+                                            item.hasOwnProperty('chapter_id') && moment(item.start_date) < moment(new Date()) ?
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
                                               <i className="fa fa-video"></i> Open
                                             </a>
+                                            :
+                                            null
                                           }
 
                                           {
-                                            item.hasOwnProperty('exam_id') &&
+                                            item.hasOwnProperty('exam_id') && moment(item.start_date) < moment(new Date()) ?
                                             <>
                                             <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info mr-2">
                                               <i className="fa fa-tasks"></i> Detail
@@ -211,6 +213,12 @@ class Overview extends React.Component {
                                               <i className="fa fa-video"></i> Open
                                             </a>
                                             </>
+                                            :
+                                            null
+                                          }
+                                          {
+                                            moment(item.start_date) > moment(new Date()) &&
+                                            <h6 style={{color:'#F00', margin:5}}>The schedule hasn't started yet</h6>
                                           }
 
                                         </div>

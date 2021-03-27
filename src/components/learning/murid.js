@@ -31,7 +31,15 @@ const switchTambahan = [
 
 export default class LearningMurid extends Component {
 
-  state = {
+  constructor(props) {
+    super(props);
+    this.goBack = this.goBack.bind(this);
+    this.state = {
+    }
+  }
+
+  goBack(){
+    this.props.history.goBack();
   }
 
   render() {
@@ -48,7 +56,7 @@ export default class LearningMurid extends Component {
                       src={`newasset/back-button.svg`}
                       alt=""
                       width={90}
-                      onClick={this.goBack}
+                      onClick={this.goBack.bind(this)}
                     ></img>
                   </div>
                   <div className="row">
