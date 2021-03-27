@@ -112,6 +112,10 @@ export default class WebinarEdit extends Component {
     })
   }
 
+  selectedFolder = (val) => {
+    this.setState({folderId: val});
+  }
+
   fetchWebinar() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if (res.data.error)
@@ -119,6 +123,7 @@ export default class WebinarEdit extends Component {
       else
         this.setState({
           projectId: [Number(res.data.result.project_id)],
+          folderId: res.data.result.dokumen_id,
           judul: res.data.result.judul,
           status: res.data.result.status
         })
@@ -182,6 +187,7 @@ export default class WebinarEdit extends Component {
       sekretarisId: this.state.sekretarisId,
       pembicaraId: this.state.pembicaraId,
       ownerId: this.state.ownerId,
+      dokumenId: this.state.folderId,
       projectId: this.state.projectId
     }
 
@@ -385,7 +391,7 @@ export default class WebinarEdit extends Component {
 
                     <div className="col-sm-12">
                       <div id="scrollin" style={{ height: '492px', marginBottom: '0px', overflowY: 'scroll' }}>
-                        <TableFiles access_project_admin={true} projectId={this.state.projectId} />
+                        <TableFiles access_project_admin={true} projectId={this.state.projectId} selectedFolder={this.selectedFolder} initialFolder={this.state.folderId} />
                       </div>
                     </div>
                     <div className="col-sm-12">

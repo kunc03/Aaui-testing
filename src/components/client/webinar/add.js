@@ -225,8 +225,8 @@ class WebinarAddClass extends Component {
         jamMulai: jam_mulai,
         jamSelesai: jam_selesai,
         oldJamMulai: jam_mulai,
-        projectId: res.data.result.projectId,
-        dokumenId: res.data.result.dokumenId,
+        projectId: res.data.result.project_id,
+        dokumenId: res.data.result.dokumen_id,
         peserta: res.data.result.peserta,
         tamu: res.data.result.tamu,
         status: res.data.result.status,
@@ -658,7 +658,7 @@ class WebinarAddClass extends Component {
                         <label className="bold">Folder & File</label>
                         <div className="col-sm-12">
                           <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                            <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} webinarId={this.state.webinarId} />
+                            { this.state.dokumenId && <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} />}
                           </div>
                         </div>
                       </div>
