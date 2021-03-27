@@ -405,7 +405,7 @@ class Mengajar extends React.Component {
   }
 
   fetchMengumpulkan(examId) {
-    API.get(`${API_SERVER}v2/guru/tugas/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
@@ -416,7 +416,7 @@ class Mengajar extends React.Component {
   }
 
   fetchScore(examId) {
-    API.get(`${API_SERVER}v2/guru/score-murid/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/score-murid/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
@@ -430,14 +430,14 @@ class Mengajar extends React.Component {
     e.preventDefault()
     let examId = e.target.getAttribute('data-id')
     let tipeJawab = e.target.getAttribute('data-tipe')
-    API.get(`${API_SERVER}v2/guru/tugas/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
       else {
         let { result } = res.data;
         let find = result.filter(item => item.user_id == Storage.get('user').data.user_id);
-        if(find.length == 1) {
+        if(find.length == 1 && find[0].score) {
           toast.success(`Kamu sudah mengerjakan tugas ini.`)
           this.setState({ scoreTugas: find[0].score })
         }
@@ -786,7 +786,10 @@ class Mengajar extends React.Component {
 
                                     {
                                       this.state.role == 'murid' ?
-                                      <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
+                                          <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        :
+                                          'Belum Saatnya'
                                       : null
                                     }
 

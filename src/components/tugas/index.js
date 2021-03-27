@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
