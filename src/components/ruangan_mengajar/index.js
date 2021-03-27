@@ -150,7 +150,8 @@ class RuanganMengajar extends React.Component {
           aModerator: 1,
           aPembicara: 1,
           aOwner: 1,
-          aPeserta: 1
+          aPeserta: 1,
+          created_by: Storage.get('user').data.user_id
         };
 
         API.post(`${API_SERVER}v1/folder`, formData).then(res => {
@@ -244,9 +245,9 @@ class RuanganMengajar extends React.Component {
                   </select>
                 </div>
                 <div className="col-sm-6">
-                  <label>Folder</label>
+                  <label>Sub-Folder</label>
                   <select value={this.state.folder} onChange={e => this.setState({ folder: e.target.value })} required className="form-control">
-                    <option value="">Select Folder</option>
+                    <option value="">Select Sub-Folder</option>
                     {
                       this.state.dataFolder.map(item => (
                         <option value={item.id}>{item.name}</option>
