@@ -12117,3 +12117,8 @@ required {
   border-radius:4px;
   cursor:pointer;
 }
+
+.modal-1000-large{
+  width:1000px;
+  max-width:1000px;
+}

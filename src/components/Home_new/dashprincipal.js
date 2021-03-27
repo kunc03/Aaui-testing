@@ -354,7 +354,7 @@ class DashParent extends Component {
                       <Modal
                         show={this.state.openSilabus}
                         onHide={this.closeSilabus.bind(this)}
-                        dialogClassName="modal-lg"
+                        dialogClassName="modal-lg modal-1000-large"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
