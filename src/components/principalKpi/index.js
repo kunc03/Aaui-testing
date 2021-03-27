@@ -10,6 +10,8 @@ import 'react-sm-select/dist/styles.css';
 import { toast } from 'react-toastify'
 import { Modal } from 'react-bootstrap';
 
+import { PDFReader, MobilePDFReader } from 'reactjs-pdf-view';
+
 import Viewer, { Worker } from '@phuocng/react-pdf-viewer';
 import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 
@@ -160,6 +162,20 @@ class LaporanKpi extends Component {
     return Object.keys(found).map(key => found[key]);
   }
 
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['pdf'].includes(eks)) {
+      this.setState({ fileName: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai, pastikan file yang di upload format PDF.`);
+      this.setState({ tempFile: Math.random().toString(36) })
+    }
+  }
+
+
   render() {
     console.log('state: ', this.state);
     return (
@@ -251,7 +267,7 @@ class LaporanKpi extends Component {
                         <div className="card-body">
 
                           {
-                            this.state.formatKpi !== "" &&
+                            this.state.formatKpi !== "" && this.state.grupName == "principal" &&
                             <a href={this.state.formatKpi} target="_blank" class="btn btn-v2 btn-primary">Download Format KPI</a>
                           }
 
@@ -283,19 +299,19 @@ class LaporanKpi extends Component {
                                     <td class="text-center">
                                       {
                                         item.file ?
-                                        <button onClick={this.openPreview} data-index={i} class="btn btn-sm btn-v2 btn-primary">Selengkapnya</button>
+                                          <button onClick={this.openPreview} data-index={i} class="btn btn-sm btn-v2 btn-primary">Selengkapnya</button>
                                         :
-                                        this.state.grupName === "principal" ?
-                                          <button
-                                            onClick={this.openModal}
-                                            data-guru={item.pengajar}
-                                            data-jadwal={item.jadwal_id}
-                                            data-semester={item.semester_id}
-                                            data-kelas={item.kelas_id}
-                                            data-pelajaran={item.pelajaran_id}
-                                            class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
+                                          this.state.grupName === "principal" ?
+                                            <button
+                                              onClick={this.openModal}
+                                              data-guru={item.pengajar}
+                                              data-jadwal={item.jadwal_id}
+                                              data-semester={item.semester_id}
+                                              data-kelas={item.kelas_id}
+                                              data-pelajaran={item.pelajaran_id}
+                                              class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
                                           :
-                                          ""
+                                            ""
                                       }
                                     </td>
                                   </tr>
@@ -345,11 +361,13 @@ class LaporanKpi extends Component {
                           </div>
 
                           <div class="col-sm-9">
-                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
-                              <div style={{ height: '750px' }}>
-                                  <Viewer fileUrl={this.state.detailKinerja.file} />
+                            {
+                              this.state.detailKinerja ?
+                              <div className="wrap" style={{ height: '800px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                                <PDFReader width={800} url={this.state.detailKinerja.file} scale={1} showAllPage={true} />
                               </div>
-                            </Worker>
+                              : null
+                            }
                           </div>
 
                         </div>
@@ -368,7 +386,7 @@ class LaporanKpi extends Component {
                         <form onSubmit={this.submitKPI}>
                           <div className="form-group">
                             <label>Upload File</label>
-                            <input key={this.state.tempFile} onChange={e => this.setState({ fileName: e.target.files[0] })} type="file" className="form-control" />
+                            <input key={this.state.tempFile} onChange={this.filterType} type="file" className="form-control" />
                           </div>
                           <div className="form-group">
                             <button type="submit" className="btn btn-v2 btn-success">Submit</button>

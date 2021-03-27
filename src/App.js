@@ -144,6 +144,8 @@ import ParentRapor from './components/parentRapor/index';
 
 import PembelajaranPrincipal from './components/principalPembelajaran/index';
 import LaporanPrincipal from './components/principalLaporan/index';
+import LaporanPrincipalMurid from './components/principalLaporan/murid';
+import LaporanKurikulum from './components/principalLaporan/kurikulum';
 import KinerjaPrincipal from './components/principalKpi/index';
 import EvaluasiPrincipal from './components/principalEvaluasi/index';
 
@@ -336,7 +338,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/meeting" exact component={Meeting} />
         <Route
           exact
-          path="/meeting/:roomid" 
+          path="/meeting/:roomid"
           render={props => (
             <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
           )}
@@ -493,7 +495,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/meeting" exact component={Meeting} />
         <Route
           exact
-          path="/meeting/:roomid" 
+          path="/meeting/:roomid"
           render={props => (
             <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
           )}
@@ -585,7 +587,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/meeting" exact component={Meeting} />
         <Route
           exact
-          path="/meeting/:roomid" 
+          path="/meeting/:roomid"
           render={props => (
             <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
           )}
@@ -633,15 +635,17 @@ export class ClientSwitch extends React.Component {
 
         {/* ROUTE PRINCIPAL */}
         <Route path='/principal-syllabus' component={ParentSylabus} />
-        <Route path='/principal-pelajaran' component={PembelajaranPrincipal} />
+        <Route path='/principal-pelajaran' component={LaporanKurikulum} />
         <Route path='/principal-rapor' component={LaporanPrincipal} />
+        <Route path='/principal-rapor-murid' component={LaporanPrincipalMurid} />
         <Route path='/principal-kinerja' component={KinerjaPrincipal} />
         <Route path='/principal-evaluasi' component={EvaluasiPrincipal} />
 
         {/* ROUTE MANAGEMENT */}
-        <Route path='/management-syllabus' component={ParentSylabus} />
+        <Route path='/management-kurikulum' component={LaporanKurikulum} />
         <Route path='/management-pelajaran' component={PembelajaranPrincipal} />
         <Route path='/management-rapor' component={LaporanPrincipal} />
+        <Route path='/management-rapor-murid' component={LaporanPrincipalMurid} />
         <Route path='/management-kinerja' component={KinerjaPrincipal} />
         <Route path='/management-evaluasi' component={EvaluasiPrincipal} />
 
