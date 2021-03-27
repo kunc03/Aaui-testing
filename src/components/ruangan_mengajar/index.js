@@ -159,7 +159,7 @@ class RuanganMengajar extends React.Component {
             if (res.data.error) {
               toast.warning("Warning initial project")
             } else {
-              toast.success(`Inisiasi project berhasil`)
+              toast.success(`Inisiasi project berhasil, Folder 'Learning' telah dibuat.`)
             }
           }
         })
