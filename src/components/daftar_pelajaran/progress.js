@@ -105,13 +105,17 @@ class GuruUjian extends Component {
                     <>
                       <tr>
                         <td data-toggle='collapse' data-target={`#col${i}`} className="collapsed text-center">
-                          <i className="fa"></i>
+                          {
+                            item.tugas.length || item.kuis.length || item.ujian.length ?
+                            <i className="fa"></i>
+                            : null
+                          }
                         </td>
                         <td>{item.sesi}</td>
                         <td>{item.jenis == '0' ? 'Materi' : item.jenis == '1' ? 'Kuis' : 'Ujian'}</td>
                         <td>{item.topik}</td>
                         <td>{item.chapter_title}</td>
-                        <td>{item.absen_jam ? 'Hadir' : (new Date() <= new Date(moment(item.start_date).format('DD/MM/YYYY HH:mm'))) ? 'Tidak Hadir' : '-'}</td>
+                        <td>{item.absen_jam ? 'Hadir' : (new Date() <= new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm'))) ? '-' : 'Tidak Hadir'}</td>
                         <td>{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</td>
                         <td>{item.absen_jam ? moment(item.absen_jam).format('DD/MM/YYYY HH:mm') : '-'}</td>
                       </tr>

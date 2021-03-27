@@ -119,6 +119,8 @@ class DetailMurid extends Component {
                     <div className="col-xl-12">
                       <div className="card">
                         <div className="card-body">
+                          <h3 className="f-24 fc-skyblue f-w-800 mb-3">Laporan Kelas</h3>
+
                           <form>
                             <div className="form-group row">
                               <div className="col-sm-2">
