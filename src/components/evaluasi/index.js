@@ -216,7 +216,8 @@ class Evaluasi extends React.Component {
                 </div>
                 <div className="col-sm-6">
                   <label>Import Excel</label>
-                  <input required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                  <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.formFile ? this.state.formFile.name : 'Choose File'}</span></label>
+                  <input required type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.tempFile} onChange={e => this.setState({ formFile: e.target.files[0] })}/>
                 </div>
                 <div className="col-sm-3">
                   <button style={{ marginTop: '22px' }} className="btn btn-primary" type="submit">

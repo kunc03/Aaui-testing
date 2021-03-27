@@ -2422,7 +2422,7 @@ th, td {
 
 hr {
   display: block;
-  width: 18%;
+  width: 100%;
   border-top: 1px solid #ccc;
 }
 
@@ -12094,4 +12094,26 @@ required {
 
 .rdt_TableBody{
   min-height: 200px !important;
+}
+
+.file-upload-icademy{
+  display:none;
+}
+
+.label-upload-icademy{
+  padding: 5px 10px;
+  border: 1px solid #0091FF;
+  color: #0091FF;
+  border-radius:4px;
+  cursor:pointer;
+  margin:5px;
+}
+
+.form-control-upload-label{
+  background:rgb(224, 224, 224);
+  width:auto;
+  padding: 4px 7px;
+  margin:2px;
+  border-radius:4px;
+  cursor:pointer;
 }

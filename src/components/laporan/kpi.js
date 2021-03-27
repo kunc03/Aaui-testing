@@ -151,7 +151,8 @@ class Kpi extends React.Component {
                   </div>
                   <div className="col-sm-6">
                     <label>File</label>
-                    <input type="file" class="form-control" key={this.state.tempFile} onChange={e => this.setState({ file: e.target.files[0] })} />
+                    <label for="attachment" className="form-control">{this.state.file ? this.state.file.name : 'Choose File'}</label>
+                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.tempFile} onChange={e => this.setState({ file: e.target.files[0] })} />
                   </div>
 
                   <div className="col-sm-2">
