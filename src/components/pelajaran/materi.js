@@ -186,7 +186,7 @@ class Overview extends React.Component {
       })
     }
     else {
-      toast.info(`Upload materi terlebih dahulu, setelah itu bisa memilih tugas ataupun kuis.`)
+      toast.info(`Isi form dan klik tombol Simpan terlebih dahulu, setelah itu dapat memilih tugas ataupun kuis.`)
     }
     this.setState({ setTugas: [], setKuis: [], setUjian: [] })
   }
