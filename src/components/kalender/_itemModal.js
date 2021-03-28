@@ -1,14 +1,14 @@
-import React, { Component,useState } from "react";
+import React, { Component, useState } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
-import { Calendar, momentLocalizer, Views  } from 'react-big-calendar';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import Moment from 'moment-timezone';
-import {dataKalender} from '../../modul/data';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
-import {OverlayTrigger, Modal} from 'react-bootstrap';
-import {Popover} from 'react-bootstrap';
+import { dataKalender } from '../../modul/data';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
+import { OverlayTrigger, Modal } from 'react-bootstrap';
+import { Popover } from 'react-bootstrap';
 const localizer = momentLocalizer(moment);
 
 class Event extends Component {
@@ -20,20 +20,33 @@ class Event extends Component {
     },
     infoClass: [],
     event: [],
-    show : false,
-    setShow : false
+    show: false,
+    setShow: false,
+    webinarShow: false,
   }
 
-  handleShow(){
-      console.log(this.props.event, 'asdassdasd');
-    this.setState({setShow:true});
+  handleShow(a) {
+    // eslint-disable-next-line default-case
+    switch (a) {
+      case 'webinar':
+        this.setState({ webinarShow: true });
+        break;
+
+      case 'meeting':
+        this.setState({ setShow: true });
+        break;
+    }
   }
 
-  handleClose(){
-    this.setState({setShow:false});
+  handleClose() {
+    this.setState({ setShow: false });
   }
 
-  confirmAttendance(confirmation){
+  handleCloseWebinar() {
+    this.setState({ webinarShow: false });
+  }
+
+  confirmAttendance(confirmation) {
     let form = {
       confirmation: confirmation,
     }
@@ -54,13 +67,13 @@ class Event extends Component {
           schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
           userInvite: [Storage.get('user').data.user_id],
           //url
-          message: APPS_SERVER+'redirect/meeting/information/'+this.state.infoClass.class_id,
-          messageNonStaff: APPS_SERVER+'meeting/'+this.state.infoClass.class_id
+          message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
+          messageNonStaff: APPS_SERVER + 'meeting/' + this.state.infoClass.class_id
         }
-        this.setState({alertSuccess:true})
+        this.setState({ alertSuccess: true })
         API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-          if(res.status === 200) {
-            if(!res.data.error) {
+          if (res.status === 200) {
+            if (!res.data.error) {
               console.log('sukses konfirmasi')
             } else {
               alert('Email error');
@@ -71,12 +84,12 @@ class Event extends Component {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user+' Akan '+confirmation+' Pada Meeting : '+this.state.infoClass.room_name,
+          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
           dest: null,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
-          if(res.status === 200) {
-            if(!res.data.error) {
+          if (res.status === 200) {
+            if (!res.data.error) {
               console.log('Sukses Notif')
             } else {
               console.log('Gagal Notif')
@@ -86,24 +99,24 @@ class Event extends Component {
       }
     })
   }
-  fetchMeetingInfo(id){
+  fetchMeetingInfo(id) {
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
       if (res.status === 200) {
-          this.setState({
-              infoClass: res.data.result[0],
-              infoParticipant: res.data.result[1],
-              countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
-              countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
-              countTentative: res.data.result[1].filter((item) => item.confirmation == '').length ,
-              needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length,
-              attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
-          })
+        this.setState({
+          infoClass: res.data.result[0],
+          infoParticipant: res.data.result[1],
+          countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
+          countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
+          countTentative: res.data.result[1].filter((item) => item.confirmation == '').length,
+          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length,
+          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
+        })
       }
     })
   }
 
   componentDidMount() {
-    if (this.props.event.type === 3){
+    if (this.props.event.type === 3) {
       this.fetchMeetingInfo(this.props.event.activity_id);
     }
   }
@@ -116,16 +129,48 @@ class Event extends Component {
     let infoDateEnd = new Date(this.state.infoClass.schedule_end);
     const event = this.props.event;
     return (
+      <div>
         <div>
-            <div>
-              {
-                this.props.event.type === 3 ?
-                <span onClick={this.handleShow.bind(this)}>{event.title}</span>
-                :
-                <span>{event.title}</span>
-              }
+          {
+            this.props.event.type === 3 ?
+              <span onClick={this.handleShow.bind(this, 'meeting')}>{event.title}</span>
+              :
+              <span onClick={this.handleShow.bind(this, 'webinar')}>{event.title}</span>
+          }
+        </div>
+        {/* MODAL WEBINAR */}
+        <Modal show={this.state.webinarShow} onHide={this.handleCloseWebinar.bind(this)} dialogClassName="modal-lg">
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Webinar
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <div className="card" style={{ background: '#fff', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                <div className="card-carousel col-sm-8">
+                  <p className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                    {event.title}
+                  </p>
+                  <h6>pembicara  : </h6>
+                  <h6>{Moment.tz(event.create, 'Asia/Jakarta').format("DD MMMM YYYY")}, &nbsp;
+                  {Moment.tz(event.start, 'Asia/Jakarta').format("HH:mm:ss")} -
+                  {Moment.tz(event.end, 'Asia/Jakarta').format("HH:mm:ss")}</h6>
+                </div>
+              </div>
             </div>
-            <Modal show={this.state.setShow} onHide={this.handleClose.bind(this)} dialogClassName="modal-lg">
+          </Modal.Body>
+          <Modal.Footer>
+
+            <button className="btn btn-icademy-primary">
+              <i className="fa fa-video"></i> Masuk
+              </button>
+
+          </Modal.Footer>
+        </Modal>
+
+        {/* MODAL MEETING */}
+        <Modal show={this.state.setShow} onHide={this.handleClose.bind(this)} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
               Meeting and Attendance Information
@@ -172,10 +217,10 @@ class Event extends Component {
                   <div class="row">
                     <div className="col-sm-6">
                       {this.state.infoClass.is_akses ?
-                      <h3 className="f-14">
-                        Moderator : {this.state.infoClass.name}
-                      </h3>
-                      :null
+                        <h3 className="f-14">
+                          Moderator : {this.state.infoClass.name}
+                        </h3>
+                        : null
                       }
                       <h3 className="f-14">
                         Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
@@ -245,8 +290,8 @@ class Event extends Component {
               </Link>
               : null}
           </Modal.Footer>
-            </Modal>
-        </div>
+        </Modal>
+      </div>
     );
 
 

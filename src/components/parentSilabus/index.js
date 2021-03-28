@@ -4,7 +4,7 @@ import Storage from '../../repository/storage';
 import InfoSilabus from './info';
 import { Link } from 'react-router-dom'
 import TableSilabus from "./table";
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import { Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify'
 
@@ -35,7 +35,7 @@ class GuruUjian extends Component {
 
   fetchSilabus(pelajaranId) {
     API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch overview`)
+      if (res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ dataSilabus: res.data.result });
     })
@@ -72,7 +72,7 @@ class GuruUjian extends Component {
 
   fetchPelajaran() {
     API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({
         mataPelajaran: res.data.result
@@ -89,7 +89,7 @@ class GuruUjian extends Component {
 
   fetchMyMurid(userId) {
     API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch murid`)
+      if (res.data.error) toast.warning(`Warning: fetch murid`)
 
       this.setState({ myMurid: res.data.result })
 
@@ -130,7 +130,7 @@ class GuruUjian extends Component {
                             <select onChange={this.selectPelajaran} className="form-control ml-2 col-sm-6">
                               <option value="" disabled selected>Choose subject</option>
                               {
-                                this.state.jadwalPelajaran.map((item,i) => (
+                                this.state.jadwalPelajaran.map((item, i) => (
                                   <option key={i} value={item.mapel_id}>{item.nama_pelajaran}</option>
                                 ))
                               }
@@ -144,22 +144,22 @@ class GuruUjian extends Component {
                       <div class="card">
                         <div class="card-body">
                           <table className="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Session</th>
-                              <th>Periode</th>
-                              <th>Duration</th>
-                              <th>Topic</th>
-                              <th>Goal</th>
-                              <th>Description</th>
-                              <th>Files</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              this.state.dataSilabus.map((item, i) => {
-                                if(item.jenis === 0) {
-                                  return (
+                            <thead>
+                              <tr>
+                                <th>Session</th>
+                                <th>Periode</th>
+                                <th>Duration</th>
+                                <th>Topic</th>
+                                <th>Goal</th>
+                                <th>Description</th>
+                                <th>Files</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                this.state.dataSilabus.map((item, i) => {
+                                  if (item.jenis === 0) {
+                                    return (
                                       <tr key={i}>
                                         <td>{item.sesi}</td>
                                         <td>{item.periode}</td>
@@ -167,23 +167,23 @@ class GuruUjian extends Component {
                                         <td>{item.topik}</td>
                                         <td>{item.tujuan}</td>
                                         <td>{item.deskripsi}</td>
-                                        <td style={{padding: '12px'}}>
+                                        <td style={{ padding: '12px' }}>
                                           {
                                             item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
                                           }
                                         </td>
                                       </tr>
                                     )
-                                } else {
-                                  return (
-                                    <tr key={i}>
-                                      <td>{item.sesi}</td>
-                                      <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                                    </tr>
-                                  )
-                                }
-                              })
-                            }
+                                  } else {
+                                    return (
+                                      <tr key={i}>
+                                        <td>{item.sesi}</td>
+                                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                                      </tr>
+                                    )
+                                  }
+                                })
+                              }
                             </tbody>
                           </table>
                         </div>

@@ -7,20 +7,20 @@ class Meeting extends Component {
     super(props);
     this.goBack = this.goBack.bind(this);
   }
-  goBack(){
+  goBack() {
     this.props.history.goBack();
   }
 
   render() {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
-    return(
-        <div className="pcoded-main-container">
-          <div className="pcoded-wrapper">
-            <div className="pcoded-content">
-              <div className="pcoded-inner-content">
-                <div className="main-body">
-                  <div className="page-wrapper">
+    return (
+      <div className="pcoded-main-container">
+        <div className="pcoded-wrapper">
+          <div className="pcoded-content">
+            <div className="pcoded-inner-content">
+              <div className="main-body">
+                <div className="page-wrapper">
                   <div className="floating-back">
                     <img
                       src={`newasset/back-button.svg`}
@@ -29,17 +29,17 @@ class Meeting extends Component {
                       onClick={this.goBack}
                     ></img>
                   </div>
-                    <div className="row">
-                      <div className="col-xl-12">
-            <TableMeeting allMeeting={true} access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0'/>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
+                  <div className="row">
+                    <div className="col-xl-12">
+                      <TableMeeting allMeeting={true} access_project_admin={access_project_admin} informationId={this.props.match.params.roomid ? this.props.match.params.roomid : null} projectId='0' />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 }
