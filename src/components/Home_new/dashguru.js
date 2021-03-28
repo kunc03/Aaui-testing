@@ -13,7 +13,7 @@ const widgetNew = [
   { idWidget: '1', name: 'Tugas', checked: false },
   { idWidget: '2', name: 'Pertemuan Yang Akan Datang', checked: false },
   { idWidget: '3', name: 'Pengumuman Terbaru', checked: false },
-  // { idWidget: '4', name: 'Laporan Yang Harus Diselesaikan', checked: false },
+  { idWidget: '4', name: 'Laporan Yang Harus Diselesaikan', checked: false },
   { idWidget: '5', name: 'Materi Pelajaran', checked: false },
   { idWidget: '6', name: 'Meeting', checked: false }
 ]

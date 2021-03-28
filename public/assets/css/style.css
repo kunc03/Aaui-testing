@@ -6939,6 +6939,11 @@ body.layout-8 .card:hover {
   padding: 0 3px;
 }
 
+.card-table {
+  background-color: #FAFAFA;
+  margin-bottom: 3px;
+}
+
 @media screen and (max-width: 767px) {
   .user-designer [class*=col-]:last-child {
     margin-top: 15px;

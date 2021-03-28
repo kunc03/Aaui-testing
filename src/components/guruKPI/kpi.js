@@ -27,8 +27,9 @@ class StatisKelas extends Component {
 
 
   componentDidMount() {
-    let link = `${API_SERVER}v1/company`;
+    let link = `${API_SERVER}v2/principal/kpi-guru/${Storage.get('user').data.company_id}`;
     API.get(link).then(response => {
+      console.log(response.data, 'response data baru')
       this.setState({ grup: response.data.result });
     }).catch(function (error) {
       console.log(error);
@@ -58,12 +59,12 @@ class StatisKelas extends Component {
             <div className="row d-flex ">
               <div className="col-sm-10">
                 <small className="f-w-600 f-12 text-c-black">
-                  Designing Learning Experiences for Children
+                  {item.pelajaran}
                 </small>
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 fc-skyblue float-right">
-                  85
+                  {item.kurikulum}
                 </small>
               </div>
             </div>
@@ -81,33 +82,8 @@ class StatisKelas extends Component {
           >
             <table className="table">
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Subject </span></td>
-                <td>Matematika</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang mengikuti mata pelajaran</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah 50% in progress mata pelajaran</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah selesai mata pelajaran</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per mata pelajaran</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per session</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> {item.pelajaran} </span></td>
+                <td>{item.kurikulum}</td>
               </tr>
             </table>
           </div>
