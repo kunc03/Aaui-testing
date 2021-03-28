@@ -200,7 +200,7 @@ class Tugas extends React.Component {
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
-        tipeJawab: this.state.tipeJawab
+        tipeJawab: this.state.tipeJawab,
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
@@ -215,7 +215,8 @@ class Tugas extends React.Component {
         }
 
       })
-    } else {
+    }
+    else {
       let form = {
         companyId: Storage.get('user').data.company_id,
         pelajaranId: this.state.silabus.length ? this.state.silabus[0].pelajaran_id : '0',
@@ -225,7 +226,8 @@ class Tugas extends React.Component {
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
-        tipeJawab: this.state.tipeJawab
+        tipeJawab: this.state.tipeJawab,
+        jadwalId: this.state.pelajaranId,
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {

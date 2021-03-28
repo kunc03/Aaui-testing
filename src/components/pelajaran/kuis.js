@@ -224,7 +224,8 @@ class Tugas extends React.Component {
         tatapmuka: this.state.tatapmuka,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
-        tanggalAkhir: this.state.tanggalAkhir
+        tanggalAkhir: this.state.tanggalAkhir,
+        jadwalId: this.state.pelajaranId,
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {

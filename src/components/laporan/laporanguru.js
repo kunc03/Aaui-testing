@@ -3,14 +3,19 @@ import { NavLink, Switch, Route, Link } from 'react-router-dom';
 import API, { API_SERVER, API_SOCKET } from '../../repository/api';
 import Storage from '../../repository/storage';
 
-import DetailMurid from '../detail_murid/index';
-import DetailKelas from '../detail_kelas/index';
 import DetailRapor from '../detail_rapor/index';
+import DetailKelas from '../detail_kelas/index';
+import DetailMurid from '../detail_murid/index';
+
+const HistoriNilai = () => (
+  <h1>Histori Nilai</h1>
+)
 
 const titleTabs = [
   { name: 'Nilai Rata Kelas', link: '/ratakelas', component: DetailRapor },
   { name: 'Nilai Per Kelas', link: '/perkelas', component: DetailKelas },
   { name: 'Nilai Per Murid', link: '/permurid', component: DetailMurid },
+  { name: 'History Nilai', link: '/historinilai', component: HistoriNilai },
 ]
 
 export default class LearningGuru extends Component {

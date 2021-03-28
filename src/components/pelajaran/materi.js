@@ -122,9 +122,10 @@ class Overview extends React.Component {
       number: item[0].sesi,
       title: item[0].chapter_title,
       content: item[0].chapter_body,
-      tatapmuka: item[0].tatapmuka,
+      tatapmuka: item[0].tatapmuka ? item[0].tatapmuka : '1',
       tanggal: item[0].start_date ? moment(item[0].start_date).format('YYYY-MM-DD HH:mm') : moment(new Date()).format('YYYY-MM-DD HH:mm'),
-      silabusId: item[0].id
+      silabusId: item[0].id,
+      jadwalId: this.state.jadwalId,
     }
 
     console.log('state: ', form)
