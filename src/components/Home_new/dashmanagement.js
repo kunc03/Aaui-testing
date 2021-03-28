@@ -5,6 +5,8 @@ import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import {toast} from 'react-toastify'
 
+import TableMeetings from '../meeting/meeting';
+
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import moment from 'moment-timezone';
@@ -181,6 +183,10 @@ class DashGuru extends Component {
   }
 
   render() {
+
+    let levelUser = Storage.get('user').data.level;
+    let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -191,7 +197,11 @@ class DashGuru extends Component {
 
                   <div className="row">
 
-                  <div class="col-sm-6">
+                    <div className="col-sm-6">
+                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
+                    </div>
+
+                    <div class="col-sm-6">
                       <div className="card">
                         <div className="card-header header-kartu">
                           Parent Teacher Conference (PTC)

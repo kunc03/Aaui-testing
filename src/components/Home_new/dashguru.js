@@ -583,7 +583,7 @@ class DashGuru extends Component {
 
                         </Card.Body>
                       </Card>
-                    </div> */}
+                    </div>
 
                     <div className={this.state.dataWidget[4].checked ? "col-sm-6" : "hidden"}>
                       <Card>
