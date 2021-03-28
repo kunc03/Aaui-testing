@@ -6939,6 +6939,11 @@ body.layout-8 .card:hover {
   padding: 0 3px;
 }
 
+.card-table {
+  background-color: #FAFAFA;
+  margin-bottom: 3px;
+}
+
 @media screen and (max-width: 767px) {
   .user-designer [class*=col-]:last-child {
     margin-top: 15px;
@@ -12092,33 +12097,35 @@ required {
   cursor:pointer;
 }
 
-.rdt_TableBody{
-  min-height: 200px !important;
+.nopad {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/*image gallery*/
+.image-checkbox {
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 4px solid transparent;
+  margin-bottom: 10px;
+  outline: 0;
+}
+.image-checkbox input[type="checkbox"] {
+  display: none;
 }
 
-.file-upload-icademy{
-  display:none;
+.image-checkbox-checked {
+  border-color: #4db2ff;
 }
-
-.label-upload-icademy{
-  padding: 5px 10px;
-  border: 1px solid #0091FF;
-  color: #0091FF;
-  border-radius:4px;
-  cursor:pointer;
-  margin:5px;
+.image-checkbox .fa {
+  position: absolute;
+    color: #4db2ff;
+    background-color: #fff;
+    padding: 7px;
+    top: 0;
+    right: 0;
 }
-
-.form-control-upload-label{
-  background:rgb(224, 224, 224);
-  width:auto;
-  padding: 4px 7px;
-  margin:2px;
-  border-radius:4px;
-  cursor:pointer;
-}
-
-.modal-1000-large{
-  width:1000px;
-  max-width:1000px;
+.image-checkbox-checked .fa {
+  display: block !important;
 }

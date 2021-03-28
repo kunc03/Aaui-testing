@@ -14,7 +14,10 @@ class StatisKelas extends Component {
       delete: {
         modal: false,
         id: ''
-      }
+      },
+
+      kinerja: [],
+
     };
   }
 
@@ -24,11 +27,18 @@ class StatisKelas extends Component {
   })
 
   /* action for delete */
-
+  fetchKinerja() {
+    API.get(`${API_SERVER}v2/principal/kpi-guru/${Storage.get('user').data.company_id}`).then(res => {
+      this.setState({ kinerja: res.data.result.filter(item => item.nama == Storage.get('user').data.user) })
+    })
+  }
 
   componentDidMount() {
-    let link = `${API_SERVER}v1/company`;
+    this.fetchKinerja()
+
+    let link = `${API_SERVER}v2/principal/kpi-guru/${Storage.get('user').data.company_id}`;
     API.get(link).then(response => {
+      console.log(response.data, 'response data baru')
       this.setState({ grup: response.data.result });
     }).catch(function (error) {
       console.log(error);
@@ -56,15 +66,30 @@ class StatisKelas extends Component {
             style={{ padding: "12px 35px" }}
           >
             <div className="row d-flex ">
-              <div className="col-sm-10">
+              <div className="col-sm-3">
                 <small className="f-w-600 f-12 text-c-black">
-                  Designing Learning Experiences for Children
+                  {item.pelajaran}
                 </small>
               </div>
               <div className="col-sm-2">
-                <small className="f-w-600 f-12 fc-skyblue float-right">
-                  85
+                <small className="f-w-600 f-12 text-c-black">
+                  {item.tahun_ajaran}
                 </small>
+              </div>
+              <div className="col-sm-2">
+                <small className="f-w-600 f-12 text-c-black">
+                  {item.semester}
+                </small>
+              </div>
+              <div className="col-sm-2">
+                <small className="f-w-600 f-12 text-c-black">
+                  {item.kelas}
+                </small>
+              </div>
+              <div className="col-sm-2">
+                {
+                  item.file ? <a href={item.file} target="_blank">Download</a> : 'Belum di upload'
+                }
               </div>
             </div>
           </div>
@@ -81,33 +106,27 @@ class StatisKelas extends Component {
           >
             <table className="table">
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}> Subject </span></td>
-                <td>Matematika</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Pelajaran</span></td>
+                <td>{item.pelajaran}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang mengikuti mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Tahun Ajaran</span></td>
+                <td>{item.tahun_ajaran}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah 50% in progress mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Semester</span></td>
+                <td>{item.semester}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang sudah selesai mata pelajaran</span></td>
-                <td>54</td>
+                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Kelas</span></td>
+                <td>{item.kelas}</td>
               </tr>
               <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per mata pelajaran</span></td>
-                <td>54</td>
-              </tr>
-              <tr>
-                <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>
-                  jumlah user yang lulus exercise per session</span></td>
-                <td>54</td>
+                <td colSpan="2" className="text-center">
+                  {
+                    item.file ? <a href={item.file} target="_blank">Download</a> : 'Belum di upload'
+                  }
+                </td>
               </tr>
             </table>
           </div>
@@ -144,14 +163,14 @@ class StatisKelas extends Component {
             {/*RESPONSIVE IN THE CENTER 'WEB VIEW'*/}
             <Hidden only="xs">
               <div style={{ overflowX: "hidden" }}>
-                <Lists lists={grup} />
+                <Lists lists={this.state.kinerja} />
               </div>
             </Hidden>
 
             {/*RESPONSIVE IN THE CENTER 'MOBILE VIEW'*/}
             <Hidden only={['lg', 'md', 'sm', 'xl']}>
               <div style={{ overflowX: "auto" }}>
-                <ListMobile lists={grup} />
+                <ListMobile lists={this.state.kinerja} />
               </div>
             </Hidden>
           </div>
