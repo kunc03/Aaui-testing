@@ -69,7 +69,10 @@ class Latihan extends React.Component {
     openDetail: false,
     examId: '',
     examTitle: '',
-    examSoal: []
+    examSoal: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: []
 
   }
 
@@ -99,15 +102,32 @@ class Latihan extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchKuis(Storage.get('user').data.user_id);
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchKuis(Storage.get('user').data.user_id, tahunAjaran);
   }
 
-  fetchKuis(id) {
-    API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${id}`).then(res => {
+  fetchKuis(id, tahunAjaran) {
+    API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) toast.warning(`Warning: fetch kuis murid`);
 
       this.setState({ mataPelajaran: res.data.result.kuis })
     })
+  }
+
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchKuis(Storage.get('user').data.user_id, value);
   }
 
   render() {
@@ -120,6 +140,19 @@ class Latihan extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-body" style={{ padding: '12px' }}>
+
+              <div className="col-sm-2">
+                <label>Tahun Ajaran</label>
+                <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.listTahunAjaran.map(item => (
+                      <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+
 
               <table className="table table-striped">
                 <thead>
