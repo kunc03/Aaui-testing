@@ -14,6 +14,7 @@ import Evaluasi from '../evaluasi/index';
 import EvaluasiDetail from '../evaluasi/detail';
 import Folder from './folder';
 import Laporan from '../laporan/index';
+import Histori from '../laporan/histori';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
@@ -24,8 +25,9 @@ const titleTabs = [
   { name: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar, icon: 'learning-calendar-1' },
   { name: 'Personnel', link: '/personalia', component: Personalia, icon: 'learning-teamwork-1' },
   { name: 'Report', link: '/laporan', component: Laporan, icon: 'learning-report-1' },
+  { name: 'History', link: '/histori', component: Histori, icon: 'learning-report-1' },
   { name: 'Preference', link: '/kpi', component: Kpi, icon: 'learning-report-1' },
-  { name: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
+  // { name: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
 
 ]
 
@@ -37,7 +39,15 @@ const switchTambahan = [
 
 export default class LearningAdmin extends Component {
 
-  state = {
+  constructor(props) {
+    super(props);
+    this.goBack = this.goBack.bind(this);
+    this.state = {
+    }
+  }
+
+  goBack() {
+    this.props.history.goBack();
   }
 
   render() {

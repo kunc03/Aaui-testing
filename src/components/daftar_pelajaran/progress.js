@@ -14,29 +14,43 @@ class GuruUjian extends Component {
     pelajaran: [],
 
     loading: true,
-    silabus: []
+    silabus: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
   componentDidMount() {
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
     let role = Storage.get('user').data.grup_name.toLowerCase();
     if(role == 'murid') {
       this.setState({ userId: Storage.get('user').data.user_id })
-      this.fetchPelajaran(Storage.get('user').data.user_id)
+      this.fetchPelajaran(Storage.get('user').data.user_id, tahunAjaran)
     }
     else {
-      this.fetchMuridKu(Storage.get('user').data.user_id)
+      this.fetchMuridKu(Storage.get('user').data.user_id, tahunAjaran)
     }
   }
 
-  fetchMuridKu(userId) {
+  fetchMuridKu(userId, tahunAjaran) {
     API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
       this.setState({ userId: res.data.result.user_id_murid })
-      this.fetchPelajaran(res.data.result.user_id_murid)
+      this.fetchPelajaran(res.data.result.user_id_murid, tahunAjaran)
     })
   }
 
-  fetchPelajaran(userId) {
-    API.get(`${API_SERVER}v2/jadwal-murid/${userId}?mapelOnly=true`).then(res => {
+  fetchPelajaran(userId, tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-murid/${userId}?mapelOnly=true&tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({ pelajaran: res.data.result })
@@ -65,6 +79,19 @@ class GuruUjian extends Component {
     console.log('filterClear')
   }
 
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value, pelajaran: [] })
+    let role = Storage.get('user').data.grup_name.toLowerCase();
+    
+    if(role == 'murid') {
+      this.fetchPelajaran(Storage.get('user').data.user_id, value)
+    }
+    else {
+      this.fetchMuridKu(Storage.get('user').data.user_id, value)
+    }
+  }
+
   render() {
 
     const { pelajaran, silabus } = this.state;
@@ -75,7 +102,16 @@ class GuruUjian extends Component {
       <div class="col-sm-12 mt-2">
         <Card>
           <Card.Body>
-            <h4 className="f-w-900 f-18 fc-blue">Progress</h4>
+            <h4 className="f-w-900 f-18 fc-blue mb-3">Progress</h4>
+
+            <select style={{padding: '2px'}} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
+              <option value="" selected disabled>Select</option>
+              {
+                this.state.listTahunAjaran.map(item => (
+                  <option value={item}>{item}</option>
+                ))
+              }
+            </select>
 
             <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
               {
@@ -105,13 +141,17 @@ class GuruUjian extends Component {
                     <>
                       <tr>
                         <td data-toggle='collapse' data-target={`#col${i}`} className="collapsed text-center">
-                          <i className="fa"></i>
+                          {
+                            item.tugas.length || item.kuis.length || item.ujian.length ?
+                            <i className="fa"></i>
+                            : null
+                          }
                         </td>
                         <td>{item.sesi}</td>
                         <td>{item.jenis == '0' ? 'Materi' : item.jenis == '1' ? 'Kuis' : 'Ujian'}</td>
                         <td>{item.topik}</td>
                         <td>{item.chapter_title}</td>
-                        <td>{item.absen_jam ? 'Hadir' : (new Date() <= new Date(moment(item.start_date).format('DD/MM/YYYY HH:mm'))) ? 'Tidak Hadir' : '-'}</td>
+                        <td>{item.absen_jam ? 'Hadir' : (new Date() <= new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm'))) ? '-' : 'Tidak Hadir'}</td>
                         <td>{moment(item.start_date).format('DD/MM/YYYY HH:mm')}</td>
                         <td>{item.absen_jam ? moment(item.absen_jam).format('DD/MM/YYYY HH:mm') : '-'}</td>
                       </tr>

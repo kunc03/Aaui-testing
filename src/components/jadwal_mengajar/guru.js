@@ -19,10 +19,12 @@ class MataPelajaran extends React.Component {
 
     jadwalKu: [],
 
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
-  fetchJadwalKu() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
+  fetchJadwalKu(tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
       let dd = res.data.result;
@@ -50,8 +52,8 @@ class MataPelajaran extends React.Component {
     })
   }
 
-  fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}`).then(res => {
+  fetchJadwal(tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
@@ -69,8 +71,19 @@ class MataPelajaran extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchJadwal();
-    this.fetchJadwalKu();
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchJadwal(tahunAjaran);
+    this.fetchJadwalKu(tahunAjaran);
   }
 
   clearForm() {
@@ -87,6 +100,13 @@ class MataPelajaran extends React.Component {
     let pelajaranId = e.target.value;
     this.setState({ isModalSilabus: true, pelajaranId })
     this.fetchSilabus(pelajaranId);
+  }
+
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchJadwal(value);
+    this.fetchJadwalKu(value);
   }
 
   render() {
@@ -106,11 +126,25 @@ class MataPelajaran extends React.Component {
                   <div className="row">
                     <div className="col-sm-12">
                       <div className="card">
-                        <div className="card-header">
-                          <button onClick={() => this.setState({ isModalSilabus: true })} className="btn btn-v2 btn-primary">
-                            <i className="fa fa-list"></i>
-                            See Syllabus
-                          </button>
+
+                        <div className="card-header row">
+                          <div className="col-sm-2">
+                            <label>Tahun Ajaran</label>
+                            <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                              <option value="" selected disabled>Select</option>
+                              {
+                                this.state.listTahunAjaran.map(item => (
+                                  <option value={item}>{item}</option>
+                                ))
+                              }
+                            </select>
+                          </div>
+                          <div className="col-sm-4">
+                            <button onClick={() => this.setState({ isModalSilabus: true })} className="btn btn-v2 btn-primary mt-4">
+                              <i className="fa fa-list"></i>
+                              See Syllabus
+                            </button>
+                          </div>
                         </div>
 
                         <div className="card-body" style={{ padding: '12px' }}>

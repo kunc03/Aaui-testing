@@ -350,7 +350,12 @@ class PembelajaranPrincipal extends React.Component {
                                     <td>{item.nama_pelajaran}</td>
                                     <td>{item.kategori}</td>
                                     <td style={{ padding: '12px' }}>
-                                      <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share' : 'plus'}`}></i> {item.silabus > 0 ? 'Open' : 'Setup'}</span>
+                                      {
+                                      item.silabus > 0 ?
+                                      <span onClick={this.openSilabus} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-${item.silabus > 0 ? 'share' : 'plus'}`}></i> Open</span>
+                                      :
+                                      null
+                                      }
                                     </td>
                                     <td style={{ padding: '12px' }}>
                                       <span onClick={this.openProsentase} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus"><i className={`fa fa-cog`}></i> Open</span>
@@ -394,7 +399,7 @@ class PembelajaranPrincipal extends React.Component {
                           <Modal
                             show={this.state.openSilabus}
                             onHide={this.closeModal.bind(this)}
-                            dialogClassName="modal-lg"
+                            dialogClassName="modal-lg modal-1000-large"
                           >
                             <Modal.Header closeButton>
                               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>

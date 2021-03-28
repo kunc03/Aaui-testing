@@ -346,6 +346,8 @@ class DaftarPelajaran extends React.Component {
                     <th>Category</th>
                     <th>Silabus</th>
                     <th>Bobot %</th>
+                    <th>In Curriculum</th>
+                    <th>Scheduled</th>
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
@@ -363,6 +365,8 @@ class DaftarPelajaran extends React.Component {
                         <td style={{ padding: '12px' }}>
                           <span onClick={this.openProsentase} data-id={item.pelajaran_id} data-title={item.nama_pelajaran} className="silabus">Set</span>
                         </td>
+                        <td>{item.kurikulum ? 'Yes' : 'No'}</td>
+                        <td>{item.jadwal ? 'Yes' : 'No'}</td>
                         <td className="text-center">
                           <i style={{ cursor: 'pointer' }} onClick={this.selectPelajaran} data-id={item.pelajaran_id} className="fa fa-edit mr-2"></i>
                           <i style={{ cursor: 'pointer' }} onClick={this.deletePelajaran} data-id={item.pelajaran_id} className="fa fa-trash"></i>

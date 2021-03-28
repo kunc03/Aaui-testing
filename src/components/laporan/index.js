@@ -28,7 +28,10 @@ class Laporan extends React.Component {
     muridInfo: {},
 
     isLoading: false,
-    nilaiMurid: []
+    nilaiMurid: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
   fetchSemester() {
@@ -87,30 +90,32 @@ class Laporan extends React.Component {
     this.setState({ isLoading: true, nilaiMurid: [] })
     API.get(`${API_SERVER}v2/murid/no-induk/${e[0]}`).then(res => {
       this.setState({ muridId: e, muridInfo: res.data.result })
-      this.fetchNilaiMurid(this.state.semesterId, this.state.kelasId, res.data.result.user_id)
+      this.fetchNilaiMurid(this.state.semesterId, this.state.kelasId, res.data.result.user_id, this.state.tahunAjaran)
     })
   }
 
-  fetchNilaiMurid(semesterId, kelasId, userId) {
+  fetchNilaiMurid(semesterId, kelasId, userId, tahunAjaran) {
     console.log(`Query: ${semesterId} ${kelasId} ${userId}`);
-    API.get(`${API_SERVER}v2/guru/nilai-murid/${semesterId}/${kelasId}/${userId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/nilai-murid/${semesterId}/${kelasId}/${userId}?tahunAjaran=${tahunAjaran}`).then(res => {
       this.setState({ nilaiMurid: res.data.result, isLoading: false })
     })
   }
 
   componentDidMount() {
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
     this.fetchSemester()
-    // this.fetchNilai()
   }
 
-  fetchNilai() {
-    let data = [
-      { id: 1, mata_pelajaran: "Matematika", nilai_rata: 98.2, nilai_tugas: 88, nilai_uts: 80, nilai_uas: 90, persensi: '95%' },
-      { id: 2, mata_pelajaran: "Fisika", nilai_rata: 93.2, nilai_tugas: 89, nilai_uts: 90, nilai_uas: 80, persensi: '98%' },
-      { id: 2, mata_pelajaran: "Bahasa Indonesia", nilai_rata: 91.2, nilai_tugas: 90.5, nilai_uts: 95, nilai_uas: 80, persensi: '96%' },
-    ];
-    this.setState({ nilaiMurid: data })
-  }
 
   exportPDF = () => {
     const unit = "pt";
@@ -168,6 +173,11 @@ class Laporan extends React.Component {
     doc.save("report.pdf")
   }
 
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+  }
+
   render() {
 
     return (
@@ -180,6 +190,17 @@ class Laporan extends React.Component {
             <div className="card-body">
               <form>
                 <div className="form-group row">
+                  <div className="col-sm-2">
+                    <label>Tahun Ajaran</label>
+                    <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                      <option value="" selected disabled>Select</option>
+                      {
+                        this.state.listTahunAjaran.map(item => (
+                          <option value={item}>{item}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
                   <div className="col-sm-2">
                     <label>Semester</label>
                     <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>

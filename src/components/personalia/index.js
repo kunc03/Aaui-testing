@@ -22,8 +22,8 @@ class Personalia extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-header">
-              <button onClick={this.selectTab} data-id='murid' className="btn btn-v2 btn-primary" style={{marginBottom: '0px'}}>Data Murid</button>
-              <button onClick={this.selectTab} data-id='guru' className="btn btn-v2 btn-primary ml-2" style={{marginBottom: '0px'}}>Data Guru</button>
+              <button onClick={this.selectTab} data-id='murid' className="btn btn-v2 btn-primary" style={{marginBottom: '0px'}} disabled={this.state.tab === 'murid'}>Data Murid</button>
+              <button onClick={this.selectTab} data-id='guru' className="btn btn-v2 btn-primary ml-2" style={{marginBottom: '0px'}} disabled={this.state.tab === 'guru'}>Data Guru</button>
             </div>
           </div>
         </div>

@@ -22,9 +22,12 @@ class GuruUjian extends Component {
 
     nilaiTugas: 0,
     nilaiKuis: 0,
-    nilaiUjian: 0
+    nilaiUjian: 0,
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
-  
+
   closeProsentase() {
     this.setState({
       nilaiTugas: 0,
@@ -89,8 +92,8 @@ class GuruUjian extends Component {
     })
   }
 
-  fetchAnakSaya(userId) {
-    API.get(`${API_SERVER}v2/parents/my-murid/${userId}`).then(res => {
+  fetchAnakSaya(userId, tahunAjaran) {
+    API.get(`${API_SERVER}v2/parents/my-murid/${userId}?tahunAjaran=${tahunAjaran}`).then(res => {
       let { result } = res.data;
       this.setState({ infoMurid: result })
       this.fetchKurikulum(result.kurikulum)
@@ -98,7 +101,25 @@ class GuruUjian extends Component {
   }
 
   componentDidMount() {
-    this.fetchAnakSaya(Storage.get('user').data.user_id);
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchAnakSaya(Storage.get('user').data.user_id, tahunAjaran);
+  }
+
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value, pelajaran: [] })
+    this.fetchAnakSaya(Storage.get('user').data.user_id, value);
+
   }
 
   render() {
@@ -138,12 +159,25 @@ class GuruUjian extends Component {
                               <td><b>{this.state.infoMurid.nik_murid}</b></td>
                             </tr>
                             <tr>
+                              <td>Kelas</td>
+                              <td><b>{this.state.infoMurid.kelas_nama}</b></td>
+                            </tr>
+                            <tr>
                               <td>Semester</td>
                               <td><b>{this.state.infoMurid.semester_name}</b></td>
                             </tr>
                             <tr>
                               <td>Tahun Ajaran</td>
-                              <td><b>{this.state.infoMurid.tahun_ajaran}</b></td>
+                              <td>
+                                <select style={{padding: '2px'}} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
+                                  <option value="" selected disabled>Select</option>
+                                  {
+                                    this.state.listTahunAjaran.map(item => (
+                                      <option value={item}>{item}</option>
+                                    ))
+                                  }
+                                </select>
+                              </td>
                             </tr>
                             <tr>
                               <td>Kurikulum</td>
@@ -161,7 +195,7 @@ class GuruUjian extends Component {
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">{this.state.infoMurid.kurikulum_name}</h4>
-                          
+
                           <table className="table table-striped">
                             <thead>
                               <tr>
@@ -283,7 +317,7 @@ class GuruUjian extends Component {
                           </form>
                         </Modal.Body>
                       </Modal>
-                      
+
                     </div>
                   </div>
 

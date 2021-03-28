@@ -27,6 +27,8 @@ class Registasi extends React.Component {
 
     optionsName: [],
     muridId: [],
+
+    semesterId: ''
   }
 
   saveKelas = e => {
@@ -198,75 +200,95 @@ class Registasi extends React.Component {
     }
   }
 
+  filterSemester = e => {
+    const { value } = e.target;
+
+    API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data semester");
+
+      this.setState({ listKelas: res.data.result.filter(row => row.semester_id == value), semester: value })
+    })
+  }
+
   render() {
-    // console.log('state: ', this.state)
+    console.log('state: ', this.state)
     return (
       <div className="row mt-3">
-        <div className="col-sm-3">
+        <div className="col-sm-4">
           <div className="card">
-            <div className="card-header">Kelas</div>
+            <div className="card-header">
+              Kelas
+              <select required value={this.state.semesterId} onChange={this.filterSemester} className="float-right" name="semester">
+                <option value="" disabled selected>filter semester</option>
+                {
+                  this.state.listSemester.map((item, i) => (
+                    <option value={item.semester_id}>{item.semester_name}</option>
+                  ))
+                }
+              </select>
+            </div>
             <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
                 {
                   this.state.listKelas.map((item, i) => (
-                    <Link onClick={this.selectKelas} data-id={item.kelas_id} key={i} className="list-group-item list-group-item-action">{item.kelas_nama}</Link>
+                    <Link onClick={this.selectKelas} data-id={item.kelas_id} key={i} className="list-group-item list-group-item-action">
+                      {item.tahun_ajaran} - {item.semester} - {item.kelas_nama}
+                    </Link>
                   ))
                 }
               </div>
-
+              {this.state.idKelas !== '' ?
               <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary m-3" style={{ width: '88%' }}>
-                <i className="fa fa-plus"></i> Tambahkan
+                <i className="fa fa-plus"></i> Add new
               </button>
+              :null
+              }
             </div>
           </div>
         </div>
 
-        <div className="col-sm-9">
+        <div className="col-sm-8">
           <div className="row">
 
             <div className="col-sm-12">
               <div className="card">
-                <div className="card-header">Class</div>
+                <div className="card-header">{this.state.idKelas === '' ? 'Add new class' : 'Edit class'}</div>
                 <div className="card-body">
                   <form onSubmit={this.saveKelas}>
-                    <div className="row mb-3">
-                      <div className="col">
-                        <label>Class Name</label>
-                        <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter" name="namaKelas" />
-                      </div>
-                      <div className="col">
-                        <label>Semester</label>
-                        <select required value={this.state.semester} onChange={e => this.setState({ semester: e.target.value })} className="form-control" name="semester">
-                          <option value="" disabled selected>Pilih semester</option>
-                          {
-                            this.state.listSemester.map((item, i) => (
-                              <option value={item.semester_id}>{item.semester_name}</option>
-                            ))
-                          }
-                        </select>
-                      </div>
+                    <div className="mb-2">
+                      <label>Class Name</label>
+                      <input required value={this.state.namaKelas} onChange={e => this.setState({ namaKelas: e.target.value })} type="text" className="form-control" placeholder="Enter" name="namaKelas" />
                     </div>
-                    <div className="row mb-3">
-                      <div className="col">
-                        <label>Kurikulum</label>
-                        <select required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} className="form-control" name="kurikulum">
-                          <option value="" disabled selected>Pilih kurikulum</option>
-                          {
-                            this.state.kurikulums.map((item, i) => (
-                              <option value={item.id}>{item.name}</option>
-                            ))
-                          }
-                        </select>
-                        {/*<input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />*/}
-                      </div>
-                      <div className="col">
-                        <label>Academic Year</label>
-                        <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} onBlur={this.handleAcademicYear} type="text" className="form-control" placeholder="Enter" name="tahunAjaran" />
-                      </div>
-                      <div className="col">
-                        <label>Capacity</label>
-                        <input required value={this.state.kapasitas} onChange={e => this.setState({ kapasitas: e.target.value })} type="number" className="form-control" placeholder="Enter" name="kapasitas" />
-                      </div>
+                    <div className="mb-2">
+                      <label>Semester</label>
+                      <select required value={this.state.semester} onChange={e => this.setState({ semester: e.target.value })} className="form-control" name="semester">
+                        <option value="" disabled selected>Pilih semester</option>
+                        {
+                          this.state.listSemester.map((item, i) => (
+                            <option value={item.semester_id}>{item.semester_name}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
+                    <div className="mb-2">
+                      <label>Kurikulum</label>
+                      <select required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} className="form-control" name="kurikulum">
+                        <option value="" disabled selected>Pilih kurikulum</option>
+                        {
+                          this.state.kurikulums.map((item, i) => (
+                            <option value={item.id}>{item.name}</option>
+                          ))
+                        }
+                      </select>
+                      {/*<input required value={this.state.kurikulum} onChange={e => this.setState({ kurikulum: e.target.value })} type="text" className="form-control" placeholder="Enter" name="kurikulum" />*/}
+                    </div>
+                    <div className="mb-2">
+                      <label>Academic Year</label>
+                      <input required value={this.state.tahunAjaran} onChange={e => this.setState({ tahunAjaran: e.target.value })} onBlur={this.handleAcademicYear} type="text" className="form-control" placeholder="Enter" name="tahunAjaran" />
+                    </div>
+                    <div className="mb-3">
+                      <label>Capacity</label>
+                      <input required value={this.state.kapasitas} onChange={e => this.setState({ kapasitas: e.target.value })} type="number" className="form-control" placeholder="Enter" name="kapasitas" />
                     </div>
                     <div className="row">
                       <div className="col">

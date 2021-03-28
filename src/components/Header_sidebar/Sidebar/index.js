@@ -121,11 +121,11 @@ class SidebarClass extends Component {
       principal: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/principal-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/principal-pelajaran' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/principal-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kurikulum', link: '/principal-pelajaran' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Kelas', link: '/principal-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Murid', link: '/principal-rapor-murid' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/principal-kinerja' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
+          // { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi', link: '/principal-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -133,11 +133,11 @@ class SidebarClass extends Component {
       management: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
-          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Silabus', link: '/management-syllabus' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'List Pembelajaran', link: '/management-pelajaran' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Pembelajaran Murid', link: '/management-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kurikulum', link: '/management-kurikulum' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Kelas', link: '/management-rapor' },
+          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Murid', link: '/management-rapor-murid' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kinerja Guru', link: '/management-kinerja' },
-          { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi ', link: '/management-evaluasi' },
+          // { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Evaluasi ', link: '/management-evaluasi' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ]
       },
@@ -186,10 +186,10 @@ class SidebarClass extends Component {
       submenuPendidikan : [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Registration", link: '/learning/registrasi' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'List of Lessons', link: '/learning/daftar-pelajaran' },
-        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Teaching Room', link: '/learning/ruangan-mengajar' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Teaching Schedule', link: '/learning/jadwal-mengajar' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Classes", link: '/learning/registrasi' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Lessons', link: '/learning/daftar-pelajaran' },
+        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Room', link: '/learning/ruangan-mengajar' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Schedule', link: '/learning/jadwal-mengajar' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Preference', link: '/learning/kpi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },

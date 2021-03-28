@@ -2422,7 +2422,7 @@ th, td {
 
 hr {
   display: block;
-  width: 18%;
+  width: 100%;
   border-top: 1px solid #ccc;
 }
 

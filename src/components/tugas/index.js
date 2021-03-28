@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 import API, {USER_ME, API_SERVER} from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
@@ -25,10 +25,13 @@ class Tugas extends React.Component {
 
     jawaban: '',
     submitted: false,
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
-  fetchJadwal() {
-    API.get(`${API_SERVER}v2/tugas-murid/${Storage.get('user').data.user_id}`).then(res => {
+  fetchJadwal(tahunAjaran) {
+    API.get(`${API_SERVER}v2/tugas-murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
@@ -38,7 +41,18 @@ class Tugas extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchJadwal()
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchJadwal(tahunAjaran)
   }
 
   clearForm() {
@@ -135,6 +149,12 @@ class Tugas extends React.Component {
     }
   }
 
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchJadwal(value);
+  }
+
   render() {
 
     console.log(`state: `, this.state)
@@ -145,6 +165,18 @@ class Tugas extends React.Component {
         <div className="col-sm-12">
           <div className="card">
             <div className="card-body" style={{ padding: '12px' }}>
+
+              <div className="col-sm-2">
+                <label>Tahun Ajaran</label>
+                <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.listTahunAjaran.map(item => (
+                      <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
 
               <table className="table table-striped">
                 <thead>

@@ -1286,16 +1286,17 @@ fetchRekamanBBB(folder){
                   <Col>
                     <div className="form-group">
                       <label>Lampiran</label>
+                      <label for="attachmentId" className="label-upload-icademy">{this.state.attachmentId.length} File</label>
                       <input
                         accept="all"
+                        id="attachmentId"
                         name="attachmentId"
                         onChange={this.onChangeInput}
                         type="file"
                         multiple
                         placeholder="media chapter"
-                        className="form-control"
+                        className="form-control file-upload-icademy"
                       />
-                      <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.attachmentId.length} File</label>
                       <Form.Text>
                         Bisa banyak file, pastikan file tidak melebihi 500MB
                               {/* dan ukuran file tidak melebihi 20MB. */}
