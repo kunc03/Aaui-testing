@@ -16,6 +16,9 @@ import "jspdf-autotable";
 class DetailMurid extends Component {
 
   state = {
+    mataPelajaran: [],
+    jadwalPelajaran: [],
+
     listSemester: [],
     semesterId: '',
     semesterInfo: {},
@@ -35,6 +38,17 @@ class DetailMurid extends Component {
 
     tahunAjaran: '',
     listTahunAjaran: [],
+  }
+
+  fetchJadwalKu(tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch pelajaran`)
+
+      let dd = res.data.result;
+      let unique = [...new Map(dd.map(item => [item['pelajaran_id'], item])).values()];
+
+      this.setState({ mataPelajaran: dd, jadwalPelajaran: unique, jadwalKu: res.data.result })
+    })
   }
 
   fetchJadwal(tahunAjaran) {
@@ -192,6 +206,7 @@ class DetailMurid extends Component {
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
     this.fetchJadwal(tahunAjaran)
+    this.fetchJadwalKu(tahunAjaran)
     this.fetchSemester()
   }
 
@@ -242,22 +257,11 @@ class DetailMurid extends Component {
                     </select>
                   </div>
                   <div className="col-sm-2">
-                    <label>Semester</label>
-                    <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
-                      <option value="" selected disabled>Select</option>
-                      {
-                        this.state.listSemester.map((item,i) => (
-                          <option key={i} value={item.semester_id}>{item.semester_name}</option>
-                        ))
-                      }
-                    </select>
-                  </div>
-                  <div className="col-sm-2">
                     <label>Kelas</label>
                     <select onChange={this.selectKelas} value={this.state.kelasId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listKelas.map((item,i) => (
+                        this.state.jadwalKu.map((item,i) => (
                           <option key={i} value={item.kelas_id}>{item.kelas_nama}</option>
                         ))
                       }
@@ -315,30 +319,24 @@ class DetailMurid extends Component {
                         <input type="text" value={this.state.muridId[0]} disabled className="form-control" />
                       </div>
 
-                      <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
-                      <div className="col-sm-4">
-                        <input type="text" value={this.state.semesterInfo.semester_name} className="form-control" />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label className="col-sm-2 col-form-label text-right"> NAME </label>
-                      <div className="col-sm-4">
-                        <input type="text" value={this.state.muridInfo.nama} className="form-control" />
-                      </div>
-
-                      <label className="col-sm-2 col-form-label text-right">SCHOOL YEAR</label>
-                      <div className="col-sm-4">
-                        <input type="text" value={this.state.kelasInfo.tahun_ajaran} className="form-control" />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
                       <label className="col-sm-2 col-form-label text-right">KELAS</label>
                       <div className="col-sm-4">
                         <input type="text" value={this.state.kelasInfo.kelas_nama} className="form-control" />
                       </div>
                     </div>
+
+                    <div className="form-group row">
+                      <label className="col-sm-2 col-form-label text-right"> NAMA LENGKAP </label>
+                      <div className="col-sm-4">
+                        <input type="text" value={this.state.muridInfo.nama} className="form-control" />
+                      </div>
+
+                      <label className="col-sm-2 col-form-label text-right"> TAHUN AJARAN </label>
+                      <div className="col-sm-4">
+                        <input type="text" value={this.state.kelasInfo.tahun_ajaran} className="form-control" />
+                      </div>
+                    </div>
+
                   </form>
                 </div>
 

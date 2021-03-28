@@ -27,6 +27,8 @@ class Registasi extends React.Component {
 
     optionsName: [],
     muridId: [],
+
+    semesterId: ''
   }
 
   saveKelas = e => {
@@ -204,7 +206,7 @@ class Registasi extends React.Component {
     API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
       if (res.data.error) toast.warning("Error fetch data semester");
 
-      this.setState({ listKelas: res.data.result.filter(row => row.semester_id == value) })
+      this.setState({ listKelas: res.data.result.filter(row => row.semester_id == value), semester: value })
     })
   }
 
@@ -212,11 +214,11 @@ class Registasi extends React.Component {
     console.log('state: ', this.state)
     return (
       <div className="row mt-3">
-        <div className="col-sm-8">
+        <div className="col-sm-4">
           <div className="card">
             <div className="card-header">
               Kelas
-              <select required value={this.state.semester} onChange={this.filterSemester} className="float-right" name="semester">
+              <select required value={this.state.semesterId} onChange={this.filterSemester} className="float-right" name="semester">
                 <option value="" disabled selected>filter semester</option>
                 {
                   this.state.listSemester.map((item, i) => (
@@ -245,7 +247,7 @@ class Registasi extends React.Component {
           </div>
         </div>
 
-        <div className="col-sm-4">
+        <div className="col-sm-8">
           <div className="row">
 
             <div className="col-sm-12">
