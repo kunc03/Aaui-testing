@@ -113,7 +113,7 @@ class Tugas extends React.Component {
       }
       else {
         toast.success(`Berhasil mengumpulkan tugas`);
-        this.fetchJadwal();
+        this.fetchJadwal(this.state.tahunAjaran);
         this.clearForm();
       }
     })
@@ -132,7 +132,7 @@ class Tugas extends React.Component {
       }
       else {
         toast.success(`Berhasil mengumpulkan tugas`);
-        this.fetchJadwal();
+        this.fetchJadwal(this.state.tahunAjaran);
         this.clearForm();
       }
     })
