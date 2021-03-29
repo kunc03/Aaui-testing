@@ -484,8 +484,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-tugas/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
-                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -522,8 +522,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-kuis/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
-                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -693,8 +693,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
-                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -705,8 +705,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j+1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment(row.time_start).format('DD/MM/YYYY')}</td>
-                                            <td>{moment(row.time_finish).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
