@@ -414,7 +414,7 @@ class Overview extends React.Component {
                                       <div className="col-sm-4 bordered">
                                         <div className="form-group">
                                           <label>Date</label><br/>
-                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).utc().format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
                                           <label className="mb-3">Webcam</label><br/>
