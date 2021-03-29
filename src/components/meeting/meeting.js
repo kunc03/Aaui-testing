@@ -1159,7 +1159,7 @@ class MeetingTable extends Component {
                     })
                     :
                     (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                      <td colspan='5'>There is no</td>
+                      <td colspan='5'>There is no booking</td>
                     </tr>)
                 }
               </tbody>
