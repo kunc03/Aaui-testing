@@ -26,11 +26,14 @@ class DetailMurid extends Component {
     pelajaranInfo: {},
 
     isLoading: false,
-    nilaiMurid: []
+    nilaiMurid: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
-  fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/company/${Storage.get('user').data.company_id}`).then(res => {
+  fetchJadwal(tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/company/${Storage.get('user').data.company_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ jadwalKu: res.data.result })
@@ -49,11 +52,13 @@ class DetailMurid extends Component {
     e.preventDefault();
     let semesterId = e.target.value;
 
-    let dd = [...this.state.jadwalKu];
-    let unique = [...new Map(dd.map(item => [item['kelas_id'], item])).values()];
-    this.setState({ semesterId: semesterId, listKelas: unique })
-  }
+    API.get(`${API_SERVER}v2/kelas/company/${Storage.get('user').data.company_id}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data semester");
 
+      this.setState({ semesterId: semesterId, listKelas: res.data.result })
+    })
+  }
+  
   selectKelas = e => {
     e.preventDefault();
     let kelasId = e.target.value;
@@ -75,20 +80,57 @@ class DetailMurid extends Component {
     // ];
     // this.setState({ nilaiMurid: nilaiMurid, isLoading: false })
 
-    this.fetchNilaiMurid(this.state.kelasId, pelajaranId);
+    this.fetchNilaiMurid(this.state.kelasId, pelajaranId, this.state.tahunAjaran);
   }
 
-  fetchNilaiMurid(kelasId, pelajaranId) {
+  fetchNilaiMurid(kelasId, pelajaranId, tahunAjaran) {
     console.log(`Query: ${kelasId} ${pelajaranId}`);
 
-    API.get(`${API_SERVER}v2/guru/nilai-kelas/${kelasId}/${pelajaranId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/nilai-kelas/${kelasId}/${pelajaranId}?tahunAjaran=${tahunAjaran}`).then(res => {
       this.setState({ nilaiMurid: res.data.result, isLoading: false })
     })
   }
 
   componentDidMount() {
-    this.fetchJadwal()
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchJadwal(tahunAjaran)
     this.fetchSemester()
+  }
+
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchJadwal(value);
+  }
+
+
+  resetFilter = e => {
+    e.preventDefault()
+    this.setState({
+      semesterId: '',
+      semesterInfo: {},
+
+      listKelas: [],
+      kelasId: '',
+      kelasInfo: {},
+
+      listPelajaran: [],
+      pelajaranId: '',
+      pelajaranInfo: {},
+
+      isLoading: false,
+      nilaiMurid: [],
+    })
   }
 
   render() {
@@ -119,8 +161,21 @@ class DetailMurid extends Component {
                     <div className="col-xl-12">
                       <div className="card">
                         <div className="card-body">
+                          <h3 className="f-24 fc-skyblue f-w-800 mb-3">Laporan Kelas</h3>
+
                           <form>
                             <div className="form-group row">
+                              <div className="col-sm-2">
+                                <label>Tahun Ajaran</label>
+                                <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                                  <option value="" selected disabled>Select</option>
+                                  {
+                                    this.state.listTahunAjaran.map(item => (
+                                      <option value={item}>{item}</option>
+                                    ))
+                                  }
+                                </select>
+                              </div>
                               <div className="col-sm-2">
                                 <label>Semester</label>
                                 <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
@@ -153,6 +208,11 @@ class DetailMurid extends Component {
                                     ))
                                   }
                                 </select>
+                              </div>
+
+                              <div className="col-sm-2">
+                                <label>Action</label><br/>
+                                <button className="btn btn-v2 btn-info" type="reset" onClick={this.resetFilter}>Reset</button>
                               </div>
 
                             </div>

@@ -25,10 +25,13 @@ class GuruUjian extends Component {
     ujian: [],
     jadwal: [],
     event: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: []
   }
 
-  fetchJadwal(userIdMurid) {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${userIdMurid}`).then(res => {
+  fetchJadwal(userIdMurid, tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${userIdMurid}?tahunAjaran=${tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
       let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -162,8 +165,19 @@ class GuruUjian extends Component {
   }
 
   componentDidMount() {
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
     this.fetchPengumuman();
-    this.fetchJadwal(Storage.get('user').data.user_id)
+    this.fetchJadwal(Storage.get('user').data.user_id, tahunAjaran)
     this.fetchEvents(Storage.get('user').data.user_id)
   }
 
@@ -198,6 +212,13 @@ class GuruUjian extends Component {
     this.fetchEvents(this.state.muridId)
   }
 
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchJadwal(Storage.get('user').data.user_id, value)
+  }
+
+
   render() {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -211,7 +232,15 @@ class GuruUjian extends Component {
       <div class="col-sm-12 mt-2">
         <Card>
           <Card.Body>
-            <h4 className="f-w-900 f-18 fc-blue">Progress</h4>
+            <h4 className="f-w-900 f-18 fc-blue mb-3">Progress</h4>
+            <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran}>
+              <option value="" selected disabled>Select</option>
+              {
+                this.state.listTahunAjaran.map(item => (
+                  <option value={item}>{item}</option>
+                ))
+              }
+            </select>
             <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
               <option value="all">All</option>
               <option value="materi">Materi</option>

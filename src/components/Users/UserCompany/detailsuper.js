@@ -969,10 +969,14 @@ export default class CompanyDetail extends Component {
                                       </h3>
                                       <div className="form-group">
                                         <label>Company Grade</label>
+                                        <div>
+                                          <label style={{fontSize:'9px'}}>Tab atau Enter untuk mengisi lebih dari 1 grade</label>
+                                        </div>
                                         <TagsInput
                                           value={this.state.grade}
                                           onChange={this.handleChangeGrade.bind(this)}
                                           addOnPaste={true}
+                                          addOnBlur={true}
                                           inputProps={{ placeholder: 'Company Grade' }}
                                         />
                                       </div>

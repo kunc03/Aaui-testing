@@ -4,6 +4,8 @@ import { Card, Modal, Form, FormControl } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+import TableMeetings from '../meeting/meeting';
+
 import CalenderNew from '../kalender/kalenderlearning';
 import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
@@ -41,12 +43,12 @@ class DashParent extends Component {
 
       let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
-      let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
+      let hariIni = res.data.result ? res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]) : [];
 
       this.setState({
         jadwal: hariIni,
-        tugas: res.data.result.tugas,
-        ujian: res.data.result.ujian,
+        tugas: res.data.result ? res.data.result.tugas : [],
+        ujian: res.data.result ? res.data.result.ujian : [],
       })
     })
   }
@@ -127,6 +129,9 @@ class DashParent extends Component {
 
   render() {
 
+    let levelUser = Storage.get('user').data.level;
+    let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
+
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
         <div className="pcoded-wrapper">
@@ -138,33 +143,7 @@ class DashParent extends Component {
                   <div className="row">
 
                     <div className="col-sm-6">
-                      <Card>
-                        <Card.Body>
-                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
-                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
-                            <table className="table table-striped">
-                              <thead>
-                                <tr>
-                                  <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {
-                                  this.state.jadwal.map((item, i) => (
-                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
-                                      <td>{item.nama_pelajaran}</td>
-                                      <td>{item.hari}</td>
-                                      <td>{item.jam_mulai}-{item.jam_selesai}</td>
-                                      <td>{item.sesi}</td>
-
-                                    </tr>
-                                  ))
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-                        </Card.Body>
-                      </Card>
+                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
                     </div>
 
                     <div className="col-sm-6">
@@ -204,6 +183,36 @@ class DashParent extends Component {
                               </tbody>
                             </table>
 
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card>
+                        <Card.Body>
+                          <h4 className="f-w-900 f-18 fc-blue">Jadwal Hari Ini</h4>
+                          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                            <table className="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Mata Pelajaran</th><th>Hari</th><th>Waktu</th><th>Sesi</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  this.state.jadwal.map((item, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
+                                      <td>{item.nama_pelajaran}</td>
+                                      <td>{item.hari}</td>
+                                      <td>{item.jam_mulai}-{item.jam_selesai}</td>
+                                      <td>{item.sesi}</td>
+
+                                    </tr>
+                                  ))
+                                }
+                              </tbody>
+                            </table>
                           </div>
                         </Card.Body>
                       </Card>
@@ -270,6 +279,13 @@ class DashParent extends Component {
 
                         </Card.Body>
                       </Card>
+                    </div>
+
+                    <div className="col-sm-6">
+                      {
+                        this.state.myMurid.hasOwnProperty('user_id_murid') &&
+                        <CalenderNew grupName="murid" muridId={this.state.myMurid.user_id_murid} lists={this.state.event} />
+                      }
                     </div>
 
                     <div className="col-sm-12">
@@ -360,13 +376,6 @@ class DashParent extends Component {
 
                       </Modal.Body>
                     </Modal>
-                    </div>
-
-                    <div className="col-sm-6">
-                      {
-                        this.state.myMurid.hasOwnProperty('user_id_murid') &&
-                        <CalenderNew grupName="murid" muridId={this.state.myMurid.user_id_murid} lists={this.state.event} />
-                      }
                     </div>
 
                   </div>

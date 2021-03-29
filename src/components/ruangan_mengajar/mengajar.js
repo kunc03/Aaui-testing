@@ -405,7 +405,7 @@ class Mengajar extends React.Component {
   }
 
   fetchMengumpulkan(examId) {
-    API.get(`${API_SERVER}v2/guru/tugas/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
@@ -416,7 +416,7 @@ class Mengajar extends React.Component {
   }
 
   fetchScore(examId) {
-    API.get(`${API_SERVER}v2/guru/score-murid/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/score-murid/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
@@ -430,14 +430,14 @@ class Mengajar extends React.Component {
     e.preventDefault()
     let examId = e.target.getAttribute('data-id')
     let tipeJawab = e.target.getAttribute('data-tipe')
-    API.get(`${API_SERVER}v2/guru/tugas/${examId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
       if(res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
       else {
         let { result } = res.data;
         let find = result.filter(item => item.user_id == Storage.get('user').data.user_id);
-        if(find.length == 1) {
+        if(find.length == 1 && find[0].score) {
           toast.success(`Kamu sudah mengerjakan tugas ini.`)
           this.setState({ scoreTugas: find[0].score })
         }
@@ -695,23 +695,23 @@ class Mengajar extends React.Component {
 
                       {
                         (this.state.infoChapter.hasOwnProperty('ujian') && this.state.infoChapter.ujian.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Ujian</button>
+                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='ujian'}>Ujian</button>
                         : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('kuis') && this.state.infoChapter.kuis.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Kuis</button>
+                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='kuis'}>Kuis</button>
                         : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('tugas') && this.state.infoChapter.tugas.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Tugas</button>
+                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='tugas'}>Tugas</button>
                         : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2">Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Materi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
@@ -786,7 +786,10 @@ class Mengajar extends React.Component {
 
                                     {
                                       this.state.role == 'murid' ?
-                                      <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
+                                          <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        :
+                                          'Belum Saatnya'
                                       : null
                                     }
 

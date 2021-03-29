@@ -35,6 +35,8 @@ class Overview extends React.Component {
     loading: true,
     silabus: [],
 
+    uploading: false,
+
     materi: Math.random().toString(36),
     files: null,
 
@@ -79,6 +81,7 @@ class Overview extends React.Component {
 
   handleDynamicDate = (e, i) => {
     let newObj = [...this.state.silabus];
+    console.log('e', e)
     newObj[i].start_date = e;
     this.setState({ silabus: newObj });
   }
@@ -100,6 +103,7 @@ class Overview extends React.Component {
       if (res.data.error) toast.warning(`Error: create chapter`)
 
       if (this.state.files) {
+        this.setState({ uploading: true })
         this.uplaodFiles(item[0].chapter_id, this.state.files)
       } else {
         toast.success(`Materi berhasil diupdate.`)
@@ -119,9 +123,10 @@ class Overview extends React.Component {
       number: item[0].sesi,
       title: item[0].chapter_title,
       content: item[0].chapter_body,
-      tatapmuka: item[0].tatapmuka,
-      tanggal: moment(item[0].start_date).format('YYYY-MM-DD HH:mm'),
-      silabusId: item[0].id
+      tatapmuka: item[0].tatapmuka ? item[0].tatapmuka : '1',
+      tanggal: item[0].start_date ? moment(item[0].start_date).format('YYYY-MM-DD HH:mm') : moment(new Date()).format('YYYY-MM-DD HH:mm'),
+      silabusId: item[0].id,
+      jadwalId: this.state.jadwalId,
     }
 
     console.log('state: ', form)
@@ -132,6 +137,7 @@ class Overview extends React.Component {
       }
       else {
         if (this.state.files) {
+          this.setState({ uploading: true })
           this.uplaodFiles(res.data.result.id, this.state.files)
         } else {
           toast.success(`Materi berhasil disimpan.`)
@@ -153,7 +159,7 @@ class Overview extends React.Component {
       } else {
         toast.success(`Materi dan Attachments berhasil di upload.`);
         this.fetchOverview()
-        this.setState({ materi: Math.random().toString(36), files: null })
+        this.setState({ materi: Math.random().toString(36), files: null, uploading: false })
       }
     })
   }
@@ -186,7 +192,7 @@ class Overview extends React.Component {
       })
     }
     else {
-      toast.info(`Upload materi terlebih dahulu, setelah itu bisa memilih tugas ataupun kuis.`)
+      toast.info(`Isi form dan klik tombol Simpan terlebih dahulu, setelah itu dapat memilih tugas ataupun kuis.`)
     }
     this.setState({ setTugas: [], setKuis: [], setUjian: [] })
   }
@@ -316,7 +322,7 @@ class Overview extends React.Component {
                                 {
                                   item.start_date ?
                                     <>
-                                      {moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                      {moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
                                     </>
                                   :
                                     <span className="label label-primary">Upload Materi</span>
@@ -408,7 +414,7 @@ class Overview extends React.Component {
                                       <div className="col-sm-4 bordered">
                                         <div className="form-group">
                                           <label>Date</label><br/>
-                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).utc().format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
                                           <label className="mb-3">Webcam</label><br/>
@@ -424,7 +430,8 @@ class Overview extends React.Component {
 
                                         <h4>Attachments</h4>
                                         <div className="input-group mb-3">
-                                          <input key={this.state.materi} type="file" multiple onChange={e => this.setState({ files: e.target.files })} className="form-control" placeholder="Search" />
+                                          <label key={this.state.materi} for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.files ? this.state.files.length+' Files' : 'Choose File'}</span></label>
+                                          <input required multiple type="file" id="attachment" class="form-control file-upload-icademy" onChange={e => this.setState({ files: e.target.files })}/>
                                         </div>
 
                                         <ul className="list-group">
@@ -439,7 +446,7 @@ class Overview extends React.Component {
 
                                         <div className="form-group mt-4">
                                           <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
-                                            <Spinner animation="border" /> Simpan
+                                            <Spinner animation="border" /> {this.state.uploading ? 'Uploading...' : 'Simpan'}
                                           </Button>
                                         </div>
 
@@ -669,7 +676,7 @@ class Overview extends React.Component {
                                           :
                                           <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
                                         }
-                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kui':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kuis':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
                                       </div>
                                     </div>
                                     <table className="table mt-2 table-bordered">
