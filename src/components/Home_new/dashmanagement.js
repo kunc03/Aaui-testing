@@ -6,8 +6,6 @@ import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
 import TableMeetings from '../meeting/meeting';
 
-import TableMeetings from '../meeting/meeting';
-
 import CalenderNew from '../kalender/kalender';
 import ListToDoNew from './listToDo';
 import moment from 'moment-timezone';
