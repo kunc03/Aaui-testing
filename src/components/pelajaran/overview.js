@@ -19,7 +19,7 @@ class Overview extends React.Component {
   state = {
     jadwalId: this.props.match.params.id,
 
-    overview: ''
+    overview: 'Loading...'
   };
 
   handleEditorChange = e => {
@@ -67,7 +67,7 @@ class Overview extends React.Component {
                 <label>Overview</label>
                 <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
                 {
-                  this.state.overview ?
+                  this.state.overview !== 'Loading...' ?
                   <Editor
                     apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                     initialValue={this.state.overview}
