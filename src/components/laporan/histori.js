@@ -38,7 +38,10 @@ class Laporan extends React.Component {
       else {
         for(var i=0; i<res.data.result.length; i++) {
           let nilai = await API.get(`${API_SERVER}v2/guru/nilai-murid/${res.data.result[i].semester_id}/${res.data.result[i].kelas_id}/${userId}?tahunAjaran=${res.data.result[i].tahun_ajaran}`);
+          let hitung = 0;
+          nilai.data.result.map(item => hitung += (item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian))
           res.data.result[i].nilai = nilai.data.result;
+          res.data.result[i].total = (hitung / nilai.data.result.length).toFixed(2);
         }
 
         this.setState({ kelasMurid: res.data.result, isLoading: false })
@@ -157,32 +160,40 @@ class Laporan extends React.Component {
 
                                   <tbody>
                                     {
-                                      row.nilai.map((item, i) => (
-                                        <tr className="text-center">
-                                          <td>{i + 1}</td>
-                                          <td>{item.nama_pelajaran}</td>
-                                          <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulTugas.length}/{item.totalTugas.length}
-                                          </td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulKuis.length}/{item.totalKuis.length}
-                                          </td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulUjian.length}/{item.totalUjian.length}
-                                          </td>
-                                          <td>{item.persensi}</td>
-                                        </tr>
-                                      ))
+                                      row.nilai.map((item, i) => {
+                                        return (
+                                          <tr className="text-center">
+                                            <td>{i + 1}</td>
+                                            <td>{item.nama_pelajaran}</td>
+                                            <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
+                                            <td>
+                                              {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
+                                              <br/>
+                                              {item.kumpulTugas.length}/{item.totalTugas.length}
+                                            </td>
+                                            <td>
+                                              {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
+                                              <br/>
+                                              {item.kumpulKuis.length}/{item.totalKuis.length}
+                                            </td>
+                                            <td>
+                                              {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
+                                              <br/>
+                                              {item.kumpulUjian.length}/{item.totalUjian.length}
+                                            </td>
+                                            <td>{item.persensi}</td>
+                                          </tr>
+                                        )
+                                      })
                                     }
                                   </tbody>
                                 </table>
+
+                                <div className="border p-4">
+                                  <p>Keputusan</p>
+                                  <p>Berdasarkan pencapaian seluruh kompetensi</p>
+                                  <p>Peserta didik dinyatakan <b>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
+                                </div>
                               </td>
                             </tr>
                           </>

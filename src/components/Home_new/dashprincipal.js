@@ -280,9 +280,6 @@ class DashParent extends Component {
 
   render() {
     let levelUser = Storage.get('user').data.level;
-
-    console.log('state: ', this.state)
-    let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
     return (
