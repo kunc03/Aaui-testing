@@ -12129,3 +12129,7 @@ required {
 .image-checkbox-checked .fa {
   display: block !important;
 }
+
+.modal-1000-large{
+  min-width:1000px;
+}
