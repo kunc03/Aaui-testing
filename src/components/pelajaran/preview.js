@@ -120,6 +120,8 @@ class Overview extends React.Component {
                                 <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title collapsed"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
+
+                                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https://k4f4w9c2.stackpathcdn.com/wp-content/uploads/01_big_files_kim7/2021_best_ppt/Stand%20Out%20Red%20Umbrella%20PowerPoint%20Templates.pptx" height="300px" width="100%"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +150,7 @@ class Overview extends React.Component {
                                 <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">
-                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).utc().format('DD/MM/YYYY HH:mm') : moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
                                         </div>
                                         <OverlayTrigger
                                           placement="top"
