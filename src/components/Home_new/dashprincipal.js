@@ -5,6 +5,7 @@ import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import TableMeetings from '../meeting/meeting';
+
 import CalenderNew from '../kalender/kalender';
 import ProjekNew from './projek';
 import LaporanPembelajaranMurid from './laporanPembelajaranMurid';
@@ -280,6 +281,8 @@ class DashParent extends Component {
   render() {
     let levelUser = Storage.get('user').data.level;
 
+    console.log('state: ', this.state)
+    let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
     return (
@@ -291,6 +294,10 @@ class DashParent extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
+
+                    <div className="col-sm-6">
+                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
+                    </div>
 
                     <div class="col-sm-6">
                       <div className="card">

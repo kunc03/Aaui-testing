@@ -98,6 +98,7 @@ class SidebarClass extends Component {
 
       guru: {
         submenu: [
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Meeting Sekolah', link: '/meeting' },
           { iconOn: 'info-on.svg', iconOff: 'info.svg', label: 'Jadwal Mengajar', link: '/jadwal-mengajar' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Laporan Murid', link: '/guru-laporan/ratakelas' },
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Courses', link: '/guru-info/kursus' },
@@ -121,6 +122,7 @@ class SidebarClass extends Component {
       principal: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Meeting Sekolah', link: '/meeting' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kurikulum', link: '/principal-pelajaran' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Kelas', link: '/principal-rapor' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Murid', link: '/principal-rapor-murid' },
@@ -133,6 +135,7 @@ class SidebarClass extends Component {
       management: {
         submenu: [
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Dashboard', link: '/' },
+          { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Meeting Sekolah', link: '/meeting' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Kurikulum', link: '/management-kurikulum' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Kelas', link: '/management-rapor' },
           { iconOn: 'laporanraporon.svg', iconOff: 'laporanraporoff.svg', label: 'Laporan Murid', link: '/management-rapor-murid' },
@@ -180,7 +183,7 @@ class SidebarClass extends Component {
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
+        // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       submenuPendidikan : [
@@ -193,7 +196,7 @@ class SidebarClass extends Component {
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Personnel', link: '/learning/personalia' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Preference', link: '/learning/kpi' },
         { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Report', link: '/learning/laporan' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
+        // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas: [
