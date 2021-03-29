@@ -43,12 +43,12 @@ class DashParent extends Component {
 
       let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
-      let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
+      let hariIni = res.data.result ? res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]) : [];
 
       this.setState({
         jadwal: hariIni,
-        tugas: res.data.result.tugas,
-        ujian: res.data.result.ujian,
+        tugas: res.data.result ? res.data.result.tugas : [],
+        ujian: res.data.result ? res.data.result.ujian : [],
       })
     })
   }
