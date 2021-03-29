@@ -150,7 +150,7 @@ class DashGuru extends Component {
 
   getDashGuru() {
     // console.log(Storage.get('widgetGuru'), 'gasss');
-    if (Storage.get('widgetGuru')) {
+    if (Storage.get('widgetGuru').dataWidget) {
       this.setState({
         dataWidget: Storage.get('widgetGuru').dataWidget
       })
@@ -302,6 +302,8 @@ class DashGuru extends Component {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
     let sort = this.state.event.sort((a, b) => a.start - b.start);
+
+    console.log('widget: ', this.state.dataWidget);
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
