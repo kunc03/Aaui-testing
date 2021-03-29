@@ -58,14 +58,6 @@ class LaporanPembelajaranMurid extends Component {
             </div>
           </div>
         </div>
-        <div className="col-sm-4 text-right">
-          <p className="m-b-0">
-            <Link to={"project"}>
-              <span className=" f-12 fc-skyblue">See all</span>
-            </Link>
-          </p>
-          <b className="f-24 f-w-800">  . . . </b>
-        </div>
 
         <div className="col-xl-12">
 

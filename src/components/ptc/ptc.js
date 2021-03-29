@@ -94,13 +94,13 @@ class PtcClasses extends React.Component {
   fetchNotif() {
     let url = ``;
 
-    if(this.state.role.toLowerCase() === "guru") {
-      if(Storage.get('user').data.level !== "client") {
+    if (this.state.role.toLowerCase() === "guru") {
+      if (Storage.get('user').data.level !== "client") {
         url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
       } else {
         url = `${API_SERVER}v1/ptc-room/moderator/${Storage.get('user').data.user_id}`;
       }
-    } else if(this.state.role.toLowerCase() === "parents") {
+    } else if (this.state.role.toLowerCase() === "parents") {
       url = `${API_SERVER}v1/ptc-room/parents/${Storage.get('user').data.user_id}`;
     } else {
       url = `${API_SERVER}v1/ptc-room/company/${Storage.get('user').data.company_id}`;
@@ -155,10 +155,9 @@ class PtcClasses extends React.Component {
 
         <div className="row">
           <div className="col-sm-12">
-            <div className="card">
-              <div className="card-header header-kartu">
-                Parent Teacher Conference (PTC)
-
+            <div className="card p-20">
+              <div className="mb-4">
+                <strong className="f-w-bold f-18 fc-skyblue ">Parent Teacher Conference (PTC) </strong>
                 {
                   this.state.role.toLowerCase() !== "parents" &&
                   <Link to={`/ptc/create/ptc`} className="btn btn-v2 btn-primary float-right" style={{ margin: 0 }}>
@@ -167,7 +166,7 @@ class PtcClasses extends React.Component {
                 }
 
               </div>
-              <div className="card-body" style={{ padding: 0 }}>
+              <div className="table-responsive">
                 <table className="table table-striped">
                   <thead>
                     <tr>
@@ -176,7 +175,7 @@ class PtcClasses extends React.Component {
                       <th>Status</th>
                       <th>Time </th>
                       <th> Date </th>
-                      { this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th> }
+                      {this.state.role.toLowerCase() !== "parents" && <th className="text-center"> Participants </th>}
                       <th className="text-center"> Action </th>
                     </tr>
                   </thead>
@@ -208,13 +207,13 @@ class PtcClasses extends React.Component {
                             }
 
                             {
-                              (["admin","guru"].includes(this.state.role.toLowerCase()) || ["admin","superadmin"].includes(Storage.get('user').data.level)) &&
+                              (["admin", "guru"].includes(this.state.role.toLowerCase()) || ["admin", "superadmin"].includes(Storage.get('user').data.level)) &&
                               <>
-                              <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
-                                <i className="fa fa-edit ml-2"></i>
-                              </Link>
+                                <Link to={`/ptc/update/ptc/${item.ptc_id}`}>
+                                  <i className="fa fa-edit ml-2"></i>
+                                </Link>
 
-                              <i onClick={this.deletePtc} data-id={item.ptc_id} className="fa fa-trash ml-2" style={{ cursor: 'pointer' }}></i>
+                                <i onClick={this.deletePtc} data-id={item.ptc_id} className="fa fa-trash ml-2" style={{ cursor: 'pointer' }}></i>
                               </>
                             }
                           </td>

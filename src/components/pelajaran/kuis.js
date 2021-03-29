@@ -35,6 +35,9 @@ class Tugas extends React.Component {
 
     mengumpulkan: [],
 
+    silabus: [],
+    loading: false,
+
     formFile: null,
     loading: false,
     fileExcel: Math.random().toString(36),
@@ -154,6 +157,20 @@ class Tugas extends React.Component {
   componentDidMount() {
     this.fetchKuis();
     this.fetchChapters();
+    this.fetchOverview();
+  }
+
+  fetchOverview() {
+    API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.pelajaranId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      console.log('silabus: ', res.data.result);
+      if (res.data.result.length===0){
+        toast.warning('Contact admin to setup syllabus')
+      }
+      else{
+        this.setState({ silabus: res.data.result, loading: false, });
+      }
+    })
   }
 
   fetchChapters() {
@@ -201,13 +218,14 @@ class Tugas extends React.Component {
     } else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
+        pelajaranId: this.state.silabus.length ? this.state.silabus[0].pelajaran_id : '0',
 
         title: this.state.title,
         tatapmuka: this.state.tatapmuka,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
-        tanggalAkhir: this.state.tanggalAkhir
+        tanggalAkhir: this.state.tanggalAkhir,
+        jadwalId: this.state.pelajaranId,
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
@@ -292,6 +310,19 @@ class Tugas extends React.Component {
     }
 	}
 
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['xlsx', 'xls'].includes(eks)) {
+      this.setState({ formFile: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai`);
+      this.setState({ fileExcel: Math.random().toString(36) })
+    }
+  }
+
   render() {
 
     console.log('state: ', this.state)
@@ -317,7 +348,7 @@ class Tugas extends React.Component {
               </div>
 
               <div style={{padding: '12px'}}>
-                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true })}} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true })}} type="button" className="btn btn-v2 btn-primary btn-block mt-2" disabled={this.state.silabus.length ? false : true}>
                   <i className="fa fa-plus"></i> Tambah
                 </button>
               </div>
@@ -393,13 +424,34 @@ class Tugas extends React.Component {
                         </div>
                         <div className="col-sm-6">
                           <label>Import Excel</label>
-                          <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                          <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.formFile ? this.state.formFile.name : 'Choose File'}</span></label>
+                          <input key={this.state.fileExcel} required onChange={this.filterType} type="file" id="attachment" class="form-control file-upload-icademy" />
                         </div>
                         <div className="col-sm-3">
                           <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
                             <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
                           </button>
                         </div>
+                      </div>
+                      <div className="form-group row">
+                        {
+                          this.state.formFile ?
+                          <table className="border" border="1">
+                            <tr>
+                              <td width="90px">Filename</td>
+                              <td>{this.state.formFile.name}</td>
+                            </tr>
+                            <tr>
+                              <td>Size</td>
+                              <td>{this.state.formFile.size/1000}KB</td>
+                            </tr>
+                            <tr>
+                              <td>Type</td>
+                              <td>{this.state.formFile.type}</td>
+                            </tr>
+                          </table>
+                          : null
+                        }
                       </div>
                     </form>
                   </div>

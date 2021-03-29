@@ -20,25 +20,42 @@ class GuruKursus extends Component {
     semesterId: '',
     semesterInfo: {},
 
-    jadwalKu: [],
+    jadwalKu: {},
 
     listKelas: [],
     kelasId: '',
     kelasInfo: {},
 
-    muridId: '',
+    listMurid: [],
+    muridId: [],
     muridInfo: {},
 
     isLoading: false,
-    nilaiMurid: []
+    nilaiMurid: [],
+
+    tahunAjaran: '',
+    listTahunAjaran: [],
   }
 
-  fetchJadwal() {
-    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
+  fetchJadwal(tahunAjaran) {
+    API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if(res.data.error) console.log(`Error: fetch pelajaran`)
-      console.log('state2 ', res.data.result)
 
-      this.setState({ jadwalKu: res.data.result.jadwal })
+      this.setState({ jadwalKu: res.data.result })
+      let r = res.data.result;
+      API.get(`${API_SERVER}v2/murid/no-induk/${r.no_induk}`).then(res => {
+        this.setState({ muridId: r.id, muridInfo: res.data.result })
+      })
+
+      API.get(`${API_SERVER}v1/semester/${r.semester_id}`).then(res => {
+        this.setState({ semesterId: r.semester_id, semesterInfo: res.data.result })
+      })
+
+      API.get(`${API_SERVER}v2/kelas/one/${r.kelas_id}`).then(res => {
+        this.setState({ kelasId: r.kelas_id, kelasInfo: res.data.result })
+      })
+
+      this.fetchNilaiMurid(r.semester_id, r.kelas_id, Storage.get('user').data.user_id, tahunAjaran)
     })
   }
 
@@ -106,15 +123,31 @@ class GuruKursus extends Component {
     })
   }
 
+  selectTahunAjaran = e => {
+    const { value } = e.target;
+    this.setState({ tahunAjaran: value })
+    this.fetchJadwal(value);
+  }
+
   selectSemester = e => {
     e.preventDefault();
     let semesterId = e.target.value;
 
-    let dd = [...this.state.jadwalKu];
+    let dd = [...this.state.jadwalKu.jadwal];
     let unique = [...new Map(dd.map(item => [item['kelas_id'], item])).values()];
+    let filter = unique.filter(item => item.semester_id === parseInt(semesterId));
+    this.setState({ semesterId: semesterId, listKelas: filter })
 
     API.get(`${API_SERVER}v1/semester/${semesterId}`).then(res => {
-      this.setState({ semesterId, semesterInfo: res.data.result, listKelas: unique })
+      this.setState({ semesterId, semesterInfo: res.data.result, listKelas: filter })
+    })
+  }
+
+  fetchKelas(semesterId) {
+    API.get(`${API_SERVER}v2/kelas/semester/${Storage.get('user').data.company_id}/${semesterId}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch data semester");
+
+      this.setState({ listKelas: res.data.result })
     })
   }
 
@@ -123,44 +156,82 @@ class GuruKursus extends Component {
     let kelasId = e.target.value;
     API.get(`${API_SERVER}v2/kelas/one/${kelasId}`).then(res => {
       this.setState({ kelasId, kelasInfo: res.data.result })
-      this.fetchNilaiMurid(this.state.semesterId, this.state.kelasId, Storage.get('user').data.user_id);
+    })
+    this.fetchMurid(kelasId);
+  }
+
+  fetchMurid(kelasId) {
+    API.get(`${API_SERVER}v2/murid/kelas/${kelasId}`).then(res => {
+      if (res.data.error) toast.warning("Error fetch murid");
+
+      let createOptions = [];
+      res.data.result.map((item) => {
+        createOptions.push({
+          value: item.no_induk,
+          label: `${item.no_induk} - ${item.nama}`
+        });
+      })
+
+      this.setState({ listMurid: createOptions })
+
     })
   }
 
-  fetchNilaiMurid(semesterId, kelasId, userId) {
+  selectMurid = e => {
+    console.log('state:', e)
+    this.setState({ isLoading: true, nilaiMurid: [] })
+    API.get(`${API_SERVER}v2/murid/no-induk/${e[0]}`).then(res => {
+      this.setState({ muridId: e, muridInfo: res.data.result })
+      this.fetchNilaiMurid(this.state.semesterId, this.state.kelasId, res.data.result.user_id, this.state.tahunAjaran)
+    })
+  }
+
+  fetchNilaiMurid(semesterId, kelasId, userId, tahunAjaran) {
     console.log(`Query: ${semesterId} ${kelasId} ${userId}`);
-    API.get(`${API_SERVER}v2/guru/nilai-murid/${semesterId}/${kelasId}/${userId}`).then(res => {
+    API.get(`${API_SERVER}v2/guru/nilai-murid/${semesterId}/${kelasId}/${userId}?tahunAjaran=${tahunAjaran}`).then(res => {
       this.setState({ nilaiMurid: res.data.result, isLoading: false })
     })
   }
 
-  fetchInfoKu() {
-    API.get(`${API_SERVER}v2/murid/user-id/${Storage.get('user').data.user_id}`).then(res => {
-      this.setState({ muridInfo: res.data.result })
+  componentDidMount() {
+    let d = new Date();
+    // bulan diawali dengan 0 = januari, 11 = desember
+    let month = d.getMonth();
+    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+
+    let temp = [];
+    for(var i=0; i<6; i++) {
+      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    }
+    this.setState({ tahunAjaran, listTahunAjaran: temp })
+
+    this.fetchJadwal(tahunAjaran)
+    this.fetchSemester()
+  }
+
+  resetFilter = e => {
+    e.preventDefault()
+    this.setState({
+      semesterId: '',
+      semesterInfo: {},
+
+      listKelas: [],
+      kelasId: '',
+      kelasInfo: {},
+
+      listPelajaran: [],
+      pelajaranId: '',
+      pelajaranInfo: {},
+
+      muridId: [],
+
+      isLoading: false,
+      nilaiMurid: [],
     })
   }
 
-  componentDidMount() {
-    this.fetchJadwal()
-    this.fetchSemester()
-    this.fetchInfoKu()
-  }
-
-  convertNilaiToAbjad(value) {
-    if(0 <= value && 26 > value) {
-      return "D";
-    } else if(26 <= value && 51 > value) {
-      return "C";
-    } else if(51 <= value && 76 > value) {
-      return "B";
-    } else if(76 <= value && 101 > value) {
-      return "A";
-    } else {
-      return "-";
-    }
-  }
-
   render() {
+    console.log('state: ', this.state)
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
@@ -179,33 +250,24 @@ class GuruKursus extends Component {
                             <form>
                               <div className="form-group row">
                                 <div className="col-sm-2">
-                                  <label>Semester</label>
-                                  <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                                  <label>Tahun Ajaran</label>
+                                  <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
                                     <option value="" selected disabled>Select</option>
                                     {
-                                      this.state.listSemester.map((item,i) => (
-                                        <option key={i} value={item.semester_id}>{item.semester_name}</option>
-                                      ))
-                                    }
-                                  </select>
-                                </div>
-                                <div className="col-sm-2">
-                                  <label>Kelas</label>
-                                  <select onChange={this.selectKelas} value={this.state.kelasId} className="form-control" required>
-                                    <option value="" selected disabled>Select</option>
-                                    {
-                                      this.state.listKelas.map((item,i) => (
-                                        <option key={i} value={item.kelas_id}>{item.kelas_nama}</option>
+                                      this.state.listTahunAjaran.map(item => (
+                                        <option value={item}>{item}</option>
                                       ))
                                     }
                                   </select>
                                 </div>
 
                                 <div className="col-sm-3">
-                                  <button className="btn btn-v2 btn-success mt-4" onClick={() => this.exportPDF()}>
-                                    <i className="fa fa-download"></i> Download Report
+                                  <button className="btn btn-v2 btn-success mt-4 mr-2" onClick={() => this.exportPDF()}>
+                                    <i className="fa fa-download"></i> Report
                                   </button>
+                                  <button className="btn btn-v2 btn-info mt-4" type="reset" onClick={this.resetFilter}>Reset</button>
                                 </div>
+
                               </div>
                             </form>
 
@@ -233,7 +295,7 @@ class GuruKursus extends Component {
                                   <div className="form-group row">
                                     <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
                                     <div className="col-sm-4">
-                                      <input type="text" value={this.state.muridInfo.no_induk} disabled className="form-control" />
+                                      <input type="text" value={this.state.jadwalKu.no_induk} disabled className="form-control" />
                                     </div>
 
                                     <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
@@ -272,7 +334,7 @@ class GuruKursus extends Component {
                                     <tr className="text-center">
                                       <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
                                       <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> NILAI</td>
+                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
                                       <td colSpan="3">NILAI HASIL BELAJAR</td>
                                       <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
                                     </tr>
@@ -297,7 +359,7 @@ class GuruKursus extends Component {
                                         <tr className="text-center">
                                           <td>{i + 1}</td>
                                           <td>{item.nama_pelajaran}</td>
-                                          <td>{this.convertNilaiToAbjad(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian)}</td>
+                                          <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
                                           <td>
                                             {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
                                             <br/>
@@ -313,7 +375,7 @@ class GuruKursus extends Component {
                                             <br/>
                                             {item.kumpulUjian.length}/{item.totalUjian.length}
                                           </td>
-                                          <td>{item.persensi}</td>
+                                          <td>{item.persensi ? item.persensi + '%' : '0%'}</td>
                                         </tr>
                                       ))
                                     }

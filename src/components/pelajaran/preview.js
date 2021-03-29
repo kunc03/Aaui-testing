@@ -120,6 +120,8 @@ class Overview extends React.Component {
                                 <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title collapsed"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
                                 <div class="collapse" id={`tOverview`}>
                                     <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
+
+                                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https://k4f4w9c2.stackpathcdn.com/wp-content/uploads/01_big_files_kim7/2021_best_ppt/Stand%20Out%20Red%20Umbrella%20PowerPoint%20Templates.pptx" height="300px" width="100%"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +150,7 @@ class Overview extends React.Component {
                                 <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">
-                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).utc().format('DD/MM/YYYY HH:mm') : moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
                                         </div>
                                         <OverlayTrigger
                                           placement="top"
@@ -172,7 +174,7 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
@@ -180,7 +182,7 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
@@ -188,21 +190,23 @@ class Overview extends React.Component {
 
                                           {
                                             (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
-                                              <button onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
+                                              <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
                                                 <i className="fa fa-tasks"></i> {row.exam_title}
                                               </button>
                                             ))
                                           }
 
                                           {
-                                            item.hasOwnProperty('chapter_id') &&
+                                            item.hasOwnProperty('chapter_id') && moment(item.start_date) < moment(new Date()) ?
                                             <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
                                               <i className="fa fa-video"></i> Open
                                             </a>
+                                            :
+                                            null
                                           }
 
                                           {
-                                            item.hasOwnProperty('exam_id') &&
+                                            item.hasOwnProperty('exam_id') && moment(item.start_date) < moment(new Date()) ?
                                             <>
                                             <Link to={`/guru/detail-kuis/${this.state.jadwalId}/${item.exam_id}`} className="btn btn-v2 btn-info mr-2">
                                               <i className="fa fa-tasks"></i> Detail
@@ -211,6 +215,12 @@ class Overview extends React.Component {
                                               <i className="fa fa-video"></i> Open
                                             </a>
                                             </>
+                                            :
+                                            null
+                                          }
+                                          {
+                                            moment(item.start_date) > moment(new Date()) &&
+                                            <h6 style={{color:'#F00', margin:5}}>The schedule hasn't started yet</h6>
                                           }
 
                                         </div>

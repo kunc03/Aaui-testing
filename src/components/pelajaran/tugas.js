@@ -24,6 +24,9 @@ class Tugas extends React.Component {
 
     kuis: [],
 
+    silabus: [],
+    loading: false,
+
     examId: '',
     title: '',
     quizAt: '',
@@ -151,6 +154,7 @@ class Tugas extends React.Component {
   componentDidMount() {
     this.fetchKuis();
     this.fetchChapters();
+    this.fetchOverview()
   }
 
   fetchChapters() {
@@ -174,6 +178,19 @@ class Tugas extends React.Component {
     })
   }
 
+  fetchOverview() {
+    API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.pelajaranId}`).then(res => {
+      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      console.log('silabus: ', res.data.result);
+      if (res.data.result.length===0){
+        toast.warning('Contact admin to setup syllabus')
+      }
+      else{
+        this.setState({ silabus: res.data.result, loading: false, });
+      }
+    })
+  }
+
   saveKuis = e => {
     e.preventDefault();
     if(this.state.examId) {
@@ -183,7 +200,7 @@ class Tugas extends React.Component {
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
-        tipeJawab: this.state.tipeJawab
+        tipeJawab: this.state.tipeJawab,
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
@@ -198,17 +215,19 @@ class Tugas extends React.Component {
         }
 
       })
-    } else {
+    }
+    else {
       let form = {
         companyId: Storage.get('user').data.company_id,
-        pelajaranId: this.state.chapters.length ? this.state.chapters[0].pelajaran_id : '0',
+        pelajaranId: this.state.silabus.length ? this.state.silabus[0].pelajaran_id : '0',
 
         title: this.state.title,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
         tanggalMulai: this.state.tanggalMulai,
         tanggalAkhir: this.state.tanggalAkhir,
         tatapmuka: 0,
-        tipeJawab: this.state.tipeJawab
+        tipeJawab: this.state.tipeJawab,
+        jadwalId: this.state.pelajaranId,
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
@@ -288,7 +307,7 @@ class Tugas extends React.Component {
   		form.append('examId', this.state.examId);
   		form.append('files', this.state.formFile);
 
-  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import`, form).then(res => {
+  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import?tipe=tugas`, form).then(res => {
   			if(res.data.error) {
           toast.warning("Error import data");
         }
@@ -303,6 +322,19 @@ class Tugas extends React.Component {
       toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
     }
 	}
+
+  filterType = e => {
+    const { files } = e.target;
+    let split = files[0].name.split('.');
+    let eks = split[split.length-1];
+    if(['xlsx', 'xls'].includes(eks)) {
+      this.setState({ formFile: e.target.files[0] })
+    }
+    else {
+      toast.info(`Format tidak sesuai`);
+      this.setState({ fileExcel: Math.random().toString(36) })
+    }
+  }
 
   render() {
 
@@ -329,7 +361,7 @@ class Tugas extends React.Component {
               </div>
 
               <div style={{padding: '12px'}}>
-                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true }) }} type="button" className="btn btn-v2 btn-primary btn-block mt-2">
+                <button onClick={() => { this.clearForm(); this.setState({ formAdd: true }) }} type="button" className="btn btn-v2 btn-primary btn-block mt-2" disabled={this.state.silabus.length ? false : true}>
                   <i className="fa fa-plus"></i> Tambah
                 </button>
               </div>
@@ -412,20 +444,40 @@ class Tugas extends React.Component {
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label>Template Excel</label>
-                          <a href={`${API_SERVER}attachment/pertanyaan.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
+                          <a href={`${API_SERVER}attachment/tugas.xlsx`} target="_blank" className="btn btn-v2 btn-primary">
                             <i className="fa fa-download"></i>
                             Download
                           </a>
                         </div>
                         <div className="col-sm-6">
                           <label>Import Excel</label>
-                          <input key={this.state.fileExcel} required onChange={e => this.setState({ formFile: e.target.files[0] })} className="form-control" type="file" />
+                          <input key={this.state.fileExcel} required onChange={this.filterType} className="form-control" type="file" />
                         </div>
                         <div className="col-sm-3">
                           <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
                             <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
                           </button>
                         </div>
+                      </div>
+                      <div className="form-group row">
+                        {
+                          this.state.formFile ?
+                          <table className="border" border="1">
+                            <tr>
+                              <td width="90px">Filename</td>
+                              <td>{this.state.formFile.name}</td>
+                            </tr>
+                            <tr>
+                              <td>Size</td>
+                              <td>{this.state.formFile.size/1000}KB</td>
+                            </tr>
+                            <tr>
+                              <td>Type</td>
+                              <td>{this.state.formFile.type}</td>
+                            </tr>
+                          </table>
+                          : null
+                        }
                       </div>
                     </form>
                   </div>

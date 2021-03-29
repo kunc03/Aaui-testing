@@ -150,15 +150,14 @@ class RuanganMengajar extends React.Component {
           aModerator: 1,
           aPembicara: 1,
           aOwner: 1,
-          aPeserta: 1
+          aPeserta: 1,
+          created_by: Storage.get('user').data.user_id
         };
 
         API.post(`${API_SERVER}v1/folder`, formData).then(res => {
           if (res.status === 200) {
             if (res.data.error) {
               toast.warning("Warning initial project")
-            } else {
-              toast.success(`Inisiasi project berhasil`)
             }
           }
         })
