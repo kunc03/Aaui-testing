@@ -88,6 +88,25 @@ class Login extends Component {
             title: 'voucher login'
           }
 
+          Storage.set('widgetGuru', {
+            dataWidget: [{ idWidget: '1', imgOn: '@0,5xTugas on.svg', imgOff: '@0,5xTugas off.svg', name: 'Tugas', checked: false },
+            { idWidget: '2', imgOn: '@0,5xPertemuan on.svg', imgOff: '@0,5xPertemuan off.svg', name: 'Pertemuan Yang Akan Datang', checked: false },
+            { idWidget: '3', imgOn: '@0,5xPengumuman on.svg', imgOff: '@0,5xPengumuman off.svg', name: 'Pengumuman Terbaru', checked: false },
+            { idWidget: '4', imgOn: '@0,5xLaporan on.svg', imgOff: '@0,5xLaporan off.svg', name: 'Laporan Yang Harus Diselesaikan', checked: false },
+            { idWidget: '5', imgOn: '@0,5xMateri on.svg', imgOff: '@0,5xMateri off.svg', name: 'Materi Pelajaran', checked: false },
+            { idWidget: '6', imgOn: '@0,5xMeeting on.svg', imgOff: '@0,5xMeeting off.svg', name: 'Meeting', checked: false }]
+          });
+
+          Storage.set('widgetPrincipal', {
+            dataWidget: [{ idWidget: '1', imgOn: '@0,5xPengumuman on.svg', imgOff: '@0,5xPengumuman off.svg', name: 'Pengumuman Terbaru', checked: false },
+            { idWidget: '2', imgOn: '@0,5xMeeting on.svg', imgOff: '@0,5xMeeting off.svg', name: 'Meeting', checked: false }]
+          });
+
+          Storage.set('widgetManagement', {
+            dataWidget: [
+              { idWidget: '1', imgOn: '@0,5xMeeting on.svg', imgOff: '@0,5xMeeting off.svg', name: 'Meeting', checked: false }]
+          });
+
           Storage.set('user', {
             data: {
               user_id: res.data.result.user_id,
@@ -369,8 +388,8 @@ class Login extends Component {
                   ) : this.state.tabIndex === 2 && (isVoucher) ? (
                     <div className="col-sm-12">{formKu}</div>
                   ) : (
-                        <div><LupaPassword id={this.props.match.params.id} otp={this.props.match.params.key} /></div>
-                      )}
+                    <div><LupaPassword id={this.props.match.params.id} otp={this.props.match.params.key} /></div>
+                  )}
                 </div>
                 {/* <p className="mb-0 mt-1">
                   <a

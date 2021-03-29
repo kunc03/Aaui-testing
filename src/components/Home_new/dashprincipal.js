@@ -17,6 +17,10 @@ import 'react-sm-select/dist/styles.css';
 
 import { toast } from 'react-toastify'
 
+const widgetNew = [
+  { idWidget: '1', imgOn: '@0,5xPengumuman on.svg', imgOff: '@0,5xPengumuman off.svg', name: 'Pengumuman Terbaru', checked: false },
+  { idWidget: '2', imgOn: '@0,5xMeeting on.svg', imgOff: '@0,5xMeeting off.svg', name: 'Meeting', checked: false }
+]
 class DashParent extends Component {
 
   state = {
@@ -52,6 +56,42 @@ class DashParent extends Component {
     pelajaranId: '',
     pelajaranNama: '',
     silabus: [],
+
+    dataWidget: widgetNew,
+    openWidget: false
+  }
+
+  checkedWidget = e => {
+    const dataWidgetCopy = [...this.state.dataWidget];
+    const itemToUpdate = dataWidgetCopy.find(item => item.name === e.target.value);
+
+    itemToUpdate.checked = !itemToUpdate.checked;
+
+    this.setState({
+      dataWidget: dataWidgetCopy
+    });
+  };
+
+  tambahWidget(data) {
+    Storage.set('widgetPrincipal', {
+      dataWidget: data
+    });
+    this.setState({
+      openWidget: false,
+      dataWidget: data
+    })
+    // console.log(data, 'data tambahhh');
+  }
+
+  openWidgets = e => {
+    e.preventDefault();
+    this.setState({ openWidget: true })
+  }
+
+  closeWidget() {
+    this.setState({
+      openWidget: false,
+    })
   }
 
   openParticipants = e => {
@@ -177,10 +217,20 @@ class DashParent extends Component {
   }
 
   componentDidMount() {
+    this.getDashGuru();
     this.fetchPengumuman();
     this.fetchJadwal();
     this.fetchPtc()
     this.fetchPelajaran()
+  }
+
+  getDashGuru() {
+    // console.log(Storage.get('widgetPrincipal'), 'gasss');
+    if (Storage.get('widgetPrincipal')) {
+      this.setState({
+        dataWidget: Storage.get('widgetPrincipal').dataWidget
+      })
+    }
   }
 
   fetchPengumuman() {
@@ -229,6 +279,7 @@ class DashParent extends Component {
   }
 
   render() {
+    let levelUser = Storage.get('user').data.level;
 
     console.log('state: ', this.state)
     let levelUser = Storage.get('user').data.level;
@@ -416,7 +467,7 @@ class DashParent extends Component {
                       <CalenderNew lists={this.state.calendar} />
                     </div>
 
-                    <div className="col-sm-6">
+                    <div className={this.state.dataWidget[0].checked ? "col-sm-6" : "hidden"}>
                       <Card>
                         <Card.Body>
                           <h4 className="f-w-900 f-18 fc-blue">Pengumuman Terbaru</h4>
@@ -497,6 +548,54 @@ class DashParent extends Component {
                       </Modal>
                     </div>
 
+                    <div className={this.state.dataWidget[1].checked ? "col-sm-6" : "hidden"}>
+
+
+                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
+
+
+
+                    </div>
+
+                    <div className="col-sm-6">
+                      <Card style={{ backgroundColor: '#F3F3F3', cursor: 'pointer' }} onClick={this.openWidgets}>
+                        <div style={{ height: '394px', alignSelf: 'center' }}>
+                          <img src='newasset/Combined Shape.svg' style={{ position: 'absolute', top: '10pc', marginLeft: '-26px' }}></img>
+                          <p style={{ position: 'absolute', top: '16pc', marginLeft: '-46px' }}><b>Tambah Widget</b></p>
+                        </div>
+                      </Card>
+
+                      <Modal
+                        show={this.state.openWidget}
+                        onHide={this.closeWidget.bind(this)}
+                        dialogClassName="modal-lg"
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                            Tambah Widget
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <div className="row">
+                            {this.state.dataWidget.map((item, i) => {
+                              return (
+                                <div className="col-sm-4 text-center">
+                                  <label className={item.checked ? "image-checkbox image-checkbox-checked" : "image-checkbox"} onChange={this.checkedWidget}>
+                                    <img className="img-responsive" src={item.checked ? "/newasset/widget/" + `${item.imgOn}` : "/newasset/widget/" + `${item.imgOff}`} style={{ width: '235px', padding: '50px' }} />
+                                    <input name="image[]" type="checkbox" checked={item.cek} value={item.name} />
+                                    <h6 className={item.checked ? "fc-skyblue" : ""}> {item.name} </h6>
+                                    <i className={item.checked ? "fa fa-check " : "fa fa-check hidden"}></i>
+                                  </label>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <button className="btn btn-primary float-right" onClick={this.tambahWidget.bind(this, this.state.dataWidget)} >Tambah</button>
+                        </Modal.Footer>
+                      </Modal>
+                    </div>
                     {/* <div class="col-sm-6">
                       <Card>
                         <Card.Body>

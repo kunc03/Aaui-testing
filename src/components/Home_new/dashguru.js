@@ -10,12 +10,12 @@ import TableMeetings from '../meeting/meeting';
 import CalenderNew from '../kalender/kalenderlearning';
 import ListToDoNew from './listToDo';
 const widgetNew = [
-  { idWidget: '1', name: 'Tugas', checked: false },
-  { idWidget: '2', name: 'Pertemuan Yang Akan Datang', checked: false },
-  { idWidget: '3', name: 'Pengumuman Terbaru', checked: false },
-  { idWidget: '4', name: 'Laporan Yang Harus Diselesaikan', checked: false },
-  { idWidget: '5', name: 'Materi Pelajaran', checked: false },
-  { idWidget: '6', name: 'Meeting', checked: false }
+  { idWidget: '1', imgOn: '@0,5xTugas on.svg', imgOff: '@0,5xTugas off.svg', name: 'Tugas', checked: false },
+  { idWidget: '2', imgOn: '@0,5xPertemuan on.svg', imgOff: '@0,5xPertemuan off.svg', name: 'Pertemuan Yang Akan Datang', checked: false },
+  { idWidget: '3', imgOn: '@0,5xPengumuman on.svg', imgOff: '@0,5xPengumuman off.svg', name: 'Pengumuman Terbaru', checked: false },
+  { idWidget: '4', imgOn: '@0,5xLaporan on.svg', imgOff: '@0,5xLaporan off.svg', name: 'Laporan Yang Harus Diselesaikan', checked: false },
+  { idWidget: '5', imgOn: '@0,5xMateri on.svg', imgOff: '@0,5xMateri off.svg', name: 'Materi Pelajaran', checked: false },
+  { idWidget: '6', imgOn: '@0,5xMeeting on.svg', imgOff: '@0,5xMeeting off.svg', name: 'Meeting', checked: false }
 ]
 class DashGuru extends Component {
 
@@ -72,6 +72,9 @@ class DashGuru extends Component {
   };
 
   tambahWidget(data) {
+    Storage.set('widgetGuru', {
+      dataWidget: data
+    });
     this.setState({
       openWidget: false,
       dataWidget: data
@@ -136,12 +139,22 @@ class DashGuru extends Component {
   }
 
   componentDidMount() {
+    this.getDashGuru();
     this.fetchPelajaran();
     this.fetchPengumuman();
     this.fetchJadwal();
     this.fetchPtc();
     this.fetchTugas();
     this.fetchEvents()
+  }
+
+  getDashGuru() {
+    // console.log(Storage.get('widgetGuru'), 'gasss');
+    if (Storage.get('widgetGuru')) {
+      this.setState({
+        dataWidget: Storage.get('widgetGuru').dataWidget
+      })
+    }
   }
 
   fetchEvents() {
@@ -704,9 +717,9 @@ class DashGuru extends Component {
                               return (
                                 <div className="col-sm-4 text-center">
                                   <label className={item.checked ? "image-checkbox image-checkbox-checked" : "image-checkbox"} onChange={this.checkedWidget}>
-                                    <img className="img-responsive" src={item.checked ? "/newasset/tugason.svg" : "/newasset/tugasoff.svg"} style={{ width: '235px', padding: '50px' }} />
+                                    <img className="img-responsive" src={item.checked ? "/newasset/widget/" + `${item.imgOn}` : "/newasset/widget/" + `${item.imgOff}`} style={{ width: '235px', padding: '50px' }} />
                                     <input name="image[]" type="checkbox" checked={item.cek} value={item.name} />
-                                    <h6 className={item.checked ? "fc-skyblue" : ""}> {item.name}</h6>
+                                    <h6 className={item.checked ? "fc-skyblue" : ""}> {item.name} </h6>
                                     <i className={item.checked ? "fa fa-check " : "fa fa-check hidden"}></i>
                                   </label>
                                 </div>
