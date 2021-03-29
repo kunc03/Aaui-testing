@@ -81,6 +81,7 @@ class Overview extends React.Component {
 
   handleDynamicDate = (e, i) => {
     let newObj = [...this.state.silabus];
+    console.log('e', e)
     newObj[i].start_date = e;
     this.setState({ silabus: newObj });
   }
@@ -321,7 +322,7 @@ class Overview extends React.Component {
                                 {
                                   item.start_date ?
                                     <>
-                                      {moment.tz(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
+                                      {moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
                                     </>
                                   :
                                     <span className="label label-primary">Upload Materi</span>
