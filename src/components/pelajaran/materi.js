@@ -322,7 +322,7 @@ class Overview extends React.Component {
                                 {
                                   item.start_date ?
                                     <>
-                                      {moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
+                                      {moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm')}
                                     </>
                                   :
                                     <span className="label label-primary">Upload Materi</span>
@@ -414,7 +414,7 @@ class Overview extends React.Component {
                                       <div className="col-sm-4 bordered">
                                         <div className="form-group">
                                           <label>Date</label><br/>
-                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).utc().format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
                                           <label className="mb-3">Webcam</label><br/>
@@ -551,7 +551,7 @@ class Overview extends React.Component {
                                 {item.sesi}
                               </td>
                               <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                              <td className="text-center">{item.start_date ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
+                              <td className="text-center">{item.start_date ? moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
                               <td className="text-center">{item.durasi} menit</td>
                               <td className="text-center">
@@ -637,7 +637,7 @@ class Overview extends React.Component {
                                   <div className="col-sm-6 bordered">
                                     <div className="form-group">
                                       <label>Date</label><br/>
-                                      <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment(item.start_date).format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                      <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                     </div>
                                     <div className="form-group">
                                       <label className="mb-3">Webcam</label><br/>
