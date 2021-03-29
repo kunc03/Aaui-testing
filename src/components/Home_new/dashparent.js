@@ -281,6 +281,13 @@ class DashParent extends Component {
                       </Card>
                     </div>
 
+                    <div className="col-sm-6">
+                      {
+                        this.state.myMurid.hasOwnProperty('user_id_murid') &&
+                        <CalenderNew grupName="murid" muridId={this.state.myMurid.user_id_murid} lists={this.state.event} />
+                      }
+                    </div>
+
                     <div className="col-sm-12">
                       <Card>
                         <Card.Body>
@@ -369,13 +376,6 @@ class DashParent extends Component {
 
                       </Modal.Body>
                     </Modal>
-                    </div>
-
-                    <div className="col-sm-6">
-                      {
-                        this.state.myMurid.hasOwnProperty('user_id_murid') &&
-                        <CalenderNew grupName="murid" muridId={this.state.myMurid.user_id_murid} lists={this.state.event} />
-                      }
                     </div>
 
                   </div>

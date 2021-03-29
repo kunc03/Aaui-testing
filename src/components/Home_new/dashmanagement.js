@@ -194,7 +194,7 @@ class DashGuru extends Component {
 
   getDashGuru() {
     // console.log(Storage.get('widgetManagement'), 'gasss');
-    if (Storage.get('widgetManagement')) {
+    if (Storage.get('widgetManagement').dataWidget) {
       this.setState({
         dataWidget: Storage.get('widgetManagement').dataWidget
       })
@@ -244,10 +244,6 @@ class DashGuru extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-
-                    <div className="col-sm-6">
-                      <TableMeetings allMeeting={true} access_project_admin={access_project_admin} projectId='0' />
-                    </div>
 
                     <div class="col-sm-6">
                       <div className="card">

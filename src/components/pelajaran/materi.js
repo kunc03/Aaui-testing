@@ -321,7 +321,7 @@ class Overview extends React.Component {
                                 {
                                   item.start_date ?
                                     <>
-                                      {moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                      {moment.tz(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
                                     </>
                                   :
                                     <span className="label label-primary">Upload Materi</span>
