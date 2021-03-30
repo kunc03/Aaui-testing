@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 
+import KelasKu from '../detail_kelas/kelasku';
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Timeline from '../daftar_pelajaran/timeline';
 import Progress from '../daftar_pelajaran/progress';
@@ -16,6 +17,7 @@ const KuisDetail = props => <Detail {...props} role={'murid'} tipe="kuis" />;
 const UjianDetail = props => <Detail {...props} role={'murid'} tipe="ujian" />;
 
 const titleTabs = [
+  {name: 'Kelas', link: '/kelas', component: KelasKu},
   {name: 'Progress', link: '/timeline', component: Progress},
   {name: 'Schedule', link: '/mata-pelajaran', component: MataPelajaran},
   {name: 'Task', link: '/tugas', component: Tugas},
