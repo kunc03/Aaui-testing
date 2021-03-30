@@ -148,7 +148,7 @@ class Overview extends React.Component {
                                 <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                     <div class="card-body">
                                         <div class="float-right text-muted f-12">
-                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).utc().format('DD/MM/YYYY HH:mm') : moment(item.start_date).utc().format('DD/MM/YYYY HH:mm')}
+                                          {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
                                         </div>
                                         <OverlayTrigger
                                           placement="top"
