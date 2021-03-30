@@ -213,7 +213,7 @@ class Overview extends React.Component {
       let form = {
         companyId: Storage.get('user').data.company_id,
         pelajaranId: item[0].pelajaran_id,
-        jadwalId: item[0].jadwal_id,
+        jadwalId: this.state.jadwalId,
         number: item[0].sesi,
         title: item[0].chapter_title,
         content: item[0].chapter_body,
