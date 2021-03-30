@@ -7,11 +7,14 @@ import { ThemeProvider } from 'styled-components';
 import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
 
 import Mengajar from '../ruangan_mengajar/mengajar'
+import Kelas from '../ruangan_mengajar/kelas'
 
 const MengajarComponent = props => <Mengajar {...props} role={Storage.get('user').data.grup_name} />;
+const KelasComponent = props => <Kelas {...props} role={Storage.get('user').data.grup_name} />;
 
 const titleTabs = [
   { name: 'Ruangan Mengajar', link: '/mengajar/:jadwalId/:jenis/:sesiId', component: MengajarComponent},
+  { name: 'Ruangan Kelas', link: '/kelas/:kelasId', component: KelasComponent},
 ]
 
 class LearningRuangan extends React.Component {

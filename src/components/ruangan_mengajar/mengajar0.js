@@ -186,8 +186,7 @@ class Mengajar extends React.Component {
     let http = bbb.http
 
     // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
-    // let meetingID = `${this.state.jadwalId}-${this.state.jenis}-${this.state.sesiId}`;
-    let meetingID = `${this.state.infoJadwal.kelas_id}`;
+    let meetingID = `${this.state.jadwalId}-${this.state.jenis}-${this.state.sesiId}`;
     let meetingInfo = api.monitoring.getMeetingInfo(meetingID)
     console.log('meetingInfo: ', meetingInfo)
 
@@ -283,14 +282,6 @@ class Mengajar extends React.Component {
 
       if (data.event == 'mulai' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
         this.setState({ startPertemuan: data.isStart })
-      }
-
-      if (data.event == 'submit-tugas-file' && data.sesiId == this.state.sesiId && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
-        this.fetchMengumpulkan(data.examId)
-      }
-
-      if(data.event == 'submit-kuis-ujian' && data.companyId == Storage.get('user').data.company_id) {
-        this.fetchScore(data.examId)
       }
     })
   }
@@ -559,28 +550,6 @@ class Mengajar extends React.Component {
     this.setState({ examId })
   }
 
-  mulaiKelas = e => {
-    e.preventDefault();
-    this.props.socket.emit('send', {
-      event: 'mulai-kelas',
-      jenis: this.state.jenis,
-      jadwalId: this.state.jadwalId,
-      companyId: Storage.get('user').data.company_id,
-      chapterId: this.state.sesiId,
-    })
-  }
-
-  akhiriKelas = e => {
-    e.preventDefault();
-    this.props.socket.emit('send', {
-      event: 'akhiri-kelas',
-      jenis: this.state.jenis,
-      jadwalId: this.state.jadwalId,
-      companyId: Storage.get('user').data.company_id,
-      chapterId: this.state.sesiId,
-    })
-  }
-
   render() {
 
     console.log('state: ', this.state);
@@ -601,9 +570,9 @@ class Mengajar extends React.Component {
                     </button>
 
                     {
-                      this.state.role === "guru" &&
-                      <button onClick={this.akhiriKelas} className={'float-right btn btn-icademy-danger mr-2 mt-2'}>
-                        <i className={'fa fa-stop-circle'}></i> Akhiri
+                      this.state.jenis === "materi" && this.state.role === "guru" &&
+                      <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-danger mr-2 mt-2">
+                        <i className="fa fa-stop-circle"></i> Akhiri
                       </button>
                     }
 
@@ -615,13 +584,6 @@ class Mengajar extends React.Component {
                       this.state.role === "guru" &&
                       <button onClick={this.openInfoKelas} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
                         <i className={'fa fa-list-alt'}></i> Info
-                      </button>
-                    }
-
-                    {
-                      this.state.role === "guru" &&
-                      <button onClick={this.mulaiKelas} className={'float-right btn btn-icademy-primary mr-2 mt-2'}>
-                        <i className={'fa fa-list-alt'}></i> Mulai
                       </button>
                     }
 

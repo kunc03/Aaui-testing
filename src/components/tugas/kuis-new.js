@@ -143,6 +143,12 @@ class UjianClass extends React.Component {
         score: res.data.result.score
       })
 
+      this.props.socket.emit('send', {
+        event: `submit-kuis-ujian`,
+        companyId: Storage.get('user').data.company_id,
+        examId: this.state.examId
+      })
+
       this.fetchSubmit();
     })
   }

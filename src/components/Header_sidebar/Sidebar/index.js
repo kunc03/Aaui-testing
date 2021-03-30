@@ -87,6 +87,7 @@ class SidebarClass extends Component {
     let menuClients = {
       murid: {
         submenu: [
+          { iconOn: 'info-on.svg', iconOff: 'ujianoff.svg', label: 'My Class', link: '/murid/kelas' },
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Subjects', link: '/murid/mata-pelajaran' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Task', link: '/murid/tugas' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Quiz', link: '/murid/kuis' },
