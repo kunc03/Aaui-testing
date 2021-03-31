@@ -350,7 +350,7 @@ class DashGuru extends Component {
                                       <td>
                                         {
                                           item.event === 'materi' &&
-                                          <Link style={{ padding: '2px 8px' }} class={`btn btn-${item.start >= new Date() ? 'success' : 'info'}`} to={`/ruangan/mengajar/${item.jadwal}/materi/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</Link>
+                                          <a style={{ padding: '2px 8px' }} class={`btn btn-${item.start >= new Date() ? 'success' : 'info'}`} target="_blank" href={`/ruangan/mengajar/${item.jadwal}/materi/${item.sesi}`}>{item.start >= new Date() ? 'Start' : 'Done'}</a>
                                         }
                                         {
                                           item.event === 'tugas' &&

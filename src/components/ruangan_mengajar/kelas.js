@@ -185,7 +185,8 @@ class Mengajar extends React.Component {
         this.props.socket.emit('send', {
           event: 'absen',
           jadwalId: jadwalId,
-          companyId: Storage.get('user').data.company_id
+          companyId: Storage.get('user').data.company_id,
+          muridNama: Storage.get('user').data.user,
         })
       }
     })
@@ -247,7 +248,37 @@ class Mengajar extends React.Component {
           jadwalId: this.state.jadwalId,
           sesiId: this.state.sesiId,
           companyId: Storage.get('user').data.company_id,
-          examId: this.state.examId
+          examId: this.state.examId,
+          muridNama: Storage.get('user').data.user,
+        })
+
+        this.clearForm();
+      }
+    })
+  }
+
+  submitTugasLangsung = e => {
+    e.preventDefault()
+    let form = {
+      jawaban: this.state.jawaban,
+      userId: Storage.get('user').data.user_id,
+      examId: this.state.examId
+    }
+    API.post(`${API_SERVER}v2/tugas-murid/submit-langsung`, form).then(res => {
+      if(res.data.error) {
+        toast.warning(`Error: submit tugas`)
+      }
+      else {
+        toast.success(`Berhasil mengumpulkan tugas`);
+        this.fetchJadwal(this.state.jadwalId, this.state.jenis);
+
+        this.props.socket.emit('send', {
+          event: 'submit-tugas-file',
+          jadwalId: this.state.jadwalId,
+          sesiId: this.state.sesiId,
+          companyId: Storage.get('user').data.company_id,
+          examId: this.state.examId,
+          muridNama: Storage.get('user').data.user,
         })
 
         this.clearForm();
@@ -267,6 +298,7 @@ class Mengajar extends React.Component {
 
     this.props.socket.on('broadcast', data => {
       if(data.event == 'mulai-kelas' && data.companyId == Storage.get('user').data.company_id) {
+        toast.info(`${data.guruNama} memasuki ruangan.`)
         Storage.set('ruangan-kelas', {
           jadwalId: data.jadwalId, sesiId: data.chapterId, jenis: data.jenis
         })
@@ -280,6 +312,7 @@ class Mengajar extends React.Component {
       }
 
       if(data.event == 'akhiri-kelas' && data.jadwalId == this.state.jadwalId && data.jenis == this.state.jenis && data.chapterId == this.state.sesiId) {
+        toast.info(`${data.guruNama} telah meninggalkan ruangan.`)
         this.clearKonten()
         localStorage.removeItem('ruangan-kelas');
       }
@@ -441,16 +474,12 @@ class Mengajar extends React.Component {
                       this.state.kelasInfo ? this.state.kelasInfo.kelas_nama : 'Kelas tidak ditemukan'
                     }
 
-                    <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
-                      <i className="fa fa-sign-out-alt"></i> Keluar
-                    </button>
-
                     <button onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning mr-2 mt-2' : 'float-right btn btn-icademy-primary mr-2 mt-2'}>
                       <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
                     </button>
 
                   </h4>
-                  <span>Pengajar : {this.state.infoJadwal ? this.state.kelasInfo.tahun_ajaran : null}</span>
+                  <span>{this.state.infoJadwal ? this.state.kelasInfo.tahun_ajaran : null}</span>
                 </div>
 
                 {

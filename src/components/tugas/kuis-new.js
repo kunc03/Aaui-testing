@@ -146,7 +146,8 @@ class UjianClass extends React.Component {
       this.props.socket.emit('send', {
         event: `submit-kuis-ujian`,
         companyId: Storage.get('user').data.company_id,
-        examId: this.state.examId
+        examId: this.state.examId,
+        muridNama: Storage.get('user').data.user,
       })
 
       this.fetchSubmit();
