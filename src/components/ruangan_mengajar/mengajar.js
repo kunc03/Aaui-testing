@@ -278,6 +278,7 @@ class Mengajar extends React.Component {
       }
 
       if (data.event == 'absen' && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
+        toast.info(`${data.muridNama} hadir dalam kelas`)
         this.fetchMurid(this.state.jadwalId);
       }
 
@@ -286,10 +287,12 @@ class Mengajar extends React.Component {
       }
 
       if (data.event == 'submit-tugas-file' && data.sesiId == this.state.sesiId && data.jadwalId == this.state.jadwalId && data.companyId == Storage.get('user').data.company_id) {
+        toast.info(`${data.muridNama} telah mengumpulkan tugas`)
         this.fetchMengumpulkan(data.examId)
       }
 
       if(data.event == 'submit-kuis-ujian' && data.companyId == Storage.get('user').data.company_id) {
+        toast.info(`${data.muridNama} telah mengerjakan soal.`)
         this.fetchScore(data.examId)
       }
     })
@@ -561,12 +564,14 @@ class Mengajar extends React.Component {
 
   mulaiKelas = e => {
     e.preventDefault();
+    toast.info(`Kelas dimulai dan materi sudah diberikan ke murid.`)
     this.props.socket.emit('send', {
       event: 'mulai-kelas',
       jenis: this.state.jenis,
       jadwalId: this.state.jadwalId,
       companyId: Storage.get('user').data.company_id,
       chapterId: this.state.sesiId,
+      guruNama: Storage.get('user').data.user,
     })
   }
 
@@ -578,7 +583,9 @@ class Mengajar extends React.Component {
       jadwalId: this.state.jadwalId,
       companyId: Storage.get('user').data.company_id,
       chapterId: this.state.sesiId,
+      guruNama: Storage.get('user').data.user,
     })
+    window.close()
   }
 
   render() {
@@ -596,14 +603,10 @@ class Mengajar extends React.Component {
                   <h4 className="header-kartu">
                     {this.state.infoJadwal.nama_pelajaran}
 
-                    <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
-                      <i className="fa fa-sign-out-alt"></i> Keluar
-                    </button>
-
                     {
                       this.state.role === "guru" &&
-                      <button onClick={this.akhiriKelas} className={'float-right btn btn-icademy-danger mr-2 mt-2'}>
-                        <i className={'fa fa-stop-circle'}></i> Akhiri
+                      <button onClick={this.akhiriKelas} className="float-right btn btn-icademy-danger mr-2 mt-2">
+                        <i className="fa fa-sign-out-alt"></i> Keluar
                       </button>
                     }
 
