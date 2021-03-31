@@ -9,6 +9,7 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Modal } from 'react-bootstrap';
+import Moment from 'moment-timezone';
 
 class User extends Component {
   constructor(props) {
@@ -159,8 +160,9 @@ class User extends Component {
         },
       },
       {
-        name: 'Registration Number',
-        selector: 'id',
+        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        name: 'Created at',
+        selector: 'created_at',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -281,7 +283,6 @@ class User extends Component {
                                                         columns={columns}
                                                         data={data}
                                                         highlightOnHover
-                                                        defaultSortField="name"
                                                         pagination
                                                         fixedHeader
                                                         />
