@@ -312,7 +312,7 @@ class Mengajar extends React.Component {
       }
 
       if(data.event == 'akhiri-kelas' && data.jadwalId == this.state.jadwalId && data.jenis == this.state.jenis && data.chapterId == this.state.sesiId) {
-        toast.info(`${data.guruNama} telah meninggalkan kelas.`)
+        toast.info(`${data.guruNama} telah meninggalkan ruangan.`)
         this.clearKonten()
         localStorage.removeItem('ruangan-kelas');
       }
@@ -473,10 +473,6 @@ class Mengajar extends React.Component {
                     {
                       this.state.kelasInfo ? this.state.kelasInfo.kelas_nama : 'Kelas tidak ditemukan'
                     }
-
-                    <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
-                      <i className="fa fa-sign-out-alt"></i> Keluar
-                    </button>
 
                     <button onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning mr-2 mt-2' : 'float-right btn btn-icademy-primary mr-2 mt-2'}>
                       <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
