@@ -32,6 +32,12 @@
   width: 100%;
   border: 0px;
   margin-bottom: 12px;
+  background : #f3f3f3;
+}
+
+.borderLeftCalender {
+  border-left-color: antiquewhite;
+    border-left: solid 1px #f3f3f3;
 }
 
 #new-toolbox > div.toolbox-content > div.button-group-right > div:nth-child(2) { display: none; }
