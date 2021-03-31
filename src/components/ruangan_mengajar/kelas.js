@@ -150,8 +150,8 @@ class Mengajar extends React.Component {
     })
   }
 
-  fetchChapter(chapterId) {
-    API.get(`${API_SERVER}v2/chapter/${chapterId}`).then(res => {
+  fetchChapter(chapterId, userId) {
+    API.get(`${API_SERVER}v2/chapter/${chapterId}?userId=${userId}`).then(res => {
       if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
       this.setState({ sesiId: chapterId, infoChapter: res.data.result })
@@ -242,6 +242,7 @@ class Mengajar extends React.Component {
       else {
         toast.success(`Berhasil mengumpulkan tugas`);
         this.fetchJadwal(this.state.jadwalId, this.state.jenis);
+        this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
 
         this.props.socket.emit('send', {
           event: 'submit-tugas-file',
@@ -271,6 +272,7 @@ class Mengajar extends React.Component {
       else {
         toast.success(`Berhasil mengumpulkan tugas`);
         this.fetchJadwal(this.state.jadwalId, this.state.jenis);
+        this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
 
         this.props.socket.emit('send', {
           event: 'submit-tugas-file',
@@ -292,7 +294,7 @@ class Mengajar extends React.Component {
 
     if(Storage.get('ruangan-kelas').jadwalId && Storage.get('ruangan-kelas').sesiId && Storage.get('ruangan-kelas').jenis) {
       this.fetchJadwal(Storage.get('ruangan-kelas').jadwalId, Storage.get('ruangan-kelas').jenis)
-      this.fetchChapter(Storage.get('ruangan-kelas').sesiId)
+      this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
       this.cekKehadiran(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
     }
 
@@ -303,7 +305,7 @@ class Mengajar extends React.Component {
           jadwalId: data.jadwalId, sesiId: data.chapterId, jenis: data.jenis
         })
         this.fetchJadwal(data.jadwalId, data.jenis)
-        this.fetchChapter(data.chapterId)
+        this.fetchChapter(data.chapterId, Storage.get('user').data.user_id)
         this.cekKehadiran(data.chapterId, Storage.get('user').data.user_id)
       }
 
@@ -638,22 +640,18 @@ class Mengajar extends React.Component {
                                 </tr>
                                 <tr>
                                   <td colSpan="2">
-                                    {/* <button className="btn btn-v2 btn-info mr-2">More</button> */}
 
                                     {
-                                      this.state.role == 'murid' && this.state.scoreTugas ?
-                                      <div className="text-center" style={{padding: '8px 26px'}}>
+                                      item.pengumpulan ?
+                                      <div style={{padding: '8px 26px'}}>
                                         <span>Score</span>
-                                        <h1>{this.state.scoreTugas}</h1>
+                                        <h1>{item.score}</h1>
                                       </div>
-                                      : null
-                                    }
-
-                                    {
-                                      moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
-                                        <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
                                       :
-                                        'Belum Saatnya'
+                                        moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
+                                          <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        :
+                                          'Belum Saatnya'
                                     }
 
                                   </td>
