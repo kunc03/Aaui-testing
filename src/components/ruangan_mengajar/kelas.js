@@ -155,6 +155,9 @@ class Mengajar extends React.Component {
       if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
       this.setState({ sesiId: chapterId, infoChapter: res.data.result })
+      if(res.data.result.tatapmuka == 1) {
+        this.fetchBBB(this.state.kelasId)
+      }
     })
   }
 
@@ -290,7 +293,7 @@ class Mengajar extends React.Component {
 
   componentDidMount() {
     this.fetchKelas(this.state.kelasId);
-    this.fetchBBB(this.state.kelasId);
+    // this.fetchBBB(this.state.kelasId);
 
     if(Storage.get('ruangan-kelas').jadwalId && Storage.get('ruangan-kelas').sesiId && Storage.get('ruangan-kelas').jenis) {
       this.fetchJadwal(Storage.get('ruangan-kelas').jadwalId, Storage.get('ruangan-kelas').jenis)
@@ -347,6 +350,8 @@ class Mengajar extends React.Component {
       isSubmit: false,
 
       isModalTugas: false,
+
+      joinUrl: ''
 
     })
   }
@@ -491,7 +496,11 @@ class Mengajar extends React.Component {
                           <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
                         }
                       </div>
-                    : null
+                    :
+                      <div className="card-body p-1 text-center">
+                        <img className="m-2" src={`/assets/images/component/tes.png`} />
+                        <p className="m-2">Saat ini Anda berada dikelas.</p>
+                      </div>
                 }
 
               </div>

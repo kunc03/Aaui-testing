@@ -262,7 +262,11 @@ class Registasi extends React.Component {
                                       <i className="fa"></i> {' '}
                                       {item.name}
                                     </h5>
-                                    <button onClick={this.formAddMapel} data-id={item.id} className="btn btn-v2 btn-primary float-right">Lesson</button>
+                                    {
+                                      ['guru','admin'].includes(Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : '') ?
+                                        <button onClick={this.formAddMapel} data-id={item.id} className="btn btn-v2 btn-primary float-right">Lesson</button>
+                                      : null
+                                    }
                                     <i onClick={this.selectKurikulum} data-id={item.id} data-name={item.name} style={{cursor: 'pointer'}} className="fa fa-edit mr-2"></i>
                                     <i onClick={this.deleteKurikulum} data-id={item.id} style={{cursor: 'pointer'}} className="fa fa-trash"></i>
                                   </Card.Header>

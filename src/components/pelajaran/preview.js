@@ -173,7 +173,7 @@ class Overview extends React.Component {
                                           {
                                             (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
                                               <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
-                                                <i className="fa fa-tasks"></i> {row.exam_title}
+                                                <i className="fa fa-tasks"></i> Lihat {row.exam_title}
                                               </button>
                                             ))
                                           }
@@ -181,7 +181,7 @@ class Overview extends React.Component {
                                           {
                                             (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
                                               <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
-                                                <i className="fa fa-tasks"></i> {row.exam_title}
+                                                <i className="fa fa-tasks"></i> Lihat {row.exam_title}
                                               </button>
                                             ))
                                           }
@@ -189,7 +189,7 @@ class Overview extends React.Component {
                                           {
                                             (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
                                               <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
-                                                <i className="fa fa-tasks"></i> {row.exam_title}
+                                                <i className="fa fa-tasks"></i> Lihat {row.exam_title}
                                               </button>
                                             ))
                                           }
