@@ -150,18 +150,56 @@ class Overview extends React.Component {
                                         <div class="float-right text-muted f-12">
                                           {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
                                         </div>
-                                        <OverlayTrigger
-                                          placement="top"
-                                          delay={{ show: 250, hide: 400 }}
-                                          overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Silahkan upload materi dan piilh tanggalnya di Tab Sesi.'}</Tooltip>}
-                                        >
-                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
-                                            {
-                                              [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
-                                            }
-                                            {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
-                                          </h4>
-                                        </OverlayTrigger>
+                                        {
+                                          item.jenis == 0 ?
+                                            <OverlayTrigger
+                                              placement="top"
+                                              delay={{ show: 250, hide: 400 }}
+                                              overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Silahkan upload materi dan pilih tanggalnya di Tab Sesi.'}</Tooltip>}
+                                            >
+                                              <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                                {
+                                                  [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                                }
+                                                {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                              </h4>
+                                            </OverlayTrigger>
+                                          : null
+                                        }
+
+                                        {
+                                          item.jenis == 1 ?
+                                            <OverlayTrigger
+                                              placement="top"
+                                              delay={{ show: 250, hide: 400 }}
+                                              overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih kuis yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
+                                            >
+                                              <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                                {
+                                                  [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                                }
+                                                {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                              </h4>
+                                            </OverlayTrigger>
+                                          : null
+                                        }
+
+                                        {
+                                          item.jenis == 2 ?
+                                            <OverlayTrigger
+                                              placement="top"
+                                              delay={{ show: 250, hide: 400 }}
+                                              overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih ujian yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
+                                            >
+                                              <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                                {
+                                                  [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                                }
+                                                {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                              </h4>
+                                            </OverlayTrigger>
+                                          : null
+                                        }
 
                                         {
                                           item.topik &&

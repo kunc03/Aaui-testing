@@ -63,6 +63,8 @@ class Mengajar extends React.Component {
     isSubmit: false,
 
     isModalTugas: false,
+
+    waktuPengerjaan: 0,
   }
 
   fetchKelas(kelasId) {
@@ -154,7 +156,12 @@ class Mengajar extends React.Component {
     API.get(`${API_SERVER}v2/chapter/${chapterId}?userId=${userId}`).then(res => {
       if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
-      this.setState({ sesiId: chapterId, infoChapter: res.data.result })
+      this.setState({
+        sesiId: chapterId,
+        infoChapter: res.data.result,
+        waktuPengerjaan: localStorage.getItem('waktuPengerjaan') ? parseInt(localStorage.getItem('waktuPengerjaan')) : (res.data.result.durasi * 60)
+      })
+      
       if(res.data.result.tatapmuka == 1) {
         this.fetchBBB(this.state.kelasId)
       }
@@ -292,6 +299,7 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
+
     this.fetchKelas(this.state.kelasId);
     // this.fetchBBB(this.state.kelasId);
 
@@ -759,7 +767,7 @@ class Mengajar extends React.Component {
 
                     {
                       (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.examId ?
-                      <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
+                      <Detail waktuPengerjaan={this.state.waktuPengerjaan} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
                       : null
                     }
                   </div>
