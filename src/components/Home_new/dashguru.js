@@ -161,8 +161,8 @@ class DashGuru extends Component {
     API.get(`${API_SERVER}v2/events/guru/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) console.log(`Error: fetch events`)
 
-      // console.log('mengajar: ', res.data.result.mengajar);
-      let mengajar = res.data.result.mengajar.map(item => {
+      console.log('mengajar: ', res.data.result.mengajar);
+      let mengajar = res.data.result.mengajar.filter(item => item.chapter_title != null).map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -298,7 +298,7 @@ class DashGuru extends Component {
   }
 
   render() {
-    // console.log(`event1: `, this.state.event)
+    console.log(`event1: `, this.state.event)
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
     let sort = this.state.event.sort((a, b) => a.start - b.start);
