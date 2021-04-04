@@ -7,6 +7,7 @@ import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 
 import SocketContext from '../../socket';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 class UjianClass extends React.Component {
 
@@ -14,6 +15,7 @@ class UjianClass extends React.Component {
     role: this.props.role,
     tipe: this.props.tipe,
     examId: this.props.examId,
+    waktuPengerjaan: this.props.waktuPengerjaan ? this.props.waktuPengerjaan : 0,
 
     infoExam: {},
     examSoal: [],
@@ -166,6 +168,34 @@ class UjianClass extends React.Component {
             <div className="card-body" style={{ padding: '12px' }}>
 
               <h4 className="mb-3">{this.state.infoExam.title}</h4>
+
+              {
+                this.state.tipe == 'ujian' && this.state.role === "murid" && this.state.waktuPengerjaan !== 0 &&
+                  <CountdownCircleTimer
+                    isPlaying
+                    duration={this.state.waktuPengerjaan}
+                    colors={[
+                      ['#004777', 0.33],
+                      ['#F7B801', 0.33],
+                      ['#A30000', 0.33],
+                    ]}
+                    renderAriaTime={(remainingTime, elapsedTime) => {
+                      localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
+                    }}
+                    children={({ remainingTime }) => {
+                      const hours = Math.floor(remainingTime / 3600)
+                      const minutes = Math.floor((remainingTime % 3600) / 60)
+                      const seconds = remainingTime % 60
+
+                      return `${hours}:${minutes}:${seconds}`
+                    }}
+                    size={80}
+                    strokeWidth={4}
+                    onComplete={() => {
+                      this.saveJawaban()
+                    }}
+                  />
+              }
 
               {
                 this.state.score != 0 ?
