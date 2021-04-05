@@ -62,6 +62,7 @@ export default class WebinarLive extends Component {
     jawaban: [],
     companyId: '',
     qnaPeserta: '',
+    loadingTest: false,
 
 		zoomUrl: '',
 
@@ -574,12 +575,15 @@ export default class WebinarLive extends Component {
     })
   }
   fetchResultPretest(){
+    this.setState({loadingTest: true})
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPretest: res.data.result})
+          this.setState({resultPretest: res.data.result}, ()=>{
+            this.setState({loadingTest: false})
+          })
         }
       }
     })
@@ -588,12 +592,15 @@ export default class WebinarLive extends Component {
     this.setState({modalResultPretest: true})
   }
   fetchResultPosttest(){
+    this.setState({loadingTest: true})
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
       if(res.status === 200) {
         if(res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPosttest: res.data.result})
+          this.setState({resultPosttest: res.data.result},()=>{
+            this.setState({loadingTest: false})
+          })
         }
       }
     })
@@ -1309,21 +1316,28 @@ export default class WebinarLive extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Nilai : {this.state.resultPretest.nilai}</div>
-            <div>Jawaban Benar : {this.state.resultPretest.benar}</div>
-            <div>Jawaban Salah : {this.state.resultPretest.salah}</div>
             {
-                  this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
-                    <div className="mb-3 mt-3">
-                      <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
-                      {
-                        item.options.map(items => (
-                          <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
-                        ))
-                         }
-                    </div>
-                  ))
-                  }
+              this.state.loadingTest || this.state.resultPretest.nilai === 'NaN' ?
+              <div>Loading...</div>
+              :
+              <div>
+              <div>Nilai : {this.state.resultPretest.nilai}</div>
+              <div>Jawaban Benar : {this.state.resultPretest.benar}</div>
+              <div>Jawaban Salah : {this.state.resultPretest.salah}</div>
+              {
+                    this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
+                      <div className="mb-3 mt-3">
+                        <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
+                        {
+                          item.options.map(items => (
+                            <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
+                          ))
+                           }
+                      </div>
+                    ))
+                    }
+              </div>
+            }
           </Modal.Body>
         </Modal>
         <Modal
@@ -1338,6 +1352,11 @@ export default class WebinarLive extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            {
+              this.state.loadingTest || this.state.resultPosttest.nilai === 'NaN' ?
+              <div>Loading...</div>
+              :
+              <div>
             <div>Nilai : {this.state.resultPosttest.nilai}</div>
             <div>Jawaban Benar : {this.state.resultPosttest.benar}</div>
             <div>Jawaban Salah : {this.state.resultPosttest.salah}</div>
@@ -1353,6 +1372,8 @@ export default class WebinarLive extends Component {
                     </div>
                   ))
                   }
+              </div>
+            }
           </Modal.Body>
         </Modal>
       </div>
