@@ -305,7 +305,7 @@ class FormCourse extends Component {
         title : "",
         content : "",
         media : null,
-        sort : this.state.data.session.length,
+        sort : this.state.data.session.length+1,
         media : []
     })
   }

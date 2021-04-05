@@ -12049,6 +12049,15 @@ div.code-toolbar > .toolbar span:hover {
   float:left;
   clear:both;
 }
+.form-field-top-label > .MultiSelect{
+  float:left;
+  clear:both;
+  width:100%;
+}
+.form-field-top-label > .MultiSelect > .Header, .Header__value, .Header__controls{
+  height:55px !important;
+  line-height: 56px !important;
+}
 .form-field-top-label > .form-control{
   padding:18px 20px;
   border: 1px dashed #DDDDDD;
@@ -12215,4 +12224,16 @@ required {
 .training-session-media-list > .fa-paperclip {
   margin-right:5px;
   cursor:pointer;
+}
+
+.form-toggle-switch{
+  float:left;
+  clear:both;
+}
+
+.form-notes{
+  float:left;
+  clear:both;
+  color:#848484;
+  font-size:12px;
 }
