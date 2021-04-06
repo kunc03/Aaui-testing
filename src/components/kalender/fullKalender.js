@@ -6,14 +6,15 @@ import MinCalender from 'react-calendar';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-calendar/dist/Calendar.css';
+import { MultiSelect } from 'react-sm-select';
+import ToggleSwitch from "react-switch";
 
 import moment from 'moment';
-import { dataKalender } from '../../modul/data';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
-import { OverlayTrigger, Modal } from 'react-bootstrap';
-import { Popover } from 'react-bootstrap';
+import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import Event from './_itemModal';
-import ReactFullScreenElement from "react-fullscreen-element";
+import { Editor } from '@tinymce/tinymce-react';
+
 const localizer = momentLocalizer(moment);
 
 class FullKalenderNew extends Component {
@@ -25,6 +26,35 @@ class FullKalenderNew extends Component {
     },
     event: [],
     fullscreen: false,
+    agendaShow: false,
+    limited: false,
+
+    optionsProjectAdmin: [],
+    valueProjectAdmin: [],
+    valueUser: [],
+  }
+
+  onChangeInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
+      this.setState({ [name]: value });
+    }
+  }
+
+  toggleSwitch(checked) {
+    this.setState({ limited: !this.state.limited });
+  }
+
+  handleShow() {
+    this.setState({ agendaShow: true });
+  }
+
+  handleClose() {
+    this.setState({ agendaShow: false });
   }
 
   fetchUserCalendar() {
@@ -131,9 +161,17 @@ class FullKalenderNew extends Component {
                       <div className="p-10 "> <i className="fa fa-dropdown"></i> <b>My Calender</b></div>
 
                       <div className="p-10">
-                        <p><input type="radio"></input> calendar </p>
-                        <input type="radio"></input> Unitade Stade
-                            </div>
+                        <span>
+                          <input type="radio"></input> &nbsp;
+                          <button className="btn btn-primary">Calendar</button>
+                        </span>
+                        <br />
+                        <span>
+                          <input type="radio"></input> &nbsp;
+                          <button className="btn btn-primary" onClick={this.handleShow.bind(this)}>My Agenda</button>
+
+                        </span>
+                      </div>
 
                     </div>
                     <div className="col-sm-7">
@@ -160,9 +198,18 @@ class FullKalenderNew extends Component {
                         <span className="f-w-900 f-18 fc-grey ">Fri, Feb 19</span>
                         <span className=" f-14 float-right">40</span>
                       </div>
-                      <div className="" style={{ textAlign: 'center', marginTop: '15vh' }}>
-                        <h4>Nothing Planed For Today </h4>
+
+                      <div className="row" style={{ marginTop: '1vh' }}>
+                        <div className="agenda-chat">
+                          <span style={{ width: '-webkit-fill-available' }}>
+                            <small>1.00 PM &nbsp; </small>
+                            <b className="fc-blue "> Webinar Risiko </b>
+                            <br />
+                            <small className="fc-muted mt-1"> 30 min</small>
+                          </span>
+                        </div>
                       </div>
+
                     </div>
                   </div>
 
@@ -178,11 +225,130 @@ class FullKalenderNew extends Component {
                   </div>
 
                 </div>
+
+                <Modal show={this.state.agendaShow} onHide={this.handleClose.bind(this)} dialogClassName="modal-lg">
+                  <Modal.Header closeButton>
+                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                      My Agenda
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Card className="cardku">
+                      <Card.Body>
+                        <Row>
+                          <Col sm={8}>
+                            <Form.Group controlId="formJudul">
+                              <Form.Label className="f-w-bold">
+                                Add Title
+                              </Form.Label>
+                              <div className="input-group mb-4">
+                                <input
+                                  type="text"
+                                  name="folderName"
+                                  className="form-control"
+                                  placeholder="Nama Agenda"
+                                  onChange={this.onChangeInput}
+                                  required
+                                />
+                              </div>
+                            </Form.Group>
+
+                            <Form.Group controlId="formJudul">
+                              <Form.Label className="f-w-bold">
+                                Invite Attendance
+                              </Form.Label>
+                              <MultiSelect
+                                id="moderator"
+                                options={this.state.optionsProjectAdmin}
+                                value={this.state.valueProjectAdmin}
+                                onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
+                                mode="tags"
+                                required
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Pilih "
+                              />
+                            </Form.Group>
+                            <Form.Group controlId="formJudul">
+                              <Form.Label className="f-w-bold">
+                                All day
+                              </Form.Label>
+                              <div style={{ width: '100%' }}>
+                                <Row>
+                                  <Col sm={10}>
+                                    <div className="input-group mb-4">
+                                      <input
+                                        type="date"
+                                        className="form-control"
+                                        onChange={this.onChangeInput}
+                                        required
+                                      />
+                                    </div>
+                                  </Col>
+                                  <Col sm={2}>
+                                    <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
+
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Form.Group>
+
+                            <Editor
+                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                              initialValue={this.state.body}
+                              init={{
+                                height: 1000,
+                                menubar: false,
+                                plugins: [
+                                  "advlist autolink lists link image charmap print preview anchor",
+                                  "searchreplace visualblocks code fullscreen",
+                                  "insertdatetime media table paste code help wordcount"
+                                ],
+                                toolbar:
+                                  "undo redo | formatselect | bold italic backcolor | \
+                                   alignleft aligncenter alignright alignjustify | \
+                                    bullist numlist outdent indent | removeformat | help"
+                              }}
+                              onChange={this.onChangeTinyMce}
+                            />
+
+                          </Col>
+                          <Col sm={4}>
+                            <Calendar
+                              selectable
+                              localizer={localizer}
+                              events={event}
+                              defaultView={Views.DAY}
+                              scrollToTime={new Date(1970, 1, 1, 6)}
+                            />
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Modal.Footer>
+                        <button
+                          className="btn btm-icademy-primary btn-icademy-grey"
+                          onClick={this.handleClose.bind(this)}
+                        >
+                          Close
+                      </button>
+                        <button
+                          className="btn btn-icademy-primary"
+                          onClick={this.handleClose.bind(this)}
+                        >
+                          <i className="fa fa-save"></i>
+                        Save
+                      </button>
+                      </Modal.Footer>
+                    </Card>
+                  </Modal.Body>
+
+                </Modal>
+
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </div >
     );
 
 
