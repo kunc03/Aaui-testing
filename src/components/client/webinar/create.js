@@ -170,9 +170,9 @@ export default class WebinarCreate extends Component {
       this.props.history.goBack();
     })
   }
-  
+
   selectedFolder = (val) => {
-    this.setState({folderId: val});
+    this.setState({ folderId: val });
   }
 
   goback() {
@@ -181,7 +181,7 @@ export default class WebinarCreate extends Component {
 
   render() {
 
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
 
     // let levelUser = 'admin';
 

@@ -18,6 +18,8 @@ import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
+
+import FullCalender from "./components/kalender/fullKalender"
 // import Files from "./components/files/files";
 
 // Dashboard New Home Detail
@@ -308,6 +310,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}

@@ -51,10 +51,10 @@ class PtcCreate extends React.Component {
       }
       console.log('form: ', form);
       API.put(`${API_SERVER}v1/ptc-room/update/${this.state.idPtc}`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           console.log('Error: ', res.data.result)
         }
-        else{
+        else {
           toast.success('new PTC added');
           this.props.history.goBack();
         }
@@ -78,10 +78,10 @@ class PtcCreate extends React.Component {
 
       console.log('form: ', form);
       API.post(`${API_SERVER}v1/add/ptc-room`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           console.log('Error: ', res.data.result)
         }
-        else{
+        else {
           toast.success('new PTC added');
           this.props.history.goBack();
         }
@@ -159,7 +159,7 @@ class PtcCreate extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     var selection = [];
     for (var i = 0; i < 24; i++) {

@@ -78,7 +78,7 @@ export default class WebinarRoles extends Component {
 
   render() {
 
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <div className="row">

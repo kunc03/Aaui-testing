@@ -192,7 +192,7 @@ class Registasi extends React.Component {
   }
 
   handleAcademicYear = e => {
-    if(e.target.value.length === 9) {
+    if (e.target.value.length === 9) {
       return true
     } else {
       toast.warning(`Academic must be yyyy/yyyy ex. 2021/2022`)
@@ -211,7 +211,7 @@ class Registasi extends React.Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     return (
       <div className="row mt-3">
         <div className="col-sm-4">
@@ -238,10 +238,10 @@ class Registasi extends React.Component {
                 }
               </div>
               {this.state.idKelas !== '' ?
-              <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary m-3" style={{ width: '88%' }}>
-                <i className="fa fa-plus"></i> Add new
+                <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary m-3" style={{ width: '88%' }}>
+                  <i className="fa fa-plus"></i> Add new
               </button>
-              :null
+                : null
               }
             </div>
           </div>

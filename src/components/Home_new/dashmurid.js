@@ -36,7 +36,7 @@ class DashMurid extends Component {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
-      let hari = [ "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+      let hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       let tglIni = new Date();
       let hariIni = res.data.result.jadwal.filter(item => item.hari === hari[tglIni.getDay()]);
 
@@ -91,7 +91,7 @@ class DashMurid extends Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>

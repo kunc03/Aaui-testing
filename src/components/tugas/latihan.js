@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
 import moment from 'moment-timezone'
@@ -10,51 +10,51 @@ import ReactToPrint from 'react-to-print';
 class ListSoal extends React.PureComponent {
   render() {
     return (
-      <div style={{padding: '24px'}}>
-      {
-        this.props.lists.map((item,i) => (
-          <div className="mb-2">
-            <label>Pertanyaan <b>{i+1}</b></label>
-            <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+      <div style={{ padding: '24px' }}>
+        {
+          this.props.lists.map((item, i) => (
+            <div className="mb-2">
+              <label>Pertanyaan <b>{i + 1}</b></label>
+              <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
-            {
-              item.a &&
-              <tr>
-                <td style={{width: '24px'}}>A.</td>
-                <td>{item.a}</td>
-              </tr>
-            }
-            {
-              item.b &&
-              <tr>
-                <td style={{width: '24px'}}>B.</td>
-                <td>{item.b}</td>
-              </tr>
-            }
-            {
-              item.c &&
-              <tr>
-                <td style={{width: '24px'}}>C.</td>
-                <td>{item.c}</td>
-              </tr>
-            }
-            {
-              item.d &&
-              <tr>
-                <td style={{width: '24px'}}>D.</td>
-                <td>{item.d}</td>
-              </tr>
-            }
-            {
-              item.e &&
-              <tr>
-                <td style={{width: '24px'}}>E.</td>
-                <td>{item.e}</td>
-              </tr>
-            }
-          </div>
-        ))
-      }
+              {
+                item.a &&
+                <tr>
+                  <td style={{ width: '24px' }}>A.</td>
+                  <td>{item.a}</td>
+                </tr>
+              }
+              {
+                item.b &&
+                <tr>
+                  <td style={{ width: '24px' }}>B.</td>
+                  <td>{item.b}</td>
+                </tr>
+              }
+              {
+                item.c &&
+                <tr>
+                  <td style={{ width: '24px' }}>C.</td>
+                  <td>{item.c}</td>
+                </tr>
+              }
+              {
+                item.d &&
+                <tr>
+                  <td style={{ width: '24px' }}>D.</td>
+                  <td>{item.d}</td>
+                </tr>
+              }
+              {
+                item.e &&
+                <tr>
+                  <td style={{ width: '24px' }}>E.</td>
+                  <td>{item.e}</td>
+                </tr>
+              }
+            </div>
+          ))
+        }
       </div>
     )
   }
@@ -95,7 +95,7 @@ class Latihan extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if (res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
       this.setState({ examSoal: res.data.result })
     })
@@ -105,11 +105,11 @@ class Latihan extends React.Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -118,7 +118,7 @@ class Latihan extends React.Component {
 
   fetchKuis(id, tahunAjaran) {
     API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch kuis murid`);
+      if (res.data.error) toast.warning(`Warning: fetch kuis murid`);
 
       this.setState({ mataPelajaran: res.data.result.kuis })
     })
@@ -132,7 +132,7 @@ class Latihan extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <>

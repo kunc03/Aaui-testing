@@ -24,16 +24,16 @@ class GuruUjian extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
     let role = Storage.get('user').data.grup_name.toLowerCase();
-    if(role == 'murid') {
+    if (role == 'murid') {
       this.setState({ userId: Storage.get('user').data.user_id })
       this.fetchPelajaran(Storage.get('user').data.user_id, tahunAjaran)
     }
@@ -51,11 +51,11 @@ class GuruUjian extends Component {
 
   fetchPelajaran(userId, tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-murid/${userId}?mapelOnly=true&tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({ pelajaran: res.data.result })
-      if(res.data.result.length) {
-        this.fetchSilabus(res.data.result[0].jadwal_id , userId)
+      if (res.data.result.length) {
+        this.fetchSilabus(res.data.result[0].jadwal_id, userId)
       }
       else {
         toast.info(`Belum ada jadwal.`)
@@ -65,7 +65,7 @@ class GuruUjian extends Component {
 
   fetchSilabus(jadwalId, userId) {
     API.get(`${API_SERVER}v2/silabus/jadwal/${jadwalId}?userId=${userId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal one`)
       this.setState({ silabus: res.data.result, loading: false, });
     })
   }
@@ -83,8 +83,8 @@ class GuruUjian extends Component {
     const { value } = e.target;
     this.setState({ tahunAjaran: value, pelajaran: [] })
     let role = Storage.get('user').data.grup_name.toLowerCase();
-    
-    if(role == 'murid') {
+
+    if (role == 'murid') {
       this.fetchPelajaran(Storage.get('user').data.user_id, value)
     }
     else {
@@ -96,7 +96,7 @@ class GuruUjian extends Component {
 
     const { pelajaran, silabus } = this.state;
 
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <div class="col-sm-12 mt-2">
@@ -104,7 +104,7 @@ class GuruUjian extends Component {
           <Card.Body>
             <h4 className="f-w-900 f-18 fc-blue mb-3">Progress</h4>
 
-            <select style={{padding: '2px'}} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
+            <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
               <option value="" selected disabled>Select</option>
               {
                 this.state.listTahunAjaran.map(item => (
@@ -113,9 +113,9 @@ class GuruUjian extends Component {
               }
             </select>
 
-            <select style={{padding: '2px'}} onChange={this.filterKegiatan}>
+            <select style={{ padding: '2px' }} onChange={this.filterKegiatan}>
               {
-                pelajaran.map((item,i) => (
+                pelajaran.map((item, i) => (
                   <option value={item.jadwal_id}>{item.mapel}</option>
                 ))
               }
@@ -137,14 +137,14 @@ class GuruUjian extends Component {
               </thead>
               <tbody>
                 {
-                  silabus.map((item,i) => (
+                  silabus.map((item, i) => (
                     <>
                       <tr>
                         <td data-toggle='collapse' data-target={`#col${i}`} className="collapsed text-center">
                           {
                             item.tugas.length || item.kuis.length || item.ujian.length ?
-                            <i className="fa"></i>
-                            : null
+                              <i className="fa"></i>
+                              : null
                           }
                         </td>
                         <td>{item.sesi}</td>
@@ -157,123 +157,123 @@ class GuruUjian extends Component {
                       </tr>
                       {
                         item.tugas.length || item.kuis.length || item.ujian.length ?
-                        <tr className='collapse' id={`col${i}`}>
-                          <td colSpan='8'>
-                            <section className="container-fluid">
-                              {
-                                item.tugas.length ?
-                                <>
-                                <h5>Tugas</h5>
-                                <Row>
-                                  <table className="col-sm-12 table table-bordered">
-                                    <thead>
-                                      <tr>
-                                        <th>ID</th>
-                                        <th>Title</th>
-                                        <th>Deadline</th>
-                                        <th>Submitted</th>
-                                        <th>Score</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                    {
-                                      item.tugas.map((tugas, i) => (
-                                        <tr>
-                                          <td>{tugas.exam_id}</td>
-                                          <td>{tugas.exam_title}</td>
-                                          <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
-                                          <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
-                                          <td>{tugas.score ? tugas.score : '-'}</td>
-                                        </tr>
-                                      ))
-                                    }
-                                    </tbody>
-                                  </table>
-                                </Row>
-                                </>
-                              : null
-                            }
+                          <tr className='collapse' id={`col${i}`}>
+                            <td colSpan='8'>
+                              <section className="container-fluid">
+                                {
+                                  item.tugas.length ?
+                                    <>
+                                      <h5>Tugas</h5>
+                                      <Row>
+                                        <table className="col-sm-12 table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>ID</th>
+                                              <th>Title</th>
+                                              <th>Deadline</th>
+                                              <th>Submitted</th>
+                                              <th>Score</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {
+                                              item.tugas.map((tugas, i) => (
+                                                <tr>
+                                                  <td>{tugas.exam_id}</td>
+                                                  <td>{tugas.exam_title}</td>
+                                                  <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
+                                                  <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                                                  <td>{tugas.score ? tugas.score : '-'}</td>
+                                                </tr>
+                                              ))
+                                            }
+                                          </tbody>
+                                        </table>
+                                      </Row>
+                                    </>
+                                    : null
+                                }
 
 
-                            {
-                              item.kuis.length ?
-                              <>
-                              <h5>Kuis</h5>
-                              <Row>
-                                <table className="col-sm-12 table table-bordered">
-                                  <thead>
-                                    <tr>
-                                      <th>ID</th>
-                                      <th>Title</th>
-                                      <th>Deadline</th>
-                                      <th>Correct</th>
-                                      <th>Wrong</th>
-                                      <th>Submitted</th>
-                                      <th>Score</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {
-                                      item.kuis.map((tugas, i) => (
-                                        <tr>
-                                          <td>{tugas.exam_id}</td>
-                                          <td>{tugas.exam_title}</td>
-                                          <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
-                                          <td>{tugas.total_correct ? tugas.total_correct : '-'}</td>
-                                          <td>{tugas.total_uncorrect ? tugas.total_uncorrect : '-'}</td>
-                                          <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
-                                          <td>{tugas.score ? tugas.score : '-'}</td>
-                                        </tr>
-                                      ))
-                                    }
-                                  </tbody>
-                                </table>
-                              </Row>
-                              </> : null
-                            }
+                                {
+                                  item.kuis.length ?
+                                    <>
+                                      <h5>Kuis</h5>
+                                      <Row>
+                                        <table className="col-sm-12 table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>ID</th>
+                                              <th>Title</th>
+                                              <th>Deadline</th>
+                                              <th>Correct</th>
+                                              <th>Wrong</th>
+                                              <th>Submitted</th>
+                                              <th>Score</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {
+                                              item.kuis.map((tugas, i) => (
+                                                <tr>
+                                                  <td>{tugas.exam_id}</td>
+                                                  <td>{tugas.exam_title}</td>
+                                                  <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
+                                                  <td>{tugas.total_correct ? tugas.total_correct : '-'}</td>
+                                                  <td>{tugas.total_uncorrect ? tugas.total_uncorrect : '-'}</td>
+                                                  <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                                                  <td>{tugas.score ? tugas.score : '-'}</td>
+                                                </tr>
+                                              ))
+                                            }
+                                          </tbody>
+                                        </table>
+                                      </Row>
+                                    </> : null
+                                }
 
-                            {
-                              item.ujian.length ?
-                              <>
-                              <h5>Ujian</h5>
-                              <Row>
-                                <table className="col-sm-12 table table-bordered">
-                                  <thead>
-                                    <tr>
-                                      <th>ID</th>
-                                      <th>Title</th>
-                                      <th>Deadline</th>
-                                      <th>Correct</th>
-                                      <th>Wrong</th>
-                                      <th>Submitted</th>
-                                      <th>Score</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {
-                                      item.ujian.map((tugas, i) => (
-                                        <tr>
-                                          <td>{tugas.exam_id}</td>
-                                          <td>{tugas.exam_title}</td>
-                                          <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
-                                          <td>{tugas.total_correct ? tugas.total_correct : '-'}</td>
-                                          <td>{tugas.total_uncorrect ? tugas.total_uncorrect : '-'}</td>
-                                          <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
-                                          <td>{tugas.score ? tugas.score : '-'}</td>
-                                        </tr>
+                                {
+                                  item.ujian.length ?
+                                    <>
+                                      <h5>Ujian</h5>
+                                      <Row>
+                                        <table className="col-sm-12 table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>ID</th>
+                                              <th>Title</th>
+                                              <th>Deadline</th>
+                                              <th>Correct</th>
+                                              <th>Wrong</th>
+                                              <th>Submitted</th>
+                                              <th>Score</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {
+                                              item.ujian.map((tugas, i) => (
+                                                <tr>
+                                                  <td>{tugas.exam_id}</td>
+                                                  <td>{tugas.exam_title}</td>
+                                                  <td>{moment(tugas.time_finish).format('DD/MM/YYYY HH:mm')}</td>
+                                                  <td>{tugas.total_correct ? tugas.total_correct : '-'}</td>
+                                                  <td>{tugas.total_uncorrect ? tugas.total_uncorrect : '-'}</td>
+                                                  <td>{tugas.submit_at ? moment(tugas.submit_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
+                                                  <td>{tugas.score ? tugas.score : '-'}</td>
+                                                </tr>
 
-                                      ))
-                                    }
-                                  </tbody>
-                                </table>
-                              </Row>
-                              </> : null
-                            }
+                                              ))
+                                            }
+                                          </tbody>
+                                        </table>
+                                      </Row>
+                                    </> : null
+                                }
 
-                          </section>
-                        </td>
-                        </tr>
-                        : null
+                              </section>
+                            </td>
+                          </tr>
+                          : null
                       }
                     </>
                   ))

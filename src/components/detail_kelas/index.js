@@ -51,7 +51,7 @@ class DetailMurid extends Component {
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ jadwalKu: res.data.result })
     })
@@ -111,11 +111,11 @@ class DetailMurid extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -128,7 +128,7 @@ class DetailMurid extends Component {
   convertNilaiToAbjad(value) {
     let hr = "-";
     this.state.rangeNilai.map(item => {
-      if(this.checkRangeNilai(value, item.min, item.max)) {
+      if (this.checkRangeNilai(value, item.min, item.max)) {
         hr = item.huruf;
       }
     })
@@ -175,7 +175,7 @@ class DetailMurid extends Component {
 
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -203,7 +203,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listSemester.map((item,i) => (
+                        this.state.listSemester.map((item, i) => (
                           <option key={i} value={item.semester_id}>{item.semester_name}</option>
                         ))
                       }
@@ -214,7 +214,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectKelas} value={this.state.kelasId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listKelas.map((item,i) => (
+                        this.state.listKelas.map((item, i) => (
                           <option key={i} value={item.kelas_id}>{item.kelas_nama}</option>
                         ))
                       }
@@ -225,7 +225,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectPelajaran} value={this.state.pelajaranId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listPelajaran.map((item,i) => (
+                        this.state.listPelajaran.map((item, i) => (
                           <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
                         ))
                       }
@@ -233,7 +233,7 @@ class DetailMurid extends Component {
                   </div>
 
                   <div className="col-sm-2">
-                    <label>Action</label><br/>
+                    <label>Action</label><br />
                     <button className="btn btn-v2 btn-info" type="reset" onClick={this.resetFilter}>Reset</button>
                   </div>
 
@@ -281,18 +281,18 @@ class DetailMurid extends Component {
                         <td>{item.nama}</td>
                         <td>
                           {item.task ? item.task.toFixed(2) : '-'}
-                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dTask)}>{item.dTask.length}</p>
+                          <p title="More detail" style={{ cursor: 'pointer' }} onClick={() => this.openDetail(item.dTask)}>{item.dTask.length}</p>
                         </td>
                         <td>
                           {item.quiz ? item.quiz.toFixed(2) : '-'}
-                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dQuiz)}>{item.dQuiz.length}</p>
+                          <p title="More detail" style={{ cursor: 'pointer' }} onClick={() => this.openDetail(item.dQuiz)}>{item.dQuiz.length}</p>
                         </td>
                         <td>
                           {item.exam ? item.exam.toFixed(2) : '-'}
-                          <p title="More detail" style={{cursor: 'pointer'}} onClick={() => this.openDetail(item.dExam)}>{item.dExam.length}</p>
+                          <p title="More detail" style={{ cursor: 'pointer' }} onClick={() => this.openDetail(item.dExam)}>{item.dExam.length}</p>
                         </td>
-                        <td>{(item.exam+item.quiz+item.task).toFixed(2)}<p title="More detail" style={{cursor: 'pointer'}} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task+item.quiz+item.exam)}</p></td>
-                        <td>{(item.task+item.quiz+item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
+                        <td>{(item.exam + item.quiz + item.task).toFixed(2)}<p title="More detail" style={{ cursor: 'pointer' }} onClick={this.openKeteranganNilai}>{this.convertNilaiToAbjad(item.task + item.quiz + item.exam)}</p></td>
+                        <td>{(item.task + item.quiz + item.exam) >= 50 ? <span class="label label-success">Lulus</span> : <span class="label label-danger">Mengulang</span>}</td>
                       </tr>
                     ))
                   }
@@ -308,20 +308,20 @@ class DetailMurid extends Component {
                 <Modal.Body>
                   <table class="table table-bordered table-striped">
                     <thead>
-                    <tr>
-                      <td width="40px"><b>Nilai</b></td>
-                      <td><b>Range</b></td>
-                    </tr>
+                      <tr>
+                        <td width="40px"><b>Nilai</b></td>
+                        <td><b>Range</b></td>
+                      </tr>
                     </thead>
                     <tbody>
-                    {
-                      this.state.rangeNilai.map(item => (
-                        <tr>
-                          <td><b>{item.huruf}</b></td>
-                          <td>{item.min} - {item.max}</td>
-                        </tr>
-                      ))
-                    }
+                      {
+                        this.state.rangeNilai.map(item => (
+                          <tr>
+                            <td><b>{item.huruf}</b></td>
+                            <td>{item.min} - {item.max}</td>
+                          </tr>
+                        ))
+                      }
                     </tbody>
                   </table>
                 </Modal.Body>
@@ -343,15 +343,15 @@ class DetailMurid extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                    {
-                      this.state.detailTask.map(item => (
-                        <tr>
-                          <td>{item.exam_title}</td>
-                          <td>{item.user_id ? <span class="label label-success">Sudah mengerjakan</span> : <span class="label label-danger">Belum mengerjakan</span>}</td>
-                          <td>{item.score}</td>
-                        </tr>
-                      ))
-                    }
+                      {
+                        this.state.detailTask.map(item => (
+                          <tr>
+                            <td>{item.exam_title}</td>
+                            <td>{item.user_id ? <span class="label label-success">Sudah mengerjakan</span> : <span class="label label-danger">Belum mengerjakan</span>}</td>
+                            <td>{item.score}</td>
+                          </tr>
+                        ))
+                      }
                     </tbody>
                   </table>
                 </Modal.Body>
