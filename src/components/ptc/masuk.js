@@ -58,7 +58,7 @@ class Mengajar extends React.Component {
     }
 
     API.put(`${API_SERVER}v1/ptc-room/hadir/${form.ptcId}/${form.userId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: gagal absen`)
+      if (res.data.error) toast.warning(`Warning: gagal absen`)
 
       toast.success(`Terimakasih Anda sudah mengkonfirmasi kehadiran.`)
       this.setState({ openKehadiran: false })
@@ -199,9 +199,9 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
-    if(this.state.role === "murid") {
+    if (this.state.role === "murid") {
       API.get(`${API_SERVER}v1/ptc-room/cek-hadir/${this.state.ptcId}/${Storage.get('user').data.user_id}`).then(res => {
-        if(res.data.error) toast.warning(`Warning: cek kehadiran`)
+        if (res.data.error) toast.warning(`Warning: cek kehadiran`)
 
         this.setState({ openKehadiran: res.data.result.join_at ? false : true })
       })
@@ -222,7 +222,7 @@ class Mengajar extends React.Component {
 
   fetchPtcInfo(ptcId) {
     API.get(`${API_SERVER}v1/ptc-room/${ptcId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch ptc detail`)
+      if (res.data.error) toast.warning(`Warning: fetch ptc detail`)
 
       this.setState({ infoPtc: res.data.result })
 
@@ -274,16 +274,16 @@ class Mengajar extends React.Component {
 
   fetchParticipants(ptcId) {
     API.get(`${API_SERVER}v1/ptc-room/peserta/${ptcId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch peserta PTC`)
+      if (res.data.error) toast.warning(`Warning: fetch peserta PTC`)
 
       this.setState({ peserta: res.data.result })
     })
   }
 
   joinChime = e => {
-    const title     = this.state.infoPtc.nama_ruangan.replace(/ /g, '')+'-'+moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
-    const name      = Storage.get('user').data.user;
-    const region    = `ap-southeast-1`;
+    const title = this.state.infoPtc.nama_ruangan.replace(/ /g, '') + '-' + moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
+    const name = Storage.get('user').data.user;
+    const region = `ap-southeast-1`;
 
     axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
       this.setState({ attendee: res.data.JoinInfo })
@@ -292,7 +292,7 @@ class Mengajar extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
@@ -334,15 +334,15 @@ class Mengajar extends React.Component {
 
                 {/* <ChimeMeeting attendee={this.state.attendee} /> */}
 
-                  <div className="card-body p-1">
-                    <Iframe url={this.state.joinUrl}
+                <div className="card-body p-1">
+                  <Iframe url={this.state.joinUrl}
                     width="100%"
                     height="600px"
                     display="initial"
                     frameBorder="0"
                     allow="fullscreen *; geolocation *; microphone *; camera *"
                     position="relative" />
-                  </div>
+                </div>
               </div>
             </div>
 
@@ -355,7 +355,7 @@ class Mengajar extends React.Component {
 
                       {
                         this.state.role === "guru" &&
-                        <button onClick={e => this.setState({ openUpload: true })} class="float-right btn btn-success btn-circle btn-circle-sm"><i style={{margin: 0}} class="fa fa-plus"></i></button>
+                        <button onClick={e => this.setState({ openUpload: true })} class="float-right btn btn-success btn-circle btn-circle-sm"><i style={{ margin: 0 }} class="fa fa-plus"></i></button>
                       }
                     </h4>
                   </div>
@@ -364,42 +364,42 @@ class Mengajar extends React.Component {
                     <div className="table-responsive" style={{ overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto' }}>
                       <table className="table table-hover">
 
-                      {
-                        this.state.infoFiles.map(item =>
-                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src={
-                                item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
-                                  ? `assets/images/files/${item.type}.svg`
-                                  : 'assets/images/files/file.svg'
-                              } width="32" /> &nbsp;{item.name}
-                            </td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                              <span class="btn-group dropleft col-sm-1">
-                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i
-                                    className="fa fa-ellipsis-v"
-                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                  />
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                        {
+                          this.state.infoFiles.map(item =>
+                            <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                              <td className="fc-muted f-14 f-w-300 p-t-20">
+                                <img src={
+                                  item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
+                                    ? `assets/images/files/${item.type}.svg`
+                                    : 'assets/images/files/file.svg'
+                                } width="32" /> &nbsp;{item.name}
+                              </td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                <span class="btn-group dropleft col-sm-1">
+                                  <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i
+                                      className="fa fa-ellipsis-v"
+                                      style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                    />
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
 
-                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button"
-                                    onClick={e => {window.open(item.location, 'Downloading files')}}>
-                                    Download
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button"
+                                      onClick={e => { window.open(item.location, 'Downloading files') }}>
+                                      Download
                                   </button>
 
-                                  {
-                                    this.state.role === "guru" &&
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
-                                  }
+                                    {
+                                      this.state.role === "guru" &&
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
+                                    }
 
-                                </div>
-                              </span>
-                            </td>
-                          </tr>
-                        )
-                      }
+                                  </div>
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        }
 
                       </table>
                     </div>
@@ -421,19 +421,19 @@ class Mengajar extends React.Component {
 
                     {
                       this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id !== null &&
-                        <ul className="list-group f-12 mb-3">
+                      <ul className="list-group f-12 mb-3">
                         {
                           this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id.split(',').map(item => (
                             <li className="list-group-item">
                               <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js">
                                 <div style={{ height: '750px' }}>
-                                    <Viewer fileUrl={item} />
+                                  <Viewer fileUrl={item} />
                                 </div>
                               </Worker>
                             </li>
                           ))
                         }
-                        </ul>
+                      </ul>
                     }
 
                   </div>
@@ -447,35 +447,35 @@ class Mengajar extends React.Component {
                 {
                   this.state.role === "murid" &&
                   <div className="col-sm-12">
-                  <div className="card">
-                  <div className="card-header">
-                  <h4 className="header-kartu">
-                  Waktu Pengerjaan
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="header-kartu">
+                          Waktu Pengerjaan
 
                   {
-                    this.state.role === "murid" &&
-                    <Timer
-                    durationInSeconds={7200}
-                    formatted={true}
+                            this.state.role === "murid" &&
+                            <Timer
+                              durationInSeconds={7200}
+                              formatted={true}
 
-                    onStart = {()=> {
-                      console.log('Triggered when the timer starts')
-                    }}
+                              onStart={() => {
+                                console.log('Triggered when the timer starts')
+                              }}
 
-                    onFinish = {()=> {
-                      console.log('Triggered when the timer finishes')
-                    }}
+                              onFinish={() => {
+                                console.log('Triggered when the timer finishes')
+                              }}
 
-                    />
-                  }
+                            />
+                          }
 
-                  </h4>
-                  </div>
-                  </div>
+                        </h4>
+                      </div>
+                    </div>
                   </div>
                 }
 
-                <Detail role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+                <Detail role={this.state.role} tipe={this.state.jenis} match={{ params: { examId: this.state.sesiId } }} />
               </>
             }
 
@@ -588,7 +588,7 @@ class Mengajar extends React.Component {
                   onClick={this.uploadFile.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                    {'Upload'}
+                  {'Upload'}
                 </button>
               </Modal.Footer>
             </Modal>
@@ -613,7 +613,7 @@ class Mengajar extends React.Component {
                     {
                       this.state.peserta.map((item, i) => (
                         <tr>
-                          <td>{i+1}</td>
+                          <td>{i + 1}</td>
                           <td>{item.name}</td>
                           <td>{item.identity}</td>
                           <td>{item.join_at ? <span class="badge badge-pill badge-success">Hadir</span> : <span class="badge badge-pill badge-info">Belum</span>}</td>

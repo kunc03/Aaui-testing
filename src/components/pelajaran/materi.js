@@ -1,6 +1,6 @@
 import React from 'react';
 
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
@@ -61,7 +61,7 @@ class Overview extends React.Component {
 
   fetchOverview() {
     API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal one`)
       console.log('silabus: ', res.data.result);
       this.setState({ silabus: res.data.result, loading: false, });
     })
@@ -69,7 +69,7 @@ class Overview extends React.Component {
 
   handleDynamicInput = (e, i) => {
     let newObj = [...this.state.silabus];
-    if(e.hasOwnProperty('target')) {
+    if (e.hasOwnProperty('target')) {
       const { value, name } = e.target;
       newObj[i][name] = value;
       this.setState({ silabus: newObj });
@@ -166,11 +166,11 @@ class Overview extends React.Component {
 
   fetchPenugasan(tipe) {
     API.get(`${API_SERVER}v2/pelajaran/${tipe}/all/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${tipe}`)
+      if (res.data.error) toast.warning(`Error: fetch ${tipe}`)
 
       let temp = [];
       res.data.result.map((item) => {
-        let obj = {value: item.id, label: item.title}
+        let obj = { value: item.id, label: item.title }
         temp.push(obj)
         return true
       })
@@ -180,13 +180,13 @@ class Overview extends React.Component {
 
   addPenugasan(tipe, event, index) {
     let cc = [...this.state.silabus].filter((item, i) => i === index);
-    if(cc[0].chapter_id) {
+    if (cc[0].chapter_id) {
       let form = {
         chapterId: cc[0].chapter_id,
         examId: tipe === 'tugas' ? this.state.setTugas[0] : tipe == 'kuis' ? this.state.setKuis[0] : this.state.setUjian[0]
       };
       API.post(`${API_SERVER}v2/chapter/exam`, form).then(res => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.fetchOverview()
         }
       })
@@ -199,7 +199,7 @@ class Overview extends React.Component {
 
   deletePenugasan(id) {
     API.delete(`${API_SERVER}v2/chapter/exam/${id}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.fetchOverview()
       }
     })
@@ -209,7 +209,7 @@ class Overview extends React.Component {
     let cc = [...this.state.silabus];
     let item = cc.filter((item, i) => i === index);
 
-    if(item[0].chapter_id) {
+    if (item[0].chapter_id) {
       let form = {
         companyId: Storage.get('user').data.company_id,
         pelajaranId: item[0].pelajaran_id,
@@ -244,7 +244,7 @@ class Overview extends React.Component {
     let cc = [...this.state.silabus];
     let item = cc.filter((item, i) => i === index);
 
-    if(item[0].chapter_id) {
+    if (item[0].chapter_id) {
       API.delete(`${API_SERVER}v2/pelajaran/chapter/delete/${item[0].chapter_id}`).then(res => {
         if (res.data.error) {
           toast.warning(`Error: delete chapter`)
@@ -260,7 +260,7 @@ class Overview extends React.Component {
   }
 
   render() {
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <div className="row mt-3">
@@ -275,13 +275,13 @@ class Overview extends React.Component {
                 <thead>
                   <tr>
                     <th></th>
-                    <th style={{color: 'black'}} className="text-center">Sesi</th>
-                    <th style={{color: 'black'}} className="text-center">Topik</th>
-                    <th style={{color: 'black'}} className="text-center">Tujuan</th>
-                    <th style={{color: 'black'}} className="text-center">Tanggal</th>
-                    <th style={{color: 'black'}} className="text-center">Periode</th>
-                    <th style={{color: 'black'}} className="text-center">Durasi</th>
-                    <th style={{color: 'black'}} className="text-center">Files</th>
+                    <th style={{ color: 'black' }} className="text-center">Sesi</th>
+                    <th style={{ color: 'black' }} className="text-center">Topik</th>
+                    <th style={{ color: 'black' }} className="text-center">Tujuan</th>
+                    <th style={{ color: 'black' }} className="text-center">Tanggal</th>
+                    <th style={{ color: 'black' }} className="text-center">Periode</th>
+                    <th style={{ color: 'black' }} className="text-center">Durasi</th>
+                    <th style={{ color: 'black' }} className="text-center">Files</th>
                     <th width="50px"></th>
                   </tr>
                 </thead>
@@ -294,7 +294,7 @@ class Overview extends React.Component {
                   }
                   {
                     this.state.silabus.map((item, i) => {
-                      if(item.jenis === 0) {
+                      if (item.jenis === 0) {
                         return (
                           <>
                             <tr key={i} style={{ cursor: 'pointer' }}>
@@ -324,13 +324,13 @@ class Overview extends React.Component {
                                     <>
                                       {moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm')}
                                     </>
-                                  :
+                                    :
                                     <span className="label label-primary">Upload Materi</span>
                                 }
                               </td>
-                              <td  className="text-center">{item.periode}</td>
-                              <td  className="text-center">{item.durasi} menit</td>
-                              <td style={{padding: '12px'}} className="text-center">
+                              <td className="text-center">{item.periode}</td>
+                              <td className="text-center">{item.durasi} menit</td>
+                              <td style={{ padding: '12px' }} className="text-center">
                                 {
                                   item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : '-'
                                 }
@@ -350,14 +350,14 @@ class Overview extends React.Component {
                             <tr className="collapse" id={`collapse${i}`}>
                               <td colSpan="9">
                                 <Tabs defaultActiveKey="materi" id="uncontrolled-tab-example">
-                                  <Tab eventKey="materi" title="Materi" style={{padding: '8px'}}>
+                                  <Tab eventKey="materi" title="Materi" style={{ padding: '8px' }}>
                                     <form className="row">
                                       <div className="col-sm-8 bordered">
                                         <div className="form-group">
                                           <input required value={item.chapter_title} name="chapter_title" onChange={e => this.handleDynamicInput(e, i)} type="text" className="form-control" placeholder="Title" />
                                         </div>
                                         <div className="form-group">
-                                          <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
+                                          <input id="my-file" type="file" name="my-file" style={{ display: "none" }} onChange="" />
                                           <Editor
                                             apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                                             initialValue={item.chapter_body}
@@ -367,9 +367,9 @@ class Overview extends React.Component {
                                               menubar: false,
                                               convert_urls: false,
                                               image_class_list: [
-                                                {title: 'None', value: ''},
-                                                {title: 'Responsive', value: 'img-responsive'},
-                                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                                { title: 'None', value: '' },
+                                                { title: 'Responsive', value: 'img-responsive' },
+                                                { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                                               ],
                                               file_browser_callback_types: 'image file media',
                                               file_picker_callback: function (callback, value, meta) {
@@ -388,7 +388,7 @@ class Overview extends React.Component {
                                                       data: dataForm,
                                                       processData: false,
                                                       contentType: false,
-                                                      success: (data)=>{
+                                                      success: (data) => {
                                                         callback(data.result.url);
                                                         this.value = '';
                                                       }
@@ -413,11 +413,11 @@ class Overview extends React.Component {
                                       </div>
                                       <div className="col-sm-4 bordered">
                                         <div className="form-group">
-                                          <label>Date</label><br/>
+                                          <label>Date</label><br />
                                           <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
-                                          <label className="mb-3">Webcam</label><br/>
+                                          <label className="mb-3">Webcam</label><br />
                                           <div class="form-check form-check-inline">
                                             <input checked={item.tatapmuka == "1"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="1" />
                                             <label class="form-check-label" for="inlineRadio1">Yes</label>
@@ -430,8 +430,8 @@ class Overview extends React.Component {
 
                                         <h4>Attachments</h4>
                                         <div className="input-group mb-3">
-                                          <label key={this.state.materi} for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.files ? this.state.files.length+' Files' : 'Choose File'}</span></label>
-                                          <input required multiple type="file" id="attachment" class="form-control file-upload-icademy" onChange={e => this.setState({ files: e.target.files })}/>
+                                          <label key={this.state.materi} for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.files ? this.state.files.length + ' Files' : 'Choose File'}</span></label>
+                                          <input required multiple type="file" id="attachment" class="form-control file-upload-icademy" onChange={e => this.setState({ files: e.target.files })} />
                                         </div>
 
                                         <ul className="list-group">
@@ -454,7 +454,7 @@ class Overview extends React.Component {
                                     </form>
                                   </Tab>
 
-                                  <Tab eventKey="tugas" title="Tugas" style={{padding: '8px'}}>
+                                  <Tab eventKey="tugas" title="Tugas" style={{ padding: '8px' }}>
                                     <div className="form-group row">
                                       <div className="col-sm-4">
                                         <MultiSelect
@@ -482,7 +482,7 @@ class Overview extends React.Component {
                                       {
                                         item.tugas.map((row, j) => (
                                           <tr>
-                                            <td>{j+1}</td>
+                                            <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-tugas/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
                                             <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
@@ -493,7 +493,7 @@ class Overview extends React.Component {
                                     </table>
                                   </Tab>
 
-                                  <Tab eventKey="kuis" title="Kuis" style={{padding: '8px'}}>
+                                  <Tab eventKey="kuis" title="Kuis" style={{ padding: '8px' }}>
                                     <div className="form-group row">
                                       <div className="col-sm-4">
                                         <MultiSelect
@@ -520,7 +520,7 @@ class Overview extends React.Component {
                                       {
                                         item.kuis.map((row, j) => (
                                           <tr>
-                                            <td>{j+1}</td>
+                                            <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-kuis/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
                                             <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
@@ -550,8 +550,8 @@ class Overview extends React.Component {
                               <td className="text-center">
                                 {item.sesi}
                               </td>
-                              <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                              <td className="text-center">{item.start_date ? moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis':'Ujian'}</span>}</td>
+                              <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                              <td className="text-center">{item.start_date ? moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis' : 'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
                               <td className="text-center">{item.durasi} menit</td>
                               <td className="text-center">
@@ -580,7 +580,7 @@ class Overview extends React.Component {
                                       <input required value={item.chapter_title} name="chapter_title" onChange={e => this.handleDynamicInput(e, i)} type="text" className="form-control" placeholder="Title" />
                                     </div>
                                     <div className="form-group">
-                                      <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
+                                      <input id="my-file" type="file" name="my-file" style={{ display: "none" }} onChange="" />
                                       <Editor
                                         apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                                         initialValue={item.chapter_body}
@@ -590,9 +590,9 @@ class Overview extends React.Component {
                                           menubar: false,
                                           convert_urls: false,
                                           image_class_list: [
-                                            {title: 'None', value: ''},
-                                            {title: 'Responsive', value: 'img-responsive'},
-                                            {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                            { title: 'None', value: '' },
+                                            { title: 'Responsive', value: 'img-responsive' },
+                                            { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                                           ],
                                           file_browser_callback_types: 'image file media',
                                           file_picker_callback: function (callback, value, meta) {
@@ -611,7 +611,7 @@ class Overview extends React.Component {
                                                   data: dataForm,
                                                   processData: false,
                                                   contentType: false,
-                                                  success: (data)=>{
+                                                  success: (data) => {
                                                     callback(data.result.url);
                                                     this.value = '';
                                                   }
@@ -636,11 +636,11 @@ class Overview extends React.Component {
                                   </div>
                                   <div className="col-sm-6 bordered">
                                     <div className="form-group">
-                                      <label>Date</label><br/>
+                                      <label>Date</label><br />
                                       <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
                                     </div>
                                     <div className="form-group">
-                                      <label className="mb-3">Webcam</label><br/>
+                                      <label className="mb-3">Webcam</label><br />
                                       <div class="form-check form-check-inline">
                                         <input checked={item.tatapmuka == "1"} onChange={e => this.handleDynamicInput(e, i)} class="form-check-input" type="radio" name="tatapmuka" value="1" />
                                         <label class="form-check-label" for="inlineRadio1">Yes</label>
@@ -672,11 +672,11 @@ class Overview extends React.Component {
 
                                         {
                                           item.jenis == 1 ?
-                                          <Button onClick={e => this.addPenugasan('kuis', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
-                                          :
-                                          <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis':'Ujian'}</Button>
+                                            <Button onClick={e => this.addPenugasan('kuis', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis' : 'Ujian'}</Button>
+                                            :
+                                            <Button onClick={e => this.addPenugasan('ujian', e, i)} variant="primary" size="sm">Tambah {item.jenis == 1 ? 'Kuis' : 'Ujian'}</Button>
                                         }
-                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kuis':'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis':'Ujian'}</Link>
+                                        <Link className="btn btn-sm btn-default" to={`/guru/${item.jenis == 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}`}>Buat {item.jenis == 1 ? 'Kuis' : 'Ujian'}</Link>
                                       </div>
                                     </div>
                                     <table className="table mt-2 table-bordered">
@@ -691,7 +691,7 @@ class Overview extends React.Component {
                                       {
                                         item.jenis == 1 && item.kuis.map((row, j) => (
                                           <tr>
-                                            <td>{j+1}</td>
+                                            <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
                                             <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
@@ -703,7 +703,7 @@ class Overview extends React.Component {
                                       {
                                         item.jenis == 2 && item.ujian.map((row, j) => (
                                           <tr>
-                                            <td>{j+1}</td>
+                                            <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
                                             <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
                                             <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
@@ -724,8 +724,8 @@ class Overview extends React.Component {
 
                     })
                   }
-                  </tbody>
-                </table>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

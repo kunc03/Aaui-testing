@@ -187,15 +187,15 @@ class JadwalMengajar extends React.Component {
     })
   }
 
-  selectKelasJadwal  = e => {
+  selectKelasJadwal = e => {
     let { value } = e.target;
     let kId = value.split('_')[2];
 
     let filter = this.state.kurikulums.filter(item => item.id == parseInt(kId));
     API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
       let mapelFromClass = [];
-      if(filter.length) {
-        for(var i=0; i<filter[0].mapel.length; i++) {
+      if (filter.length) {
+        for (var i = 0; i < filter[0].mapel.length; i++) {
           let ff = res.data.result.filter(item => item.pelajaran_id == filter[0].mapel[i].pelajaran_id)
           mapelFromClass.push(ff[0])
         }
@@ -211,7 +211,7 @@ class JadwalMengajar extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     const StatusJadwal = ({ item }) => {
       if (

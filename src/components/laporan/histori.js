@@ -32,11 +32,11 @@ class Laporan extends React.Component {
   fetchKelasMurid(userId) {
     this.setState({ isLoading: true })
     API.get(`${API_SERVER}v2/kelas/murid/${userId}`).then(async res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error fetch kelas murid`)
       }
       else {
-        for(var i=0; i<res.data.result.length; i++) {
+        for (var i = 0; i < res.data.result.length; i++) {
           let nilai = await API.get(`${API_SERVER}v2/guru/nilai-murid/${res.data.result[i].semester_id}/${res.data.result[i].kelas_id}/${userId}?tahunAjaran=${res.data.result[i].tahun_ajaran}`);
           let hitung = 0;
           nilai.data.result.map(item => hitung += (item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian))
@@ -81,7 +81,7 @@ class Laporan extends React.Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -120,86 +120,86 @@ class Laporan extends React.Component {
                   <tbody>
                     {
                       this.state.isLoading ?
-                      <tr>
-                        <td className="text-center" colSpan="4">fetching data...</td>
-                      </tr>
-                      :
-                      <>
-                      {
-                        this.state.kelasMurid.map((row,i) => (
-                          <>
-                            <tr>
-                              <td className="text-center collapsed"
-                                data-toggle="collapse"
-                                data-target={`#collapse${i}`}
-                                aria-expanded="false"
-                                aria-controls={`collapse${i}`}>
-                                <i class="fa" aria-hidden="true"></i>
-                              </td>
-                              <td>{row.semester_name}</td>
-                              <td>{row.kelas_nama}</td>
-                              <td>{row.tahun_ajaran}</td>
-                            </tr>
-                            <tr className="collapse" id={`collapse${i}`}>
-                              <td colSpan="4">
-                                <table className="table table-striped table-bordered">
-                                  <thead>
-                                    <tr className="text-center">
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
-                                      <td colSpan="3">NILAI HASIL BELAJAR</td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
-                                    </tr>
-                                    <tr className="text-center">
-                                      <td>TASK</td>
-                                      <td>QUIZ</td>
-                                      <td>EXAM</td>
-                                    </tr>
-                                  </thead>
+                        <tr>
+                          <td className="text-center" colSpan="4">fetching data...</td>
+                        </tr>
+                        :
+                        <>
+                          {
+                            this.state.kelasMurid.map((row, i) => (
+                              <>
+                                <tr>
+                                  <td className="text-center collapsed"
+                                    data-toggle="collapse"
+                                    data-target={`#collapse${i}`}
+                                    aria-expanded="false"
+                                    aria-controls={`collapse${i}`}>
+                                    <i class="fa" aria-hidden="true"></i>
+                                  </td>
+                                  <td>{row.semester_name}</td>
+                                  <td>{row.kelas_nama}</td>
+                                  <td>{row.tahun_ajaran}</td>
+                                </tr>
+                                <tr className="collapse" id={`collapse${i}`}>
+                                  <td colSpan="4">
+                                    <table className="table table-striped table-bordered">
+                                      <thead>
+                                        <tr className="text-center">
+                                          <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
+                                          <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
+                                          <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
+                                          <td colSpan="3">NILAI HASIL BELAJAR</td>
+                                          <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
+                                        </tr>
+                                        <tr className="text-center">
+                                          <td>TASK</td>
+                                          <td>QUIZ</td>
+                                          <td>EXAM</td>
+                                        </tr>
+                                      </thead>
 
-                                  <tbody>
-                                    {
-                                      row.nilai.map((item, i) => {
-                                        return (
-                                          <tr className="text-center">
-                                            <td>{i + 1}</td>
-                                            <td>{item.nama_pelajaran}</td>
-                                            <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
-                                            <td>
-                                              {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
-                                              <br/>
-                                              {item.kumpulTugas.length}/{item.totalTugas.length}
-                                            </td>
-                                            <td>
-                                              {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
-                                              <br/>
-                                              {item.kumpulKuis.length}/{item.totalKuis.length}
-                                            </td>
-                                            <td>
-                                              {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
-                                              <br/>
-                                              {item.kumpulUjian.length}/{item.totalUjian.length}
-                                            </td>
-                                            <td>{item.persensi}</td>
-                                          </tr>
-                                        )
-                                      })
-                                    }
-                                  </tbody>
-                                </table>
+                                      <tbody>
+                                        {
+                                          row.nilai.map((item, i) => {
+                                            return (
+                                              <tr className="text-center">
+                                                <td>{i + 1}</td>
+                                                <td>{item.nama_pelajaran}</td>
+                                                <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
+                                                <td>
+                                                  {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
+                                                  <br />
+                                                  {item.kumpulTugas.length}/{item.totalTugas.length}
+                                                </td>
+                                                <td>
+                                                  {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
+                                                  <br />
+                                                  {item.kumpulKuis.length}/{item.totalKuis.length}
+                                                </td>
+                                                <td>
+                                                  {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
+                                                  <br />
+                                                  {item.kumpulUjian.length}/{item.totalUjian.length}
+                                                </td>
+                                                <td>{item.persensi}</td>
+                                              </tr>
+                                            )
+                                          })
+                                        }
+                                      </tbody>
+                                    </table>
 
-                                <div className="border p-4">
-                                  <p>Keputusan</p>
-                                  <p>Berdasarkan pencapaian seluruh kompetensi</p>
-                                  <p>Peserta didik dinyatakan <b>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
-                                </div>
-                              </td>
-                            </tr>
-                          </>
-                        ))
-                      }
-                      </>
+                                    <div className="border p-4">
+                                      <p>Keputusan</p>
+                                      <p>Berdasarkan pencapaian seluruh kompetensi</p>
+                                      <p>Peserta didik dinyatakan <b>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </>
+                            ))
+                          }
+                        </>
                     }
 
                   </tbody>

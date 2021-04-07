@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
@@ -49,7 +49,7 @@ class Tugas extends React.Component {
   };
 
   onClickTambahPertanyaan = () => {
-    if(this.state.examId) {
+    if (this.state.examId) {
       let baruPertanyaan = {
         id: '',
         tanya: ''
@@ -64,7 +64,7 @@ class Tugas extends React.Component {
 
   handleDynamicInput = (e, i) => {
     let newObj = [...this.state.pertanyaan];
-    if(e.hasOwnProperty('target')) {
+    if (e.hasOwnProperty('target')) {
       const { value, name } = e.target;
       newObj[i][name] = value;
       this.setState({ pertanyaan: newObj });
@@ -93,8 +93,8 @@ class Tugas extends React.Component {
   }
 
   fetchPertanyaan(id) {
-    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`, {tugas: true}).then(res => {
-      if(res.data.error) {
+    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`, { tugas: true }).then(res => {
+      if (res.data.error) {
         toast.warning(`Error: fetch pertanyaan`)
       }
       else {
@@ -107,18 +107,18 @@ class Tugas extends React.Component {
   fetchMengumpulkan(id) {
     this.setState({
       mengumpulkan: [
-        {id: 1, nama: 'Agus', nilai: 76, submission: true},
-        {id: 2, nama: 'Muhammad', nilai: 88, submission: true},
-        {id: 3, nama: 'Sulton', nilai: 98, submission: true},
-        {id: 4, nama: 'Bella', nilai: 0, submission: false},
-        {id: 5, nama: 'Deby', nilai: 0, submission: false},
+        { id: 1, nama: 'Agus', nilai: 76, submission: true },
+        { id: 2, nama: 'Muhammad', nilai: 88, submission: true },
+        { id: 3, nama: 'Sulton', nilai: 98, submission: true },
+        { id: 4, nama: 'Bella', nilai: 0, submission: false },
+        { id: 5, nama: 'Deby', nilai: 0, submission: false },
       ]
     })
   }
 
   selectOne(id) {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${id}`).then(res => {
-      if(res.data.error){
+      if (res.data.error) {
         toast.warning(`Error: fetch ${this.state.tipe}`)
       }
       else {
@@ -159,7 +159,7 @@ class Tugas extends React.Component {
 
   fetchChapters() {
     API.get(`${API_SERVER}v2/pelajaran/chapter/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: fetch chapters`)
       }
       else {
@@ -172,7 +172,7 @@ class Tugas extends React.Component {
 
   fetchKuis() {
     API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/all/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
+      if (res.data.error) toast.warning(`Error: fetch ${this.state.tipe}`)
 
       this.setState({ kuis: res.data.result })
     })
@@ -180,12 +180,12 @@ class Tugas extends React.Component {
 
   fetchOverview() {
     API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal one`)
       console.log('silabus: ', res.data.result);
-      if (res.data.result.length===0){
+      if (res.data.result.length === 0) {
         toast.warning('Contact admin to setup syllabus')
       }
-      else{
+      else {
         this.setState({ silabus: res.data.result, loading: false, });
       }
     })
@@ -193,7 +193,7 @@ class Tugas extends React.Component {
 
   saveKuis = e => {
     e.preventDefault();
-    if(this.state.examId) {
+    if (this.state.examId) {
       let form = {
         title: this.state.title,
         quizAt: this.state.quizAt ? this.state.quizAt : '0',
@@ -204,7 +204,7 @@ class Tugas extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/pelajaran/${this.state.tipe}/update/${this.state.examId}`, form).then(res => {
-        if(res.data.error) {
+        if (res.data.error) {
           toast.warning(`Error: update ${this.state.tipe}`)
         }
         else {
@@ -231,10 +231,10 @@ class Tugas extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/pelajaran/${this.state.tipe}/create`, form).then(res => {
-        if(res.data.error)  {
+        if (res.data.error) {
           toast.warning(`Error: create ${this.state.tipe}`)
         }
-        else{
+        else {
           toast.success(`Sukses menyimpan ${this.state.tipe}`)
           this.selectOne(res.data.result.id);
           this.fetchKuis();
@@ -247,7 +247,7 @@ class Tugas extends React.Component {
   deleteKuis = e => {
     e.preventDefault();
     API.delete(`${API_SERVER}v2/pelajaran/${this.state.tipe}/delete/${this.state.examId}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: delete ${this.state.tipe}`)
       }
       else {
@@ -258,10 +258,10 @@ class Tugas extends React.Component {
   }
 
   onClickHapusPertanyaan = (e) => {
-		let dataIndex = e.target.getAttribute('data-id');
-		let dataID = e.target.getAttribute('data-index');
-		API.delete(`${API_SERVER}v2/pelajaran/pertanyaan/hapus/${dataIndex}`).then(res => {
-			if(res.data.error) {
+    let dataIndex = e.target.getAttribute('data-id');
+    let dataID = e.target.getAttribute('data-index');
+    API.delete(`${API_SERVER}v2/pelajaran/pertanyaan/hapus/${dataIndex}`).then(res => {
+      if (res.data.error) {
         toast.warning("Gagal menghapus data");
       }
       else {
@@ -269,11 +269,11 @@ class Tugas extends React.Component {
         this.fetchPertanyaan(this.state.examId)
 
       }
-		})
+    })
   }
 
-  saveKuesioner(){
-    if(this.state.examId) {
+  saveKuesioner() {
+    if (this.state.examId) {
       let form = {
         examId: this.state.examId,
         pertanyaan: this.state.pertanyaan,
@@ -284,8 +284,8 @@ class Tugas extends React.Component {
 
         console.log('state: ', res.data.result)
 
-        if(res.status === 200) {
-          if(res.data.error) {
+        if (res.status === 200) {
+          if (res.data.error) {
             toast.error('Error post data')
           } else {
             this.fetchKuis();
@@ -300,15 +300,15 @@ class Tugas extends React.Component {
   }
 
   submitImport = e => {
-		e.preventDefault();
-    if(this.state.examId) {
-  		this.setState({ loading: true });
-  		let form = new FormData();
-  		form.append('examId', this.state.examId);
-  		form.append('files', this.state.formFile);
+    e.preventDefault();
+    if (this.state.examId) {
+      this.setState({ loading: true });
+      let form = new FormData();
+      form.append('examId', this.state.examId);
+      form.append('files', this.state.formFile);
 
-  		API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import?tipe=tugas`, form).then(res => {
-  			if(res.data.error) {
+      API.post(`${API_SERVER}v2/pelajaran/pertanyaan/import?tipe=tugas`, form).then(res => {
+        if (res.data.error) {
           toast.warning("Error import data");
         }
         else {
@@ -317,17 +317,17 @@ class Tugas extends React.Component {
           this.fetchPertanyaan(this.state.examId);
         }
 
-  		})
+      })
     } else {
       toast.info(`Pilih ${this.state.tipe} terlebih dahulu`)
     }
-	}
+  }
 
   filterType = e => {
     const { files } = e.target;
     let split = files[0].name.split('.');
-    let eks = split[split.length-1];
-    if(['xlsx', 'xls'].includes(eks)) {
+    let eks = split[split.length - 1];
+    if (['xlsx', 'xls'].includes(eks)) {
       this.setState({ formFile: e.target.files[0] })
     }
     else {
@@ -338,7 +338,7 @@ class Tugas extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -348,7 +348,7 @@ class Tugas extends React.Component {
             <div className="card-header header-kartu">
               Semua {this.state.tipe}
             </div>
-            <div className="card-body" style={{padding: '5px'}}>
+            <div className="card-body" style={{ padding: '5px' }}>
               <div className="list-group list-group-flush">
                 {
                   this.state.kuis.map((item, i) => (
@@ -360,7 +360,7 @@ class Tugas extends React.Component {
                 }
               </div>
 
-              <div style={{padding: '12px'}}>
+              <div style={{ padding: '12px' }}>
                 <button onClick={() => { this.clearForm(); this.setState({ formAdd: true }) }} type="button" className="btn btn-v2 btn-primary btn-block mt-2" disabled={this.state.silabus.length ? false : true}>
                   <i className="fa fa-plus"></i> Tambah
                 </button>
@@ -388,13 +388,13 @@ class Tugas extends React.Component {
                           <input className="form-control" type="text" value={this.state.title} name="title" onChange={e => this.setState({ [e.target.name]: e.target.value })} required placeholder="Enter" />
                         </div>
                         <div className="col-sm-4">
-                          <label className="mb-3">Jenis Tugas</label><br/>
+                          <label className="mb-3">Jenis Tugas</label><br />
                           <div class="form-check form-check-inline">
-                            <input checked={this.state.tipeJawab == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tipeJawab" value="1" />
+                            <input checked={this.state.tipeJawab == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value })} class="form-check-input" type="radio" name="tipeJawab" value="1" />
                             <label class="form-check-label" for="inlineRadio1">Upload File</label>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input checked={this.state.tipeJawab == "2"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tipeJawab" value="2" />
+                            <input checked={this.state.tipeJawab == "2"} onChange={e => this.setState({ [e.target.name]: e.target.value })} class="form-check-input" type="radio" name="tipeJawab" value="2" />
                             <label class="form-check-label" for="inlineRadio2">Jawab Langsung</label>
                           </div>
                         </div>
@@ -454,29 +454,29 @@ class Tugas extends React.Component {
                           <input key={this.state.fileExcel} required onChange={this.filterType} className="form-control" type="file" />
                         </div>
                         <div className="col-sm-3">
-                          <button style={{marginTop: '28px'}} className="btn btn-v2 btn-primary" type="submit">
-                            <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan" }
+                          <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-primary" type="submit">
+                            <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan"}
                           </button>
                         </div>
                       </div>
                       <div className="form-group row">
                         {
                           this.state.formFile ?
-                          <table className="border" border="1">
-                            <tr>
-                              <td width="90px">Filename</td>
-                              <td>{this.state.formFile.name}</td>
-                            </tr>
-                            <tr>
-                              <td>Size</td>
-                              <td>{this.state.formFile.size/1000}KB</td>
-                            </tr>
-                            <tr>
-                              <td>Type</td>
-                              <td>{this.state.formFile.type}</td>
-                            </tr>
-                          </table>
-                          : null
+                            <table className="border" border="1">
+                              <tr>
+                                <td width="90px">Filename</td>
+                                <td>{this.state.formFile.name}</td>
+                              </tr>
+                              <tr>
+                                <td>Size</td>
+                                <td>{this.state.formFile.size / 1000}KB</td>
+                              </tr>
+                              <tr>
+                                <td>Type</td>
+                                <td>{this.state.formFile.type}</td>
+                              </tr>
+                            </table>
+                            : null
                         }
                       </div>
                     </form>
@@ -491,13 +491,13 @@ class Tugas extends React.Component {
                   </div>
                   <div className="card-body">
                     {
-                      this.state.pertanyaan.map((item,i) => (
+                      this.state.pertanyaan.map((item, i) => (
                         <div className="form-group">
-                          <label>Pertanyaan <b>{i+1}</b></label>
+                          <label>Pertanyaan <b>{i + 1}</b></label>
                           <span className="float-right">
-                            <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
+                            <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                           </span>
-                          <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{display:"none"}} onChange="" />
+                          <input id={`myFile${i}`} type="file" name={`myFile${i}`} style={{ display: "none" }} onChange="" />
                           <Editor
                             apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                             initialValue={item.tanya}
@@ -507,9 +507,9 @@ class Tugas extends React.Component {
                               menubar: false,
                               convert_urls: false,
                               image_class_list: [
-                                {title: 'None', value: ''},
-                                {title: 'Responsive', value: 'img-responsive'},
-                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                { title: 'None', value: '' },
+                                { title: 'Responsive', value: 'img-responsive' },
+                                { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                               ],
                               file_browser_callback_types: 'image',
                               file_picker_callback: function (callback, value, meta) {
@@ -527,7 +527,7 @@ class Tugas extends React.Component {
                                       data: dataForm,
                                       processData: false,
                                       contentType: false,
-                                      success: (data)=>{
+                                      success: (data) => {
                                         callback(data.result.url);
                                         this.value = '';
                                       }
@@ -553,11 +553,11 @@ class Tugas extends React.Component {
                       ))
                     }
 
-                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{width:'100%'}}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
+                    <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Tambah Pertanyaan</button>
 
                     <button
                       type="button"
-                      style={{width: '100%'}}
+                      style={{ width: '100%' }}
                       className="btn btn-icademy-primary mt-2"
                       onClick={this.saveKuesioner.bind(this)}
                     >
