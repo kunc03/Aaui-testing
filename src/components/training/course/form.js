@@ -617,15 +617,28 @@ autoSave = () =>{
                                                                     <label for="media">Media</label>
                                                                     <div className="training-session-media">
                                                                         {
-                                                                            media.map(item =>
+                                                                            media.map(item => {
+                                                                                let icon = 'fa-paperclip'
+                                                                                switch (item.type){
+                                                                                    case 'PDF' : icon = 'fa-file-pdf'; break;
+                                                                                    case 'Word' : icon = 'fa-file-word'; break;
+                                                                                    case 'Excel' : icon = 'fa-file-excel'; break;
+                                                                                    case 'PowerPoint' : icon = 'fa-file-powerpoint'; break;
+                                                                                    case 'Image' : icon = 'fa-image'; break;
+                                                                                    case 'Video' : icon = 'fa-file-video'; break;
+                                                                                    case 'Audio' : icon = 'fa-file-audio'; break;
+                                                                                    default : icon = 'fa-paperclip';
+                                                                                }
+                                                                                return(
                                                                                 <div className="training-session-media-list">
                                                                                     <a href={item.url} target="_blank" style={{color:"#000"}}>
-                                                                                        <i className="fa fa-paperclip"></i>&nbsp;
+                                                                                        <i className={`fa ${icon}`}></i>&nbsp;
                                                                                         {item.name}
                                                                                     </a>
                                                                                     <i className="fa fa-times"></i>
                                                                                 </div>
-                                                                            )
+                                                                                )
+                                                                            })
                                                                         }
                                                                     </div>
                                                                     <label for="media" className="form-control"><i className="fa fa-plus"></i> Add media</label>
