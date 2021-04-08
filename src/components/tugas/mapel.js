@@ -1,6 +1,6 @@
 import React from 'react';
 
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
@@ -49,7 +49,7 @@ class Overview extends React.Component {
 
   fetchPelajaranByJadwal() {
     API.get(`${API_SERVER}v2/pelajaran/jadwal/${this.state.jadwalId}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ informasiJadwal: res.data.result.length ? res.data.result[0] : {} })
       }
     })
@@ -57,7 +57,7 @@ class Overview extends React.Component {
 
   fetchSilabus() {
     API.get(`${API_SERVER}v2/silabus/jadwal/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal one`)
       this.setState({ silabus: res.data.result, loading: false, });
     })
   }
@@ -70,7 +70,7 @@ class Overview extends React.Component {
     // })
 
     API.get(`${API_SERVER}v2/jadwal-mengajar/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch overview`)
+      if (res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ overview: res.data.result.deskripsi });
     })
@@ -89,9 +89,9 @@ class Overview extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if (res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
-      this.setState({ pertanyaan: res.data.result})
+      this.setState({ pertanyaan: res.data.result })
     })
   }
 
@@ -106,7 +106,7 @@ class Overview extends React.Component {
   }
 
   render() {
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <>
@@ -130,31 +130,31 @@ class Overview extends React.Component {
               </table>
 
               <h4 className="f-w-900 f-18 fc-blue">Preview</h4>
-              <div class="container py-2" style={{marginLeft: '24px'}}>
+              <div class="container py-2" style={{ marginLeft: '24px' }}>
                 <div class="row">
-                    <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                            <div class="col">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                            <span class="badge badge-pill bg-success border">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                            <div class="col border-right">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
+                  <div class="col-auto text-center flex-column d-none d-sm-flex">
+                    <div class="row h-50">
+                      <div class="col">&nbsp;</div>
+                      <div class="col">&nbsp;</div>
                     </div>
-                    <div class="col py-2">
-                        <div class="card shadow">
-                            <div class="card-body timeline-active">
-                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title"><i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
-                                <div class="collapse" id={`tOverview`}>
-                                    <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
-                                </div>
-                            </div>
-                        </div>
+                    <h5 class="m-2">
+                      <span class="badge badge-pill bg-success border">&nbsp;</span>
+                    </h5>
+                    <div class="row h-50">
+                      <div class="col border-right">&nbsp;</div>
+                      <div class="col">&nbsp;</div>
                     </div>
+                  </div>
+                  <div class="col py-2">
+                    <div class="card shadow">
+                      <div class="card-body timeline-active">
+                        <h4 data-target="#tOverview" data-toggle="collapse" style={{ marginBottom: '8px' }} class="card-title"><i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
+                        <div class="collapse" id={`tOverview`}>
+                          <div style={{ padding: '12px' }} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {
@@ -162,19 +162,19 @@ class Overview extends React.Component {
 
                     return (
                       <div class="row">
-                          <div class="col-auto text-center flex-column d-none d-sm-flex">
-                              <div class="row h-50">
-                                <div class="col border-right">&nbsp;</div>
-                                <div class="col">&nbsp;</div>
-                              </div>
-                              <h5 class="m-2">
-                                <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
-                              </h5>
-                              <div class="row h-50">
-                                <div class={`col ${i == (this.state.silabus.length-1) ? '' : 'border-right'}`}>&nbsp;</div>
-                                <div class="col">&nbsp;</div>
-                              </div>
+                        <div class="col-auto text-center flex-column d-none d-sm-flex">
+                          <div class="row h-50">
+                            <div class="col border-right">&nbsp;</div>
+                            <div class="col">&nbsp;</div>
                           </div>
+                          <h5 class="m-2">
+                            <span className={`badge badge-pill bg-${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'success' : 'light') : (moment(item.start_date) < moment(new Date()) ? 'success' : 'light')} border`}>&nbsp;</span>
+                          </h5>
+                          <div class="row h-50">
+                            <div class={`col ${i == (this.state.silabus.length - 1) ? '' : 'border-right'}`}>&nbsp;</div>
+                            <div class="col">&nbsp;</div>
+                          </div>
+
                           <div class="col py-2">
                               <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
                                   <div class="card-body">
@@ -237,6 +237,7 @@ class Overview extends React.Component {
                                         item.topik &&
                                         <span>Topik : {item.topik}</span>
                                       }
+
                                       <div class="collapse mt-4" id={`t${i}`}>
                                         <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
@@ -269,25 +270,29 @@ class Overview extends React.Component {
                                           <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
                                             <i className="fa fa-video"></i> Open
                                           </a>
-                                          :null
+                                            : null
                                         }
 
                                         {
                                           item.hasOwnProperty('exam_id') && moment(item.start_date) < moment(new Date()) ?
-                                          <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
-                                            <i className="fa fa-video"></i> Open
-                                          </a>
-                                          :null
+                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
+                                              <i className="fa fa-video"></i> Open
+                                            </a>
+                                            : null
                                         }
+
                                         {
                                           moment(item.start_date) > moment(new Date()) &&
-                                          <h6 style={{color:'#F00', margin:5}}>The schedule hasn't started yet</h6>
+                                          <h6 style={{ color: '#F00', margin: 5 }}>The schedule hasn't started yet</h6>
                                         }
 
                                       </div>
                                   </div>
                               </div>
+
                           </div>
+
+                        </div>
                       </div>
                     )
                   })
@@ -301,55 +306,55 @@ class Overview extends React.Component {
                 dialogClassName="modal-lg"
               >
                 <Modal.Header closeButton>
-                  <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                     {this.state.infoTugas.exam_title ? this.state.infoTugas.exam_title : this.state.infoTugas.title}
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                {
-                  this.state.pertanyaan.map((item,i) => (
-                    <div className="form-group">
-                      <label>Pertanyaan <b>{i+1}</b></label>
-                      <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+                  {
+                    this.state.pertanyaan.map((item, i) => (
+                      <div className="form-group">
+                        <label>Pertanyaan <b>{i + 1}</b></label>
+                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
-                      {
-                        item.a &&
-                        <tr>
-                          <td style={{width: '24px'}}>A.</td>
-                          <td>{item.a}</td>
-                        </tr>
-                      }
-                      {
-                        item.b &&
-                        <tr>
-                          <td style={{width: '24px'}}>B.</td>
-                          <td>{item.b}</td>
-                        </tr>
-                      }
-                      {
-                        item.c &&
-                        <tr>
-                          <td style={{width: '24px'}}>C.</td>
-                          <td>{item.c}</td>
-                        </tr>
-                      }
-                      {
-                        item.d &&
-                        <tr>
-                          <td style={{width: '24px'}}>D.</td>
-                          <td>{item.d}</td>
-                        </tr>
-                      }
-                      {
-                        item.e &&
-                        <tr>
-                          <td style={{width: '24px'}}>E.</td>
-                          <td>{item.e}</td>
-                        </tr>
-                      }
-                    </div>
-                  ))
-                }
+                        {
+                          item.a &&
+                          <tr>
+                            <td style={{ width: '24px' }}>A.</td>
+                            <td>{item.a}</td>
+                          </tr>
+                        }
+                        {
+                          item.b &&
+                          <tr>
+                            <td style={{ width: '24px' }}>B.</td>
+                            <td>{item.b}</td>
+                          </tr>
+                        }
+                        {
+                          item.c &&
+                          <tr>
+                            <td style={{ width: '24px' }}>C.</td>
+                            <td>{item.c}</td>
+                          </tr>
+                        }
+                        {
+                          item.d &&
+                          <tr>
+                            <td style={{ width: '24px' }}>D.</td>
+                            <td>{item.d}</td>
+                          </tr>
+                        }
+                        {
+                          item.e &&
+                          <tr>
+                            <td style={{ width: '24px' }}>E.</td>
+                            <td>{item.e}</td>
+                          </tr>
+                        }
+                      </div>
+                    ))
+                  }
                 </Modal.Body>
               </Modal>
 

@@ -93,7 +93,7 @@ class Mengajar extends React.Component {
 
   fetchPertanyaan(examId) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${examId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if (res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
       this.setState({ examSoal: res.data.result })
     })
@@ -101,11 +101,11 @@ class Mengajar extends React.Component {
 
   fetchSilabus() {
     API.get(`${API_SERVER}v2/jadwal-mengajar/id/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal one`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal one`)
 
       this.setState({ pelajaranId: res.data.result.pelajaran_id })
       API.get(`${API_SERVER}v2/silabus/pelajaran/${res.data.result.pelajaran_id}`).then(res => {
-        if(res.data.error) console.log(`Error: fetch overview`)
+        if (res.data.error) console.log(`Error: fetch overview`)
 
         const { result } = res.data;
         const filterKuis = result.filter(item => item.jenis === (this.state.jenis === 'kuis' ? 1 : 2));
@@ -139,7 +139,7 @@ class Mengajar extends React.Component {
 
   fetchMurid(jadwalId) {
     API.get(`${API_SERVER}v2/murid/jadwal-absen/${jadwalId}/${this.state.jenis}/${this.state.sesiId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
+      if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ infoMurid: res.data.result })
     })
@@ -147,7 +147,7 @@ class Mengajar extends React.Component {
 
   fetchKelas(kelasId) {
     API.get(`${API_SERVER}v2/murid/kelas-v1/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch kelas");
+      if (res.data.error) toast.warning("Error fetch kelas");
 
       this.setState({ infoKelas: res.data.result })
     })
@@ -155,7 +155,7 @@ class Mengajar extends React.Component {
 
   fetchJadwal(jadwalId) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/id/${jadwalId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: ${res.data.result}`)
+      if (res.data.error) toast.warning(`Warning: ${res.data.result}`)
 
       this.setState({ infoJadwal: res.data.result })
 
@@ -166,7 +166,7 @@ class Mengajar extends React.Component {
 
   fetchChapter(chapterId) {
     API.get(`${API_SERVER}v2/chapter/${chapterId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
+      if (res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
       this.setState({ infoChapter: res.data.result })
     })
@@ -249,26 +249,26 @@ class Mengajar extends React.Component {
 
   cekKehadiran(userId) {
     API.get(`${API_SERVER}v2/murid/cek-hadir/${userId}/${this.state.sesiId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: cek kehadiran Anda`)
+      if (res.data.error) toast.warning(`Warning: cek kehadiran Anda`)
 
       this.setState({ openKehadiran: res.data.result.length ? false : true })
     })
   }
 
   componentDidMount() {
-    if(localStorage.getItem('waktuPengerjaan')) {
-      this.setState({ waktuPengerjaan: parseInt(localStorage.getItem('waktuPengerjaan'))})
+    if (localStorage.getItem('waktuPengerjaan')) {
+      this.setState({ waktuPengerjaan: parseInt(localStorage.getItem('waktuPengerjaan')) })
     } else {
       this.fetchSilabus();
     }
 
-    if(this.state.role === "murid") {
+    if (this.state.role === "murid") {
       this.cekKehadiran(Storage.get('user').data.user_id)
     }
 
     this.fetchJadwal(this.state.jadwalId)
 
-    if(this.state.jenis === "materi") {
+    if (this.state.jenis === "materi") {
       this.fetchChapter(this.state.sesiId);
     }
 
@@ -380,7 +380,7 @@ class Mengajar extends React.Component {
     }
 
     API.post(`${API_SERVER}v2/murid/jadwal-absen`, form).then(res => {
-      if(res.data.error) toast.warning(`Warning: gagal absen`)
+      if (res.data.error) toast.warning(`Warning: gagal absen`)
 
       toast.success(`Anda mengkonfirmasi kehadiran ${this.state.jenis}.`)
       this.setState({ openKehadiran: false })
@@ -418,7 +418,7 @@ class Mengajar extends React.Component {
 
   fetchMengumpulkan(examId) {
     API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
       else {
@@ -429,7 +429,7 @@ class Mengajar extends React.Component {
 
   fetchScore(examId) {
     API.get(`${API_SERVER}v2/guru/score-murid/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
       else {
@@ -443,13 +443,13 @@ class Mengajar extends React.Component {
     let examId = e.target.getAttribute('data-id')
     let tipeJawab = e.target.getAttribute('data-tipe')
     API.get(`${API_SERVER}v2/guru/tugas/${examId}?kelas=${this.state.infoJadwal.kelas_id}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Warning: fetch mengumpulkan tugas`)
       }
       else {
         let { result } = res.data;
         let find = result.filter(item => item.user_id == Storage.get('user').data.user_id);
-        if(find.length == 1 && find[0].score) {
+        if (find.length == 1 && find[0].score) {
           toast.success(`Kamu sudah mengerjakan tugas ini.`)
           this.setState({ scoreTugas: find[0].score })
         }
@@ -469,9 +469,9 @@ class Mengajar extends React.Component {
     form.append('examId', this.state.examId);
     form.append('deskripsi', this.state.deskripsi);
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     API.post(`${API_SERVER}v2/tugas-murid/submit`, form).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: submit tugas`)
       }
       else {
@@ -490,7 +490,7 @@ class Mengajar extends React.Component {
       examId: this.state.examId
     }
     API.post(`${API_SERVER}v2/tugas-murid/submit-langsung`, form).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: submit tugas`)
       }
       else {
@@ -537,7 +537,7 @@ class Mengajar extends React.Component {
 
   handleDynamicInput = (e, i) => {
     let newObj = [...this.state.mengumpulkan];
-    if(e.hasOwnProperty('target')) {
+    if (e.hasOwnProperty('target')) {
       const { value, name } = e.target;
       newObj[i][name] = value;
       this.setState({ pertanyaan: newObj });
@@ -549,8 +549,8 @@ class Mengajar extends React.Component {
 
   setNilaiTugas = (e, answerId) => {
     let score = e.target.value;
-    API.put(`${API_SERVER}v2/guru/detail-tugas/${answerId}`, {score}).then(res => {
-      if(res.data.error){
+    API.put(`${API_SERVER}v2/guru/detail-tugas/${answerId}`, { score }).then(res => {
+      if (res.data.error) {
         toast.warning(`Warning: update score`)
       } else {
         toast.success(`Success update score`)
@@ -590,7 +590,7 @@ class Mengajar extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
@@ -658,13 +658,13 @@ class Mengajar extends React.Component {
 
                       {
                         this.state.infoJadwal.deskripsi ?
-                        <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
-                        :
-                        null
+                          <div className="p-3" dangerouslySetInnerHTML={{ __html: this.state.infoJadwal.deskripsi }} />
+                          :
+                          null
                       }
                     </div>
-                  :
-                  null
+                    :
+                    null
                 }
               </div>
             </div>
@@ -679,7 +679,7 @@ class Mengajar extends React.Component {
 
                       {
                         this.state.role === "guru" &&
-                        <button onClick={e => this.setState({ openUpload: true })} class="float-right btn btn-success btn-circle btn-circle-sm"><i style={{margin: 0}} class="fa fa-plus"></i></button>
+                        <button onClick={e => this.setState({ openUpload: true })} class="float-right btn btn-success btn-circle btn-circle-sm"><i style={{ margin: 0 }} class="fa fa-plus"></i></button>
                       }
                     </h4>
                   </div>
@@ -688,42 +688,42 @@ class Mengajar extends React.Component {
                     <div className="table-responsive" style={{ overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto' }}>
                       <table className="table table-hover">
 
-                      {
-                        this.state.infoFiles.map(item =>
-                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src={
-                                item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
-                                  ? `assets/images/files/${item.type}.svg`
-                                  : 'assets/images/files/file.svg'
-                              } width="32" /> &nbsp;{item.name}
-                            </td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                              <span class="btn-group dropleft col-sm-1">
-                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i
-                                    className="fa fa-ellipsis-v"
-                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                  />
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                        {
+                          this.state.infoFiles.map(item =>
+                            <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                              <td className="fc-muted f-14 f-w-300 p-t-20">
+                                <img src={
+                                  item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
+                                    ? `assets/images/files/${item.type}.svg`
+                                    : 'assets/images/files/file.svg'
+                                } width="32" /> &nbsp;{item.name}
+                              </td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                <span class="btn-group dropleft col-sm-1">
+                                  <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i
+                                      className="fa fa-ellipsis-v"
+                                      style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                    />
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
 
-                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button"
-                                    onClick={e => {window.open(item.location, 'Downloading files')}}>
-                                    Download
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button"
+                                      onClick={e => { window.open(item.location, 'Downloading files') }}>
+                                      Download
                                   </button>
 
-                                  {
-                                    this.state.role === "guru" &&
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
-                                  }
+                                    {
+                                      this.state.role === "guru" &&
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
+                                    }
 
-                                </div>
-                              </span>
-                            </td>
-                          </tr>
-                        )
-                      }
+                                  </div>
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        }
 
                       </table>
                     </div>
@@ -743,23 +743,23 @@ class Mengajar extends React.Component {
 
                       {
                         (this.state.infoChapter.hasOwnProperty('ujian') && this.state.infoChapter.ujian.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='ujian'}>Ujian</button>
-                        : null
+                          <button onClick={e => this.setState({ contentSesi: 'ujian', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'ujian'}>Ujian</button>
+                          : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('kuis') && this.state.infoChapter.kuis.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='kuis'}>Kuis</button>
-                        : null
+                          <button onClick={e => this.setState({ contentSesi: 'kuis', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'kuis'}>Kuis</button>
+                          : null
                       }
 
                       {
                         (this.state.infoChapter.hasOwnProperty('tugas') && this.state.infoChapter.tugas.length) ?
-                        <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='tugas'}>Tugas</button>
-                        : null
+                          <button onClick={e => this.setState({ contentSesi: 'tugas', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'tugas'}>Tugas</button>
+                          : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'materi'}>Materi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
@@ -774,7 +774,7 @@ class Mengajar extends React.Component {
 
                           {
                             this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id !== null &&
-                              <ul className="list-group f-12 mb-3">
+                            <ul className="list-group f-12 mb-3">
                               {
                                 this.state.infoChapter.hasOwnProperty('attachment_id') && this.state.infoChapter.attachment_id.split(',').map(item => (
                                   <li className="list-group-item p-0">
@@ -789,10 +789,10 @@ class Mengajar extends React.Component {
                                   </li>
                                 ))
                               }
-                              </ul>
+                            </ul>
                           }
                         </div>
-                      :
+                        :
                         null
                     }
 
@@ -800,7 +800,7 @@ class Mengajar extends React.Component {
                       this.state.contentSesi == 'tugas' ?
                         <div>
                           {
-                            this.state.infoChapter.tugas.map((item,i) => (
+                            this.state.infoChapter.tugas.map((item, i) => (
                               <table className="table table-bordered">
                                 <tr>
                                   <td width="140px">Title</td>
@@ -824,26 +824,26 @@ class Mengajar extends React.Component {
 
                                     {
                                       this.state.role == 'murid' && this.state.scoreTugas ?
-                                      <div className="text-center" style={{padding: '8px 26px'}}>
-                                        <span>Score</span>
-                                        <h1>{this.state.scoreTugas}</h1>
-                                      </div>
-                                      : null
+                                        <div className="text-center" style={{ padding: '8px 26px' }}>
+                                          <span>Score</span>
+                                          <h1>{this.state.scoreTugas}</h1>
+                                        </div>
+                                        : null
                                     }
 
                                     {
                                       this.state.role == 'guru' ?
-                                      <button onClick={this.openReportTugas} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
-                                      : null
+                                        <button onClick={this.openReportTugas} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
+                                        : null
                                     }
 
                                     {
                                       this.state.role == 'murid' ?
                                         moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
                                           <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
-                                        :
+                                          :
                                           'Belum Saatnya'
-                                      : null
+                                        : null
                                     }
 
                                   </td>
@@ -852,15 +852,15 @@ class Mengajar extends React.Component {
                             ))
                           }
                         </div>
-                      :
-                      null
+                        :
+                        null
                     }
 
                     {
                       this.state.contentSesi == 'kuis' ?
                         <div>
                           {
-                            this.state.infoChapter.kuis.map((item,i) => (
+                            this.state.infoChapter.kuis.map((item, i) => (
                               <table className="table table-bordered">
                                 <tr>
                                   <td width="140px">Title</td>
@@ -876,24 +876,24 @@ class Mengajar extends React.Component {
                                 </tr>
                                 {
                                   item.quiz == '2' ?
-                                  <tr>
-                                    <td>Type</td>
-                                    <td><b>{item.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
-                                  </tr>
-                                  : null
+                                    <tr>
+                                      <td>Type</td>
+                                      <td><b>{item.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
+                                    </tr>
+                                    : null
                                 }
                                 <tr>
                                   <td colSpan="2">
                                     {
                                       this.state.role == 'guru' ?
-                                      <button onClick={this.openReportKuis} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
-                                      : null
+                                        <button onClick={this.openReportKuis} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
+                                        : null
                                     }
 
                                     {
                                       this.state.role == 'murid' ?
-                                      <button onClick={e => this.kerjakanKuis(item.exam_id)} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
-                                      : null
+                                        <button onClick={e => this.kerjakanKuis(item.exam_id)} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        : null
                                     }
                                   </td>
                                 </tr>
@@ -901,15 +901,15 @@ class Mengajar extends React.Component {
                             ))
                           }
                         </div>
-                      :
-                      null
+                        :
+                        null
                     }
 
                     {
                       this.state.contentSesi == 'ujian' ?
                         <div>
                           {
-                            this.state.infoChapter.ujian.map((item,i) => (
+                            this.state.infoChapter.ujian.map((item, i) => (
                               <table className="table table-bordered">
                                 <tr>
                                   <td width="140px">Title</td>
@@ -925,24 +925,24 @@ class Mengajar extends React.Component {
                                 </tr>
                                 {
                                   item.quiz == '2' ?
-                                  <tr>
-                                    <td>Type</td>
-                                    <td><b>{item.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
-                                  </tr>
-                                  : null
+                                    <tr>
+                                      <td>Type</td>
+                                      <td><b>{item.tipe_jawab == '1' ? 'Upload File' : 'Jawab Langsung'}</b></td>
+                                    </tr>
+                                    : null
                                 }
                                 <tr>
                                   <td colSpan="2">
                                     {
                                       this.state.role == 'guru' ?
-                                      <button onClick={this.openReportKuis} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
-                                      : null
+                                        <button onClick={this.openReportKuis} data-id={item.exam_id} className="btn btn-v2 btn-info mr-2">Report</button>
+                                        : null
                                     }
 
                                     {
                                       this.state.role == 'murid' ?
-                                      <button onClick={e => this.kerjakanKuis(item.exam_id)} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
-                                      : null
+                                        <button onClick={e => this.kerjakanKuis(item.exam_id)} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        : null
                                     }
                                   </td>
                                 </tr>
@@ -950,14 +950,14 @@ class Mengajar extends React.Component {
                             ))
                           }
                         </div>
-                      :
-                      null
+                        :
+                        null
                     }
 
                     {
                       (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.examId ?
-                      <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
-                      : null
+                        <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
+                        : null
                     }
                   </div>
                 </div>
@@ -973,40 +973,40 @@ class Mengajar extends React.Component {
                     <div className="card">
                       <div className="card-header">
                         <h4 className="header-kartu">
-                        Waktu Pengerjaan
+                          Waktu Pengerjaan
                         </h4>
                         {
                           this.state.role === "murid" && this.state.waktuPengerjaan !== 0 &&
-                            <CountdownCircleTimer
-                              isPlaying
-                              duration={this.state.waktuPengerjaan}
-                              colors={[
-                                ['#004777', 0.33],
-                                ['#F7B801', 0.33],
-                                ['#A30000', 0.33],
-                              ]}
-                              renderAriaTime={(remainingTime, elapsedTime) => {
-                                localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
-                              }}
-                              children={({ remainingTime }) => {
-                                const hours = Math.floor(remainingTime / 3600)
-                                const minutes = Math.floor((remainingTime % 3600) / 60)
-                                const seconds = remainingTime % 60
+                          <CountdownCircleTimer
+                            isPlaying
+                            duration={this.state.waktuPengerjaan}
+                            colors={[
+                              ['#004777', 0.33],
+                              ['#F7B801', 0.33],
+                              ['#A30000', 0.33],
+                            ]}
+                            renderAriaTime={(remainingTime, elapsedTime) => {
+                              localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
+                            }}
+                            children={({ remainingTime }) => {
+                              const hours = Math.floor(remainingTime / 3600)
+                              const minutes = Math.floor((remainingTime % 3600) / 60)
+                              const seconds = remainingTime % 60
 
-                                return `${hours}:${minutes}:${seconds}`
-                              }}
-                              size={80}
-                              strokeWidth={4}
-                              onComplete={() => {
-                                localStorage.removeItem('waktuPengerjaan')
-                                this.props.socket.emit('send', {
-                                  event: 'selesai',
-                                  isStart: !this.state.startPertemuan,
-                                  jadwalId: this.state.jadwalId,
-                                  companyId: Storage.get('user').data.company_id
-                                })
-                              }}
-                            />
+                              return `${hours}:${minutes}:${seconds}`
+                            }}
+                            size={80}
+                            strokeWidth={4}
+                            onComplete={() => {
+                              localStorage.removeItem('waktuPengerjaan')
+                              this.props.socket.emit('send', {
+                                event: 'selesai',
+                                isStart: !this.state.startPertemuan,
+                                jadwalId: this.state.jadwalId,
+                                companyId: Storage.get('user').data.company_id
+                              })
+                            }}
+                          />
                         }
                       </div>
                     </div>
@@ -1019,41 +1019,41 @@ class Mengajar extends React.Component {
                     <div className="card">
                       <div className="card-header">
                         <h4 className="header-kartu">
-                        Waktu Pengerjaan
+                          Waktu Pengerjaan
                         </h4>
                         {
                           this.state.waktuPengerjaan !== 0 &&
-                            <CountdownCircleTimer
-                              isPlaying
-                              duration={this.state.waktuPengerjaan}
-                              colors={[
-                                ['#004777', 0.33],
-                                ['#F7B801', 0.33],
-                                ['#A30000', 0.33],
-                              ]}
-                              renderAriaTime={(remainingTime, elapsedTime) => {
-                                localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
-                              }}
-                              children={({ remainingTime }) => {
-                                const hours = Math.floor(remainingTime / 3600)
-                                const minutes = Math.floor((remainingTime % 3600) / 60)
-                                const seconds = remainingTime % 60
+                          <CountdownCircleTimer
+                            isPlaying
+                            duration={this.state.waktuPengerjaan}
+                            colors={[
+                              ['#004777', 0.33],
+                              ['#F7B801', 0.33],
+                              ['#A30000', 0.33],
+                            ]}
+                            renderAriaTime={(remainingTime, elapsedTime) => {
+                              localStorage.setItem('waktuPengerjaan', remainingTime.remainingTime)
+                            }}
+                            children={({ remainingTime }) => {
+                              const hours = Math.floor(remainingTime / 3600)
+                              const minutes = Math.floor((remainingTime % 3600) / 60)
+                              const seconds = remainingTime % 60
 
-                                return `${hours}:${minutes}:${seconds}`
-                              }}
-                              size={80}
-                              strokeWidth={4}
-                              onComplete={() => {
-                                console.log('selesai')
-                              }}
-                            />
+                              return `${hours}:${minutes}:${seconds}`
+                            }}
+                            size={80}
+                            strokeWidth={4}
+                            onComplete={() => {
+                              console.log('selesai')
+                            }}
+                          />
                         }
                       </div>
                     </div>
                   </div>
                 }
 
-                <Detail getStarted={this.getStarted} getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{params: {examId: this.state.sesiId}}} />
+                <Detail getStarted={this.getStarted} getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{ params: { examId: this.state.sesiId } }} />
               </>
             }
 
@@ -1062,7 +1062,7 @@ class Mengajar extends React.Component {
               onHide={() => this.clearForm()}
             >
               <Modal.Header className="card-header header-kartu" closeButton>
-                { this.state.submitted ? 'Informasi Tugas' : 'Kumpulkan Tugas'}
+                {this.state.submitted ? 'Informasi Tugas' : 'Kumpulkan Tugas'}
               </Modal.Header>
               <Modal.Body>
                 {
@@ -1070,9 +1070,9 @@ class Mengajar extends React.Component {
                   <form onSubmit={this.submitTugas}>
 
                     {
-                      this.state.examSoal.map((item,i) => (
+                      this.state.examSoal.map((item, i) => (
                         <div className="mb-2">
-                          <label>Pertanyaan <b>{i+1}</b></label>
+                          <label>Pertanyaan <b>{i + 1}</b></label>
                           <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                         </div>
                       ))
@@ -1098,9 +1098,9 @@ class Mengajar extends React.Component {
                   this.state.tipeJawab == '2' &&
                   <form onSubmit={this.submitTugasLangsung}>
                     {
-                      this.state.examSoal.map((item,i) => (
+                      this.state.examSoal.map((item, i) => (
                         <div className="mb-2">
-                          <label>Pertanyaan <b>{i+1}</b></label>
+                          <label>Pertanyaan <b>{i + 1}</b></label>
                           <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                         </div>
                       ))
@@ -1130,7 +1130,7 @@ class Mengajar extends React.Component {
                 <h4 className="f-w-900 f-18 fc-blue">Informasi Kelas</h4>
                 <table>
                   <tr>
-                    <td style={{width: '180px'}}>Nama Kelas</td>
+                    <td style={{ width: '180px' }}>Nama Kelas</td>
                     <td><b>{this.state.infoKelas.kelas_nama}</b></td>
                   </tr>
                   <tr>
@@ -1151,8 +1151,8 @@ class Mengajar extends React.Component {
                   </tr>
                 </table>
 
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <h4 className="f-w-900 f-18 fc-blue">Informasi Murid</h4>
                 <table className="table table-striped">
@@ -1170,7 +1170,7 @@ class Mengajar extends React.Component {
                     {
                       this.state.infoMurid.map((item, i) => (
                         <tr>
-                          <td>{i+1}</td>
+                          <td>{i + 1}</td>
                           <td>{item.nama}</td>
                           <td>{item.no_induk}</td>
                           <td>{item.jenis_kelamin}</td>
@@ -1204,7 +1204,7 @@ class Mengajar extends React.Component {
                             <th>Catatan</th>
                             <th>Jawaban</th>
                           </>
-                        : null
+                          : null
                       }
                       <th>Status</th>
                       <th>Score</th>
@@ -1214,7 +1214,7 @@ class Mengajar extends React.Component {
                     {
                       this.state.contentSesi == 'tugas' && this.state.mengumpulkan.map((item, i) => (
                         <tr>
-                          <td>{i+1}</td>
+                          <td>{i + 1}</td>
                           <td>{item.nama}</td>
                           <td>{item.pengumpulan ? moment(item.pengumpulan).format('DD/MM/YYYY') : '-'}</td>
                           <td>{item.pengumpulan ? moment(item.pengumpulan).format('HH:mm') : '-'}</td>
@@ -1223,14 +1223,14 @@ class Mengajar extends React.Component {
                             {
                               item.tipe_jawab == '1' ?
                                 item.pengumpulan ? <a href={item.answer_file} target="_blank" className="silabus">Open</a> : '-'
-                              :
+                                :
                                 <div dangerouslySetInnerHTML={{ __html: item.answer_file }} />
                             }
                           </td>
                           <td>
                             <span className={`label label-${item.pengumpulan ? 'success' : 'danger'}`}>{item.pengumpulan ? 'Sudah' : 'Belum'}</span>
                           </td>
-                          <td><input style={{padding: '2px', width: '50px'}} onChange={e => this.handleDynamicInput(e,i)} onBlur={e => this.setNilaiTugas(e, item.answer_id)} name="score" type="number" value={item.pengumpulan ? item.score : 0} /></td>
+                          <td><input style={{ padding: '2px', width: '50px' }} onChange={e => this.handleDynamicInput(e, i)} onBlur={e => this.setNilaiTugas(e, item.answer_id)} name="score" type="number" value={item.pengumpulan ? item.score : 0} /></td>
                         </tr>
                       ))
                     }
@@ -1238,7 +1238,7 @@ class Mengajar extends React.Component {
                     {
                       (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.mengumpulkan.map((item, i) => (
                         <tr>
-                          <td>{i+1}</td>
+                          <td>{i + 1}</td>
                           <td>{item.nama}</td>
                           <td>{item.pengumpulan ? moment(item.pengumpulan).format('DD/MM/YYYY') : '-'}</td>
                           <td>{item.pengumpulan ? moment(item.pengumpulan).format('HH:mm') : '-'}</td>
@@ -1303,7 +1303,7 @@ class Mengajar extends React.Component {
                   onClick={this.uploadFile.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                    {'Upload'}
+                  {'Upload'}
                 </button>
               </Modal.Footer>
             </Modal>

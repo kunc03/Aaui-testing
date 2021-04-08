@@ -44,9 +44,9 @@ class PersonaliaDetail extends React.Component {
 
       this.setState({ userParents: guru })
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   simpanData = e => {
@@ -110,7 +110,7 @@ class PersonaliaDetail extends React.Component {
       }
 
       let url = '';
-      if(this.state.exists) {
+      if (this.state.exists) {
         url = `${API_SERVER}v2/parents/create?exists=true`
       }
       else {
@@ -214,7 +214,7 @@ class PersonaliaDetail extends React.Component {
 
   render() {
 
-    console.log('STATE: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">

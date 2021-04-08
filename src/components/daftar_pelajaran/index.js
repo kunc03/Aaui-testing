@@ -49,7 +49,7 @@ class DaftarPelajaran extends React.Component {
     form.append('files', this.state.fileSilabus)
 
     API.post(`${API_SERVER}v2/silabus/import`, form).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.fetchSilabus(this.state.pelajaranId)
         this.setState({ keyFileSilabus: Math.random().toString(36) })
       }
@@ -74,7 +74,7 @@ class DaftarPelajaran extends React.Component {
       ujian: this.state.nilaiUjian
     };
     API.put(`${API_SERVER}v2/nilai-pelajaran/${this.state.pelajaranId}`, form).then(res => {
-      if(res.data.error) toast.warning(`Warning: update prosentase`)
+      if (res.data.error) toast.warning(`Warning: update prosentase`)
 
       toast.success('Set prosentase nilai berhasil disimpan');
       this.fetchProsentase(this.state.pelajaranId)
@@ -83,7 +83,7 @@ class DaftarPelajaran extends React.Component {
 
   fetchProsentase(pelajaranId) {
     API.get(`${API_SERVER}v2/nilai-pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch prosentase`);
+      if (res.data.error) toast.warning(`Warning: fetch prosentase`);
 
       this.setState({
         nilaiTugas: res.data.result.tugas,
@@ -329,7 +329,7 @@ class DaftarPelajaran extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -395,11 +395,11 @@ class DaftarPelajaran extends React.Component {
                       </div>
                       <div className="col-sm-4">
                         <label>Kuis</label>
-                        <input  className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
+                        <input className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
                       </div>
                       <div className="col-sm-4">
                         <label>Ujian</label>
-                        <input  className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
+                        <input className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
                       </div>
                     </div>
                     <div className="form-group">
@@ -431,19 +431,19 @@ class DaftarPelajaran extends React.Component {
                     </div>
                     <div class="col-sm-2">
                       <div class="form-group">
-                        <label>Action</label><br/>
+                        <label>Action</label><br />
                         <button onClick={this.importSilabus} class="btn btn-v2 btn-primary">Import</button>
                       </div>
                     </div>
                     <div class="col-sm-2">
                       <div class="form-group">
-                        <label>Template</label><br/>
+                        <label>Template</label><br />
                         <a target="_blank" href={`${API_SERVER}attachment/silabus-template.xlsx`} class="btn btn-v2 btn-primary">Download</a>
                       </div>
                     </div>
                   </div>
 
-                  <hr/>
+                  <hr />
                   <form onSubmit={this.saveSilabus}>
                     <div className="form-group row">
                       <div className="col-sm-2">

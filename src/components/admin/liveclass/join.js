@@ -88,12 +88,12 @@ export default class LiveClassAdminJoin extends Component {
   render() {
 
     const { classRooms, user } = this.state;
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{paddingTop: 20}}>
+          <div className="pcoded-content" style={{ paddingTop: 20 }}>
             <div className="pcoded-inner-content">
               <div className="main-body">
                 <div className="page-wrapper">
@@ -154,44 +154,44 @@ export default class LiveClassAdminJoin extends Component {
                       <Modal.Title className="text-c-purple3 f-w-bold">
                         Invite People
                       </Modal.Title>
-                              </Modal.Header>
-                              <Modal.Body>
-                                <div className="form-vertical">
-                                  <div className="form-group">
-                                    <label style={{ fontWeight: "bold" }}>Email</label>
-                                    <input
-                                      type="email"
-                                      className="form-control"
-                                      name="email"
-                                      onChange={e => {
-                                        this.setState({
-                                          emailInvite: e.target.value
-                                        });
-                                      }}
-                                    />
-                                    <Form.Text>
-                                      {this.state.emailResponse}
-                                    </Form.Text>
-                                  </div>
-                                </div>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className="form-vertical">
+                        <div className="form-group">
+                          <label style={{ fontWeight: "bold" }}>Email</label>
+                          <input
+                            type="email"
+                            className="form-control"
+                            name="email"
+                            onChange={e => {
+                              this.setState({
+                                emailInvite: e.target.value
+                              });
+                            }}
+                          />
+                          <Form.Text>
+                            {this.state.emailResponse}
+                          </Form.Text>
+                        </div>
+                      </div>
 
-                                <button
-                                  style={{ marginTop: "30px" }}
-                                  type="button"
-                                  onClick={this.onClickSubmitInvite}
-                                  className="btn btn-block btn-ideku f-w-bold"
-                                >
-                                  Submit
+                      <button
+                        style={{ marginTop: "30px" }}
+                        type="button"
+                        onClick={this.onClickSubmitInvite}
+                        className="btn btn-block btn-ideku f-w-bold"
+                      >
+                        Submit
                       </button>
-                                <button
-                                  type="button"
-                                  className="btn btn-block f-w-bold"
-                                  onClick={this.handleCloseInvite}
-                                >
-                                  Tidak
+                      <button
+                        type="button"
+                        className="btn btn-block f-w-bold"
+                        onClick={this.handleCloseInvite}
+                      >
+                        Tidak
                       </button>
-                              </Modal.Body>
-                            </Modal>
+                    </Modal.Body>
+                  </Modal>
 
                 </div>
               </div>
