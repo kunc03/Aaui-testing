@@ -163,7 +163,7 @@ class Latihan extends React.Component {
                     <th>Deadline</th>
                     <th>Date Submit</th>
                     <th>Score</th>
-                    <th>Action</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
 
@@ -179,9 +179,12 @@ class Latihan extends React.Component {
                         <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                         <td>{item.submitted.length ? moment(item.submitted[0].created_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
                         <td>{item.submitted.length ? item.submitted[0].score : '-'}</td>
-                        <td>
-                          <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`} className="btn btn-v2 btn-primary">
-                            <i className="fa fa-share"></i> Open
+                        <td className="text-center">
+                          <a
+                            target="_blank"
+                            href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`}
+                            className="btn btn-v2 btn-primary">
+                            Open
                           </a>
 
                           {
@@ -190,6 +193,12 @@ class Latihan extends React.Component {
                             <i className="fa fa-share"></i> Open
                             </Link>
                             */
+                          }
+
+                          {
+                            item.submitted.length ?
+                              <Link to={`/murid/kerjakan-lagi/${item.exam_id}`} className="btn btn-v2 btn-info ml-2">Kerjakan Lagi</Link>
+                            : null
                           }
 
                         </td>

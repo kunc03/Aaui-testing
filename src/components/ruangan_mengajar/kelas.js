@@ -161,7 +161,7 @@ class Mengajar extends React.Component {
         infoChapter: res.data.result,
         waktuPengerjaan: localStorage.getItem('waktuPengerjaan') ? parseInt(localStorage.getItem('waktuPengerjaan')) : (res.data.result.durasi * 60)
       })
-      
+
       if(res.data.result.tatapmuka == 1) {
         this.fetchBBB(this.state.kelasId)
       }
@@ -596,7 +596,7 @@ class Mengajar extends React.Component {
                         : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Deskripsi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>

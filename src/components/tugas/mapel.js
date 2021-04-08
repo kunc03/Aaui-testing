@@ -130,6 +130,7 @@ class Overview extends React.Component {
               </table>
 
               <h4 className="f-w-900 f-18 fc-blue">Preview</h4>
+
               <div class="container py-2" style={{ marginLeft: '24px' }}>
                 <div class="row">
                   <div class="col-auto text-center flex-column d-none d-sm-flex">
@@ -174,125 +175,123 @@ class Overview extends React.Component {
                             <div class={`col ${i == (this.state.silabus.length - 1) ? '' : 'border-right'}`}>&nbsp;</div>
                             <div class="col">&nbsp;</div>
                           </div>
+                        </div>
+                        <div class="col py-2">
+                            <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
+                                <div class="card-body">
+                                    <div class="float-right text-muted f-12">
+                                      {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
+                                    </div>
 
-                          <div class="col py-2">
-                              <div class={`card shadow ${item.hasOwnProperty('exam_id') ? (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '') : (moment(item.start_date) < moment(new Date()) ? 'timeline-active' : '')} shadow`}>
-                                  <div class="card-body">
-                                      <div class="float-right text-muted f-12">
-                                        {item.hasOwnProperty('exam_id') ? moment(item.start_date).format('DD/MM/YYYY HH:mm') : moment(item.start_date).format('DD/MM/YYYY HH:mm')}
-                                      </div>
+                                    {
+                                      item.jenis == 0 ?
+                                        <OverlayTrigger
+                                          placement="top"
+                                          delay={{ show: 250, hide: 400 }}
+                                          overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Silahkan upload materi dan pilih tanggalnya di Tab Sesi.'}</Tooltip>}
+                                        >
+                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                            {
+                                              [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                            }
+                                            {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                          </h4>
+                                        </OverlayTrigger>
+                                      : null
+                                    }
+
+                                    {
+                                      item.jenis == 1 ?
+                                        <OverlayTrigger
+                                          placement="top"
+                                          delay={{ show: 250, hide: 400 }}
+                                          overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih kuis yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
+                                        >
+                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                            {
+                                              [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                            }
+                                            {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                          </h4>
+                                        </OverlayTrigger>
+                                      : null
+                                    }
+
+                                    {
+                                      item.jenis == 2 ?
+                                        <OverlayTrigger
+                                          placement="top"
+                                          delay={{ show: 250, hide: 400 }}
+                                          overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih ujian yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
+                                        >
+                                          <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
+                                            {
+                                              [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
+                                            }
+                                            {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
+                                          </h4>
+                                        </OverlayTrigger>
+                                      : null
+                                    }
+
+                                    {
+                                      item.topik &&
+                                      <span>Topik : {item.topik}</span>
+                                    }
+
+                                    <div class="collapse mt-4" id={`t${i}`}>
+                                      <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
 
                                       {
-                                        item.jenis == 0 ?
-                                          <OverlayTrigger
-                                            placement="top"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Materi dan tanggal belum diatur. Silahkan upload materi dan pilih tanggalnya di Tab Sesi.'}</Tooltip>}
-                                          >
-                                            <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
-                                              {
-                                                [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
-                                              }
-                                              {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
-                                            </h4>
-                                          </OverlayTrigger>
-                                        : null
+                                        (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
+                                          <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
+                                            <i className="fa fa-tasks"></i> {row.exam_title}
+                                          </button>
+                                        ))
                                       }
 
                                       {
-                                        item.jenis == 1 ?
-                                          <OverlayTrigger
-                                            placement="top"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih kuis yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
-                                          >
-                                            <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
-                                              {
-                                                [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
-                                              }
-                                              {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
-                                            </h4>
-                                          </OverlayTrigger>
-                                        : null
+                                        (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
+                                          <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
+                                            <i className="fa fa-tasks"></i> {row.exam_title}
+                                          </button>
+                                        ))
                                       }
 
                                       {
-                                        item.jenis == 2 ?
-                                          <OverlayTrigger
-                                            placement="top"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={<Tooltip>{item.chapter_title && item.start_date ? item.chapter_title : 'Silahkan pilih ujian yang akan dikerjakan oleh murid pada tab Sesi.'}</Tooltip>}
-                                          >
-                                            <h4 data-target={`#t${i}`} data-toggle="collapse" className="card-title collapsed">
-                                              {
-                                                [1,2].includes(item.jenis) ? <i className="fa fa-paste mr-3"></i> : <i className="fa fa-book-open mr-3"></i>
-                                              }
-                                              {item.chapter_title ? item.chapter_title : item.jenis == 1 ? 'Kuis' : item.jenis == 2 ? 'Ujian' : 'Materi'}
-                                            </h4>
-                                          </OverlayTrigger>
-                                        : null
+                                        (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
+                                          <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
+                                            <i className="fa fa-tasks"></i> {row.exam_title}
+                                          </button>
+                                        ))
                                       }
 
                                       {
-                                        item.topik &&
-                                        <span>Topik : {item.topik}</span>
+                                        item.hasOwnProperty('chapter_id') && moment(item.start_date) < moment(new Date()) ?
+                                        <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                          <i className="fa fa-video"></i> Open
+                                        </a>
+                                          : null
                                       }
 
-                                      <div class="collapse mt-4" id={`t${i}`}>
-                                        <div className="mb-3" dangerouslySetInnerHTML={{ __html: item.chapter_body }} />
-
-                                        {
-                                          (item.hasOwnProperty('tugas') && item.tugas.length > 0) && item.tugas.map(row => (
-                                            <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-info mr-2">
-                                              <i className="fa fa-tasks"></i> {row.exam_title}
-                                            </button>
-                                          ))
-                                        }
-
-                                        {
-                                          (item.hasOwnProperty('kuis') && item.kuis.length > 0) && item.kuis.map(row => (
-                                            <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-warning mr-2">
-                                              <i className="fa fa-tasks"></i> {row.exam_title}
-                                            </button>
-                                          ))
-                                        }
-
-                                        {
-                                          (item.hasOwnProperty('ujian') && item.ujian.length > 0) && item.ujian.map(row => (
-                                            <button disabled={moment(item.start_date) > moment(new Date())} onClick={() => this.selectTugas(row)} className="btn btn-v2 btn-danger mr-2">
-                                              <i className="fa fa-tasks"></i> {row.exam_title}
-                                            </button>
-                                          ))
-                                        }
-
-                                        {
-                                          item.hasOwnProperty('chapter_id') && moment(item.start_date) < moment(new Date()) ?
-                                          <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/materi/${item.chapter_id}`} className="btn btn-v2 btn-success mr-2">
+                                      {
+                                        item.hasOwnProperty('exam_id') && moment(item.start_date) < moment(new Date()) ?
+                                          <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
                                             <i className="fa fa-video"></i> Open
                                           </a>
-                                            : null
-                                        }
+                                          : null
+                                      }
 
-                                        {
-                                          item.hasOwnProperty('exam_id') && moment(item.start_date) < moment(new Date()) ?
-                                            <a target='_blank' href={`/ruangan/mengajar/${this.state.jadwalId}/kuis/${item.exam_id}`} className="btn btn-v2 btn-success mr-2">
-                                              <i className="fa fa-video"></i> Open
-                                            </a>
-                                            : null
-                                        }
+                                      {
+                                        moment(item.start_date) > moment(new Date()) &&
+                                        <h6 style={{ color: '#F00', margin: 5 }}>The schedule hasn't started yet</h6>
+                                      }
 
-                                        {
-                                          moment(item.start_date) > moment(new Date()) &&
-                                          <h6 style={{ color: '#F00', margin: 5 }}>The schedule hasn't started yet</h6>
-                                        }
-
-                                      </div>
-                                  </div>
-                              </div>
-
-                          </div>
-
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                       </div>
                     )
                   })

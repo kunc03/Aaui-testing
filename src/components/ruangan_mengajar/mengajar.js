@@ -165,11 +165,26 @@ class Mengajar extends React.Component {
   }
 
   fetchChapter(chapterId) {
-    API.get(`${API_SERVER}v2/chapter/${chapterId}`).then(res => {
-      if (res.data.error) toast.warning(`Warning: ${res.data.result}`);
+    if(this.state.role === 'murid') {
+      // role murid
+      API.get(`${API_SERVER}v2/chapter/${chapterId}?userId=${Storage.get('user').data.user_id}`).then(res => {
+        if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
-      this.setState({ infoChapter: res.data.result })
-    })
+        this.setState({
+          infoChapter: res.data.result,
+          waktuPengerjaan: localStorage.getItem('waktuPengerjaan') ? parseInt(localStorage.getItem('waktuPengerjaan')) : (res.data.result.durasi * 60)
+        })
+
+      })
+    }
+    else {
+      // role guru
+      API.get(`${API_SERVER}v2/chapter/${chapterId}`).then(res => {
+        if (res.data.error) toast.warning(`Warning: ${res.data.result}`);
+
+        this.setState({ infoChapter: res.data.result })
+      })
+    }
   }
 
   fetchFiles(folderId) {
@@ -585,12 +600,13 @@ class Mengajar extends React.Component {
       chapterId: this.state.sesiId,
       guruNama: Storage.get('user').data.user,
     })
+    this.endMeeting()
     window.close()
   }
 
   render() {
 
-    //console.log('state: ', this.state);
+    console.log('state: ', this.state);
 
     return (
       <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
@@ -759,7 +775,7 @@ class Mengajar extends React.Component {
                           : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'materi'}>Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi === 'materi'}>Deskripsi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
@@ -956,7 +972,7 @@ class Mengajar extends React.Component {
 
                     {
                       (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.examId ?
-                        <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
+                        <Detail waktuPengerjaan={this.state.waktuPengerjaan} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
                         : null
                     }
                   </div>
@@ -1053,7 +1069,7 @@ class Mengajar extends React.Component {
                   </div>
                 }
 
-                <Detail getStarted={this.getStarted} getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{ params: { examId: this.state.sesiId } }} />
+                <Detail waktuPengerjaan={this.state.waktuPengerjaan} getStarted={this.getStarted} getTatapMuka={this.cekTatapMuka} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.jenis} match={{ params: { examId: this.state.sesiId } }} />
               </>
             }
 

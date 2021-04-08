@@ -41,7 +41,7 @@ class UjianClass extends React.Component {
   }
 
   fetchExam(id) {
-    API.get(`${API_SERVER}v2/pelajaran/${this.state.tipe}/one/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/exam/${id}`).then(res => {
       if (res.data.error) toast.warning(`Warning: fetch exam`);
 
       this.setState({ infoExam: res.data.result })
@@ -49,7 +49,7 @@ class UjianClass extends React.Component {
   }
 
   fetchSoal(id) {
-    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/murid-user/${id}/${Storage.get('user').data.user_id}`).then(res => {
+    API.get(`${API_SERVER}v2/pelajaran/pertanyaan/murid-user/${id}/${Storage.get('user').data.user_id}?retake=true`).then(res => {
       if (res.data.error) toast.warning(`Warning: fetch exam`);
 
       this.setState({ examSoal: res.data.result })
@@ -57,7 +57,7 @@ class UjianClass extends React.Component {
   }
 
   fetchSubmit() {
-    API.get(`${API_SERVER}v2/murid/kuis-ujian/result/${Storage.get('user').data.user_id}/${this.state.examId}`).then(res => {
+    API.get(`${API_SERVER}v2/murid/kuis-ujian/result/${Storage.get('user').data.user_id}/${this.state.examId}?retake=true`).then(res => {
       if (res.data.error) toast.warning(`Warning: fetch hasil`);
 
       this.setState({
@@ -65,6 +65,8 @@ class UjianClass extends React.Component {
         benar: res.data.result.length ? res.data.result[0].total_correct : 0,
         salah: res.data.result.length ? res.data.result[0].total_uncorrect : 0,
         score: res.data.result.length ? res.data.result[0].score : 0,
+
+        waktuPengerjaan: 0
       })
 
       if (res.data.result.length) {
@@ -81,7 +83,7 @@ class UjianClass extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchSubmit()
+    // this.fetchSubmit()
     this.fetchExam(this.state.examId)
 
     // if (this.state.tipe === 'kuis') {
@@ -121,7 +123,7 @@ class UjianClass extends React.Component {
         jawaban: e.target.value
       };
       // console.log('state: ', form);
-      API.post(`${API_SERVER}v2/murid/kuis-ujian/jawab`, form).then(res => {
+      API.post(`${API_SERVER}v2/murid/kuis-ujian/jawab?retake=true`, form).then(res => {
         if (res.data.error) toast.warning(`Warning: jawab pertanyaan`)
 
         this.setState({ examSoal: copy })
@@ -135,14 +137,15 @@ class UjianClass extends React.Component {
       examId: this.state.examId,
     }
 
-    API.post(`${API_SERVER}v2/murid/kuis-ujian/submit`, form).then(res => {
+    API.post(`${API_SERVER}v2/murid/kuis-ujian/submit?retake=true`, form).then(res => {
       if (res.data.error) toast.warning(`Warning: submit jawaban`);
 
       this.setState({
         openConfirm: false,
         benar: res.data.result.benar,
         salah: res.data.result.salah,
-        score: res.data.result.score
+        score: res.data.result.score,
+        isSubmit: true
       })
 
       this.props.socket.emit('send', {
@@ -158,7 +161,7 @@ class UjianClass extends React.Component {
 
   render() {
 
-    //console.log('state: ', this.state)
+    console.log('stateJawab: ', this.state)
 
     return (
       <>
@@ -167,7 +170,7 @@ class UjianClass extends React.Component {
           <div className="card">
             <div className="card-body" style={{ padding: '12px' }}>
 
-              <h4 className="mb-3">{this.state.infoExam.title}</h4>
+              <h4 className="mb-3">{this.state.infoExam.exam_title}</h4>
 
               {
                 this.state.role === "murid" && this.state.waktuPengerjaan !== 0 &&
@@ -197,47 +200,32 @@ class UjianClass extends React.Component {
                   />
               }
 
-              {
-                this.state.score != 0 ?
-                  <div className="mb-3">
-                    <div className="score-exam text-center" style={{ padding: '8px 26px' }}>
-                      <span>Score</span>
-                      <h1>{this.state.score}</h1>
-                    </div>
 
-                    <tr>
-                      <td>Benar</td>
-                      <td><b>{this.state.benar}</b></td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: '80px' }}>Salah</td>
-                      <td><b>{this.state.salah}</b></td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: '80px' }}>Score</td>
-                      <td><b>{this.state.score}</b></td>
-                    </tr>
-                  </div>
-                  : null
-              }
+              <div className="mb-3">
+                <div className="score-exam text-center" style={{ padding: '8px 26px' }}>
+                  <span>Score</span>
+                  <h1>{this.state.score}</h1>
+                </div>
+
+                <tr>
+                  <td>Benar</td>
+                  <td><b>{this.state.benar}</b></td>
+                </tr>
+                <tr>
+                  <td style={{ width: '80px' }}>Salah</td>
+                  <td><b>{this.state.salah}</b></td>
+                </tr>
+                <tr>
+                  <td style={{ width: '80px' }}>Score</td>
+                  <td><b>{this.state.score}</b></td>
+                </tr>
+              </div>
 
               {
                 this.state.examSoal.map((item, i) => (
                   <div className="mb-2" key={i}>
                     <label>Pertanyaan <b>{i + 1}</b></label>
                     <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
-
-                    {
-                      this.state.isSubmit && item.myJawaban.length ?
-                        <ul class="list-group">
-                          {item.a ? <li class={`list-group-item list-group-item-${item.jawaban === "A" ? 'success' : item.myJawaban[0].answer_option === "A" ? 'danger' : ''}`}><b>A.</b> {item.a}</li> : null}
-                          {item.b ? <li class={`list-group-item list-group-item-${item.jawaban === "B" ? 'success' : item.myJawaban[0].answer_option === "B" ? 'danger' : ''}`}><b>B.</b> {item.b}</li> : null}
-                          {item.c ? <li class={`list-group-item list-group-item-${item.jawaban === "C" ? 'success' : item.myJawaban[0].answer_option === "C" ? 'danger' : ''}`}><b>C.</b> {item.c}</li> : null}
-                          {item.d ? <li class={`list-group-item list-group-item-${item.jawaban === "D" ? 'success' : item.myJawaban[0].answer_option === "D" ? 'danger' : ''}`}><b>D.</b> {item.d}</li> : null}
-                          {item.e ? <li class={`list-group-item list-group-item-${item.jawaban === "E" ? 'success' : item.myJawaban[0].answer_option === "E" ? 'danger' : ''}`}><b>E.</b> {item.e}</li> : null}
-                        </ul>
-                        : null
-                    }
 
                     {
                       this.state.role === "guru" &&
@@ -258,7 +246,7 @@ class UjianClass extends React.Component {
                     }
 
                     {
-                      this.state.role === "murid" && !this.state.isSubmit && item.a &&
+                      this.state.role === "murid" && item.a &&
                       <tr>
                         <td><input type="radio" value="A" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{ width: '24px' }}>A.</td>
@@ -266,7 +254,7 @@ class UjianClass extends React.Component {
                       </tr>
                     }
                     {
-                      this.state.role === "murid" && !this.state.isSubmit && item.b &&
+                      this.state.role === "murid" && item.b &&
                       <tr>
                         <td><input type="radio" value="B" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{ width: '24px' }}>B.</td>
@@ -274,7 +262,7 @@ class UjianClass extends React.Component {
                       </tr>
                     }
                     {
-                      this.state.role === "murid" && !this.state.isSubmit && item.c &&
+                      this.state.role === "murid" && item.c &&
                       <tr>
                         <td><input type="radio" value="C" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{ width: '24px' }}>C.</td>
@@ -282,7 +270,7 @@ class UjianClass extends React.Component {
                       </tr>
                     }
                     {
-                      this.state.role === "murid" && !this.state.isSubmit && item.d &&
+                      this.state.role === "murid" && item.d &&
                       <tr>
                         <td><input type="radio" value="D" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{ width: '24px' }}>D.</td>
@@ -290,7 +278,7 @@ class UjianClass extends React.Component {
                       </tr>
                     }
                     {
-                      this.state.role === "murid" && !this.state.isSubmit && item.e &&
+                      this.state.role === "murid" && item.e &&
                       <tr>
                         <td><input type="radio" value="E" name={`opsi${i}`} onChange={e => this.selectJawaban(e, i)} /></td>
                         <td style={{ width: '24px' }}>E.</td>
@@ -298,13 +286,6 @@ class UjianClass extends React.Component {
                       </tr>
                     }
 
-                    {
-                      this.state.role === "murid" && this.state.isSubmit &&
-                      <div className="penjelasan mt-3 mb-4">
-                        <label><b>Penjelasan</b></label>
-                        <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.penjelasan }} />
-                      </div>
-                    }
                   </div>
                 ))
               }
