@@ -85,7 +85,7 @@ class Course extends Component {
         name: 'Thumbnail',
         selector: 'image',
         sortable: true,
-        cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-logo.jpg'} />
+        cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
       },
       {
         name: 'Title',

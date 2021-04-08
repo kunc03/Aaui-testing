@@ -16,7 +16,7 @@ class FormCourse extends Component {
         companyId:'',
         image:'',
         logo:'',
-        imagePreview:'assets/images/no-logo.jpg',
+        imagePreview:'assets/images/no-image.png',
         name: '',
         address: '',
         telephone: '',
