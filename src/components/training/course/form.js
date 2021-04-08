@@ -10,6 +10,7 @@ class FormCourse extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        edited: false,
         initialSession: false,
         id: '',
         companyId:'',
@@ -100,6 +101,7 @@ class FormCourse extends Component {
   }
 
 autoSave = () =>{
+    if (!this.state.edited) return;
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
     }
@@ -125,11 +127,13 @@ autoSave = () =>{
                             }
                             else{
                                 toast.success('Automatic saving')
+                                this.setState({edited: false})
                             }
                         })
                     }
                     else{
                         toast.success('Automatic saving')
+                        this.setState({edited: false})
                     }
                 }
             })
@@ -138,6 +142,7 @@ autoSave = () =>{
 }
   save = (e, newSession) =>{
     e.preventDefault();
+    if (!this.state.edited) return;
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
     }
@@ -165,9 +170,11 @@ autoSave = () =>{
                                 if (newSession){
                                     this.addNewSession();
                                     toast.success('Automatic saving')
+                                    this.setState({edited: false})
                                 }
                                 else{
                                     toast.success('Course edited')
+                                    this.setState({edited: false})
                                 }
                             }
                         })
@@ -176,9 +183,11 @@ autoSave = () =>{
                         if (newSession){
                             this.addNewSession();
                             toast.success('Automatic saving')
+                            this.setState({edited: false})
                         }
                         else{
                             toast.success('Course edited')
+                            this.setState({edited: false})
                         }
                     }
                 }
@@ -208,9 +217,11 @@ autoSave = () =>{
                                 if (newSession){
                                     this.addNewSession();
                                     toast.success('Automatic saving')
+                                    this.setState({edited: false})
                                 }
                                 else{
                                     toast.success('Saving course')
+                                    this.setState({edited: false})
                                 }
                             }
                         })
@@ -244,6 +255,7 @@ autoSave = () =>{
       this.state.session.splice(i, 1, item)
   }
   handleChange = e => {
+    this.setState({edited: true})
       let {name, value} = e.target;
       if (name==='media'){
         if (e.target.files.length){
@@ -362,6 +374,7 @@ autoSave = () =>{
 
   clearSessionForm(){
     this.setState({
+        edited: false,
         selectedSession : '',
         session_title : '',
         content : '',
