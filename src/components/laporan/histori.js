@@ -192,7 +192,7 @@ class Laporan extends React.Component {
                                     <div className="border p-4">
                                       <p>Keputusan</p>
                                       <p>Berdasarkan pencapaian seluruh kompetensi</p>
-                                      <p>Peserta didik dinyatakan <b>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
+                                      <p>Peserta didik dinyatakan <b style={parseFloat(row.total) <= 50 ? {color: 'red'}:{color: 'green'}}>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
                                     </div>
                                   </td>
                                 </tr>

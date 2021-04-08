@@ -9,6 +9,7 @@ import Tugas from '../tugas/index';
 import Latihan from '../tugas/latihan';
 import Detail from '../tugas/detail';
 import DetailMapel from '../tugas/mapel';
+import KerjakanLagi from '../tugas/kerjakanlagi';
 
 const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
@@ -29,6 +30,7 @@ const switchTambahan = [
   {name: 'Detail', link: '/detail-kuis/:examId', component: KuisDetail},
   {name: 'Detail', link: '/detail-ujian/:examId', component: UjianDetail},
   {name: 'Detail', link: '/detail-mapel/:jadwalId', component: DetailMapel},
+  {name: 'Detail', link: '/kerjakan-lagi/:examId', component: KerjakanLagi},
 ];
 
 export default class LearningMurid extends Component {

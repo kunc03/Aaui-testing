@@ -98,7 +98,6 @@ class Overview extends React.Component {
             <div className="card-body">
               <h4 className="f-w-900 f-18 fc-blue">Preview</h4>
 
-              <div class="container py-2" style={{ marginLeft: '24px' }}>
 
                 <div class="row">
                   <div class="col-auto text-center flex-column d-none d-sm-flex">
@@ -106,16 +105,22 @@ class Overview extends React.Component {
                       <div class="col">&nbsp;</div>
                       <div class="col">&nbsp;</div>
                     </div>
-                    <div class="col py-2">
-                        <div class="card shadow">
-                            <div class="card-body timeline-active">
-                                <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title collapsed"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
-                                <div class="collapse" id={`tOverview`}>
-                                    <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
-                                </div>
+                    <h5 class="m-2">
+                      <span className={`badge badge-pill bg-success border`}>&nbsp;</span>
+                    </h5>
+                    <div class="row h-50">
+                      <div class={`col border-right`}>&nbsp;</div>
+                      <div class="col">&nbsp;</div>
+                    </div>
+                  </div>
+                  <div class="col py-2">
+                    <div class="card shadow">
+                        <div class="card-body timeline-active">
+                            <h4 data-target="#tOverview" data-toggle="collapse" style={{marginBottom: '8px'}} class="card-title collapsed"> <i className="fa fa-binoculars mr-3"></i> Overview Pelajaran</h4>
+                            <div class="collapse" id={`tOverview`}>
+                                <div style={{padding: '12px'}} dangerouslySetInnerHTML={{ __html: this.state.overview }} />
                             </div>
                         </div>
-                      </div>
                     </div>
                   </div>
                 </div>

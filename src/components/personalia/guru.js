@@ -164,6 +164,18 @@ class Guru extends React.Component {
     }
   }
 
+  cekEmail = (email) => {
+    API.get(`${API_SERVER}v1/user/cek/email/${email}`).then(res => {
+      if(res.data.error) {
+        toast.warning(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+        this.setState({ email: '' })
+      }
+      else {
+        toast.info(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+      }
+    })
+  }
+
   render() {
     console.log('state', this.state);
 
@@ -294,7 +306,7 @@ class Guru extends React.Component {
                       </div>
                       <div className="col-sm-6">
                         <label>Email</label>
-                        <input value={this.state.email} onChange={e => this.setState({ email: e.target.value })} required type="email" className="form-control" placeholder="Enter" />
+                        <input onBlur={e => this.cekEmail(e.target.value)} value={this.state.email} onChange={e => this.setState({ email: e.target.value })} required type="email" className="form-control" placeholder="Enter" />
                       </div>
                     </div>
                     <div className="form-group row">
