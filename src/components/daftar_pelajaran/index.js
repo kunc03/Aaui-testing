@@ -223,7 +223,9 @@ class DaftarPelajaran extends React.Component {
     API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
       if (res.data.error) toast.warning("Error fetch data kelas");
 
-      this.setState({ listPelajaran: res.data.result })
+      const arrayUniqueByKey = [...new Map(res.data.result.map(item => [item['pelajaran_id'], item])).values()];
+
+      this.setState({ listPelajaran: arrayUniqueByKey })
     })
   }
 
@@ -329,7 +331,7 @@ class DaftarPelajaran extends React.Component {
 
   render() {
 
-    //console.log('state: ', this.state)
+    console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
