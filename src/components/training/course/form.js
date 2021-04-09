@@ -24,8 +24,9 @@ class FormCourse extends Component {
         website: '',
         email: '',
 
-        content:'',
+        content:'Loading...',
         title: '',
+        overview: 'Loading...',
         session_title : '',
         file: '',
         selectedSession: '',
@@ -52,7 +53,7 @@ class FormCourse extends Component {
 
 autoSave = (isDrag) =>{
     if (!this.state.edited && !isDrag) return;
-    if (!this.state.title){
+    if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
     }
     else{
@@ -60,6 +61,7 @@ autoSave = (isDrag) =>{
             let form = {
                 image: this.state.image,
                 title: this.state.title,
+                overview: this.state.overview,
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -93,7 +95,7 @@ autoSave = (isDrag) =>{
   save = (e, newSession) =>{
     e.preventDefault();
     if (!this.state.edited && !newSession) return;
-    if (!this.state.title){
+    if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
     }
     else{
@@ -101,6 +103,7 @@ autoSave = (isDrag) =>{
             let form = {
                 image: this.state.image,
                 title: this.state.title,
+                overview: this.state.overview,
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -147,6 +150,7 @@ autoSave = (isDrag) =>{
             let form = {
                 company_id: this.state.companyId,
                 title: this.state.title,
+                overview: this.state.overview,
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -192,18 +196,21 @@ autoSave = (isDrag) =>{
     }
 }
 
-  handleDynamicInput = (e) => {
-      this.setState({ content: e });
-      let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
-      let item = {
-          id : this.state.selectedSession,
-          title : this.state.session_title,
-          content : e,
-          sort : i,
-          media : this.state.media
-      }
-      this.state.session.splice(i, 1, item)
-  }
+handleDynamicInput = (e) => {
+    this.setState({ content: e, edited:true });
+    let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
+    let item = {
+        id : this.state.selectedSession,
+        title : this.state.session_title,
+        content : e,
+        sort : i,
+        media : this.state.media
+    }
+    this.state.session.splice(i, 1, item)
+}
+handleOverview = (e) => {
+    this.setState({ overview: e, edited:true });
+}
   handleChange = e => {
     this.setState({edited: true})
       let {name, value} = e.target;
@@ -273,6 +280,7 @@ autoSave = (isDrag) =>{
                 initialSession: res.data.result.session.length ? true : false,
                 id: res.data.result.id,
                 title: res.data.result.title,
+                overview: res.data.result.overview,
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 session: res.data.result.session,
                 selectedSession : res.data.result.session.length ? res.data.result.session[0].id : '',
@@ -463,6 +471,66 @@ autoSave = (isDrag) =>{
                                                             <label for="title">Title<required>*</required></label>
                                                             <input type="text" name="title" size="50" id="name" placeholder="XXXXX XXXXX XXXXX" value={this.state.title} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
+                                                        <div className="form-field-top-label" style={{width:'80%'}}>
+                                                                    <label for="overview">Overview</label>
+                                                                    <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                                                                    {
+                                                                        this.state.overview !== 'Loading...' ?
+                                                                        <Editor
+                                                                            name="overview"
+                                                                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                                                            initialValue={this.state.overview}
+                                                                            value={this.state.overview}
+                                                                            init={{
+                                                                            height: 200,
+                                                                            menubar: false,
+                                                                            convert_urls: false,
+                                                                            image_class_list: [
+                                                                                {title: 'None', value: ''},
+                                                                                {title: 'Responsive', value: 'img-responsive'},
+                                                                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                                                            ],
+                                                                            file_browser_callback_types: 'image',
+                                                                            file_picker_callback: function (callback, value, meta) {
+                                                                                if (meta.filetype == 'image') {
+                                                                                var input = document.getElementById(`myFile`);
+                                                                                input.click();
+                                                                                input.onchange = function () {
+        
+                                                                                    var dataForm = new FormData();
+                                                                                    dataForm.append('file', this.files[0]);
+        
+                                                                                    window.$.ajax({
+                                                                                    url: `${API_SERVER}v2/media/upload`,
+                                                                                    type: 'POST',
+                                                                                    data: dataForm,
+                                                                                    processData: false,
+                                                                                    contentType: false,
+                                                                                    success: (data)=>{
+                                                                                        callback(data.result.url);
+                                                                                        this.value = '';
+                                                                                    }
+                                                                                    })
+        
+                                                                                };
+                                                                                }
+                                                                            },
+                                                                            plugins: [
+                                                                                "advlist autolink lists link image charmap print preview anchor",
+                                                                                "searchreplace visualblocks code fullscreen",
+                                                                                "insertdatetime media table paste code help wordcount"
+                                                                            ],
+                                                                            toolbar:
+                                                                                // eslint-disable-next-line no-multi-str
+                                                                                "undo redo | bold italic backcolor | \
+                                                                            alignleft aligncenter alignright alignjustify | image | \
+                                                                                bullist numlist outdent indent | removeformat | help"
+                                                                            }}
+                                                                            onEditorChange={e => this.handleOverview(e)}
+                                                                        />
+                                                                        :null
+                                                                    }
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="form-section no-border">
@@ -509,59 +577,63 @@ autoSave = (isDrag) =>{
                                                                 <div className="form-field-top-label" style={{width:'80%'}}>
                                                                     <label for="name">Content</label>
                                                                     <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
-                                                                    <Editor
-                                                                        name="content"
-                                                                        apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                                                                        initialValue={this.state.content}
-                                                                        value={this.state.content}
-                                                                        init={{
-                                                                        height: 400,
-                                                                        width: "100%",
-                                                                        menubar: false,
-                                                                        convert_urls: false,
-                                                                        image_class_list: [
-                                                                            {title: 'None', value: ''},
-                                                                            {title: 'Responsive', value: 'img-responsive'},
-                                                                            {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                                                                        ],
-                                                                        file_browser_callback_types: 'image',
-                                                                        file_picker_callback: function (callback, value, meta) {
-                                                                            if (meta.filetype == 'image') {
-                                                                            var input = document.getElementById(`myFile`);
-                                                                            input.click();
-                                                                            input.onchange = function () {
-    
-                                                                                var dataForm = new FormData();
-                                                                                dataForm.append('file', this.files[0]);
-    
-                                                                                window.$.ajax({
-                                                                                url: `${API_SERVER}v2/media/upload`,
-                                                                                type: 'POST',
-                                                                                data: dataForm,
-                                                                                processData: false,
-                                                                                contentType: false,
-                                                                                success: (data)=>{
-                                                                                    callback(data.result.url);
-                                                                                    this.value = '';
+                                                                    {
+                                                                        this.state.content !== 'Loading...' ?
+                                                                        <Editor
+                                                                            name="content"
+                                                                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                                                            initialValue={this.state.content}
+                                                                            value={this.state.content}
+                                                                            init={{
+                                                                            height: 400,
+                                                                            width: "100%",
+                                                                            menubar: false,
+                                                                            convert_urls: false,
+                                                                            image_class_list: [
+                                                                                {title: 'None', value: ''},
+                                                                                {title: 'Responsive', value: 'img-responsive'},
+                                                                                {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                                                            ],
+                                                                            file_browser_callback_types: 'image',
+                                                                            file_picker_callback: function (callback, value, meta) {
+                                                                                if (meta.filetype == 'image') {
+                                                                                var input = document.getElementById(`myFile`);
+                                                                                input.click();
+                                                                                input.onchange = function () {
+        
+                                                                                    var dataForm = new FormData();
+                                                                                    dataForm.append('file', this.files[0]);
+        
+                                                                                    window.$.ajax({
+                                                                                    url: `${API_SERVER}v2/media/upload`,
+                                                                                    type: 'POST',
+                                                                                    data: dataForm,
+                                                                                    processData: false,
+                                                                                    contentType: false,
+                                                                                    success: (data)=>{
+                                                                                        callback(data.result.url);
+                                                                                        this.value = '';
+                                                                                    }
+                                                                                    })
+        
+                                                                                };
                                                                                 }
-                                                                                })
-    
-                                                                            };
-                                                                            }
-                                                                        },
-                                                                        plugins: [
-                                                                            "advlist autolink lists link image charmap print preview anchor",
-                                                                            "searchreplace visualblocks code fullscreen",
-                                                                            "insertdatetime media table paste code help wordcount"
-                                                                        ],
-                                                                        toolbar:
-                                                                            // eslint-disable-next-line no-multi-str
-                                                                            "undo redo | bold italic backcolor | \
-                                                                        alignleft aligncenter alignright alignjustify | image | \
-                                                                            bullist numlist outdent indent | removeformat | help"
-                                                                        }}
-                                                                        onEditorChange={e => this.handleDynamicInput(e)}
-                                                                    />
+                                                                            },
+                                                                            plugins: [
+                                                                                "advlist autolink lists link image charmap print preview anchor",
+                                                                                "searchreplace visualblocks code fullscreen",
+                                                                                "insertdatetime media table paste code help wordcount"
+                                                                            ],
+                                                                            toolbar:
+                                                                                // eslint-disable-next-line no-multi-str
+                                                                                "undo redo | bold italic backcolor | \
+                                                                            alignleft aligncenter alignright alignjustify | image | \
+                                                                                bullist numlist outdent indent | removeformat | help"
+                                                                            }}
+                                                                            onEditorChange={e => this.handleDynamicInput(e)}
+                                                                        />
+                                                                        :null
+                                                                    }
                                                                 </div>
                                                                 <div className="form-field-top-label">
                                                                     <label for="media">Media</label>
