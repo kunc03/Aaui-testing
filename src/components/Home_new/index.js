@@ -27,6 +27,8 @@ import DashParent from './dashparent';
 import DashPrincipal from './dashprincipal';
 import DashManagement from './dashmanagement';
 
+import Training from '../training/company'
+
 class HomeNew extends Component {
   state = {
     user: {
@@ -493,6 +495,14 @@ class HomeV2 extends Component {
       } else if(this.state.grupName.toLowerCase() === "management") {
         return (
           <DashManagement />
+        )
+      } else if(this.state.grupName.toLowerCase() === "user training") {
+        return (
+          <Training />
+        )
+      } else if(this.state.grupName.toLowerCase() === "admin training") {
+        return (
+          <Training />
         )
       } else {
         return (
