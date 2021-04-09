@@ -32,57 +32,7 @@ class FormCourse extends Component {
         media: [],
         modalDelete: false,
         disabledForm: this.props.disabledForm && this.props.id,
-        session: [],
-        session_bak : [
-                {
-                    id : '1',
-                    title : "Memahami investasi reksa dana",
-                    content : "asdasdas111",
-                    sort : 0,
-                    media : [
-                        {
-                            id : 1,
-                            name : 'memahami-investasi-reksa-dana.pdf'
-                        },
-                        {
-                            id : 2,
-                            name : 'reksa-dana.mp4'
-                        }
-                    ]
-                },
-                {
-                    id : '2',
-                    title : "Mengenal jenis reksadana",
-                    content : "asdasdas222",
-                    sort : 1,
-                    media : [
-                        {
-                            id : 1,
-                            name : 'memahami-investasi-reksa-dfadana.pdf'
-                        },
-                        {
-                            id : 2,
-                            name : 'reksa-dandga.mp4'
-                        }
-                    ]
-                },
-                {
-                    id : '3',
-                    title : "Memilih reksadana yang sesuai",
-                    content : "asdasdas333",
-                    sort : 2,
-                    media : [
-                        {
-                            id : 1,
-                            name : 'memahami12312-reksa-dana.pdf'
-                        },
-                        {
-                            id : 2,
-                            name : 'reksa-dana.mp4'
-                        }
-                    ]
-                }
-            ]
+        session: []
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -92,7 +42,7 @@ class FormCourse extends Component {
         this.props.goBack();
     }
     else{
-        this.props.history.push('/training');
+        this.props.history.push('/training/course');
     }
   }
 
