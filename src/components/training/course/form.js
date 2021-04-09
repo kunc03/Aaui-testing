@@ -50,8 +50,8 @@ class FormCourse extends Component {
     this.setState({ modalDelete: false, deleteId: '' })
   }
 
-autoSave = () =>{
-    if (!this.state.edited) return;
+autoSave = (isDrag) =>{
+    if (!this.state.edited && !isDrag) return;
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
     }
@@ -92,7 +92,7 @@ autoSave = () =>{
 }
   save = (e, newSession) =>{
     e.preventDefault();
-    if (!this.state.edited) return;
+    if (!this.state.edited && !newSession) return;
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
     }
@@ -404,7 +404,7 @@ autoSave = () =>{
     items.splice(result.destination.index, 0, reorderedItem);
 
     this.setState({session: items},()=>{
-        this.autoSave()
+        this.autoSave(true)
     })
   }
   render() {
