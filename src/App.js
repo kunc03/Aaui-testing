@@ -331,7 +331,8 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/course/edit/:id" exact component={TrainingCourseForm} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
         <Route path="/training/exam" exact component={TrainingExam} />
-        <Route path="/training/exam/create" exact component={TrainingExamForm} />
+        <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
+        <Route path="/training/exam/edit/:id" exact component={TrainingExamForm} />
         <Route path="/training/membership" exact component={TrainingMembership} />
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
         <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
