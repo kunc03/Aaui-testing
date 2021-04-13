@@ -143,10 +143,10 @@ class FullKalenderNew extends Component {
                   <div className="p-20" style={{ background: '#f3f3f3' }}>
                     <div className="f-w-900 f-18 fc-blue">
                       <button className="btn btn-icademy-primary">New Event</button>
-                      <span className="float-right p-10">
+                      {/* <span className="float-right p-10">
                         <span onClick={this.printHandler.bind(this)} style={{ cursor: 'pointer' }}><i className="fa fa-share"></i> Share &nbsp; </span>
                         <span><i className="fa fa-print"></i> Print &nbsp; </span>
-                      </span>
+                      </span> */}
                     </div>
                   </div>
 
