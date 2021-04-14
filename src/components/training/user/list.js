@@ -73,7 +73,7 @@ class User extends Component {
   }
 
   cancelAssign(id){
-    API.delete(`${API_SERVER}v2/training/assign/${id}`).then(res => {
+    API.delete(`${API_SERVER}v2/training/assign/${id}/${this.state.userId}`).then(res => {
         if (res.data.error){
             toast.error(`Error cancel`)
         }
