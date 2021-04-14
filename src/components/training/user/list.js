@@ -304,7 +304,7 @@ class User extends Component {
             <i className="fa fa-ellipsis-h"></i>
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Assignee</MenuItem>
+            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
             <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
             <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
             <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
@@ -409,7 +409,7 @@ class User extends Component {
         <Modal show={this.state.modalAssignee} onHide={this.closeModalAssignee} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Assignee : {this.state.assignee.name}
+              Assignment : {this.state.assignee.name}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>

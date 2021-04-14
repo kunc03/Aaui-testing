@@ -48,6 +48,12 @@ export const Menu = [
         route: '/training/membership'
     },
     {
+        label: 'Questions',
+        icon: 'questions.svg',
+        iconActive: 'questions-active.svg',
+        route: '/training/questions'
+    },
+    {
         label: 'Settings',
         icon: 'settings.png',
         iconActive: 'settings-active.png',
