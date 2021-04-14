@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Modal } from 'react-bootstrap';
 import Moment from 'moment-timezone';
+import { MultiSelect } from 'react-sm-select';
 
 class User extends Component {
   constructor(props) {
@@ -19,18 +20,68 @@ class User extends Component {
         companyId:'',
         data : [],
         filter:'',
-        modalDelete:'',
+        modalDelete:false,
         deleteId:'',
         level:'',
         import: true,
         file:'',
-        isUploading: false
+        isUploading: false,
+        modalAssignee: false,
+        userAssigneeId: '',
+        assignee: [{
+          name : '',
+          assignee : []
+        }],
+        optionsExam: [],
+        valueExam: []
     };
     this.goBack = this.goBack.bind(this);
   }
   
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalAssignee = e => {
+    this.setState({ modalAssignee: false, userAssigneeId: '', valueExam: [] })
+  }
+
+  assign (){
+    if (this.state.valueExam.length){
+      let form = {
+        exam_id : String(this.state.valueExam),
+        training_user_id : this.state.userAssigneeId,
+        created_by : this.state.userAssigneeId
+      }
+      API.post(`${API_SERVER}v2/training/assign`, form).then(res => {
+          if (res.data.error){
+              toast.error(`Error assign`)
+          }
+          else{
+            if (res.data.result === 'validationError'){
+              toast.error(res.data.message);
+            }
+            else{
+              this.readAssign(form.training_user_id);
+              toast.success(`Assignment success`);
+            }
+          }
+      })
+    }
+    else{
+      toast.warning('Select exam')
+    }
+  }
+
+  cancelAssign(id){
+    API.delete(`${API_SERVER}v2/training/assign/${id}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error cancel`)
+        }
+        else{
+          toast.success(`Assignment canceled`);
+          this.readAssign(this.state.userAssigneeId);
+        }
+    })
   }
   
   onClickHapus(id){
@@ -70,6 +121,31 @@ class User extends Component {
             this.getUser(this.state.companyId)
           }
         }
+    })
+  }
+
+  getExam(companyId){
+    API.get(`${API_SERVER}v2/training/exam/${companyId}/1`).then(res => {
+      if (res.data.error){
+          toast.error('Error read exam list')
+      }
+      else{
+        if (this.state.optionsExam.length === 0){
+          res.data.result.map((item)=>{
+            this.state.optionsExam.push({label: item.title, value: item.id})
+          })
+          API.get(`${API_SERVER}v2/training/exam/${companyId}/0`).then(res => {
+            if (res.data.error){
+                toast.error('Error read exam list')
+            }
+            else{
+              res.data.result.map((item)=>{
+                this.state.optionsExam.push({label: item.title, value: item.id})
+              })
+            }
+          })
+        };
+      }
     })
   }
 
@@ -127,6 +203,28 @@ class User extends Component {
         }
       })
     }
+  }
+
+  readAssign(id){
+    this.setState({
+      modalAssignee: true,
+      userAssigneeId: id
+    });
+    this.getExam(this.state.companyId);
+    
+    API.get(`${API_SERVER}v2/training/assignee/${id}`).then((res) => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Read assignee failed')
+        }
+        else{
+          this.setState({
+            assignee: res.data.result,
+            valueExam: []
+          });
+        }
+      }
+    })
   }
 
   componentDidMount(){
@@ -190,9 +288,10 @@ class User extends Component {
           pullRight
           onSelect={(eventKey) => {
             switch (eventKey){
-              case 1 : this.props.goTo('/training/user/detail/'+row.id);break;
-              case 2 : this.props.goTo('/training/user/edit/'+row.id);break;
-              case 3 : this.onClickHapus(row.id);break;
+              case 1 : this.readAssign(row.id);break;
+              case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
+              case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
+              case 4 : this.onClickHapus(row.id);break;
               default : this.props.goTo('/training/user');break;
             }
           }}
@@ -205,9 +304,10 @@ class User extends Component {
             <i className="fa fa-ellipsis-h"></i>
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
-            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Assignee</MenuItem>
+            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
+            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
           </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
@@ -306,6 +406,62 @@ class User extends Component {
               </button>
             </Modal.Footer>
           </Modal>
+        <Modal show={this.state.modalAssignee} onHide={this.closeModalAssignee} dialogClassName="modal-lg">
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Assignee : {this.state.assignee.name}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <table className="table table-hover">
+              <thead>
+                <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+                  <td>Assignee Date</td>
+                  <td>Exam / Quiz</td>
+                  <td>Status</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.assignee.assignee && this.state.assignee.assignee.length ?
+                    this.state.assignee.assignee.map((item) => {
+                      return (
+                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                          <td>{Moment.tz(item.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
+                          <td>{item.title}</td>
+                          <td>{item.status}</td>
+                          <td>
+                            <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelAssign.bind(this, item.id)}>Cancel</span>
+                          </td>
+                        </tr>
+                      )
+                    })
+                    :
+                    (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                      <td colspan='5'>There is no assignee</td>
+                    </tr>)
+                }
+              </tbody>
+            </table>
+
+            <h4 style={{ padding: 10, marginTop: 20, marginBottom: 10 }}>Assign</h4>
+            <div className="form-group row">
+              <div className="col-sm-12">
+                <label className="bold col-sm-12">Exam / Quiz</label>
+                <MultiSelect id="exam" options={this.state.optionsExam} value={this.state.valueExam} onChange={valueExam => this.setState({ valueExam })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Exam / Quiz" />
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalAssignee}>
+              Cancel
+            </button>
+            <button className="btn btn-icademy-primary" onClick={this.assign.bind(this)}>
+              <i className="fa fa-save"></i> Assign
+            </button>
+          </Modal.Footer>
+        </Modal>
                                             </div>
       </div>
     )

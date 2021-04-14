@@ -65,10 +65,10 @@ class FormExam extends Component {
   }
   
   ToggleSwitch(checked) {
-    this.setState({ generate: !this.state.generate });
+    this.setState({ generate: !this.state.generate, edited: true });
   }
   ToggleSwitchScheduled(checked) {
-    this.setState({ scheduled: !this.state.scheduled });
+    this.setState({ scheduled: !this.state.scheduled, edited: true });
   }
 
   goBack() {
@@ -657,7 +657,7 @@ handleChangeAnswer = (value) => {
                                                     <div className="row">
                                                         <div className="form-field-top-label" style={{width:400}}>
                                                             <label for="licenses">Licenses Type<required>*</required></label>
-                                                            <MultiSelect id="licenses" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={valueLicensesType => this.setState({ valueLicensesType })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Licenses Type" />
+                                                            <MultiSelect id="licenses" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={valueLicensesType => this.setState({ valueLicensesType, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Licenses Type" />
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="time">Time Limit (Minute)<required>*</required></label>
@@ -681,7 +681,7 @@ handleChangeAnswer = (value) => {
                                                             this.state.scheduled ?
                                                             <div className="form-field-top-label">
                                                                 <label for="start_date">Start Date & Time</label>
-                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_date} onChange={e => this.setState({ start_date: e })} />
+                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_date} onChange={e => this.setState({ start_date: e, edited: true })} />
                                                             </div>
                                                             : null
                                                         }
