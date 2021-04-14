@@ -7,36 +7,53 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
+import { Modal } from 'react-bootstrap';
+import Moment from 'moment-timezone';
 
 class Exam extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data : [
-            {
-                title : 'AAUI Training Exam',
-                category : 'Investment',
-                date : '07/03/2021',
-                status : 'Active'
-            },
-            {
-                title : 'Javascript Advance Exam',
-                category : 'Programming',
-                date : '06/03/2021',
-                status : 'Active'
-            },
-        ],
-        filter:''
+      companyId: '',
+      data : [],
+      filter:'',
+      modalDelete: false,
+      deleteId: '',
+      exam: this.props.quiz ? 0 : 1
     };
     this.goBack = this.goBack.bind(this);
   }
   
   goBack() {
-    this.props.history.goBack();
+    if (this.props.goBack){
+      this.props.goBack();
+    }
+    else{
+      this.props.history.goBack();
+    }
   }
 
-  onClickHapus(){
-      toast.warning('Delete button clicked');
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteId: '' })
+  }
+
+  onClickHapus(id){
+    this.setState({modalDelete: true, deleteId: id})
+  }
+
+  delete (id){
+    API.delete(`${API_SERVER}v2/training/exam/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error delete exam')
+        }
+        else{
+          this.getUserData();
+          this.closeModalDelete();
+          toast.success('exam deleted');
+        }
+    })
   }
   
   filter = (e) => {
@@ -44,8 +61,38 @@ class Exam extends Component {
     this.setState({ filter: e.target.value });
   }
 
+  getData(companyId){
+    API.get(`${API_SERVER}v2/training/exam/${companyId}/${this.state.exam}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read exam list')
+        }
+        else{
+            this.setState({data: res.data.result})
+        }
+    })
+  }
+
+  getUserData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
+          this.getData(this.state.companyId)
+        }
+    })
+  }
+
+  componentDidMount(){
+    this.getUserData()
+  }
+
   render() {
     const columns = [
+      {
+        name: 'Thumbnail',
+        selector: 'image',
+        sortable: true,
+        cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
+      },
       {
         name: 'Title',
         selector: 'title',
@@ -53,36 +100,41 @@ class Exam extends Component {
         grow: 2,
       },
       {
-        name: 'Category',
-        selector: 'category',
+        name: 'Licenses Type',
+        selector: 'licenses_type',
         sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
       },
       {
-        name: 'Date',
-        selector: 'date',
+        name: 'Scheduled',
+        selector: 'is_scheduled',
         sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
       },
       {
-        name: 'Status',
-        selector: 'status',
+        cell: row => row.scheduled === 1 ? Moment.tz(row.start_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm") : '-',
+        name: 'Time Start',
+        selector: 'created_at',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
+      // {
+      //   name: 'Status',
+      //   selector: 'status',
+      //   sortable: true,
+      //   style: {
+      //     color: 'rgba(0,0,0,.54)',
+      //   },
+      // },
       {
         cell: row =>
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
-              if (eventKey === 1) {
-                window.open('/training-company-edit/' + row.id, "_self")
+              switch (eventKey){
+                case 1 : window.open('/training/exam/edit/' + row.id, "_self");break;
+                case 2 : this.onClickHapus(row.id);break;
+                default : this.props.goTo('/training/course');break;
               }
             }}
           >
@@ -95,7 +147,7 @@ class Exam extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Delete</MenuItem>
+              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -128,14 +180,14 @@ class Exam extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Exam'/>
+                                        <TabMenu title='Training' selected={this.state.exam ? 'Exam' : 'Quiz'}/>
                                         <div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Exam List</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.state.exam ? 'Exam' : 'Quiz'} List</strong>
                                                         <Link
-                                                        to={`/training/exam/create`}>
+                                                        to={`/training/exam/create/${this.state.exam ? 'exam' : 'quiz'}`}>
                                                             <button
                                                             className="btn btn-icademy-primary float-right"
                                                             style={{ padding: "7px 8px !important", marginLeft: 14 }}>
@@ -167,6 +219,24 @@ class Exam extends Component {
                     </div>
                 </div>
             </div>
+          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this exam ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
         </div>
     )
   }
