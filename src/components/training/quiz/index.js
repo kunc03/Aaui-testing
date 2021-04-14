@@ -20,11 +20,19 @@ class Quiz extends Component {
   goBack() {
     this.props.history.goBack();
   }
+  goTo(url) {
+    if (url === 'back'){
+      this.props.history.goBack();
+    }
+    else{
+      this.props.history.push(url);
+    }
+  }
 
 
   render() {
     return(
-        <Exam quiz={true} goBack={this.goBack}/>
+        <Exam quiz={true} goBack={this.goBack} goTo={this.goTo.bind(this)}/>
     )
   }
 }

@@ -132,7 +132,7 @@ class Exam extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : window.open('/training/exam/edit/' + row.id, "_self");break;
+                case 1 : this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id) : this.props.history.push(`/training/exam/edit/` + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
                 default : this.props.goTo('/training/course');break;
               }
