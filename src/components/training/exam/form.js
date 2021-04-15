@@ -40,15 +40,8 @@ class FormExam extends Component {
         subCategory: '',
         optionsLicensesType: [],
         valueLicensesType: [],
-        optionsCategory: [{
-            label: 'Asuransi',
-            value: 'Asuransi'
-        },
-        {
-            label: 'Relationship',
-            value: 'Relationship'
-        }],
-        valueCategory: [],
+        optionsCourse: [],
+        valueCourse: [],
         generate: false,
         scheduled: false,
         session_title : '',
@@ -65,10 +58,10 @@ class FormExam extends Component {
   }
   
   ToggleSwitch(checked) {
-    this.setState({ generate: !this.state.generate });
+    this.setState({ generate: !this.state.generate, edited: true });
   }
   ToggleSwitchScheduled(checked) {
-    this.setState({ scheduled: !this.state.scheduled });
+    this.setState({ scheduled: !this.state.scheduled, edited: true });
   }
 
   goBack() {
@@ -105,7 +98,7 @@ class FormExam extends Component {
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
                 number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCategory),
+                category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -155,7 +148,7 @@ class FormExam extends Component {
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
                 number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCategory),
+                category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -209,7 +202,7 @@ class FormExam extends Component {
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
                 number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCategory),
+                category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
@@ -369,7 +362,7 @@ handleChangeAnswer = (value) => {
                 start_date: new Date(res.data.result.start_time),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
-                valueCategory: [Number(res.data.result.category_id)],
+                valueCourse: [Number(res.data.result.category_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
                 question: res.data.result.question
             })
@@ -391,9 +384,19 @@ handleChangeAnswer = (value) => {
                     res.data.result.map((item)=>{
                         this.state.optionsLicensesType.push({label: item.name, value: item.id})
                     })
-                    if (this.state.id){
-                        this.getData(this.state.id);
-                    }
+                    API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+                        if (res.data.error){
+                            toast.error(`Error read course list`)
+                        }
+                        else{
+                            res.data.result.map((item)=>{
+                                this.state.optionsCourse.push({label: item.title, value: item.id})
+                            })
+                            if (this.state.id){
+                                this.getData(this.state.id);
+                            }
+                        }
+                    })
                 }
             })
           });
@@ -657,7 +660,7 @@ handleChangeAnswer = (value) => {
                                                     <div className="row">
                                                         <div className="form-field-top-label" style={{width:400}}>
                                                             <label for="licenses">Licenses Type<required>*</required></label>
-                                                            <MultiSelect id="licenses" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={valueLicensesType => this.setState({ valueLicensesType })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Licenses Type" />
+                                                            <MultiSelect id="licenses" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={valueLicensesType => this.setState({ valueLicensesType, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Licenses Type" />
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="time">Time Limit (Minute)<required>*</required></label>
@@ -681,7 +684,7 @@ handleChangeAnswer = (value) => {
                                                             this.state.scheduled ?
                                                             <div className="form-field-top-label">
                                                                 <label for="start_date">Start Date & Time</label>
-                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_date} onChange={e => this.setState({ start_date: e })} />
+                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_date} onChange={e => this.setState({ start_date: e, edited: true })} />
                                                             </div>
                                                             : null
                                                         }
@@ -702,9 +705,9 @@ handleChangeAnswer = (value) => {
                                                                 <input type="number" name="numberQuestions" size="50" id="numberQuestions" placeholder="0" value={this.state.numberQuestions} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                             </div>
                                                             <div className="form-field-top-label" style={{width:400}}>
-                                                                <label for="valueCategory">Category</label>
-                                                                <MultiSelect id="valueCategory" options={this.state.optionsCategory} value={this.state.valueCategory} onChange={valueCategory => this.setState({ valueCategory })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Category" />
-                                                                <p className="form-notes">Keep empty if you want to generate questions by all of category</p>
+                                                                <label for="valueCourse">Course</label>
+                                                                <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                <p className="form-notes">Keep empty if you want to generate questions by all of course</p>
                                                             </div>
                                                         </div>
                                                     </div>

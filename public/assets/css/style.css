@@ -12276,3 +12276,7 @@ required {
 .rdt_TableBody{
   min-height:150px !important;
 }
+
+.tox .tox-editor-header{
+  z-index: unset !important;
+}

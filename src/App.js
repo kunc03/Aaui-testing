@@ -90,6 +90,8 @@ import TrainingQuiz from "./components/training/quiz";
 import TrainingExamForm from "./components/training/exam/form";
 import TrainingExam from "./components/training/exam";
 import TrainingMembership from "./components/training/membership";
+import TrainingQuestions from "./components/training/questions";
+import TrainingQuestionsForm from "./components/training/questions/form";
 import TrainingCompanyForm from "./components/training/company/form";
 import TrainingCompanyDetail from "./components/training/company/detail";
 import TrainingUserForm from "./components/training/user/form";
@@ -332,6 +334,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
         <Route path="/training/course/edit/:id" exact component={TrainingCourseForm} />
+        <Route path="/training/questions" exact component={TrainingQuestions} />
+        <Route path="/training/questions/create" exact component={TrainingQuestionsForm} />
+        <Route path="/training/questions/edit/:id" exact component={TrainingQuestionsForm} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
         <Route path="/training/exam" exact component={TrainingExam} />
         <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
