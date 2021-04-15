@@ -30,7 +30,7 @@ class MataPelajaran extends React.Component {
       this.setState({
         mataPelajaran: res.data.result,
         semester: res.data.semester,
-        semesterId: res.data.semester[0].kelas_id
+        semesterId: res.data.semester.length ? res.data.semester[0].kelas_id : ''
       })
     })
   }
@@ -38,12 +38,16 @@ class MataPelajaran extends React.Component {
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal`)
+      if(res.data.result) {
+        let uniq = [...new Map(res.data.result.jadwal.map(item => [item['nama_pelajaran'], item])).values()];
 
-      let uniq = [...new Map(res.data.result.jadwal.map(item => [item['nama_pelajaran'], item])).values()];
-
-      this.setState({
-        jadwalPelajaran: uniq,
-      })
+        this.setState({
+          jadwalPelajaran: uniq,
+        })
+      }
+      else {
+        toast.info('Belum ada jadwal')
+      }
     })
   }
 

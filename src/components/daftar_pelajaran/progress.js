@@ -56,7 +56,12 @@ class GuruUjian extends Component {
     API.get(`${API_SERVER}v2/jadwal-murid/${userId}?mapelOnly=true&tahunAjaran=${tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
-      this.setState({ pelajaran: res.data.result, semester: res.data.semester, semesterId: res.data.semester[0].kelas_id  })
+      this.setState({
+        pelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: res.data.result.length ? res.data.semester[0].kelas_id : ''
+      })
+
       if (res.data.result.length) {
         this.fetchSilabus(res.data.result[0].jadwal_id, userId)
       }
@@ -97,10 +102,14 @@ class GuruUjian extends Component {
 
   selectSemester = e => {
     const { value } = e.target;
-    API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}?kelasId=${value}&mapelOnly=true&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+    API.get(`${API_SERVER}v2/jadwal-murid/${this.state.role === 'murid' ? Storage.get('user').data.user_id : this.state.userId}?kelasId=${value}&mapelOnly=true&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
-      this.setState({ pelajaran: res.data.result, semester: res.data.semester, semesterId: value  })
+      this.setState({
+        pelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: value
+      })
       if (res.data.result.length) {
         this.fetchSilabus(res.data.result[0].jadwal_id, Storage.get('user').data.user_id)
       }
