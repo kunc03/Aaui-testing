@@ -44,6 +44,7 @@ class FormExam extends Component {
         valueCourse: [],
         generate: false,
         scheduled: false,
+        generate_membership: false,
         session_title : '',
         file: '',
         selectedQuestion: '',
@@ -63,13 +64,16 @@ class FormExam extends Component {
   ToggleSwitchScheduled(checked) {
     this.setState({ scheduled: !this.state.scheduled, edited: true });
   }
+  ToggleSwitchMembership(checked) {
+    this.setState({ generate_membership: !this.state.generate_membership, edited: true });
+  }
 
   goBack() {
     if (this.props.goBack){
         this.props.goBack();
     }
     else{
-        this.props.history.push('/training');
+        this.props.history.goBack();
     }
   }
 
@@ -100,6 +104,7 @@ class FormExam extends Component {
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
+                generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
@@ -150,6 +155,7 @@ class FormExam extends Component {
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
+                generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
@@ -204,6 +210,7 @@ class FormExam extends Component {
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
+                generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
                 created_by: Storage.get('user').data.user_id
@@ -359,6 +366,7 @@ handleChangeAnswer = (value) => {
                 numberQuestions: res.data.result.number_of_question,
                 generate: res.data.result.generate_question ? true : false,
                 scheduled: res.data.result.scheduled ? true : false,
+                generate_membership: res.data.result.generate_membership ? true : false,
                 start_date: new Date(res.data.result.start_time),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
@@ -688,6 +696,11 @@ handleChangeAnswer = (value) => {
                                                             </div>
                                                             : null
                                                         }
+                                                        <div className="form-field-top-label">
+                                                            <label for="scheduled">Generate Membership</label>
+                                                            <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
+                                                            <p className="form-notes">{this.state.scheduled ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 {

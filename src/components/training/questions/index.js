@@ -111,7 +111,7 @@ class Questions extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : window.open('/training/questions/edit/' + row.id, "_self");break;
+                case 1 : this.props.history.push('/training/questions/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
                 default : this.props.goTo('/training/questions');break;
               }
