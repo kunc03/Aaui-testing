@@ -13,6 +13,9 @@ class GuruUjian extends Component {
     userId: '',
     pelajaran: [],
 
+    semester: [],
+    semesterId: [],
+
     loading: true,
     silabus: [],
 
@@ -53,7 +56,12 @@ class GuruUjian extends Component {
     API.get(`${API_SERVER}v2/jadwal-murid/${userId}?mapelOnly=true&tahunAjaran=${tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
-      this.setState({ pelajaran: res.data.result })
+      this.setState({
+        pelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: res.data.result.length ? res.data.semester[0].kelas_id : ''
+      })
+
       if (res.data.result.length) {
         this.fetchSilabus(res.data.result[0].jadwal_id, userId)
       }
@@ -92,6 +100,25 @@ class GuruUjian extends Component {
     }
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/jadwal-murid/${this.state.role === 'murid' ? Storage.get('user').data.user_id : this.state.userId}?kelasId=${value}&mapelOnly=true&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
+
+      this.setState({
+        pelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: value
+      })
+      if (res.data.result.length) {
+        this.fetchSilabus(res.data.result[0].jadwal_id, Storage.get('user').data.user_id)
+      }
+      else {
+        toast.info(`Belum ada jadwal.`)
+      }
+    })
+  }
+
   render() {
 
     const { pelajaran, silabus } = this.state;
@@ -101,28 +128,42 @@ class GuruUjian extends Component {
     return (
       <div class="col-sm-12 mt-2">
         <Card>
+          <Card.Header className="row">
+            <div className="col-sm-2">
+              <label>Tahun Ajaran</label>
+              <select style={{ padding: '2px' }} className="mr-2 form-control" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
+                <option value="" selected disabled>Select</option>
+                {
+                  this.state.listTahunAjaran.map(item => (
+                    <option value={item}>{item}</option>
+                  ))
+                }
+              </select>
+            </div>
+            <div className="col-sm-2">
+              <label>Semester</label>
+              <select style={{ padding: '2px' }} className="mr-2 form-control" onChange={this.selectSemester} value={this.state.semesterId} >
+                <option value="" selected disabled>Select</option>
+                {
+                  this.state.semester.map(item => (
+                    <option value={item.kelas_id}>{item.semester_name}</option>
+                  ))
+                }
+              </select>
+            </div>
+            <div className="col-sm-2">
+              <label>Pelajaran</label>
+              <select style={{ padding: '2px' }} className="form-control" onChange={this.filterKegiatan}>
+                {
+                  pelajaran.map((item, i) => (
+                    <option value={item.jadwal_id}>{item.mapel}</option>
+                  ))
+                }
+              </select>
+            </div>
+          </Card.Header>
           <Card.Body>
-            <h4 className="f-w-900 f-18 fc-blue mb-3">Progress</h4>
-
-            <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
-              <option value="" selected disabled>Select</option>
-              {
-                this.state.listTahunAjaran.map(item => (
-                  <option value={item}>{item}</option>
-                ))
-              }
-            </select>
-
-            <select style={{ padding: '2px' }} onChange={this.filterKegiatan}>
-              {
-                pelajaran.map((item, i) => (
-                  <option value={item.jadwal_id}>{item.mapel}</option>
-                ))
-              }
-            </select>
-            <button class="ml-2" onClick={this.filterClear}>clear</button>
-
-            <table className="table table-bordered mt-3">
+            <table className="table table-bordered">
               <thead>
                 <tr>
                   <th></th>

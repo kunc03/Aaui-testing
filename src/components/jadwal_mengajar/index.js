@@ -31,6 +31,8 @@ class JadwalMengajar extends React.Component {
     dataGuru: [],
 
     kurikulums: [],
+
+    isModalTambahMulti: false
   }
 
   selectPelajaran = e => {
@@ -138,6 +140,7 @@ class JadwalMengajar extends React.Component {
       kapasitasMurid: "",
 
       isModalTambah: false,
+      isModalTambahMulti: false,
     })
   }
 
@@ -241,8 +244,10 @@ class JadwalMengajar extends React.Component {
             <div className="card-header">
               Teaching Schedule
               <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
-                <i className="fa fa-plus"></i>
-                Add Teaching Schedule
+                Add Schedule
+              </button>
+              <button onClick={() => this.setState({ isModalTambahMulti: true })} className="mr-2 btn btn-v2 btn-primary float-right">
+                Form Multiple
               </button>
             </div>
             <div className="card-body p-0">
@@ -399,6 +404,138 @@ class JadwalMengajar extends React.Component {
                   <input required className="form-control" type="number" value={this.state.kapasitasMurid} onChange={e => this.setState({ kapasitasMurid: e.target.value })} placeholder="Enter kapasitas murid" />
                 </div>
               </div>
+
+              <div className="form-group row">
+                <div className="col-sm-12">
+                  <button
+                    type="submit"
+                    className="btn btn-icademy-primary btn-icademy-blue"
+                  >
+                    <i className="fa fa-save"></i>
+                    Simpan
+                  </button>
+                  <button
+                    className="btn btm-icademy-primary btn-icademy-grey ml-2"
+                    onClick={() => this.clearForm()}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={this.state.isModalTambahMulti}
+          onHide={() => this.clearForm()}
+          dialogClassName="modal-lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Add Schedule
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={this.saveJadwal}>
+              <div className="form-group row">
+                <div className="col-sm-6">
+                  <label>Class</label>
+                  <select value={this.state.kelasJadwal} onChange={this.selectKelasJadwal} className="form-control">
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataKelas.map((item, i) => (
+                        <option value={`${item.kelas_id}_${item.kapasitas}_${item.kurikulum}`}>{item.kelas_nama}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+
+                <div className="col-sm-6">
+                  <label>Nama Pelajaran</label>
+                  <select value={this.state.namaPelajaran} onChange={this.selectPelajaran} required className="form-control">
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataPelajaran.map((item, i) => (
+                        <option value={item.pelajaran_id + '_' + item.silabus}>{item.nama_pelajaran}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+
+              </div>
+
+              <div className="form-group row">
+                <div className="col-sm-6">
+                  <label>Ruangan</label>
+                  <select value={this.state.ruanganJadwal} onChange={this.selectRuangan} required className="form-control">
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataRuangan.map((item, i) => (
+                        <option value={`${item.id}_${item.pengajar_id}`}>{item.nama_ruangan}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+                <div className="col-sm-6">
+                  <label>Teacher Name</label>
+                  <select value={this.state.namaPengajar} onChange={e => this.setState({ namaPengajar: e.target.value })} disabled className="form-control">
+                    <option value="">Pilih</option>
+                    {
+                      this.state.dataGuru.map((item, i) => (
+                        <option value={item.id}>{item.nama}</option>
+                      ))
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group row">
+                <div className="col-sm-6">
+                  <label>Jumlah Pertemuan</label>
+                  <input required className="form-control" type="number" min="0" value={this.state.jumlahPertemuan} onChange={e => this.setState({ jumlahPertemuan: e.target.value < 0 ? 0 : e.target.value })} placeholder="Enter jumlah pertemuan" />
+                </div>
+                <div className="col-sm-6">
+                  <label>Kapasitas Murid</label>
+                  <input required className="form-control" type="number" value={this.state.kapasitasMurid} onChange={e => this.setState({ kapasitasMurid: e.target.value })} placeholder="Enter kapasitas murid" />
+                </div>
+              </div>
+
+              {
+                hari.map((item, key) => (
+                  <div className="form-group row">
+                    <div className="col-sm-2">
+                      <input type="checkbox" className="form-control mt-3" />
+                    </div>
+                    <div className="col-sm-2">
+                      <label className="mt-4">{item}</label>
+                    </div>
+                    <div className="col-sm-4">
+                      <label> Starting Hours </label>
+                      <select value={this.state.jamMulai} onChange={e => this.setState({ jamMulai: e.target.value })} required className="form-control">
+                        <option value="">Pilih</option>
+                        {
+                          jam.map((item, i) => (
+                            <option value={item}>{item}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
+                    <div className="col-sm-4">
+                      <label> End Hours </label>
+                      <select value={this.state.jamSelesai} onChange={e => this.setState({ jamSelesai: e.target.value })} required className="form-control">
+                        <option value="">Pilih</option>
+                        {
+                          jam.map((item, i) => (
+                            <option value={item}>{item}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
+                  </div>
+                ))
+              }
+
 
               <div className="form-group row">
                 <div className="col-sm-12">
