@@ -27,7 +27,10 @@ class Tugas extends React.Component {
     submitted: false,
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
+
+    semester: [],
+    semesterId: ''
   }
 
   fetchJadwal(tahunAjaran) {
@@ -36,6 +39,8 @@ class Tugas extends React.Component {
 
       this.setState({
         semuaTugas: res.data.result.tugas.filter(item => item.quiz == 2),
+        semester: res.data.semester,
+        semesterId: res.data.semester[0].kelas_id
       })
     })
   }
@@ -155,6 +160,19 @@ class Tugas extends React.Component {
     this.fetchJadwal(value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/tugas-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Error: fetch jadwal`)
+
+      this.setState({
+        semuaTugas: res.data.result.tugas.filter(item => item.quiz == 2),
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
 
     console.log(`state: `, this.state)
@@ -164,7 +182,7 @@ class Tugas extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{ padding: '12px' }}>
+            <div className="card-body row" style={{ padding: '12px' }}>
 
               <div className="col-sm-2">
                 <label>Tahun Ajaran</label>
@@ -173,6 +191,18 @@ class Tugas extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>

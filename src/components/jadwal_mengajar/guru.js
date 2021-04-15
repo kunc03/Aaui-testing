@@ -9,6 +9,8 @@ class MataPelajaran extends React.Component {
 
   state = {
     mataPelajaran: [],
+    semester: [],
+    semesterId: '',
 
     isModalBuka: false,
 
@@ -30,25 +32,44 @@ class MataPelajaran extends React.Component {
       let dd = res.data.result;
       let unique = [...new Map(dd.map(item => [item['pelajaran_id'], item])).values()];
 
-      let senin = dd.filter(item => item.hari === "Senin");
-      let selasa = dd.filter(item => item.hari === "Selasa");
-      let rabu = dd.filter(item => item.hari === "Rabu");
-      let kamis = dd.filter(item => item.hari === "Kamis");
-      let jumat = dd.filter(item => item.hari === "Jumat");
-      let sabtu = dd.filter(item => item.hari === "Sabtu");
-      let minggu = dd.filter(item => item.hari === "Minggu");
+      let semesterUnik = [...new Map(dd.map(item => [item['semester_id'], item])).values()];
 
-      let mataPelajaran = [
-        { tanggal: "Senin", data: senin },
-        { tanggal: "Selasa", data: selasa },
-        { tanggal: "Rabu", data: rabu },
-        { tanggal: "Kamis", data: kamis },
-        { tanggal: "Jumat", data: jumat },
-        { tanggal: "Sabtu", data: sabtu },
-        { tanggal: "Minggu", data: minggu },
-      ];
+      if(dd.length > 0) {
+        let senin = dd.filter(item => item.hari === "Senin" && item.semester_id === semesterUnik[0].semester_id);
+        let selasa = dd.filter(item => item.hari === "Selasa" && item.semester_id === semesterUnik[0].semester_id);
+        let rabu = dd.filter(item => item.hari === "Rabu" && item.semester_id === semesterUnik[0].semester_id);
+        let kamis = dd.filter(item => item.hari === "Kamis" && item.semester_id === semesterUnik[0].semester_id);
+        let jumat = dd.filter(item => item.hari === "Jumat" && item.semester_id === semesterUnik[0].semester_id);
+        let sabtu = dd.filter(item => item.hari === "Sabtu" && item.semester_id === semesterUnik[0].semester_id);
+        let minggu = dd.filter(item => item.hari === "Minggu" && item.semester_id === semesterUnik[0].semester_id);
 
-      this.setState({ mataPelajaran: mataPelajaran, jadwalPelajaran: unique, jadwalKu: res.data.result })
+        let mataPelajaran = [
+          { tanggal: "Senin", data: senin },
+          { tanggal: "Selasa", data: selasa },
+          { tanggal: "Rabu", data: rabu },
+          { tanggal: "Kamis", data: kamis },
+          { tanggal: "Jumat", data: jumat },
+          { tanggal: "Sabtu", data: sabtu },
+          { tanggal: "Minggu", data: minggu },
+        ];
+
+        this.setState({
+          mataPelajaran: mataPelajaran,
+          jadwalPelajaran: unique,
+          jadwalKu: res.data.result,
+          semester: semesterUnik,
+          semesterId: semesterUnik[0].semester_id
+        })
+      }
+      else {
+        this.setState({
+          mataPelajaran: res.data.result,
+          jadwalPelajaran: unique,
+          jadwalKu: res.data.result,
+          semester: semesterUnik,
+        })
+      }
+
     })
   }
 
@@ -109,7 +130,42 @@ class MataPelajaran extends React.Component {
     this.fetchJadwalKu(value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+
+    API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if(res.data.error) console.log(`Error: fetch pelajaran`)
+
+      let dd = res.data.result;
+
+      let senin = dd.filter(item => item.hari === "Senin" && item.semester_id == value);
+      let selasa = dd.filter(item => item.hari === "Selasa" && item.semester_id == value);
+      let rabu = dd.filter(item => item.hari === "Rabu" && item.semester_id == value);
+      let kamis = dd.filter(item => item.hari === "Kamis" && item.semester_id == value);
+      let jumat = dd.filter(item => item.hari === "Jumat" && item.semester_id == value);
+      let sabtu = dd.filter(item => item.hari === "Sabtu" && item.semester_id == value);
+      let minggu = dd.filter(item => item.hari === "Minggu" && item.semester_id == value);
+
+      let mataPelajaran = [
+        { tanggal: "Senin", data: senin },
+        { tanggal: "Selasa", data: selasa },
+        { tanggal: "Rabu", data: rabu },
+        { tanggal: "Kamis", data: kamis },
+        { tanggal: "Jumat", data: jumat },
+        { tanggal: "Sabtu", data: sabtu },
+        { tanggal: "Minggu", data: minggu },
+      ];
+
+      this.setState({
+        mataPelajaran: mataPelajaran,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
+
+    console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container">
@@ -135,6 +191,17 @@ class MataPelajaran extends React.Component {
                               {
                                 this.state.listTahunAjaran.map(item => (
                                   <option value={item}>{item}</option>
+                                ))
+                              }
+                            </select>
+                          </div>
+                          <div className="col-sm-2">
+                            <label>Semester</label>
+                            <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                              <option value="" selected disabled>Select</option>
+                              {
+                                this.state.semester.map(item => (
+                                  <option value={item.semester_id}>{item.semester_name}</option>
                                 ))
                               }
                             </select>
