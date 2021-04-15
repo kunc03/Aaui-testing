@@ -72,8 +72,10 @@ class Latihan extends React.Component {
     examSoal: [],
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
 
+    semester: [],
+    semesterId: ''
   }
 
   clearForm() {
@@ -120,7 +122,11 @@ class Latihan extends React.Component {
     API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${id}?tahunAjaran=${tahunAjaran}`).then(res => {
       if (res.data.error) toast.warning(`Warning: fetch kuis murid`);
 
-      this.setState({ mataPelajaran: res.data.result.kuis })
+      this.setState({
+        mataPelajaran: res.data.result.kuis,
+        semester: res.data.semester,
+        semesterId: res.data.semester[0].kelas_id
+      })
     })
   }
 
@@ -128,6 +134,19 @@ class Latihan extends React.Component {
     const { value } = e.target;
     this.setState({ tahunAjaran: value })
     this.fetchKuis(Storage.get('user').data.user_id, value);
+  }
+
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Warning: fetch kuis murid`);
+
+      this.setState({
+        mataPelajaran: res.data.result.kuis,
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
   }
 
   render() {
@@ -139,7 +158,7 @@ class Latihan extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{ padding: '12px' }}>
+            <div className="card-body row" style={{ padding: '12px' }}>
 
               <div className="col-sm-2">
                 <label>Tahun Ajaran</label>
@@ -148,6 +167,18 @@ class Latihan extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semester} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>

@@ -9,6 +9,8 @@ class MataPelajaran extends React.Component {
 
   state = {
     mataPelajaran: [],
+    semester: [],
+    semesterId: '',
 
     isModalBuka: false,
 
@@ -26,7 +28,9 @@ class MataPelajaran extends React.Component {
       if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({
-        mataPelajaran: res.data.result
+        mataPelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: res.data.semester[0].kelas_id
       })
     })
   }
@@ -90,6 +94,20 @@ class MataPelajaran extends React.Component {
     this.fetchJadwal(value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    this.setState({ semesterId: value })
+    API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
+
+      this.setState({
+        mataPelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
 
     //console.log('state: ', this.state)
@@ -107,6 +125,17 @@ class MataPelajaran extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>
