@@ -7,37 +7,15 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
+import Moment from 'moment-timezone';
 
 class Membership extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data : [
-            {
-                image : 'https://i.pinimg.com/originals/88/95/cb/8895cbb68f06273705135cb34714940a.jpg',
-                name : 'Alvin Kurnia Kamal',
-                company : 'PT Kelola Teknologi Digital',
-                number : '23487519512332',
-                expired : '07/03/2022',
-                status : 'Active',
-            },
-            {
-                image : 'https://i.pinimg.com/originals/88/95/cb/8895cbb68f06273705135cb34714940a.jpg',
-                name : 'Milzam Hibatullah',
-                company : 'PT Kelola Teknologi Digital',
-                number : '23487519512333',
-                expired : '07/03/2022',
-                status : 'Active',
-            },
-            {
-                image : 'https://i.pinimg.com/originals/88/95/cb/8895cbb68f06273705135cb34714940a.jpg',
-                name : 'Joaldrik F. Wawolumaja',
-                company : 'PT Infovesta Utama',
-                number : '23487519576964',
-                expired : '07/03/2022',
-                status : 'Active',
-            },
-        ],
+        data : [],
         filter:''
     };
     this.goBack = this.goBack.bind(this);
@@ -45,6 +23,30 @@ class Membership extends Component {
   
   goBack() {
     this.props.history.goBack();
+  }
+
+  getData(companyId){
+    API.get(`${API_SERVER}v2/training/membership/${companyId}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read membership list')
+        }
+        else{
+            this.setState({data: res.data.result})
+        }
+    })
+  }
+
+  getUserData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
+          this.getData(this.state.companyId)
+        }
+    })
+  }
+
+  componentDidMount(){
+    this.getUserData()
   }
 
   onClickHapus(){
@@ -60,9 +62,17 @@ class Membership extends Component {
     const columns = [
       {
         name: 'Member Card',
-        selector: 'image',
+        selector: 'license_card',
         sortable: true,
-        cell: row => <img height="36px" alt={row.name} src={row.image} />
+        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card} /></a>
+      },
+      {
+        name: 'License Number',
+        selector: 'license_number',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
       },
       {
         name: 'Name',
@@ -72,31 +82,16 @@ class Membership extends Component {
       },
       {
         name: 'Company',
-        selector: 'company',
+        selector: 'company_name',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
       {
-        name: 'Registration Number',
-        selector: 'number',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
+        cell: row => Moment.tz(row.expired, 'Asia/Jakarta').format("DD-MM-YYYY"),
         name: 'Expired Date',
         selector: 'expired',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
-        name: 'Status',
-        selector: 'status',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -108,7 +103,7 @@ class Membership extends Component {
             pullRight
             onSelect={(eventKey) => {
               if (eventKey === 1) {
-                window.open('/training-company-edit/' + row.id, "_self")
+                this.props.history.push('/training/membership/edit/' + row.id);
               }
             }}
           >
@@ -121,7 +116,6 @@ class Membership extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Delete</MenuItem>
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -160,15 +154,6 @@ class Membership extends Component {
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
-                                                        <Link
-                                                        to={`/training/user/create`}>
-                                                            <button
-                                                            className="btn btn-icademy-primary float-right"
-                                                            style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                                                                <i className="fa fa-plus"></i>
-                                                                Create New
-                                                            </button>
-                                                        </Link>
                                                         <input
                                                             type="text"
                                                             placeholder="Search"
