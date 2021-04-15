@@ -64,7 +64,7 @@ class Membership extends Component {
         name: 'Member Card',
         selector: 'license_card',
         sortable: true,
-        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card} /></a>
+        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>
       },
       {
         name: 'License Number',
