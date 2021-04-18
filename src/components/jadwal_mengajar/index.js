@@ -309,7 +309,7 @@ class JadwalMengajar extends React.Component {
                 Add Schedule
               </button>
               <button onClick={() => this.setState({ isModalTambahMulti: true })} className="mr-2 btn btn-v2 btn-primary float-right">
-                Form Multiple
+                Add Bulk
               </button>
             </div>
             <div className="card-body p-0">
