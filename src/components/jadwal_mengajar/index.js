@@ -6,7 +6,7 @@ import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 const hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-const jam = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+const jam = Array(24 * 4).fill(0).map((_, i) => { return ('0' + ~~(i / 4) + ':0' + 60  * (i / 4 % 1)).replace(/\d(\d\d)/g, '$1') });
 
 class JadwalMengajar extends React.Component {
 
@@ -32,7 +32,9 @@ class JadwalMengajar extends React.Component {
 
     kurikulums: [],
 
-    isModalTambahMulti: false
+    isModalTambahMulti: false,
+
+    bulkDays: []
   }
 
   selectPelajaran = e => {
@@ -69,7 +71,8 @@ class JadwalMengajar extends React.Component {
         this.fetchJadwal(companyId)
       })
 
-    } else {
+    }
+    else {
       let form = {
         company_id: Storage.get('user').data.company_id,
         ruangan_id: this.state.ruanganJadwal.split('_')[0],
@@ -83,13 +86,46 @@ class JadwalMengajar extends React.Component {
       }
 
       API.post(`${API_SERVER}v2/jadwal-mengajar`, form).then(res => {
-        if (res.data.error) toast.warning("Error menyimpan jadwal")
+        if (res.data.error) {
+          toast.warning("Error menyimpan jadwal")
+        }
+        else {
+          toast.warning("Menyimpan jadwal baru")
 
-        this.fetchJadwal(companyId)
+          this.fetchJadwal(companyId)
+          this.clearForm();
+        }
       })
     }
 
-    this.clearForm();
+  }
+
+  saveJadwalBulk = e => {
+    e.preventDefault()
+    let companyId = Storage.get('user').data.company_id;
+
+    let onlyChecked = this.state.bulkDays.filter(item => item.check === true)
+    let form = {
+      company_id: Storage.get('user').data.company_id,
+      ruangan_id: this.state.ruanganJadwal.split('_')[0],
+      pelajaran_id: this.state.namaPelajaran.split('_')[0],
+      kelas_id: this.state.kelasJadwal.split('_')[0],
+      jumlah_pertemuan: this.state.jumlahPertemuan,
+      kapasitas: this.state.kapasitasMurid,
+      days: onlyChecked
+    }
+
+    API.post(`${API_SERVER}v2/jadwal-mengajar?bulk=true`, form).then(res => {
+      if (res.data.error) {
+        toast.warning("Error menyimpan jadwal")
+      }
+      else {
+        toast.warning("Menyimpan jadwal baru")
+        this.fetchJadwal(companyId)
+        this.clearForm()
+      }
+
+    })
   }
 
   deleteJadwal = e => {
@@ -127,6 +163,11 @@ class JadwalMengajar extends React.Component {
   }
 
   clearForm() {
+    let temp = [];
+    for (var i = 0; i < hari.length; i++) {
+      temp.push({check: false, day: hari[i], start: '', end: ''})
+    }
+
     this.setState({
       idJadwal: "",
       namaPelajaran: "",
@@ -141,6 +182,7 @@ class JadwalMengajar extends React.Component {
 
       isModalTambah: false,
       isModalTambahMulti: false,
+      bulkDays: temp
     })
   }
 
@@ -150,6 +192,12 @@ class JadwalMengajar extends React.Component {
     this.fetchRuangan(companyId)
     this.fetchJadwal(companyId)
     this.fetchKurikulum()
+
+    let temp = [];
+    for (var i = 0; i < hari.length; i++) {
+      temp.push({check: false, day: hari[i], start: '', end: ''})
+    }
+    this.setState({ bulkDays: temp })
   }
 
   fetchJadwal(companyId) {
@@ -212,9 +260,23 @@ class JadwalMengajar extends React.Component {
     })
   }
 
+  handleDynamic = (e, i) => {
+    let { value, name, checked } = e.target
+    let index = i
+    let cc = [...this.state.bulkDays]
+    if(name === 'check') {
+      cc[i][name] = checked
+    }
+    else {
+      cc[i][name] = value
+    }
+
+    this.setState({ bulkDays: cc })
+  }
+
   render() {
 
-    //console.log('state: ', this.state)
+    console.log('state: ', this.state.bulkDays)
 
     const StatusJadwal = ({ item }) => {
       if (
@@ -437,7 +499,7 @@ class JadwalMengajar extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={this.saveJadwal}>
+            <form onSubmit={this.saveJadwalBulk}>
               <div className="form-group row">
                 <div className="col-sm-6">
                   <label>Class</label>
@@ -502,17 +564,17 @@ class JadwalMengajar extends React.Component {
               </div>
 
               {
-                hari.map((item, key) => (
+                this.state.bulkDays.map((item, key) => (
                   <div className="form-group row">
                     <div className="col-sm-2">
-                      <input type="checkbox" className="form-control mt-3" />
+                      <input checked={item.check ? 'checked' : ''} onChange={e => this.handleDynamic(e, key)} name="check" type="checkbox" className="form-control mt-3" />
                     </div>
                     <div className="col-sm-2">
-                      <label className="mt-4">{item}</label>
+                      <label className="mt-4">{item.day}</label>
                     </div>
                     <div className="col-sm-4">
                       <label> Starting Hours </label>
-                      <select value={this.state.jamMulai} onChange={e => this.setState({ jamMulai: e.target.value })} required className="form-control">
+                      <select value={item.start} onChange={e => this.handleDynamic(e, key)} name="start" className="form-control">
                         <option value="">Pilih</option>
                         {
                           jam.map((item, i) => (
@@ -523,7 +585,7 @@ class JadwalMengajar extends React.Component {
                     </div>
                     <div className="col-sm-4">
                       <label> End Hours </label>
-                      <select value={this.state.jamSelesai} onChange={e => this.setState({ jamSelesai: e.target.value })} required className="form-control">
+                      <select value={item.end} onChange={e => this.handleDynamic(e, key)} name="end" className="form-control">
                         <option value="">Pilih</option>
                         {
                           jam.map((item, i) => (
