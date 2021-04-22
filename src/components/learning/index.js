@@ -18,15 +18,15 @@ import Histori from '../laporan/histori';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
-  { label: 'Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran, icon: 'learning-clipboard-2.svg', iconActive: 'learning-clipboard-1.svg', },
-  { label: 'Curriculum', link: '/kurikulum', component: Curriculum, icon: 'learning-clipboard-2.svg', iconActive: 'learning-clipboard-1.svg', },
-  { label: 'Class', link: '/registrasi', component: Registrasi, icon: 'learning-add-1.svg', iconActive: 'learning-add.svg', },
-  { label: 'Room', link: '/ruangan-mengajar', component: RuanganMengajar, icon: 'learning-webinar-1.svg', iconActive: 'users-active.svg', },
-  { label: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar, icon: 'learning-calendar-1.svg', iconActive: 'users-active.svg', },
-  { label: 'Personnel', link: '/personalia', component: Personalia, icon: 'learning-teamwork-1.svg', iconActive: 'users-active.svg', },
-  { label: 'Report', link: '/laporan', component: Laporan, icon: 'learning-report-1.svg', iconActive: 'users-active.svg', },
-  { label: 'History', link: '/histori', component: Histori, icon: 'learning-report-1.svg', iconActive: 'users-active.svg', },
-  { label: 'Preference', link: '/kpi', component: Kpi, icon: 'learning-report-1.svg', iconActive: 'users-active.svg', },
+  { label: 'Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran, icon: '@0,5xLessons off.svg', iconActive: '@0,5xLessons on.svg', },
+  { label: 'Curriculum', link: '/kurikulum', component: Curriculum, icon: '@0,5xCurriculum off.svg', iconActive: '@0,5xCurriculum on.svg', },
+  { label: 'Class', link: '/registrasi', component: Registrasi, icon: '@0,5xclass-1.svg', iconActive: '@0,5xclass on.svg', },
+  { label: 'Room', link: '/ruangan-mengajar', component: RuanganMengajar, icon: '@0,5xRoom off.svg', iconActive: '@0,5xRoom on.svg', },
+  { label: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar, icon: '@0,5xSchedule off.svg', iconActive: '@0,5xSchedule on.svg', },
+  { label: 'Personnel', link: '/personalia', component: Personalia, icon: '@0,5xPersonnel off.svg', iconActive: '@0,5xPersonnel on.svg', },
+  { label: 'Report', link: '/laporan', component: Laporan, icon: '@0,5xReport off.svg', iconActive: '@0,5xReport on.svg', },
+  { label: 'History', link: '/histori', component: Histori, icon: '@0,5xhistory off.svg', iconActive: '@0,5xhistory on.svg', },
+  { label: 'Preference', link: '/kpi', component: Kpi, icon: '@0,5xLessons off.svg', iconActive: '@0,5xLessons on.svg', },
   // { label: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
 
 ]
@@ -103,7 +103,7 @@ export default class LearningAdmin extends Component {
                                       <li className={this.state.selected === item.label && 'active'} onClick={this.selectMenu.bind(this, item.label)}>
 
                                         <img
-                                          src={`newasset/${this.state.selected === item.label ? item.iconActive : item.icon}`}
+                                          src={`newasset/learning/${this.state.selected === item.label ? item.iconActive : item.icon}`}
                                           alt=""
                                           height={26}
                                           width={26}
