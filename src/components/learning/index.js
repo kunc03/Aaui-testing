@@ -25,8 +25,8 @@ const titleTabs = [
   { label: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar, icon: '@0,5xSchedule off.svg', iconActive: '@0,5xSchedule on.svg', },
   { label: 'Personnel', link: '/personalia', component: Personalia, icon: '@0,5xPersonnel off.svg', iconActive: '@0,5xPersonnel on.svg', },
   { label: 'Report', link: '/laporan', component: Laporan, icon: '@0,5xReport off.svg', iconActive: '@0,5xReport on.svg', },
-  { label: 'History', link: '/histori', component: Histori, icon: '@0,5xhistory off.svg', iconActive: '@0,5xhistory on.svg', },
   { label: 'Preference', link: '/kpi', component: Kpi, icon: '@0,5xLessons off.svg', iconActive: '@0,5xLessons on.svg', },
+  { label: 'History', link: '/histori', component: Histori, icon: '@0,5xhistory off.svg', iconActive: '@0,5xhistory on.svg', },
   // { label: 'Evaluation', link: '/evaluasi', component: Evaluasi, icon: 'learning-clipboard-2' },
 
 ]
@@ -95,28 +95,28 @@ export default class LearningAdmin extends Component {
                             <strong className="f-w-bold f-18" style={{ color: '#000' }}>Learning | {this.state.selected}</strong>
                           </div>
                           <div className="col-sm-10">
-                            <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
-                              <ul className="tab-menu" style={{ width: '100%' }}>
-                                {
-                                  titleTabs.map(item =>
-                                    <Link to={`/learning${item.link}`}>
-                                      <li className={this.state.selected === item.label && 'active'} onClick={this.selectMenu.bind(this, item.label)}>
+                            {/* <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}> */}
+                            <ul className="tab-menu" style={{ width: '100%' }}>
+                              {
+                                titleTabs.map(item =>
+                                  <Link to={`/learning${item.link}`}>
+                                    <li className={this.state.selected === item.label && 'active'} onClick={this.selectMenu.bind(this, item.label)}>
 
-                                        <img
-                                          src={`newasset/learning/${this.state.selected === item.label ? item.iconActive : item.icon}`}
-                                          alt=""
-                                          height={26}
-                                          width={26}
-                                          style={{ marginRight: 8 }}
-                                        ></img>
-                                        {item.label}
+                                      <img
+                                        src={`newasset/learning/${this.state.selected === item.label ? item.iconActive : item.icon}`}
+                                        alt=""
+                                        height={26}
+                                        width={26}
+                                        style={{ marginRight: 8 }}
+                                      ></img>
+                                      {item.label}
 
-                                      </li>
-                                    </Link>
-                                  )
-                                }
-                              </ul>
-                            </div>
+                                    </li>
+                                  </Link>
+                                )
+                              }
+                            </ul>
+
                           </div>
                         </div>
                       </div>
