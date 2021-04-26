@@ -35,12 +35,12 @@ export const Menu = [
         iconActive: 'exam-active.svg',
         route: '/training/exam'
     },
-    // {
-    //     label: 'Webinar',
-    //     icon: 'webinars.svg',
-    //     iconActive: 'webinars-active.svg',
-    //     route: '/training'
-    // },
+    {
+        label: 'Webinar',
+        icon: 'webinars.svg',
+        iconActive: 'webinars-active.svg',
+        route: '/training/webinar'
+    },
     {
         label: 'Membership',
         icon: 'membership.svg',

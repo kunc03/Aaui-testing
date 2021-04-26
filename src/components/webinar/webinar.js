@@ -130,7 +130,12 @@ class WebinarTable extends Component {
     return (
       <div className="card p-20">
         <span className="mb-4">
+          {
+          this.props.titleColor && this.props.titleColor === 'black' ?
+          <strong className="f-w-bold f-18" style={{color:'#000'}}>Webinar List</strong>
+          :
           <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
+          }
 
 
           {access_project_admin == true && this.state.limitCompany.webinar ?
