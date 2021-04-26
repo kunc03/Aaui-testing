@@ -305,11 +305,8 @@ class JadwalMengajar extends React.Component {
           <div className="card">
             <div className="card-header">
               Teaching Schedule
-              <button onClick={() => this.setState({ isModalTambah: true })} className="btn btn-v2 btn-primary float-right">
-                Add Schedule
-              </button>
               <button onClick={() => this.setState({ isModalTambahMulti: true })} className="mr-2 btn btn-v2 btn-primary float-right">
-                Add Bulk
+                Add Schedule
               </button>
             </div>
             <div className="card-body p-0">
