@@ -151,14 +151,14 @@ class Company extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
-      {
-        name: 'Status',
-        selector: 'status',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
+      // {
+      //   name: 'Status',
+      //   selector: 'status',
+      //   sortable: true,
+      //   style: {
+      //     color: 'rgba(0,0,0,.54)',
+      //   },
+      // },
       {
         cell: row =>
           <Dropdown
