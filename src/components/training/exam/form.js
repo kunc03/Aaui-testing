@@ -699,7 +699,7 @@ handleChangeAnswer = (value) => {
                                                         <div className="form-field-top-label">
                                                             <label for="scheduled">Generate Membership</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
-                                                            <p className="form-notes">{this.state.scheduled ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
+                                                            <p className="form-notes">{this.state.generate_membership ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
