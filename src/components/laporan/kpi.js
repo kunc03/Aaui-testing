@@ -24,7 +24,13 @@ class Kpi extends React.Component {
     idNilai: '',
     min: '',
     max: '',
-    huruf: ''
+    huruf: '',
+
+    nilaiKelulusan: [],
+    lulusId: '',
+    semesterId: '',
+    nilai: '',
+    companyId: Storage.get('user').data.company_id
   }
 
   clearForm() {
@@ -32,7 +38,11 @@ class Kpi extends React.Component {
       id: '',
       name: '',
       file: '',
-      tempFile: Math.random().toString(36)
+      tempFile: Math.random().toString(36),
+
+      lulusId: '',
+      semesterId: '',
+      nilai: '',
     })
   }
 
@@ -114,9 +124,38 @@ class Kpi extends React.Component {
     })
   }
 
+  handleDynamic = (e, i) => {
+    let { value, name } = e.target
+    let index = i
+    let cc = [...this.state.nilaiKelulusan]
+    cc[i][name] = value
+    this.setState({ nilaiKelulusan: cc })
+  }
+
+  updateNilaiKelulusan = (e, i) => {
+    let cc = [...this.state.nilaiKelulusan]
+    let form = cc[i]
+    API.post(`${API_SERVER}v2/semester-kelulusan`, form).then(res => {
+      if(res.data.error) {
+        toast.warning('Tidak dapat ubah nilai kelulusan')
+      }
+      else {
+        toast.success(`Nilai minimal kelulusan tersimpan`)
+        this.fetchNilaiKelulusan()
+      }
+    })
+  }
+
   componentDidMount() {
     this.fetchFormatKpi()
     this.fetchRangeNilai()
+    this.fetchNilaiKelulusan()
+  }
+
+  fetchNilaiKelulusan() {
+    API.get(`${API_SERVER}v2/semester-kelulusan/${this.state.companyId}`).then(res => {
+      this.setState({ nilaiKelulusan: res.data.result })
+    })
   }
 
   fetchFormatKpi() {
@@ -267,6 +306,40 @@ class Kpi extends React.Component {
                   }
                 </tbody>
               </table>
+
+            </div>
+          </div>
+        </div>
+
+        <div className="col-sm-12">
+          <div className="card">
+            <div className="card-header header-kartu">
+              Minimal Nilai Kelulusan
+            </div>
+
+            <div className="card-body">
+              <div className="row">
+                <table className="table table-striped table-bordered col-sm-5">
+                  <thead>
+                    <tr className="text-center">
+                      <td>NO</td>
+                      <td>SEMESTER</td>
+                      <td>MINIMAL (0-100)</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.state.nilaiKelulusan.map((item, i) => (
+                        <tr className="text-center">
+                          <td>{i + 1}</td>
+                          <td>{item.semester_name}</td>
+                          <td><input type="text" name="nilai" value={item.nilai} onChange={e => this.handleDynamic(e,i)} onBlur={e => this.updateNilaiKelulusan(e, i)} className="form-control" /></td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
 
             </div>
           </div>

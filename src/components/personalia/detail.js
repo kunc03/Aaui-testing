@@ -33,6 +33,7 @@ class PersonaliaDetail extends React.Component {
     alamatOrtu: '',
     teleponOrtu: '',
     emailOrtu: '',
+    passOrtu: '',
 
     userParents: [],
     exists: false
@@ -97,6 +98,7 @@ class PersonaliaDetail extends React.Component {
         alamat: this.state.alamatOrtu,
         telepon: this.state.teleponOrtu,
         email: this.state.emailOrtu,
+        password: this.state.passOrtu
       }
 
       API.put(`${API_SERVER}v2/parents/update/${this.state.parentsId}`, form).then(res => {
@@ -118,6 +120,7 @@ class PersonaliaDetail extends React.Component {
         alamat: this.state.alamatOrtu,
         telepon: this.state.teleponOrtu,
         email: this.state.emailOrtu,
+        password: this.state.passOrtu,
         userId: this.state.userId
       }
 
@@ -151,6 +154,7 @@ class PersonaliaDetail extends React.Component {
       alamatOrtu: e.target.getAttribute('data-alamatOrtu'),
       teleponOrtu: e.target.getAttribute('data-teleponOrtu'),
       emailOrtu: e.target.getAttribute('data-emailOrtu'),
+      passOrtu: e.target.getAttribute('data-passOrtu'),
     })
   }
 
@@ -175,6 +179,7 @@ class PersonaliaDetail extends React.Component {
       alamatOrtu: '',
       teleponOrtu: '',
       emailOrtu: '',
+      passOrtu: '',
     })
   }
 
@@ -373,6 +378,12 @@ class PersonaliaDetail extends React.Component {
                   <label className="col-sm-2 col-form-label text-right">Email</label>
                   <div className="col-sm-4">
                     <input onBlur={e => this.cekEmail(e.target.value)} type="email" value={this.state.emailOrtu} onChange={e => this.setState({ emailOrtu: e.target.value })} className="form-control" />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 col-form-label text-right">Password</label>
+                  <div className="col-sm-4">
+                    <input type="password" value={this.state.passOrtu} onChange={e => this.setState({ passOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
 
