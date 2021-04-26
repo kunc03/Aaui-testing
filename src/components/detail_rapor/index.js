@@ -36,7 +36,7 @@ class DetailMurid extends Component {
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ jadwalKu: res.data.result })
     })
@@ -89,11 +89,11 @@ class DetailMurid extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -127,7 +127,7 @@ class DetailMurid extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -155,7 +155,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listSemester.map((item,i) => (
+                        this.state.listSemester.map((item, i) => (
                           <option key={i} value={item.semester_id}>{item.semester_name}</option>
                         ))
                       }
@@ -166,7 +166,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectKelas} value={this.state.kelasId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listKelas.map((item,i) => (
+                        this.state.listKelas.map((item, i) => (
                           <option key={i} value={item.kelas_id}>{item.kelas_nama}</option>
                         ))
                       }
@@ -177,7 +177,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectPelajaran} value={this.state.pelajaranId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listPelajaran.map((item,i) => (
+                        this.state.listPelajaran.map((item, i) => (
                           <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
                         ))
                       }
@@ -185,7 +185,7 @@ class DetailMurid extends Component {
                   </div>
 
                   <div className="col-sm-2">
-                    <label>Action</label><br/>
+                    <label>Action</label><br />
                     <button className="btn btn-v2 btn-info" type="reset" onClick={this.resetFilter}>Reset</button>
                   </div>
 
@@ -234,7 +234,7 @@ class DetailMurid extends Component {
                         <td>{item.task}</td>
                         <td>{item.quiz}</td>
                         <td>{item.exam}</td>
-                        <td>{((item.task+item.quiz+item.exam)/3).toFixed(2)}</td>
+                        <td>{((item.task + item.quiz + item.exam) / 3).toFixed(2)}</td>
                       </tr>
                     ))
                   }

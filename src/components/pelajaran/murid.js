@@ -1,6 +1,6 @@
 import React from 'react';
 
-import API, {USER_ME, API_SERVER, APPS_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
@@ -20,7 +20,7 @@ class Overview extends React.Component {
     jadwalId: this.props.match.params.id,
     pelajaranId: '',
 
-    murid:[],
+    murid: [],
     kelas: {},
   };
 
@@ -30,13 +30,13 @@ class Overview extends React.Component {
 
   fetchOverview() {
     API.get(`${API_SERVER}v2/murid/jadwal/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
+      if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ murid: res.data.result })
     })
 
     API.get(`${API_SERVER}v2/murid/kelas-v1/${this.state.jadwalId}`).then(res => {
-      if(res.data.error) toast.warning("Error fetch murid");
+      if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ kelas: res.data.result })
     })
@@ -44,7 +44,7 @@ class Overview extends React.Component {
   }
 
   render() {
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     return (
       <div className="row mt-3">
@@ -54,7 +54,7 @@ class Overview extends React.Component {
               <h4 className="f-w-900 f-18 fc-blue">Informasi Kelas</h4>
               <table>
                 <tr>
-                  <td style={{width: '180px'}}>Nama Kelas</td>
+                  <td style={{ width: '180px' }}>Nama Kelas</td>
                   <td><b>{this.state.kelas.kelas_nama}</b></td>
                 </tr>
                 <tr>
@@ -75,8 +75,8 @@ class Overview extends React.Component {
                 </tr>
               </table>
 
-              <br/>
-              <br/>
+              <br />
+              <br />
 
               <h4 className="f-w-900 f-18 fc-blue">Informasi Murid</h4>
               <table className="table table-striped">
@@ -94,7 +94,7 @@ class Overview extends React.Component {
                   {
                     this.state.murid.map((item, i) => (
                       <tr>
-                        <td>{i+1}</td>
+                        <td>{i + 1}</td>
                         <td>{item.nama}</td>
                         <td>{item.no_induk}</td>
                         <td>{item.tempat_lahir}</td>

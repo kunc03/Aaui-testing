@@ -122,19 +122,19 @@ class Company extends Component {
         cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-logo.jpg'} />
       },
       {
-        name: 'Name',
-        selector: 'name',
+        cell: row => <Link to={'/training/company/detail/'+row.id}>{row.name}</Link>,
+        name: 'Company Name',
         sortable: true,
         grow: 2,
       },
-      {
-        name: 'Registration Number',
-        selector: 'id',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
+      // {
+      //   name: 'Registration Number',
+      //   selector: 'id',
+      //   sortable: true,
+      //   style: {
+      //     color: 'rgba(0,0,0,.54)',
+      //   },
+      // },
       {
         name: 'Website',
         selector: 'website',
