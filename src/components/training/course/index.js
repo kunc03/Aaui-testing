@@ -7,30 +7,20 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import Storage from '../../../repository/storage';
+import { Modal } from 'react-bootstrap';
+import Moment from 'moment-timezone';
 
 class Course extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data : [
-            {
-                image : 'https://rencanamu.id/assets/file_uploaded/blog/1544666963-uiux-01.png',
-                title : 'Pembuatan UI/UX design',
-                number : '00001',
-                date : '07/03/2021',
-                content : 'Text, Video',
-                status : 'Active',
-            },
-            {
-                image : 'https://4.bp.blogspot.com/-s2EhTt57oeU/XHtQtO1QNLI/AAAAAAAANW8/KYkPQEZUyocSpA2RzqCcVt31imXPi63RACLcBGAs/s1600/Free%2BCourses%2Bto%2Blearn%2BJavaScript.jpg',
-                title : 'Penulisan Coding Javascript',
-                number : '00002',
-                date : '04/03/2021',
-                content : 'PDF, Audio, Practice',
-                status : 'Active',
-            },
-        ],
-        filter:''
+      companyId: '',
+      data : [],
+      filter:'',
+      modalDelete: false,
+      deleteId: ''
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -39,13 +29,54 @@ class Course extends Component {
     this.props.history.goBack();
   }
 
-  onClickHapus(){
-      toast.warning('Delete button clicked');
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteId: '' })
+  }
+
+  onClickHapus(id){
+    this.setState({modalDelete: true, deleteId: id})
+  }
+
+  delete (id){
+    API.delete(`${API_SERVER}v2/training/course/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error delete course')
+        }
+        else{
+          this.getUserData();
+          this.closeModalDelete();
+          toast.success('Course deleted');
+        }
+    })
   }
   
   filter = (e) => {
     e.preventDefault();
     this.setState({ filter: e.target.value });
+  }
+
+  getCourseList(companyId){
+    API.get(`${API_SERVER}v2/training/course-list/${companyId}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read course list')
+        }
+        else{
+            this.setState({data: res.data.result})
+        }
+    })
+  }
+
+  getUserData(){
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
+          this.getCourseList(this.state.companyId)
+        }
+    })
+  }
+
+  componentDidMount(){
+    this.getUserData()
   }
 
   render() {
@@ -54,7 +85,7 @@ class Course extends Component {
         name: 'Thumbnail',
         selector: 'image',
         sortable: true,
-        cell: row => <img height="36px" alt={row.name} src={row.image} />
+        cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
       },
       {
         name: 'Title',
@@ -63,16 +94,9 @@ class Course extends Component {
         grow: 2,
       },
       {
-        name: 'Number',
-        selector: 'number',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
+        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
         name: 'Publish Date',
-        selector: 'date',
+        selector: 'created_at',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -86,21 +110,23 @@ class Course extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
-      {
-        name: 'Status',
-        selector: 'status',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
+      // {
+      //   name: 'Status',
+      //   selector: 'status',
+      //   sortable: true,
+      //   style: {
+      //     color: 'rgba(0,0,0,.54)',
+      //   },
+      // },
       {
         cell: row =>
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
-              if (eventKey === 1) {
-                window.open('/training-company-edit/' + row.id, "_self")
+              switch (eventKey){
+                case 1 : window.open('/training/course/edit/' + row.id, "_self");break;
+                case 2 : this.onClickHapus(row.id);break;
+                default : this.props.goTo('/training/course');break;
               }
             }}
           >
@@ -113,7 +139,7 @@ class Course extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Delete</MenuItem>
+              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -153,7 +179,7 @@ class Course extends Component {
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Course List</strong>
                                                         <Link
-                                                        to={`/training/company/create`}>
+                                                        to={`/training/course/create`}>
                                                             <button
                                                             className="btn btn-icademy-primary float-right"
                                                             style={{ padding: "7px 8px !important", marginLeft: 14 }}>
@@ -185,6 +211,24 @@ class Course extends Component {
                     </div>
                 </div>
             </div>
+          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this course ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
         </div>
     )
   }

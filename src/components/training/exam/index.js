@@ -135,7 +135,7 @@ class Exam extends Component {
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Exam List</strong>
                                                         <Link
-                                                        to={`/training/company/create`}>
+                                                        to={`/training/exam/create`}>
                                                             <button
                                                             className="btn btn-icademy-primary float-right"
                                                             style={{ padding: "7px 8px !important", marginLeft: 14 }}>

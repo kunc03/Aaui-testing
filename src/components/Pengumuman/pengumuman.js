@@ -191,7 +191,7 @@ class PengumumanTableClass extends Component {
   }
 
   render() {
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     let { grup, roles } = this.state;
     let statusCompany = ['active', 'nonactive'];
@@ -295,7 +295,7 @@ class PengumumanTableClass extends Component {
       </ul>
     );
 
-    const levelUser = ["admin","superadmin"];
+    const levelUser = ["admin", "superadmin"];
     const grupUser = ["principal", "management"];
 
     return (

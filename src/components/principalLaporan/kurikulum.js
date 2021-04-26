@@ -66,7 +66,7 @@ class Registasi extends React.Component {
 
   fetchProsentase(pelajaranId) {
     API.get(`${API_SERVER}v2/nilai-pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch prosentase`);
+      if (res.data.error) toast.warning(`Warning: fetch prosentase`);
 
       this.setState({
         nilaiTugas: res.data.result.tugas,
@@ -130,15 +130,15 @@ class Registasi extends React.Component {
       name: this.state.name
     }
 
-    if(this.state.id) {
+    if (this.state.id) {
       API.put(`${API_SERVER}v2/kurikulum/${this.state.id}`, form).then(res => {
-        if(res.data.error) toast.warning(`Error update kurikulum`)
+        if (res.data.error) toast.warning(`Error update kurikulum`)
 
         this.fetchKurikulum();
       })
     } else {
       API.post(`${API_SERVER}v2/kurikulum`, form).then(res => {
-        if(res.data.error) toast.warning(`Error save kurikulum`)
+        if (res.data.error) toast.warning(`Error save kurikulum`)
 
         this.fetchKurikulum();
       })
@@ -203,8 +203,8 @@ class Registasi extends React.Component {
     let id = e.target.getAttribute('data-id')
     let filter = this.state.kurikulum.filter(item => item.id == parseInt(id))[0];
     let temp = [];
-    if(filter.mapel.length) {
-      for(var i=0; i<filter.mapel.length; i++) {
+    if (filter.mapel.length) {
+      for (var i = 0; i < filter.mapel.length; i++) {
         temp.push(filter.mapel[i].pelajaran_id)
       }
     }
@@ -223,7 +223,7 @@ class Registasi extends React.Component {
   render() {
     const { kurikulum, listPelajaran } = this.state;
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container">
@@ -255,14 +255,18 @@ class Registasi extends React.Component {
 
                           <Accordion defaultActiveKey="0">
                             {
-                              kurikulum.map((item,i) => (
+                              kurikulum.map((item, i) => (
                                 <Card>
                                   <Card.Header>
-                                    <h5 className="collapsed" data-toggle="collapse" data-target={`#colp${i}`} style={{cursor: 'pointer'}}>
+                                    <h5 className="collapsed" data-toggle="collapse" data-target={`#colp${i}`} style={{ cursor: 'pointer' }}>
                                       <i className="fa"></i> {' '}
                                       {item.name}
                                     </h5>
-                                    <button onClick={this.formAddMapel} data-id={item.id} className="btn btn-v2 btn-primary float-right">Lesson</button>
+                                    {
+                                      ['guru','admin'].includes(Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toLowerCase() : '') ?
+                                        <button onClick={this.formAddMapel} data-id={item.id} className="btn btn-v2 btn-primary float-right">Lesson</button>
+                                      : null
+                                    }
                                     <i onClick={this.selectKurikulum} data-id={item.id} data-name={item.name} style={{cursor: 'pointer'}} className="fa fa-edit mr-2"></i>
                                     <i onClick={this.deleteKurikulum} data-id={item.id} style={{cursor: 'pointer'}} className="fa fa-trash"></i>
                                   </Card.Header>
@@ -279,9 +283,9 @@ class Registasi extends React.Component {
                                       </thead>
                                       <tbody>
                                         {
-                                          item.mapel.map((row,j) => (
+                                          item.mapel.map((row, j) => (
                                             <tr>
-                                              <td>{j+1}</td>
+                                              <td>{j + 1}</td>
                                               <td>{row.nama_pelajaran}</td>
                                               <td>{row.kode_pelajaran}</td>
                                               <td style={{ padding: '12px' }}>
@@ -322,11 +326,11 @@ class Registasi extends React.Component {
                               </div>
                               <div className="col-sm-4">
                                 <label>Kuis</label>
-                                <input  className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
+                                <input className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
                               </div>
                               <div className="col-sm-4">
                                 <label>Ujian</label>
-                                <input  className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
+                                <input className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
                               </div>
                             </div>
                           </form>

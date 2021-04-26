@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 
+import KelasKu from '../detail_kelas/kelasku';
 import MataPelajaran from '../daftar_pelajaran/mapel';
 import Timeline from '../daftar_pelajaran/timeline';
 import Progress from '../daftar_pelajaran/progress';
@@ -8,6 +9,7 @@ import Tugas from '../tugas/index';
 import Latihan from '../tugas/latihan';
 import Detail from '../tugas/detail';
 import DetailMapel from '../tugas/mapel';
+import KerjakanLagi from '../tugas/kerjakanlagi';
 
 const KuisComponent = props => <Latihan {...props} tipe="kuis" />;
 const UjianComponent = props => <Latihan {...props} tipe="ujian" />;
@@ -16,6 +18,7 @@ const KuisDetail = props => <Detail {...props} role={'murid'} tipe="kuis" />;
 const UjianDetail = props => <Detail {...props} role={'murid'} tipe="ujian" />;
 
 const titleTabs = [
+  {name: 'Kelas', link: '/kelas', component: KelasKu},
   {name: 'Progress', link: '/timeline', component: Progress},
   {name: 'Schedule', link: '/mata-pelajaran', component: MataPelajaran},
   {name: 'Task', link: '/tugas', component: Tugas},
@@ -27,6 +30,7 @@ const switchTambahan = [
   {name: 'Detail', link: '/detail-kuis/:examId', component: KuisDetail},
   {name: 'Detail', link: '/detail-ujian/:examId', component: UjianDetail},
   {name: 'Detail', link: '/detail-mapel/:jadwalId', component: DetailMapel},
+  {name: 'Detail', link: '/kerjakan-lagi/:examId', component: KerjakanLagi},
 ];
 
 export default class LearningMurid extends Component {

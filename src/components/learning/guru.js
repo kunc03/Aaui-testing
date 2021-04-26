@@ -29,14 +29,13 @@ const UjianDetailComponent = props => (<KuisDetail {...props} tipe="ujian" />);
 const TugasDetailComponent = props => (<KuisDetail {...props} tipe="tugas" />);
 
 const titleTabs = [
-  { name: 'Overview', link: '/pelajaran', component: Overview },
-  { name: 'Murid', link: '/murid', component: Murid },
-  // { name: 'Silabus', link: '/silabus', component: Silabus },
-  { name: 'Sesi', link: '/chapter', component: Materi },
-  { name: 'Tugas', link: '/tugas', component: Tugas },
-  { name: 'Kuis', link: '/kuis', component: KuisComponent },
-  { name: 'Ujian', link: '/ujian', component: UjianComponent },
-  { name: 'Preview', link: '/preview', component: Preview },
+  { name: '1. Overview', link: '/pelajaran', component: Overview },
+  { name: '2. Tugas', link: '/tugas', component: Tugas },
+  { name: '3. Kuis', link: '/kuis', component: KuisComponent },
+  { name: '4. Ujian', link: '/ujian', component: UjianComponent },
+  { name: '5. Sesi', link: '/chapter', component: Materi },
+  { name: '6. Preview', link: '/preview', component: Preview },
+  { name: '7. Murid', link: '/murid', component: Murid },
 ]
 
 const switchTambahan = [

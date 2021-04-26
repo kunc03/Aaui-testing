@@ -18,6 +18,8 @@ import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
+
+import FullCalender from "./components/kalender/fullKalender"
 // import Files from "./components/files/files";
 
 // Dashboard New Home Detail
@@ -83,7 +85,9 @@ import TrainingSettings from "./components/training/settings";
 import Training from "./components/training/company";
 import TrainingUser from "./components/training/user";
 import TrainingCourse from "./components/training/course";
+import TrainingCourseForm from "./components/training/course/form";
 import TrainingQuiz from "./components/training/quiz";
+import TrainingExamForm from "./components/training/exam/form";
 import TrainingExam from "./components/training/exam";
 import TrainingMembership from "./components/training/membership";
 import TrainingCompanyForm from "./components/training/company/form";
@@ -308,6 +312,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
@@ -325,8 +330,11 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training" exact component={Training} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
+        <Route path="/training/course/create" exact component={TrainingCourseForm} />
+        <Route path="/training/course/edit/:id" exact component={TrainingCourseForm} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
         <Route path="/training/exam" exact component={TrainingExam} />
+        <Route path="/training/exam/create" exact component={TrainingExamForm} />
         <Route path="/training/membership" exact component={TrainingMembership} />
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
         <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
@@ -418,6 +426,7 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
@@ -531,6 +540,7 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />

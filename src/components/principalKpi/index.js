@@ -94,10 +94,10 @@ class LaporanKpi extends Component {
     form.append('kelasId', this.state.kId);
     form.append('pelajaranId', this.state.pId);
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     API.post(`${API_SERVER}v2/principal/upload`, form).then(res => {
       console.log('res: ', res.data);
-      if(res.data.error) toast.warning(`Error: upload KPI`)
+      if (res.data.error) toast.warning(`Error: upload KPI`)
 
       toast.success(`Berhasil upload KPI Guru`);
       this.clearFilter();
@@ -146,8 +146,8 @@ class LaporanKpi extends Component {
 
   fetchNewestFormat() {
     API.get(`${API_SERVER}v2/learning-kpi/company/${Storage.get('user').data.company_id}`).then(res => {
-      if(res.data.result.length) {
-        this.setState({ formatKpi: res.data.result[res.data.result.length-1].file })
+      if (res.data.result.length) {
+        this.setState({ formatKpi: res.data.result[res.data.result.length - 1].file })
       } else {
         toast.info(`Format KPI belum di upload oleh Admin.`)
       }
@@ -165,8 +165,8 @@ class LaporanKpi extends Component {
   filterType = e => {
     const { files } = e.target;
     let split = files[0].name.split('.');
-    let eks = split[split.length-1];
-    if(['pdf'].includes(eks)) {
+    let eks = split[split.length - 1];
+    if (['pdf'].includes(eks)) {
       this.setState({ fileName: e.target.files[0] })
     }
     else {
@@ -177,7 +177,7 @@ class LaporanKpi extends Component {
 
 
   render() {
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
     return (
       <div className="pcoded-main-container">
         <div className="pcoded-wrapper">
@@ -202,61 +202,61 @@ class LaporanKpi extends Component {
                     <div className="col-xl-12">
                       <div className="card">
                         <div className="card-body">
-                            <div className="form-group row">
-                              <div className="col-sm-3">
-                                <label>Guru</label>
-                                <select onChange={this.changeGuru} disabled={this.state.guruId} value={this.state.guruId} className="form-control">
-                                  <option value="" selected disabled>Select</option>
-                                  {
-                                    this.state.guru.map(item => (
-                                      <option value={item.pengajar}>{item.nama}</option>
-                                    ))
-                                  }
-                                </select>
-                              </div>
-
-                              <div className="col-sm-2">
-                                <label>Semester</label>
-                                <select onChange={this.changeSemester} disabled={this.state.semesterId} value={this.state.semesterId} className="form-control">
-                                  <option value="" selected disabled>Select</option>
-                                  {
-                                    this.state.semester.map(item => (
-                                      <option value={item.semester_id}>{item.semester}</option>
-                                    ))
-                                  }
-                                </select>
-                              </div>
-
-                              <div className="col-sm-2">
-                                <label>Kelas</label>
-                                <select onChange={this.changeKelas} disabled={this.state.kelasId} value={this.state.kelasId} className="form-control" >
-                                  <option value="" selected disabled>Select</option>
-                                  {
-                                    this.state.kelas.map(item => (
-                                      <option value={item.kelas_id}>{item.kelas}</option>
-                                    ))
-                                  }
-                                </select>
-                              </div>
-
-                              <div className="col-sm-2">
-                                <label>Pelajaran</label>
-                                <select onChange={this.changePelajaran} disabled={this.state.pelajaranId} value={this.state.pelajaranId} className="form-control" >
-                                  <option value="" selected disabled>Select</option>
-                                  {
-                                    this.state.pelajaran.map(item => (
-                                      <option value={item.pelajaran_id}>{item.pelajaran}</option>
-                                    ))
-                                  }
-                                </select>
-                              </div>
-
-                              <div className="col-sm-2">
-                                <button className="btn btn-v2 btn-success mt-4" onClick={() => this.clearFilter()}>
-                                  Reset Filter
-                                </button>
-                              </div>
+                          <div className="form-group row">
+                            <div className="col-sm-3">
+                              <label>Guru</label>
+                              <select onChange={this.changeGuru} disabled={this.state.guruId} value={this.state.guruId} className="form-control">
+                                <option value="" selected disabled>Select</option>
+                                {
+                                  this.state.guru.map(item => (
+                                    <option value={item.pengajar}>{item.nama}</option>
+                                  ))
+                                }
+                              </select>
                             </div>
+
+                            <div className="col-sm-2">
+                              <label>Semester</label>
+                              <select onChange={this.changeSemester} disabled={this.state.semesterId} value={this.state.semesterId} className="form-control">
+                                <option value="" selected disabled>Select</option>
+                                {
+                                  this.state.semester.map(item => (
+                                    <option value={item.semester_id}>{item.semester}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="col-sm-2">
+                              <label>Kelas</label>
+                              <select onChange={this.changeKelas} disabled={this.state.kelasId} value={this.state.kelasId} className="form-control" >
+                                <option value="" selected disabled>Select</option>
+                                {
+                                  this.state.kelas.map(item => (
+                                    <option value={item.kelas_id}>{item.kelas}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="col-sm-2">
+                              <label>Pelajaran</label>
+                              <select onChange={this.changePelajaran} disabled={this.state.pelajaranId} value={this.state.pelajaranId} className="form-control" >
+                                <option value="" selected disabled>Select</option>
+                                {
+                                  this.state.pelajaran.map(item => (
+                                    <option value={item.pelajaran_id}>{item.pelajaran}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
+                            <div className="col-sm-2">
+                              <button className="btn btn-v2 btn-success mt-4" onClick={() => this.clearFilter()}>
+                                Reset Filter
+                                </button>
+                            </div>
+                          </div>
 
                         </div>
                       </div>
@@ -287,9 +287,9 @@ class LaporanKpi extends Component {
 
                             <tbody>
                               {
-                                this.state.kinerja.map((item,i) => (
+                                this.state.kinerja.map((item, i) => (
                                   <tr>
-                                    <td>{i+1}</td>
+                                    <td>{i + 1}</td>
                                     <td>{item.nama}</td>
                                     <td>{item.noinduk}</td>
                                     <td>{item.semester}</td>
@@ -300,7 +300,7 @@ class LaporanKpi extends Component {
                                       {
                                         item.file ?
                                           <button onClick={this.openPreview} data-index={i} class="btn btn-sm btn-v2 btn-primary">Selengkapnya</button>
-                                        :
+                                          :
                                           this.state.grupName === "principal" ?
                                             <button
                                               onClick={this.openModal}
@@ -310,7 +310,7 @@ class LaporanKpi extends Component {
                                               data-kelas={item.kelas_id}
                                               data-pelajaran={item.pelajaran_id}
                                               class="btn btn-sm btn-v2 btn-warning">Upload KPI</button>
-                                          :
+                                            :
                                             ""
                                       }
                                     </td>
@@ -338,7 +338,7 @@ class LaporanKpi extends Component {
                           <div class="col-sm-3">
                             <table>
                               <tr>
-                                <td style={{width: '180px'}}>Nama Guru</td>
+                                <td style={{ width: '180px' }}>Nama Guru</td>
                                 <td><b>{this.state.detailKinerja.nama}</b></td>
                               </tr>
                               <tr>
@@ -363,10 +363,10 @@ class LaporanKpi extends Component {
                           <div class="col-sm-9">
                             {
                               this.state.detailKinerja ?
-                              <div className="wrap" style={{ height: '800px', overflowY: 'scroll', overflowX: 'hidden' }}>
-                                <PDFReader width={800} url={this.state.detailKinerja.file} scale={1} showAllPage={true} />
-                              </div>
-                              : null
+                                <div className="wrap" style={{ height: '800px', overflowY: 'scroll', overflowX: 'hidden' }}>
+                                  <PDFReader width={800} url={this.state.detailKinerja.file} scale={1} showAllPage={true} />
+                                </div>
+                                : null
                             }
                           </div>
 

@@ -38,15 +38,27 @@ class PersonaliaDetail extends React.Component {
     exists: false
   }
 
+  cekEmail = (email) => {
+    API.get(`${API_SERVER}v1/user/cek/email/${email}`).then(res => {
+      if(res.data.error) {
+        toast.warning(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+        this.setState({ emailOrtu: '' })
+      }
+      else {
+        toast.info(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+      }
+    })
+  }
+
   fetchUsers() {
     API.get(`${API_SERVER}v2/parents/cek-user/${Storage.get('user').data.company_id}`).then(response => {
       let guru = response.data.result.filter(item => item.id == null)
 
       this.setState({ userParents: guru })
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   simpanData = e => {
@@ -110,7 +122,7 @@ class PersonaliaDetail extends React.Component {
       }
 
       let url = '';
-      if(this.state.exists) {
+      if (this.state.exists) {
         url = `${API_SERVER}v2/parents/create?exists=true`
       }
       else {
@@ -214,7 +226,7 @@ class PersonaliaDetail extends React.Component {
 
   render() {
 
-    console.log('STATE: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -360,7 +372,7 @@ class PersonaliaDetail extends React.Component {
                 <div className="form-group row">
                   <label className="col-sm-2 col-form-label text-right">Email</label>
                   <div className="col-sm-4">
-                    <input type="email" value={this.state.emailOrtu} onChange={e => this.setState({ emailOrtu: e.target.value })} className="form-control" />
+                    <input onBlur={e => this.cekEmail(e.target.value)} type="email" value={this.state.emailOrtu} onChange={e => this.setState({ emailOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
 

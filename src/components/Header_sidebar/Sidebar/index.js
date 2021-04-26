@@ -87,6 +87,7 @@ class SidebarClass extends Component {
     let menuClients = {
       murid: {
         submenu: [
+          { iconOn: 'info-on.svg', iconOff: 'ujianoff.svg', label: 'My Class', link: '/murid/kelas' },
           { iconOn: 'matapelajaranon.svg', iconOff: 'graduate.svg', label: 'Subjects', link: '/murid/mata-pelajaran' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Task', link: '/murid/tugas' },
           { iconOn: 'tugason.svg', iconOff: 'tugasoff.svg', label: 'Quiz', link: '/murid/kuis' },
@@ -166,6 +167,18 @@ class SidebarClass extends Component {
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
+        { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
+        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+      ],
+
+      submenuTraining: [
+        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+      ],
+      menuAtasTraining: [
+        { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
+      ],
+      menuBawahTraining: [
+        { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
       ]
@@ -283,11 +296,19 @@ class SidebarClass extends Component {
             || subMenuClient === "management"
           ) {
         menuContent = menuClients[subMenuClient].submenu;
-      } else {
-        menuContent = menuClients.other.submenu;
+        menuAtas = menuClients.menuAtas;
+        menuBawah = menuClients.menuBawah;
+      } 
+      else if (subMenuClient === "user training" || subMenuClient === "admin training"){
+        menuContent = menuClients.submenuTraining;
+        menuAtas = menuClients.menuAtasTraining;
+        menuBawah = menuClients.menuBawahTraining;
       }
-      menuAtas = menuClients.menuAtas;
-      menuBawah = menuClients.menuBawah;
+      else {
+        menuContent = menuClients.other.submenu;
+        menuAtas = menuClients.menuAtas;
+        menuBawah = menuClients.menuBawah;
+      }
     }
 
     return (
