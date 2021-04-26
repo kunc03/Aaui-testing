@@ -90,6 +90,10 @@ import TrainingQuiz from "./components/training/quiz";
 import TrainingExamForm from "./components/training/exam/form";
 import TrainingExam from "./components/training/exam";
 import TrainingMembership from "./components/training/membership";
+import TrainingMembershipForm from "./components/training/membership/form";
+import TrainingWebinar from "./components/training/webinar";
+import TrainingQuestions from "./components/training/questions";
+import TrainingQuestionsForm from "./components/training/questions/form";
 import TrainingCompanyForm from "./components/training/company/form";
 import TrainingCompanyDetail from "./components/training/company/detail";
 import TrainingUserForm from "./components/training/user/form";
@@ -332,10 +336,16 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
         <Route path="/training/course/edit/:id" exact component={TrainingCourseForm} />
+        <Route path="/training/questions" exact component={TrainingQuestions} />
+        <Route path="/training/questions/create" exact component={TrainingQuestionsForm} />
+        <Route path="/training/questions/edit/:id" exact component={TrainingQuestionsForm} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
         <Route path="/training/exam" exact component={TrainingExam} />
-        <Route path="/training/exam/create" exact component={TrainingExamForm} />
+        <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
+        <Route path="/training/exam/edit/:id" exact component={TrainingExamForm} />
         <Route path="/training/membership" exact component={TrainingMembership} />
+        <Route path="/training/membership/edit/:id" exact component={TrainingMembershipForm} />
+        <Route path="/training/webinar" exact component={TrainingWebinar} />
         <Route path="/training/company/create" exact component={TrainingCompanyForm} />
         <Route path="/training/company/edit/:id" exact component={TrainingCompanyForm} />
         <Route path="/training/company/detail/:id" exact component={TrainingCompanyDetail} />

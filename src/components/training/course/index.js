@@ -124,7 +124,7 @@ class Course extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : window.open('/training/course/edit/' + row.id, "_self");break;
+                case 1 : this.props.history.push('/training/course/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
                 default : this.props.goTo('/training/course');break;
               }

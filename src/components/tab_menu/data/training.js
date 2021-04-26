@@ -35,17 +35,23 @@ export const Menu = [
         iconActive: 'exam-active.svg',
         route: '/training/exam'
     },
-    // {
-    //     label: 'Webinar',
-    //     icon: 'webinars.svg',
-    //     iconActive: 'webinars-active.svg',
-    //     route: '/training'
-    // },
+    {
+        label: 'Webinar',
+        icon: 'webinars.svg',
+        iconActive: 'webinars-active.svg',
+        route: '/training/webinar'
+    },
     {
         label: 'Membership',
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
         route: '/training/membership'
+    },
+    {
+        label: 'Questions',
+        icon: 'questions.svg',
+        iconActive: 'questions-active.svg',
+        route: '/training/questions'
     },
     {
         label: 'Settings',
