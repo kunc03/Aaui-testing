@@ -255,7 +255,7 @@ class FullKalenderNew extends Component {
 
                             <Form.Group controlId="formJudul">
                               <Form.Label className="f-w-bold">
-                                Invite Attendance
+                                Team
                               </Form.Label>
                               <MultiSelect
                                 id="moderator"
