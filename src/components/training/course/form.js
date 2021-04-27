@@ -565,6 +565,7 @@ handleOverview = (e) => {
                                                                     <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                                                                         {(provided) => (
                                                                     <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={this.selectSession.bind(this, item.id)}>
+                                                                        <i className="fa fa-bars icon-draggable"></i>
                                                                         {item.title}
                                                                         {
                                                                             this.state.selectedSession === item.id &&

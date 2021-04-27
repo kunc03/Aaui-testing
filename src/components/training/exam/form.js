@@ -789,7 +789,8 @@ handleChangeAnswer = (value) => {
                                                                     <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                                                                         {(provided) => (
                                                                     <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={this.selectQuestion.bind(this, item.id)}>
-                                                                        <div dangerouslySetInnerHTML={{__html: (index+1 + '. ' + (item.question.length > 25 ? item.question.substring(0, 25) + '...' : item.question))}}></div>
+                                                                        <i className="fa fa-bars icon-draggable"></i>
+                                                                        <div style={{display:'inline-block'}} dangerouslySetInnerHTML={{__html: (index+1 + '. ' + (item.question.length > 25 ? item.question.substring(0, 25) + '...' : item.question))}}></div>
                                                                         {
                                                                             this.state.selectedQuestion === item.id &&
                                                                             <div className="training-session-list-indicator"><i className="fa fa-chevron-right"></i></div>
