@@ -98,6 +98,7 @@ class ProjekNew extends Component {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+          console.log(response.data.result, 'RESULLTT PROJECT')
           this.setState({ project: response.data.result });
         }).catch(function (error) {
           console.log(error);
@@ -238,8 +239,8 @@ class ProjekNew extends Component {
   }
 
   fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
-      if(res.status === 200) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+      if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
     })
@@ -277,8 +278,8 @@ class ProjekNew extends Component {
                     >
                       <i className="fa fa-plus"></i> Add
                     </button>
-                  :
-                  null
+                    :
+                    null
                 }
               </div>
             }
@@ -294,55 +295,55 @@ class ProjekNew extends Component {
           </p>
         </div>
         <div className="col-sm-12" style={{ marginTop: '10px' }}>
-          <div className="wrap" style={{ height: '305px', overflowY: 'scroll', overflowX: 'hidden' }}>
-            {
-              lists.length == 0 ?
-                <div className="col-sm-12 mb-1">
-                  Not available
+          {/* <div className="wrap" style={{ height: '310px', overflowY: 'scroll', overflowX: 'hidden' }}> */}
+          {
+            lists.length == 0 ?
+              <div className="col-sm-12 mb-1">
+                Not available
                 </div>
-                :
-                lists.map((item, i) => (
-                  <div className="col-sm-12 mb-1">
-                    <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
-                      <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
-                        <div className="box-project">
-                          <div className=" f-w-800 f-16 fc-black">
-                            {item.title}
-                          </div>
-                          {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
+              :
+              lists.map((item, i) => (
+                <div className="col-sm-12 mb-1">
+                  <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
+                    <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
+                      <div className="box-project">
+                        <div className=" f-w-800 f-16 fc-black">
+                          {item.title}
                         </div>
-                      </Link>
-                      <span className="col-sm-7">
-                        <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
-                        <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
-                      </span>
+                        {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
+                      </div>
+                    </Link>
+                    <span className="col-sm-7">
+                      <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
+                      <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
+                    </span>
 
-                      {
-                        accessProjectManager ?
-                          <span class="btn-group dropleft col-sm-1">
-                            <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <i
-                                className="fa fa-ellipsis-v"
-                                style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                              />
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
-                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
-                                {
-                                  cdProject &&
-                                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
-                                }
-                            </div>
-                          </span>
-                          : null
-                      }
+                    {
+                      accessProjectManager ?
+                        <span class="btn-group dropleft col-sm-1">
+                          <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i
+                              className="fa fa-ellipsis-v"
+                              style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                            />
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
+                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
+                            {
+                              cdProject &&
+                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
+                            }
+                          </div>
+                        </span>
+                        : null
+                    }
 
-                    </div>
                   </div>
-                ))
-            }
-            {/* <div className="col-sm-12 mb-1">
+                </div>
+              ))
+          }
+          {/* <div className="col-sm-12 mb-1">
             <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
               <div className="box-project">
                 <div className="f-16 fc-black" className="shadowFieldCont">
@@ -360,7 +361,7 @@ class ProjekNew extends Component {
               </div>
             </div>
         </div> */}
-          </div>
+          {/* </div> */}
         </div>
         <Modal
           show={this.state.modalNewFolder}

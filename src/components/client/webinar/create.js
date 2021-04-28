@@ -53,10 +53,14 @@ export default class WebinarCreate extends Component {
     modalUpload: false,
     alert: '',
     uploading: false,
+
+    // training
+    optionsCourse: [],
+    valueCourse: []
   }
 
   nextStep() {
-    if (this.state.valuesFolder == '' || this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '') {
+    if (this.state.valuesFolder == '' || this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '' || (this.props.match.params.training === 'by-training' && this.state.valueCourse === [])) {
       toast.warning('Semua field wajib diisi dengan benar')
     }
     else {
@@ -112,6 +116,18 @@ export default class WebinarCreate extends Component {
           });
       }
     })
+    if (this.props.match.params.training === 'by-training'){
+      API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+          if (res.data.error){
+              toast.error(`Error read course list`)
+          }
+          else{
+              res.data.result.map((item)=>{
+                  this.state.optionsCourse.push({label: item.title, value: item.id})
+              })
+          }
+      })
+    }
   }
 
   handleDynamicInput = (e, i) => {
@@ -158,9 +174,9 @@ export default class WebinarCreate extends Component {
       pembicaraId: this.state.pembicaraId,
       ownerId: this.state.ownerId,
       projectId: this.state.valuesFolder,
-      dokumenId: this.state.folderId
+      dokumenId: this.state.folderId,
+      course_id: String(this.state.valueCourse)
     }
-
 
     API.post(`${API_SERVER}v2/webinar/create`, form).then(res => {
       if (res.data.error)
@@ -326,6 +342,23 @@ export default class WebinarCreate extends Component {
                           />
                         </div>
                       </div>
+                      {
+                        this.props.match.params.training === 'by-training' &&
+                        <div className="form-section no-border">
+                            <div className="row">
+                                <div className="col-sm-12 m-b-20">
+                                    <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Assign to Course</strong>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="form-field-top-label" style={{width:400}}>
+                                    <label for="valueCourse">Course</label>
+                                    <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                    <p className="form-notes">Keep empty if you don't want to assign to course</p>
+                                </div>
+                            </div>
+                        </div>
+                      }
 
                     </div>
                     <div className="col-sm-12">

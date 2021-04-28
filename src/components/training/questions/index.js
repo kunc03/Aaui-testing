@@ -19,14 +19,48 @@ class Questions extends Component {
       companyId: '',
       data : [],
       filter:'',
+      file:'',
       modalDelete: false,
-      deleteId: ''
+      deleteId: '',
+      isUploading: false
     };
     this.goBack = this.goBack.bind(this);
   }
   
   goBack() {
     this.props.history.goBack();
+  }
+
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
+  }
+
+  uploadData = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('company_id', this.state.companyId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/training/questions/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Data import failed')
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            this.getUserData()
+            toast.success('Data import success')
+            this.setState({ isUploading: false, file: '' });
+          }
+        }
+      })
+    }
   }
 
   closeModalDelete = e => {
@@ -161,6 +195,42 @@ class Questions extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Questions'/>
                                         <div>
+                                            <div className="card p-20 main-tab-container">
+                                                <div className="row">
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Import Questions</strong>
+                                                    </div>
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <a href={`${API_SERVER}template-excel/template-import-questions.xlsx`}>
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
+                                                    </div>
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <strong className="f-w-bold f-13" style={{color:'#000'}}>Select a file</strong>
+                                                    </div>
+                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
+                                                        <label for="file-import" style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                            <i
+                                                                className="fa fa-upload"
+                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                            />
+                                                            {this.state.isUploading ? 'Uploading...' : 'Upload File'}
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
