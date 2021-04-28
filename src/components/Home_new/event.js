@@ -74,7 +74,7 @@ class EventNew extends Component {
                   case 'Meeting' : return urlMeeting;
                   case 'Learning' : return urlLearning;
                   case 'Webinar' : return 'webinars';
-                  case 'Training' : return '#';
+                  case 'Training' : return 'training';
                   default : return '#';
                 }
               }

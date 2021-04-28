@@ -12280,3 +12280,9 @@ required {
 .tox .tox-editor-header{
   z-index: unset !important;
 }
+
+.icon-draggable{
+  cursor:n-resize;
+  margin-right: 5px;
+  color: #add6ff;
+}
