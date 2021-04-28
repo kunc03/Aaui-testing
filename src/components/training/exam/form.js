@@ -42,6 +42,7 @@ class FormExam extends Component {
         valueLicensesType: [],
         optionsCourse: [],
         valueCourse: [],
+        valueCourse2: [],
         generate: false,
         scheduled: false,
         generate_membership: false,
@@ -101,6 +102,7 @@ class FormExam extends Component {
                 time_limit: this.state.time,
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
+                course_id: String(this.state.valueCourse2),
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
                 scheduled: this.state.scheduled ? 1 : 0,
@@ -154,6 +156,7 @@ class FormExam extends Component {
                 generate_question: this.state.generate ? 1 : 0,
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
+                course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -209,6 +212,7 @@ class FormExam extends Component {
                 generate_question: this.state.generate ? 1 : 0,
                 number_of_question: this.state.numberQuestions,
                 category_id: String(this.state.valueCourse),
+                course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -371,6 +375,7 @@ handleChangeAnswer = (value) => {
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
                 valueCourse: [Number(res.data.result.category_id)],
+                valueCourse2: [Number(res.data.result.course_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
                 question: res.data.result.question
             })
@@ -703,6 +708,20 @@ handleChangeAnswer = (value) => {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                    <div className="form-section">
+                                                        <div className="row">
+                                                            <div className="col-sm-12 m-b-20">
+                                                                <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Assign to Course</strong>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row">
+                                                            <div className="form-field-top-label" style={{width:400}}>
+                                                                <label for="valueCourse">Course</label>
+                                                                <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse2} onChange={valueCourse2 => this.setState({ valueCourse2, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                <p className="form-notes">Keep empty if you don't want to assign to course</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 {
                                                     this.state.generate ?
                                                     <div>
@@ -719,7 +738,7 @@ handleChangeAnswer = (value) => {
                                                             </div>
                                                             <div className="form-field-top-label" style={{width:400}}>
                                                                 <label for="valueCourse">Course</label>
-                                                                <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                                                 <p className="form-notes">Keep empty if you want to generate questions by all of course</p>
                                                             </div>
                                                         </div>
