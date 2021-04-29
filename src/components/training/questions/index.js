@@ -201,7 +201,7 @@ class Questions extends Component {
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Import Questions</strong>
                                                     </div>
                                                     <div className="col-sm-12 m-b-20">
-                                                        <a href={`${API_SERVER}template-excel/template-import-questions.xlsx`}>
+                                                        <a href={`${API_SERVER}template-excel/template-import-training-questions.xlsx`}>
                                                           <button className="button-bordered">
                                                               <i
                                                                   className="fa fa-download"
