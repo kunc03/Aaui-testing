@@ -17,7 +17,7 @@ class FormCompany extends Component {
         fax: '',
         website: '',
         email: '',
-        disabledForm: this.props.disabledForm && this.props.id
+        disabledForm: this.props.disabledForm
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -153,17 +153,17 @@ class FormCompany extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          if (this.props.disabledForm && this.props.id){
+              this.getCompany(this.props.id);
+          }
+          else if (this.props.match.params.id){
+              this.getCompany(this.props.match.params.id);
+          }
         }
     })
   }
   componentDidMount(){
     this.getUserData();
-    if (this.props.disabledForm && this.props.id){
-        this.getCompany(this.props.id);
-    }
-    else if (this.props.match.params.id){
-        this.getCompany(this.props.match.params.id);
-    }
   }
   render() {
     return(
@@ -173,14 +173,17 @@ class FormCompany extends Component {
                     <div className="pcoded-inner-content">
                         <div className="main-body">
                             <div className="page-wrapper">
-                                <div className="floating-back">
-                                    <img
-                                    src={`newasset/back-button.svg`}
-                                    alt=""
-                                    width={90}
-                                    onClick={this.goBack}
-                                    ></img>
-                                </div>
+                                {
+                                    !this.props.lockEdit &&
+                                    <div className="floating-back">
+                                        <img
+                                        src={`newasset/back-button.svg`}
+                                        alt=""
+                                        width={90}
+                                        onClick={this.goBack}
+                                        ></img>
+                                    </div>
+                                }
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <div>
@@ -191,7 +194,7 @@ class FormCompany extends Component {
                                                     </div>
                                                     <div className="col-sm-2 m-b-20">
                                                         {
-                                                        this.props.disabledForm &&
+                                                        this.state.disabledForm && !this.props.lockEdit &&
                                                         <button
                                                         onClick={this.props.goEdit}
                                                         className="btn btn-icademy-primary float-right"
@@ -286,7 +289,7 @@ class FormCompany extends Component {
                                                 </div>
                                                 <div className="row" style={{justifyContent:'flex-end'}}>
                                                     {
-                                                    !this.props.disabledForm &&
+                                                    !this.state.disabledForm &&
                                                     <button
                                                     onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
