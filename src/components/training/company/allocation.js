@@ -147,8 +147,8 @@ class Allocation extends Component {
         name: 'Action',
         cell: row =>
         <div>
-            <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'addition'})} className="button-table-plus">+</button>
-            <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'reduction'})} className="button-table-min">-</button>
+            {!this.props.lockEdit && <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'addition'})} className="button-table-plus">+</button>}
+            {!this.props.lockEdit && <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'reduction'})} className="button-table-min">-</button>}
         </div>
       }
     ];

@@ -27,6 +27,11 @@ import DashParent from './dashparent';
 import DashPrincipal from './dashprincipal';
 import DashManagement from './dashmanagement';
 
+// import Training from '../training/company'
+import TrainingUser from '../training/user'
+import TrainingCourse from '../training/course'
+import TrainingDetailCompany from '../training/company/detailTrainingCompany'
+
 class HomeNew extends Component {
   state = {
     user: {
@@ -40,8 +45,7 @@ class HomeNew extends Component {
     kategoriKursus: [],
     kursusTerbaru: [],
     kursusDiikuti: [],
-    recentDocs: [],
-
+    recentDocs: []
   }
 
   onChangeInput = e => {
@@ -470,6 +474,19 @@ class HomeV2 extends Component {
     level: Storage.get('user').data.level,
     grupId: Storage.get('user').data.grup_id,
     grupName: Storage.get('user').data.grup_name,
+    training_company_id: ''
+  }
+
+  componentDidMount(){
+    let level = Storage.get('user').data.level;
+    let grupName = Storage.get('user').data.grup_name;
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+      API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ training_company_id: res.data.result.training_company_id });
+        }
+      })
+    }
   }
 
   render() {
@@ -493,6 +510,14 @@ class HomeV2 extends Component {
       } else if(this.state.grupName.toLowerCase() === "management") {
         return (
           <DashManagement />
+        )
+      } else if(this.state.grupName.toLowerCase() === "user training") {
+        return (
+          <TrainingCourse />
+        )
+      } else if(this.state.grupName.toLowerCase() === "admin training") {
+        return (
+          <TrainingDetailCompany id={this.state.training_company_id} />
         )
       } else {
         return (

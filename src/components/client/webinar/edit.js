@@ -53,7 +53,11 @@ export default class WebinarEdit extends Component {
     modalUpload: false,
     alert: '',
     uploading: false,
-    dataWebinar: []
+    dataWebinar: [],
+
+    // training
+    optionsCourse: [],
+    valueCourse: []
   }
   goback() {
     this.props.history.goBack();
@@ -110,6 +114,18 @@ export default class WebinarEdit extends Component {
           });
       }
     })
+    if (this.props.match.params.training === 'by-training'){
+      API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+          if (res.data.error){
+              toast.error(`Error read course list`)
+          }
+          else{
+              res.data.result.map((item)=>{
+                  this.state.optionsCourse.push({label: item.title, value: item.id})
+              })
+          }
+      })
+    }
   }
 
   selectedFolder = (val) => {
@@ -123,6 +139,7 @@ export default class WebinarEdit extends Component {
       else
         this.setState({
           projectId: [Number(res.data.result.project_id)],
+          valueCourse: [Number(res.data.result.training_course_id)],
           folderId: res.data.result.dokumen_id,
           judul: res.data.result.judul,
           status: res.data.result.status
@@ -188,7 +205,8 @@ export default class WebinarEdit extends Component {
       pembicaraId: this.state.pembicaraId,
       ownerId: this.state.ownerId,
       dokumenId: this.state.folderId,
-      projectId: this.state.projectId
+      projectId: this.state.projectId,
+      course_id: String(this.state.valueCourse)
     }
 
 
@@ -345,6 +363,23 @@ export default class WebinarEdit extends Component {
                           />
                         </div>
                       </div>
+                      {
+                        this.props.match.params.training === 'by-training' &&
+                        <div className="form-section no-border">
+                            <div className="row">
+                                <div className="col-sm-12 m-b-20">
+                                    <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Assign to Course</strong>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="form-field-top-label" style={{width:400}}>
+                                    <label for="valueCourse">Course</label>
+                                    <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                    <p className="form-notes">Keep empty if you don't want to assign to course</p>
+                                </div>
+                            </div>
+                        </div>
+                      }
 
                     </div>
                     <div className="col-sm-12">

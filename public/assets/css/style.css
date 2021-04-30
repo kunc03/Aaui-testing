@@ -12034,7 +12034,7 @@ div.code-toolbar > .toolbar span:hover {
   width:400px;
   margin-bottom:10px;
 }
-.form-field-top-label > input[type=text], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea{
+.form-field-top-label > input[type=text], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea {
   padding:18px 20px;
   background: rgba(248,248,248,0.5);
   border: 1px solid #DDDDDD;
@@ -12042,7 +12042,64 @@ div.code-toolbar > .toolbar span:hover {
   float:left;
   clear:both;
 }
-.form-field-top-label > input[type=text]:disabled, input[type=date]:disabled, input[type=number]:disabled, textarea:disabled{
+.form-field-top-label > .tox-tinymce{
+  background: rgba(248,248,248,0.5);
+  border: 1px solid #DDDDDD;
+  border-radius:10px;
+  float:left;
+  clear:both;
+}
+.form-field-top-label > .MultiSelect, .form-field-top-label > .react-datepicker-wrapper{
+  float:left;
+  clear:both;
+  width:100%;
+}
+.form-field-top-label > .MultiSelect > .Header, .Header__value, .Header__controls{
+  height:55px !important;
+  line-height: 56px !important;
+}
+.form-field-top-label > .form-control{
+  padding:18px 20px;
+  border: 1px dashed #DDDDDD;
+  border-radius:10px;
+  float:left;
+  clear:both;
+  cursor: pointer;
+  color:rgb(146, 146, 146);
+  width:auto;
+}
+
+.exam-option {
+  width:100%
+}
+.exam-option > input[type=text] {
+  width:80%
+}
+
+.exam-option > .fa {
+  font-size: 24px;
+  float:left;
+  margin-top:14px;
+  margin-left:10px;
+  cursor:pointer;
+}
+.exam-option.answer  > .fa{
+  color:rgb(31, 165, 71);
+}
+.exam-option.answer > input[type=text] {
+  border:1px solid rgb(31, 165, 71);
+}
+.exam-option > p {
+  float:left;
+  clear:both;
+  color:rgb(31, 165, 71);
+  font-size: 12px;
+  display:none;
+}
+.exam-option.answer > p {
+  display:block;
+}
+.form-field-top-label > input[type=text]:disabled, input[type=date]:disabled, input[type=number]:disabled, textarea:disabled, .tox-tinymce:disabled, .react-datepicker-wrapper:disabled{
   background: #c0c0c080;
 }
 .form-field-top-label > input[type=file]::-webkit-file-upload-button{
@@ -12132,4 +12189,100 @@ required {
 
 .modal-1000-large{
   min-width:1000px;
+}
+
+.training-new-session{
+  color:rgb(146, 146, 146);
+  border: 1px dashed #DDDDDD;
+  width:100%;
+  padding:14px 12px;
+  border-radius: 4px;
+}
+
+.training-new-session:hover{
+  color:#000;
+  border-color: #000;
+  cursor:pointer;
+}
+
+.training-session-list{
+  color:rgb(0 109 214);
+  border: 1px solid #a7cce4;
+  background: #e7f3ff;
+  width:100%;
+  padding:14px 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  position: relative;
+  text-align: left;
+  min-height: 47px;
+}
+.training-session-list:hover{
+  color:#035baf;
+  border: 1px solid #5c9bc5;
+  cursor:pointer;
+}
+
+.training-session-list-indicator{
+  position:absolute;
+  right:-16px;
+  top:14px;
+}
+
+.training-session-list > div > p{
+  display:inline !important;
+}
+
+.training-session-title{
+  font-size: 16px;
+}
+
+.training-session-media{
+  clear:both;
+  float:left;
+}
+.training-session-media-list{
+  padding:18px 20px;
+  border: 1px solid #DDD;
+  border-radius:10px;
+  float:left;
+  margin-right:10px;
+  margin-bottom:10px;
+  color:rgb(43, 43, 43);
+}
+
+.training-session-media-list > .fa-times {
+  margin-left:10px;
+  cursor:pointer;
+}
+
+.training-session-media-list > .fa-paperclip {
+  margin-right:5px;
+  cursor:pointer;
+}
+
+.form-toggle-switch{
+  float:left;
+  clear:both;
+}
+
+.form-notes{
+  float:left;
+  clear:both;
+  color:#848484;
+  font-size:12px;
+}
+
+.rdt_TableBody{
+  min-height:150px !important;
+}
+
+.tox .tox-editor-header{
+  z-index: unset !important;
+}
+
+.icon-draggable{
+  cursor:n-resize;
+  margin-right: 5px;
+  color: #add6ff;
 }
