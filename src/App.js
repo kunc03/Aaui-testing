@@ -40,21 +40,21 @@ import UserCompanyAdd from "./components/Users/User/companyadd";
 import UserCompanyEdit from "./components/Users/User/companyedit";
 // import UserAccess from "./components/Users/Access/index";
 
-import KursusMateri from "./components/admin/course/kursusmateri";
-import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
-import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
+// import KursusMateri from "./components/admin/course/kursusmateri";
+// import KursusMateriAdd from "./components/admin/course/kursusmateriadd";
+// import KursusMateriEdit from "./components/admin/course/kursusmateriedit";
 
-import ChapterPreview from "./components/admin/chapter/chapter";
-import NilaiUjianPreview from "./components/admin/nilaiujian";
+// import ChapterPreview from "./components/admin/chapter/chapter";
+// import NilaiUjianPreview from "./components/admin/nilaiujian";
 
-import QuizList from "./components/admin/exam/quiz";
-import QuestionQuiz from "./components/admin/question/quiz";
-import QuestionQuizCreate from "./components/admin/question/quizcreate";
-import QuestionQuizEdit from "./components/admin/question/quizedit";
+// import QuizList from "./components/admin/exam/quiz";
+// import QuestionQuiz from "./components/admin/question/quiz";
+// import QuestionQuizCreate from "./components/admin/question/quizcreate";
+// import QuestionQuizEdit from "./components/admin/question/quizedit";
 
-import ExamList from "./components/admin/exam/exam";
-import QuestionExam from "./components/admin/question/exam";
-import QuestionExamCreate from "./components/admin/question/examcreate";
+// import ExamList from "./components/admin/exam/exam";
+// import QuestionExam from "./components/admin/question/exam";
+// import QuestionExamCreate from "./components/admin/question/examcreate";
 import FilePicker from "./components/admin/filemanager/file";
 
 import Cabang from "./components/Users/UserCabang/index";
@@ -64,15 +64,15 @@ import CompanyDetail from "./components/Users/UserCompany/detail";
 import CompanyDetailSuper from "./components/Users/UserCompany/detailsuper";
 import Login from "./components/Login/index";
 
-import KategoriKursus from "./components/client/kategorikursus";
-import DetailKursus from "./components/client/detailkursus";
-import UjianKursus from "./components/client/ujiankursus";
-import UjianHasil from "./components/client/ujianhasil";
+// import KategoriKursus from "./components/client/kategorikursus";
+// import DetailKursus from "./components/client/detailkursus";
+// import UjianKursus from "./components/client/ujiankursus";
+// import UjianHasil from "./components/client/ujianhasil";
 
 import InformasiAdmin from "./components/admin/informasi";
 
-import Forum from "./components/forum/forum";
-import ForumDetail from "./components/forum/forum-detail";
+// import Forum from "./components/forum/forum";
+// import ForumDetail from "./components/forum/forum-detail";
 
 // import LiveClass from "./components/liveclass";
 // import LiveStream from "./components/liveclass/livestream";
@@ -106,12 +106,12 @@ import Webinar from "./components/webinar";
 
 import Kursus from "./components/Kursus";
 
-import CertificateAdmin from './components/admin/certificate';
-import CertificateCreate from './components/admin/certificate/create';
-import Certificate from './components/client/certificate';
-import PrintCertificate1 from './components/client/certificate/Certificate1'
-import PrintCertificate2 from './components/client/certificate/Certificate2'
-import PrintCertificate3 from './components/client/certificate/Certificate3'
+// import CertificateAdmin from './components/admin/certificate';
+// import CertificateCreate from './components/admin/certificate/create';
+// import Certificate from './components/client/certificate';
+// import PrintCertificate1 from './components/client/certificate/Certificate1'
+// import PrintCertificate2 from './components/client/certificate/Certificate2'
+// import PrintCertificate3 from './components/client/certificate/Certificate3'
 
 import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
@@ -323,8 +323,8 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
 
-        <Route path="/forum" component={Forum} />
-        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        {/* <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} /> */}
         <Route path="/aktivitas" component={Activity} />
         {/* Training */}
         <Route path="/training/settings" exact component={TrainingSettings} />
@@ -370,7 +370,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/notification" component={Notification} />
         <Route path="/pengumuman" component={Pengumuman} />
 
-        <Route path="/kursus-materi" exact component={KursusMateri} />
+        {/* <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
 
@@ -391,7 +391,7 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/exam/:course_id" exact component={ExamList} />
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
-        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
+        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} /> */}
 
         <Route path="/user" component={User} />
         <Route path="/user-create" component={UserAdd} />
@@ -411,13 +411,13 @@ export class SuperAdminSwitch extends React.Component {
 
         <Route path="/filemanager" exact component={FilePicker} />
 
-        <Route path='/certificate-admin' component={CertificateAdmin} />
+        {/* <Route path='/certificate-admin' component={CertificateAdmin} />
         <Route path='/certificate-create' component={CertificateCreate} />
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
-        <Route path='/print-certificate3' component={PrintCertificate3} />
+        <Route path='/print-certificate3' component={PrintCertificate3} /> */}
 
 
 
@@ -444,8 +444,8 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/ptc" component={Ptc} />
 
-        <Route path="/forum" component={Forum} />
-        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        {/* <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} /> */}
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
 
@@ -466,16 +466,16 @@ export class AdminSwitch extends React.Component {
         {/* <Route path="/user-access" exactcomponent={UserAccess} /> */}
         <Route path="/my-company" exact component={CompanyDetail} />
 
-        <Route path="/kursus-materi" exact component={KursusMateri} />
+        {/* <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
-        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
+        <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} /> */}
 
         <Route path="/kursus" component={Kursus} />
 
         <Route path="/pengumuman" component={Pengumuman} />
         <Route path="/notification" component={Notification} />
 
-        <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
+        {/* <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
         <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
@@ -490,7 +490,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/exam/:course_id" exact component={ExamList} />
         <Route path="/question-exam/:exam_id" exact component={QuestionExam} />
-        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} />
+        <Route path="/question-exam-create/:exam_id" exact component={QuestionExamCreate} /> */}
 
         {/* Training */}
         <Route path="/training/settings" exact component={TrainingSettings} />
@@ -536,13 +536,13 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/filemanager" exact component={FilePicker} />
 
-        <Route path='/certificate-admin' component={CertificateAdmin} />
+        {/* <Route path='/certificate-admin' component={CertificateAdmin} />
         <Route path='/certificate-create' component={CertificateCreate} />
 
         <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
-        <Route path='/print-certificate3' component={PrintCertificate3} />
+        <Route path='/print-certificate3' component={PrintCertificate3} /> */}
 
         <Route path="/logout" exact component={Logout} />
       </Switch>
@@ -570,8 +570,8 @@ export class ClientSwitch extends React.Component {
         <Route path="/ptc" component={Ptc} />
         <Route path="/kursus-new" component={KursusNew} />
 
-        <Route path="/forum" component={Forum} />
-        <Route path="/forum-detail/:forum_id" component={ForumDetail} />
+        {/* <Route path="/forum" component={Forum} />
+        <Route path="/forum-detail/:forum_id" component={ForumDetail} /> */}
 
         <Route path="/jadwal-mengajar" component={GuruJadwal} />
 
@@ -580,7 +580,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/pengumuman" component={Pengumuman} />
         <Route path="/notification" component={Notification} />
 
-        <Route path="/kursus-materi" exact component={KursusMateri} />
+        {/* <Route path="/kursus-materi" exact component={KursusMateri} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         <Route path="/kursus-materi-create" exact component={KursusMateriAdd} />
         <Route path="/kursus-materi-edit/:course_id" exact component={KursusMateriEdit} />
@@ -588,7 +588,7 @@ export class ClientSwitch extends React.Component {
         <Route path="/kategori-kursus/:category_id" component={KategoriKursus} />
         <Route path="/detail-kursus/:course_id" component={DetailKursus} />
         <Route path="/ujian-kursus/:exam_id/:count_soal/:durasi_waktu" component={UjianKursus} />
-        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} />
+        <Route path="/ujian-hasil/:exam_id" component={UjianHasil} /> */}
 
         {/* <Route path="/liveclass" exact component={LiveClass} /> */}
         {/* <Route path="/liveclass" component={LiveClass} /> */}
@@ -623,10 +623,10 @@ export class ClientSwitch extends React.Component {
         <Route path="/profile" component={Profile} />
         {/* <Route path="/files" component={Files} /> */}
 
-        <Route path='/certificate' component={Certificate} />
+        {/* <Route path='/certificate' component={Certificate} />
         <Route path='/print-certificate1' component={PrintCertificate1} />
         <Route path='/print-certificate2' component={PrintCertificate2} />
-        <Route path='/print-certificate3' component={PrintCertificate3} />
+        <Route path='/print-certificate3' component={PrintCertificate3} /> */}
 
 
         {/* ROUTE GURU */}
