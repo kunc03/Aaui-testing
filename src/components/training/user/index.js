@@ -3,11 +3,14 @@ import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { toast } from "react-toastify";
 import TabMenu from '../../tab_menu/route';
 import ListData from './list';
+import API, { API_SERVER } from '../../../repository/api';
+import Storage from '../../../repository/storage';
 
 class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      training_company_id : ''
     };
   }
 
@@ -20,6 +23,21 @@ class User extends Component {
     }
   }
 
+  fetchDataUser() {
+    API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ training_company_id: res.data.result .training_company_id })
+      }
+    })
+  }
+
+  componentDidMount(){
+    let level = Storage.get('user').data.level;
+    let grupName = Storage.get('user').data.grup_name;
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+      this.fetchDataUser();
+    }
+  }
   render() {
     return(
         <div className="pcoded-main-container">
@@ -40,7 +58,7 @@ class User extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='User'/>
                                         <div>
-                                            <ListData goTo={this.goTo.bind(this)} import={true}/>
+                                            <ListData goTo={this.goTo.bind(this)} import={true} trainingCompany={this.state.training_company_id !== '' ? this.state.training_company_id : false}/>
                                         </div>
                                     </div>
                                 </div>
