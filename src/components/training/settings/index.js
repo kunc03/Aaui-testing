@@ -9,6 +9,7 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
+import Quota from '../quota/detail'
 
 class SettingsTraining extends Component {
   constructor(props) {
@@ -206,6 +207,10 @@ class SettingsTraining extends Component {
                                         </div>
                                     </div>
                                 </div>
+                                {
+                                  this.state.companyId &&
+                                  <Quota id={this.state.companyId} lockEdit={true}/>
+                                }
                             </div>
                         </div>
                     </div>

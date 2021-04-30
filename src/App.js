@@ -81,6 +81,8 @@ import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
 import TrainingSettings from "./components/training/settings";
 import Training from "./components/training/company";
+import TrainingQuota from "./components/training/quota";
+import TrainingQuotaDetail from "./components/training/quota/detail";
 import TrainingUser from "./components/training/user";
 import TrainingCourse from "./components/training/course";
 import TrainingCourseForm from "./components/training/course/form";
@@ -328,7 +330,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/aktivitas" component={Activity} />
         {/* Training */}
         <Route path="/training/settings" exact component={TrainingSettings} />
-        <Route path="/training" exact component={Training} />
+        <Route path="/training/company" exact component={Training} />
+        <Route path="/training" exact component={TrainingQuota} />
+        <Route path="/training/quota/detail/:id" exact component={TrainingQuotaDetail} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
