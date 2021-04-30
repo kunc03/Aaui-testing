@@ -174,7 +174,7 @@ class FullKalenderNew extends Component {
                       </div>
 
                     </div>
-                    <div className="col-sm-7">
+                    <div className="col-sm-7" style={{ height: '500px' }}>
                       <Calendar
                         popup
                         events={event}
@@ -297,7 +297,7 @@ class FullKalenderNew extends Component {
                               apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                               initialValue={this.state.body}
                               init={{
-                                height: 1000,
+                                height: 200,
                                 menubar: false,
                                 plugins: [
                                   "advlist autolink lists link image charmap print preview anchor",
@@ -313,7 +313,7 @@ class FullKalenderNew extends Component {
                             />
 
                           </Col>
-                          <Col sm={4}>
+                          <Col sm={4} style={{ height: '400px' }}>
                             <Calendar
                               selectable
                               localizer={localizer}
