@@ -20,7 +20,8 @@ class Allocation extends Component {
         licensesTypeId: '',
         modalAllocation: false,
         amount: '',
-        mode: ''
+        mode: '',
+        id: '',
     };
   }
   
@@ -40,16 +41,16 @@ class Allocation extends Component {
     }
     else{
           let form = {
-              training_company_id: this.props.trainingCompany,
+              company_id: this.state.id,
               licenses_type_id: this.state.licensesTypeId,
               licenses_allocation_id: this.state.licensesId,
               amount : this.state.amount,
               type : this.state.mode,
               created_by : this.state.userId,
           }
-          API.post(`${API_SERVER}v2/training/licenses-allocation-transaction`, form).then(res => {
+          API.post(`${API_SERVER}v2/training/quota/company/transaction`, form).then(res => {
               if (res.data.error){
-                toast.error(res.data.result)
+                  toast.error(res.data.result)
               }
               else{
                   toast.success(`Success for licenses allocation ${this.state.mode}`)
@@ -82,7 +83,7 @@ class Allocation extends Component {
   }
 
   getAllocation(){
-    API.get(`${API_SERVER}v2/training/licenses-allocation/${this.props.trainingCompany}`).then(res => {
+    API.get(`${API_SERVER}v2/training/quota/company/${this.state.id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read licenses allocation`)
         }
@@ -93,7 +94,7 @@ class Allocation extends Component {
   }
 
   getHistory(){
-    API.get(`${API_SERVER}v2/training/licenses-allocation-transaction-history/${this.props.trainingCompany}`).then(res => {
+    API.get(`${API_SERVER}v2/training/quota/company/history/${this.state.id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read licenses allocation`)
         }
@@ -104,11 +105,20 @@ class Allocation extends Component {
   }
 
   componentDidMount(){
+    if (this.props.id){
+        this.setState({id: this.props.id})
+    }
+    else if (this.props.match.params.id){
+        this.setState({id: this.props.match.params.id})
+    }
       this.getUserData();
   }
 
 
   render() {
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    }
     const columns = [
       {
         name: 'Time',
@@ -118,6 +128,12 @@ class Allocation extends Component {
       {
         name: 'Amount',
         selector: 'amount',
+        sortable: true
+      },
+      {
+        cell: row => row.transaction_type.capitalize(),
+        name: 'Transaction Type',
+        selector: 'transaction_type',
         sortable: true
       },
       {
@@ -168,6 +184,25 @@ class Allocation extends Component {
       )
     }
     return(
+        <div className="pcoded-main-container" style={this.props.id ? {marginLeft: 0} : null}>
+            <div className="pcoded-wrapper">
+                <div className="pcoded-content" style={this.props.id ? {padding: 0} : null}>
+                    <div className="pcoded-inner-content">
+                        <div className="main-body">
+                            <div className="page-wrapper">
+                                {
+                                    !this.props.id &&
+                                    <div className="floating-back">
+                                        <img
+                                        src={`newasset/back-button.svg`}
+                                        alt=""
+                                        width={90}
+                                        onClick={this.props.history.goBack.bind(this)}
+                                        ></img>
+                                    </div>
+                                }
+                                <div className="row">
+                                    <div className="col-xl-12">
         <div>
             <div className="card p-20 main-tab-container">
                 <div className="row">
@@ -229,6 +264,14 @@ class Allocation extends Component {
               </button>
             </Modal.Footer>
           </Modal>
+        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
   }
