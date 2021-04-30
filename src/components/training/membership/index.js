@@ -16,7 +16,8 @@ class Membership extends Component {
     super(props);
     this.state = {
         data : [],
-        filter:''
+        filter:'',
+        training_company_id: ''
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -26,7 +27,16 @@ class Membership extends Component {
   }
 
   getData(companyId){
-    API.get(`${API_SERVER}v2/training/membership/${companyId}`).then(res => {
+    let level = Storage.get('user').data.level;
+    let grupName = Storage.get('user').data.grup_name;
+    let sql = '';
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+      sql = `${API_SERVER}v2/training/membership-training/${this.state.training_company_id}`
+    }
+    else{
+      sql = `${API_SERVER}v2/training/membership/${companyId}`
+    }
+    API.get(sql).then(res => {
         if (res.data.error){
             toast.error('Error read membership list')
         }
@@ -43,6 +53,15 @@ class Membership extends Component {
           this.getData(this.state.companyId)
         }
     })
+    let level = Storage.get('user').data.level;
+    let grupName = Storage.get('user').data.grup_name;
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+      API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ training_company_id: res.data.result .training_company_id })
+        }
+      })
+    }
   }
 
   componentDidMount(){
