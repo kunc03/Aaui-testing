@@ -12049,7 +12049,7 @@ div.code-toolbar > .toolbar span:hover {
   float:left;
   clear:both;
 }
-.form-field-top-label > .MultiSelect{
+.form-field-top-label > .MultiSelect, .form-field-top-label > .react-datepicker-wrapper{
   float:left;
   clear:both;
   width:100%;
@@ -12068,7 +12068,38 @@ div.code-toolbar > .toolbar span:hover {
   color:rgb(146, 146, 146);
   width:auto;
 }
-.form-field-top-label > input[type=text]:disabled, input[type=date]:disabled, input[type=number]:disabled, textarea:disabled, .tox-tinymce:disabled{
+
+.exam-option {
+  width:100%
+}
+.exam-option > input[type=text] {
+  width:80%
+}
+
+.exam-option > .fa {
+  font-size: 24px;
+  float:left;
+  margin-top:14px;
+  margin-left:10px;
+  cursor:pointer;
+}
+.exam-option.answer  > .fa{
+  color:rgb(31, 165, 71);
+}
+.exam-option.answer > input[type=text] {
+  border:1px solid rgb(31, 165, 71);
+}
+.exam-option > p {
+  float:left;
+  clear:both;
+  color:rgb(31, 165, 71);
+  font-size: 12px;
+  display:none;
+}
+.exam-option.answer > p {
+  display:block;
+}
+.form-field-top-label > input[type=text]:disabled, input[type=date]:disabled, input[type=number]:disabled, textarea:disabled, .tox-tinymce:disabled, .react-datepicker-wrapper:disabled{
   background: #c0c0c080;
 }
 .form-field-top-label > input[type=file]::-webkit-file-upload-button{
@@ -12198,6 +12229,10 @@ required {
   top:14px;
 }
 
+.training-session-list > div > p{
+  display:inline !important;
+}
+
 .training-session-title{
   font-size: 16px;
 }
@@ -12236,4 +12271,18 @@ required {
   clear:both;
   color:#848484;
   font-size:12px;
+}
+
+.rdt_TableBody{
+  min-height:150px !important;
+}
+
+.tox .tox-editor-header{
+  z-index: unset !important;
+}
+
+.icon-draggable{
+  cursor:n-resize;
+  margin-right: 5px;
+  color: #add6ff;
 }
