@@ -251,7 +251,7 @@ class Report extends Component {
         <table id="table-data" className="table table-striped">
           <thead>
             <tr>
-              <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} /></th>
+              { Storage.get('user').data.level !== 'client' ? <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} /></th> : null }
               <th>Name</th>
               <th>Email</th>
               <th>Company</th>
@@ -273,7 +273,7 @@ class Report extends Component {
             items.length ?
               items.map((item, i) => {
                 return (<tr key={i}>
-                  <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td>
+                  { Storage.get('user').data.level !== 'client' ? <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td> : null }
                   <td>{item.name}</td>
                   <td>{item.email}</td>
                   <td>{item.training_company}</td>
@@ -296,7 +296,7 @@ class Report extends Component {
           </tbody>
         </table>
       </div>
-      <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
+      { Storage.get('user').data.level !== 'client' ? <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button> : null }
       </div>
     );
     return(
