@@ -256,7 +256,6 @@ export default class WebinarRiwayat extends Component {
       API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
         toast.success('Mengirim sertifikat kepada peserta');
         this.handleModal();
-        console.log('ALVIN SERT', formData)
       });
     }
   }
