@@ -10,7 +10,6 @@ import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
-import Moment from 'moment-timezone';
 
 class Quota extends Component {
   constructor(props) {
@@ -37,32 +36,6 @@ class Quota extends Component {
     });
   }
 
-  uploadData = e => {
-    e.preventDefault();
-    if (!this.state.file){
-      toast.warning('Choose the file first')
-    }
-    else{
-      this.setState({isUploading: true})
-      let form = new FormData();
-      form.append('company_id', this.state.companyId);
-      form.append('file', this.state.file)
-      API.post(`${API_SERVER}v2/training/questions/import`, form).then((res) => {
-        if (res.status === 200) {
-          if (res.data.error) {
-            toast.error('Data import failed')
-            this.setState({ isUploading: false, file: '' });
-          }
-          else{
-            this.getUserData()
-            toast.success('Data import success')
-            this.setState({ isUploading: false, file: '' });
-          }
-        }
-      })
-    }
-  }
-
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
   }
@@ -70,26 +43,13 @@ class Quota extends Component {
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
   }
-
-  delete (id){
-    API.delete(`${API_SERVER}v2/training/questions/${id}`).then(res => {
-        if (res.data.error){
-            toast.error('Error delete questions')
-        }
-        else{
-          this.getUserData();
-          this.closeModalDelete();
-          toast.success('Question deleted');
-        }
-    })
-  }
   
   filter = (e) => {
     e.preventDefault();
     this.setState({ filter: e.target.value });
   }
 
-  getList(companyId){
+  getList(){
     API.get(`${API_SERVER}v2/training/quota/company`).then(res => {
         if (res.data.error){
             toast.error('Error read company list')
@@ -224,24 +184,6 @@ class Quota extends Component {
                     </div>
                 </div>
             </div>
-          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
-            <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Confirmation
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div>Are you sure want to delete this question ?</div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
-                Cancel
-              </button>
-              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Delete
-              </button>
-            </Modal.Footer>
-          </Modal>
         </div>
     )
   }

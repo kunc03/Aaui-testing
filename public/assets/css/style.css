@@ -12286,3 +12286,12 @@ required {
   margin-right: 5px;
   color: #add6ff;
 }
+
+.form-field-top-label > .react-datepicker-wrapper >.react-datepicker__input-container > input{
+  padding: 16px 20px;
+  border-radius:10px;
+}
+
+.form-field-top-label > .MultiSelect .Header {
+  border-radius: 10px !important;
+}
