@@ -83,6 +83,7 @@ import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
 import TrainingSettings from "./components/training/settings";
 import Training from "./components/training/company";
+import TrainingReport from "./components/training/report";
 import TrainingQuota from "./components/training/quota";
 import TrainingQuotaDetail from "./components/training/quota/detail";
 import TrainingUser from "./components/training/user";
@@ -335,6 +336,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training/company" exact component={Training} />
         <Route path="/training" exact component={TrainingQuota} />
+        <Route path="/training/report" exact component={TrainingReport} />
         <Route path="/training/quota/detail/:id" exact component={TrainingQuotaDetail} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
@@ -503,6 +505,7 @@ export class AdminSwitch extends React.Component {
         {/* Training */}
         <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training" exact component={Training} />
+        <Route path="/training/report" exact component={TrainingReport} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
@@ -604,6 +607,7 @@ export class ClientSwitch extends React.Component {
 
         {/* Training */}
         <Route path="/training" exact component={Home} />
+        <Route path="/training/report" exact component={TrainingReport} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/user/create/:level/:company" exact component={TrainingUserForm} />
