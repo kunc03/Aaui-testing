@@ -16,7 +16,10 @@ import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
+
+import ClassBantuan from "./components/bantuan/index";
 import GlobalSettings from "./components/Global_setting/index";
+import NotificationAlert from "./components/Global_setting/notification";
 import Profile from "./components/Profile/index";
 
 import FullCalender from "./components/kalender/fullKalender"
@@ -373,6 +376,8 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
 
+        <Route path="/bantuan" component={ClassBantuan} />
+
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
         {/* <Route path="/files" component={Files} /> */}
@@ -458,9 +463,11 @@ export class AdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} /> */}
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
+        <Route path="/bantuan" component={ClassBantuan} />
 
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/global-settings" component={GlobalSettings} />
+        <Route path="/notification-alert" component={NotificationAlert} />
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
@@ -628,6 +635,7 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
+        <Route path="/bantuan" component={ClassBantuan} />
 
         <Route path="/pengaturan" component={Pengaturan} />
 

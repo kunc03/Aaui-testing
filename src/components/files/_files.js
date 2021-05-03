@@ -75,7 +75,8 @@ class FilesTableClass extends Component {
       filterFolder: true,
       filterFiles: true,
       filterMOM: true,
-      filterRecord: true
+      filterRecord: true,
+      gb : [],
     };
   }
 
@@ -553,6 +554,10 @@ fetchRekamanBBB(folder){
         this.selectFolder(data.folderId);
       }
     });
+
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
+  ,'R_FILES_FOLDER'])
+
   }
 
   handleChangeFilter = (filter) => {
@@ -561,7 +566,20 @@ fetchRekamanBBB(folder){
     });
   }
 
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+      if(res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
+
   render() {
+    // * GLOBAL SETTINGS * //
+
+    let cdFile = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_FILE_FOLDER')[0].status;
+    let read_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_FILES_FOLDER')[0].status;
+
     const headerTabble = [
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
@@ -619,8 +637,7 @@ fetchRekamanBBB(folder){
                   Upload
                   </button>:null
           }
-
-          {access_project_admin == true ? <button
+          { cdFile && access_project_admin == true ? <button
             onClick={e => this.setState({ modalNewFolder: true })}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important" }}
@@ -685,6 +702,7 @@ fetchRekamanBBB(folder){
                     </tr>
                   </tbody>
                   :
+                  read_file ?
                   <tbody>
                     {
                       this.state.folderId !== 0 &&
@@ -917,6 +935,8 @@ fetchRekamanBBB(folder){
                       )
                     }
                   </tbody>
+                  :
+                  <span>access denied</span>
             }
           </table>
         </div>
