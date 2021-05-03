@@ -192,10 +192,8 @@ export default class WebinarCreate extends Component {
 
   selectedFolder = (val) => {
     this.setState({ folderId: val });
-<<<<<<< HEAD
-=======
   }
-  
+
 
   fetchCheckAccess(role, companyId, level, param) {
     API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
@@ -203,7 +201,6 @@ export default class WebinarCreate extends Component {
         this.setState({ gb: res.data.result })
       }
     })
->>>>>>> 3b0cf720548015576cf9738bec878a31f946ce8b
   }
 
   goback() {
@@ -212,15 +209,9 @@ export default class WebinarCreate extends Component {
 
   render() {
 
-<<<<<<< HEAD
-    //console.log('state: ', this.state);
-
-    // let levelUser = 'admin';
-=======
     let crudRoles = this.state.gb.length && this.state.gb.filter(item => item.code === 'CRUD_ROLES')[0].status;
->>>>>>> 3b0cf720548015576cf9738bec878a31f946ce8b
 
-   
+
     return (
       <div className="row">
         {/** STEP 1 */}
