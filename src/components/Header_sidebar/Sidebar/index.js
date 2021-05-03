@@ -19,8 +19,8 @@ const Msg = ({ id, desc, socket }) => {
   return (
     <div>
       {desc}
-      <br/>
-      <button style={{marginTop: '8px'}} onClick={e => readReminder(id)}>OK</button>
+      <br />
+      <button style={{ marginTop: '8px' }} onClick={e => readReminder(id)}>OK</button>
     </div>
   )
 }
@@ -61,9 +61,9 @@ class SidebarClass extends Component {
       const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
 
       let now = moment(new Date()).format('YYYY-MM-DD')
-      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0,10) === now);
-      Remind.map((item,i) => {
-        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, {autoClose: false, type: toast.TYPE.INFO})
+      const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0, 10) === now);
+      Remind.map((item, i) => {
+        toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, { autoClose: false, type: toast.TYPE.INFO })
       })
     });
   }
@@ -150,11 +150,11 @@ class SidebarClass extends Component {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
-          { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
-          { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
-          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi', access: 'manage_course' },
-          { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
+          // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
+          // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
+          // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
+          // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi', access: 'manage_course' },
+          // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
           { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
         ],
       },
@@ -169,6 +169,7 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ],
 
       submenuTraining: [
@@ -181,25 +182,26 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
     let menuAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
-        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
-        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
+        // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
+        // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
+        // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
+        // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
+        // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
-      submenuPendidikan : [
+      submenuPendidikan: [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Classes", link: '/learning/registrasi' },
@@ -222,19 +224,20 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
     let menuSuperAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
-        { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
-        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
-        { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
+        // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
+        // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
+        // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
+        // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
+        // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
+        // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Company', link: '/company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
@@ -249,6 +252,7 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
@@ -261,7 +265,7 @@ class SidebarClass extends Component {
     let tempAtasSuper = [], tempBawahSuper = [];
     let tempAtasAdmin = [], tempBawahAdmin = [];
 
-    if(companyType === "perusahaan") {
+    if (companyType === "perusahaan") {
       tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
       tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
 
@@ -280,7 +284,7 @@ class SidebarClass extends Component {
       menuAtas = tempAtasSuper;
       menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      if(companyType === "pendidikan") {
+      if (companyType === "pendidikan") {
         menuContent = menuAdmins.submenuPendidikan;
       } else {
         menuContent = menuAdmins.submenu;
@@ -288,18 +292,18 @@ class SidebarClass extends Component {
       menuAtas = tempAtasAdmin;
       menuBawah = tempBawahAdmin;
     } else {
-      let subMenuClient =  Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
+      let subMenuClient = Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
       if (subMenuClient === "guru"
-            || subMenuClient === "murid"
-            || subMenuClient === "parents"
-            || subMenuClient === "principal"
-            || subMenuClient === "management"
-          ) {
+        || subMenuClient === "murid"
+        || subMenuClient === "parents"
+        || subMenuClient === "principal"
+        || subMenuClient === "management"
+      ) {
         menuContent = menuClients[subMenuClient].submenu;
         menuAtas = menuClients.menuAtas;
         menuBawah = menuClients.menuBawah;
-      } 
-      else if (subMenuClient === "user training" || subMenuClient === "admin training"){
+      }
+      else if (subMenuClient === "user training" || subMenuClient === "admin training") {
         menuContent = menuClients.submenuTraining;
         menuAtas = menuClients.menuAtasTraining;
         menuBawah = menuClients.menuBawahTraining;

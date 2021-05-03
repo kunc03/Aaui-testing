@@ -24,6 +24,7 @@ class ModalAdd extends Component {
       logo: "",
       notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
       unlimited: false,
+      access_training: false,
       validity: new Date(),
       limituser: null,
       limitmeeting: null,
@@ -49,6 +50,9 @@ class ModalAdd extends Component {
   toggleSwitch(checked) {
     this.setState({ unlimited: !this.state.unlimited });
   }
+  toggleSwitchTraining(checked) {
+    this.setState({ access_training: !this.state.access_training });
+  }
 
   onClickSimpan = e => {
     e.preventDefault();
@@ -66,6 +70,7 @@ class ModalAdd extends Component {
       formData.append('limituser', this.state.limituser);
       formData.append('limitmeeting', this.state.limitmeeting);
       formData.append('limitwebinar', this.state.limitwebinar);
+      formData.append('access_training', this.state.access_training);
 
       let linkURL = `${API_SERVER}v1/company`;
       API.post(linkURL, formData).then(res => {
@@ -256,6 +261,15 @@ class ModalAdd extends Component {
                                   </tr>
                                 </table>
                               </div>
+                <div className="form-group">
+                  <label className="label-input" htmlFor>
+                    Access Training
+                  </label>
+                  <div style={{ width: '100%' }}>
+                    <ToggleSwitch checked={false} onChange={this.toggleSwitchTraining.bind(this)} checked={this.state.access_training} />
+                  </div>
+
+                </div>
                 {/* <div className="form-group">
                   <label className="label-input" htmlFor>
                     Status Company
