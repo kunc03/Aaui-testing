@@ -55,7 +55,7 @@ export default class Webinar extends Component {
   }
 
   render() {
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
     console.log('STATEP:', this.props.match.params.webinar)
     let { projects, webinars, project } = this.state;
 

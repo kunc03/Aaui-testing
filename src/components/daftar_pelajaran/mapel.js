@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify'
@@ -9,6 +9,8 @@ class MataPelajaran extends React.Component {
 
   state = {
     mataPelajaran: [],
+    semester: [],
+    semesterId: '',
 
     isModalBuka: false,
 
@@ -23,29 +25,35 @@ class MataPelajaran extends React.Component {
 
   fetchPelajaran(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal murid`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
 
       this.setState({
-        mataPelajaran: res.data.result
+        mataPelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: res.data.semester.length ? res.data.semester[0].kelas_id : ''
       })
     })
   }
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal`)
+      if(res.data.result) {
+        let uniq = [...new Map(res.data.result.jadwal.map(item => [item['nama_pelajaran'], item])).values()];
 
-      let uniq = [...new Map(res.data.result.jadwal.map(item => [item['nama_pelajaran'], item])).values()];
-
-      this.setState({
-        jadwalPelajaran: uniq,
-      })
+        this.setState({
+          jadwalPelajaran: uniq,
+        })
+      }
+      else {
+        toast.info('Belum ada jadwal')
+      }
     })
   }
 
   fetchSilabus(pelajaranId) {
     API.get(`${API_SERVER}v2/silabus/pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch overview`)
+      if (res.data.error) console.log(`Error: fetch overview`)
 
       this.setState({ dataSilabus: res.data.result });
     })
@@ -55,11 +63,11 @@ class MataPelajaran extends React.Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -90,9 +98,23 @@ class MataPelajaran extends React.Component {
     this.fetchJadwal(value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    this.setState({ semesterId: value })
+    API.get(`${API_SERVER}v2/jadwal-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Error: fetch jadwal murid`)
+
+      this.setState({
+        mataPelajaran: res.data.result,
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <>
@@ -107,6 +129,17 @@ class MataPelajaran extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>
@@ -139,7 +172,7 @@ class MataPelajaran extends React.Component {
                     this.state.mataPelajaran.map((item, i) => (
                       <>
                         <tr>
-                          <td className="text-center" style={{verticalAlign: 'middle'}} rowSpan={item.data.length+1}>{item.tanggal}</td>
+                          <td className="text-center" style={{ verticalAlign: 'middle' }} rowSpan={item.data.length + 1}>{item.tanggal}</td>
                           {
                             item.data.length === 0 &&
                             <td className="text-center" colSpan="6">No schedule</td>
@@ -148,12 +181,12 @@ class MataPelajaran extends React.Component {
                         {
                           item.data.map(row => (
                             <tr>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.mapel}</td>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.jam_mulai}-{row.jam_selesai}</td>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.sesi}</td>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_guru}</td>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>{row.nama_ruangan}</td>
-                              <td className="text-center" style={{verticalAlign: 'middle'}}>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>{row.mapel}</td>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>{row.jam_mulai}-{row.jam_selesai}</td>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>{row.sesi}</td>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>{row.nama_guru}</td>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>{row.nama_ruangan}</td>
+                              <td className="text-center" style={{ verticalAlign: 'middle' }}>
                                 {
                                   /**
                                   <button onClick={e => {e.preventDefault(); this.setState({ isModalBuka: true })}} className="btn btn-v2 btn-primary">
@@ -212,7 +245,7 @@ class MataPelajaran extends React.Component {
               <select onChange={this.selectPelajaran} className="form-control ml-2">
                 <option value="" disabled selected>Choose subject</option>
                 {
-                  this.state.jadwalPelajaran.map((item,i) => (
+                  this.state.jadwalPelajaran.map((item, i) => (
                     <option key={i} value={item.pelajaran_id}>{item.nama_pelajaran}</option>
                   ))
                 }
@@ -221,42 +254,42 @@ class MataPelajaran extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Session</th>
-                <th>Topic</th>
-                <th>Goal</th>
-                <th>Description</th>
-                <th>Files</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                this.state.dataSilabus.map((item, i) => {
-                  if(item.jenis === 0) {
-                    return (
+              <thead>
+                <tr>
+                  <th>Session</th>
+                  <th>Topic</th>
+                  <th>Goal</th>
+                  <th>Description</th>
+                  <th>Files</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.dataSilabus.map((item, i) => {
+                    if (item.jenis === 0) {
+                      return (
                         <tr key={i}>
                           <td>{item.sesi}</td>
                           <td>{item.topik}</td>
                           <td>{item.tujuan}</td>
                           <td>{item.deskripsi}</td>
-                          <td style={{padding: '12px'}}>
+                          <td style={{ padding: '12px' }}>
                             {
                               item.files ? <a href={item.files} target="_blank" className="silabus">Open</a> : 'No files'
                             }
                           </td>
                         </tr>
                       )
-                  } else {
-                    return (
-                      <tr key={i}>
-                        <td>{item.sesi}</td>
-                        <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis':'Ujian'}</td>
-                      </tr>
-                    )
-                  }
-                })
-              }
+                    } else {
+                      return (
+                        <tr key={i}>
+                          <td>{item.sesi}</td>
+                          <td colSpan="4" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
+                        </tr>
+                      )
+                    }
+                  })
+                }
               </tbody>
             </table>
           </Modal.Body>

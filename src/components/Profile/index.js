@@ -184,7 +184,7 @@ class Profile extends Component {
 
   render() {
     const { user_data, toggle_alert } = this.state;
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
     // const ListAktivitas = ({ lists }) => {
     //   if (lists.length !== 0) {
     //     return (

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import Storage from '../../repository/storage';
+import { Link } from "react-router-dom";
+
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
@@ -124,7 +126,22 @@ class KalenderNew extends Component {
                 views={['month', 'week', 'day', 'agenda']}
                 components={{ event: Event, agenda: { event: Agendas } }}
               />
-
+              <div className="p-l-20 m-t-10">
+                <span className="p-r-5" style={{ color: '#0091FF' }}>
+                  <i className="fa fa-square"></i>
+                </span>
+              Group Meeting
+              <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
+                  <i className="fa fa-square"></i>
+                </span>
+                <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
+                  <i className="fa fa-square"></i>
+                </span>
+              Webinar
+              <span className="float-right">
+                  <Link to="/full-kalender">Lihat Selengkapnya</Link>
+                </span>
+              </div>
             </div>
           </div>
         </ReactFullScreenElement>

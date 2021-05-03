@@ -33,9 +33,22 @@ class PersonaliaDetail extends React.Component {
     alamatOrtu: '',
     teleponOrtu: '',
     emailOrtu: '',
+    passOrtu: '',
 
     userParents: [],
     exists: false
+  }
+
+  cekEmail = (email) => {
+    API.get(`${API_SERVER}v1/user/cek/email/${email}`).then(res => {
+      if(res.data.error) {
+        toast.warning(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+        this.setState({ emailOrtu: '' })
+      }
+      else {
+        toast.info(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+      }
+    })
   }
 
   fetchUsers() {
@@ -44,9 +57,9 @@ class PersonaliaDetail extends React.Component {
 
       this.setState({ userParents: guru })
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   simpanData = e => {
@@ -85,6 +98,7 @@ class PersonaliaDetail extends React.Component {
         alamat: this.state.alamatOrtu,
         telepon: this.state.teleponOrtu,
         email: this.state.emailOrtu,
+        password: this.state.passOrtu
       }
 
       API.put(`${API_SERVER}v2/parents/update/${this.state.parentsId}`, form).then(res => {
@@ -106,11 +120,12 @@ class PersonaliaDetail extends React.Component {
         alamat: this.state.alamatOrtu,
         telepon: this.state.teleponOrtu,
         email: this.state.emailOrtu,
+        password: this.state.passOrtu,
         userId: this.state.userId
       }
 
       let url = '';
-      if(this.state.exists) {
+      if (this.state.exists) {
         url = `${API_SERVER}v2/parents/create?exists=true`
       }
       else {
@@ -139,6 +154,7 @@ class PersonaliaDetail extends React.Component {
       alamatOrtu: e.target.getAttribute('data-alamatOrtu'),
       teleponOrtu: e.target.getAttribute('data-teleponOrtu'),
       emailOrtu: e.target.getAttribute('data-emailOrtu'),
+      passOrtu: e.target.getAttribute('data-passOrtu'),
     })
   }
 
@@ -163,6 +179,7 @@ class PersonaliaDetail extends React.Component {
       alamatOrtu: '',
       teleponOrtu: '',
       emailOrtu: '',
+      passOrtu: '',
     })
   }
 
@@ -214,7 +231,7 @@ class PersonaliaDetail extends React.Component {
 
   render() {
 
-    console.log('STATE: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -360,7 +377,13 @@ class PersonaliaDetail extends React.Component {
                 <div className="form-group row">
                   <label className="col-sm-2 col-form-label text-right">Email</label>
                   <div className="col-sm-4">
-                    <input type="email" value={this.state.emailOrtu} onChange={e => this.setState({ emailOrtu: e.target.value })} className="form-control" />
+                    <input onBlur={e => this.cekEmail(e.target.value)} type="email" value={this.state.emailOrtu} onChange={e => this.setState({ emailOrtu: e.target.value })} className="form-control" />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 col-form-label text-right">Password</label>
+                  <div className="col-sm-4">
+                    <input type="password" value={this.state.passOrtu} onChange={e => this.setState({ passOrtu: e.target.value })} className="form-control" />
                   </div>
                 </div>
 

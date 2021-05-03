@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
 import moment from 'moment-timezone'
@@ -10,51 +10,51 @@ import ReactToPrint from 'react-to-print';
 class ListSoal extends React.PureComponent {
   render() {
     return (
-      <div style={{padding: '24px'}}>
-      {
-        this.props.lists.map((item,i) => (
-          <div className="mb-2">
-            <label>Pertanyaan <b>{i+1}</b></label>
-            <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
+      <div style={{ padding: '24px' }}>
+        {
+          this.props.lists.map((item, i) => (
+            <div className="mb-2">
+              <label>Pertanyaan <b>{i + 1}</b></label>
+              <div className="soal mb-2" dangerouslySetInnerHTML={{ __html: item.tanya }} />
 
-            {
-              item.a &&
-              <tr>
-                <td style={{width: '24px'}}>A.</td>
-                <td>{item.a}</td>
-              </tr>
-            }
-            {
-              item.b &&
-              <tr>
-                <td style={{width: '24px'}}>B.</td>
-                <td>{item.b}</td>
-              </tr>
-            }
-            {
-              item.c &&
-              <tr>
-                <td style={{width: '24px'}}>C.</td>
-                <td>{item.c}</td>
-              </tr>
-            }
-            {
-              item.d &&
-              <tr>
-                <td style={{width: '24px'}}>D.</td>
-                <td>{item.d}</td>
-              </tr>
-            }
-            {
-              item.e &&
-              <tr>
-                <td style={{width: '24px'}}>E.</td>
-                <td>{item.e}</td>
-              </tr>
-            }
-          </div>
-        ))
-      }
+              {
+                item.a &&
+                <tr>
+                  <td style={{ width: '24px' }}>A.</td>
+                  <td>{item.a}</td>
+                </tr>
+              }
+              {
+                item.b &&
+                <tr>
+                  <td style={{ width: '24px' }}>B.</td>
+                  <td>{item.b}</td>
+                </tr>
+              }
+              {
+                item.c &&
+                <tr>
+                  <td style={{ width: '24px' }}>C.</td>
+                  <td>{item.c}</td>
+                </tr>
+              }
+              {
+                item.d &&
+                <tr>
+                  <td style={{ width: '24px' }}>D.</td>
+                  <td>{item.d}</td>
+                </tr>
+              }
+              {
+                item.e &&
+                <tr>
+                  <td style={{ width: '24px' }}>E.</td>
+                  <td>{item.e}</td>
+                </tr>
+              }
+            </div>
+          ))
+        }
       </div>
     )
   }
@@ -72,8 +72,10 @@ class Latihan extends React.Component {
     examSoal: [],
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
 
+    semester: [],
+    semesterId: ''
   }
 
   clearForm() {
@@ -95,7 +97,7 @@ class Latihan extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if (res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
       this.setState({ examSoal: res.data.result })
     })
@@ -105,11 +107,11 @@ class Latihan extends React.Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -118,9 +120,13 @@ class Latihan extends React.Component {
 
   fetchKuis(id, tahunAjaran) {
     API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch kuis murid`);
+      if (res.data.error) toast.warning(`Warning: fetch kuis murid`);
 
-      this.setState({ mataPelajaran: res.data.result.kuis })
+      this.setState({
+        mataPelajaran: res.data.result.kuis,
+        semester: res.data.semester,
+        semesterId: res.data.semester[0].kelas_id
+      })
     })
   }
 
@@ -130,16 +136,29 @@ class Latihan extends React.Component {
     this.fetchKuis(Storage.get('user').data.user_id, value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/${this.state.tipe}-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Warning: fetch kuis murid`);
+
+      this.setState({
+        mataPelajaran: res.data.result.kuis,
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <>
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{ padding: '12px' }}>
+            <div className="card-body row" style={{ padding: '12px' }}>
 
               <div className="col-sm-2">
                 <label>Tahun Ajaran</label>
@@ -148,6 +167,18 @@ class Latihan extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semester} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>
@@ -163,7 +194,7 @@ class Latihan extends React.Component {
                     <th>Deadline</th>
                     <th>Date Submit</th>
                     <th>Score</th>
-                    <th>Action</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
 
@@ -179,9 +210,12 @@ class Latihan extends React.Component {
                         <td>{moment(item.time_start).format('DD/MM/YYYY')} sampai {moment(item.time_finish).format('DD/MM/YYYY')}</td>
                         <td>{item.submitted.length ? moment(item.submitted[0].created_at).format('DD/MM/YYYY HH:mm') : '-'}</td>
                         <td>{item.submitted.length ? item.submitted[0].score : '-'}</td>
-                        <td>
-                          <a target="_blank" href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`} className="btn btn-v2 btn-primary">
-                            <i className="fa fa-share"></i> Open
+                        <td className="text-center">
+                          <a
+                            target="_blank"
+                            href={`/ruangan/mengajar/${item.jadwal_id}/materi/${item.chapter_id}`}
+                            className="btn btn-v2 btn-primary">
+                            Open
                           </a>
 
                           {
@@ -190,6 +224,12 @@ class Latihan extends React.Component {
                             <i className="fa fa-share"></i> Open
                             </Link>
                             */
+                          }
+
+                          {
+                            item.submitted.length ?
+                              <Link to={`/murid/kerjakan-lagi/${item.exam_id}`} className="btn btn-v2 btn-info ml-2">Kerjakan Lagi</Link>
+                            : null
                           }
 
                         </td>

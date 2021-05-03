@@ -49,7 +49,7 @@ class Allocation extends Component {
           }
           API.post(`${API_SERVER}v2/training/licenses-allocation-transaction`, form).then(res => {
               if (res.data.error){
-                  toast.error(`Error add licenses allocation`)
+                toast.error(res.data.result)
               }
               else{
                   toast.success(`Success for licenses allocation ${this.state.mode}`)

@@ -210,6 +210,9 @@ export default class WebinarCreate extends Component {
   render() {
 
     let crudRoles = this.state.gb.length && this.state.gb.filter(item => item.code === 'CRUD_ROLES')[0].status;
+    //console.log('state: ', this.state);
+
+    // let levelUser = 'admin';
 
    
     return (

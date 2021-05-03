@@ -174,7 +174,7 @@ class Chapter extends React.Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     var selection = [];
     for (var i = 0; i < 24; i++) {
@@ -212,7 +212,7 @@ class Chapter extends React.Component {
                 </div>
                 <div className="form-group">
                   <label>Isi</label>
-                  <input id="my-file" type="file" name="my-file" style={{display:"none"}} onChange="" />
+                  <input id="my-file" type="file" name="my-file" style={{ display: "none" }} onChange="" />
                   <Editor
                     apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
                     initialValue={this.state.content}
@@ -222,9 +222,9 @@ class Chapter extends React.Component {
                       menubar: false,
                       convert_urls: false,
                       image_class_list: [
-                        {title: 'None', value: ''},
-                        {title: 'Responsive', value: 'img-responsive'},
-                        {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                        { title: 'None', value: '' },
+                        { title: 'Responsive', value: 'img-responsive' },
+                        { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                       ],
                       file_browser_callback_types: 'image file media',
                       file_picker_callback: function (callback, value, meta) {
@@ -243,7 +243,7 @@ class Chapter extends React.Component {
                               data: dataForm,
                               processData: false,
                               contentType: false,
-                              success: (data)=>{
+                              success: (data) => {
                                 callback(data.result.url);
                                 this.value = '';
                               }
@@ -282,13 +282,13 @@ class Chapter extends React.Component {
                     </select>
                   </div>
                   <div className="col-sm-4">
-                    <label className="mb-3">Tatap Muka</label><br/>
+                    <label className="mb-3">Tatap Muka</label><br />
                     <div class="form-check form-check-inline">
-                      <input checked={this.state.tatapmuka == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="1" />
+                      <input checked={this.state.tatapmuka == "1"} onChange={e => this.setState({ [e.target.name]: e.target.value })} class="form-check-input" type="radio" name="tatapmuka" value="1" />
                       <label class="form-check-label" for="inlineRadio1">Ya</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input checked={this.state.tatapmuka == "0"} onChange={e => this.setState({ [e.target.name]: e.target.value})} class="form-check-input" type="radio" name="tatapmuka" value="0" />
+                      <input checked={this.state.tatapmuka == "0"} onChange={e => this.setState({ [e.target.name]: e.target.value })} class="form-check-input" type="radio" name="tatapmuka" value="0" />
                       <label class="form-check-label" for="inlineRadio2">Tidak</label>
                     </div>
                   </div>

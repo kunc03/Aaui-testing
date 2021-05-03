@@ -16,9 +16,13 @@ import Activity from "./components/Activity/index";
 import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
+
+import ClassBantuan from "./components/bantuan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import NotificationAlert from "./components/Global_setting/notification";
 import Profile from "./components/Profile/index";
+
+import FullCalender from "./components/kalender/fullKalender"
 // import Files from "./components/files/files";
 
 // Dashboard New Home Detail
@@ -82,6 +86,8 @@ import MobileMeeting from "./components/liveclass/mobileMeeting";
 import Meeting from "./components/meeting";
 import TrainingSettings from "./components/training/settings";
 import Training from "./components/training/company";
+import TrainingQuota from "./components/training/quota";
+import TrainingQuotaDetail from "./components/training/quota/detail";
 import TrainingUser from "./components/training/user";
 import TrainingCourse from "./components/training/course";
 import TrainingCourseForm from "./components/training/course/form";
@@ -315,6 +321,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
@@ -329,7 +336,9 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/aktivitas" component={Activity} />
         {/* Training */}
         <Route path="/training/settings" exact component={TrainingSettings} />
-        <Route path="/training" exact component={Training} />
+        <Route path="/training/company" exact component={Training} />
+        <Route path="/training" exact component={TrainingQuota} />
+        <Route path="/training/quota/detail/:id" exact component={TrainingQuotaDetail} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
@@ -364,6 +373,8 @@ export class SuperAdminSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
+
+        <Route path="/bantuan" component={ClassBantuan} />
 
         <Route path="/pengaturan" component={Pengaturan} />
         <Route path="/profile" component={Profile} />
@@ -434,6 +445,7 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
@@ -449,6 +461,7 @@ export class AdminSwitch extends React.Component {
         <Route path="/forum-detail/:forum_id" component={ForumDetail} /> */}
         <Route path="/aktivitas" component={Activity} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
+        <Route path="/bantuan" component={ClassBantuan} />
 
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/global-settings" component={GlobalSettings} />
@@ -557,6 +570,7 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />
@@ -617,6 +631,7 @@ export class ClientSwitch extends React.Component {
         {/* <Route path="/liveclass-room/:roomid" component={LiveStream} /> */}
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />
         <Route path="/webinars" exact component={Webinar} />
+        <Route path="/bantuan" component={ClassBantuan} />
 
         <Route path="/pengaturan" component={Pengaturan} />
 
