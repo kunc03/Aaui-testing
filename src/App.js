@@ -19,6 +19,7 @@ import Pengaturan from "./components/Pengaturan/index";
 
 import ClassBantuan from "./components/bantuan/index";
 import GlobalSettings from "./components/Global_setting/index";
+import NotificationAlert from "./components/Global_setting/notification";
 import Profile from "./components/Profile/index";
 
 import FullCalender from "./components/kalender/fullKalender"
@@ -464,6 +465,7 @@ export class AdminSwitch extends React.Component {
 
         <Route path="/pengaturan" exact component={Pengaturan} />
         <Route path="/global-settings" component={GlobalSettings} />
+        <Route path="/notification-alert" component={NotificationAlert} />
 
         <Route path="/profile" exact component={Profile} />
         {/* <Route path="/user-access" component={UserAccess} /> */}
