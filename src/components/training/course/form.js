@@ -58,6 +58,7 @@ autoSave = (isDrag) =>{
     if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -102,6 +103,7 @@ autoSave = (isDrag) =>{
     if (!this.state.edited && !newSession) {this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -385,6 +387,7 @@ handleOverview = (e) => {
   addNewSession(){
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         let form = {
