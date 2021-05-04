@@ -77,7 +77,7 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Webinar',
+        label: 'Live Class',
         icon: 'webinars.svg',
         iconActive: 'webinars-active.svg',
         route: '/training/webinar'
@@ -152,7 +152,7 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Webinar',
+        label: 'Live Class',
         icon: 'webinars.svg',
         iconActive: 'webinars-active.svg',
         route: '/training/webinar'

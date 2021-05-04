@@ -255,8 +255,8 @@ class Report extends Component {
               <th>Name</th>
               <th>Email</th>
               <th>Company</th>
-              <th>Type</th>
               <th>License Type</th>
+              <th>Type</th>
               <th>Title</th>
               <th>Course</th>
               <th>Submission</th>

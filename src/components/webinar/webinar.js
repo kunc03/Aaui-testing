@@ -133,7 +133,7 @@ class WebinarTable extends Component {
         <span className="mb-4">
           {
           this.props.titleColor && this.props.titleColor === 'black' ?
-          <strong className="f-w-bold f-18" style={{color:'#000'}}>Webinar List</strong>
+          <strong className="f-w-bold f-18" style={{color:'#000'}}>Live Class List</strong>
           :
           <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
           }
