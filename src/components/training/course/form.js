@@ -286,6 +286,20 @@ handleOverview = (e) => {
           this.setState({[name]: value})
       }
   }
+
+  deleteMedia(id){
+    API.delete(`${API_SERVER}v2/training/course/session/media/${id}`).then(res => {
+        if (res.data.error){
+            toast.warning('Fail to delete media')
+        }
+        else{
+            let i = this.state.media.indexOf(this.state.media.filter(item=> item.id === id)[0]);
+            let media = this.state.media;
+            media.splice(i, 1);
+            this.forceUpdate();
+        }
+    })
+  }
   getCourse(id){
     API.get(`${API_SERVER}v2/training/course/read/${id}`).then(res => {
         if (res.data.error){
@@ -677,7 +691,7 @@ handleOverview = (e) => {
                                                                                         <i className={`fa ${icon}`}></i>&nbsp;
                                                                                         {item.name}
                                                                                     </a>
-                                                                                    <i className="fa fa-times"></i>
+                                                                                    <i className="fa fa-times" onClick={this.deleteMedia.bind(this, item.id)}></i>
                                                                                 </div>
                                                                                 )
                                                                             })
