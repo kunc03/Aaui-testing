@@ -13,7 +13,7 @@ import Storage from '../../../repository/storage';
 import DatePicker from "react-datepicker";
 import { MultiSelect } from 'react-sm-select';
 import Moment from 'moment-timezone';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Badge } from 'react-bootstrap';
 
 class Report extends Component {
   constructor(props) {
@@ -119,6 +119,7 @@ class Report extends Component {
       API.post(`${API_SERVER}v2/training/certificate`, formData).then(async (res) => {
         toast.success(`Sending certificate to participant's email`);
         this.handleModal();
+        this.getList();
       });
     }
   }
@@ -158,7 +159,15 @@ class Report extends Component {
     item['checked'] = e.target.checked;
   }
   checkAll(e) {
-    let item = this.state.data
+    let item = this.state.data;
+    let filter = this.state.filter;
+    if (filter != "") {
+      item = item.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filter, "gmi"))
+      )
+    }
     item.map((item, index) => {
       item.checked = e.target.checked;
     })
@@ -290,7 +299,14 @@ class Report extends Component {
                   <td>{item.score}</td>
                   <td>{item.pass ? 'Yes' : 'No'}</td>
                   <td>{item.license_number}</td>
-                  <td><a href={item.certificate} target="_blank">{item.certificate}</a></td>
+                  <td>
+                    {
+                    item.certificate_status === null ? '-' :
+                    item.certificate_status === 'Sent' ? <a href={item.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+                    item.certificate_status === 'Processing' ? <Badge variant="warning">{item.certificate_status}</Badge> :
+                    <Badge variant="danger">{item.certificate_status}</Badge>
+                    }
+                  </td>
                 </tr>)
               })
               :
