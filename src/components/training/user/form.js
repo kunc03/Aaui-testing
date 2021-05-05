@@ -384,6 +384,13 @@ class FormUser extends Component {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="form-section no-border">
+                                                    <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="phone"><required>*</required> By default the password is the same as email</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div className="row" style={{justifyContent:'flex-end'}}>
                                                     {
                                                     !this.props.disabledForm &&
