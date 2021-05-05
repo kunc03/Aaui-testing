@@ -147,7 +147,7 @@ class WebinarTable extends Component {
         <span className="mb-4">
           {
           this.props.titleColor && this.props.titleColor === 'black' ?
-          <strong className="f-w-bold f-18" style={{color:'#000'}}>Webinar List</strong>
+          <strong className="f-w-bold f-18" style={{color:'#000'}}>Live Class List</strong>
           :
           <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
           }
@@ -214,7 +214,11 @@ class WebinarTable extends Component {
                             let levelUser = Storage.get('user').data.level;
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">
+                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}/${this.props.training ? 'by-training' : 'default'}`} style={{cursor:'pointer'}} type="button">
+                                          {item.judul}
+                                          </Link>
+                                </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />

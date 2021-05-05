@@ -1306,7 +1306,7 @@ fetchRekamanBBB(folder){
                   <Col>
                     <div className="form-group">
                       <label>Lampiran</label>
-                      <label for="attachmentId" className="label-upload-icademy">{this.state.attachmentId.length} File</label>
+                      {this.state.attachmentId.length ? <label for="attachmentId" className="label-upload-icademy"> : {this.state.attachmentId.length} File</label> :null}
                       <input
                         accept="all"
                         id="attachmentId"
