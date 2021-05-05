@@ -60,8 +60,8 @@ export default class WebinarCreate extends Component {
   }
 
   nextStep() {
-    if (this.state.valuesFolder == '' || this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '' || (this.props.match.params.training === 'by-training' && this.state.valueCourse === [])) {
-      toast.warning('Semua field wajib diisi dengan benar')
+    if (this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '' || (this.props.match.params.training === 'by-training' && this.state.valueCourse == '') || (this.props.match.params.training === 'default' && this.state.valuesFolder == '')) {
+      toast.warning('Some field is required')
     }
     else {
       this.setState({ isStep1: false, isStep2: true })
@@ -234,14 +234,14 @@ export default class WebinarCreate extends Component {
                     <div className="col-sm-12">
 
                       <div className="form-group">
-                        <label className="bold">Title Webinar</label>
+                        <label className="bold">Title Webinar<required>*</required></label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
                       {
                         this.state.projectId == 0 ?
                           <div className="form-group">
-                            <label className="bold">Project</label>
+                            <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}</label>
                             <MultiSelect
                               id="folder"
                               options={this.state.optionsFolder}
@@ -265,7 +265,7 @@ export default class WebinarCreate extends Component {
                           <input type="text" className="form-control" value="Sekretaris" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold"> Name </label>
+                          <label className="bold">Sekretaris<required>*</required></label>
                           <MultiSelect
                             id={`sekretarisId`}
                             options={this.state.optionNames}
@@ -286,7 +286,7 @@ export default class WebinarCreate extends Component {
                           <input type="text" className="form-control" value="Moderator" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold"> Name </label>
+                          <label className="bold">Moderator<required>*</required></label>
                           <MultiSelect
                             id={`moderatorId`}
                             options={this.state.optionNames}
@@ -307,7 +307,7 @@ export default class WebinarCreate extends Component {
                           <input type="text" className="form-control" value="Pembicara" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold"> Name </label>
+                          <label className="bold">Pembicara<required>*</required></label>
                           <MultiSelect
                             id={`pembicaraId`}
                             options={this.state.optionNames}
@@ -328,7 +328,7 @@ export default class WebinarCreate extends Component {
                           <input type="text" className="form-control" value="Owner" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold"> Name </label>
+                          <label className="bold">Owner<required>*</required></label>
                           <MultiSelect
                             id={`ownerId`}
                             options={this.state.optionNames}
@@ -352,7 +352,7 @@ export default class WebinarCreate extends Component {
                             </div>
                             <div className="row">
                                 <div className="form-field-top-label" style={{width:400}}>
-                                    <label for="valueCourse">Course</label>
+                                    <label for="valueCourse">Course<required>*</required></label>
                                     <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                     <p className="form-notes">Keep empty if you don't want to assign to course</p>
                                 </div>
