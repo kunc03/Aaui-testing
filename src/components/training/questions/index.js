@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import { Modal } from 'react-bootstrap';
+import { Modal, Badge } from 'react-bootstrap';
 import Moment from 'moment-timezone';
 
 class Questions extends Component {
@@ -22,7 +22,9 @@ class Questions extends Component {
       file:'',
       modalDelete: false,
       deleteId: '',
-      isUploading: false
+      isUploading: false,
+      modalResultImport: false,
+      resultImport: {field: [], data: []}
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -55,8 +57,7 @@ class Questions extends Component {
           }
           else{
             this.getUserData()
-            toast.success('Data import success')
-            this.setState({ isUploading: false, file: '' });
+            this.setState({ isUploading: false, file: '', modalResultImport: true, resultImport: res.data.result });
           }
         }
       })
@@ -65,6 +66,9 @@ class Questions extends Component {
 
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalResult = e => {
+    this.setState({ modalResultImport: false })
   }
 
   onClickHapus(id){
@@ -221,13 +225,24 @@ class Questions extends Component {
                                                           </div>
                                                         </label>
                                                         <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
-                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}} disabled={this.state.isUploading}>
                                                             <i
                                                                 className="fa fa-upload"
                                                                 style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
                                                             />
                                                             {this.state.isUploading ? 'Uploading...' : 'Upload File'}
                                                         </button>
+                                                        {
+                                                          this.state.resultImport.field.length && this.state.resultImport.data.length ?
+                                                          <button type="button" className="button-gradient-green" style={{marginLeft:20}} onClick={()=> this.setState({modalResultImport: true})}>
+                                                              <i
+                                                                  className="fa fa-table"
+                                                                  style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                              />
+                                                              Last Import Result
+                                                          </button>
+                                                          : null
+                                                        }
                                                     </form>
                                                 </div>
                                             </div>
@@ -285,6 +300,51 @@ class Questions extends Component {
                 <i className="fa fa-trash"></i> Delete
               </button>
             </Modal.Footer>
+          </Modal>
+          
+          <Modal show={this.state.modalResultImport} onHide={this.closeModalResult} centered dialogClassName="modal-lg">
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Import Result
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {
+                this.state.resultImport.field.length && this.state.resultImport.data.length ?
+                <div>
+                  <table className="small-font table table-striped">
+                  <thead>
+                    <tr>
+                      {
+                        this.state.resultImport.field.map(item => <th style={{fontSize:10}}>{item}</th>)
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {
+                        this.state.resultImport.data.map(item =>
+                        <tr>
+                          {
+                            item.map((items, index)=>
+                            <td style={{fontSize: 10}}>
+                              {
+                                index === 0 && items === 'Success' ? <Badge variant="success">{items}</Badge> :
+                                index === 0 && items === 'Failed' ? <Badge variant="danger">{items}</Badge> : 
+                                index === 0 && items === 'Warning' ? <Badge variant="warning">{items}</Badge> : 
+                                String(items).length > 30 ? items.substring(0, 30) + '...' : items
+                              }
+                            </td>)
+                          }
+                        </tr>
+                        )
+                      }
+                  </tbody>
+                  </table>
+                </div>
+                :
+                <div>No result</div>
+              }
+            </Modal.Body>
           </Modal>
         </div>
     )

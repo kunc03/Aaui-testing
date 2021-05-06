@@ -13,7 +13,7 @@ import Storage from '../../../repository/storage';
 import DatePicker from "react-datepicker";
 import { MultiSelect } from 'react-sm-select';
 import Moment from 'moment-timezone';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Badge } from 'react-bootstrap';
 
 class Report extends Component {
   constructor(props) {
@@ -32,6 +32,8 @@ class Report extends Component {
       valueCompany: [],
       optionsLicensesType: [],
       valueLicensesType: [],
+      optionsPass: [{label: 'Yes', value: '1'},{label: 'No', value: '0'}],
+      valuePass: [],
       user: '',
       checkAll: false,
       isModalSertifikat: false,
@@ -117,6 +119,7 @@ class Report extends Component {
       API.post(`${API_SERVER}v2/training/certificate`, formData).then(async (res) => {
         toast.success(`Sending certificate to participant's email`);
         this.handleModal();
+        this.getList();
       });
     }
   }
@@ -156,7 +159,15 @@ class Report extends Component {
     item['checked'] = e.target.checked;
   }
   checkAll(e) {
-    let item = this.state.data
+    let item = this.state.data;
+    let filter = this.state.filter;
+    if (filter != "") {
+      item = item.filter(x =>
+        JSON.stringify(
+          Object.values(x)
+        ).match(new RegExp(filter, "gmi"))
+      )
+    }
     item.map((item, index) => {
       item.checked = e.target.checked;
     })
@@ -169,7 +180,8 @@ class Report extends Component {
         end: this.state.end,
         licenses_type: this.state.valueLicensesType,
         company: this.state.companyId,
-        training_company: this.state.valueCompany
+        training_company: this.state.valueCompany,
+        pass: this.state.valuePass
     }
     API.post(`${API_SERVER}v2/training/report`, form).then(res => {
         if (res.data.error){
@@ -255,8 +267,8 @@ class Report extends Component {
               <th>Name</th>
               <th>Email</th>
               <th>Company</th>
-              <th>Type</th>
               <th>License Type</th>
+              <th>Type</th>
               <th>Title</th>
               <th>Course</th>
               <th>Submission</th>
@@ -287,7 +299,14 @@ class Report extends Component {
                   <td>{item.score}</td>
                   <td>{item.pass ? 'Yes' : 'No'}</td>
                   <td>{item.license_number}</td>
-                  <td><a href={item.certificate} target="_blank">{item.certificate}</a></td>
+                  <td>
+                    {
+                    item.certificate_status === null ? '-' :
+                    item.certificate_status === 'Sent' ? <a href={item.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+                    item.certificate_status === 'Processing' ? <Badge variant="warning">{item.certificate_status}</Badge> :
+                    <Badge variant="danger">{item.certificate_status}</Badge>
+                    }
+                  </td>
                 </tr>)
               })
               :
@@ -334,7 +353,7 @@ class Report extends Component {
                                                                 </div>
                                                                 <div className="form-field-top-label" style={{width:300}}>
                                                                     <label for="course">License Type</label>
-                                                                    <MultiSelect id="course" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={e => this.handleChangeFilter('valueLicensesType', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                    <MultiSelect id="course" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={e => this.handleChangeFilter('valueLicensesType', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Select License Type" />
                                                                 </div>
                                                                 {
                                                                     Storage.get('user').data.level !== 'client' ?
@@ -344,6 +363,10 @@ class Report extends Component {
                                                                     </div>
                                                                     : null
                                                                 }
+                                                                <div className="form-field-top-label" style={{width:300}}>
+                                                                    <label for="pass">Pass</label>
+                                                                    <MultiSelect id="pass" options={this.state.optionsPass} value={this.state.valuePass} onChange={e => this.handleChangeFilter('valuePass', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Select Pass" />
+                                                                </div>
                                                                 <div className="form-field-top-label">
                                                                     <label for="filter">Search</label>  
                                                                     <input type="text" placeholder="Search" onChange={this.filter}/>
