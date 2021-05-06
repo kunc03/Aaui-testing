@@ -57,7 +57,8 @@ class WebinarTable extends Component {
   fetchData() {
     this.setState({ isLoading: true })
     API.get(
-      this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}`
+      this.props.projectId ? `${API_SERVER}v2/webinar/list/${this.props.projectId}` :
+      this.props.training ? `${API_SERVER}v2/webinar/list-by-training/${this.state.companyId}`
         : `${API_SERVER}v2/webinar/list-by-company/${this.state.companyId}`
     ).then(res => {
       if (res.data.error) {
@@ -130,12 +131,17 @@ class WebinarTable extends Component {
     return (
       <div className="card p-20">
         <span className="mb-4">
+          {
+          this.props.titleColor && this.props.titleColor === 'black' ?
+          <strong className="f-w-bold f-18" style={{color:'#000'}}>Live Class List</strong>
+          :
           <strong className="f-w-bold f-18 fc-skyblue ">Webinar</strong>
+          }
 
 
           {access_project_admin == true && this.state.limitCompany.webinar ?
             <Link
-              to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}`}
+              to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}/${this.props.training ? 'by-training' : 'default'}`}
             >
               <button
                 className="btn btn-icademy-primary float-right"
@@ -194,7 +200,11 @@ class WebinarTable extends Component {
                             let levelUser = Storage.get('user').data.level;
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">{item.judul}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20">
+                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}/${this.props.training ? 'by-training' : 'default'}`} style={{cursor:'pointer'}} type="button">
+                                          {item.judul}
+                                          </Link>
+                                </td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />
@@ -224,7 +234,7 @@ class WebinarTable extends Component {
                                         }
                                         {
                                           (access_project_admin && item.status !=3) &&
-                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                          <Link to={`/webinar/edit/${item.project_id}/${item.id}/${this.props.training ? 'by-training' : 'default'}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Edit
                                           </Link>
                                         }

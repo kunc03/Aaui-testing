@@ -9,15 +9,19 @@ import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'moment-timezone';
+import { Modal } from 'react-bootstrap';
 
-class Membership extends Component {
+class Quota extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        data : [],
-        filter:'',
-        training_company_id: ''
+      companyId: '',
+      data : [],
+      filter:'',
+      file:'',
+      modalDelete: false,
+      deleteId: '',
+      isUploading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -26,19 +30,29 @@ class Membership extends Component {
     this.props.history.goBack();
   }
 
-  getData(companyId){
-    let level = Storage.get('user').data.level;
-    let grupName = Storage.get('user').data.grup_name;
-    let sql = '';
-    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
-      sql = `${API_SERVER}v2/training/membership-training/${this.state.training_company_id}`
-    }
-    else{
-      sql = `${API_SERVER}v2/training/membership/${companyId}`
-    }
-    API.get(sql).then(res => {
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
+  }
+
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteId: '' })
+  }
+
+  onClickHapus(id){
+    this.setState({modalDelete: true, deleteId: id})
+  }
+  
+  filter = (e) => {
+    e.preventDefault();
+    this.setState({ filter: e.target.value });
+  }
+
+  getList(){
+    API.get(`${API_SERVER}v2/training/quota/company`).then(res => {
         if (res.data.error){
-            toast.error('Error read membership list')
+            toast.error('Error read company list')
         }
         else{
             this.setState({data: res.data.result})
@@ -50,79 +64,52 @@ class Membership extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-          this.getData(this.state.companyId)
+          this.getList(this.state.companyId)
         }
     })
-    let level = Storage.get('user').data.level;
-    let grupName = Storage.get('user').data.grup_name;
-    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
-      API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
-        if (res.status === 200) {
-          this.setState({ training_company_id: res.data.result .training_company_id })
-        }
-      })
-    }
   }
 
   componentDidMount(){
     this.getUserData()
   }
 
-  onClickHapus(){
-      toast.warning('Delete button clicked');
-  }
-  
-  filter = (e) => {
-    e.preventDefault();
-    this.setState({ filter: e.target.value });
-  }
-
   render() {
     const columns = [
       {
-        name: 'Member Card',
-        selector: 'license_card',
-        sortable: true,
-        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>
+        name: 'Logo',
+        selector: 'logo',
+        cell: row => <img height="26px" alt={row.logo} src={row.logo ? row.logo : 'assets/images/no-logo.jpg'} />
       },
       {
-        name: 'License Number',
-        selector: 'license_number',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
-        name: 'Name',
-        selector: 'name',
-        sortable: true,
-        grow: 2,
-      },
-      {
-        name: 'Company',
+        name: 'Company Name',
         selector: 'company_name',
+        grow: 2,
         sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
+        cell: row => <Link to={'/training/quota/detail/'+row.company_id}>{row.company_name}</Link>
       },
       {
-        cell: row => Moment.tz(row.expired, 'Asia/Jakarta').format("DD-MM-YYYY"),
-        name: 'Expired Date',
-        selector: 'expired',
+        name: 'Total Allocated',
+        selector: 'total_allocated',
         sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
+      },
+      {
+        name: 'Total Used',
+        selector: 'total_used',
+        sortable: true,
+      },
+      {
+        name: 'Total Amount',
+        selector: 'total_amount',
+        sortable: true,
       },
       {
         cell: row =>
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
-              if (eventKey === 1) {
-                this.props.history.push('/training/membership/edit/' + row.id);
+              switch (eventKey){
+                case 1 : this.props.history.push('/training/quota/detail/' + row.company_id);break;
+                default : this.props.goTo('/training/quota');break;
               }
             }}
           >
@@ -134,7 +121,7 @@ class Membership extends Component {
               <i className="fa fa-ellipsis-h"></i>
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -167,12 +154,12 @@ class Membership extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Membership'/>
+                                        <TabMenu title='Training' selected='Quota'/>
                                         <div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Company & Quota List</strong>
                                                         <input
                                                             type="text"
                                                             placeholder="Search"
@@ -202,4 +189,4 @@ class Membership extends Component {
   }
 }
 
-export default Membership;
+export default Quota;

@@ -26,6 +26,7 @@ export default class CompanyDetail extends Component {
     validity: '',
     dateValidity: new Date(),
     unlimited: false,
+    access_training: false,
     logo: "",
     tempLogo: "",
 
@@ -70,6 +71,9 @@ export default class CompanyDetail extends Component {
 
   toggleSwitch(checked) {
     this.setState({ unlimited: !this.state.unlimited });
+  }
+  toggleSwitchTraining(checked) {
+    this.setState({ access_training: !this.state.access_training });
   }
 
   closeNotifikasi = e => {
@@ -116,7 +120,7 @@ export default class CompanyDetail extends Component {
 
   onClickUpdate = e => {
 
-    let unlimited = this.state.unlimited == false ? '1' : '0'
+    let unlimited = this.state.unlimited === false ? '1' : '0'
     let formData = {
       company_id: this.state.companyId,
       name: this.state.nama,
@@ -127,7 +131,8 @@ export default class CompanyDetail extends Component {
       unlimited: unlimited,
       limituser: this.state.limituser,
       limitmeeting: this.state.limitmeeting,
-      limitwebinar: this.state.limitwebinar
+      limitwebinar: this.state.limitwebinar,
+      access_training: this.state.access_training
     };
 
     const linkURL = `${API_SERVER}v1/company/${this.state.companyId}`;
@@ -420,7 +425,8 @@ export default class CompanyDetail extends Component {
           unlimited: unlimited,
           limituser: res.data.result.limit_user,
           limitmeeting: res.data.result.limit_meeting,
-          limitwebinar: res.data.result.limit_webinar
+          limitwebinar: res.data.result.limit_webinar,
+          access_training: res.data.result.access_training === 1 ? true : false
         });
 
         let linkURLCabang = `${API_SERVER}v1/branch/company/${this.state.companyId}`;
@@ -784,6 +790,15 @@ export default class CompanyDetail extends Component {
                                     </td>
                                   </tr>
                                 </table>
+                              </div>
+                              <div className="form-group">
+                                <label className="label-input" htmlFor>
+                                  Access Training
+                                </label>
+                                <div style={{ width: '100%' }}>
+                                  <ToggleSwitch checked={false} onChange={this.toggleSwitchTraining.bind(this)} checked={this.state.access_training} />
+                                </div>
+
                               </div>
                               <button
                                 className="btn btn-sm btn-ideku"

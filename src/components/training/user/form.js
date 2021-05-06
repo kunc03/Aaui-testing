@@ -21,6 +21,7 @@ class FormUser extends Component {
         phone:'',
         email:'',
         level: '',
+        license_number: '',
         optionCompany:[],
         companyId:'',
         disabledForm: this.props.disabledForm && this.props.id
@@ -53,6 +54,7 @@ class FormUser extends Component {
               gender: this.state.gender,
               identity: this.state.identity,
               tin: this.state.tin,
+              license_number: this.state.license_number,
               address: this.state.address,
               city: this.state.city,
               phone: this.state.phone,
@@ -94,6 +96,7 @@ class FormUser extends Component {
               gender: this.state.gender,
               identity: this.state.identity,
               tin: this.state.tin,
+              license_number: this.state.license_number,
               address: this.state.address,
               city: this.state.city,
               phone: this.state.phone,
@@ -112,16 +115,17 @@ class FormUser extends Component {
                     API.put(`${API_SERVER}v2/training/user/image/${res.data.result.insertId}`, formData).then(res2 => {
                         if (res2.data.error){
                             toast.warning(`${this.state.level} created but fail to upload image`)
+                            this.props.history.push(`/training/user`)
                         }
                         else{
                             toast.success(`New ${this.state.level} added`)
-                            this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                            this.props.history.push(`/training/user`)
                         }
                     })
                 }
                 else{
                     toast.success(`New ${this.state.level} added`)
-                    this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                    this.props.history.push(`/training/user`)
                 }
               }
           })
@@ -163,6 +167,7 @@ class FormUser extends Component {
                 gender: res.data.result.gender,
                 identity: res.data.result.identity,
                 tin: res.data.result.tin,
+                license_number: res.data.result.license_number,
                 address: res.data.result.address,
                 city: res.data.result.city,
                 phone: res.data.result.phone,
@@ -247,6 +252,26 @@ class FormUser extends Component {
                                                 <div className="form-section">
                                                     <div className="row">
                                                         <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="training_company_id">Company Name<required>*</required></label>
+                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
+                                                                <option value="">Select Company</option>
+                                                                {
+                                                                    this.state.optionCompany.map(item=>
+                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
+                                                                    )
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-section">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
                                                             <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Personal Information</strong>
                                                         </div>
                                                     </div>
@@ -294,6 +319,10 @@ class FormUser extends Component {
                                                         <div className="form-field-top-label">
                                                             <label for="tin">Tax Identification Number</label>
                                                             <input type="text" name="tin" id="tin" placeholder="1234567890" value={this.state.tin} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="license_number">License Number</label>
+                                                            <input type="text" name="license_number" id="license_number" placeholder="1234567890" value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -357,21 +386,8 @@ class FormUser extends Component {
                                                 </div>
                                                 <div className="form-section no-border">
                                                     <div className="row">
-                                                        <div className="col-sm-12 m-b-20">
-                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="training_company_id">Company Name<required>*</required></label>
-                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
-                                                                <option value="">Select Company</option>
-                                                                {
-                                                                    this.state.optionCompany.map(item=>
-                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
-                                                                    )
-                                                                }
-                                                            </select>
+                                                            <label for="phone"><required>*</required> By default the password is the same as email</label>
                                                         </div>
                                                     </div>
                                                 </div>

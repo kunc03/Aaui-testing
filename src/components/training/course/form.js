@@ -12,7 +12,7 @@ class FormCourse extends Component {
     this.state = {
         edited: false,
         initialSession: false,
-        id: '',
+        id: this.props.match.params.id ? this.props.match.params.id : '',
         companyId:'',
         image:'',
         logo:'',
@@ -23,6 +23,8 @@ class FormCourse extends Component {
         fax: '',
         website: '',
         email: '',
+        isUploading: false,
+        isSaving: false,
 
         content:'Loading...',
         title: '',
@@ -52,12 +54,14 @@ class FormCourse extends Component {
   }
 
 autoSave = (isDrag) =>{
-    if (!this.state.edited && !isDrag) return;
+    this.setState({isSaving: true})
+    if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
-        if (this.props.match.params.id || this.state.id){
+        if (this.state.id){
             let form = {
                 image: this.state.image,
                 title: this.state.title,
@@ -65,7 +69,7 @@ autoSave = (isDrag) =>{
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
-            API.put(`${API_SERVER}v2/training/course/${this.props.match.params.id}`, form).then(res => {
+            API.put(`${API_SERVER}v2/training/course/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit course')
                 }
@@ -73,19 +77,20 @@ autoSave = (isDrag) =>{
                     if (this.state.image){
                         let formData = new FormData();
                         formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/course/image/${this.props.match.params.id}`, formData).then(res2 => {
+                        API.put(`${API_SERVER}v2/training/course/image/${this.state.id}`, formData).then(res2 => {
                             if (res2.data.error){
                                 toast.warning('Course edited but fail to upload image')
+                                this.setState({edited: false, isSaving: false})
                             }
                             else{
                                 toast.success('Automatic saving')
-                                this.setState({edited: false})
+                                this.setState({edited: false, isSaving: false})
                             }
                         })
                     }
                     else{
                         toast.success('Automatic saving')
-                        this.setState({edited: false})
+                        this.setState({edited: false, isSaving: false})
                     }
                 }
             })
@@ -93,13 +98,15 @@ autoSave = (isDrag) =>{
     }
 }
   save = (e, newSession) =>{
+    this.setState({isSaving: true})
     e.preventDefault();
-    if (!this.state.edited && !newSession) return;
+    if (!this.state.edited && !newSession) {this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
-        if (this.props.match.params.id || this.state.id){
+        if (this.state.id){
             let form = {
                 image: this.state.image,
                 title: this.state.title,
@@ -107,7 +114,7 @@ autoSave = (isDrag) =>{
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
-            API.put(`${API_SERVER}v2/training/course/${this.props.match.params.id}`, form).then(res => {
+            API.put(`${API_SERVER}v2/training/course/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit course')
                 }
@@ -115,19 +122,20 @@ autoSave = (isDrag) =>{
                     if (this.state.image){
                         let formData = new FormData();
                         formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/course/image/${this.props.match.params.id}`, formData).then(res2 => {
+                        API.put(`${API_SERVER}v2/training/course/image/${this.state.id}`, formData).then(res2 => {
                             if (res2.data.error){
                                 toast.warning('Course edited but fail to upload image')
+                                this.setState({edited: false, isSaving: false})
                             }
                             else{
                                 if (newSession){
                                     this.addNewSession();
                                     toast.success('Automatic saving')
-                                    this.setState({edited: false})
+                                    this.setState({edited: false, isSaving: false})
                                 }
                                 else{
                                     toast.success('Course edited')
-                                    this.setState({edited: false})
+                                    this.setState({edited: false, isSaving: false})
                                 }
                             }
                         })
@@ -136,11 +144,11 @@ autoSave = (isDrag) =>{
                         if (newSession){
                             this.addNewSession();
                             toast.success('Automatic saving')
-                            this.setState({edited: false})
+                            this.setState({edited: false, isSaving: false})
                         }
                         else{
                             toast.success('Course edited')
-                            this.setState({edited: false})
+                            this.setState({edited: false, isSaving: false})
                         }
                     }
                 }
@@ -165,18 +173,21 @@ autoSave = (isDrag) =>{
                         API.put(`${API_SERVER}v2/training/course/image/${res.data.result.insertId}`, formData).then(res2 => {
                             if (res2.data.error){
                                 toast.warning('Course created but fail to upload image')
+                                this.setState({edited: false, isSaving: false})
+                                this.props.history.push(`/training/course/edit/${res.data.result.insertId}`)
                             }
                             else{
                                 this.setState({id: res.data.result.insertId})
                                 if (newSession){
                                     this.addNewSession();
                                     toast.success('Automatic saving')
-                                    this.setState({edited: false})
+                                    this.setState({edited: false, isSaving: false})
                                 }
                                 else{
                                     toast.success('Saving course')
-                                    this.setState({edited: false})
+                                    this.setState({edited: false, isSaving: false})
                                 }
+                                this.props.history.push(`/training/course/edit/${res.data.result.insertId}`)
                             }
                         })
                     }
@@ -185,10 +196,13 @@ autoSave = (isDrag) =>{
                         if (newSession){
                             this.addNewSession();
                             toast.success('Automatic saving')
+                            this.setState({isSaving: false})
                         }
                         else{
                             toast.success('Saving course')
+                            this.setState({isSaving: false})
                         }
+                        this.props.history.push(`/training/course/edit/${res.data.result.insertId}`)
                     }
                 }
             })
@@ -216,12 +230,14 @@ handleOverview = (e) => {
       let {name, value} = e.target;
       if (name==='media'){
         if (e.target.files.length){
-            if (e.target.files[0].size <= 5000000) {
+            if (e.target.files[0].size <= 500000000) {
+                this.setState({isUploading: true})
                 let formData = new FormData();
                 formData.append("media", e.target.files[0])
                 API.post(`${API_SERVER}v2/training/course/session/media/${this.state.selectedSession}`, formData).then(res => {
                     if (res.data.error){
                         toast.warning('Fail to upload image')
+                        this.setState({isUploading: false})
                     }
                     else{
                         let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
@@ -231,7 +247,7 @@ handleOverview = (e) => {
                             name: res.data.result.name,
                             url: res.data.result.url
                         })
-                        this.setState({media: media})
+                        this.setState({media: media, isUploading: false})
                     }
                 })
             } else {
@@ -270,6 +286,20 @@ handleOverview = (e) => {
           this.setState({[name]: value})
       }
   }
+
+  deleteMedia(id){
+    API.delete(`${API_SERVER}v2/training/course/session/media/${id}`).then(res => {
+        if (res.data.error){
+            toast.warning('Fail to delete media')
+        }
+        else{
+            let i = this.state.media.indexOf(this.state.media.filter(item=> item.id === id)[0]);
+            let media = this.state.media;
+            media.splice(i, 1);
+            this.forceUpdate();
+        }
+    })
+  }
   getCourse(id){
     API.get(`${API_SERVER}v2/training/course/read/${id}`).then(res => {
         if (res.data.error){
@@ -280,7 +310,7 @@ handleOverview = (e) => {
                 initialSession: res.data.result.session.length ? true : false,
                 id: res.data.result.id,
                 title: res.data.result.title,
-                overview: res.data.result.overview,
+                overview: res.data.result.overview === null || res.data.result.overview === 'Loading...' ? '' : res.data.result.overview,
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 session: res.data.result.session,
                 selectedSession : res.data.result.session.length ? res.data.result.session[0].id : '',
@@ -305,6 +335,9 @@ handleOverview = (e) => {
     }
     else if (this.props.match.params.id){
         this.getCourse(this.props.match.params.id);
+    }
+    else{
+        this.setState({overview: ''})
     }
   }
 
@@ -350,7 +383,6 @@ handleOverview = (e) => {
             let form = {
                 id : this.state.session[i].id
             }
-            console.log('ALVIN FORM DELETE', form)
             let session = this.state.session;
             session.splice(i, 1);
             this.setState({session : session});
@@ -369,6 +401,7 @@ handleOverview = (e) => {
   addNewSession(){
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         let form = {
@@ -549,6 +582,7 @@ handleOverview = (e) => {
                                                                     <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                                                                         {(provided) => (
                                                                     <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={this.selectSession.bind(this, item.id)}>
+                                                                        <i className="fa fa-bars icon-draggable"></i>
                                                                         {item.title}
                                                                         {
                                                                             this.state.selectedSession === item.id &&
@@ -657,14 +691,14 @@ handleOverview = (e) => {
                                                                                         <i className={`fa ${icon}`}></i>&nbsp;
                                                                                         {item.name}
                                                                                     </a>
-                                                                                    <i className="fa fa-times"></i>
+                                                                                    <i className="fa fa-times" onClick={this.deleteMedia.bind(this, item.id)}></i>
                                                                                 </div>
                                                                                 )
                                                                             })
                                                                         }
                                                                     </div>
-                                                                    <label for="media" className="form-control"><i className="fa fa-plus"></i> Add media</label>
-                                                                    <input type="file" id="media" name="media" class="form-control file-upload-icademy" onChange={this.handleChange} />
+                                                                    <label for="media" className="form-control" disabled={this.state.isUploading}><i className="fa fa-plus"></i> {this.state.isUploading ? 'Uploading...' : 'Add media'}</label>
+                                                                    <input type="file" id="media" name="media" disabled={this.state.isUploading} class="form-control file-upload-icademy" onChange={this.handleChange} />
                                                                 </div>
                                                             </div>
                                                             : null
@@ -685,11 +719,12 @@ handleOverview = (e) => {
                                                     {
                                                     !this.props.disabledForm &&
                                                     <button
+                                                    disabled={this.state.isSaving}
                                                     onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>
-                                                        Save
+                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
                                                     </button>
                                                     }
                                                 </div>
