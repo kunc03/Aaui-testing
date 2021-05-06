@@ -25,7 +25,10 @@ class GuruUjian extends Component {
     nilaiUjian: 0,
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
+
+    semester: [],
+    semesterId: ''
   }
 
   closeProsentase() {
@@ -95,7 +98,7 @@ class GuruUjian extends Component {
   fetchAnakSaya(userId, tahunAjaran) {
     API.get(`${API_SERVER}v2/parents/my-murid/${userId}?tahunAjaran=${tahunAjaran}`).then(res => {
       let { result } = res.data;
-      this.setState({ infoMurid: result })
+      this.setState({ infoMurid: result, semester: res.data.semester, semesterId: res.data.semester.length ? res.data.semester[0].semester_id : ''})
       this.fetchKurikulum(result.kurikulum)
     })
   }
@@ -119,7 +122,21 @@ class GuruUjian extends Component {
     const { value } = e.target;
     this.setState({ tahunAjaran: value, pelajaran: [] })
     this.fetchAnakSaya(Storage.get('user').data.user_id, value);
+  }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/parents/my-murid/${Storage.get('user').data.user_id}?tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      let { result } = res.data;
+
+      this.setState({
+        infoMurid: result,
+        semester: res.data.semester,
+        semesterId: value
+      })
+
+      this.fetchKurikulum(result.kurikulum)
+    })
   }
 
   render() {
@@ -159,14 +176,6 @@ class GuruUjian extends Component {
                               <td><b>{this.state.infoMurid.nik_murid}</b></td>
                             </tr>
                             <tr>
-                              <td>Kelas</td>
-                              <td><b>{this.state.infoMurid.kelas_nama}</b></td>
-                            </tr>
-                            <tr>
-                              <td>Semester</td>
-                              <td><b>{this.state.infoMurid.semester_name}</b></td>
-                            </tr>
-                            <tr>
                               <td>Tahun Ajaran</td>
                               <td>
                                 <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
@@ -178,6 +187,23 @@ class GuruUjian extends Component {
                                   }
                                 </select>
                               </td>
+                            </tr>
+                            <tr>
+                              <td>Semester</td>
+                              <td>
+                                <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectSemester} value={this.state.semesterId} >
+                                  <option value="" selected disabled>Select</option>
+                                  {
+                                    this.state.semester.map(item => (
+                                      <option value={item.semester_id}>{item.semester_name}</option>
+                                    ))
+                                  }
+                                </select>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Kelas</td>
+                              <td><b>{this.state.infoMurid.kelas_nama}</b></td>
                             </tr>
                             <tr>
                               <td>Kurikulum</td>

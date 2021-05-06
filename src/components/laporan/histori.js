@@ -23,10 +23,20 @@ class Laporan extends React.Component {
     muridInfo: {},
 
     kelasMurid: [],
+
+    minimalLulus: [],
+
+  }
+
+  fetchNilaiKelulusan() {
+    API.get(`${API_SERVER}v2/semester-kelulusan/${Storage.get('user').data.company_id}`).then(res => {
+      this.setState({ minimalLulus: res.data.result })
+    })
   }
 
   componentDidMount() {
     this.fetchMurid()
+    this.fetchNilaiKelulusan()
   }
 
   fetchKelasMurid(userId) {
@@ -81,7 +91,7 @@ class Laporan extends React.Component {
   }
 
   render() {
-    //console.log('state: ', this.state)
+    console.log('state: ', this.state.kelasMurid)
 
     return (
       <div className="row mt-3">
@@ -192,7 +202,11 @@ class Laporan extends React.Component {
                                     <div className="border p-4">
                                       <p>Keputusan</p>
                                       <p>Berdasarkan pencapaian seluruh kompetensi</p>
-                                      <p>Peserta didik dinyatakan <b style={parseFloat(row.total) <= 50 ? {color: 'red'}:{color: 'green'}}>{parseFloat(row.total) <= 50 ? 'Tinggal' : 'Naik'} Kelas</b></p>
+                                      <p>Peserta didik dinyatakan{' '}
+                                        <b style={(parseFloat(row.total) <= this.state.minimalLulus.filter(i => i.semester_id == row.semester_id)[0].nilai || row.total === "NaN") ? {color: 'red'}:{color: 'green'}}>
+                                          {(parseFloat(row.total) <= this.state.minimalLulus.filter(i => i.semester_id == row.semester_id)[0].nilai || row.total === "NaN") ? 'Tidak' : null} Lulus
+                                        </b>
+                                      </p>
                                     </div>
                                   </td>
                                 </tr>

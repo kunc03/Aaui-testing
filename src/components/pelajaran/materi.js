@@ -261,7 +261,17 @@ class Overview extends React.Component {
   }
 
   render() {
-    //console.log('state: ', this.state);
+    console.log('state: ', this.state);
+
+    const bulan = new Date().getMonth()
+    let minDate, maxDate;
+    if(bulan < 6) {
+      minDate = new Date((new Date()).getFullYear(), 0, 1)
+      maxDate = new Date((new Date()).getFullYear(), 5, 30)
+    } else {
+      minDate = new Date((new Date()).getFullYear(), 6, 1)
+      maxDate = new Date((new Date()).getFullYear(), 11, 31)
+    }
 
     return (
       <div className="row mt-3">
@@ -415,7 +425,13 @@ class Overview extends React.Component {
                                       <div className="col-sm-4 bordered">
                                         <div className="form-group">
                                           <label>Date</label><br />
-                                          <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                          <DatePicker
+                                            showTimeSelect
+                                            minDate={minDate}
+                                            maxDate={maxDate}
+                                            dateFormat="yyyy-MM-dd HH:mm"
+                                            selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()}
+                                            onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
                                           <label className="mb-3">Webcam</label><br />
@@ -638,7 +654,13 @@ class Overview extends React.Component {
                                   <div className="col-sm-6 bordered">
                                     <div className="form-group">
                                       <label>Date</label><br />
-                                      <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()} onChange={date => this.handleDynamicDate(date, i)} />
+                                      <DatePicker
+                                        showTimeSelect
+                                        dateFormat="yyyy-MM-dd HH:mm"
+                                        minDate={minDate}
+                                        maxDate={maxDate}
+                                        selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()}
+                                        onChange={date => this.handleDynamicDate(date, i)} />
                                     </div>
                                     <div className="form-group">
                                       <label className="mb-3">Webcam</label><br />
