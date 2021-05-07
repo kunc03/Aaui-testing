@@ -30,8 +30,8 @@ class KalenderNew extends Component {
   fetchJadwal() {
     API.get(`${API_SERVER}v2/events/${this.state.grupName}/${this.state.muridId}`).then(res => {
       if (res.data.error) console.log(`Error: fetch events`)
-      console.log(res.data, 'resssssss');
-      let mengajar = res.data.result.mengajar.map(item => {
+
+      let mengajar = res.data.result.mengajar && res.data.result.mengajar.map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -44,7 +44,7 @@ class KalenderNew extends Component {
         }
       })
 
-      let ptc = res.data.result.ptc.map(item => {
+      let ptc = res.data.result.ptc && res.data.result.ptc.map(item => {
         let stTgl = moment(item.tanggal_mulai).format('YYYY-MM-DD') + ' ' + item.waktu_mulai;
         let tglSt = new Date(stTgl)
 
@@ -55,7 +55,7 @@ class KalenderNew extends Component {
         }
       })
 
-      let tugas = res.data.result.tugas.map(item => {
+      let tugas = res.data.result.tugas && res.data.result.tugas.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
@@ -66,7 +66,7 @@ class KalenderNew extends Component {
         }
       })
 
-      let quiz = res.data.result.quiz.map(item => {
+      let quiz = res.data.result.quiz && res.data.result.quiz.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
@@ -77,7 +77,7 @@ class KalenderNew extends Component {
         }
       })
 
-      let ujian = res.data.result.ujian.map(item => {
+      let ujian = res.data.result.ujian && res.data.result.ujian.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
