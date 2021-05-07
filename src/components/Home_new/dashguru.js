@@ -162,7 +162,8 @@ class DashGuru extends Component {
       if (res.data.error) console.log(`Error: fetch events`)
 
       console.log('mengajar: ', res.data.result.mengajar);
-      let mengajar = res.data.result.mengajar.filter(item => item.chapter_title != null).map(item => {
+
+      let mengajar = res.data.result.mengajar ? res.data.result.mengajar.filter(item => item.chapter_title != null).map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -177,9 +178,10 @@ class DashGuru extends Component {
           sesi: item.chapter_id
         }
       })
+      : [];
 
       // console.log('mengajar: ', res.data.result.tugas);
-      let tugas = res.data.result.tugas.map(item => {
+      let tugas = res.data.result.tugas ? res.data.result.tugas.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -194,8 +196,9 @@ class DashGuru extends Component {
           sesi: item.exam_id
         }
       })
+      : [];
 
-      let quiz = res.data.result.quiz.map(item => {
+      let quiz = res.data.result.quiz ? res.data.result.quiz.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -210,8 +213,9 @@ class DashGuru extends Component {
           sesi: item.exam_id
         }
       })
+      : [];
 
-      let ujian = res.data.result.ujian.map(item => {
+      let ujian = res.data.result.ujian ? res.data.result.ujian.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -226,6 +230,7 @@ class DashGuru extends Component {
           sesi: item.exam_id
         }
       })
+      : [];
 
       let events = mengajar.concat(tugas.concat(quiz.concat(ujian)));
 
