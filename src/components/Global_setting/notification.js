@@ -66,7 +66,7 @@ class NotificationSetting extends React.Component {
     let id = e.target.getAttribute('data-id');
     let val = e.target.value;
 
-    API.put(`${API_SERVER}v2/notification-alert/${id}/email`, { status_website: val === "1" ? 0 : 1}).then(res => {
+    API.put(`${API_SERVER}v2/notification-alert/${id}/email`, { status_email: val === "1" ? 0 : 1}).then(res => {
       if(res.status === 200){
         this.fetchAccess();
       }
@@ -77,7 +77,17 @@ class NotificationSetting extends React.Component {
     let id = e.target.getAttribute('data-id');
     let val = e.target.value;
 
-    API.put(`${API_SERVER}v2/notification-alert/${id}/mobile`, { status_website: val === "1" ? 0 : 1}).then(res => {
+    API.put(`${API_SERVER}v2/notification-alert/${id}/mobile`, { status_mobile: val === "1" ? 0 : 1}).then(res => {
+      if(res.status === 200){
+        this.fetchAccess();
+      }
+    })
+  }
+  changeStatusWebsite = (e) => {
+    let id = e.target.getAttribute('data-id');
+    let val = e.target.value;
+
+    API.put(`${API_SERVER}v2/notification-alert/${id}/website`, { status_website: val === "1" ? 0 : 1}).then(res => {
       if(res.status === 200){
         this.fetchAccess();
       }
