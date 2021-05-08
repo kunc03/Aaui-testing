@@ -238,8 +238,8 @@ class NotificationClass extends Component {
                                       </b>
                                       &nbsp; &nbsp;
                                       <small>
-                                        {moment.utc(item.created_at).format('HH:mm')} &nbsp;
-                                        {moment.utc(item.created_at).format('DD/MM/YYYY')}
+                                        {moment.utc(item.created_at).tz('Asia/Jakarta').format('HH:mm')} &nbsp;
+                                        {moment.utc(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}
                                       </small>
                                       <p className="fc-muted mt-1">
                                         {item.description}
