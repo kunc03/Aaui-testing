@@ -472,7 +472,6 @@ class MeetingTable extends Component {
 
   }
   onSubmitForm = e => {
-    console.log('ALVIN MEET', this.state.valueFolder)
     e.preventDefault();
     if (this.state.roomName === '' || !this.state.valueFolder.length) {
       toast.warning('Judul meeting dan folder project wajib diisi')
