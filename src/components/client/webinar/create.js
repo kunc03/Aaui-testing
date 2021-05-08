@@ -53,6 +53,7 @@ export default class WebinarCreate extends Component {
     modalUpload: false,
     alert: '',
     uploading: false,
+    gb: [],
 
     // training
     optionsCourse: [],
@@ -95,7 +96,9 @@ export default class WebinarCreate extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.forceUpdate()
+    this.forceUpdate();
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CRUD_ROLES'])
+
   }
 
   fetchData() {
@@ -190,6 +193,15 @@ export default class WebinarCreate extends Component {
   selectedFolder = (val) => {
     this.setState({ folderId: val });
   }
+  
+
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+      if(res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
 
   goback() {
     this.props.history.goBack();
@@ -197,10 +209,12 @@ export default class WebinarCreate extends Component {
 
   render() {
 
+    let crudRoles = this.state.gb.length && this.state.gb.filter(item => item.code === 'CRUD_ROLES')[0].status;
     //console.log('state: ', this.state);
 
     // let levelUser = 'admin';
 
+   
     return (
       <div className="row">
         {/** STEP 1 */}
@@ -266,6 +280,8 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold"> Name </label>
+                          {
+                            crudRoles ?
                           <MultiSelect
                             id={`sekretarisId`}
                             options={this.state.optionNames}
@@ -277,6 +293,9 @@ export default class WebinarCreate extends Component {
                             valuePlaceholder="Silahkan Pilih User"
                             allSelectedLabel="Silahkan Pilih User"
                           />
+                          :
+                          <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -287,6 +306,8 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold"> Name </label>
+                          {
+                            crudRoles ?
                           <MultiSelect
                             id={`moderatorId`}
                             options={this.state.optionNames}
@@ -298,6 +319,9 @@ export default class WebinarCreate extends Component {
                             valuePlaceholder="Silahkan Pilih User"
                             allSelectedLabel="Silahkan Pilih User"
                           />
+                          :
+                          <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -308,6 +332,8 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold"> Name </label>
+                          {
+                            crudRoles ?
                           <MultiSelect
                             id={`pembicaraId`}
                             options={this.state.optionNames}
@@ -319,6 +345,9 @@ export default class WebinarCreate extends Component {
                             valuePlaceholder="Silahkan Pilih User"
                             allSelectedLabel="Silahkan Pilih User"
                           />
+                          :
+                          <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -329,6 +358,8 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold"> Name </label>
+                          {
+                            crudRoles ?
                           <MultiSelect
                             id={`ownerId`}
                             options={this.state.optionNames}
@@ -340,6 +371,9 @@ export default class WebinarCreate extends Component {
                             valuePlaceholder="Silahkan Pilih User"
                             allSelectedLabel="Silahkan Pilih User"
                           />
+                          :
+                          <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
                       {

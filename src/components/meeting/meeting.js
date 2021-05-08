@@ -832,7 +832,8 @@ class MeetingTable extends Component {
       this.fetchMeetingInfo(this.props.informationId)
     }
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_MEETING'])
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+     ['CD_MEETING','CD_MEETING','R_MEETINGS','R_MEETING','R_ATTENDANCE']);
 
   }
 
@@ -871,7 +872,18 @@ class MeetingTable extends Component {
   }
 
   render() {
-    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+
+    // ** GLOBAL SETTINGS ** //
+    let  cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    let  Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
+    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+    let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+
+    // ========= End ======== //
+
+    const notify = () => toast.warning("Access Denied");
+
+
     // const headerTabble = [
     //   // {title : 'Meeting Name', width: null, status: true},
     //   {title : 'Moderator', width: null, status: true},
@@ -982,17 +994,22 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
+      Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={ R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
-      },
+      }
+      :
+      {
+        name: 'Action',
+      }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1048,9 +1065,15 @@ class MeetingTable extends Component {
             You cannot create a new meeting because you have reached the limit.
           </span>
         }
+        {
+          Rmeetings ?
         <DataTable
           style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
         />
+        :
+      <span>sorry your access is not allowed to access the meeting room</span>
+      }
+
         <div className="table-responsive">
           {/*
           <table className="table table-hover">
