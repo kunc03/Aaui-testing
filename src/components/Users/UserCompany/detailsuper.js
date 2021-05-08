@@ -816,17 +816,18 @@ export default class CompanyDetail extends Component {
                         <Card.Body>
                           <Row style={{ marginBottom: "32px" }}>
                             <Col md={2}>
-                              <ul className="list-group list-group-flush" style={{ fontWeight: 'bold' }}>
-                                <li onClick={this.onClickMenuKiri} menu="group" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'group' ? 'back-active' : ''}`}>{this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</li>
-                                <li onClick={this.onClickMenuKiri} menu="role" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
-
-                                {this.state.tipe == 'pendidikan' &&
-                                  <div style={{ marginTop: '1px' }}>
-                                    <li onClick={this.onClickMenuKiri} menu="grade" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'grade' ? 'back-active' : ''}`}>Grade</li>
+                              {
+                                this.state.tipe == 'pendidikan' ?
+                                  <ul className="list-group list-group-flush" style={{ fontWeight: 'bold' }}>
+                                    <li onClick={this.onClickMenuKiri} menu="role" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
                                     <li onClick={this.onClickMenuKiri} menu="semester" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'semester' ? 'back-active' : ''}`}>Semester</li>
-                                  </div>
-                                }
-                              </ul>
+                                  </ul>
+                                :
+                                  <ul className="list-group list-group-flush" style={{ fontWeight: 'bold' }}>
+                                    <li onClick={this.onClickMenuKiri} menu="group" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'group' ? 'back-active' : ''}`}>{this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</li>
+                                    <li onClick={this.onClickMenuKiri} menu="role" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
+                                  </ul>
+                              }
                             </Col>
 
                             <Col md={10}>
