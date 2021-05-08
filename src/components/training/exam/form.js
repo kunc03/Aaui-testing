@@ -25,6 +25,7 @@ class FormExam extends Component {
         website: '',
         email: '',
         start_date: new Date(),
+        end_date: new Date(),
         edited: false,
 
         isSaving: false,
@@ -108,6 +109,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
@@ -160,6 +162,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
@@ -216,6 +219,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
                 created_by: Storage.get('user').data.user_id
             }
@@ -371,7 +375,8 @@ handleChangeAnswer = (value) => {
                 generate: res.data.result.generate_question ? true : false,
                 scheduled: res.data.result.scheduled ? true : false,
                 generate_membership: res.data.result.generate_membership ? true : false,
-                start_date: new Date(res.data.result.start_time),
+                start_date: res.data.result.start_time ? new Date(res.data.result.start_time) : new Date(),
+                end_date: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
                 valueCourse: [Number(res.data.result.category_id)],
@@ -698,6 +703,14 @@ handleChangeAnswer = (value) => {
                                                             <div className="form-field-top-label">
                                                                 <label for="start_date">Start Date & Time</label>
                                                                 <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_date} onChange={e => this.setState({ start_date: e, edited: true })} />
+                                                            </div>
+                                                            : null
+                                                        }
+                                                        {
+                                                            this.state.scheduled ?
+                                                            <div className="form-field-top-label">
+                                                                <label for="start_date">End Date & Time</label>
+                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.end_date} onChange={e => this.setState({ end_date: e, edited: true })} />
                                                             </div>
                                                             : null
                                                         }

@@ -12009,6 +12009,17 @@ div.code-toolbar > .toolbar span:hover {
   cursor:pointer;
 }
 
+.button-gradient-green{
+  background: linear-gradient(180deg, #35ca30 0%, #1e9600 100%);
+  border: none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor:pointer;
+}
+
 .form-section{
   border-bottom: 1px solid #e6e6e6;
   padding: 30px 0px;
@@ -12295,4 +12306,8 @@ required {
 
 .form-field-top-label > .MultiSelect .Header {
   border-radius: 10px !important;
+}
+
+.small-font > tbody > tr > td{
+  font-size:10px !important;
 }

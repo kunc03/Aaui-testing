@@ -5,6 +5,12 @@ import ModalPassword from "./modalpassword";
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+const menus = [
+  { name: 'Setting' },
+  { name: 'Security' },
+  { name: 'Profile' },
+  { name: 'Global Setting' }
+]
 class Pengaturan extends Component {
   constructor(props) {
     super(props);
@@ -91,6 +97,10 @@ class Pengaturan extends Component {
     })
   }
 
+  tabChoice(a) {
+    console.log(a)
+  }
+
   render() {
     console.log('response: ', this.state);
 
@@ -104,7 +114,24 @@ class Pengaturan extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    <div className="col-sm-12">
+                    <div className="col-sm-4">
+                      <div className="card">
+                        <div className="card-block">
+                          <h3 className="f-w-bold f-18 fc-blue mb-4">SETTINGS</h3>
+                          <div className="row m-b-100">
+                            {menus.map((item, i) => {
+                              return (
+                                <div className="col-xl-12 p-10 mb-3" style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                                  onClick={this.tabChoice.bind(this, item.name)}>
+                                  <span className={item.name ? 'fc-skyblue' : ''}>{item.name}</span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-8">
                       {/* <h3 className="f-36 f-w-bold mb-3">Pengaturan Anda !</h3> */}
                       <div className="card">
                         <div className="card-block">

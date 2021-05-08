@@ -252,6 +252,26 @@ class FormUser extends Component {
                                                 <div className="form-section">
                                                     <div className="row">
                                                         <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="training_company_id">Company Name<required>*</required></label>
+                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
+                                                                <option value="">Select Company</option>
+                                                                {
+                                                                    this.state.optionCompany.map(item=>
+                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
+                                                                    )
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-section">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
                                                             <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Personal Information</strong>
                                                         </div>
                                                     </div>
@@ -366,21 +386,8 @@ class FormUser extends Component {
                                                 </div>
                                                 <div className="form-section no-border">
                                                     <div className="row">
-                                                        <div className="col-sm-12 m-b-20">
-                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="training_company_id">Company Name<required>*</required></label>
-                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
-                                                                <option value="">Select Company</option>
-                                                                {
-                                                                    this.state.optionCompany.map(item=>
-                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
-                                                                    )
-                                                                }
-                                                            </select>
+                                                            <label for="phone"><required>*</required> By default the password is the same as email</label>
                                                         </div>
                                                     </div>
                                                 </div>

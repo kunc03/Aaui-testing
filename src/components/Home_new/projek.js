@@ -94,11 +94,12 @@ class ProjekNew extends Component {
     })
   }
   fetchProject() {
+
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
-          console.log(response.data.result, 'RESULLTT PROJECT')
+          // console.log(response.data.result, 'RESULLTT PROJECT')
           this.setState({ project: response.data.result });
         }).catch(function (error) {
           console.log(error);

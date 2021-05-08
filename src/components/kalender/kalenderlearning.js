@@ -30,8 +30,8 @@ class KalenderNew extends Component {
   fetchJadwal() {
     API.get(`${API_SERVER}v2/events/${this.state.grupName}/${this.state.muridId}`).then(res => {
       if (res.data.error) console.log(`Error: fetch events`)
-      console.log(res.data, 'resssssss');
-      let mengajar = res.data.result.mengajar.map(item => {
+
+      let mengajar = res.data.result.mengajar ? res.data.result.mengajar.map(item => {
         let stTgl = moment(item.start_date).format('YYYY-MM-DD HH:mm');
         let tglSt = new Date(stTgl)
 
@@ -43,8 +43,9 @@ class KalenderNew extends Component {
           jadwal_id: item.jadwal_id
         }
       })
+      : [];
 
-      let ptc = res.data.result.ptc.map(item => {
+      let ptc = res.data.result.ptc ? res.data.result.ptc.map(item => {
         let stTgl = moment(item.tanggal_mulai).format('YYYY-MM-DD') + ' ' + item.waktu_mulai;
         let tglSt = new Date(stTgl)
 
@@ -54,8 +55,9 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
+      : [];
 
-      let tugas = res.data.result.tugas.map(item => {
+      let tugas = res.data.result.tugas ? res.data.result.tugas.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
@@ -65,8 +67,9 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
+      : [];
 
-      let quiz = res.data.result.quiz.map(item => {
+      let quiz = res.data.result.quiz ? res.data.result.quiz.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
@@ -76,8 +79,9 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
+      : [];
 
-      let ujian = res.data.result.ujian.map(item => {
+      let ujian = res.data.result.ujian ? res.data.result.ujian.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
         let tglSt = new Date(stTgl)
 
@@ -87,6 +91,7 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
+      : [];
 
       let events = mengajar.concat(ptc.concat(tugas.concat(quiz.concat(ujian))));
 
@@ -127,18 +132,7 @@ class KalenderNew extends Component {
                 components={{ event: Event, agenda: { event: Agendas } }}
               />
               <div className="p-l-20 m-t-10">
-                <span className="p-r-5" style={{ color: '#0091FF' }}>
-                  <i className="fa fa-square"></i>
-                </span>
-              Group Meeting
-              <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
-                  <i className="fa fa-square"></i>
-                </span>
-                <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
-                  <i className="fa fa-square"></i>
-                </span>
-              Webinar
-              <span className="float-right">
+                <span className="float-right">
                   <Link to="/full-kalender">Lihat Selengkapnya</Link>
                 </span>
               </div>

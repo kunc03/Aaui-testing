@@ -238,7 +238,9 @@ class WebinarAddClass extends Component {
       this.checkProjectAccess(this.state.projectId)
     })
 
-    API.get(`${API_SERVER}v2/project/user/${this.props.match.params.projectId}`).then(response => {
+    let sqlNotFromProject = `${API_SERVER}v1/user/all/company/${this.state.companyId}`;
+    let sqlFromProject = `${API_SERVER}v2/project/user/${this.props.match.params.projectId}`;
+    API.get(this.props.match.params.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
       this.setState({ optionsName: [] })
       response.data.result.map(item => {
         this.state.optionsName.push({
@@ -658,7 +660,7 @@ class WebinarAddClass extends Component {
                         <label className="bold">Folder & File</label>
                         <div className="col-sm-12">
                           <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                            { this.state.dokumenId && <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} />}
+                            { this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
                           </div>
                         </div>
                       </div>

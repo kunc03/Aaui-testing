@@ -291,7 +291,7 @@ class MeetingTable extends Component {
     if (this.props.projectId != 0 && !this.props.webinarId) {
       apiMeeting = `${API_SERVER}v1/liveclass/project/${this.props.access_project_admin ? 'admin' : levelUser}/${userId}/${this.props.projectId}`
     }
-    else if (this.props.webinarId && this.props.projectId != 0) {
+    else if (this.props.webinarId) {
       apiMeeting = `${API_SERVER}v1/liveclass/webinar/${this.props.access_project_admin ? 'admin' : levelUser}/${userId}/${this.props.webinarId}`
     }
     else if (this.props.allMeeting) {

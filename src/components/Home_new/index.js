@@ -64,6 +64,8 @@ class HomeNew extends Component {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
     this.fetchEvent();
+
+
   }
 
   fetchDataUser() {
@@ -481,10 +483,11 @@ class HomeV2 extends Component {
     training_company_id: ''
   }
 
-  componentDidMount(){
+  componentDidMount() {
+
     let level = Storage.get('user').data.level;
     let grupName = Storage.get('user').data.grup_name;
-    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training') {
       API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
         if (res.status === 200) {
           this.setState({ training_company_id: res.data.result.training_company_id });

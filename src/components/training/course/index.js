@@ -103,8 +103,8 @@ class Course extends Component {
         },
       },
       {
-        name: 'Content',
-        selector: 'content',
+        name: 'Total Session',
+        selector: 'session_count',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
