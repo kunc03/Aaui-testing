@@ -204,7 +204,7 @@ class Laporan extends React.Component {
                                       <p>Berdasarkan pencapaian seluruh kompetensi</p>
                                       <p>Peserta didik dinyatakan{' '}
                                         <b style={(parseFloat(row.total) <= this.state.minimalLulus.filter(i => i.semester_id == row.semester_id)[0].nilai || row.total === "NaN") ? {color: 'red'}:{color: 'green'}}>
-                                          {(parseFloat(row.total) <= this.state.minimalLulus.filter(i => i.semester_id == row.semester_id)[0].nilai || row.total === "NaN") ? 'Tinggal' : 'Naik'} Kelas
+                                          {(parseFloat(row.total) <= this.state.minimalLulus.filter(i => i.semester_id == row.semester_id)[0].nilai || row.total === "NaN") ? 'Tidak' : null} Lulus
                                         </b>
                                       </p>
                                     </div>

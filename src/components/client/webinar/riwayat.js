@@ -256,7 +256,6 @@ export default class WebinarRiwayat extends Component {
       API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
         toast.success('Mengirim sertifikat kepada peserta');
         this.handleModal();
-        console.log('ALVIN SERT', formData)
       });
     }
   }
@@ -340,7 +339,7 @@ export default class WebinarRiwayat extends Component {
             <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{fontSize:12}} onChange={(e) => this.filterPeserta(e)}>
               <option value="Semua" selected> All</option>
               <option value="Hadir"> Present</option>
-              <option value="Tidak Hadir"> No Present</option>
+              <option value="Tidak Hadir"> Not Present</option>
             </select>
           </div>
           <table id="table-peserta" className="table table-striped">

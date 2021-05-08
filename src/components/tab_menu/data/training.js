@@ -21,6 +21,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
         route: '/training/membership'
+    },
+    {
+        label: 'Report',
+        icon: 'reports.svg',
+        iconActive: 'reports-active.svg',
+        route: '/training/report'
     }
 ]
 : level.toLowerCase() === 'client' && grupName.toLowerCase() === 'user training' ?
@@ -71,7 +77,7 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Webinar',
+        label: 'Live Class',
         icon: 'webinars.svg',
         iconActive: 'webinars-active.svg',
         route: '/training/webinar'
@@ -89,6 +95,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/questions'
     },
     {
+        label: 'Report',
+        icon: 'reports.svg',
+        iconActive: 'reports-active.svg',
+        route: '/training/report'
+    },
+    {
         label: 'Settings',
         icon: 'settings.png',
         iconActive: 'settings-active.png',
@@ -99,8 +111,8 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
 [
     {
         label: 'Quota',
-        icon: 'practice.svg',
-        iconActive: 'practice-active.svg',
+        icon: 'quota.svg',
+        iconActive: 'quota-active.svg',
         route: '/training'
     },
     {
@@ -140,7 +152,7 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Webinar',
+        label: 'Live Class',
         icon: 'webinars.svg',
         iconActive: 'webinars-active.svg',
         route: '/training/webinar'
@@ -156,6 +168,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         icon: 'questions.svg',
         iconActive: 'questions-active.svg',
         route: '/training/questions'
+    },
+    {
+        label: 'Report',
+        icon: 'reports.svg',
+        iconActive: 'reports-active.svg',
+        route: '/training/report'
     },
     {
         label: 'Settings',

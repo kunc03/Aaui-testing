@@ -11784,6 +11784,7 @@ div.code-toolbar > .toolbar span:hover {
 
 .wrap::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
   background-color: #F5F5F5;
 }
 
@@ -11999,6 +12000,17 @@ div.code-toolbar > .toolbar span:hover {
 
 .button-gradient-blue{
   background: linear-gradient(180deg, #00B1F0 0%, #0079DC 100%);
+  border: none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor:pointer;
+}
+
+.button-gradient-green{
+  background: linear-gradient(180deg, #35ca30 0%, #1e9600 100%);
   border: none;
   border-radius: 4px;
   color: #FFFFFF;
@@ -12285,4 +12297,17 @@ required {
   cursor:n-resize;
   margin-right: 5px;
   color: #add6ff;
+}
+
+.form-field-top-label > .react-datepicker-wrapper >.react-datepicker__input-container > input{
+  padding: 16px 20px;
+  border-radius:10px;
+}
+
+.form-field-top-label > .MultiSelect .Header {
+  border-radius: 10px !important;
+}
+
+.small-font > tbody > tr > td{
+  font-size:10px !important;
 }

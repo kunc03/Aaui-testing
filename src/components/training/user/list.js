@@ -132,7 +132,7 @@ class User extends Component {
       else{
         if (this.state.optionsExam.length === 0){
           res.data.result.map((item)=>{
-            this.state.optionsExam.push({label: item.title, value: item.id})
+            this.state.optionsExam.push({label: `Exam : ${item.title}`, value: item.id})
           })
           API.get(`${API_SERVER}v2/training/exam/${companyId}/0`).then(res => {
             if (res.data.error){
@@ -140,7 +140,7 @@ class User extends Component {
             }
             else{
               res.data.result.map((item)=>{
-                this.state.optionsExam.push({label: item.title, value: item.id})
+                this.state.optionsExam.push({label: `Quiz : ${item.title}`, value: item.id})
               })
             }
           })

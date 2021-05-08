@@ -62,7 +62,7 @@ class Webinar extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Webinar'/>
+                                        <TabMenu title='Training' selected='Live Class'/>
                                         <div>
                                                         <Webinars access_project_admin={access_project_admin} titleColor='black' training={true}/>
                                         </div>
