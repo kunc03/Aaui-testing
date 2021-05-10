@@ -214,7 +214,7 @@ class News extends Component {
                                                         columns={columns}
                                                         data={data}
                                                         highlightOnHover
-                                                        defaultSortField="name"
+                                                        noDataComponent="There are no news to display"
                                                         pagination
                                                         fixedHeader
                                                         />
