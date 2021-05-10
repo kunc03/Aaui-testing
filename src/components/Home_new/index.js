@@ -15,6 +15,7 @@ import JadwalHariIni from './jadwalHariIni';
 import PengumumanTerbaru from './pengumumanTerbaru';
 import TugasYangDikerjakan from './tugasYangDikerjakan';
 import UjianYangAkanDatang from './ujianYangAkanDatang';
+import NewsList from '../news/list';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -47,7 +48,7 @@ class HomeNew extends Component {
     kursusDiikuti: [],
     recentDocs: []
   }
-
+  
   onChangeInput = e => {
     const name = e.target.name;
     const value = e.target.value;
@@ -370,6 +371,9 @@ class HomeNew extends Component {
                         </div>
                         <div className="col-sm-12">
                           <CalenderNew lists={kursusTerbaru} />
+                        </div>
+                        <div className="col-sm-12">
+                          <NewsList widgetMode={true}/>
                         </div>
                       </div>
                       <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>

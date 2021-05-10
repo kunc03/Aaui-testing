@@ -27,7 +27,7 @@ class FormCompany extends Component {
         this.props.goBack();
     }
     else{
-        this.props.history.push('/training');
+        this.props.history.push('/training/company');
     }
   }
 

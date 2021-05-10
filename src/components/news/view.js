@@ -26,12 +26,7 @@ class ViewNews extends Component {
   }
   
   goBack() {
-    if (this.props.goBack){
-        this.props.goBack();
-    }
-    else{
-        this.props.history.push('/news');
-    }
+    this.props.history.goBack();
   }
 
   closeModalDelete = e => {

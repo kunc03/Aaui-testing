@@ -10,7 +10,6 @@ import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { Modal, Badge } from 'react-bootstrap';
 import Moment from 'moment-timezone';
-import NewsList from './list';
 
 class News extends Component {
   constructor(props) {
@@ -29,14 +28,6 @@ class News extends Component {
     this.goBack = this.goBack.bind(this);
   }
   
-  goTo(url) {
-    if (url === 'back'){
-      this.props.history.goBack();
-    }
-    else{
-      this.props.history.push(url);
-    }
-  }
   goBack() {
     this.props.history.goBack();
   }
@@ -155,7 +146,7 @@ class News extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : this.props.history.push('/news/edit/' + row.id);break;
+                case 1 : this.props.goTo('/news/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
                 default : this.props.goTo('/news');break;
               }
@@ -176,7 +167,7 @@ class News extends Component {
         allowOverflow: true,
         button: true,
         width: '56px',
-        omit: Storage.get('user').data.level === 'client' ? true : false
+        omit: Storage.get('user').data.level === 'client' || this.props.widgetMode ? true : false
       },
     ];
     let {data, filter} = this.state;
@@ -188,33 +179,66 @@ class News extends Component {
       )
     }
     return(
-        <div className="pcoded-main-container">
-            <div className="pcoded-wrapper">
-                <div className="pcoded-content">
-                    <div className="pcoded-inner-content">
-                        <div className="main-body">
-                            <div className="page-wrapper">
-                                <div className="floating-back">
-                                    <img
-                                    src={`newasset/back-button.svg`}
-                                    alt=""
-                                    width={90}
-                                    onClick={this.goBack}
-                                    ></img>
-                                </div>
-                                <div className="row">
-                                    <div className="col-xl-12">
-                                        <div>
-                                            <NewsList goTo={this.goTo.bind(this)}/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                            <div className="card p-20 main-tab-container">
+                                                <div className="row">
+                                                    <div className="col-sm-12 m-b-20">
+                                                        {
+                                                            !this.props.widgetMode ?
+                                                                <strong className="f-w-bold f-18" style={{color:'#000'}}>News</strong>
+                                                            :
+                                                                <strong className="f-w-900 f-18 fc-blue">News</strong>
+                                                        }
+                                                        {
+                                                            Storage.get('user').data.level !== 'client' && !this.props.widgetMode ?
+                                                            <Link
+                                                            to={`/news/create`}>
+                                                                <button
+                                                                className="btn btn-icademy-primary float-right"
+                                                                style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                                                                    <i className="fa fa-plus"></i>
+                                                                    Create New
+                                                                </button>
+                                                            </Link>
+                                                            : null
+                                                        }
+                                                        {
+                                                            !this.props.widgetMode ?
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Search"
+                                                                onChange={this.filter}
+                                                                className="form-control float-right col-sm-3"/>
+                                                            : null
+                                                        }
+                                                        <DataTable
+                                                        columns={columns}
+                                                        data={data}
+                                                        highlightOnHover
+                                                        defaultSortField="name"
+                                                        pagination
+                                                        fixedHeader
+                                                        />
+                                                    </div>
+                                                </div>
+          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this news ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
+                                            </div>
     )
   }
 }
