@@ -209,7 +209,7 @@ p {
 }
 
 strong {
-  font-weight: 400;
+  font-weight: bold;
 }
 
 /* .f-32{
@@ -12310,4 +12310,9 @@ required {
 
 .small-font > tbody > tr > td{
   font-size:10px !important;
+}
+
+.html-content{
+  margin: 15px;
+  color: #191919;
 }

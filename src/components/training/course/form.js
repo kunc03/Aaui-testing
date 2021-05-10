@@ -5,6 +5,9 @@ import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
 import { Modal } from 'react-bootstrap';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import ToggleSwitch from "react-switch";
+import DatePicker from "react-datepicker";
+import Moment from 'moment-timezone';
 
 class FormCourse extends Component {
   constructor(props) {
@@ -25,6 +28,9 @@ class FormCourse extends Component {
         email: '',
         isUploading: false,
         isSaving: false,
+        scheduled: false,
+        start_time: new Date(),
+        end_time: new Date(),
 
         content:'Loading...',
         title: '',
@@ -49,6 +55,10 @@ class FormCourse extends Component {
     }
   }
 
+  ToggleSwitchScheduled(checked) {
+    this.setState({ scheduled: !this.state.scheduled, edited: true });
+  }
+
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
   }
@@ -66,6 +76,9 @@ autoSave = (isDrag) =>{
                 image: this.state.image,
                 title: this.state.title,
                 overview: this.state.overview,
+                scheduled: this.state.scheduled ? 1 : 0,
+                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -111,6 +124,9 @@ autoSave = (isDrag) =>{
                 image: this.state.image,
                 title: this.state.title,
                 overview: this.state.overview,
+                scheduled: this.state.scheduled ? 1 : 0,
+                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -159,6 +175,9 @@ autoSave = (isDrag) =>{
                 company_id: this.state.companyId,
                 title: this.state.title,
                 overview: this.state.overview,
+                scheduled: this.state.scheduled ? 1 : 0,
+                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -311,6 +330,9 @@ handleOverview = (e) => {
                 id: res.data.result.id,
                 title: res.data.result.title,
                 overview: res.data.result.overview === null || res.data.result.overview === 'Loading...' ? '' : res.data.result.overview,
+                scheduled: res.data.result.scheduled ? true : false,
+                start_time: res.data.result.start_time ? new Date(res.data.result.start_time) : new Date(),
+                end_time: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 session: res.data.result.session,
                 selectedSession : res.data.result.session.length ? res.data.result.session[0].id : '',
@@ -564,6 +586,36 @@ handleOverview = (e) => {
                                                                         :null
                                                                     }
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-section">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Course Configuration</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="scheduled">Scheduled</label>
+                                                            <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
+                                                            <p className="form-notes">{this.state.scheduled ? 'Course will available for certain schedule' : 'Course always available'}</p>
+                                                        </div>
+                                                        {
+                                                            this.state.scheduled ?
+                                                            <div className="form-field-top-label">
+                                                                <label for="start_time">Start Date & Time</label>
+                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.start_time} onChange={e => this.setState({ start_time: e, edited: true })} />
+                                                            </div>
+                                                            : null
+                                                        }
+                                                        {
+                                                            this.state.scheduled ?
+                                                            <div className="form-field-top-label">
+                                                                <label for="end_time">End Date & Time</label>
+                                                                <DatePicker showTimeSelect dateFormat="yyyy-MM-dd HH:mm" selected={this.state.end_time} onChange={e => this.setState({ end_time: e, edited: true })} />
+                                                            </div>
+                                                            : null
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="form-section no-border">

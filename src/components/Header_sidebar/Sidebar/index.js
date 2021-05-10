@@ -149,6 +149,7 @@ class SidebarClass extends Component {
       other: {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
           { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
           // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
           // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
@@ -189,6 +190,7 @@ class SidebarClass extends Component {
     let menuAdmins = {
       submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
@@ -232,6 +234,7 @@ class SidebarClass extends Component {
     let menuSuperAdmins = {
       submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
         // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },

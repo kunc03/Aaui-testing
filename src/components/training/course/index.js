@@ -56,7 +56,7 @@ class Course extends Component {
   }
 
   getCourseList(companyId){
-    API.get(`${API_SERVER}v2/training/course-list/${companyId}`).then(res => {
+    API.get(`${API_SERVER}v2/training/course-list-admin/${companyId}`).then(res => {
         if (res.data.error){
             toast.error('Error read course list')
         }

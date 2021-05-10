@@ -119,6 +119,7 @@ export default class WebinarCreate extends Component {
           });
       }
     })
+<<<<<<< HEAD
     if (this.props.match.params.training === 'by-training') {
       API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
         if (res.data.error) {
@@ -129,6 +130,18 @@ export default class WebinarCreate extends Component {
             this.state.optionsCourse.push({ label: item.title, value: item.id })
           })
         }
+=======
+    if (this.props.match.params.training === 'by-training'){
+      API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
+          if (res.data.error){
+              toast.error(`Error read course list`)
+          }
+          else{
+              res.data.result.map((item)=>{
+                  this.state.optionsCourse.push({label: item.title, value: item.id})
+              })
+          }
+>>>>>>> origin/alvin
       })
     }
   }

@@ -69,6 +69,7 @@ autoSave = (isDrag) =>{
     if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -112,6 +113,7 @@ autoSave = (isDrag) =>{
     e.preventDefault();
     if (!this.state.valueLicensesType.length || !this.state.valueCourse.length){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -280,7 +282,7 @@ handleOverview = (e) => {
                     })
                 }
             })
-            API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+            API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
                 if (res.data.error){
                     toast.error(`Error read course list`)
                 }
@@ -370,6 +372,7 @@ handleOverview = (e) => {
   addNewSession(){
     if (!this.state.title){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         let form = {
