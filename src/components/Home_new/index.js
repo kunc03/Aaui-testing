@@ -497,6 +497,15 @@ class HomeV2 extends Component {
     }
   }
 
+  goTo(url) {
+    if (url === 'back'){
+      this.props.history.goBack();
+    }
+    else{
+      this.props.history.push(url);
+    }
+  }
+
   render() {
     if (this.state.level === "client") {
       if (this.state.grupName.toLowerCase() === "guru") {
@@ -525,7 +534,7 @@ class HomeV2 extends Component {
         )
       } else if (this.state.grupName.toLowerCase() === "admin training") {
         return (
-          <TrainingDetailCompany id={this.state.training_company_id} />
+          <TrainingDetailCompany goTo={this.goTo.bind(this)} id={this.state.training_company_id} />
         )
       } else {
         return (

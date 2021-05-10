@@ -8,7 +8,7 @@ class DetailUser extends Component {
   }
   
   goBack() {
-    this.props.history.push('/training/user');
+    this.props.history.goBack();
   }
   goEdit() {
     this.props.history.push(`/training/user/edit/${this.props.match.params.id}`);
