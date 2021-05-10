@@ -344,12 +344,12 @@ class User extends Component {
                                                         </a>
                                                     </div>
                                                     <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
-                                                        <label for="file-import" style={{cursor:'pointer', overflow:'hidden'}}>
+                                                        <label for={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} style={{cursor:'pointer', overflow:'hidden'}}>
                                                           <div className="button-bordered-grey">
                                                               {this.state.file ? this.state.file.name : 'Choose'}
                                                           </div>
                                                         </label>
-                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                        <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'}onChange={this.handleChangeFile} />
                                                         <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
                                                             <i
                                                                 className="fa fa-upload"

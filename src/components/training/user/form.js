@@ -34,7 +34,7 @@ class FormUser extends Component {
         this.props.goBack();
     }
     else{
-        this.props.history.push('/training/user');
+        this.props.history.goBack();
     }
   }
 
@@ -115,17 +115,17 @@ class FormUser extends Component {
                     API.put(`${API_SERVER}v2/training/user/image/${res.data.result.insertId}`, formData).then(res2 => {
                         if (res2.data.error){
                             toast.warning(`${this.state.level} created but fail to upload image`)
-                            this.props.history.push(`/training/user`)
+                            this.goBack()
                         }
                         else{
                             toast.success(`New ${this.state.level} added`)
-                            this.props.history.push(`/training/user`)
+                            this.goBack()
                         }
                     })
                 }
                 else{
                     toast.success(`New ${this.state.level} added`)
-                    this.props.history.push(`/training/user`)
+                    this.goBack()
                 }
               }
           })

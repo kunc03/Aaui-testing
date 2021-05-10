@@ -9,7 +9,7 @@ class DetailCompany extends Component {
   }
   
   goBack() {
-    this.props.history.push('/training');
+    this.props.history.push('/training/company');
   }
   goEdit() {
     this.props.history.push(`/training/company/edit/${this.props.match.params.id}`);
