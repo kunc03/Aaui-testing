@@ -8,6 +8,7 @@ import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import Moment from 'moment-timezone';
+import axios from 'axios'
 
 class FormCourse extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ class FormCourse extends Component {
         file: '',
         selectedSession: '',
         media: [],
+        progressUploadMedia: 0,
         modalDelete: false,
         disabledForm: this.props.disabledForm && this.props.id,
         session: []
@@ -253,10 +255,19 @@ handleOverview = (e) => {
                 this.setState({isUploading: true})
                 let formData = new FormData();
                 formData.append("media", e.target.files[0])
-                API.post(`${API_SERVER}v2/training/course/session/media/${this.state.selectedSession}`, formData).then(res => {
+                let token = Storage.get('token');
+                var config = {
+                  onUploadProgress: progressEvent => {
+                    this.setState({progressUploadMedia: Math.round( (progressEvent.loaded * 100) / progressEvent.total )});
+                  },
+                  headers: {
+                    Authorization: token.data,
+                  }
+                };
+                axios.post(`${API_SERVER}v2/training/course/session/media/${this.state.selectedSession}`, formData, config).then(res => {
                     if (res.data.error){
                         toast.warning('Fail to upload image')
-                        this.setState({isUploading: false})
+                        this.setState({isUploading: false, progressUploadMedia: 0})
                     }
                     else{
                         let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
@@ -266,7 +277,7 @@ handleOverview = (e) => {
                             name: res.data.result.name,
                             url: res.data.result.url
                         })
-                        this.setState({media: media, isUploading: false})
+                        this.setState({media: media, isUploading: false, progressUploadMedia: 0})
                     }
                 })
             } else {
@@ -749,7 +760,11 @@ handleOverview = (e) => {
                                                                             })
                                                                         }
                                                                     </div>
-                                                                    <label for="media" className="form-control" disabled={this.state.isUploading}><i className="fa fa-plus"></i> {this.state.isUploading ? 'Uploading...' : 'Add media'}</label>
+                                                                    <label for="media" className="form-control" disabled={this.state.isUploading}>
+                                                                        <div className='loading-button' style={{width:this.state.progressUploadMedia+'%'}}></div>
+                                                                        {this.state.isUploading ? null : <i className="fa fa-plus"></i>}&nbsp;
+                                                                        {this.state.isUploading ? `Uploading... ${this.state.progressUploadMedia}%` : 'Add media'}
+                                                                    </label>
                                                                     <input type="file" id="media" name="media" disabled={this.state.isUploading} class="form-control file-upload-icademy" onChange={this.handleChange} />
                                                                 </div>
                                                             </div>
