@@ -21,14 +21,10 @@ import ClassBantuan from "./components/bantuan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import NotificationAlert from "./components/Global_setting/notification";
 import Profile from "./components/Profile/index";
-<<<<<<< HEAD
-
 import FullCalender from "./components/kalender/fullKalender"
-=======
 import News from "./components/news/index";
 import NewsForm from "./components/news/form";
 import NewsView from "./components/news/view";
->>>>>>> origin/alvin
 // import Files from "./components/files/files";
 
 // Dashboard New Home Detail
