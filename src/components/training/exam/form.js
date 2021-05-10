@@ -94,6 +94,7 @@ class FormExam extends Component {
     if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.valueLicensesType || !this.state.time || !this.state.minScore){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -147,6 +148,7 @@ class FormExam extends Component {
     if (!this.state.edited && !newQuestion) {this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.valueLicensesType || !this.state.time || !this.state.minScore){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.state.id){
@@ -402,7 +404,7 @@ handleChangeAnswer = (value) => {
                     res.data.result.map((item)=>{
                         this.state.optionsLicensesType.push({label: item.name, value: item.id})
                     })
-                    API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+                    API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
                         if (res.data.error){
                             toast.error(`Error read course list`)
                         }
@@ -562,6 +564,7 @@ handleChangeAnswer = (value) => {
   addNewQuestion(){
     if (!this.state.title || !this.state.valueLicensesType || !this.state.time || !this.state.minScore){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         let form = {

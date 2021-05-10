@@ -6,21 +6,24 @@ import Dropdown, {
 } from '@trendmicro/react-dropdown';
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import TabMenu from '../../tab_menu/route';
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
-import Storage from '../../../repository/storage';
-import { Modal } from 'react-bootstrap';
+import API, { API_SERVER, USER_ME } from '../../repository/api';
+import Storage from '../../repository/storage';
+import { Modal, Badge } from 'react-bootstrap';
 import Moment from 'moment-timezone';
 
-class Course extends Component {
+class News extends Component {
   constructor(props) {
     super(props);
     this.state = {
       companyId: '',
       data : [],
       filter:'',
+      file:'',
       modalDelete: false,
-      deleteId: ''
+      deleteId: '',
+      isUploading: false,
+      modalResultImport: false,
+      resultImport: {field: [], data: []}
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -29,8 +32,42 @@ class Course extends Component {
     this.props.history.goBack();
   }
 
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
+  }
+
+  uploadData = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('company_id', this.state.companyId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/training/questions/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Data import failed')
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            this.getUserData()
+            this.setState({ isUploading: false, file: '', modalResultImport: true, resultImport: res.data.result });
+          }
+        }
+      })
+    }
+  }
+
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalResult = e => {
+    this.setState({ modalResultImport: false })
   }
 
   onClickHapus(id){
@@ -38,14 +75,14 @@ class Course extends Component {
   }
 
   delete (id){
-    API.delete(`${API_SERVER}v2/training/course/${id}`).then(res => {
+    API.delete(`${API_SERVER}v2/news/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error delete course')
+            toast.error('Error delete news')
         }
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.success('Course deleted');
+          toast.success('News deleted');
         }
     })
   }
@@ -55,10 +92,10 @@ class Course extends Component {
     this.setState({ filter: e.target.value });
   }
 
-  getCourseList(companyId){
-    API.get(`${API_SERVER}v2/training/course-list-admin/${companyId}`).then(res => {
+  getList(companyId){
+    API.get(`${API_SERVER}v2/news/${companyId}`).then(res => {
         if (res.data.error){
-            toast.error('Error read course list')
+            toast.error('Error read news list')
         }
         else{
             this.setState({data: res.data.result})
@@ -70,7 +107,7 @@ class Course extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-          this.getCourseList(this.state.companyId)
+          this.getList(this.state.companyId)
         }
     })
   }
@@ -85,17 +122,18 @@ class Course extends Component {
         name: 'Thumbnail',
         selector: 'image',
         sortable: true,
-        cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
+        cell: row => <Link to={'/news/'+row.id}><img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} /></Link>
       },
       {
         name: 'Title',
         selector: 'title',
         sortable: true,
         grow: 2,
+        cell: row => <Link to={'/news/'+row.id}>{row.title}</Link>
       },
       {
         cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        name: 'Publish Date',
+        name: 'Created at',
         selector: 'created_at',
         sortable: true,
         style: {
@@ -103,30 +141,14 @@ class Course extends Component {
         },
       },
       {
-        name: 'Total Session',
-        selector: 'session_count',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      // {
-      //   name: 'Status',
-      //   selector: 'status',
-      //   sortable: true,
-      //   style: {
-      //     color: 'rgba(0,0,0,.54)',
-      //   },
-      // },
-      {
         cell: row =>
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : this.props.history.push('/training/course/edit/' + row.id);break;
+                case 1 : this.props.goTo('/news/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
-                default : this.props.goTo('/training/course');break;
+                default : this.props.goTo('/news');break;
               }
             }}
           >
@@ -145,6 +167,7 @@ class Course extends Component {
         allowOverflow: true,
         button: true,
         width: '56px',
+        omit: Storage.get('user').data.level === 'client' || this.props.widgetMode ? true : false
       },
     ];
     let {data, filter} = this.state;
@@ -156,42 +179,37 @@ class Course extends Component {
       )
     }
     return(
-        <div className="pcoded-main-container">
-            <div className="pcoded-wrapper">
-                <div className="pcoded-content">
-                    <div className="pcoded-inner-content">
-                        <div className="main-body">
-                            <div className="page-wrapper">
-                                <div className="floating-back">
-                                    <img
-                                    src={`newasset/back-button.svg`}
-                                    alt=""
-                                    width={90}
-                                    onClick={this.goBack}
-                                    ></img>
-                                </div>
-                                <div className="row">
-                                    <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Course'/>
-                                        <div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Course List</strong>
-                                                        <Link
-                                                        to={`/training/course/create`}>
-                                                            <button
-                                                            className="btn btn-icademy-primary float-right"
-                                                            style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                                                                <i className="fa fa-plus"></i>
-                                                                Create New
-                                                            </button>
-                                                        </Link>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Search"
-                                                            onChange={this.filter}
-                                                            className="form-control float-right col-sm-3"/>
+                                                        {
+                                                            !this.props.widgetMode ?
+                                                                <strong className="f-w-bold f-18" style={{color:'#000'}}>News</strong>
+                                                            :
+                                                                <strong className="f-w-900 f-18 fc-blue">News</strong>
+                                                        }
+                                                        {
+                                                            Storage.get('user').data.level !== 'client' && !this.props.widgetMode ?
+                                                            <Link
+                                                            to={`/news/create`}>
+                                                                <button
+                                                                className="btn btn-icademy-primary float-right"
+                                                                style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                                                                    <i className="fa fa-plus"></i>
+                                                                    Create New
+                                                                </button>
+                                                            </Link>
+                                                            : null
+                                                        }
+                                                        {
+                                                            !this.props.widgetMode ?
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Search"
+                                                                onChange={this.filter}
+                                                                className="form-control float-right col-sm-3"/>
+                                                            : null
+                                                        }
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
@@ -202,15 +220,6 @@ class Course extends Component {
                                                         />
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
@@ -218,7 +227,7 @@ class Course extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this course ?</div>
+              <div>Are you sure want to delete this news ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
@@ -229,9 +238,9 @@ class Course extends Component {
               </button>
             </Modal.Footer>
           </Modal>
-        </div>
+                                            </div>
     )
   }
 }
 
-export default Course;
+export default News;

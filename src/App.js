@@ -20,6 +20,9 @@ import GlobalSettings from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
 
 import FullCalender from "./components/kalender/fullKalender"
+import News from "./components/news/index";
+import NewsForm from "./components/news/form";
+import NewsView from "./components/news/view";
 // import Files from "./components/files/files";
 
 // Dashboard New Home Detail
@@ -374,6 +377,10 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/webinars" exact component={Webinar} />
 
         <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/news" exact component={News} />
+        <Route path="/news/create" exact component={NewsForm} />
+        <Route path="/news/edit/:id" exact component={NewsForm} />
+        <Route path="/news/:id" exact component={NewsView} />
         <Route path="/profile" component={Profile} />
         {/* <Route path="/files" component={Files} /> */}
         <Route path="/notification" component={Notification} />
@@ -460,6 +467,10 @@ export class AdminSwitch extends React.Component {
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
 
         <Route path="/pengaturan" exact component={Pengaturan} />
+        <Route path="/news" exact component={News} />
+        <Route path="/news/create" exact component={NewsForm} />
+        <Route path="/news/edit/:id" exact component={NewsForm} />
+        <Route path="/news/:id" exact component={NewsView} />
         <Route path="/global-settings" component={GlobalSettings} />
 
         <Route path="/profile" exact component={Profile} />
@@ -630,6 +641,8 @@ export class ClientSwitch extends React.Component {
         <Route path="/webinars" exact component={Webinar} />
 
         <Route path="/pengaturan" component={Pengaturan} />
+        <Route path="/news" exact component={News} />
+        <Route path="/news/:id" exact component={NewsView} />
 
         <Route path="/kursus" component={Kursus} />
 
