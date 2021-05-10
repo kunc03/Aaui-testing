@@ -402,7 +402,7 @@ handleChangeAnswer = (value) => {
                     res.data.result.map((item)=>{
                         this.state.optionsLicensesType.push({label: item.name, value: item.id})
                     })
-                    API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+                    API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
                         if (res.data.error){
                             toast.error(`Error read course list`)
                         }
