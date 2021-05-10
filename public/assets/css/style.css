@@ -12299,6 +12299,15 @@ required {
   color: #add6ff;
 }
 
+.loading-button{
+  position:absolute;
+  top:0px;
+  left:0px;
+  height:100%;
+  background-color: #10ca0033;
+  border-radius: 10px;
+}
+
 .form-field-top-label > .react-datepicker-wrapper >.react-datepicker__input-container > input{
   padding: 16px 20px;
   border-radius:10px;
