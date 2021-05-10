@@ -12079,6 +12079,7 @@ div.code-toolbar > .toolbar span:hover {
   cursor: pointer;
   color:rgb(146, 146, 146);
   width:auto;
+  position: relative;
 }
 
 .exam-option {
