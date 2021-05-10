@@ -20,7 +20,7 @@ class DetailCompany extends Component {
       this.props.history.goBack();
     }
     else{
-      this.props.history.push(url);
+      this.props.goTo(url);
     }
   }
   render() {
