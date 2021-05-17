@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import Moment from 'moment-timezone';
+import { Link } from "react-router-dom";
 
 class ViewNews extends Component {
   constructor(props) {
@@ -128,6 +129,20 @@ handleContent = (e) => {
                                                 <div className="row">
                                                     <div className="col-sm-10 m-b-10">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>{this.state.title}</strong>
+                                                    </div>
+                                                    <div className="col-sm-2 m-b-20">
+                                                        {
+                                                        Storage.get('user').data.level !== 'client' &&
+                                                        <Link
+                                                        to={`/news/edit/${this.state.id}`}>
+                                                            <button
+                                                            className="btn btn-icademy-primary float-right"
+                                                            style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                <i className="fa fa-edit"></i>
+                                                                Edit
+                                                            </button>
+                                                        </Link>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="row">

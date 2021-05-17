@@ -242,7 +242,7 @@ class WebinarTable extends Component {
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                                         {
                                           ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
-                                          <Link to={`/webinar/add/${item.project_id}/${item.id}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
+                                          <Link to={`/webinar/add/${item.project_id}/${item.id}/${this.props.training ? 'by-training' : 'default'}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Detail
                                           </Link>
                                         }

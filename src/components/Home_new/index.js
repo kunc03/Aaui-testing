@@ -375,20 +375,6 @@ class HomeNew extends Component {
                           <CalenderNew lists={kursusTerbaru} />
                         </div>
                         <div className="col-sm-12">
-                          <NewsList widgetMode={true}/>
-                        </div>
-                      </div>
-                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                        <div className="col-sm-12">
-                          <Card>
-                            <Card.Body>
-                              <div style={{ marginTop: '10px', overflowX: 'hidden', height: '360px' }}>
-                                <ProjekNew lists={projekDashboard} />
-                              </div>
-                            </Card.Body>
-                          </Card>
-                        </div>
-                        <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <div className="row">
@@ -410,6 +396,18 @@ class HomeNew extends Component {
                               </div>
                             </Card.Body>
                           </Card>
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <ProjekNew lists={projekDashboard} />
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <NewsList widgetMode={true}/>
                         </div>
                         {/* <div className="col-sm-12">
                           <Card>
