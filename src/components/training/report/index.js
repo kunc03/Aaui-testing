@@ -34,6 +34,8 @@ class Report extends Component {
       valueLicensesType: [],
       optionsPass: [{label: 'Yes', value: '1'},{label: 'No', value: '0'}],
       valuePass: [],
+      optionsCert: [{label: 'No', value: 'No'},{label: 'Sent', value: 'Sent'},{label: 'Failed', value: 'Failed'}],
+      valueCert: [],
       user: '',
       checkAll: false,
       isModalSertifikat: false,
@@ -181,7 +183,8 @@ class Report extends Component {
         licenses_type: this.state.valueLicensesType,
         company: this.state.companyId,
         training_company: this.state.valueCompany,
-        pass: this.state.valuePass
+        pass: this.state.valuePass,
+        cert: this.state.valueCert
     }
     API.post(`${API_SERVER}v2/training/report`, form).then(res => {
         if (res.data.error){
@@ -366,6 +369,10 @@ class Report extends Component {
                                                                 <div className="form-field-top-label" style={{width:300}}>
                                                                     <label for="pass">Pass</label>
                                                                     <MultiSelect id="pass" options={this.state.optionsPass} value={this.state.valuePass} onChange={e => this.handleChangeFilter('valuePass', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Select Pass" />
+                                                                </div>
+                                                                <div className="form-field-top-label" style={{width:300}}>
+                                                                    <label for="cert">Certificate</label>
+                                                                    <MultiSelect id="cert" options={this.state.optionsCert} value={this.state.valueCert} onChange={e => this.handleChangeFilter('valueCert', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Certificate Status" />
                                                                 </div>
                                                                 <div className="form-field-top-label">
                                                                     <label for="filter">Search</label>  

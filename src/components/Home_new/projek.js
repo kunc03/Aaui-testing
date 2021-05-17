@@ -295,7 +295,7 @@ class ProjekNew extends Component {
           </p>
         </div>
         <div className="col-sm-12" style={{ marginTop: '10px' }}>
-          {/* <div className="wrap" style={{ height: '310px', overflowY: 'scroll', overflowX: 'hidden' }}> */}
+          <div className="wrap" style={{ height: '310px', overflowY: 'scroll', overflowX: 'hidden' }}>
           {
             lists.length == 0 ?
               <div className="col-sm-12 mb-1">
@@ -361,7 +361,7 @@ class ProjekNew extends Component {
               </div>
             </div>
         </div> */}
-          {/* </div> */}
+          </div>
         </div>
         <Modal
           show={this.state.modalNewFolder}

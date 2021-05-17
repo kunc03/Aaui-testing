@@ -655,26 +655,34 @@ class WebinarAddClass extends Component {
                       </div>
                     </div>
 
-                    <div className="form-group row">
-                      <div className="col-sm-12">
-                        <label className="bold">Folder & File</label>
+                    {
+                      this.props.match.params.training === 'by-training' ?
+                      null :
+                      <div className="form-group row">
                         <div className="col-sm-12">
-                          <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                            { this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                          <label className="bold">Folder & File</label>
+                          <div className="col-sm-12">
+                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                              { this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="form-group row">
-                      <div className="col-sm-12">
-                        <label className="bold">Ruang Meeting</label>
+                    }
+                    {
+                      this.props.match.params.training === 'by-training' ?
+                      null :
+                      <div className="form-group row">
                         <div className="col-sm-12">
-                          <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                            <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                          <label className="bold">Ruang Meeting</label>
+                          <div className="col-sm-12">
+                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                              <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    }
 
                     {/* <div className="form-group row">
                       <div className="col-sm-8">

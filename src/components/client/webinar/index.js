@@ -31,7 +31,7 @@ export default class WebinarClient extends Component {
                     <Route path="/webinar/edit/:projectId/:webinar/:training" component={WebinarEdit} />
                     <Route path="/webinar/kuesioner-add" component={WebinarKuesionerAdd} />
                     
-                    <Route path="/webinar/add/:projectId/:webinarId" component={WebinarAdd} />
+                    <Route path="/webinar/add/:projectId/:webinarId/:training" component={WebinarAdd} />
                     <Route path="/webinar/roles/:projectId" component={WebinarRoles} />
                     <Route path="/webinar/create/:projectId/:training" component={WebinarCreate} />
                     <Route path="/webinar/live/:webinarId" component={WebinarLive} />
