@@ -59,12 +59,17 @@ export default class WebinarCreate extends Component {
     valueCourse: []
   }
 
-  nextStep() {
+  nextStep = e => {
     if (this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '' || (this.props.match.params.training === 'by-training' && this.state.valueCourse == '') || (this.props.match.params.training === 'default' && this.state.valuesFolder == '')) {
       toast.warning('Some field is required')
     }
     else {
-      this.setState({ isStep1: false, isStep2: true })
+      if (this.props.match.params.training === 'by-training'){
+        this.simpanWebinar(e)
+      }
+      else{
+        this.setState({ isStep1: false, isStep2: true })
+      }
     }
   }
 
@@ -362,8 +367,8 @@ export default class WebinarCreate extends Component {
 
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={this.nextStep.bind(this)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-file"></i> &nbsp; Atur Folder dan File
+                      <button onClick={e => this.nextStep(e)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                        <i className="fa fa-file"></i> &nbsp; {this.props.match.params.training === 'by-training' ? 'Save' : 'Atur Folder dan File'}
                       </button>
                     </div>
                   </div>

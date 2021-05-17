@@ -221,6 +221,15 @@ export default class WebinarEdit extends Component {
     })
   }
 
+  nextStep = e => {
+    if (this.props.match.params.training === 'by-training'){
+      this.simpanWebinar(e)
+    }
+    else{
+      this.setState({ isStep1: false, isStep2: true })
+    }
+  }
+
   render() {
 
     console.log('STATE: ', this.state);
@@ -383,8 +392,8 @@ export default class WebinarEdit extends Component {
 
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={e => this.setState({ isStep1: false, isStep2: true })} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-file"></i> &nbsp; Organize Folders and Files
+                      <button onClick={e => this.nextStep(e)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                        <i className="fa fa-file"></i> &nbsp; {this.props.match.params.training === 'by-training' ? 'Save' : 'Organize Folders and Files'}
                       </button>
                     </div>
                   </div>
