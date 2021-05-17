@@ -17,10 +17,12 @@ import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
+import SocketContext from '../../socket';
 
 import Storage from '../../repository/storage';
-const bbb = require('bigbluebutton-js')
+import moment from 'moment-timezone'
 
+const bbb = require('bigbluebutton-js')
 
 class MeetingTable extends Component {
   constructor(props) {
@@ -508,7 +510,7 @@ class MeetingTable extends Component {
               user_id: userNotif[i],
               activity_id: this.state.valueFolder[0],
               type: 3,
-              desc: `Meeting "${form.room_name}" pada tanggal ${this.state.oldStartDate} diubah ke tanggal ${startDateJkt}`,
+              desc: `Meeting "${form.room_name}" pada tanggal ${moment(this.state.oldStartDate).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')} diubah ke tanggal ${moment(startDateJkt).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
               dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
             }
             API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
@@ -1576,5 +1578,10 @@ class MeetingTable extends Component {
   }
 }
 
+const Meetings = props => (
+  <SocketContext.Consumer>
+    { socket => <MeetingTable {...props} socket={socket} />}
+  </SocketContext.Consumer>
+)
 
-export default MeetingTable;
+export default Meetings;
