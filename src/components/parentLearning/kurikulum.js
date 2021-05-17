@@ -25,7 +25,10 @@ class GuruUjian extends Component {
     nilaiUjian: 0,
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
+
+    semester: [],
+    semesterId: ''
   }
 
   closeProsentase() {
@@ -39,7 +42,7 @@ class GuruUjian extends Component {
 
   fetchProsentase(pelajaranId) {
     API.get(`${API_SERVER}v2/nilai-pelajaran/${pelajaranId}`).then(res => {
-      if(res.data.error) toast.warning(`Warning: fetch prosentase`);
+      if (res.data.error) toast.warning(`Warning: fetch prosentase`);
 
       this.setState({
         nilaiTugas: res.data.result.tugas,
@@ -95,7 +98,7 @@ class GuruUjian extends Component {
   fetchAnakSaya(userId, tahunAjaran) {
     API.get(`${API_SERVER}v2/parents/my-murid/${userId}?tahunAjaran=${tahunAjaran}`).then(res => {
       let { result } = res.data;
-      this.setState({ infoMurid: result })
+      this.setState({ infoMurid: result, semester: res.data.semester, semesterId: res.data.semester.length ? res.data.semester[0].semester_id : ''})
       this.fetchKurikulum(result.kurikulum)
     })
   }
@@ -104,11 +107,11 @@ class GuruUjian extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -119,11 +122,25 @@ class GuruUjian extends Component {
     const { value } = e.target;
     this.setState({ tahunAjaran: value, pelajaran: [] })
     this.fetchAnakSaya(Storage.get('user').data.user_id, value);
+  }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/parents/my-murid/${Storage.get('user').data.user_id}?tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      let { result } = res.data;
+
+      this.setState({
+        infoMurid: result,
+        semester: res.data.semester,
+        semesterId: value
+      })
+
+      this.fetchKurikulum(result.kurikulum)
+    })
   }
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="pcoded-main-container">
@@ -159,17 +176,9 @@ class GuruUjian extends Component {
                               <td><b>{this.state.infoMurid.nik_murid}</b></td>
                             </tr>
                             <tr>
-                              <td>Kelas</td>
-                              <td><b>{this.state.infoMurid.kelas_nama}</b></td>
-                            </tr>
-                            <tr>
-                              <td>Semester</td>
-                              <td><b>{this.state.infoMurid.semester_name}</b></td>
-                            </tr>
-                            <tr>
                               <td>Tahun Ajaran</td>
                               <td>
-                                <select style={{padding: '2px'}} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
+                                <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} >
                                   <option value="" selected disabled>Select</option>
                                   {
                                     this.state.listTahunAjaran.map(item => (
@@ -178,6 +187,23 @@ class GuruUjian extends Component {
                                   }
                                 </select>
                               </td>
+                            </tr>
+                            <tr>
+                              <td>Semester</td>
+                              <td>
+                                <select style={{ padding: '2px' }} className="mr-2" onChange={this.selectSemester} value={this.state.semesterId} >
+                                  <option value="" selected disabled>Select</option>
+                                  {
+                                    this.state.semester.map(item => (
+                                      <option value={item.semester_id}>{item.semester_name}</option>
+                                    ))
+                                  }
+                                </select>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Kelas</td>
+                              <td><b>{this.state.infoMurid.kelas_nama}</b></td>
                             </tr>
                             <tr>
                               <td>Kurikulum</td>
@@ -199,19 +225,19 @@ class GuruUjian extends Component {
                           <table className="table table-striped">
                             <thead>
                               <tr>
-                                <th style={{color: 'black'}}>No</th>
-                                <th style={{color: 'black'}}>Kode</th>
-                                <th style={{color: 'black'}}>Mata Pelajaran</th>
-                                <th style={{color: 'black'}}>Silabus</th>
-                                <th style={{color: 'black'}}>Bobot</th>
-                                <th style={{color: 'black'}}>Created At</th>
+                                <th style={{ color: 'black' }}>No</th>
+                                <th style={{ color: 'black' }}>Kode</th>
+                                <th style={{ color: 'black' }}>Mata Pelajaran</th>
+                                <th style={{ color: 'black' }}>Silabus</th>
+                                <th style={{ color: 'black' }}>Bobot</th>
+                                <th style={{ color: 'black' }}>Created At</th>
                               </tr>
                             </thead>
                             <tbody>
                               {
-                                this.state.kurikulum.map((item,i) => (
-                                  <tr key={item.title+'-'+item.start}>
-                                    <td style={{textTransform: 'capitalize'}}>{i+1}</td>
+                                this.state.kurikulum.map((item, i) => (
+                                  <tr key={item.title + '-' + item.start}>
+                                    <td style={{ textTransform: 'capitalize' }}>{i + 1}</td>
                                     <td>{item.kode_pelajaran}</td>
                                     <td>{item.nama_pelajaran}</td>
                                     <td style={{ padding: '12px' }}>
@@ -307,11 +333,11 @@ class GuruUjian extends Component {
                               </div>
                               <div className="col-sm-4">
                                 <label>Kuis (%)</label>
-                                <input  className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
+                                <input className="form-control" required type="number" value={this.state.nilaiKuis} onChange={e => this.setState({ nilaiKuis: e.target.value })} />
                               </div>
                               <div className="col-sm-4">
                                 <label>Ujian (%)</label>
-                                <input  className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
+                                <input className="form-control" required type="number" value={this.state.nilaiUjian} onChange={e => this.setState({ nilaiUjian: e.target.value })} />
                               </div>
                             </div>
                           </form>

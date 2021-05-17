@@ -67,7 +67,9 @@ class Registasi extends React.Component {
     API.get(`${API_SERVER}v2/pelajaran/company/${Storage.get('user').data.company_id}`).then(res => {
       if (res.data.error) toast.warning("Error fetch data kelas");
 
-      let reformat = res.data.result.map((item) => {
+      const arrayUniqueByKey = [...new Map(res.data.result.map(item => [item['pelajaran_id'], item])).values()];
+
+      let reformat = arrayUniqueByKey.map((item) => {
         return {
           value: item.pelajaran_id,
           label: item.kode_pelajaran + ' - ' + item.nama_pelajaran

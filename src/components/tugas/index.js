@@ -1,5 +1,5 @@
 import React from 'react';
-import API, {USER_ME, API_SERVER} from '../../repository/api';
+import API, { USER_ME, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { toast } from 'react-toastify'
 import moment from 'moment-timezone'
@@ -27,15 +27,20 @@ class Tugas extends React.Component {
     submitted: false,
 
     tahunAjaran: '',
-    listTahunAjaran: []
+    listTahunAjaran: [],
+
+    semester: [],
+    semesterId: ''
   }
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/tugas-murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch jadwal`)
+      if (res.data.error) toast.warning(`Error: fetch jadwal`)
 
       this.setState({
         semuaTugas: res.data.result.tugas.filter(item => item.quiz == 2),
+        semester: res.data.semester,
+        semesterId: res.data.semester[0].kelas_id
       })
     })
   }
@@ -44,11 +49,11 @@ class Tugas extends React.Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -92,7 +97,7 @@ class Tugas extends React.Component {
 
   fetchPertanyaan(id) {
     API.get(`${API_SERVER}v2/pelajaran/pertanyaan/semua/${id}`).then(res => {
-      if(res.data.error) toast.warning(`Error: fetch pertanyaan`)
+      if (res.data.error) toast.warning(`Error: fetch pertanyaan`)
 
       this.setState({ examSoal: res.data.result })
     })
@@ -106,9 +111,9 @@ class Tugas extends React.Component {
     form.append('examId', this.state.examId);
     form.append('deskripsi', this.state.deskripsi);
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     API.post(`${API_SERVER}v2/tugas-murid/submit`, form).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: submit tugas`)
       }
       else {
@@ -127,7 +132,7 @@ class Tugas extends React.Component {
       examId: this.state.examId
     }
     API.post(`${API_SERVER}v2/tugas-murid/submit-langsung`, form).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(`Error: submit tugas`)
       }
       else {
@@ -143,7 +148,7 @@ class Tugas extends React.Component {
     let examId = e.target.getAttribute('data-id')
     let tipeJawab = e.target.getAttribute('data-tipe')
     let cc = [...this.state.semuaTugas].filter(item => item.exam_id == examId);
-    if(cc.length) {
+    if (cc.length) {
       this.setState({ examId, tipeJawab, jawaban: cc[0].submitted[0].answer_file, isModalTugas: true, submitted: true })
       this.fetchPertanyaan(examId)
     }
@@ -155,6 +160,19 @@ class Tugas extends React.Component {
     this.fetchJadwal(value);
   }
 
+  selectSemester = e => {
+    const { value } = e.target;
+    API.get(`${API_SERVER}v2/tugas-murid/${Storage.get('user').data.user_id}?kelasId=${value}&tahunAjaran=${this.state.tahunAjaran}`).then(res => {
+      if (res.data.error) toast.warning(`Error: fetch jadwal`)
+
+      this.setState({
+        semuaTugas: res.data.result.tugas.filter(item => item.quiz == 2),
+        semester: res.data.semester,
+        semesterId: value
+      })
+    })
+  }
+
   render() {
 
     console.log(`state: `, this.state)
@@ -164,7 +182,7 @@ class Tugas extends React.Component {
 
         <div className="col-sm-12">
           <div className="card">
-            <div className="card-body" style={{ padding: '12px' }}>
+            <div className="card-body row" style={{ padding: '12px' }}>
 
               <div className="col-sm-2">
                 <label>Tahun Ajaran</label>
@@ -173,6 +191,18 @@ class Tugas extends React.Component {
                   {
                     this.state.listTahunAjaran.map(item => (
                       <option value={item}>{item}</option>
+                    ))
+                  }
+                </select>
+              </div>
+
+              <div className="col-sm-2">
+                <label>Semester</label>
+                <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
+                  <option value="" selected disabled>Select</option>
+                  {
+                    this.state.semester.map(item => (
+                      <option value={item.kelas_id}>{item.semester_name}</option>
                     ))
                   }
                 </select>
@@ -210,24 +240,24 @@ class Tugas extends React.Component {
                                 <>
                                   {
                                     item.tipe_jawab == '2' ?
-                                      <span onClick={this.openJawabanLangsung} data-tipe={item.tipe_jawab} data-id={item.exam_id} className="silabus" style={{cursor: 'pointer'}}>Open</span>
-                                    :
+                                      <span onClick={this.openJawabanLangsung} data-tipe={item.tipe_jawab} data-id={item.exam_id} className="silabus" style={{ cursor: 'pointer' }}>Open</span>
+                                      :
                                       <a href={item.submitted[0].answer_file} target="_blank" className="silabus">Open</a>
                                   }
                                 </>
-                              :
+                                :
                                 <>
-                                {
-                                  moment(item.time_finish) <= moment(new Date()) ?
-                                    'Expired'
-                                  :
-                                    moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
-                                      <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-primary">
-                                        Kirim Tugas
+                                  {
+                                    moment(item.time_finish) <= moment(new Date()) ?
+                                      'Expired'
+                                      :
+                                      moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
+                                        <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-primary">
+                                          Kirim Tugas
                                       </button>
-                                    :
-                                      'Belum Saatnya'
-                                }
+                                        :
+                                        'Belum Saatnya'
+                                  }
                                 </>
                             }
 
@@ -251,9 +281,9 @@ class Tugas extends React.Component {
             <h4 className="mb-3">{this.state.examTitle}</h4>
 
             {
-              this.state.examSoal.map((item,i) => (
+              this.state.examSoal.map((item, i) => (
                 <div className="mb-2">
-                  <label>Pertanyaan <b>{i+1}</b></label>
+                  <label>Pertanyaan <b>{i + 1}</b></label>
                   <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                 </div>
               ))
@@ -269,7 +299,7 @@ class Tugas extends React.Component {
           onHide={() => this.clearForm()}
         >
           <Modal.Header className="card-header header-kartu" closeButton>
-            { this.state.submitted ? 'Informasi Tugas' : 'Kumpulkan Tugas'}
+            {this.state.submitted ? 'Informasi Tugas' : 'Kumpulkan Tugas'}
           </Modal.Header>
           <Modal.Body>
             {
@@ -296,9 +326,9 @@ class Tugas extends React.Component {
               this.state.tipeJawab == '2' &&
               <form onSubmit={this.submitTugasLangsung}>
                 {
-                  this.state.examSoal.map((item,i) => (
+                  this.state.examSoal.map((item, i) => (
                     <div className="mb-2">
-                      <label>Pertanyaan <b>{i+1}</b></label>
+                      <label>Pertanyaan <b>{i + 1}</b></label>
                       <div className="soal" dangerouslySetInnerHTML={{ __html: item.tanya }} />
                     </div>
                   ))

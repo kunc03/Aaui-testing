@@ -39,7 +39,7 @@ class DetailMurid extends Component {
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/guru/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ jadwalKu: res.data.result })
     })
@@ -58,9 +58,9 @@ class DetailMurid extends Component {
     const title = "Report ";
     const headers = [["NO", "SUBJECT", "NILAI", "TASK", "QUIZ", "EXAM", "PRESENSI"]];
 
-    const data = this.state.nilaiMurid.map((item,i) =>
+    const data = this.state.nilaiMurid.map((item, i) =>
       [
-        i+1,
+        i + 1,
         item.nama_pelajaran,
         (item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2),
         item.totalAkhirScoreTugas,
@@ -183,11 +183,11 @@ class DetailMurid extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -221,7 +221,7 @@ class DetailMurid extends Component {
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     return (
       <div className="row mt-3">
@@ -246,7 +246,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectSemester} value={this.state.semesterId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listSemester.map((item,i) => (
+                        this.state.listSemester.map((item, i) => (
                           <option key={i} value={item.semester_id}>{item.semester_name}</option>
                         ))
                       }
@@ -257,7 +257,7 @@ class DetailMurid extends Component {
                     <select onChange={this.selectKelas} value={this.state.kelasId} className="form-control" required>
                       <option value="" selected disabled>Select</option>
                       {
-                        this.state.listKelas.map((item,i) => (
+                        this.state.listKelas.map((item, i) => (
                           <option key={i} value={item.kelas_id}>{item.kelas_nama}</option>
                         ))
                       }
@@ -379,17 +379,17 @@ class DetailMurid extends Component {
                             <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
                             <td>
                               {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
-                              <br/>
+                              <br />
                               {item.kumpulTugas.length}/{item.totalTugas.length}
                             </td>
                             <td>
                               {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
-                              <br/>
+                              <br />
                               {item.kumpulKuis.length}/{item.totalKuis.length}
                             </td>
                             <td>
                               {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
-                              <br/>
+                              <br />
                               {item.kumpulUjian.length}/{item.totalUjian.length}
                             </td>
                             <td>{item.persensi ? item.persensi + '%' : '0%'}</td>

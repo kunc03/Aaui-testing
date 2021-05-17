@@ -100,7 +100,7 @@ class Evaluasi extends Component {
     form.append('kelasId', this.state.kId);
     form.append('pelajaranId', this.state.pId);
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     API.post(`${API_SERVER}v2/principal/upload`, form).then(res => {
       console.log('res: ', res.data);
       if (res.data.error) toast.warning(`Error: upload KPI`)
@@ -134,7 +134,7 @@ class Evaluasi extends Component {
         tempFile: Math.random().toString(36),
         jId: '', sId: '', gId: '', kId: '', pId: '', fileName: '', isModal: false,
         semesterId: '', guruId: '', kelasId: '', pelajaranId: '', kinerja: res.data.result,
-        guruName: '', semesterName:'', kelasName: '', pelajaranName: '', menguasai: '', tidak: '', nilaiMurid:[]
+        guruName: '', semesterName: '', kelasName: '', pelajaranName: '', menguasai: '', tidak: '', nilaiMurid: []
       })
     })
   }
@@ -183,7 +183,7 @@ class Evaluasi extends Component {
 
   render() {
 
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
 
     const dataEvaluasi = {
       labels: ['Responden'],
