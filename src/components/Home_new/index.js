@@ -387,8 +387,10 @@ class HomeNew extends Component {
                                   </p>
                                 </div>
                               </div>
-                              <div style={{ marginTop: '10px' }}>
+                              <div style={{ overflowX: 'auto', height: '385px' }}>
+
                                 <RecentDocs lists={this.state.recentDocs} />
+
                               </div>
                             </Card.Body>
                           </Card>
@@ -512,23 +514,23 @@ class HomeV2 extends Component {
         return (
           <DashMurid />
         )
-      } else if(this.state.grupName.toLowerCase() === "parents") {
+      } else if (this.state.grupName.toLowerCase() === "parents") {
         return (
           <DashParent />
         )
-      } else if(this.state.grupName.toLowerCase() === "principal") {
+      } else if (this.state.grupName.toLowerCase() === "principal") {
         return (
           <DashPrincipal />
         )
-      } else if(this.state.grupName.toLowerCase() === "management") {
+      } else if (this.state.grupName.toLowerCase() === "management") {
         return (
           <DashManagement />
         )
-      } else if(this.state.grupName.toLowerCase() === "user training") {
+      } else if (this.state.grupName.toLowerCase() === "user training") {
         return (
           <TrainingCourse />
         )
-      } else if(this.state.grupName.toLowerCase() === "admin training") {
+      } else if (this.state.grupName.toLowerCase() === "admin training") {
         return (
           <TrainingDetailCompany goTo={this.goTo.bind(this)} id={this.state.training_company_id} />
         )

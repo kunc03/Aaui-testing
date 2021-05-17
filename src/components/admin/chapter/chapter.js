@@ -641,7 +641,7 @@ export default class ChapterPreview extends Component {
   render() {
     const { chapters, course, quiz } = this.state;
 
-    console.log('state: ', this.state);
+    //console.log('state: ', this.state);
 
     const CheckMedia = ({ media, thumbnail }) => {
       if (media) {

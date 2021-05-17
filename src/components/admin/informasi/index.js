@@ -179,7 +179,7 @@ class InformasiAdmin extends Component {
 
   render() {
 
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
 
     const Attachments = ({ lists }) => {
       let pecahFile = lists.split(',');

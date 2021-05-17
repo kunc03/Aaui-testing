@@ -39,7 +39,7 @@ class GuruKursus extends Component {
 
   fetchJadwal(tahunAjaran) {
     API.get(`${API_SERVER}v2/jadwal-mengajar/murid/${Storage.get('user').data.user_id}?tahunAjaran=${tahunAjaran}`).then(res => {
-      if(res.data.error) console.log(`Error: fetch pelajaran`)
+      if (res.data.error) console.log(`Error: fetch pelajaran`)
 
       this.setState({ jadwalKu: res.data.result })
       let r = res.data.result;
@@ -72,9 +72,9 @@ class GuruKursus extends Component {
     const title = "Report ";
     const headers = [["NO", "SUBJECT", "NILAI", "TASK", "QUIZ", "EXAM", "PRESENSI"]];
 
-    const data = this.state.nilaiMurid.map((item,i) =>
+    const data = this.state.nilaiMurid.map((item, i) =>
       [
-        i+1,
+        i + 1,
         item.nama_pelajaran,
         (item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2),
         item.totalAkhirScoreTugas,
@@ -197,11 +197,11 @@ class GuruKursus extends Component {
     let d = new Date();
     // bulan diawali dengan 0 = januari, 11 = desember
     let month = d.getMonth();
-    let tahunAjaran = month < 6 ? (d.getFullYear()-1)+'/'+d.getFullYear() : d.getFullYear()+'/'+(d.getFullYear()+1);
+    let tahunAjaran = month < 6 ? (d.getFullYear() - 1) + '/' + d.getFullYear() : d.getFullYear() + '/' + (d.getFullYear() + 1);
 
     let temp = [];
-    for(var i=0; i<6; i++) {
-      temp.push(`${d.getFullYear()-i}/${d.getFullYear()-i+1}`)
+    for (var i = 0; i < 6; i++) {
+      temp.push(`${d.getFullYear() - i}/${d.getFullYear() - i + 1}`)
     }
     this.setState({ tahunAjaran, listTahunAjaran: temp })
 
@@ -231,171 +231,171 @@ class GuruKursus extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    //console.log('state: ', this.state)
     let levelUser = Storage.get('user').data.level;
     let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
 
-    return(
-        <div className="pcoded-main-container">
-          <div className="pcoded-wrapper">
-            <div className="pcoded-content">
-              <div className="pcoded-inner-content">
-                <div className="main-body">
-                  <div className="page-wrapper">
+    return (
+      <div className="pcoded-main-container">
+        <div className="pcoded-wrapper">
+          <div className="pcoded-content">
+            <div className="pcoded-inner-content">
+              <div className="main-body">
+                <div className="page-wrapper">
 
-                    <div className="row mt-3">
-                      <div className="col-xl-12">
-                        <div className="card">
-                          <div className="card-body">
-                            <form>
-                              <div className="form-group row">
-                                <div className="col-sm-2">
-                                  <label>Tahun Ajaran</label>
-                                  <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
-                                    <option value="" selected disabled>Select</option>
-                                    {
-                                      this.state.listTahunAjaran.map(item => (
-                                        <option value={item}>{item}</option>
-                                      ))
-                                    }
-                                  </select>
-                                </div>
-
-                                <div className="col-sm-3">
-                                  <button className="btn btn-v2 btn-success mt-4 mr-2" onClick={() => this.exportPDF()}>
-                                    <i className="fa fa-download"></i> Report
-                                  </button>
-                                  <button className="btn btn-v2 btn-info mt-4" type="reset" onClick={this.resetFilter}>Reset</button>
-                                </div>
-
+                  <div className="row mt-3">
+                    <div className="col-xl-12">
+                      <div className="card">
+                        <div className="card-body">
+                          <form>
+                            <div className="form-group row">
+                              <div className="col-sm-2">
+                                <label>Tahun Ajaran</label>
+                                <select onChange={this.selectTahunAjaran} value={this.state.tahunAjaran} className="form-control" required>
+                                  <option value="" selected disabled>Select</option>
+                                  {
+                                    this.state.listTahunAjaran.map(item => (
+                                      <option value={item}>{item}</option>
+                                    ))
+                                  }
+                                </select>
                               </div>
-                            </form>
 
-                          </div>
+                              <div className="col-sm-3">
+                                <button className="btn btn-v2 btn-success mt-4 mr-2" onClick={() => this.exportPDF()}>
+                                  <i className="fa fa-download"></i> Report
+                                  </button>
+                                <button className="btn btn-v2 btn-info mt-4" type="reset" onClick={this.resetFilter}>Reset</button>
+                              </div>
+
+                            </div>
+                          </form>
+
                         </div>
                       </div>
+                    </div>
 
-                      <div className="col-xl-12">
-                        <div className="card">
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-sm-2">
-                                <img
-                                  style={{
-                                    marginTop: '36px',
-                                    marginLeft: '64px'
-                                  }}
-                                  src="/assets/images/user/avatar-1.png"
-                                  className="rounded-circle img-profile mb-4"
-                                />
-                              </div>
-
-                              <div className="col-sm-10">
-                                <form className="mt-4">
-                                  <div className="form-group row">
-                                    <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
-                                    <div className="col-sm-4">
-                                      <input type="text" value={this.state.jadwalKu.no_induk} disabled className="form-control" />
-                                    </div>
-
-                                    <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
-                                    <div className="col-sm-4">
-                                      <input type="text" value={this.state.semesterInfo.semester_name} className="form-control" />
-                                    </div>
-                                  </div>
-
-                                  <div className="form-group row">
-                                    <label className="col-sm-2 col-form-label text-right"> NAME </label>
-                                    <div className="col-sm-4">
-                                      <input type="text" value={this.state.muridInfo.nama} className="form-control" />
-                                    </div>
-
-                                    <label className="col-sm-2 col-form-label text-right">SCHOOL YEAR</label>
-                                    <div className="col-sm-4">
-                                      <input type="text" value={this.state.kelasInfo.tahun_ajaran} className="form-control" />
-                                    </div>
-                                  </div>
-
-                                  <div className="form-group row">
-                                    <label className="col-sm-2 col-form-label text-right">KELAS</label>
-                                    <div className="col-sm-4">
-                                      <input type="text" value={this.state.kelasInfo.kelas_nama} className="form-control" />
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-
+                    <div className="col-xl-12">
+                      <div className="card">
+                        <div className="card-body">
+                          <div className="row">
+                            <div className="col-sm-2">
+                              <img
+                                style={{
+                                  marginTop: '36px',
+                                  marginLeft: '64px'
+                                }}
+                                src="/assets/images/user/avatar-1.png"
+                                className="rounded-circle img-profile mb-4"
+                              />
                             </div>
 
-                            <div className="row">
-                              <div className="col-sm-12">
-                                <table className="table table-striped mt-4 table-bordered">
-                                  <thead>
-                                    <tr className="text-center">
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
-                                      <td colSpan="3">NILAI HASIL BELAJAR</td>
-                                      <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
-                                    </tr>
-                                    <tr className="text-center">
-                                      <td>TASK</td>
-                                      <td>QUIZ</td>
-                                      <td>EXAM</td>
-                                    </tr>
-                                  </thead>
+                            <div className="col-sm-10">
+                              <form className="mt-4">
+                                <div className="form-group row">
+                                  <label className="col-sm-2 col-form-label text-right">NO INDUK</label>
+                                  <div className="col-sm-4">
+                                    <input type="text" value={this.state.jadwalKu.no_induk} disabled className="form-control" />
+                                  </div>
 
-                                  <tbody>
-                                    {
-                                      this.state.isLoading &&
-                                      <tr>
-                                        <td className="text-center" colSpan='7'>
-                                          <span>Loading...</span>
+                                  <label className="col-sm-2 col-form-label text-right">SEMESTER</label>
+                                  <div className="col-sm-4">
+                                    <input type="text" value={this.state.semesterInfo.semester_name} className="form-control" />
+                                  </div>
+                                </div>
+
+                                <div className="form-group row">
+                                  <label className="col-sm-2 col-form-label text-right"> NAME </label>
+                                  <div className="col-sm-4">
+                                    <input type="text" value={this.state.muridInfo.nama} className="form-control" />
+                                  </div>
+
+                                  <label className="col-sm-2 col-form-label text-right">SCHOOL YEAR</label>
+                                  <div className="col-sm-4">
+                                    <input type="text" value={this.state.kelasInfo.tahun_ajaran} className="form-control" />
+                                  </div>
+                                </div>
+
+                                <div className="form-group row">
+                                  <label className="col-sm-2 col-form-label text-right">KELAS</label>
+                                  <div className="col-sm-4">
+                                    <input type="text" value={this.state.kelasInfo.kelas_nama} className="form-control" />
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+
+                          </div>
+
+                          <div className="row">
+                            <div className="col-sm-12">
+                              <table className="table table-striped mt-4 table-bordered">
+                                <thead>
+                                  <tr className="text-center">
+                                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">NO</td>
+                                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> SUBJECT </td>
+                                    <td style={{ verticalAlign: 'middle' }} rowSpan="2"> TOTAL</td>
+                                    <td colSpan="3">NILAI HASIL BELAJAR</td>
+                                    <td style={{ verticalAlign: 'middle' }} rowSpan="2">PERSENSI</td>
+                                  </tr>
+                                  <tr className="text-center">
+                                    <td>TASK</td>
+                                    <td>QUIZ</td>
+                                    <td>EXAM</td>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  {
+                                    this.state.isLoading &&
+                                    <tr>
+                                      <td className="text-center" colSpan='7'>
+                                        <span>Loading...</span>
+                                      </td>
+                                    </tr>
+                                  }
+                                  {
+                                    this.state.nilaiMurid.map((item, i) => (
+                                      <tr className="text-center">
+                                        <td>{i + 1}</td>
+                                        <td>{item.nama_pelajaran}</td>
+                                        <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
+                                        <td>
+                                          {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
+                                          <br />
+                                          {item.kumpulTugas.length}/{item.totalTugas.length}
                                         </td>
+                                        <td>
+                                          {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
+                                          <br />
+                                          {item.kumpulKuis.length}/{item.totalKuis.length}
+                                        </td>
+                                        <td>
+                                          {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
+                                          <br />
+                                          {item.kumpulUjian.length}/{item.totalUjian.length}
+                                        </td>
+                                        <td>{item.persensi ? item.persensi + '%' : '0%'}</td>
                                       </tr>
-                                    }
-                                    {
-                                      this.state.nilaiMurid.map((item, i) => (
-                                        <tr className="text-center">
-                                          <td>{i + 1}</td>
-                                          <td>{item.nama_pelajaran}</td>
-                                          <td>{(item.totalAkhirScoreTugas + item.totalAkhirScoreKuis + item.totalAkhirScoreUjian).toFixed(2)}</td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreTugas).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulTugas.length}/{item.totalTugas.length}
-                                          </td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreKuis).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulKuis.length}/{item.totalKuis.length}
-                                          </td>
-                                          <td>
-                                            {Number.parseFloat(item.totalAkhirScoreUjian).toFixed(2)}
-                                            <br/>
-                                            {item.kumpulUjian.length}/{item.totalUjian.length}
-                                          </td>
-                                          <td>{item.persensi ? item.persensi + '%' : '0%'}</td>
-                                        </tr>
-                                      ))
-                                    }
-                                  </tbody>
-                                </table>
-                              </div>
+                                    ))
+                                  }
+                                </tbody>
+                              </table>
                             </div>
                           </div>
                         </div>
-
                       </div>
 
                     </div>
 
                   </div>
+
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
     )
   }
 }

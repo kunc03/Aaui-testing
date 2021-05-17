@@ -134,7 +134,7 @@ export default class WebinarKuesionerAdd extends Component {
 
   render() {
 
-    console.log('STATE: ', this.state);
+    //console.log('state: ', this.state);
 
     // const DaftarPertanyaan = ({items}) => (
     //   <div>

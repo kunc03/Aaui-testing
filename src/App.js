@@ -18,6 +18,8 @@ import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import Profile from "./components/Profile/index";
+
+import FullCalender from "./components/kalender/fullKalender"
 import News from "./components/news/index";
 import NewsForm from "./components/news/form";
 import NewsView from "./components/news/view";
@@ -320,6 +322,7 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
@@ -446,6 +449,7 @@ export class AdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
@@ -573,6 +577,7 @@ export class ClientSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/full-kalender" component={FullCalender} />
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />

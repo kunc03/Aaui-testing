@@ -63,6 +63,8 @@ class Mengajar extends React.Component {
     isSubmit: false,
 
     isModalTugas: false,
+
+    waktuPengerjaan: 0,
   }
 
   fetchKelas(kelasId) {
@@ -150,11 +152,19 @@ class Mengajar extends React.Component {
     })
   }
 
-  fetchChapter(chapterId) {
-    API.get(`${API_SERVER}v2/chapter/${chapterId}`).then(res => {
+  fetchChapter(chapterId, userId) {
+    API.get(`${API_SERVER}v2/chapter/${chapterId}?userId=${userId}`).then(res => {
       if(res.data.error) toast.warning(`Warning: ${res.data.result}`);
 
-      this.setState({ sesiId: chapterId, infoChapter: res.data.result })
+      this.setState({
+        sesiId: chapterId,
+        infoChapter: res.data.result,
+        waktuPengerjaan: localStorage.getItem('waktuPengerjaan') ? parseInt(localStorage.getItem('waktuPengerjaan')) : (res.data.result.durasi * 60)
+      })
+
+      if(res.data.result.tatapmuka == 1) {
+        this.fetchBBB(this.state.kelasId)
+      }
     })
   }
 
@@ -185,7 +195,8 @@ class Mengajar extends React.Component {
         this.props.socket.emit('send', {
           event: 'absen',
           jadwalId: jadwalId,
-          companyId: Storage.get('user').data.company_id
+          companyId: Storage.get('user').data.company_id,
+          muridNama: Storage.get('user').data.user,
         })
       }
     })
@@ -241,13 +252,45 @@ class Mengajar extends React.Component {
       else {
         toast.success(`Berhasil mengumpulkan tugas`);
         this.fetchJadwal(this.state.jadwalId, this.state.jenis);
+        this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
 
         this.props.socket.emit('send', {
           event: 'submit-tugas-file',
           jadwalId: this.state.jadwalId,
           sesiId: this.state.sesiId,
           companyId: Storage.get('user').data.company_id,
-          examId: this.state.examId
+          examId: this.state.examId,
+          muridNama: Storage.get('user').data.user,
+        })
+
+        this.clearForm();
+      }
+    })
+  }
+
+  submitTugasLangsung = e => {
+    e.preventDefault()
+    let form = {
+      jawaban: this.state.jawaban,
+      userId: Storage.get('user').data.user_id,
+      examId: this.state.examId
+    }
+    API.post(`${API_SERVER}v2/tugas-murid/submit-langsung`, form).then(res => {
+      if(res.data.error) {
+        toast.warning(`Error: submit tugas`)
+      }
+      else {
+        toast.success(`Berhasil mengumpulkan tugas`);
+        this.fetchJadwal(this.state.jadwalId, this.state.jenis);
+        this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
+
+        this.props.socket.emit('send', {
+          event: 'submit-tugas-file',
+          jadwalId: this.state.jadwalId,
+          sesiId: this.state.sesiId,
+          companyId: Storage.get('user').data.company_id,
+          examId: this.state.examId,
+          muridNama: Storage.get('user').data.user,
         })
 
         this.clearForm();
@@ -256,22 +299,24 @@ class Mengajar extends React.Component {
   }
 
   componentDidMount() {
+
     this.fetchKelas(this.state.kelasId);
-    this.fetchBBB(this.state.kelasId);
+    // this.fetchBBB(this.state.kelasId);
 
     if(Storage.get('ruangan-kelas').jadwalId && Storage.get('ruangan-kelas').sesiId && Storage.get('ruangan-kelas').jenis) {
       this.fetchJadwal(Storage.get('ruangan-kelas').jadwalId, Storage.get('ruangan-kelas').jenis)
-      this.fetchChapter(Storage.get('ruangan-kelas').sesiId)
+      this.fetchChapter(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
       this.cekKehadiran(Storage.get('ruangan-kelas').sesiId, Storage.get('user').data.user_id)
     }
 
     this.props.socket.on('broadcast', data => {
       if(data.event == 'mulai-kelas' && data.companyId == Storage.get('user').data.company_id) {
+        toast.info(`${data.guruNama} memasuki ruangan.`)
         Storage.set('ruangan-kelas', {
           jadwalId: data.jadwalId, sesiId: data.chapterId, jenis: data.jenis
         })
         this.fetchJadwal(data.jadwalId, data.jenis)
-        this.fetchChapter(data.chapterId)
+        this.fetchChapter(data.chapterId, Storage.get('user').data.user_id)
         this.cekKehadiran(data.chapterId, Storage.get('user').data.user_id)
       }
 
@@ -280,6 +325,7 @@ class Mengajar extends React.Component {
       }
 
       if(data.event == 'akhiri-kelas' && data.jadwalId == this.state.jadwalId && data.jenis == this.state.jenis && data.chapterId == this.state.sesiId) {
+        toast.info(`${data.guruNama} telah meninggalkan ruangan.`)
         this.clearKonten()
         localStorage.removeItem('ruangan-kelas');
       }
@@ -312,6 +358,8 @@ class Mengajar extends React.Component {
       isSubmit: false,
 
       isModalTugas: false,
+
+      joinUrl: ''
 
     })
   }
@@ -441,16 +489,12 @@ class Mengajar extends React.Component {
                       this.state.kelasInfo ? this.state.kelasInfo.kelas_nama : 'Kelas tidak ditemukan'
                     }
 
-                    <button onClick={() => window.close()} className="float-right btn btn-icademy-danger mr-2 mt-2">
-                      <i className="fa fa-sign-out-alt"></i> Keluar
-                    </button>
-
                     <button onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'float-right btn btn-icademy-warning mr-2 mt-2' : 'float-right btn btn-icademy-primary mr-2 mt-2'}>
                       <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
                     </button>
 
                   </h4>
-                  <span>Pengajar : {this.state.infoJadwal ? this.state.kelasInfo.tahun_ajaran : null}</span>
+                  <span>{this.state.infoJadwal ? this.state.kelasInfo.tahun_ajaran : null}</span>
                 </div>
 
                 {
@@ -460,7 +504,11 @@ class Mengajar extends React.Component {
                           <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
                         }
                       </div>
-                    : null
+                    :
+                      <div className="card-body p-1 text-center">
+                        <img className="m-2" src={`/assets/images/component/tes.png`} />
+                        <p className="m-2">Saat ini Anda berada dikelas.</p>
+                      </div>
                 }
 
               </div>
@@ -548,7 +596,7 @@ class Mengajar extends React.Component {
                         : null
                       }
 
-                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Materi</button>
+                      <button onClick={e => this.setState({ contentSesi: 'materi', examId: '' })} className="float-right btn btn-icademy-primary mr-2 mt-2" disabled={this.state.contentSesi==='materi'}>Deskripsi</button>
 
                     </h4>
                     <span>Pengajar : {this.state.infoJadwal.pengajar}</span>
@@ -609,22 +657,18 @@ class Mengajar extends React.Component {
                                 </tr>
                                 <tr>
                                   <td colSpan="2">
-                                    {/* <button className="btn btn-v2 btn-info mr-2">More</button> */}
 
                                     {
-                                      this.state.role == 'murid' && this.state.scoreTugas ?
-                                      <div className="text-center" style={{padding: '8px 26px'}}>
+                                      item.pengumpulan ?
+                                      <div style={{padding: '8px 26px'}}>
                                         <span>Score</span>
-                                        <h1>{this.state.scoreTugas}</h1>
+                                        <h1>{item.score}</h1>
                                       </div>
-                                      : null
-                                    }
-
-                                    {
-                                      moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
-                                        <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
                                       :
-                                        'Belum Saatnya'
+                                        moment(new Date()) >= moment(item.time_start) && moment(new Date()) <= moment(item.time_finish) ?
+                                          <button onClick={this.answerTugas} data-id={item.exam_id} data-tipe={item.tipe_jawab} className="btn btn-v2 btn-info mr-2">Kerjakan</button>
+                                        :
+                                          'Belum Saatnya'
                                     }
 
                                   </td>
@@ -723,7 +767,7 @@ class Mengajar extends React.Component {
 
                     {
                       (this.state.contentSesi == 'kuis' || this.state.contentSesi == 'ujian') && this.state.examId ?
-                      <Detail getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
+                      <Detail waktuPengerjaan={this.state.waktuPengerjaan} getNilai={this.cekNilai} role={this.state.role} tipe={this.state.contentSesi == 'kuis' ? 'kuis' : 'ujian'} examId={this.state.examId} />
                       : null
                     }
                   </div>

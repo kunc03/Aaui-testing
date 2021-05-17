@@ -16,6 +16,7 @@ class Guru extends React.Component {
     tanggalLahir: '',
     jenisKelamin: '',
     email: '',
+    password: '',
     file:'',
 
     action: "tambah",
@@ -54,7 +55,7 @@ class Guru extends React.Component {
         companyId: Storage.get('user').data.company_id,
         nama: this.state.nama, noInduk: this.state.noInduk, tempatLahir: this.state.tempatLahir,
         tanggalLahir: this.state.tanggalLahir, jenisKelamin: this.state.jenisKelamin, email: this.state.email,
-        userId: this.state.userId
+        userId: this.state.userId, password: this.state.password
       };
 
       let url = '';
@@ -96,6 +97,7 @@ class Guru extends React.Component {
       tanggalLahir: '',
       jenisKelamin: '',
       email: '',
+      password: '',
 
       action: "tambah",
 
@@ -162,6 +164,18 @@ class Guru extends React.Component {
       toast.info(`Format tidak sesuai`);
       this.setState({ fileExcel: Math.random().toString(36) })
     }
+  }
+
+  cekEmail = (email) => {
+    API.get(`${API_SERVER}v1/user/cek/email/${email}`).then(res => {
+      if(res.data.error) {
+        toast.warning(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+        this.setState({ email: '' })
+      }
+      else {
+        toast.info(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
+      }
+    })
   }
 
   render() {
@@ -294,7 +308,11 @@ class Guru extends React.Component {
                       </div>
                       <div className="col-sm-6">
                         <label>Email</label>
-                        <input value={this.state.email} onChange={e => this.setState({ email: e.target.value })} required type="email" className="form-control" placeholder="Enter" />
+                        <input onBlur={e => this.cekEmail(e.target.value)} value={this.state.email} onChange={e => this.setState({ email: e.target.value })} required type="email" className="form-control" placeholder="Enter" />
+                      </div>
+                      <div className="col-sm-3">
+                        <label>Password</label>
+                        <input value={this.state.password} onChange={e => this.setState({ password: e.target.value })} required type="password" className="form-control" placeholder="Enter" />
                       </div>
                     </div>
                     <div className="form-group row">
