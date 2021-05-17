@@ -389,7 +389,7 @@ class HomeNew extends Component {
                                   </p>
                                 </div>
                               </div>
-                              <div style={{ overflowX: 'auto', height: '385px' }}>
+                              <div className="wrap" style={{ overflowX: 'auto', overflowY: 'scroll', height: '385px' }}>
 
                                 <RecentDocs lists={this.state.recentDocs} />
 
