@@ -30,7 +30,7 @@ export default class CompanyDetail extends Component {
     logo: "",
     tempLogo: "",
 
-    "menukiri": "group",
+    "menukiri": "role",
 
     cabang: [],
     grup: [],
@@ -817,7 +817,7 @@ export default class CompanyDetail extends Component {
                           <Row style={{ marginBottom: "32px" }}>
                             <Col md={2}>
                               {
-                                this.state.tipe == 'pendidikan' ?
+                                this.state.tipe === 'pendidikan' ?
                                   <ul className="list-group list-group-flush" style={{ fontWeight: 'bold' }}>
                                     <li onClick={this.onClickMenuKiri} menu="role" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'role' ? 'back-active' : ''}`}>Role</li>
                                     <li onClick={this.onClickMenuKiri} menu="semester" style={{ cursor: 'pointer' }} className={`list-group-item ${this.state.menukiri == 'semester' ? 'back-active' : ''}`}>Semester</li>
