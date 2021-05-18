@@ -283,6 +283,15 @@ class User extends Component {
         },
       },
       {
+        name: 'License Number',
+        selector: 'license_number',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         cell: row =>
         <Dropdown
           pullRight
