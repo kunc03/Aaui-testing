@@ -393,6 +393,7 @@ class FilesTableClass extends Component {
       this.fetchFile(id)
       this.fetchMOM(id)
       this.fetchRekamanBBB(id)
+      this.fetchRekaman(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
     if (this.props.selectedFolder){
@@ -848,6 +849,7 @@ fetchRekamanBBB(folder){
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.substring(40).replace(/%2520/g, " ")}</td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1 m-t-10">
