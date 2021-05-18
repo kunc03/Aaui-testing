@@ -119,18 +119,17 @@ class HomeNew extends Component {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/event/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
           this.setState({ event: response.data.result });
+          // recent docs
+          API.get(`${API_SERVER}v1/files-logs/${this.state.companyId}`).then(res => {
+            if (!res.data.error) {
+              this.setState({ recentDocs: res.data.result });
+            };
+          });
         }).catch(function (error) {
           console.log(error);
         });
       }
     })
-
-    // recent docs
-    API.get(`${API_SERVER}v1/files-logs`).then(res => {
-      if (!res.data.error) {
-        this.setState({ recentDocs: res.data.result });
-      };
-    });
   }
 
   findCourse = (e) => {
