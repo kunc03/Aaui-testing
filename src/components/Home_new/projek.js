@@ -390,7 +390,7 @@ class ProjekNew extends Component {
               </div>
             </div>
         </div> */}
-          </div>
+          {/* </div> */}
         </div>
         <Modal
           show={this.state.modalNewFolder}
@@ -399,7 +399,7 @@ class ProjekNew extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Create Project
+              Create Project
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -409,7 +409,7 @@ class ProjekNew extends Component {
                   <Col>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Project Name
+                        Project Name
                             </Form.Label>
                       <div className="input-group mb-4">
                         <input
@@ -429,7 +429,7 @@ class ProjekNew extends Component {
                   <Col>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Project Admin
+                        Project Admin
                             </Form.Label>
                       <MultiSelect
                         id="moderator"
@@ -443,12 +443,12 @@ class ProjekNew extends Component {
                         valuePlaceholder="Pilih Project Admin"
                       />
                       <Form.Text className="text-muted">
-                      Project admins can manage meetings, webinars, and files.
+                        Project admins can manage meetings, webinars, and files.
                             </Form.Text>
                     </Form.Group>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Limit Users
+                        Limit Users
                             </Form.Label>
                       <div style={{ width: '100%' }}>
                         <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
@@ -465,7 +465,7 @@ class ProjekNew extends Component {
                       this.state.limited &&
                       <Form.Group controlId="formJudul">
                         <Form.Label className="f-w-bold">
-                        Users
+                          Users
                           </Form.Label>
                         <MultiSelect
                           id="user"
@@ -487,7 +487,7 @@ class ProjekNew extends Component {
                   className="btn btm-icademy-primary btn-icademy-grey"
                   onClick={this.closeModalProject.bind(this)}
                 >
-                Close
+                  Close
                       </button>
                 <button
                   className="btn btn-icademy-primary"
@@ -507,7 +507,7 @@ class ProjekNew extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Edit Project
+              Edit Project
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -517,7 +517,7 @@ class ProjekNew extends Component {
                   <Col>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Project Name
+                        Project Name
                             </Form.Label>
                       <div className="input-group mb-4">
                         <input
@@ -538,7 +538,7 @@ class ProjekNew extends Component {
                   <Col>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Project Admin
+                        Project Admin
                             </Form.Label>
                       <MultiSelect
                         id="moderator"
@@ -551,12 +551,12 @@ class ProjekNew extends Component {
                         valuePlaceholder="Pilih Project Admin"
                       />
                       <Form.Text className="text-muted">
-                      Project admins can manage meetings, webinars, and files.
+                        Project admins can manage meetings, webinars, and files.
                             </Form.Text>
                     </Form.Group>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                      Limit
+                        Limit
                             </Form.Label>
                       <div style={{ width: '100%' }}>
                         <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
@@ -573,7 +573,7 @@ class ProjekNew extends Component {
                       this.state.limited &&
                       <Form.Group controlId="formJudul">
                         <Form.Label className="f-w-bold">
-                        User
+                          User
                           </Form.Label>
                         <MultiSelect
                           id="user"
@@ -597,7 +597,7 @@ class ProjekNew extends Component {
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={this.closeModalEdit.bind(this)}
             >
-            Close
+              Close
                       </button>
             <button
               className="btn btn-icademy-primary"
@@ -615,7 +615,7 @@ class ProjekNew extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Confirmation
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -626,7 +626,7 @@ class ProjekNew extends Component {
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={this.closeModalDelete.bind(this)}
             >
-            Cancel
+              Cancel
                       </button>
             <button
               className="btn btn-icademy-primary btn-icademy-red"
@@ -645,7 +645,7 @@ class ProjekNew extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Sharing
+              Sharing
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -656,7 +656,7 @@ class ProjekNew extends Component {
                     <div class="row">
                       <div className="col-sm-8">
                         <Form.Label className="f-w-bold">
-                        Email
+                          Email
                               </Form.Label>
                         <input
                           type="email"
@@ -668,7 +668,7 @@ class ProjekNew extends Component {
                           onChange={this.onChangeInput}
                         />
                         <Form.Text className="text-muted">
-                        The destination email must be registered as an ICADEMY user                              </Form.Text>
+                          The destination email must be registered as an ICADEMY user                              </Form.Text>
                       </div>
                       <div className="col-sm-4">
                         <button
@@ -715,7 +715,7 @@ class ProjekNew extends Component {
             </Card>
           </Modal.Body>
         </Modal>
-      </div >
+      </div>
     );
   }
 }
