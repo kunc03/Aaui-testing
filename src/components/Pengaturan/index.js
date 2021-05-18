@@ -1,15 +1,18 @@
 import React, { Component } from "react";
 import { Modal } from 'react-bootstrap';
 import ModalEmail from "./modalemail";
+import {Link, NavLink} from "react-router-dom";
 import ModalPassword from "./modalpassword";
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
+
 const menus = [
-  { name: 'Setting' },
+  { name: 'Setting'},
   { name: 'Security' },
-  { name: 'Profile' },
-  { name: 'Global Setting' }
+  { name: 'Profile', link: `/profile` },
+  { name: 'Global Setting', link:`/global-settings`},
+  { name: 'Notification', link: `/notification-alert`}
 ]
 class Pengaturan extends Component {
   constructor(props) {
@@ -123,7 +126,9 @@ class Pengaturan extends Component {
                               return (
                                 <div className="col-xl-12 p-10 mb-3" style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
                                   onClick={this.tabChoice.bind(this, item.name)}>
+                                  <Link to={item.link} > 
                                   <span className={item.name ? 'fc-skyblue' : ''}>{item.name}</span>
+                                  </Link>
                                 </div>
                               )
                             })}
