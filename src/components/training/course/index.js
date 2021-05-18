@@ -88,8 +88,8 @@ class Course extends Component {
         cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
       },
       {
+        cell: row => <Link to={'/training/course/edit/'+row.id}>{row.title}</Link>,
         name: 'Title',
-        selector: 'title',
         sortable: true,
         grow: 2,
       },
