@@ -120,12 +120,7 @@ class Questions extends Component {
   render() {
     const columns = [
       {
-        name: 'Course',
-        selector: 'course',
-        sortable: true,
-      },
-      {
-        cell: row => <div dangerouslySetInnerHTML={{__html: (row.question.length > 50 ? row.question.substring(0, 50) + '...' : row.question)}}></div>,
+        cell: row => <Link to={'/training/questions/edit/'+row.id}><div dangerouslySetInnerHTML={{__html: (row.question.length > 50 ? row.question.substring(0, 50) + '...' : row.question)}}></div></Link>,
         name: 'Question',
         selector: 'question',
         sortable: true,
@@ -133,6 +128,14 @@ class Questions extends Component {
           color: 'rgba(0,0,0,.54)',
         },
         grow: 2,
+      },
+      {
+        name: 'Course',
+        selector: 'course',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
       },
       {
         cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
