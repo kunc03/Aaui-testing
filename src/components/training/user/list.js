@@ -438,7 +438,7 @@ class User extends Component {
                       return (
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                           <td>{Moment.tz(item.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
-                          <td>{item.title}</td>
+                          <td><span class={`badge badge-${item.exam ? 'primary' : 'secondary'}`}>{item.exam ? 'Exam' : 'Quiz'}</span> {item.title}</td>
                           <td>{item.status}</td>
                           <td>
                             <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelAssign.bind(this, item.id)}>Cancel</span>
