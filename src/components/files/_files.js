@@ -860,14 +860,15 @@ fetchRekamanBBB(folder){
                                   />
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                  <a href={item} download>
                                   <button
                                     style={{ cursor: 'pointer' }}
                                     class="dropdown-item"
                                     type="button"
-                                    onClick={e => window.open(item, 'Rekaman Meeting')}
                                   >
                                     Download
                                       </button>
+                                  </a>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>
                               </span>
