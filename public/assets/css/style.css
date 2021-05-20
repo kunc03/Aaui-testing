@@ -12326,3 +12326,8 @@ required {
   margin: 15px;
   color: #191919;
 }
+
+.lite-filter > .MultiSelect > .Header, .Header__value, .Header__controls {
+  height: 40px !important;
+  line-height: 40px !important;
+}
