@@ -120,7 +120,6 @@ class Pengaturan extends Component {
                     <div className="col-sm-4">
                       <div className="card">
                         <div className="card-block">
-                          <h3 className="f-w-bold f-18 fc-blue mb-4">SETTINGS</h3>
                           <div className="row m-b-100">
                             {menus.map((item, i) => {
                               return (
