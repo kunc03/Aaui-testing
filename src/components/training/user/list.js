@@ -33,7 +33,9 @@ class User extends Component {
           assignee : []
         }],
         optionsExam: [],
-        valueExam: []
+        valueExam: [],
+        optionsCompany: [],
+        valueCompany: []
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -72,6 +74,18 @@ class User extends Component {
     }
   }
 
+  getCompany(id){
+    API.get(`${API_SERVER}v2/training/company/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read company')
+        }
+        else{
+            res.data.result.map(item=>{
+                this.state.optionsCompany.push({label: item.name, value: item.id})
+            })
+        }
+    })
+  }
   cancelAssign(id){
     API.delete(`${API_SERVER}v2/training/assign/${id}/${this.state.userId}`).then(res => {
         if (res.data.error){
@@ -114,6 +128,7 @@ class User extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
+          this.getCompany(this.state.companyId);
           if (this.props.trainingCompany){
             this.getUserTrainingCompany(this.props.trainingCompany)
           }
@@ -332,6 +347,12 @@ class User extends Component {
         ).match(new RegExp(filter, "gmi"))
       )
     }
+    let { valueCompany } = this.state;
+    if (valueCompany != "") {
+      data = data.filter(x =>
+        x.training_company_id === valueCompany[0]
+      )
+    }
     return(
       <div>
         {
@@ -388,6 +409,9 @@ class User extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
+                                                        <div className="float-right col-sm-3 lite-filter">
+                                                          <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                        </div>
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
