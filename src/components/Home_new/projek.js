@@ -7,6 +7,7 @@ import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import DataTable from 'react-data-table-component';
+import Moment from 'moment-timezone';
 
 const customStyles = {
   rows: {
@@ -275,17 +276,18 @@ class ProjekNew extends Component {
     const location = window.location.href.split('/')[3] === 'project' ? true : false;
 
     const lists = this.state.project;
+    console.log(lists, 'projekckkakkr');
 
     const columns = [
       {
         name: 'Name',
         selector: 'title',
-        width: '50%',
+        width: '30%',
         sortable: true,
         cell: row =>
           <Link to={`detail-project/${row.id}`}>
             <div className="box-project">
-              <div className=" f-w-800 f-16 fc-black">
+              <div className=" f-w-800 fc-black">
                 {row.title}
               </div>
               {row.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{row.share_from}</span>}
@@ -293,12 +295,22 @@ class ProjekNew extends Component {
           </Link>,
       },
       {
-        width: '40%',
+        name: 'Recent Project',
+        selector: 'recent_project',
+        width: '30%',
+        sortable: true,
+        cell: row =>
+          <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
+      },
+      {
+        name: 'Info',
+        width: '30%',
         cell: row =>
           <span style={{ inlineSize: '-webkit-fill-available' }}>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.webinar} Webinar</span></Link>
           </span>,
+        center: true,
       },
       {
         name: 'Action',

@@ -426,7 +426,7 @@ class HomeNew extends Component {
                         </div>
                       </div>
                       <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                        <div className="col-sm-12">
+                        {/* <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <ProjekNew lists={projekDashboard} />
@@ -435,7 +435,7 @@ class HomeNew extends Component {
                         </div>
                         <div className="col-sm-12">
                           <NewsList widgetMode={true} />
-                        </div>
+                        </div> */}
                         {/* <div className="col-sm-12">
                           <Card>
                             <Card.Body>
