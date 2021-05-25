@@ -21,7 +21,8 @@ class SettingsTraining extends Component {
         modalCreate: false,
         modalDelete: false,
         typeName: '',
-        typeId:''
+        typeId:'',
+        licenseFormat:''
     };
   }
 
@@ -85,6 +86,21 @@ class SettingsTraining extends Component {
           }
       }
   }
+
+  saveFormat(){
+      let form = {
+          format : this.state.licenseFormat
+      }
+      API.put(`${API_SERVER}v2/training/settings/license-format/${this.state.companyId}`, form).then(res => {
+        if (res.data.error){
+            toast.error(`Error save licenses format`)
+        }
+        else{
+            toast.success(`Licenses format saved`)
+            this.getLicensesFormat(this.state.companyId)
+        }
+      })
+  }
   
   delete(id){
           API.delete(`${API_SERVER}v2/training/settings/licenses-type/${id}`).then(res => {
@@ -104,6 +120,7 @@ class SettingsTraining extends Component {
         if (res.status === 200) {
             this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
             this.getLicensesType(this.state.companyId)
+            this.getLicensesFormat(this.state.companyId)
         }
     })
   }
@@ -115,6 +132,22 @@ class SettingsTraining extends Component {
         }
         else{
             this.setState({data: res.data.result})
+        }
+    })
+  }
+
+  getLicensesFormat(company_id){
+    API.get(`${API_SERVER}v2/training/settings/license-format/${company_id}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error read licenses format`)
+        }
+        else{
+            if (res.data.result){
+              this.setState({licenseFormat: res.data.result.format})
+            }
+            else{
+              this.setState({licenseFormat: ''})
+            }
         }
     })
   }
@@ -202,6 +235,30 @@ class SettingsTraining extends Component {
                                                             fixedHeader
                                                             noDataComponent="There are no licenses type. Please create the licenses type."
                                                         />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="card p-20 main-tab-container">
+                                            <div className="row">
+                                                <div className="col-sm-12 m-b-20">
+                                                        <button
+                                                        onClick={this.saveFormat.bind(this)}
+                                                        className="btn btn-icademy-primary float-right"
+                                                        style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                                                            <i className="fa fa-save"></i>
+                                                            Save
+                                                        </button>
+                                                    <div className="form-field-top-label">
+                                                        <label for="licenseFormat">Licenses Number Format<required>*</required></label>
+                                                        <input style={{marginBottom:10}} type="text" name="licenseFormat" size="50" id="licenseFormat" placeholder="[YYYY][MM][DD].A0[GENDER]-[NUMBER]" value={this.state.licenseFormat} onChange={this.handleChange}/>
+                                                        <p className="form-notes">Default : [YYYY][MM][DD].A0[GENDER]-[NUMBER]</p>
+                                                        <p className="form-notes">Example : 20210525.A01-000000001</p>
+                                                        <p className="form-notes">[YYYY] = Year, example is 2021</p>
+                                                        <p className="form-notes">[MM] = Month, example is 05</p>
+                                                        <p className="form-notes">[DD] = Day, example is 25</p>
+                                                        <p className="form-notes">[GENDER] = Gender, 1 for male and 0 for female</p>
+                                                        <p className="form-notes">[NUMBER] = 9 digits increment numbers of the day and by gender, example is 000000001</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
