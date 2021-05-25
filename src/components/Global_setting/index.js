@@ -52,13 +52,9 @@ export default class GlobalSetting extends Component {
     const { roles } = this.state;
 
     return (
-      <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
-            <div className="pcoded-inner-content">
+      <div className="row">
+        <div className="col">
 
-              <div className="main-body">
-                <div className="page-wrapper">
 
                   <div className="row">
                     <div className="col-sm-3">
@@ -135,7 +131,7 @@ export default class GlobalSetting extends Component {
                     {
                       this.state.cType === 'perusahaan' &&
                       <>
-                        <Route path={`/global-settings`} exact component={ProjectAdmin} />
+                        <Route path={`/global-settings`}  component={ProjectAdmin} />
                         {
                           roles.map(item => (
                             <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
@@ -149,15 +145,119 @@ export default class GlobalSetting extends Component {
                       <Route path={`/global-settings/access/:grup_id`} component={(props) => <List {...props} />} />
                     }
                   </Switch>
-
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-        </div>
       </div>
+      </div>
+
+
+
+
+
+      // <div className="pcoded-main-container" style={{ backgroundColor: "#F6F6FD" }}>
+      //   <div className="pcoded-wrapper">
+      //     <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
+      //       <div className="pcoded-inner-content">
+
+      //         <div className="main-body">
+      //           <div className="page-wrapper">
+
+      //             <div className="row">
+      //               <div className="col-sm-3">
+      //                 <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
+      //               </div>
+      //               {/*
+      //               <div className="col-sm-2">
+      //                 <label class="container">Webinar
+      //                 <input type="radio" checked="checked" name="radio"></input>
+      //                   <span class="checkmark"></span>
+      //                 </label>
+      //               </div>
+      //               <div className="col-sm-2">
+      //                 <label class="container">Meeting
+      //                 <input type="radio" name="radio"></input>
+      //                   <span class="checkmark"></span>
+      //                 </label>
+      //               </div>
+      //               */}
+      //             </div>
+
+      //             <div className="row">
+      //               <div className="col-xl-12">
+
+      //                 <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
+      //                   {
+      //                     this.state.cType === 'perusahaan' &&
+      //                     <>
+      //                       {
+      //                         roles.map((item, i) => (
+      //                           <li key={i} className={`nav-item`}>
+      //                             <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+      //                               activeClassName='active'
+      //                               className={`nav-link`}
+      //                               to={`/global-settings${item.link}`}>
+      //                               <b>{item.name}</b>
+      //                             </NavLink>
+      //                           </li>
+      //                         ))
+      //                       }
+      //                     </>
+      //                   }
+
+      //                   {
+      //                     this.state.cType === 'pendidikan' &&
+      //                     <>
+      //                       <li className={`nav-item`}>
+      //                         <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+      //                           className={`nav-link`}
+      //                           to={`/global-settings/access/0`}>
+      //                           <b>{`Admin`}</b>
+      //                         </NavLink>
+      //                       </li>
+      //                       {
+      //                         roles.map((item, i) => (
+      //                           <li key={i} className={`nav-item`}>
+      //                             <NavLink style={{ borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
+      //                               className={`nav-link`}
+      //                               to={`/global-settings/access/${item.grup_id}`}>
+      //                               <b>{item.grup_name}</b>
+      //                             </NavLink>
+      //                           </li>
+      //                         ))
+      //                       }
+      //                     </>
+      //                   }
+
+      //                 </ul>
+
+      //               </div>
+      //             </div>
+
+      //             <Switch>
+      //               {
+      //                 this.state.cType === 'perusahaan' &&
+      //                 <>
+      //                   <Route path={`/global-settings`} exact component={ProjectAdmin} />
+      //                   {
+      //                     roles.map(item => (
+      //                       <Route key={item.link} path={`/global-settings${item.link}`} component={item.component} />
+      //                     ))
+      //                   }
+      //                 </>
+      //               }
+
+      //               {
+      //                 this.state.cType === 'pendidikan' &&
+      //                 <Route path={`/global-settings/access/:grup_id`} component={(props) => <List {...props} />} />
+      //               }
+      //             </Switch>
+
+      //           </div>
+
+      //         </div>
+
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
 

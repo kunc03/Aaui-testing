@@ -14,7 +14,7 @@ const datas = [
   { title: 'File Project', width: null, status: false },
 ];
 
-class NotificationSetting extends React.Component {
+ class NotificationSetting extends React.Component {
   state = {
     projectAdmin: Storage.get('user').data.level === 'admin' ? true : false,
     projectId: 0,
@@ -100,10 +100,8 @@ class NotificationSetting extends React.Component {
     const { meeting, training, ghantt } = this.state;
 
     return (
-      <div className="pcoded-main-container" style={{ backgroundColor: '#F6F6FD' }}>
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
-            <div className="pcoded-inner-content mt-3">
+            <div className="row">
+              <div className='col'>
               <h3 className="f-w-bold f-18 mb-4 fc-blue p-l-20 ">Notification</h3>
               <div className="card">
                 <div className="card-body">
@@ -349,8 +347,257 @@ class NotificationSetting extends React.Component {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      // <div className="pcoded-main-container" style={{ backgroundColor: '#F6F6FD' }}>
+      //   <div className="pcoded-wrapper">
+      //     <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
+      //       <div className="pcoded-inner-content mt-3">
+      //         <h3 className="f-w-bold f-18 mb-4 fc-blue p-l-20 ">Notification</h3>
+      //         <div className="card">
+      //           <div className="card-body">
+      //             <div class="row ">
+      //               <div className="col-sm-12" style={{ marginTop: '10px' }}>
+      //                 <div
+      //                   className="table-responsive"
+      //                   style={{
+      //                     overflowX: 'hidden',
+      //                     overflowY: this.props.scrollHeight ? 'scroll' : 'auto',
+      //                     height: this.props.scrollHeight ? this.props.scrollHeight : 'auto',
+      //                   }}
+      //                 >
+      //                   <table className="table table-hover">
+      //                     <thead>
+      //                       <tr style={{ borderBottom: '1px solid #000' }}>
+      //                         <td className="f-w-bold f-14" style={{ width: '45%' }}>
+      //                           Meeting
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Email
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Mobile
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td>
+      //                         {/* <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td> */}
+      //                       </tr>
+      //                     </thead>
+
+      //                     {meeting.length === 0 ? (
+      //                       <div className="col-sm-12 mb-1">Not available</div>
+      //                     ) : (
+      //                       meeting.map((item, i) => (
+      //                         <tbody>
+      //                           <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+      //                             <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
+      //                             <td align="center">
+      //                               <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusEmail}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusMobile}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusWebsite}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status_website}
+      //                                   checked={item.status_website}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                           </tr>
+      //                         </tbody>
+      //                       ))
+      //                     )}
+      //                   </table>
+      //                 </div>
+
+      //                 <div
+      //                   className="table-responsive"
+      //                   style={{
+      //                     overflowX: 'hidden',
+      //                     overflowY: this.props.scrollHeight ? 'scroll' : 'auto',
+      //                     height: this.props.scrollHeight ? this.props.scrollHeight : 'auto',
+      //                   }}
+      //                 >
+      //                   <table className="table table-hover">
+      //                     <thead>
+      //                       <tr style={{ borderBottom: '1px solid #000' }}>
+      //                         <td className="f-w-bold f-14" style={{ width: '45%' }}>
+      //                           Training
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Email
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Mobile
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td>
+      //                         {/* <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td> */}
+      //                       </tr>
+      //                     </thead>
+      //                     {training.length === 0 ? (
+      //                       <div className="col-sm-12 mb-1">Not available</div>
+      //                     ) : (
+      //                       training.map((item, i) => (
+      //                         <tbody>
+      //                           <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+      //                             <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusEmail}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusMobile}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusWebsite}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                           </tr>
+      //                         </tbody>
+      //                       ))
+      //                     )}
+      //                   </table>
+      //                 </div>
+
+      //                 <div
+      //                   className="table-responsive"
+      //                   style={{
+      //                     overflowX: 'hidden',
+      //                     overflowY: this.props.scrollHeight ? 'scroll' : 'auto',
+      //                     height: this.props.scrollHeight ? this.props.scrollHeight : 'auto',
+      //                   }}
+      //                 >
+      //                   <table className="table table-hover">
+      //                     <thead>
+      //                       <tr style={{ borderBottom: '1px solid #000' }}>
+      //                         <td className="f-w-bold f-14" style={{ width: '45%' }}>
+      //                           Project Gantt Chart{' '}
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Email
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Mobile
+      //                         </td>
+      //                         <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td>
+      //                         {/* <td align="center" className="f-w-bold f-14">
+      //                           Website
+      //                         </td> */}
+      //                       </tr>
+      //                     </thead>
+      //                     {ghantt.length === 0 ? (
+      //                       <div className="col-sm-12 mb-1">Not available</div>
+      //                     ) : (
+      //                       ghantt.map((item, i) => (
+      //                         <tbody>
+      //                           <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+      //                             <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusEmail}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusMobile}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                             <td align="center">
+      //                             <label class="switch">
+      //                                 <input
+      //                                   type="checkbox"
+      //                                   onChange={this.changeStatusWebsite}
+      //                                   data-id={item.id_access}
+      //                                   value={item.status}
+      //                                   checked={item.status}
+      //                                 ></input>
+      //                                 <span class="slider round"></span>
+      //                               </label>
+      //                             </td>
+      //                           </tr>
+      //                         </tbody>
+      //                       ))
+      //                     )}
+      //                   </table>
+      //                 </div>
+      //               </div>
+      //             </div>
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
 }
