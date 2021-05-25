@@ -110,6 +110,14 @@ class Course extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
+      {
+        name: 'Total Time (Minutes)',
+        selector: 'total_session_time',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
       // {
       //   name: 'Status',
       //   selector: 'status',
