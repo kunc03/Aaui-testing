@@ -172,7 +172,7 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
         { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ],
 
@@ -203,7 +203,7 @@ class SidebarClass extends Component {
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
-        // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Notification', link: '/notification-alert' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Notification', link: '/notification-alert' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
@@ -229,7 +229,7 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
         { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
@@ -258,7 +258,7 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
         { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
