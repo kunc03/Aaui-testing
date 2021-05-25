@@ -35,6 +35,7 @@ class FormCourse extends Component {
 
         content:'Loading...',
         title: '',
+        time: 0,
         overview: 'Loading...',
         session_title : '',
         file: '',
@@ -239,6 +240,7 @@ handleDynamicInput = (e) => {
         title : this.state.session_title,
         content : e,
         sort : i,
+        time : this.state.time,
         media : this.state.media
     }
     this.state.session.splice(i, 1, item)
@@ -308,6 +310,20 @@ handleOverview = (e) => {
             title : value,
             content : this.state.content,
             sort : i,
+            time : this.state.time,
+            media : this.state.media
+        }
+        this.state.session.splice(i, 1, item)
+      }
+      else if (name==='time'){
+        this.setState({[name]: value})
+        let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
+        let item = {
+            id : this.state.selectedSession,
+            title : this.state.session_title,
+            content : this.state.content,
+            sort : i,
+            time : value,
             media : this.state.media
         }
         this.state.session.splice(i, 1, item)
@@ -381,6 +397,7 @@ handleOverview = (e) => {
           initialSession: true,
           selectedSession : this.state.session.filter(item => item.id === id)[0].id,
           session_title : this.state.session.filter(item => item.id === id)[0].title,
+          time : this.state.session.filter(item => item.id === id)[0].time,
           content : this.state.session.filter(item => item.id === id)[0].content,
           media : this.state.session.filter(item => item.id === id)[0].media,
         })
@@ -390,6 +407,7 @@ handleOverview = (e) => {
           initialSession: true,
           selectedSession : this.state.session.filter(item => item.id === id)[0].id,
           session_title : this.state.session.filter(item => item.id === id)[0].title,
+          time : this.state.session.filter(item => item.id === id)[0].time,
           content : this.state.session.filter(item => item.id === id)[0].content,
           media : this.state.session.filter(item => item.id === id)[0].media,
         })
@@ -401,6 +419,7 @@ handleOverview = (e) => {
         edited: false,
         selectedSession : '',
         session_title : '',
+        time : 0,
         content : '',
         media : []
       })
@@ -441,6 +460,7 @@ handleOverview = (e) => {
           course_id : this.props.match.params.id ? this.props.match.params.id : this.state.id,
           title : "",
           content : "",
+          time : 0,
           sort : this.state.session.length,
         };
       API.post(`${API_SERVER}v2/training/course/session`, form).then(res => {
@@ -454,6 +474,7 @@ handleOverview = (e) => {
                       id : res.data.result.insertId,
                       title : "",
                       content : "",
+                      time : 0,
                       sort : this.state.session.length,
                       media : []
                   })
@@ -462,6 +483,7 @@ handleOverview = (e) => {
                     initialSession: true,
                     selectedSession : this.state.session.filter(item => item.id === id)[0].id,
                     session_title : this.state.session.filter(item => item.id === id)[0].title,
+                    time : this.state.session.filter(item => item.id === id)[0].time,
                     content : this.state.session.filter(item => item.id === id)[0].content,
                     media : this.state.session.filter(item => item.id === id)[0].media,
                   })
@@ -669,7 +691,11 @@ handleOverview = (e) => {
                                                             <div className="col-sm-9">
                                                                 <div className="form-field-top-label">
                                                                     <label for="session_title">Session Title<required>*</required></label>
-                                                                    <input type="text" ref={(input) => { this.session_title = input; }}  name="session_title" size="50" id="name" placeholder="XXXXX XXXXX XXXXX" onChange={this.handleChange} value={this.state.session_title}/>
+                                                                    <input type="text" ref={(input) => { this.session_title = input; }} name="session_title" size="50" id="name" placeholder="XXXXX XXXXX XXXXX" onChange={this.handleChange} value={this.state.session_title}/>
+                                                                </div>
+                                                                <div className="form-field-top-label">
+                                                                    <label for="time">Time (Minute)<required>*</required></label>
+                                                                    <input type="number" name="time" size="30" id="name" placeholder="00" onChange={this.handleChange} value={this.state.time}/>
                                                                 </div>
                                                                 <div className="form-field-top-label" style={{width:'80%'}}>
                                                                     <label for="name">Content</label>

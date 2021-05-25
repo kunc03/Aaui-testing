@@ -86,8 +86,8 @@ class Membership extends Component {
         cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>
       },
       {
+        cell: row => <Link to={'/training/membership/edit/'+row.id}>{row.license_number}</Link>,
         name: 'License Number',
-        selector: 'license_number',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',

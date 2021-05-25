@@ -88,8 +88,8 @@ class Course extends Component {
         cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
       },
       {
+        cell: row => <Link to={'/training/course/edit/'+row.id}>{row.title}</Link>,
         name: 'Title',
-        selector: 'title',
         sortable: true,
         grow: 2,
       },
@@ -105,6 +105,14 @@ class Course extends Component {
       {
         name: 'Total Session',
         selector: 'session_count',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Total Time (Minutes)',
+        selector: 'total_session_time',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',

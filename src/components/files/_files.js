@@ -262,6 +262,7 @@ class FilesTableClass extends Component {
             toast.success(`Successfully modified record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
             this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
             this.fetchRekamanBBB(this.state.folderId);
+            this.fetchRekaman(this.state.folderId);
             this.closeModalRename();
           }
         }
@@ -394,6 +395,7 @@ class FilesTableClass extends Component {
       this.fetchFile(id)
       this.fetchMOM(id)
       this.fetchRekamanBBB(id)
+      this.fetchRekaman(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
     if (this.props.selectedFolder){
@@ -867,6 +869,7 @@ fetchRekamanBBB(folder){
                             <td className="fc-muted f-14 f-w-300 p-t-20">
                               <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.substring(40).replace(/%2520/g, " ")}</td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1 m-t-10">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -882,7 +885,7 @@ fetchRekamanBBB(folder){
                                     type="button"
                                     onClick={e => window.open(item, 'Rekaman Meeting')}
                                   >
-                                    Download
+                                    Open
                                       </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>

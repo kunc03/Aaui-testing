@@ -11682,12 +11682,12 @@ div.code-toolbar > .toolbar span:hover {
 
 .project-info {
   background: transparent;
-    padding: 6px 18px;
+    padding: 6px 4px;
     border: 1px solid #0895ff;
     font-size: 12px;
     font-weight: 600;
     border-radius: 6px;
-    margin-left: 6px;
+    margin-left: 3px;
     color: #0895ff;
 }
 
@@ -11704,12 +11704,12 @@ div.code-toolbar > .toolbar span:hover {
 
 .project-info-disabled {
   background: #f7f7f7;
-    padding: 6px 18px;
+    padding: 6px 4px;
     border: 1px solid #ebebeb;
     font-size: 12px;
     font-weight: 600;
     border-radius: 6px;
-    margin-left: 6px;
+    margin-left: 3px;
     color: #cfcfcf;
 }
 
@@ -12325,4 +12325,9 @@ required {
 .html-content{
   margin: 15px;
   color: #191919;
+}
+
+.lite-filter > .MultiSelect > .Header, .Header__value, .Header__controls {
+  height: 40px !important;
+  line-height: 40px !important;
 }

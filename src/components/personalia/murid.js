@@ -17,7 +17,7 @@ class Murid extends React.Component {
     jenisKelamin: '',
     email: '',
     password: '',
-    file:'',
+    file: '',
 
     action: "tambah",
 
@@ -37,14 +37,13 @@ class Murid extends React.Component {
       let idGuru = this.state.dataMurid.map(item => { return item.user_id })
 
       const guru = response.data.result
-                    .filter(item => (item.grup_name ? item.grup_name : "-").toLowerCase() === "murid")
-                    .filter(item => !idGuru.includes(item.user_id));
-
+        .filter(item => (item.grup_name ? item.grup_name : "-").toLowerCase() === "murid")
+        .filter(item => !idGuru.includes(item.user_id));
       this.setState({ userMurid: guru })
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   saveMurid = e => {
@@ -59,7 +58,7 @@ class Murid extends React.Component {
       };
 
       let url = '';
-      if(this.state.exists) {
+      if (this.state.exists) {
         url = `${API_SERVER}v2/murid/create?exists=true`
       }
       else {
@@ -117,7 +116,9 @@ class Murid extends React.Component {
   }
 
   fetchMurid() {
-    API.get(`${API_SERVER}v2/murid/company/${Storage.get('user').data.company_id}`).then(res => {
+    // dari table learning_murid : API.get(`${API_SERVER}v2/murid/company/${Storage.get('user').data.company_id}`).then(res => {
+
+    API.get(`${API_SERVER}v3/allUser/company/${Storage.get('user').data.company_id}`).then(res => {
       if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ dataMurid: res.data.result })
@@ -146,7 +147,7 @@ class Murid extends React.Component {
     form.append('companyId', Storage.get('user').data.company_id);
     form.append('excel', this.state.excel);
     API.post(`${API_SERVER}v2/murid/import`, form).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         toast.success('Import murid berhasil semua.')
         this.fetchMurid()
       }
@@ -156,8 +157,8 @@ class Murid extends React.Component {
   filterType = e => {
     const { files } = e.target;
     let split = files[0].name.split('.');
-    let eks = split[split.length-1];
-    if(['xlsx', 'xls'].includes(eks)) {
+    let eks = split[split.length - 1];
+    if (['xlsx', 'xls'].includes(eks)) {
       this.setState({ excel: e.target.files[0] })
     }
     else {
@@ -168,7 +169,7 @@ class Murid extends React.Component {
 
   cekEmail = (email) => {
     API.get(`${API_SERVER}v1/user/cek/email/${email}`).then(res => {
-      if(res.data.error) {
+      if (res.data.error) {
         toast.warning(res.data.result.charAt(0).toUpperCase() + res.data.result.slice(1))
         this.setState({ email: '' })
       }
@@ -195,7 +196,7 @@ class Murid extends React.Component {
                   <div className="col-sm-6">
                     <label>Pilih File</label>
                     <label for="attachment" className="form-control"><span className="form-control-upload-label">{this.state.excel ? this.state.excel.name : 'Choose File'}</span></label>
-                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.fileExcel} onChange={this.filterType}/>
+                    <input type="file" id="attachment" class="form-control file-upload-icademy" key={this.state.fileExcel} onChange={this.filterType} />
                   </div>
                   <div className="col-sm-3">
                     <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-success" type="submit">Submit</button>
@@ -268,7 +269,7 @@ class Murid extends React.Component {
                         <select onChange={this.showName} class="form-control">
                           <option value="" selected disabled>Find student if user exists</option>
                           {
-                            this.state.userMurid.map((item,i) => (
+                            this.state.userMurid.map((item, i) => (
                               <option value={item.user_id}>{item.name}</option>
                             ))
                           }
