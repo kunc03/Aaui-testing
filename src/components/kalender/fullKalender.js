@@ -191,6 +191,8 @@ class FullKalenderNew extends Component {
                         }}
                         views={['month', 'week', 'day', 'agenda']}
                         components={{ event: Event }}
+                        min={new Date(0, 0, 0, 8, 0, 0)}
+                        max={new Date(0, 0, 0, 20, 0, 0)}
                       />
                     </div>
                     <div className="col-sm-3 borderLeftCalender">

@@ -43,7 +43,7 @@ class KalenderNew extends Component {
           jadwal_id: item.jadwal_id
         }
       })
-      : [];
+        : [];
 
       let ptc = res.data.result.ptc ? res.data.result.ptc.map(item => {
         let stTgl = moment(item.tanggal_mulai).format('YYYY-MM-DD') + ' ' + item.waktu_mulai;
@@ -55,7 +55,7 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
-      : [];
+        : [];
 
       let tugas = res.data.result.tugas ? res.data.result.tugas.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
@@ -67,7 +67,7 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
-      : [];
+        : [];
 
       let quiz = res.data.result.quiz ? res.data.result.quiz.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
@@ -79,7 +79,7 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
-      : [];
+        : [];
 
       let ujian = res.data.result.ujian ? res.data.result.ujian.map(item => {
         let stTgl = moment(item.time_finish).format('YYYY-MM-DD');
@@ -91,7 +91,7 @@ class KalenderNew extends Component {
           end: tglSt
         }
       })
-      : [];
+        : [];
 
       let events = mengajar.concat(ptc.concat(tugas.concat(quiz.concat(ujian))));
 
@@ -130,6 +130,8 @@ class KalenderNew extends Component {
                 }}
                 views={['month', 'week', 'day', 'agenda']}
                 components={{ event: Event, agenda: { event: Agendas } }}
+                min={new Date(0, 0, 0, 8, 0, 0)}
+                max={new Date(0, 0, 0, 20, 0, 0)}
               />
               <div className="p-l-20 m-t-10">
                 <span className="float-right">
