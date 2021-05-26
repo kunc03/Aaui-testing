@@ -100,7 +100,7 @@ class KalenderNew extends Component {
           allowScrollbar={false}
         >
           <div className="card p-10">
-            <h3 className="f-w-900 f-18 fc-blue">Calendar sd</h3>
+            <h3 className="f-w-900 f-18 fc-blue">Calendar</h3>
             <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
               <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
             </div>
