@@ -120,7 +120,8 @@ export default class MeetingRoom extends Component {
 
     attendee: {},
     zoomUrl: '',
-    isZoom: false
+    isZoom: false,
+    gb: []
   }
 
   closeModalGantt = e => {
@@ -340,6 +341,8 @@ export default class MeetingRoom extends Component {
   }
 
   componentDidMount() {
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+    ['SHARE_FILES','C_MOM'])
     // this.onBotoomScroll();
     this.fetchProject()
     socket.on("broadcast", data => {
@@ -356,6 +359,7 @@ export default class MeetingRoom extends Component {
         })
       }
     });
+   
     this.fetchData();
 
     var links = document.getElementsByTagName('a');
@@ -909,12 +913,24 @@ export default class MeetingRoom extends Component {
     window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
   }
 
+  fetchCheckAccess(role, companyId, level, param)
+  {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+      if(res.status === 200){
+        this.setState({ gb : res.data.result})
+      }
+    })
+  }
+
   render() {
 
     const { classRooms, user } = this.state;
 
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
+    let sharing_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'SHARE_FILES')[0].status;
+    let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
+    const notify = () => toast.warning('Access denied')
 
     let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
     let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
@@ -1016,7 +1032,7 @@ export default class MeetingRoom extends Component {
 
                               <Tooltip title="MOM" arrow placement="top">
 
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalMOM: true })} className="float-right m-b-10">
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ create_mom ? () => this.setState({ modalMOM: true }) : notify} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-mom.svg`}
                                     alt=""
@@ -1025,18 +1041,17 @@ export default class MeetingRoom extends Component {
                                 </span>
 
                               </Tooltip>
-
+                                
                               <Tooltip title="File Sharing" arrow placement="top">
-
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalFileSharing: true })} className="float-right m-b-10">
+                                    <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-share.svg`}
                                     alt=""
                                     width={32}
-                                  ></img>
+                                    ></img>
                                 </span>
-
                               </Tooltip>
+
                               <Tooltip title="Task & Timeline" arrow placement="top">
 
                                 <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
