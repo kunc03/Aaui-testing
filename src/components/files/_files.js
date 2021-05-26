@@ -558,7 +558,7 @@ fetchRekamanBBB(folder){
     });
 
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
-  ,'R_FILES_FOLDER'])
+  ,'R_FILES_FOLDER','U_FILES'])
 
   }
 
@@ -581,6 +581,9 @@ fetchRekamanBBB(folder){
 
     let cdFile = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_FILE_FOLDER')[0].status;
     let read_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_FILES_FOLDER')[0].status;
+    let upload_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'U_FILES')[0].status;
+
+    const notify = () => toast.warning('Access denied')
 
     const headerTabble = [
       // {title : 'Date', width: null, status: true},
@@ -630,7 +633,7 @@ fetchRekamanBBB(folder){
           {
             this.props.guest === false || !this.props.guest ?
             <button
-              onClick={e => this.setState({ modalUpload: true })}
+              onClick={upload_file ? e => this.setState({ modalUpload: true }) : notify}
               className="btn btn-icademy-primary float-right"
               style={{ padding: "7px 8px !important", marginLeft: 14 }}
             >
