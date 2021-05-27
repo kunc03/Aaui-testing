@@ -876,8 +876,12 @@ class MeetingTable extends Component {
 
     // ** GLOBAL SETTINGS ** //
     let  cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+
+    // All MEETING ROOMS { SEMUA RUANGAN MEETING }
     let  Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
-    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+
+    // DISABLE { SALAH SATU RUANG MEETING }
+    // let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
     let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
 
     // ========= End ======== //
@@ -995,7 +999,7 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
-      Rmeeting ?
+      // Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
@@ -1007,10 +1011,10 @@ class MeetingTable extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       }
-      :
-      {
-        name: 'Action',
-      }
+      // :
+      // {
+      //   name: 'Action',
+      // }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
