@@ -207,7 +207,7 @@ class User extends Component {
       API.post(`${API_SERVER}v2/training/user/import`, form).then((res) => {
         if (res.status === 200) {
           if (res.data.error) {
-            toast.error('Data import failed')
+            toast.error(res.data.result)
             this.setState({ isUploading: false, file: '' });
           }
           else{
