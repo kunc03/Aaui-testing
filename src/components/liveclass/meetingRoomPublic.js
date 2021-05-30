@@ -56,7 +56,8 @@ export default class MeetingRoomPublic extends Component {
 
     attendee: {},
     zoomUrl: '',
-    isZoom: false
+    isZoom: false,
+    isLoading: false
   }
 
   joinChime = async (e) => {
@@ -102,6 +103,7 @@ export default class MeetingRoomPublic extends Component {
   }
 
   componentDidMount() {
+    this.setState({isLoading: true})
     this.onBotoomScroll();
     socket.on("broadcast", data => {
       console.log(this.state.fileChat, 'sockett onnnnn')
@@ -119,8 +121,7 @@ export default class MeetingRoomPublic extends Component {
   fetchData() {
     this.onBotoomScroll();
     API.get(`${API_SERVER}v1/liveclasspublic/id/${this.state.classId}`).then(response => {
-      console.log('RESSS', response)
-
+      this.setState({isLoading: false})
       this.setState({ classRooms: response.data.result })
       API.get(`${API_SERVER}v1/liveclasspublic/file/${this.state.classId}`).then(res => {
         let splitTags;
@@ -506,40 +507,50 @@ export default class MeetingRoomPublic extends Component {
                   >
                     <Modal.Header>
                       <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                        {classRooms.room_name}
+                    {
+                      this.state.isLoading ?
+                      <h4>Loading...</h4>
+                      :
+                      classRooms.room_name
+                    }
                       </Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
-                      <Card className="cardku">
-                        <Card.Body>
-                          <Row>
-                            <Col>
-                              <div className="input-group mb-4">
-                                <input
-                                  type="text"
-                                  value={this.state.user.name}
-                                  className="form-control"
-                                  placeholder="Nama"
-                                  onChange={this.onChangeName}
-                                  required
-                                />
-                              </div>
-                            </Col>
-                          </Row>
-                          {/* <Row>
-                      <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
-                      <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
-                    </Row>
-                    <Row>
-                      <Col><h4><i className="fa fa-camera"></i> Camera</h4></Col>
-                      <Col><ToggleSwitch onChange={this.toggleSwitchCam.bind(this)} checked={this.state.startCam} /></Col>
-                    </Row> */}
-                          <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{ padding: '10px 17px', width: '100%', marginTop: 20 }}>
-                            <i className="fa fa-video"></i>Join Meeting
-                      </Link>
-                        </Card.Body>
-                      </Card>
-                    </Modal.Body>
+                    {
+                      this.state.isLoading ?
+                      null
+                      :
+                      <Modal.Body>
+                        <Card className="cardku">
+                          <Card.Body>
+                            <Row>
+                              <Col>
+                                <div className="input-group mb-4">
+                                  <input
+                                    type="text"
+                                    value={this.state.user.name}
+                                    className="form-control"
+                                    placeholder="Nama"
+                                    onChange={this.onChangeName}
+                                    required
+                                  />
+                                </div>
+                              </Col>
+                            </Row>
+                            {/* <Row>
+                        <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
+                        <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
+                      </Row>
+                      <Row>
+                        <Col><h4><i className="fa fa-camera"></i> Camera</h4></Col>
+                        <Col><ToggleSwitch onChange={this.toggleSwitchCam.bind(this)} checked={this.state.startCam} /></Col>
+                      </Row> */}
+                        <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{ padding: '10px 17px', width: '100%', marginTop: 20 }}>
+                          <i className="fa fa-video"></i>Join Meeting
+                        </Link>
+                          </Card.Body>
+                        </Card>
+                      </Modal.Body>
+                    }
                   </Modal>
 
                 </div>
