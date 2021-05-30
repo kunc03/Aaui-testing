@@ -79,6 +79,9 @@ export default class MeetingRoom extends Component {
     subtitle: '',
     sendingEmail: false,
 
+    engine: 'bbb',
+    mode: 'web',
+
     folder: [],
     mom: [],
     recordedMeeting: [],
@@ -317,16 +320,6 @@ export default class MeetingRoom extends Component {
     this.setState({ isLive: false, liveURL: '' })
   }
 
-  joinChime = async (e) => {
-    const title = this.state.classRooms.room_name + '-' + moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
-    const name = Storage.get('user').data.user;
-    const region = `ap-southeast-1`;
-
-    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
-      this.setState({ attendee: res.data.JoinInfo })
-    })
-  }
-
   fetchProject() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
@@ -359,7 +352,7 @@ export default class MeetingRoom extends Component {
         })
       }
     });
-   
+
     this.fetchData();
 
     var links = document.getElementsByTagName('a');
@@ -416,7 +409,7 @@ export default class MeetingRoom extends Component {
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-        this.setState({ isZoom: zoomUrl.data.result.length ? true : false });
+        this.setState({ isZoom: zoomUrl.data.result.length ? true : false, engine: zoomUrl.data.result.length ? 'zoom' : 'bbb' });
 
         var data = liveClass.data.result
         /*mark api get new history course*/
@@ -456,7 +449,6 @@ export default class MeetingRoom extends Component {
           // jwt: token.data.token
         });
 
-        this.joinChime()
         // BBB JOIN START
         let api = bbb.api(BBB_URL, BBB_KEY)
         let http = bbb.http
@@ -1041,7 +1033,7 @@ export default class MeetingRoom extends Component {
                                 </span>
 
                               </Tooltip>
-                                
+
                               <Tooltip title="File Sharing" arrow placement="top">
                                     <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
                                   <img

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card } from 'react-bootstrap';
+import { Modal, Card, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import API, { API_SERVER } from '../../../repository/api';
@@ -22,6 +22,9 @@ export default class WebinarCreate extends Component {
     sekretarisId: [],
     pembicaraId: [],
     ownerId: [],
+
+    engine: 'bbb',
+    mode: 'web',
 
     isStep2: false,
     accessPembicara: false,
@@ -184,7 +187,10 @@ export default class WebinarCreate extends Component {
       ownerId: this.state.ownerId,
       projectId: this.state.valuesFolder,
       dokumenId: this.state.folderId,
-      course_id: String(this.state.valueCourse)
+      course_id: String(this.state.valueCourse),
+
+      engine: this.state.engine,
+      mode: this.state.mode
     }
 
     API.post(`${API_SERVER}v2/webinar/create`, form).then(res => {
@@ -273,6 +279,33 @@ export default class WebinarCreate extends Component {
                           :
                           null
                       }
+
+                      <Form.Group className="row" controlId="formJudul">
+                        <div className="col-sm-6">
+                          <Form.Label className="f-w-bold">Engine</Form.Label>
+                          <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
+                            <option value="bbb">Big Blue Button</option>
+                            <option value="zoom">Zoom</option>
+                          </select>
+                          <Form.Text className="text-muted">
+                            Pilih engine yang akan dipakai untuk meeting.
+                          </Form.Text>
+                        </div>
+                        {
+                          this.state.engine === 'zoom' ?
+                            <div className="col-sm-6">
+                              <Form.Label className="f-w-bold">Mode</Form.Label>
+                              <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
+                                <option value="web">Web</option>
+                                <option value="app">App</option>
+                              </select>
+                              <Form.Text className="text-muted">
+                                Jika zoom pilih mode yang akan dipakai.
+                              </Form.Text>
+                            </div>
+                          : null
+                        }
+                      </Form.Group>
 
                       <h4>Pilih Roles</h4>
                       <div className="form-group row">
