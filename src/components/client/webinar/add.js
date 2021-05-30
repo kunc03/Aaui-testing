@@ -56,6 +56,10 @@ class WebinarAddClass extends Component {
     importId: [],
     optionsImport: [],
     loadingImport: false,
+    //import from training company
+    importIdTC: [],
+    optionsImportTC: [],
+    loadingImportTC: false,
 
     // form tamu
     nama: '',
@@ -264,6 +268,21 @@ class WebinarAddClass extends Component {
         });
       }
     })
+    
+    API.get(`${API_SERVER}v2/training/company/${this.state.companyId}`).then(res => {
+      if (res.data.error){
+          toast.error('Error read company list for import feature')
+      }
+      else{
+        this.setState({ optionsImportTC: [] })
+        res.data.result.map(item => {
+          this.state.optionsImportTC.push({
+            value: item.id,
+            label: item.name
+          });
+        });
+      }
+    })
   }
 
   showTambahPeserta() {
@@ -362,8 +381,8 @@ class WebinarAddClass extends Component {
       webinarId: this.state.webinarId,
       importId: this.state.importId.toString(),
     };
-    this.setState({loadingImport: true});
-    formData.importId ?
+    if (formData.importId){
+      this.setState({loadingImport: true});
       API.post(`${API_SERVER}v2/webinar/import-participant`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
@@ -376,8 +395,36 @@ class WebinarAddClass extends Component {
           }
         }
       })
-      :
+    }
+    else{
       toast.warning('Silahkan pilih webinar terlebih dahulu')
+    }
+  }
+  
+  importPesertaTC = e => {
+    e.preventDefault();
+    const formData = {
+      webinarId: this.state.webinarId,
+      importId: this.state.importIdTC.toString(),
+    };
+    if (formData.importId){
+      this.setState({loadingImportTC: true});
+      API.post(`${API_SERVER}v2/webinar/import-participant-tc`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Copy participant failed')
+            this.setState({loadingImportTC: false});
+          } else {
+            toast.success(`Success copy participant`)
+            this.setState({ importIdTC: [], loadingImportTC: false });
+            this.fetchData();
+          }
+        }
+      })
+    }
+    else{
+      toast.warning('Silahkan pilih training company terlebih dahulu')
+    }
   }
 
   deletePeserta(id) {
@@ -790,7 +837,7 @@ class WebinarAddClass extends Component {
                       mode="single"
                       enableSearch={true}
                       resetable={true}
-                      valuePlaceholder="Pilih Webinar"
+                      valuePlaceholder="Select Webinar"
                     />
                     <span className="input-group-btn">
                       <button disabled={this.state.loadingImport} className="btn btn-default" onClick={this.importPeserta.bind(this)}>
@@ -800,6 +847,32 @@ class WebinarAddClass extends Component {
                   </div>
                 </div>
               </div>
+              {
+                this.props.match.params.training === 'by-training' ?
+                <div style={{ marginTop: "20px" }} className="form-group">
+                  <div className="form-group">
+                    <label>Copy from training company</label>
+                    <div class="input-group" style={{background: 'none'}}>
+                      <MultiSelect
+                        id={`userId`}
+                        options={this.state.optionsImportTC}
+                        value={this.state.importIdTC}
+                        onChange={importIdTC => this.setState({ importIdTC })}
+                        mode="single"
+                        enableSearch={true}
+                        resetable={true}
+                        valuePlaceholder="Select Training Company"
+                      />
+                      <span className="input-group-btn">
+                        <button disabled={this.state.loadingImportTC} className="btn btn-default" onClick={this.importPesertaTC.bind(this)}>
+                          <i className="fa fa-plus"></i> {this.state.loadingImportTC ? '....' : 'Import'}
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                :null
+              }
               <h5> Participants </h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
