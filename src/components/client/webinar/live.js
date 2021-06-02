@@ -64,6 +64,9 @@ export default class WebinarLive extends Component {
     qnaPeserta: '',
     loadingTest: false,
 
+    engine: 'bbb',
+    mode: 'web',
+
     zoomUrl: '',
 
     //webinar role
@@ -364,6 +367,10 @@ export default class WebinarLive extends Component {
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+
+              engine: res.data.result.engine,
+              mode: res.data.result.mode,
+
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startPosttest: res.data.result.posttest_sent === 1 ? true : false
@@ -415,7 +422,7 @@ export default class WebinarLive extends Component {
                       { userID: this.state.user.user_id }
                     )
 
-                    let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.webinar.id}`);
+                    let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
 
@@ -440,7 +447,7 @@ export default class WebinarLive extends Component {
                   { userID: this.state.user.user_id }
                 )
 
-                let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.webinar.id}`);
+                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
                 let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                 let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
 
@@ -484,6 +491,10 @@ export default class WebinarLive extends Component {
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+
+              engine: res.data.result.engine,
+              mode: res.data.result.mode,
+
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startPosttest: res.data.result.posttest_sent === 1 ? true : false
@@ -516,7 +527,7 @@ export default class WebinarLive extends Component {
 
             // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
             let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinar.id)
-            http(meetingInfo).then((result) => {
+            http(meetingInfo).then(async (result) => {
               if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
                 // Jika belum ada, create room nya.
                 let meetingCreateUrl = api.administration.create(this.state.webinar.judul, this.state.webinar.id, {
@@ -525,7 +536,7 @@ export default class WebinarLive extends Component {
                   allowModsToUnmuteUsers: true,
                   record: true
                 })
-                http(meetingCreateUrl).then((result) => {
+                http(meetingCreateUrl).then(async (result) => {
                   if (result.returncode = 'SUCCESS') {
                     // Setelah create, join
                     let joinUrl = api.administration.join(
@@ -534,7 +545,13 @@ export default class WebinarLive extends Component {
                       this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                       { userID: this.state.user.user_id }
                     )
-                    this.setState({ joinUrl: joinUrl })
+
+                    let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                    let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                    let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
+
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                     if (isMobile) {
                       window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
@@ -553,7 +570,13 @@ export default class WebinarLive extends Component {
                   this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                   { userID: this.state.user.user_id }
                 )
-                this.setState({ joinUrl: joinUrl })
+
+                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
+
+                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+
                 this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                 if (isMobile) {
                   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
@@ -937,7 +960,7 @@ export default class WebinarLive extends Component {
                       <div className="col-sm-12">
                         {
                           this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
-                            <Iframe url={this.state.joinUrl}
+                            <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
                               height="600px"
                               display="initial"

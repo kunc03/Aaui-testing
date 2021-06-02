@@ -50,6 +50,9 @@ class MeetingTable extends Component {
       keterangan: '',
       bookingMeetingId: '',
 
+      engine: 'bbb',
+      mode: 'web',
+
       imgPreview: '',
 
       classId: '',
@@ -500,7 +503,10 @@ class MeetingTable extends Component {
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
           schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
+          peserta: this.state.valuePeserta,
+
+          engine: this.state.engine,
+          mode: this.state.mode
         }
 
         if ((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
@@ -587,6 +593,7 @@ class MeetingTable extends Component {
             }
           }
         })
+
       } else {
         let isPrivate = this.state.private == true ? 1 : 0;
         let isAkses = this.state.akses == true ? 1 : 0;
@@ -608,7 +615,10 @@ class MeetingTable extends Component {
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
           schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
+          peserta: this.state.valuePeserta,
+
+          engine: this.state.engine,
+          mode: this.state.mode
         }
 
         API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
@@ -746,6 +756,10 @@ class MeetingTable extends Component {
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
     const schedule_start_jkt = new Date(Moment.tz(schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
     const schedule_end_jkt = new Date(Moment.tz(schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+
+    const engine = e.target.getAttribute('data-engine')
+    const mode = e.target.getAttribute('data-mode')
+
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -760,7 +774,10 @@ class MeetingTable extends Component {
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt,
-      akses: isakses == 1 ? true : false
+      akses: isakses == 1 ? true : false,
+
+      engine: engine,
+      mode: mode
     })
 
     this.fetchMeetingInfo(classId)
@@ -986,6 +1003,8 @@ class MeetingTable extends Component {
               data-start={row.schedule_start}
               data-end={row.schedule_end}
               data-folder={row.folder_id}
+              data-engine={row.engine}
+              data-mode={row.mode}
             >
               Edit
                         </button>}
@@ -1392,6 +1411,33 @@ class MeetingTable extends Component {
                 </Form.Text>
                 </Form.Group>
               }
+
+              <Form.Group className="row" controlId="formJudul">
+                <div className="col-sm-6">
+                  <Form.Label className="f-w-bold">Engine</Form.Label>
+                  <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
+                    <option value="bbb">Big Blue Button</option>
+                    <option value="zoom">Zoom</option>
+                  </select>
+                  <Form.Text className="text-muted">
+                    Pilih engine yang akan dipakai untuk meeting.
+                  </Form.Text>
+                </div>
+                {
+                  this.state.engine === 'zoom' ?
+                    <div className="col-sm-6">
+                      <Form.Label className="f-w-bold">Mode</Form.Label>
+                      <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
+                        <option value="web">Web</option>
+                        <option value="app">App</option>
+                      </select>
+                      <Form.Text className="text-muted">
+                        Jika zoom pilih mode yang akan dipakai.
+                      </Form.Text>
+                    </div>
+                  : null
+                }
+              </Form.Group>
 
             </Form>
           </Modal.Body>
