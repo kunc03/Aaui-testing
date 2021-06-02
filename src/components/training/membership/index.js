@@ -182,7 +182,6 @@ class Membership extends Component {
                                                         columns={columns}
                                                         data={data}
                                                         highlightOnHover
-                                                        defaultSortField="name"
                                                         pagination
                                                         fixedHeader
                                                         />
