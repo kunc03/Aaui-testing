@@ -42,7 +42,7 @@ class Pengaturan extends Component {
       webinar: false,
       meeting: false,
       notification: false,
-
+      gSetting: [],
       projectAdmin: true,
       secretary: false,
       moderator: false,
@@ -65,6 +65,7 @@ class Pengaturan extends Component {
 
   componentDidMount() {
     this.fetchData();
+    this.fetchGlobalSettings(Storage.get('user').data.company_id);
   }
 
   toggleModal = () => {
@@ -176,10 +177,22 @@ class Pengaturan extends Component {
     }
   }
 
+  fetchGlobalSettings(companyId)
+  {
+    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${companyId}`).then(res =>{
+      
+      this.setState({ gSetting : res.data.result });
+    })
+  }
+
   render() {
     console.log('response: ', this.state);
+    let levelUser = Storage.get('user').data.level === 'client' ? false : true;
 
     return (
+
+
+
       <div className="pcoded-main-container" style={{ backgroundColor: '#F6F6FD' }}>
         <div className="pcoded-wrapper">
           <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
@@ -190,6 +203,8 @@ class Pengaturan extends Component {
                     <div className="col-sm-4">
                       <div className="card">
                         <div className="card-block">
+                          {
+                            levelUser ?
                           <div className="row m-b-100">
                             {/* {menus.map((item, i) => {
                               return (
@@ -213,7 +228,7 @@ class Pengaturan extends Component {
                             >
                               <span className={this.state.profile ? 'fc-skyblue' : ''}>Profile</span>
                             </div>
-                            <div className="col-xl-12 p-10 mb-3" onClick={this.tabChoice.bind(this, 'global-setting')}>
+                            <div className="col-xl-12 p-10 mb-3">
                               <span className={this.state.globalSetting ? 'fc-skyblue' : ''}>Global Setting</span>
                             </div>
 
@@ -240,6 +255,40 @@ class Pengaturan extends Component {
                               <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
                             </div>
                           </div>
+                          :
+                          <div className="row m-b-100">
+                            {/* {menus.map((item, i) => {
+                              return (
+                                <div className="col-xl-12 p-10 mb-3" style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                                  onClick={this.tabChoice.bind(this, 'security')}>
+                                  <span className={this.state.security ? 'fc-skyblue' : ''}> Security</span>
+                                </div>
+                              )
+                            })} */}
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'security')}
+                            >
+                              <span className={this.state.security ? 'fc-skyblue' : ''}>Security</span>
+                            </div>
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'profile')}
+                            >
+                              <span className={this.state.profile ? 'fc-skyblue' : ''}>Profile</span>
+                            </div>
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'notification')}
+                            >
+                              <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
+                            </div>
+                          </div>
+                          }
+
                         </div>
                       </div>
                     </div>
@@ -251,7 +300,7 @@ class Pengaturan extends Component {
                               <div className="card-block">
                                 <div className="row m-b-100">
                                   <div className="col-xl-2">
-                                    <h3 className="f-w-bold f-18 fc-blue mb-4">Settings</h3>
+                                    <h3 className="f-w-bold f-18 fc-blue mb-4">security</h3>
                                   </div>
                                   <div className="col-xl-10">
                                     <form>
@@ -366,6 +415,7 @@ class Pengaturan extends Component {
                                   <div className="col-xl-12">
                                     <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
 
+
                                       <li className={`nav-item`}>
                                         <div
                                           className="col-xl-12 p-10 mb-3"
@@ -422,12 +472,12 @@ class Pengaturan extends Component {
                                       <Secretary />
                                       :
                                       this.state.moderator ?
-                                      <Moderator />
+                                      <Moderator sub="webinar" />
                                       :
                                       this.state.speaker ?
                                       <Speaker />
                                       :
-                                      <Participant />
+                                      <Participant sub="webinar" />
                                       
                                     }
                                   </div>
@@ -457,7 +507,7 @@ class Pengaturan extends Component {
                                           </div>
                                         </li>
                                         
-                                        <li className={`nav-item`}>
+                                        {/* <li className={`nav-item`}>
                                           <div
                                             className="col-xl-12 p-10 mb-3"
                                             style={{ cursor: 'pointer' }}
@@ -465,7 +515,7 @@ class Pengaturan extends Component {
                                           >
                                             <span className={this.state.meeting ? 'fc-skyblue' : ''}>Secretary</span>
                                           </div>
-                                        </li>
+                                        </li> */}
                                         <li className={`nav-item`}>
                                           <div
                                             className="col-xl-12 p-10 mb-3"
@@ -475,7 +525,7 @@ class Pengaturan extends Component {
                                             <span className={this.state.meeting ? 'fc-skyblue' : ''}>Moderator</span>
                                           </div>
                                         </li>
-                                        <li className={`nav-item`}>
+                                        {/* <li className={`nav-item`}>
                                           <div
                                             className="col-xl-12 p-10 mb-3"
                                             style={{ cursor: 'pointer' }}
@@ -483,7 +533,7 @@ class Pengaturan extends Component {
                                           >
                                             <span className={this.state.meeting ? 'fc-skyblue' : ''}>Speaker</span>
                                           </div>
-                                        </li>
+                                        </li> */}
                                         <li className={`nav-item`}>
                                           <div
                                             className="col-xl-12 p-10 mb-3"
@@ -498,16 +548,16 @@ class Pengaturan extends Component {
                                       { this.state.projectAdmin ?
                                         <ProjectAdmin />
                                         :
-                                        this.state.secretary ?
-                                        <Secretary />
-                                        :
+                                        // this.state.secretary ? 
+                                        //   <Secretary />
+                                        // :
                                         this.state.moderator ?
-                                        <Moderator />
+                                        <Moderator sub="meeting"/>
                                         :
-                                        this.state.speaker ?
-                                        <Speaker />
-                                        :
-                                        <Participant />
+                                        // this.state.speaker ?
+                                        // <Speaker />
+                                        // :
+                                        <Participant sub="meeting" />
                                         
                                       }
                                     </div>
