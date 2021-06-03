@@ -200,7 +200,7 @@ class WebinarTable extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                  {this.state.isLoading === true && 
+                  {this.state.isLoading === true &&
                         <tr>
                             <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Loading...</td>
                         </tr>}
@@ -270,7 +270,7 @@ class WebinarTable extends Component {
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
+                                        <a href={(item.engine === 'zoom' && item.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
