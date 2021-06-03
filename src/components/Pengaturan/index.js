@@ -187,6 +187,7 @@ class Pengaturan extends Component {
               <div className="main-body">
                 <div className="page-wrapper">
                   <div className="row">
+
                     <div className="col-sm-4">
                       <div className="card">
                         <div className="card-block">
@@ -231,7 +232,7 @@ class Pengaturan extends Component {
                             >
                               <span style={{ marginLeft: '20px'}} className={this.state.meeting ? 'fc-skyblue' : ''}>Meeting</span>
                             </div>
-                         
+
                             <div
                               className="col-xl-12 p-10 mb-3"
                               style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
@@ -243,6 +244,7 @@ class Pengaturan extends Component {
                         </div>
                       </div>
                     </div>
+
                     <div className="col-sm-8">
                       <div className="row m-b-100">
                         <div className="col-xl-12">
@@ -428,7 +430,7 @@ class Pengaturan extends Component {
                                       <Speaker />
                                       :
                                       <Participant />
-                                      
+
                                     }
                                   </div>
                                 </div>
@@ -443,7 +445,7 @@ class Pengaturan extends Component {
                                       <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
                                     </div>
                                   </div>
-  
+
                                   <div className="row">
                                     <div className="col-xl-12">
                                       <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
@@ -456,7 +458,7 @@ class Pengaturan extends Component {
                                             <span className={this.state.meeting ? 'fc-skyblue' : ''} activeClassname='active'>Project Admin</span>
                                           </div>
                                         </li>
-                                        
+
                                         <li className={`nav-item`}>
                                           <div
                                             className="col-xl-12 p-10 mb-3"
@@ -494,7 +496,7 @@ class Pengaturan extends Component {
                                           </div>
                                         </li>
                                       </ul>
-  
+
                                       { this.state.projectAdmin ?
                                         <ProjectAdmin />
                                         :
@@ -508,14 +510,14 @@ class Pengaturan extends Component {
                                         <Speaker />
                                         :
                                         <Participant />
-                                        
+
                                       }
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             ) :
-                            
+
                             <Notification />
 
                           )}
