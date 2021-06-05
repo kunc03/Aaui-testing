@@ -207,8 +207,8 @@ export default class WebinarCreate extends Component {
   }
 
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
       if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }

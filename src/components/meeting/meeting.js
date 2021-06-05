@@ -857,8 +857,8 @@ class MeetingTable extends Component {
 
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
       if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -894,14 +894,16 @@ class MeetingTable extends Component {
   render() {
 
     // ** GLOBAL SETTINGS ** //
-    let  cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+     let cdMeeting =  this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    console.log(cdMeeting, 'cdMeeting')
 
     // All MEETING ROOMS { SEMUA RUANGAN MEETING }
     let  Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
 
     // DISABLE { SALAH SATU RUANG MEETING }
-    // let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
-    let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+
+    // let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
 
     // ========= End ======== //
 
@@ -1020,11 +1022,11 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
-      // Rmeeting ?
+      Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status && Rmeeting == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1032,10 +1034,10 @@ class MeetingTable extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       }
-      // :
-      // {
-      //   name: 'Action',
-      // }
+      :
+      {
+        name: 'Action',
+      }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1559,7 +1561,7 @@ class MeetingTable extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
+            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
@@ -1567,6 +1569,7 @@ class MeetingTable extends Component {
                 >
                   <i className="fa fa-video"></i> Masuk
               </button>
+
               </Link>
               : null}
           </Modal.Footer>
