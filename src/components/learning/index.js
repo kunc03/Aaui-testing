@@ -18,12 +18,12 @@ import Histori from '../laporan/histori';
 import Kpi from '../laporan/kpi';
 
 const titleTabs = [
+  { label: 'Personnel', link: '/personalia', component: Personalia, icon: '@0,5xPersonnel off.svg', iconActive: '@0,5xPersonnel on.svg', },
   { label: 'Lessons', link: '/daftar-pelajaran', component: DaftarPelajaran, icon: '@0,5xLessons off.svg', iconActive: '@0,5xLessons on.svg', },
   { label: 'Curriculum', link: '/kurikulum', component: Curriculum, icon: '@0,5xCurriculum off.svg', iconActive: '@0,5xCurriculum on.svg', },
   { label: 'Class', link: '/registrasi', component: Registrasi, icon: '@0,5xclass-1.svg', iconActive: '@0,5xclass on.svg', },
   { label: 'Room', link: '/ruangan-mengajar', component: RuanganMengajar, icon: '@0,5xRoom off.svg', iconActive: '@0,5xRoom on.svg', },
   { label: 'Schedule', link: '/jadwal-mengajar', component: JadwalMengajar, icon: '@0,5xSchedule off.svg', iconActive: '@0,5xSchedule on.svg', },
-  { label: 'Personnel', link: '/personalia', component: Personalia, icon: '@0,5xPersonnel off.svg', iconActive: '@0,5xPersonnel on.svg', },
   { label: 'Report', link: '/laporan', component: Laporan, icon: '@0,5xReport off.svg', iconActive: '@0,5xReport on.svg', },
   { label: 'Preference', link: '/kpi', component: Kpi, icon: '@0,5xLessons off.svg', iconActive: '@0,5xLessons on.svg', },
   { label: 'History', link: '/histori', component: Histori, icon: '@0,5xhistory off.svg', iconActive: '@0,5xhistory on.svg', },

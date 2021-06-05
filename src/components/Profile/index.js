@@ -222,17 +222,11 @@ class Profile extends Component {
     // );
 
     return (
-      <div className="pcoded-main-container">
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content">
-            <div className="pcoded-inner-content">
-              <div className="main-body">
-                <div className="page-wrapper">
-                  <h3 className="f-w-bold f-18 fc-blue">Profile</h3>
                   <div className="row">
-                    <div className="col-sm-8">
+                    <div className="col-sm-12">
                       <div className="card">
                         <div className="card-block">
+                  <h3 className="f-w-bold f-18 fc-blue">Profile</h3>
                           <div className="mt-3 mb-3">
                             <img
                               alt=""
@@ -461,12 +455,6 @@ class Profile extends Component {
                         </Modal.Body>
                       </Modal>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card } from 'react-bootstrap';
+import { Modal, Card, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import API, { API_SERVER } from '../../../repository/api';
@@ -22,6 +22,9 @@ export default class WebinarCreate extends Component {
     sekretarisId: [],
     pembicaraId: [],
     ownerId: [],
+
+    engine: 'bbb',
+    mode: 'web',
 
     isStep2: false,
     accessPembicara: false,
@@ -53,6 +56,7 @@ export default class WebinarCreate extends Component {
     modalUpload: false,
     alert: '',
     uploading: false,
+    gb: [],
 
     // training
     optionsCourse: [],
@@ -100,7 +104,9 @@ export default class WebinarCreate extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.forceUpdate()
+    this.forceUpdate();
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CRUD_ROLES'])
+
   }
 
   fetchData() {
@@ -121,6 +127,7 @@ export default class WebinarCreate extends Component {
           });
       }
     })
+
     if (this.props.match.params.training === 'by-training'){
       API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
           if (res.data.error){
@@ -180,7 +187,10 @@ export default class WebinarCreate extends Component {
       ownerId: this.state.ownerId,
       projectId: this.state.valuesFolder,
       dokumenId: this.state.folderId,
-      course_id: String(this.state.valueCourse)
+      course_id: String(this.state.valueCourse),
+
+      engine: this.state.engine,
+      mode: this.state.mode
     }
 
     API.post(`${API_SERVER}v2/webinar/create`, form).then(res => {
@@ -196,15 +206,22 @@ export default class WebinarCreate extends Component {
     this.setState({ folderId: val });
   }
 
+
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+      if (res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
+
   goback() {
     this.props.history.goBack();
   }
 
   render() {
 
-    //console.log('state: ', this.state);
-
-    // let levelUser = 'admin';
+    let crudRoles = this.state.gb.length && this.state.gb.filter(item => item.code === 'CRUD_ROLES')[0].status;
 
     return (
       <div className="row">
@@ -263,6 +280,33 @@ export default class WebinarCreate extends Component {
                           null
                       }
 
+                      <Form.Group className="row" controlId="formJudul">
+                        <div className="col-sm-6">
+                          <Form.Label className="f-w-bold">Engine</Form.Label>
+                          <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
+                            <option value="bbb">Big Blue Button</option>
+                            <option value="zoom">Zoom</option>
+                          </select>
+                          <Form.Text className="text-muted">
+                            Pilih engine yang akan dipakai untuk meeting.
+                          </Form.Text>
+                        </div>
+                        {
+                          this.state.engine === 'zoom' ?
+                            <div className="col-sm-6">
+                              <Form.Label className="f-w-bold">Mode</Form.Label>
+                              <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
+                                <option value="web">Web</option>
+                                <option value="app">App</option>
+                              </select>
+                              <Form.Text className="text-muted">
+                                Jika zoom pilih mode yang akan dipakai.
+                              </Form.Text>
+                            </div>
+                          : null
+                        }
+                      </Form.Group>
+
                       <h4>Pilih Roles</h4>
                       <div className="form-group row">
                         <div className="col-sm-3">
@@ -271,17 +315,22 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold">Sekretaris<required>*</required></label>
-                          <MultiSelect
-                            id={`sekretarisId`}
-                            options={this.state.optionNames}
-                            value={this.state.sekretarisId}
-                            onChange={sekretarisId => this.setState({ sekretarisId })}
-                            mode="tags"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Silahkan Pilih User"
-                            allSelectedLabel="Silahkan Pilih User"
-                          />
+                          {
+                            crudRoles ?
+                              <MultiSelect
+                                id={`sekretarisId`}
+                                options={this.state.optionNames}
+                                value={this.state.sekretarisId}
+                                onChange={sekretarisId => this.setState({ sekretarisId })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Silahkan Pilih User"
+                                allSelectedLabel="Silahkan Pilih User"
+                              />
+                              :
+                              <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -292,17 +341,22 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold">Moderator<required>*</required></label>
-                          <MultiSelect
-                            id={`moderatorId`}
-                            options={this.state.optionNames}
-                            value={this.state.moderatorId}
-                            onChange={moderatorId => this.setState({ moderatorId })}
-                            mode="tags"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Silahkan Pilih User"
-                            allSelectedLabel="Silahkan Pilih User"
-                          />
+                          {
+                            crudRoles ?
+                              <MultiSelect
+                                id={`moderatorId`}
+                                options={this.state.optionNames}
+                                value={this.state.moderatorId}
+                                onChange={moderatorId => this.setState({ moderatorId })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Silahkan Pilih User"
+                                allSelectedLabel="Silahkan Pilih User"
+                              />
+                              :
+                              <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -313,17 +367,22 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold">Pembicara<required>*</required></label>
-                          <MultiSelect
-                            id={`pembicaraId`}
-                            options={this.state.optionNames}
-                            value={this.state.pembicaraId}
-                            onChange={pembicaraId => this.setState({ pembicaraId })}
-                            mode="tags"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Silahkan Pilih User"
-                            allSelectedLabel="Silahkan Pilih User"
-                          />
+                          {
+                            crudRoles ?
+                              <MultiSelect
+                                id={`pembicaraId`}
+                                options={this.state.optionNames}
+                                value={this.state.pembicaraId}
+                                onChange={pembicaraId => this.setState({ pembicaraId })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Silahkan Pilih User"
+                                allSelectedLabel="Silahkan Pilih User"
+                              />
+                              :
+                              <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
 
@@ -334,34 +393,39 @@ export default class WebinarCreate extends Component {
                         </div>
                         <div className="col-sm-9">
                           <label className="bold">Owner<required>*</required></label>
-                          <MultiSelect
-                            id={`ownerId`}
-                            options={this.state.optionNames}
-                            value={this.state.ownerId}
-                            onChange={ownerId => this.setState({ ownerId })}
-                            mode="tags"
-                            enableSearch={true}
-                            resetable={true}
-                            valuePlaceholder="Silahkan Pilih User"
-                            allSelectedLabel="Silahkan Pilih User"
-                          />
+                          {
+                            crudRoles ?
+                              <MultiSelect
+                                id={`ownerId`}
+                                options={this.state.optionNames}
+                                value={this.state.ownerId}
+                                onChange={ownerId => this.setState({ ownerId })}
+                                mode="tags"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Silahkan Pilih User"
+                                allSelectedLabel="Silahkan Pilih User"
+                              />
+                              :
+                              <small className="form-text text-muted">Sorry. access denied</small>
+                          }
                         </div>
                       </div>
                       {
                         this.props.match.params.training === 'by-training' &&
                         <div className="form-section no-border">
-                            <div className="row">
-                                <div className="col-sm-12 m-b-20">
-                                    <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Assign to Course</strong>
-                                </div>
+                          <div className="row">
+                            <div className="col-sm-12 m-b-20">
+                              <strong className="f-w-bold" style={{ color: '#000', fontSize: '15px' }}>Assign to Course</strong>
                             </div>
-                            <div className="row">
-                                <div className="form-field-top-label" style={{width:400}}>
-                                    <label for="valueCourse">Course<required>*</required></label>
-                                    <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
-                                    <p className="form-notes">Keep empty if you don't want to assign to course</p>
-                                </div>
+                          </div>
+                          <div className="row">
+                            <div className="form-field-top-label" style={{ width: 400 }}>
+                              <label for="valueCourse">Course<required>*</required></label>
+                              <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                              <p className="form-notes">Keep empty if you don't want to assign to course</p>
                             </div>
+                          </div>
                         </div>
                       }
 

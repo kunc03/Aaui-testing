@@ -9,7 +9,7 @@ import { dataToDo } from '../../modul/data';
 import EventNew from './event';
 import ProjekNew from './projek';
 import CalenderNew from '../kalender/kalender';
-import ListToDoNew from './listToDo';
+// import ListToDoNew from './listToDo';
 import RecentDocs from './recentDocs';
 import JadwalHariIni from './jadwalHariIni';
 import PengumumanTerbaru from './pengumumanTerbaru';
@@ -29,7 +29,7 @@ import DashPrincipal from './dashprincipal';
 import DashManagement from './dashmanagement';
 
 // import Training from '../training/company'
-import TrainingUser from '../training/user'
+// import TrainingUser from '../training/user'
 import TrainingCourse from '../training/course'
 import TrainingDetailCompany from '../training/company/detailTrainingCompany'
 
@@ -48,7 +48,7 @@ class HomeNew extends Component {
     kursusDiikuti: [],
     recentDocs: []
   }
-  
+
   onChangeInput = e => {
     const name = e.target.name;
     const value = e.target.value;
@@ -65,6 +65,8 @@ class HomeNew extends Component {
     this.fetchDataUser();
     this.fetchDataKursusDiikuti();
     this.fetchEvent();
+
+
   }
 
   fetchDataUser() {
@@ -140,14 +142,14 @@ class HomeNew extends Component {
   render() {
     const eventDashboard = this.state.event;
     const projekDashboard = this.state.project;
-    const toDoDashboard = dataToDo;
+    // const toDoDashboard = dataToDo;
 
-    let access = Storage.get('access');
+    // let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     console.log(levelUser);
 
     var { kategoriKursus, kursusTerbaru, kursusDiikuti, findCourseInput } = this.state;
-    if (findCourseInput != "") {
+    if (findCourseInput !== "") {
       [kategoriKursus, kursusTerbaru, kursusDiikuti] = [kategoriKursus, kursusTerbaru, kursusDiikuti]
         .map(y =>
           y.filter(x =>
@@ -372,6 +374,34 @@ class HomeNew extends Component {
                           <CalenderNew lists={kursusTerbaru} />
                         </div>
                         <div className="col-sm-12">
+                          <NewsList widgetMode={true} />
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <h3 className="f-w-900 f-18 fc-blue">
+                                    Project
+                                  </h3>
+                                </div>
+                                <div className="col-sm-6 text-right">
+                                  <p className="m-b-0">
+                                    <Link to={"project"}>
+                                      <span className=" f-12 fc-skyblue">See all</span>
+                                    </Link>
+                                  </p>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '10px', overflowX: 'hidden', height: '385px' }}>
+                                <ProjekNew lists={projekDashboard} />
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <div className="row">
@@ -396,7 +426,7 @@ class HomeNew extends Component {
                         </div>
                       </div>
                       <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                        <div className="col-sm-12">
+                        {/* <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <ProjekNew lists={projekDashboard} />
@@ -404,8 +434,8 @@ class HomeNew extends Component {
                           </Card>
                         </div>
                         <div className="col-sm-12">
-                          <NewsList widgetMode={true}/>
-                        </div>
+                          <NewsList widgetMode={true} />
+                        </div> */}
                         {/* <div className="col-sm-12">
                           <Card>
                             <Card.Body>
@@ -482,10 +512,11 @@ class HomeV2 extends Component {
     training_company_id: ''
   }
 
-  componentDidMount(){
+  componentDidMount() {
+
     let level = Storage.get('user').data.level;
     let grupName = Storage.get('user').data.grup_name;
-    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training') {
       API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
         if (res.status === 200) {
           this.setState({ training_company_id: res.data.result.training_company_id });
@@ -495,10 +526,10 @@ class HomeV2 extends Component {
   }
 
   goTo(url) {
-    if (url === 'back'){
+    if (url === 'back') {
       this.props.history.goBack();
     }
-    else{
+    else {
       this.props.history.push(url);
     }
   }

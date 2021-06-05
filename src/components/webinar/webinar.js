@@ -26,6 +26,7 @@ class WebinarTable extends Component {
       deleteWebinarId: '',
       modalDelete: false,
       limitCompany: [],
+      gb: [],
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
         { title: 'Moderator', width: null, status: true },
@@ -52,6 +53,8 @@ class WebinarTable extends Component {
   componentDidMount() {
     this.fetchData();
     this.checkLimitCompany();
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_WEBINAR'])
+
   }
 
   fetchData() {
@@ -103,7 +106,18 @@ class WebinarTable extends Component {
     })
   }
 
+  fetchCheckAccess(role, companyId, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+      if(res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
+
   render() {
+    // ** GLOBAL SETTINGS ** //
+
+    let cdWEBINAR = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_WEBINAR')[0].status;
     const headerTabble = this.state.headerWebinars;
     const bodyTabble = this.state.webinars;
     const access_project_admin = this.props.access_project_admin;
@@ -139,7 +153,7 @@ class WebinarTable extends Component {
           }
 
 
-          {access_project_admin == true && this.state.limitCompany.webinar ?
+          {cdWEBINAR && access_project_admin == true && this.state.limitCompany.webinar ?
             <Link
               to={`/webinar/create/${this.props.projectId ? this.props.projectId : 0}/${this.props.training ? 'by-training' : 'default'}`}
             >
@@ -186,7 +200,7 @@ class WebinarTable extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                  {this.state.isLoading === true && 
+                  {this.state.isLoading === true &&
                         <tr>
                             <td className="fc-muted f-14 f-w-300 p-t-20" colspan='8'>Loading...</td>
                         </tr>}
@@ -239,10 +253,11 @@ class WebinarTable extends Component {
                                           </Link>
                                         }
                                         {
-                                          access_project_admin &&
+                                          cdWEBINAR && access_project_admin ?
                                           <Link onClick={this.dialogDelete.bind(this, item.id)} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Delete
                                           </Link>
+                                          : null
                                         }
 
                                       </div>
@@ -255,7 +270,7 @@ class WebinarTable extends Component {
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <Link to={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</Link>
+                                        <a href={(item.engine === 'zoom' && item.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&

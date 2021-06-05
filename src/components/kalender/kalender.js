@@ -120,6 +120,8 @@ class KalenderNew extends Component {
               }}
               views={['month', 'week', 'day', 'agenda']}
               components={{ event: Event }}
+              min={new Date(0, 0, 0, 8, 0, 0)}
+              max={new Date(0, 0, 0, 20, 0, 0)}
             />
             <div className="p-l-20 m-t-10">
               <span className="p-r-5" style={{ color: '#0091FF' }}>

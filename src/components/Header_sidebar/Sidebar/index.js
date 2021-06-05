@@ -19,8 +19,8 @@ const Msg = ({ id, desc, socket }) => {
   return (
     <div>
       {desc}
-      <br/>
-      <button style={{marginTop: '8px'}} onClick={e => readReminder(id)}>OK</button>
+      <br />
+      <button style={{ marginTop: '8px' }} onClick={e => readReminder(id)}>OK</button>
     </div>
   )
 }
@@ -172,7 +172,8 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ],
 
       submenuTraining: [
@@ -185,11 +186,12 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
     let menuAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
@@ -201,10 +203,11 @@ class SidebarClass extends Component {
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
+        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Notification', link: '/notification-alert' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
-      submenuPendidikan : [
+      submenuPendidikan: [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "Classes", link: '/learning/registrasi' },
@@ -226,12 +229,13 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
     let menuSuperAdmins = {
-      submenu : [
+      submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
         { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
         { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
@@ -254,7 +258,8 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
       ]
     };
 
@@ -267,7 +272,7 @@ class SidebarClass extends Component {
     let tempAtasSuper = [], tempBawahSuper = [];
     let tempAtasAdmin = [], tempBawahAdmin = [];
 
-    if(companyType === "perusahaan") {
+    if (companyType === "perusahaan") {
       tempAtasSuper = menuSuperAdmins.menuAtas.filter(item => item.link != "/pengumuman");
       tempBawahSuper = menuSuperAdmins.menuBawah.filter(item => item.link != "/ptc");
 
@@ -286,7 +291,7 @@ class SidebarClass extends Component {
       menuAtas = tempAtasSuper;
       menuBawah = tempBawahSuper;
     } else if (levelUser === 'admin') {
-      if(companyType === "pendidikan") {
+      if (companyType === "pendidikan") {
         menuContent = menuAdmins.submenuPendidikan;
       } else {
         menuContent = menuAdmins.submenu;
@@ -294,18 +299,18 @@ class SidebarClass extends Component {
       menuAtas = tempAtasAdmin;
       menuBawah = tempBawahAdmin;
     } else {
-      let subMenuClient =  Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
+      let subMenuClient = Storage.get('user').data.grup_name ? Storage.get('user').data.grup_name.toString().toLowerCase() : '';
       if (subMenuClient === "guru"
-            || subMenuClient === "murid"
-            || subMenuClient === "parents"
-            || subMenuClient === "principal"
-            || subMenuClient === "management"
-          ) {
+        || subMenuClient === "murid"
+        || subMenuClient === "parents"
+        || subMenuClient === "principal"
+        || subMenuClient === "management"
+      ) {
         menuContent = menuClients[subMenuClient].submenu;
         menuAtas = menuClients.menuAtas;
         menuBawah = menuClients.menuBawah;
-      } 
-      else if (subMenuClient === "user training" || subMenuClient === "admin training"){
+      }
+      else if (subMenuClient === "user training" || subMenuClient === "admin training") {
         menuContent = menuClients.submenuTraining;
         menuAtas = menuClients.menuAtasTraining;
         menuBawah = menuClients.menuBawahTraining;

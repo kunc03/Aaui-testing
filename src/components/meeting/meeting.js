@@ -50,6 +50,9 @@ class MeetingTable extends Component {
       keterangan: '',
       bookingMeetingId: '',
 
+      engine: 'bbb',
+      mode: 'web',
+
       imgPreview: '',
 
       classId: '',
@@ -497,8 +500,13 @@ class MeetingTable extends Component {
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
           schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
+          peserta: this.state.valuePeserta,
+
+          engine: this.state.engine,
+          mode: this.state.mode
         }
+
+        console.log(form)
 
         if ((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
           let userNotif = this.state.valuePeserta.concat(this.state.infoParticipant.map(item => item.user_id));
@@ -584,6 +592,7 @@ class MeetingTable extends Component {
             }
           }
         })
+
       } else {
         let isPrivate = this.state.private == true ? 1 : 0;
         let isAkses = this.state.akses == true ? 1 : 0;
@@ -605,7 +614,10 @@ class MeetingTable extends Component {
           is_scheduled: isScheduled,
           schedule_start: startDateJkt,
           schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
+          peserta: this.state.valuePeserta,
+
+          engine: this.state.engine,
+          mode: this.state.mode
         }
 
         API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
@@ -743,6 +755,10 @@ class MeetingTable extends Component {
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
     const schedule_start_jkt = new Date(Moment.tz(schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
     const schedule_end_jkt = new Date(Moment.tz(schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+
+    const engine = e.target.getAttribute('data-engine')
+    const mode = e.target.getAttribute('data-mode')
+
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -757,7 +773,10 @@ class MeetingTable extends Component {
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt,
-      akses: isakses == 1 ? true : false
+      akses: isakses == 1 ? true : false,
+
+      engine: engine,
+      mode: mode
     })
 
     this.fetchMeetingInfo(classId)
@@ -833,7 +852,8 @@ class MeetingTable extends Component {
       this.fetchMeetingInfo(this.props.informationId)
     }
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_MEETING'])
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+     ['CD_MEETING','CD_MEETING','R_MEETINGS','R_MEETING','R_ATTENDANCE']);
 
   }
 
@@ -872,7 +892,22 @@ class MeetingTable extends Component {
   }
 
   render() {
-    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+
+    // ** GLOBAL SETTINGS ** //
+    let  cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+
+    // All MEETING ROOMS { SEMUA RUANGAN MEETING }
+    let  Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
+
+    // DISABLE { SALAH SATU RUANG MEETING }
+    // let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+    let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+
+    // ========= End ======== //
+
+    const notify = () => toast.warning("Access Denied");
+
+
     // const headerTabble = [
     //   // {title : 'Meeting Name', width: null, status: true},
     //   {title : 'Moderator', width: null, status: true},
@@ -967,6 +1002,8 @@ class MeetingTable extends Component {
               data-start={row.schedule_start}
               data-end={row.schedule_end}
               data-folder={row.folder_id}
+              data-engine={row.engine}
+              data-mode={row.mode}
             >
               Edit
                         </button>}
@@ -983,17 +1020,22 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
+      // Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={ !R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
-      },
+      }
+      // :
+      // {
+      //   name: 'Action',
+      // }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1001,6 +1043,10 @@ class MeetingTable extends Component {
     if (access_project_admin === false) {
       bodyTabble = bodyTabble.filter(item => item.status !== 'Locked')
     }
+
+    console.log(bodyTabble, 'bodyTabble')
+    console.log(this.state.infoClass, 'bodyTabble')
+
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -1049,9 +1095,15 @@ class MeetingTable extends Component {
             You cannot create a new meeting because you have reached the limit.
           </span>
         }
+        {
+          Rmeetings ?
         <DataTable
           style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
         />
+        :
+      <span>sorry your access is not allowed to access the meeting room</span>
+      }
+
         <div className="table-responsive">
           {/*
           <table className="table table-hover">
@@ -1363,6 +1415,33 @@ class MeetingTable extends Component {
                 </Form.Group>
               }
 
+              <Form.Group className="row" controlId="formJudul">
+                <div className="col-sm-6">
+                  <Form.Label className="f-w-bold">Engine</Form.Label>
+                  <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
+                    <option value="bbb">Big Blue Button</option>
+                    <option value="zoom">Zoom</option>
+                  </select>
+                  <Form.Text className="text-muted">
+                    Pilih engine yang akan dipakai untuk meeting.
+                  </Form.Text>
+                </div>
+                {
+                  this.state.engine === 'zoom' ?
+                    <div className="col-sm-6">
+                      <Form.Label className="f-w-bold">Mode</Form.Label>
+                      <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
+                        <option value="web">Web</option>
+                        <option value="app">App</option>
+                      </select>
+                      <Form.Text className="text-muted">
+                        Jika zoom pilih mode yang akan dipakai.
+                      </Form.Text>
+                    </div>
+                  : null
+                }
+              </Form.Group>
+
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -1486,13 +1565,12 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
-                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
-                // style={{width:'100%'}}
-                >
-                  <i className="fa fa-video"></i> Masuk
-              </button>
-              </Link>
+              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
+                <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
+                  <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
+                    <i className="fa fa-video"></i> Masuk
+                  </button>
+                </a>
               : null}
           </Modal.Footer>
         </Modal>
