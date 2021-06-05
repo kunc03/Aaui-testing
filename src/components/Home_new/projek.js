@@ -256,23 +256,26 @@ class ProjekNew extends Component {
   componentDidMount() {
     this.fetchProject()
     this.fetchOtherData()
-
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_PROJECT'])
-
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+    ['CD_PROJECT'])
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
-      if (res.status === 200) {
-        this.setState({ gb: res.data.result })
-      }
+  fetchCheckAccess(role, company_id, level, param)
+  {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then( res => {
+      this.setState({ gb : res.data.result})
     })
   }
+
 
   render() {
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser === 'client' ? false : true;
-    let cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
+    let cdProject = '';
+    if( levelUser === 'admin' || levelUser === 'superadmin'){
+      cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
+    }
+    console.log(cdProject, 'kk')
     const location = window.location.href.split('/')[3] === 'project' ? true : false;
 
     const lists = this.state.project;
