@@ -291,20 +291,6 @@ export default class WebinarCreate extends Component {
                             Pilih engine yang akan dipakai untuk meeting.
                           </Form.Text>
                         </div>
-                        {
-                          this.state.engine === 'zoom' ?
-                            <div className="col-sm-6">
-                              <Form.Label className="f-w-bold">Mode</Form.Label>
-                              <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
-                                <option value="web">Web</option>
-                                <option value="app">App</option>
-                              </select>
-                              <Form.Text className="text-muted">
-                                Jika zoom pilih mode yang akan dipakai.
-                              </Form.Text>
-                            </div>
-                          : null
-                        }
                       </Form.Group>
 
                       <h4>Pilih Roles</h4>
