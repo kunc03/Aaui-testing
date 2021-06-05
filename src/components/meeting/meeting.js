@@ -509,6 +509,8 @@ class MeetingTable extends Component {
           mode: this.state.mode
         }
 
+        console.log(form)
+
         if ((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
           let userNotif = this.state.valuePeserta.concat(this.state.infoParticipant.map(item => item.user_id));
           for (var i = 0; i < userNotif.length; i++) {
@@ -1025,7 +1027,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={!R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1044,6 +1046,10 @@ class MeetingTable extends Component {
     if (access_project_admin === false) {
       bodyTabble = bodyTabble.filter(item => item.status !== 'Locked')
     }
+
+    console.log(bodyTabble, 'bodyTabble')
+    console.log(this.state.infoClass, 'bodyTabble')
+
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -1435,7 +1441,7 @@ class MeetingTable extends Component {
                         Jika zoom pilih mode yang akan dipakai.
                       </Form.Text>
                     </div>
-                  : null
+                    : null
                 }
               </Form.Group>
 
@@ -1562,13 +1568,12 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
-              <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
-              // style={{width:'100%'}}
-              >
-                <i className="fa fa-video"></i> Masuk
-              </button>
-            </Link>
+              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
+              <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
+                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
+                  <i className="fa fa-video"></i> Masuk
+                  </button>
+              </a>
               : null}
           </Modal.Footer>
         </Modal>
