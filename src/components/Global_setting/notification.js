@@ -38,19 +38,17 @@ const datas = [
     this.fetchAccess();
   }
 
-  fetchAccess() {
-    let companyId = Storage.get('user').data.company_id;
-    API.get(`${API_SERVER}v2/notification-alert/${companyId}/admin`).then((res) => {
-      if (res.status === 200) {
-        const meeting = res.data.result.filter((item) => item.sub === 'meeting');
-        const training = res.data.result.filter((item) => item.sub === 'training');
-        const ghantt = res.data.result.filter((item) => item.sub === 'gantt');
+  fetchAccess()
+  {
+    API.get(`${API_SERVER}v2/notification-alert/${Storage.get('user').data.company_id}/admin`).then(res => {
+      if(res.status === 200){
+        const meeting = res.data.result.filter(item => item.sub === 'meeting');
+        const training = res.data.result.filter(item => item.sub === 'training');
 
-        this.setState({ meeting, training, ghantt });
+        this.setState({ meeting, training })
       }
-    });
+    })
   }
-
   changeStatusWebsite = (e) => {
     let id = e.target.getAttribute('data-id');
     let val = e.target.value;
@@ -62,16 +60,16 @@ const datas = [
     })
   }
 
-  changeStatusEmail = (e) => {
-    let id = e.target.getAttribute('data-id');
-    let val = e.target.value;
+  // changeStatusEmail = (e) => {
+  //   let id = e.target.getAttribute('data-id');
+  //   let val = e.target.value;
 
-    API.put(`${API_SERVER}v2/notification-alert/${id}/email`, { status_email: val === "1" ? 0 : 1}).then(res => {
-      if(res.status === 200){
-        this.fetchAccess();
-      }
-    })
-  }
+  //   API.put(`${API_SERVER}v2/notification-alert/${id}/email`, { status_email: val === "1" ? 0 : 1}).then(res => {
+  //     if(res.status === 200){
+  //       this.fetchAccess();
+  //     }
+  //   })
+  // }
 
   changeStatusMobile = (e) => {
     let id = e.target.getAttribute('data-id');
@@ -83,16 +81,7 @@ const datas = [
       }
     })
   }
-  changeStatusWebsite = (e) => {
-    let id = e.target.getAttribute('data-id');
-    let val = e.target.value;
-
-    API.put(`${API_SERVER}v2/notification-alert/${id}/website`, { status_website: val === "1" ? 0 : 1}).then(res => {
-      if(res.status === 200){
-        this.fetchAccess();
-      }
-    })
-  }
+ 
 
   
 
@@ -121,9 +110,9 @@ const datas = [
                               <td className="f-w-bold f-14" style={{ width: '45%' }}>
                                 Meeting
                               </td>
-                              <td align="center" className="f-w-bold f-14">
+                              {/* <td align="center" className="f-w-bold f-14">
                                 Email
-                              </td>
+                              </td> */}
                               <td align="center" className="f-w-bold f-14">
                                 Mobile
                               </td>
@@ -143,18 +132,6 @@ const datas = [
                               <tbody>
                                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                                   <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
-                                  <td align="center">
-                                    <label class="switch">
-                                      <input
-                                        type="checkbox"
-                                        onChange={this.changeStatusEmail}
-                                        data-id={item.id_access}
-                                        value={item.status}
-                                        checked={item.status}
-                                      ></input>
-                                      <span class="slider round"></span>
-                                    </label>
-                                  </td>
                                   <td align="center">
                                   <label class="switch">
                                       <input
@@ -201,9 +178,6 @@ const datas = [
                                 Training
                               </td>
                               <td align="center" className="f-w-bold f-14">
-                                Email
-                              </td>
-                              <td align="center" className="f-w-bold f-14">
                                 Mobile
                               </td>
                               <td align="center" className="f-w-bold f-14">
@@ -221,18 +195,6 @@ const datas = [
                               <tbody>
                                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                                   <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
-                                  <td align="center">
-                                  <label class="switch">
-                                      <input
-                                        type="checkbox"
-                                        onChange={this.changeStatusEmail}
-                                        data-id={item.id_access}
-                                        value={item.status}
-                                        checked={item.status}
-                                      ></input>
-                                      <span class="slider round"></span>
-                                    </label>
-                                  </td>
                                   <td align="center">
                                   <label class="switch">
                                       <input
@@ -279,9 +241,6 @@ const datas = [
                                 Project Gantt Chart{' '}
                               </td>
                               <td align="center" className="f-w-bold f-14">
-                                Email
-                              </td>
-                              <td align="center" className="f-w-bold f-14">
                                 Mobile
                               </td>
                               <td align="center" className="f-w-bold f-14">
@@ -299,18 +258,6 @@ const datas = [
                               <tbody>
                                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                                   <td className="fc-muted f-14 f-w-300 p-t-20">{item.name}</td>
-                                  <td align="center">
-                                  <label class="switch">
-                                      <input
-                                        type="checkbox"
-                                        onChange={this.changeStatusEmail}
-                                        data-id={item.id_access}
-                                        value={item.status}
-                                        checked={item.status}
-                                      ></input>
-                                      <span class="slider round"></span>
-                                    </label>
-                                  </td>
                                   <td align="center">
                                   <label class="switch">
                                       <input
