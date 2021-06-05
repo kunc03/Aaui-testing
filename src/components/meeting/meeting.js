@@ -24,6 +24,8 @@ import moment from 'moment-timezone'
 
 const bbb = require('bigbluebutton-js')
 
+const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09'
+
 class MeetingTable extends Component {
   constructor(props) {
     super(props);
@@ -305,6 +307,7 @@ class MeetingTable extends Component {
     else if (this.props.allMeeting) {
       apiMeeting = `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
     }
+
     API.get(apiMeeting).then(res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
@@ -1424,27 +1427,13 @@ class MeetingTable extends Component {
                 <div className="col-sm-6">
                   <Form.Label className="f-w-bold">Engine</Form.Label>
                   <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
-                    <option value="bbb">Big Blue Button</option>
+                    <option value="bbb">BigBlueButton</option>
                     <option value="zoom">Zoom</option>
                   </select>
                   <Form.Text className="text-muted">
                     Pilih engine yang akan dipakai untuk meeting.
                   </Form.Text>
                 </div>
-                {
-                  this.state.engine === 'zoom' ?
-                    <div className="col-sm-6">
-                      <Form.Label className="f-w-bold">Mode</Form.Label>
-                      <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
-                        <option value="web">Web</option>
-                        <option value="app">App</option>
-                      </select>
-                      <Form.Text className="text-muted">
-                        Jika zoom pilih mode yang akan dipakai.
-                      </Form.Text>
-                    </div>
-                    : null
-                }
               </Form.Group>
 
             </Form>
@@ -1571,7 +1560,7 @@ class MeetingTable extends Component {
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-              <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
+              <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? LINK_ZOOM : `/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
                   <i className="fa fa-video"></i> Masuk
                   </button>
