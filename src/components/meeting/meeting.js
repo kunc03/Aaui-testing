@@ -516,7 +516,8 @@ class MeetingTable extends Component {
               activity_id: this.state.valueFolder[0],
               type: 3,
               desc: `Meeting "${form.room_name}" pada tanggal ${moment(this.state.oldStartDate).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')} diubah ke tanggal ${moment(startDateJkt).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
-              dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
+              dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+              types: 2
             }
             API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
           }
@@ -682,7 +683,8 @@ class MeetingTable extends Component {
                   activity_id: this.state.valueFolder[0],
                   type: 3,
                   desc: `Silahkan konfirmasi undangan Anda pada meeting "${res.data.result.room_name}"`,
-                  dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
+                  dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                  types : 1
                 }
                 API.post(`${API_SERVER}v1/notification/broadcast`, notif);
               }
