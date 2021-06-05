@@ -642,8 +642,8 @@ fetchRekamanBBB(folder){
                   Upload
                   </button>:null
           }
-          { cdFile && access_project_admin == true ? <button
-            onClick={e => this.setState({ modalNewFolder: true })}
+          { access_project_admin == true ? <button
+            onClick={cdFile ? e => this.setState({ modalNewFolder: true }) : notify}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important" }}
           >
