@@ -537,7 +537,7 @@ class Header extends Component {
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item dropdown">
-              <Link to="/Profile">
+              <Link to="/pengaturan">
                 <div className="media">
                   <img
                     alt="Media"
