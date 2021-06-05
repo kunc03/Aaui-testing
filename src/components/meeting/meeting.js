@@ -285,8 +285,11 @@ class MeetingTable extends Component {
     this.setState({ modalDelete: false, deleteMeetingName: '', deleteMeetingId: '' })
   }
   onClickInfo(class_id) {
-    this.setState({ isModalConfirmation: true })
-    this.fetchMeetingInfo(class_id)
+    this.setState({ isModalConfirmation: true });
+    this.fetchMeetingInfo(class_id);
+
+    // console.log(this.props.projectId, 'pROJECTY');
+    API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
   }
 
   fetchMeeting() {
@@ -853,7 +856,7 @@ class MeetingTable extends Component {
     }
 
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
-     ['CD_MEETING','CD_MEETING','R_MEETINGS','R_MEETING','R_ATTENDANCE']);
+      ['CD_MEETING', 'CD_MEETING', 'R_MEETINGS', 'R_MEETING', 'R_ATTENDANCE']);
 
   }
 
@@ -894,14 +897,14 @@ class MeetingTable extends Component {
   render() {
 
     // ** GLOBAL SETTINGS ** //
-    let  cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
 
     // All MEETING ROOMS { SEMUA RUANGAN MEETING }
-    let  Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
+    let Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
 
     // DISABLE { SALAH SATU RUANG MEETING }
     // let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
-    let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+    let R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
 
     // ========= End ======== //
 
@@ -1024,7 +1027,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ !R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={!R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1097,12 +1100,12 @@ class MeetingTable extends Component {
         }
         {
           Rmeetings ?
-        <DataTable
-          style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
-        />
-        :
-      <span>sorry your access is not allowed to access the meeting room</span>
-      }
+            <DataTable
+              style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
+            />
+            :
+            <span>sorry your access is not allowed to access the meeting room</span>
+        }
 
         <div className="table-responsive">
           {/*
@@ -1438,7 +1441,7 @@ class MeetingTable extends Component {
                         Jika zoom pilih mode yang akan dipakai.
                       </Form.Text>
                     </div>
-                  : null
+                    : null
                 }
               </Form.Group>
 
@@ -1501,10 +1504,10 @@ class MeetingTable extends Component {
                   <div class="row">
                     <div className="col-sm-6">
                       {this.state.infoClass.is_akses ?
-                      <h3 className="f-14">
-                        Moderator : {this.state.infoClass.name}
-                      </h3>
-                      :null
+                        <h3 className="f-14">
+                          Moderator : {this.state.infoClass.name}
+                        </h3>
+                        : null
                       }
                       <h3 className="f-14">
                         Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
@@ -1566,11 +1569,11 @@ class MeetingTable extends Component {
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-                <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
-                  <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
-                    <i className="fa fa-video"></i> Masuk
+              <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
+                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
+                  <i className="fa fa-video"></i> Masuk
                   </button>
-                </a>
+              </a>
               : null}
           </Modal.Footer>
         </Modal>
