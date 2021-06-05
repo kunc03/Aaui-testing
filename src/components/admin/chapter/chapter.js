@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable array-callback-return */
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { Modal, Form, Card, FormControl, Badge } from "react-bootstrap";
@@ -373,7 +375,7 @@ export default class ChapterPreview extends Component {
 
       console.log('jumlah: ', this.state.attachmentId.length);
 
-      if (this.state.attachmentId.length != 0) {
+      if (this.state.attachmentId.length !== 0) {
         let formData = new FormData();
         for (let i = 0; i < this.state.attachmentId.length; i++) {
           formData.append('attachment_id', this.state.attachmentId[i]);
@@ -420,7 +422,7 @@ export default class ChapterPreview extends Component {
         API.post(`${API_SERVER}v1/chapter`, form).then((res) => {
           if (res.status === 200) {
 
-            if (this.state.attachmentId.length != 0) {
+            if (this.state.attachmentId.length !== 0) {
               let formData = new FormData();
               for (let i = 0; i < this.state.attachmentId.length; i++) {
                 formData.append('attachment_id', this.state.attachmentId[i]);
@@ -555,7 +557,7 @@ export default class ChapterPreview extends Component {
 
         this.fetchDataChapter();
 
-        if (this.state.optionsModerator.length == 0) {
+        if (this.state.optionsModerator.length === 0) {
 
           API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id}`).then(response => {
             response.data.result.map(item => {
@@ -743,13 +745,13 @@ export default class ChapterPreview extends Component {
                           Chapter {item.chapter_number}
                         </Form.Text>
                         <Form.Text style={{ float: 'right' }} data-id={item.chapter_id}>
-                          {item.jenis_pembelajaran == "forum" ? "Forum" : item.jenis_pembelajaran == "group meeting" ? "Meeting" : "Media"}
+                          {item.jenis_pembelajaran === "forum" ? "Forum" : item.jenis_pembelajaran === "group meeting" ? "Meeting" : "Media"}
                         </Form.Text>
                         {item.chapter_title}
                       </h3>
                       <Link to="#" className="buttonku" title="Edit">
                         <i
-                          onClick={item.jenis_pembelajaran == "media" ? this.onClickEditChapter : item.jenis_pembelajaran == "forum" ? this.onClickEditChapterForum : this.onClickEditChapterMeeting}
+                          onClick={item.jenis_pembelajaran === "media" ? this.onClickEditChapter : item.jenis_pembelajaran === "forum" ? this.onClickEditChapterForum : this.onClickEditChapterMeeting}
                           data-id={item.chapter_id}
                           className="fa fa-edit"
                         ></i>

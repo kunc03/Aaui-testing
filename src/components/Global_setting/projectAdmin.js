@@ -10,7 +10,6 @@ class ProjectAdmin extends React.Component {
     projectId: 0,
 
     general: [],
-    report: [],
   };
 
   componentDidMount() {
@@ -18,11 +17,11 @@ class ProjectAdmin extends React.Component {
   }
 
   fetchAccess() {
-    API.get(`${API_SERVER}v2/global-settings/${Storage.get('user').data.company_id}/admin`).then((res) => {
+    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${Storage.get('user').data.company_id}`).then((res) => {
       if (res.status === 200) {
-        const general = res.data.result.filter((item) => item.sub === 'general');
-        const report = res.data.result.filter((item) => item.sub === 'report');
-        this.setState({ general, report });
+        const general = res.data.result.filter((item) => item.sub === 'general' && item.level === 'admin' || item.level === 'superadmin' );
+        console.log(general, 'ddd')
+        this.setState({ general });
       }
     });
   }
@@ -36,13 +35,13 @@ class ProjectAdmin extends React.Component {
   };
 
   render() {
-    const { general, report } = this.state;
+    const { general } = this.state;
 
     return (
       <div className="pcoded-inner-content mt-3">
         <div className="card">
           <div className="card-body">
-            <div class="row ">
+            <div class="row">
               <div className="col-sm-12" style={{ marginTop: '10px' }}>
                 <div className="box-text d-flex justify-content-between pr-3">
                   <h3 className="f-w-bold f-18 mb-4 p-l-20 ">General</h3>
@@ -91,53 +90,6 @@ class ProjectAdmin extends React.Component {
                 </div>
               </div>
 
-              <div className="col-sm-12" style={{ marginTop: '30px' }}>
-                <div className="box-text d-flex justify-content-between pr-3">
-                  <h3 className="f-w-bold f-18 mb-4 p-l-20 ">Report</h3>
-                  <small className="f-12 mb-4 p-l-20 text-muted float-right ml-5">Last Updated</small>
-                </div>
-
-                <div className="wrap">
-                  {report.length == 0 ? (
-                    <div className="col-sm-12 mb-1">Not available</div>
-                  ) : (
-                    report.map((item, i) => (
-                      <div className="col-sm-12 mb-1">
-                        <div className="row p-8 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
-                          <span to={`detail-project/${item.id}`} className={'col-sm-10'}>
-                            <div className="box-project">
-                              <div className=" f-w-800 f-16 fc-black">{item.name}</div>
-                              {item.share_from && (
-                                <span
-                                  class="badge badge-pill badge-secondary"
-                                  style={{ fontSize: 8, backgroundColor: '#007bff' }}
-                                >
-                                  {item.share_from}
-                                </span>
-                              )}
-                            </div>
-                          </span>
-                          <span className="col-sm-1">
-                            <label class="switch float-right">
-                              <input
-                                type="checkbox"
-                                onChange={this.changeStatus}
-                                data-id={item.id_access}
-                                value={item.status}
-                                checked={item.status}
-                              ></input>
-                              <span class="slider round"></span>
-                            </label>
-                          </span>
-                          <span className="col-sm-1">
-                            <small>{item.update_at}</small>
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>

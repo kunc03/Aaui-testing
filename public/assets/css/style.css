@@ -11680,17 +11680,6 @@ div.code-toolbar > .toolbar span:hover {
   padding: 10px;
 }
 
-.project-info {
-  background: transparent;
-    padding: 6px 4px;
-    border: 1px solid #0895ff;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 6px;
-    margin-left: 3px;
-    color: #0895ff;
-}
-
 .circle-info {
   background: transparent;
     padding: 6px 18px;
@@ -11702,14 +11691,25 @@ div.code-toolbar > .toolbar span:hover {
     color: #0895ff;
 }
 
-.project-info-disabled {
-  background: #f7f7f7;
-    padding: 6px 4px;
-    border: 1px solid #ebebeb;
-    font-size: 12px;
+.project-info {
+  background: transparent;
+    padding: 6px 1px;
+    border: 1px solid #0895ff;
+    font-size: 10px;
     font-weight: 600;
     border-radius: 6px;
-    margin-left: 3px;
+    margin-left: 2px;
+    color: #0895ff;
+}
+
+.project-info-disabled {
+  background: #f7f7f7;
+    padding: 6px 1px;
+    border: 1px solid #ebebeb;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-left: 2px;
     color: #cfcfcf;
 }
 
