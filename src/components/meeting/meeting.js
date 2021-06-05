@@ -858,7 +858,7 @@ class MeetingTable extends Component {
     }
 
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
-      ['CD_MEETING', 'CD_MEETING', 'R_MEETINGS', 'R_MEETING', 'R_ATTENDANCE']);
+      ['CD_MEETING', 'R_MEETINGS', 'R_MEETING', 'R_ATTENDANCE']);
 
   }
 
@@ -1029,7 +1029,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={!R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
