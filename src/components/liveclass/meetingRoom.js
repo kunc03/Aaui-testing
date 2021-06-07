@@ -482,7 +482,7 @@ export default class MeetingRoom extends Component {
                 console.log('joinUrl: ', joinUrl)
                 this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
                 if (isMobile) {
-                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.state.classId))
                 }
               }
               else {
@@ -503,7 +503,7 @@ export default class MeetingRoom extends Component {
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.state.classId))
             }
           }
         })

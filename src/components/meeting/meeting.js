@@ -18,6 +18,7 @@ import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
 import SocketContext from '../../socket';
+import { isMobile } from 'react-device-detect';
 
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
@@ -260,6 +261,9 @@ class MeetingTable extends Component {
   }
 
   fetchMeetingInfo(id) {
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + this.state.classId))
+    }
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
       console.log(res.data.result, 'prop informationId');
       if (res.status === 200) {

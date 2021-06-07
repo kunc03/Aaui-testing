@@ -103,16 +103,21 @@ export default class MeetingRoomPublic extends Component {
   }
 
   componentDidMount() {
-    this.setState({isLoading: true})
-    this.onBotoomScroll();
-    socket.on("broadcast", data => {
-      console.log(this.state.fileChat, 'sockett onnnnn')
-      if (data.room == this.state.classId) {
-        this.fetchData();
-        this.setState({ fileChat: [...this.state.fileChat, data] })
-      }
-    });
-    this.fetchData();
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
+    }
+    else{
+      this.setState({isLoading: true})
+      this.onBotoomScroll();
+      socket.on("broadcast", data => {
+        console.log(this.state.fileChat, 'sockett onnnnn')
+        if (data.room == this.state.classId) {
+          this.fetchData();
+          this.setState({ fileChat: [...this.state.fileChat, data] })
+        }
+      });
+      this.fetchData();
+    }
     // window.onbeforeunload = function() {
     //   return "Are you sure you want to leave?";
     // };
@@ -184,7 +189,7 @@ export default class MeetingRoomPublic extends Component {
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
             }
           }
           else {
@@ -211,7 +216,7 @@ export default class MeetingRoomPublic extends Component {
 
         this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
         if (isMobile) {
-          window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+          window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
         }
       }
     })
