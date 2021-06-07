@@ -422,9 +422,6 @@ export default class WebinarLive extends Component {
                     this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
-                    if (isMobile) {
-                      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinar.id))
-                    }
                   }
                   else {
                     console.log('GAGAL', result)
@@ -447,9 +444,6 @@ export default class WebinarLive extends Component {
                 this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
 
                 this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
-                if (isMobile) {
-                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinar.id))
-                }
               }
             })
             // BBB JOIN END
@@ -536,9 +530,6 @@ export default class WebinarLive extends Component {
                     )
                     this.setState({ joinUrl: joinUrl })
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
-                    if (isMobile) {
-                      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinar.id))
-                    }
                   }
                   else {
                     console.log('GAGAL', result)
@@ -555,9 +546,6 @@ export default class WebinarLive extends Component {
                 )
                 this.setState({ joinUrl: joinUrl })
                 this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
-                if (isMobile) {
-                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinar.id))
-                }
               }
             })
             // BBB JOIN END
@@ -639,6 +627,9 @@ export default class WebinarLive extends Component {
     })
   }
   componentDidMount() {
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
+    }
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
