@@ -628,7 +628,12 @@ export default class WebinarLive extends Component {
   }
   componentDidMount() {
     if (isMobile) {
-      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
+      if (this.props.webinarId && this.props.voucher){
+        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar-guest/' + this.props.webinarId + '/' + this.props.voucher))
+      }
+      else{
+        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
+      }
     }
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {

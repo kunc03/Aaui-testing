@@ -167,7 +167,7 @@ class MeetingTable extends Component {
             toast.success("Sending invitation to participant's Email.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
-            console.log('RESS GAGAL', res)
+            this.setState({ sendingEmail: false })
           }
         }
       })
