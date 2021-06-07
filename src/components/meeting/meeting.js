@@ -1206,7 +1206,7 @@ class MeetingTable extends Component {
         <Modal show={this.state.isClassModal} onHide={this.closeClassModal} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              {this.state.classId ? 'Change Group Meeting' : 'Create Group Meeting'}
+              {this.state.classId ? 'Edit Group Meeting' : 'Create Group Meeting'}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
