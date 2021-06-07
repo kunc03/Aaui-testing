@@ -905,9 +905,9 @@ export default class MeetingRoom extends Component {
     window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
   }
 
-  fetchCheckAccess(role, companyId, level, param)
+  fetchCheckAccess(role, company_id, level, param)
   {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
       if(res.status === 200){
         this.setState({ gb : res.data.result})
       }

@@ -132,13 +132,12 @@ class KalenderNew extends Component {
                 <i className="fa fa-square"></i>
               </span>
               Group Meeting
-              <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
-                <i className="fa fa-square"></i>
-              </span>
+
               <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
                 <i className="fa fa-square"></i>
               </span>
               Webinar
+
               <span className="float-right">
                 <Link to="/full-kalender">Lihat Selengkapnya</Link>
               </span>
