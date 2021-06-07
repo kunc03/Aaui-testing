@@ -31,9 +31,9 @@ import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
 
-import { ThemeProvider } from 'styled-components';
-import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
-import ChimeMeeting from '../meeting/chime'
+// import { ThemeProvider } from 'styled-components';
+// import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+// import ChimeMeeting from '../meeting/chime'
 import axios from 'axios'
 
 import Dictation from './dictation';
@@ -482,7 +482,7 @@ export default class MeetingRoom extends Component {
                 console.log('joinUrl: ', joinUrl)
                 this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
                 if (isMobile) {
-                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.state.classId))
+                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.props.match.params.roomid))
                 }
               }
               else {
@@ -503,7 +503,7 @@ export default class MeetingRoom extends Component {
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.state.classId))
+              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.props.match.params.roomid))
             }
           }
         })

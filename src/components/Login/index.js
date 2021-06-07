@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Alert } from 'react-bootstrap';
 import axios from 'axios';
-import API, { USER_LOGIN, API_SERVER } from '../../repository/api';
+import API, { USER_LOGIN, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import LupaPassword from './lupaPassword'
 import { Link } from "react-router-dom";
-import { isMobile } from 'react-device-detect';
+import { isMobile, isIOS } from 'react-device-detect';
 
 const tabs = [
   { title: 'Login' },
@@ -26,7 +26,8 @@ class Login extends Component {
     voucher: '',
     alertMessage: '',
     tabIndex: 1,
-    showPass: false
+    showPass: false,
+    showOpenApps: true
   };
 
   tabLogin(a, b) {
@@ -242,6 +243,9 @@ class Login extends Component {
   render() {
     const { toggle_alert, isVoucher } = this.state;
     let formKu = null;
+    let plainURL = decodeURIComponent(this.props.redirectUrl ? APPS_SERVER+'redirect'+this.props.redirectUrl : APPS_SERVER);
+    let lengthURL = plainURL.length;
+    let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
     if (isVoucher) {
       formKu = (
         <form onSubmit={this.submitFormVoucher}>
@@ -423,6 +427,20 @@ class Login extends Component {
             Copyright © 2020 - ICADEMY
           </div>
         </footer>
+        {
+          isMobile && this.state.showOpenApps ?
+          <div className="floating-message">
+            <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+            <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+            <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+              <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+            </a>
+            <a href={isIOS ? iosURL : plainURL}>
+              <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+            </a>
+          </div>
+          : null
+        }
       </div>
     );
   }
