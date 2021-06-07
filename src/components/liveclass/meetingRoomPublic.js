@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import moment from 'moment-timezone';
+import { Alert } from 'react-bootstrap';
 import {
-  Card, Col, Row, Modal
+  Form, Card, Col, Row, Modal
 } from 'react-bootstrap';
 
 import 'react-sm-select/dist/styles.css';
@@ -15,11 +16,11 @@ import API, { APPS_SERVER, API_SERVER, API_SOCKET, BBB_URL, BBB_KEY, CHIME_URL, 
 import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isIOS } from 'react-device-detect';
 
-import { ThemeProvider } from 'styled-components';
-import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
-import ChimeMeeting from '../meeting/chime'
+// import { ThemeProvider } from 'styled-components';
+// import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+// import ChimeMeeting from '../meeting/chime'
 import axios from 'axios'
 
 const bbb = require('bigbluebutton-js')
@@ -41,6 +42,8 @@ export default class MeetingRoomPublic extends Component {
     attachment: '',
     isNotifikasi: false,
     isiNotifikasi: '',
+    toggle_alert: false,
+    alertMessage: '',
     isInvite: false,
     emailInvite: [],
     emailResponse: 'Masukkan email yang ingin di invite.',
@@ -51,8 +54,9 @@ export default class MeetingRoomPublic extends Component {
     join: false,
     startMic: localStorage.getItem('startMic') === 'true' ? true : false,
     startCam: localStorage.getItem('startCam') === 'true' ? true : false,
-    modalStart: true,
+    modalStart: false,
     joinUrl: '',
+    welcome: true,
 
     attendee: {},
     zoomUrl: '',
@@ -249,7 +253,7 @@ export default class MeetingRoomPublic extends Component {
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
       }
 
-      API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+      API.post(`${API_SERVER}v1/liveclasspublic/share`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
             this.setState({
@@ -262,7 +266,7 @@ export default class MeetingRoomPublic extends Component {
             toast.success("Mengirim email ke peserta.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
-            console.log('RESS GAGAL', res)
+            this.setState({ sendingEmail: false })
           }
         }
       })
@@ -272,8 +276,9 @@ export default class MeetingRoomPublic extends Component {
   onBotoomScroll = (e) => {
     //let scrollingElement = (document.scrollingElement || document.body);
     var element = document.getElementById('scrollin');
-    element.scrollTop = element.scrollHeight - element.clientHeight;
-    console.log(element, 'kebawah')
+    if (element){
+      element.scrollTop = element.scrollHeight - element.clientHeight;
+    }
   }
 
   onChangeInput = (e) => {
@@ -340,229 +345,269 @@ export default class MeetingRoomPublic extends Component {
 
       this.joinChime()
 
-      this.setState({ join: true, modalStart: false });
+      this.setState({ join: true, modalStart: false, welcome: false });
     }
     else {
-      alert('Nama harus diisi')
+      this.setState({ toggle_alert: true, alertMessage: 'Please insert your name.' });
     }
   }
 
   render() {
 
-    const { classRooms, user } = this.state;
+    const { classRooms, user, toggle_alert } = this.state;
 
     return (
-      <div className="pcoded-main-container" style={{ marginLeft: 0 }}>
-        <div className="pcoded-wrapper">
-          <div className="pcoded-content" style={{ padding: 14 }}>
-            <div className="pcoded-inner-content">
-              <div className="main-body">
-                <div className="page-wrapper">
-                  <Row>
-
-                    {/*
-          <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/`} className="menu-mati">
-              <div className="kategori title-disabled">
-              <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Kursus & Materi
-              </div>
-            </Link>
-          </div>
-
-          <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/forum`} className="menu-mati">
-              <div className="kategori title-disabled">
-                <img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Forum
-              </div>
-            </Link>
-          </div>
-
-          <div className="col-md-4 col-xl-4 mb-3">
-            <Link to={`/liveclass`}>
-              <div className="kategori-aktif">
-                <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
-              &nbsp;
-              Group Meeting
-              </div>
-            </Link>
-          </div>
-          */}
-
-                    <Col sm={12} style={{ marginBottom: '20px' }}>
-                      <h3 className="f-20 f-w-800">
-                        {classRooms.room_name}
-                        <button style={{ marginRight: 14 }} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
-                          <i className="fa fa-user"></i>Undang Peserta
-                        </button>
-                      </h3>
-                      {
-                        user.name && classRooms.room_name && this.state.join ?
-
-                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
-                            width="100%"
-                            height="600px"
-                            display="initial"
-                            frameBorder="0"
-                            allow="fullscreen *;geolocation *; microphone *; camera *"
-                            position="relative" />
-
-                          // <ThemeProvider theme={lightTheme}>
-                          //   <MeetingProvider>
-                          //     <ChimeMeeting
-                          //       ref={`child`}
-                          //       attendee={this.state.attendee}
-                          //       name={Storage.get('user').data.user}
-                          //       title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
-                          //       region={`ap-southeast-1`} />
-                          //   </MeetingProvider>
-                          // </ThemeProvider>
-
-                          //   <JitsiMeetComponent
-                          //     roomName={classRooms.room_name}
-                          //     roomId={classRooms.class_id}
-                          //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
-                          //     userId={user.user_id}
-                          //     userName={user.name}
-                          //     userEmail={user.email}
-                          //     userAvatar={user.avatar}
-                          //     startMic={this.state.startMic}
-                          //     startCam={this.state.startCam}
-                          //   />
-                          :
-                          null
-                      }
-                    </Col>
-                  </Row>
-
-                  {/* CHATING SEND FILE */}
-                  <h3 className="f-20 f-w-800">
-                    File Sharing
-        </h3>
-                  <div id="scrollin" className='box-chat'>
-
-                    {this.state.fileChat.map((item, i) => {
-                      return (
-                        <div className='box-chat-send-left'>
-                          <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
-                          <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
-                          <small >
-                            {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
-                    {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
-                          </small>
-                        </div>
-                      )
-                    })}
+      <div>
+      {
+        !this.state.welcome ?
+        <div className="pcoded-main-container" style={{ marginLeft: 0 }}>
+          <div className="pcoded-wrapper">
+            <div className="pcoded-content" style={{ padding: 14 }}>
+              <div className="pcoded-inner-content">
+                <div className="main-body">
+                  <div className="page-wrapper">
+                    <Row>
+  
+                      {/*
+            <div className="col-md-4 col-xl-4 mb-3">
+              <Link to={`/`} className="menu-mati">
+                <div className="kategori title-disabled">
+                <img src="/assets/images/component/kursusoff.png" className="img-fluid" alt="media" />
+                &nbsp;
+                Kursus & Materi
+                </div>
+              </Link>
+            </div>
+  
+            <div className="col-md-4 col-xl-4 mb-3">
+              <Link to={`/forum`} className="menu-mati">
+                <div className="kategori title-disabled">
+                  <img src="/assets/images/component/forumoff.png" className="img-fluid" alt="media" />
+                &nbsp;
+                Forum
+                </div>
+              </Link>
+            </div>
+  
+            <div className="col-md-4 col-xl-4 mb-3">
+              <Link to={`/liveclass`}>
+                <div className="kategori-aktif">
+                  <img src="/assets/images/component/liveon.png" className="img-fluid" alt="media" />
+                &nbsp;
+                Group Meeting
+                </div>
+              </Link>
+            </div>
+            */}
+  
+                      <Col sm={12} style={{ marginBottom: '20px' }}>
+                        {
+                          this.state.welcome ? null :
+                          <h3 className="f-20 f-w-800">
+                            {classRooms.room_name}
+                            <button style={{ marginRight: 14 }} onClick={this.onClickInvite} className="float-right btn btn-icademy-primary">
+                              <i className="fa fa-user"></i>Undang Peserta
+                            </button>
+                          </h3>
+                        }
+                        {
+                          user.name && classRooms.room_name && this.state.join ?
+  
+                            <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
+                              width="100%"
+                              height="600px"
+                              display="initial"
+                              frameBorder="0"
+                              allow="fullscreen *;geolocation *; microphone *; camera *"
+                              position="relative" />
+  
+                            // <ThemeProvider theme={lightTheme}>
+                            //   <MeetingProvider>
+                            //     <ChimeMeeting
+                            //       ref={`child`}
+                            //       attendee={this.state.attendee}
+                            //       name={Storage.get('user').data.user}
+                            //       title={classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH')}
+                            //       region={`ap-southeast-1`} />
+                            //   </MeetingProvider>
+                            // </ThemeProvider>
+  
+                            //   <JitsiMeetComponent
+                            //     roomName={classRooms.room_name}
+                            //     roomId={classRooms.class_id}
+                            //     moderator={classRooms.moderator == Storage.get("user").data.user_id ? true : false}
+                            //     userId={user.user_id}
+                            //     userName={user.name}
+                            //     userEmail={user.email}
+                            //     userAvatar={user.avatar}
+                            //     startMic={this.state.startMic}
+                            //     startCam={this.state.startCam}
+                            //   />
+                            :
+                            null
+                        }
+                      </Col>
+                    </Row>
+  
+                    {/* CHATING SEND FILE */}
+                        {
+                          this.state.welcome ? null :
+                          <div>
+                            <h3 className="f-20 f-w-800">
+                              File Sharing
+                            </h3>
+                            <div id="scrollin" className='box-chat'>
+          
+                              {this.state.fileChat.map((item, i) => {
+                                return (
+                                  <div className='box-chat-send-left'>
+                                    <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
+                                    <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
+                                    <small >
+                                      {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
+                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
+                                    </small>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        }
+  
+  
+                    {/*  */}
+  
+  
+  
+                    <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+                        <Modal.Header closeButton>
+                          <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                            Invite Participants
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <div className="form-vertical">
+                            <div className="form-group">
+                              <label style={{ fontWeight: "bold" }}>Email</label>
+                              <TagsInput
+                                value={this.state.emailInvite}
+                                onChange={this.handleChange.bind(this)}
+                                addOnPaste={true}
+                                addOnBlur={true}
+                                inputProps={{ placeholder: `Participant's Email` }}
+                              />
+                              <Form.Text>
+                                Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                              </Form.Text>
+                            </div>
+                          </div>
+                          <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                            <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                          </button>
+                          <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                            Cancel
+                          </button>
+                        </Modal.Body>
+                      </Modal>
                   </div>
-
-
-                  {/*  */}
-
-
-
-                  <Modal
-                    show={this.state.isInvite}
-                    onHide={this.handleCloseInvite}
-                  >
-                    <Modal.Header closeButton>
-                      <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                        Undang Peserta
-            </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <div className="form-vertical">
-                        <div className="form-group">
-                          <label style={{ fontWeight: "bold" }}>Email</label>
-                          <TagsInput
-                            value={this.state.emailInvite}
-                            onChange={this.handleChange.bind(this)}
-                            addOnPaste={true}
-                            inputProps={{ placeholder: 'Email Peserta' }}
-                            addOnBlur={true}
-                          />
-                        </div>
-                      </div>
-
-                      <button
-                        style={{ marginTop: "30px" }}
-                        type="button"
-                        onClick={this.onClickSubmitInvite}
-                        className="btn btn-block btn-ideku f-w-bold"
-                      >
-                        Submit
-            </button>
-                      <button
-                        type="button"
-                        className="btn btn-block f-w-bold"
-                        onClick={this.handleCloseInvite}
-                      >
-                        Tidak
-            </button>
-                    </Modal.Body>
-                  </Modal>
-
-
-                  <Modal
-                    show={this.state.modalStart}
-                    onHide={this.handleCloseStart}
-                    backdropClassName='modal-no-bg'
-                  >
-                    <Modal.Header>
-                      <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                    {
-                      this.state.isLoading ?
-                      <h4>Loading...</h4>
-                      :
-                      classRooms.room_name
-                    }
-                      </Modal.Title>
-                    </Modal.Header>
-                    {
-                      this.state.isLoading ?
-                      null
-                      :
-                      <Modal.Body>
-                        <Card className="cardku">
-                          <Card.Body>
-                            <Row>
-                              <Col>
-                                <div className="input-group mb-4">
-                                  <input
-                                    type="text"
-                                    value={this.state.user.name}
-                                    className="form-control"
-                                    placeholder="Nama"
-                                    onChange={this.onChangeName}
-                                    required
-                                  />
-                                </div>
-                              </Col>
-                            </Row>
-                            {/* <Row>
-                        <Col><h4><i className="fa fa-microphone"></i> Microphone</h4></Col>
-                        <Col><ToggleSwitch onChange={this.toggleSwitchMic.bind(this)} checked={this.state.startMic} /></Col>
-                      </Row>
-                      <Row>
-                        <Col><h4><i className="fa fa-camera"></i> Camera</h4></Col>
-                        <Col><ToggleSwitch onChange={this.toggleSwitchCam.bind(this)} checked={this.state.startCam} /></Col>
-                      </Row> */}
-                        <Link onClick={this.joinRoom.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{ padding: '10px 17px', width: '100%', marginTop: 20 }}>
-                          <i className="fa fa-video"></i>Join Meeting
-                        </Link>
-                          </Card.Body>
-                        </Card>
-                      </Modal.Body>
-                    }
-                  </Modal>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
+        :
+        <div style={{ background: "#fafbfc"}}>
+          <header className="header-login">
+            <center>
+              <div className="mb-4">
+                <img
+                  src="newasset/logo-horizontal.svg"
+                  style={{ paddingTop: 18 }}
+                  alt=""
+                />
+              </div>
+            </center>
+          </header>
+          <div
+            className="auth-wrapper"
+  
+          >
+            <div className="auth-content mb-4" style={{ display: isMobile ? 'none' : 'block' }}>
+              <div className=" b-r-15">
+                <div
+                  className=" text-center"
+                  style={{ padding: "50px !important" }}
+                >
+                  <div className="mb-4">
+                    <img
+                      src="newasset/user-computer.svg"
+                      style={{ width: 350 }}
+                      alt=""
+                    />
+                  </div>
+                  <h4 className="mb-0 mt-1" style={{ textTransform: 'uppercase' }}>
+                    <b>
+                      {
+                        this.state.isLoading ?
+                        <h4>Loading...</h4>
+                        :
+                        classRooms.room_name
+                      }
+                    </b>
+                  </h4>
+                  <p className="mb-0 mt-1">
+                    We are ready to connect you with others
+                  </p>
+  
+                </div>
+              </div>
+            </div>
+            <div className="auth-content mb-4" style={{}}>
+              <div className="card b-r-15">
+                <div
+                  className="card-body text-center"
+                  style={{ padding: "50px !important" }}
+                >
+                  <div className="row">
+                    <div className="col-sm-12">
+                        <b style={{ float: 'left', color: 'black' }}>
+                          Join the room "
+                          {
+                            this.state.isLoading ?
+                            <h4>Loading...</h4>
+                            :
+                            classRooms.room_name
+                          }
+                          "
+                        </b>
+                        <div className="input-group mb-4 mt-5">
+                          <input
+                            type="text"
+                            value={this.state.user.name}
+                            className="form-control"
+                            style={{ marginTop: 8 }}
+                            placeholder="Enter your name"
+                            onChange={this.onChangeName}
+                            required
+                          />
+                        </div>
+                        <button onClick={this.joinRoom.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={{ height: 60 }}>
+                          Join The Meeting
+                        </button>
+                        {
+                          toggle_alert &&
+                          <Alert variant={'danger'}>
+                            {this.state.alertMessage}
+                          </Alert>
+                        }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
       </div>
     );
   }
