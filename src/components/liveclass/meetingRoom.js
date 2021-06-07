@@ -6,8 +6,7 @@ import {
 import ReactFullScreenElement from "react-fullscreen-element";
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { MultiSelect } from 'react-sm-select';
-import 'react-sm-select/dist/styles.css';
+import Select from 'react-select';
 
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -591,8 +590,8 @@ export default class MeetingRoom extends Component {
 
   onClickSubmitInvite = e => {
     e.preventDefault();
-    if (this.state.emailInvite == '' && this.state.userInvite == '') {
-      toast.warning('Silahkan pilih user atau email yang diundang.')
+    if (this.state.emailInvite == '' && this.state.valueInvite == '') {
+      toast.warning(`Select user or insert participant's email`);
     }
     else {
       this.setState({ sendingEmail: true })
@@ -619,7 +618,7 @@ export default class MeetingRoom extends Component {
               emailResponse: res.data.result,
               sendingEmail: false
             });
-            toast.success("Mengirim email ke peserta.")
+            toast.success("Sending invitation to participant's Email.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
             console.log('RESS GAGAL', res)
@@ -1200,30 +1199,23 @@ export default class MeetingRoom extends Component {
                     <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                          Undang Peserta
+                          Invite Participants
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <div className="form-vertical">
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Invite User
+                              From User
                           </Form.Label>
-                            <MultiSelect
-                              id="peserta"
+                            <Select
                               options={this.state.optionsInvite}
-                              value={this.state.valueInvite}
-                              onChange={valueInvite => this.setState({ valueInvite })}
-                              mode="tags"
-                              removableTags={true}
-                              hasSelectAll={true}
-                              selectAllLabel="Pilih Semua"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Pilih"
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
                             />
                             <Form.Text className="text-muted">
-                              Pilih user yang ingin diundang.
+                              Select user to invite.
                           </Form.Text>
                           </Form.Group>
                           <div className="form-group">
@@ -1233,30 +1225,19 @@ export default class MeetingRoom extends Component {
                               onChange={this.handleChange.bind(this)}
                               addOnPaste={true}
                               addOnBlur={true}
-                              inputProps={{ placeholder: 'Email Peserta' }}
+                              inputProps={{ placeholder: `Participant's Email` }}
                             />
                             <Form.Text>
-                              Masukkan email yang ingin di invite.
-                </Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
                           </div>
                         </div>
-
-                        <button
-                          style={{ marginTop: "30px" }}
-                          disabled={this.state.sendingEmail}
-                          type="button"
-                          onClick={this.onClickSubmitInvite}
-                          className="btn btn-block btn-ideku f-w-bold"
-                        >
-                          {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
                         </button>
-                        <button
-                          type="button"
-                          className="btn btn-block f-w-bold"
-                          onClick={this.handleCloseInvite}
-                        >
-                          Tidak
-            </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                          Cancel
+                        </button>
                       </Modal.Body>
                     </Modal>
 

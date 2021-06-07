@@ -60,6 +60,7 @@
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "react-select": "^4.3.1",
     "react-sm-select": "^1.0.9",
     "react-speech-recognition": "^3.6.0",
     "react-switch": "^5.0.1",
