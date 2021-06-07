@@ -18,7 +18,7 @@ class ProjectAdmin extends React.Component {
   }
 
   fetchAccess() {
-    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${Storage.get('user').data.company_id}`).then((res) => {
+    API.get(`${API_SERVER}v2/global-settings/${Storage.get('user').data.company_id}/participant`).then((res) => {
       if (res.status === 200) {
         const general = res.data.result.filter((item) => item.sub === this.props.sub && item.level === 'admin' && item.role === 'participant');
         console.log(general, 'll')
