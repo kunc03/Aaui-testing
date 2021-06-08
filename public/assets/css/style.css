@@ -136,18 +136,22 @@ label.Option {
 }
 
 .react-tagsinput{
-  background-color: #f4f7fa !important;
+  background-color: #f4f7fa;
   font-size: 14px;
   line-height: 1.5;
   color: #495057 !important;
-  border: 1px solid #ced4da !important;
+  border: 1px solid #ced4da;
   border-radius: .25rem !important;
 }
 
 .react-tagsinput-tag{
-  background-color: #1298d4 !important;
-  color: #FFF !important;
+  background-color: #e6e6e6 !important;
+  color: #333333 !important;
   border:none !important;
+}
+.react-tagsinput--focused{
+  border-color: #2684FF !important;
+  box-shadow: 0 0 0 1px #2684FF !important;
 }
 
 
@@ -8489,7 +8493,7 @@ a.btn-theme.active {
   font-size: 14px;
   width: auto;
     height: 39px !important;
-    /* padding: 0px 40px !important; */
+    padding: 0px 25px !important;
   border-radius: 19px !important;
 }
 
@@ -12327,7 +12331,49 @@ required {
   color: #191919;
 }
 
-.lite-filter > .MultiSelect > .Header, .Header__value, .Header__controls {
+.lite-filter > .MultiSelect > .Header,
+.lite-filter > .MultiSelect > .Header > .Header__value,
+.lite-filter > .MultiSelect > .Header > .Header__controls {
   height: 40px !important;
   line-height: 40px !important;
+}
+
+.floating-message{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  font-size:14px;
+  background:#FFF;
+  box-shadow: 0px -2px 20px #909090;
+  z-index:6;
+  padding: 14px 14px;
+  color:rgb(20, 20, 20);
+  text-align: center;
+}
+
+.button-flat-fill{
+  padding:4px 8px;
+  border:none;
+  background:#0091ff;
+  color:#FFF;
+  margin:4px;
+  cursor:pointer;
+}
+
+.button-flat-light{
+  padding:4px 8px;
+  border:1px solid #0091ff;
+  background:#FFF;
+  color:#0091ff;
+  margin:4px;
+  cursor:pointer;
+}
+
+.floating-message .floating-close{
+  border:none;
+  position:absolute;
+  right:14px;
+  top:14px;
+  background:none;
 }

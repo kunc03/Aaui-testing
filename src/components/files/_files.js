@@ -568,8 +568,8 @@ fetchRekamanBBB(folder){
     });
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
       if(res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -642,8 +642,8 @@ fetchRekamanBBB(folder){
                   Upload
                   </button>:null
           }
-          { cdFile && access_project_admin == true ? <button
-            onClick={e => this.setState({ modalNewFolder: true })}
+          { access_project_admin == true ? <button
+            onClick={cdFile ? e => this.setState({ modalNewFolder: true }) : notify}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important" }}
           >
@@ -756,7 +756,10 @@ fetchRekamanBBB(folder){
                                       >
                                         Edit
                                         </button>
+                                        {
+                                          cdFile &&
                                       <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.name)}> Delete </button>
+                                        }
                                     </div>
                                   </span>
                                   :

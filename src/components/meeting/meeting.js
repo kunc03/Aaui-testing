@@ -12,17 +12,21 @@ import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
+import Select from 'react-select';
 // import moment from "react-moment";
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
 import SocketContext from '../../socket';
+import { isMobile } from 'react-device-detect';
 
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
 
 const bbb = require('bigbluebutton-js')
+
+const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09'
 
 class MeetingTable extends Component {
   constructor(props) {
@@ -137,8 +141,8 @@ class MeetingTable extends Component {
   }
   onClickSubmitInvite = e => {
     e.preventDefault();
-    if (this.state.emailInvite == '' && this.state.userInvite == '') {
-      toast.warning('Silahkan pilih user atau email yang diundang.')
+    if (this.state.emailInvite == '' && this.state.valueInvite == '') {
+      toast.warning(`Select user or insert participant's email`);
     }
     else {
       this.setState({ sendingEmail: true })
@@ -165,10 +169,10 @@ class MeetingTable extends Component {
               emailResponse: res.data.result,
               sendingEmail: false
             });
-            toast.success("Mengirim email ke peserta.")
+            toast.success("Sending invitation to participant's Email.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
-            console.log('RESS GAGAL', res)
+            this.setState({ sendingEmail: false })
           }
         }
       })
@@ -258,6 +262,9 @@ class MeetingTable extends Component {
   }
 
   fetchMeetingInfo(id) {
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + id))
+    }
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
       console.log(res.data.result, 'prop informationId');
       if (res.status === 200) {
@@ -305,6 +312,7 @@ class MeetingTable extends Component {
     else if (this.props.allMeeting) {
       apiMeeting = `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
     }
+
     API.get(apiMeeting).then(res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
@@ -862,8 +870,8 @@ class MeetingTable extends Component {
 
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
       if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -899,14 +907,16 @@ class MeetingTable extends Component {
   render() {
 
     // ** GLOBAL SETTINGS ** //
-    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    let cdMeeting =  this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    console.log(cdMeeting, 'cdMeeting')
 
     // All MEETING ROOMS { SEMUA RUANGAN MEETING }
     let Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
 
     // DISABLE { SALAH SATU RUANG MEETING }
-    // let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
-    let R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+
+    // let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
 
     // ========= End ======== //
 
@@ -1025,11 +1035,11 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
-      // Rmeeting ?
+      Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={R_attendance ? this.onClickInfo.bind(this, row.class_id) : notify}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status && Rmeeting == 'Active' ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1037,10 +1047,10 @@ class MeetingTable extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       }
-      // :
-      // {
-      //   name: 'Action',
-      // }
+      :
+      {
+        name: 'Action',
+      }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1258,7 +1268,7 @@ class MeetingTable extends Component {
         <Modal show={this.state.isClassModal} onHide={this.closeClassModal} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              {this.state.classId ? 'Change Group Meeting' : 'Create Group Meeting'}
+              {this.state.classId ? 'Edit Group Meeting' : 'Create Group Meeting'}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1419,32 +1429,62 @@ class MeetingTable extends Component {
                 </Form.Text>
                 </Form.Group>
               }
+                    <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                          Invite Participants
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              From User
+                          </Form.Label>
+                            <Select
+                              options={this.state.optionsInvite}
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                            />
+                            <Form.Text className="text-muted">
+                              Select user to invite.
+                          </Form.Text>
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChange.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: `Participant's Email` }}
+                            />
+                            <Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
+                          </div>
+                        </div>
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.handleCloseInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                        </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.onClickSubmitInvite}>
+                          Cancel
+                        </button>
+                      </Modal.Body>
+                    </Modal>
 
               <Form.Group className="row" controlId="formJudul">
                 <div className="col-sm-6">
                   <Form.Label className="f-w-bold">Engine</Form.Label>
                   <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
-                    <option value="bbb">Big Blue Button</option>
+                    <option value="bbb">BigBlueButton</option>
                     <option value="zoom">Zoom</option>
                   </select>
                   <Form.Text className="text-muted">
                     Pilih engine yang akan dipakai untuk meeting.
                   </Form.Text>
                 </div>
-                {
-                  this.state.engine === 'zoom' ?
-                    <div className="col-sm-6">
-                      <Form.Label className="f-w-bold">Mode</Form.Label>
-                      <select value={this.state.mode} onChange={e => this.setState({ mode: e.target.value })} name="mode" className="form-control">
-                        <option value="web">Web</option>
-                        <option value="app">App</option>
-                      </select>
-                      <Form.Text className="text-muted">
-                        Jika zoom pilih mode yang akan dipakai.
-                      </Form.Text>
-                    </div>
-                    : null
-                }
               </Form.Group>
 
             </Form>
@@ -1568,10 +1608,10 @@ class MeetingTable extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
+            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-              <a target='_blank' href={(this.state.infoClass.engine === 'zoom' && this.state.infoClass.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/meeting-room/${this.state.infoClass.class_id}`}>
+              <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? LINK_ZOOM : `/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
                   <i className="fa fa-video"></i> Masuk
                   </button>
@@ -1600,38 +1640,49 @@ class MeetingTable extends Component {
         </Modal>
 
         <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Undang Peserta
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="form-vertical">
-              <Form.Group controlId="formJudul">
-                <Form.Label className="f-w-bold">
-                  Invite User
-                </Form.Label>
-                <MultiSelect id="peserta" options={this.state.optionsInvite} value={this.state.valueInvite} onChange={valueInvite => this.setState({ valueInvite })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Pilih" />
-                <Form.Text className="text-muted">
-                  Pilih user yang ingin diundang.
-                  </Form.Text>
-              </Form.Group>
-              <div className="form-group">
-                <label style={{ fontWeight: "bold" }}>Email</label>
-                <TagsInput value={this.state.emailInvite} onChange={this.handleChangeEmail.bind(this)} addOnPaste={true} addOnBlur={true} inputProps={{ placeholder: 'Email Peserta' }} />
-                <Form.Text>
-                  Masukkan email yang ingin di invite.
-                </Form.Text>
-              </div>
-            </div>
-            <button style={{ marginTop: "30px" }} disabled={this.state.sendingEmail} type="button" onClick={this.onClickSubmitInvite} className="btn btn-block btn-ideku f-w-bold">
-              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
-            </button>
-            <button type="button" className="btn btn-block f-w-bold" onClick={this.handleCloseInvite}>
-              Tidak
-            </button>
-          </Modal.Body>
-        </Modal>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                          Invite Participants
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              From User
+                          </Form.Label>
+                            <Select
+                              options={this.state.optionsInvite}
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                            />
+                            <Form.Text className="text-muted">
+                              Select user to invite.
+                          </Form.Text>
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChangeEmail.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: `Participant's Email` }}
+                            />
+                            <Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
+                          </div>
+                        </div>
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                        </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                          Cancel
+                        </button>
+                      </Modal.Body>
+                    </Modal>
       </div>
     );
   }
