@@ -408,8 +408,8 @@ class Pengaturan extends Component {
                             <div className="row">
                               <div className="col">
                                 <div className="row">
-                                  <div className="col-sm-3">
-                                    <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
+                                  <div className="col-sm-8">
+                                    <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings | <span className="fc-black f-18">Webinar</span></h3>
                                   </div>
                                 </div>
 
@@ -491,8 +491,8 @@ class Pengaturan extends Component {
                               <div className="row">
                                 <div className="col">
                                   <div className="row">
-                                    <div className="col-sm-3">
-                                      <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
+                                    <div className="col-sm-8">
+                                      <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings | <span className="fc-black f-18"> Meeting</span></h3>
                                     </div>
                                   </div>
 
