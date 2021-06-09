@@ -285,7 +285,7 @@ class ProjekNew extends Component {
       {
         name: 'Name',
         selector: 'title',
-        width: '30%',
+        width: '40%',
         sortable: true,
         cell: row =>
           <Link to={`detail-project/${row.id}`}>
@@ -298,16 +298,16 @@ class ProjekNew extends Component {
           </Link>,
       },
       {
-        name: 'Recent Project',
+        name: 'Last Activity',
         selector: 'recent_project',
-        width: '30%',
+        width: '25%',
         sortable: true,
         cell: row =>
           <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
-        name: 'Info',
-        width: '30%',
+        name: 'Information',
+        width: '22%',
         cell: row =>
           <span style={{ inlineSize: '-webkit-fill-available' }}>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
@@ -316,7 +316,7 @@ class ProjekNew extends Component {
         center: true,
       },
       {
-        name: 'Action',
+        name: '',
         width: '10%',
         cell: row =>
           accessProjectManager ?
@@ -344,7 +344,7 @@ class ProjekNew extends Component {
 
     return (
       <div className="row">
-        <div className={location ? 'col-sm-8' : 'hidden'}>
+        <div className='col-sm-8'>
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
@@ -374,19 +374,23 @@ class ProjekNew extends Component {
 
           </div>
         </div>
-
+        <div className="col-sm-4 text-right">
+          <p className="m-b-0">
+            <Link to={"project"}>
+              <span className=" f-12 fc-skyblue">See all</span>
+            </Link>
+          </p>
+        </div>
         <div className="col-sm-12" style={{ marginTop: '-20px' }}>
 
-          {
-            lists.length === 0 ?
-              <div className="col-sm-12 mb-1">
-                Not available
-                </div>
-              :
-              <DataTable
+        <DataTable
                 style={{ marginTop: 20 }} columns={columns} data={lists} striped={false} noHeader={true} customStyles={customStyles}
+                noDataComponent="There are no project to display"
+                pagination
+                fixedHeader
+                paginationPerPage = {5}
+                paginationRowsPerPageOptions = {[5, 10, 15, 20, 25, 30]}
               />
-          }
           {/* <div className="col-sm-12 mb-1">
             <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
               <div className="box-project">
