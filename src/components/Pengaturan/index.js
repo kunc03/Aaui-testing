@@ -206,7 +206,7 @@ class Pengaturan extends Component {
                         <div className="card-block">
                           {
                             levelUser ?
-                          <div className="row m-b-100">
+                          <div className="row m-b-100" style={{padding: '10px 20px'}}>
                             {/* {menus.map((item, i) => {
                               return (
                                 <div className="col-xl-12 p-10 mb-3" style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}

@@ -374,34 +374,6 @@ class HomeNew extends Component {
                           <CalenderNew lists={kursusTerbaru} />
                         </div>
                         <div className="col-sm-12">
-                          <NewsList widgetMode={true} />
-                        </div>
-                      </div>
-                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                        <div className="col-sm-12">
-                          <Card>
-                            <Card.Body>
-                              <div className="row">
-                                <div className="col-sm-6">
-                                  <h3 className="f-w-900 f-18 fc-blue">
-                                    Project
-                                  </h3>
-                                </div>
-                                <div className="col-sm-6 text-right">
-                                  <p className="m-b-0">
-                                    <Link to={"project"}>
-                                      <span className=" f-12 fc-skyblue">See all</span>
-                                    </Link>
-                                  </p>
-                                </div>
-                              </div>
-                              <div style={{ marginTop: '10px', overflowX: 'hidden', height: '385px' }}>
-                                <ProjekNew lists={projekDashboard} />
-                              </div>
-                            </Card.Body>
-                          </Card>
-                        </div>
-                        <div className="col-sm-12">
                           <Card>
                             <Card.Body>
                               <div className="row">
@@ -423,6 +395,18 @@ class HomeNew extends Component {
                               </div>
                             </Card.Body>
                           </Card>
+                        </div>
+                      </div>
+                      <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                        <div className="col-sm-12">
+                          <Card>
+                            <Card.Body>
+                              <ProjekNew lists={projekDashboard} />
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-sm-12">
+                          <NewsList widgetMode={true} />
                         </div>
                       </div>
                       <div className="col-sm-12 col-xl-6" style={{ paddingLeft: 0, paddingRight: 0 }}>

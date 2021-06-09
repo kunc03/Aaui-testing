@@ -2607,7 +2607,7 @@ hr {
     left: 59px;
     width: 200px;
     overflow-x: auto;
-    border-right:1px solid #E6E6E6;
+    border-right:1px solid #f1f1f1;
 }
 
 .custom-side-bar::-webkit-scrollbar {
@@ -11697,11 +11697,11 @@ div.code-toolbar > .toolbar span:hover {
 
 .project-info {
   background: transparent;
-    padding: 6px 1px;
+    padding: 6px 2px;
     border: 1px solid #0895ff;
     font-size: 10px;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: 4px;
     margin-left: 2px;
     color: #0895ff;
 }
@@ -12376,4 +12376,21 @@ required {
   right:14px;
   top:14px;
   background:none;
+}
+
+.side-submenu{
+  font-size:13px;
+  padding: 10px 24px;
+}
+
+.side-submenu:hover{
+  background: rgb(231, 231, 231);
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+}
+
+.side-submenu-groupname{
+  font-size: 12px;
+  color:#0085e3;
+  padding: 10px 14px;
 }
