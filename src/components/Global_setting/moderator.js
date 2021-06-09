@@ -17,9 +17,9 @@ class ProjectAdmin extends React.Component {
   }
 
   fetchAccess() {
-    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${Storage.get('user').data.company_id}`).then((res) => {
+    API.get(`${API_SERVER}v2/global-settings/${Storage.get('user').data.company_id}/moderator`).then((res) => {
       if (res.status === 200) {
-        const general = res.data.result.filter((item) => item.sub === this.props.sub && item.level === 'superadmin' && item.role === 'moderator');
+        const general = res.data.result.filter((item) => item.sub === this.props.sub && item.level === 'admin' && item.role === 'moderator');
         this.setState({ meeting :  general });
       }
     });
