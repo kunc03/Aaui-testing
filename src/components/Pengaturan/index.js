@@ -119,9 +119,9 @@ class Pengaturan extends Component {
 
   tabTitle(a) {
     if (a === 'Project Admin') {
-      this.setState({ projectAdmin: true, secretary: false });
+      this.setState({ projectAdmin: true, secretary: false, moderator: false, speaker: false, participant: false });
     } else if (a === 'secretary') {
-      this.setState({ projectAdmin: false, secretary: true });
+      this.setState({ projectAdmin: false, secretary: true, moderator: false, speaker: false, participant: false });
     } else if ( a === 'moderator'){
       this.setState({ projectAdmin: false, secretary: false, moderator: true, speaker: false, participant: false})
     }
@@ -418,13 +418,13 @@ class Pengaturan extends Component {
                                     <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
 
 
-                                      <li className={`nav-item`}>
+                                      <li className={`nav-item`} activeClassname="active">
                                         <div
                                           className="col-xl-12 p-10 mb-3"
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'Project Admin')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Project Admin</span>
+                                          <span className={this.state.projectAdmin ? 'fc-skyblue' : ''}>Project Admin</span>
                                         </div>
                                       </li>
 
@@ -434,7 +434,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'secretary')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Secretary</span>
+                                          <span className={this.state.secretary ? 'fc-skyblue' : ''}>Secretary</span>
                                         </div>
                                       </li>
 
@@ -444,7 +444,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'moderator')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Moderator</span>
+                                          <span className={this.state.moderator ? 'fc-skyblue' : ''}>Moderator</span>
                                         </div>
                                       </li>
                                       <li className={`nav-item`}>
@@ -453,7 +453,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'speaker')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Speaker</span>
+                                          <span className={this.state.speaker ? 'fc-skyblue' : ''}>Speaker</span>
                                         </div>
                                       </li>
                                       <li className={`nav-item`}>
@@ -462,7 +462,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'participant')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Participant</span>
+                                          <span className={this.state.participant ? 'fc-skyblue' : ''}>Participant</span>
                                         </div>
                                       </li>
                                     </ul>
@@ -505,7 +505,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'Project Admin')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''} activeClassname='active'>Project Admin</span>
+                                            <span className={this.state.projectAdmin ? 'fc-skyblue' : ''} activeClassname='active'>Project Admin</span>
                                           </div>
                                         </li>
 
@@ -524,7 +524,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'moderator')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''}>Moderator</span>
+                                            <span className={this.state.moderator ? 'fc-skyblue' : ''}>Moderator</span>
                                           </div>
                                         </li>
                                         {/* <li className={`nav-item`}>
@@ -542,7 +542,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'participant')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''}>Participant</span>
+                                            <span className={this.state.participant ? 'fc-skyblue' : ''}>Participant</span>
                                           </div>
                                         </li>
                                       </ul>
