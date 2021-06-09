@@ -10,6 +10,7 @@ import {
   Modal
 } from 'react-bootstrap';
 
+const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09'
 
 class WebinarTable extends Component {
   constructor(props) {
@@ -106,8 +107,8 @@ class WebinarTable extends Component {
     })
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, companyId, level, param}).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
       if(res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -270,7 +271,7 @@ class WebinarTable extends Component {
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={(item.engine === 'zoom' && item.mode === 'app') ? 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09' : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
+                                        <a href={(item.engine === 'zoom') ? LINK_ZOOM : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
