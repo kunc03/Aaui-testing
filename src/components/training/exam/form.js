@@ -55,7 +55,14 @@ class FormExam extends Component {
         disabledForm: this.props.disabledForm && this.props.id,
         question : [],
         initialQuestion: false,
-        isUploading: false
+        isUploading: false,
+
+        composition: [
+            {
+                total: 0,
+                course_id: []
+            }
+        ]
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -105,8 +112,7 @@ class FormExam extends Component {
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
                 course_id: String(this.state.valueCourse2),
-                number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCourse),
+                composition: this.state.composition,
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -158,8 +164,7 @@ class FormExam extends Component {
                 time_limit: this.state.time,
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
-                number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCourse),
+                composition: this.state.composition,
                 course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
@@ -215,8 +220,7 @@ class FormExam extends Component {
                 time_limit: this.state.time,
                 minimum_score: this.state.minScore,
                 generate_question: this.state.generate ? 1 : 0,
-                number_of_question: this.state.numberQuestions,
-                category_id: String(this.state.valueCourse),
+                composition: this.state.composition,
                 course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
@@ -373,7 +377,6 @@ handleChangeAnswer = (value) => {
                 title: res.data.result.title,
                 time: res.data.result.time_limit,
                 minScore: res.data.result.minimum_score,
-                numberQuestions: res.data.result.number_of_question,
                 generate: res.data.result.generate_question ? true : false,
                 scheduled: res.data.result.scheduled ? true : false,
                 generate_membership: res.data.result.generate_membership ? true : false,
@@ -381,11 +384,17 @@ handleChangeAnswer = (value) => {
                 end_date: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
-                valueCourse: [Number(res.data.result.category_id)],
                 valueCourse2: [Number(res.data.result.course_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
                 question: res.data.result.question
             })
+            if (res.data.result.composition.length){
+                let composition = res.data.result.composition;
+                composition.map((item)=>{
+                    item.course_id = [item.course_id]
+                })
+                this.setState({composition: composition})
+            }
             if (this.state.question.length){
                 this.selectQuestion(this.state.selectedQuestion);
             }
@@ -422,6 +431,23 @@ handleChangeAnswer = (value) => {
           });
         }
     })
+  }
+  handleChangeComposition = (name, index, e) => {
+    if (name === 'total'){
+        let composition = this.state.composition;
+        composition[index].total = e.target.value;
+        this.setState({composition: composition, edited: true});
+    }
+    else if (name === 'course_id'){
+        let composition = this.state.composition;
+        composition[index].course_id = e;
+        this.setState({composition: composition, edited: true})
+    }
+    else if (name === 'delete'){
+        let composition = this.state.composition;
+        composition.splice(index, 1)
+        this.setState({composition: composition, edited: true})
+    }
   }
   handleDynamicInput = (e) => {
     this.setState({ question_text: e, edited:true });
@@ -522,6 +548,11 @@ handleChangeAnswer = (value) => {
             this.closeModalDelete();
         }
     })
+  }
+
+  addComposition(){
+    this.state.composition.push({total:0, course_id: []});
+    this.forceUpdate()
   }
 
   uploadData = e => {
@@ -747,29 +778,27 @@ handleChangeAnswer = (value) => {
                                                                 <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Generate Questions Randomly</strong>
                                                             </div>
                                                         </div>
-                                                        <div className="row">
-                                                            <div className="form-field-top-label">
-                                                                <label for="numberQuestions">Number of Questions<required>*</required></label>
-                                                                <input type="number" name="numberQuestions" size="50" id="numberQuestions" placeholder="0" value={this.state.numberQuestions} onChange={this.handleChange} disabled={this.state.disabledForm}/>
-                                                            </div>
-                                                            <div className="form-field-top-label" style={{width:400}}>
-                                                                <label for="valueCourse">Course</label>
-                                                                <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
-                                                                <p className="form-notes">Keep empty if you want to generate questions by all of course</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row" style={{justifyContent:'flex-end'}}>
                                                         {
-                                                        !this.props.disabledForm &&
-                                                        <button
-                                                        onClick={this.save}
-                                                        className="btn btn-icademy-primary float-right"
-                                                        style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                            <i className="fa fa-save"></i>
-                                                            Save
-                                                        </button>
+                                                            this.state.composition.map((item, index)=>
+                                                            <div className="row">
+                                                                <div className="form-field-top-label">
+                                                                    <label for="numberQuestions">Number of Questions<required>*</required></label>
+                                                                    <input type="number" name="numberQuestions" size="50" id="numberQuestions" placeholder="0" value={this.state.composition[index].total} onChange={e=> this.handleChangeComposition('total', index, e)} disabled={this.state.disabledForm}/>
+                                                                </div>
+                                                                <div className="form-field-top-label" style={{width:400}}>
+                                                                    <label for="valueCourse">Course</label>
+                                                                    <MultiSelect id="valueCourse" name="valueCourse" options={this.state.optionsCourse} value={this.state.composition[index].course_id} onChange={e => this.handleChangeComposition('course_id', index, e)} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Default : Random" />
+                                                                    <p className="form-notes">Keep empty if you want to generate questions from random course</p>
+                                                                </div>
+                                                                <div className="form-field-top-label" style={{cursor:'pointer', fontSize:18, marginTop:52}}>
+                                                                    <i className="fa fa-minus-square" onClick={e => this.handleChangeComposition('delete', index, e)}></i>
+                                                                </div>
+                                                            </div>
+                                                            )
                                                         }
+                                                        <div className="training-new-session" style={{maxWidth:600}} onClick={this.addComposition.bind(this)}>
+                                                            <i className="fa fa-plus"></i> Add More
+                                                        </div>
                                                     </div>
                                                     </div>
                                                     :
@@ -945,31 +974,31 @@ handleChangeAnswer = (value) => {
                                                             }
                                                         </div>
                                                     </div>
-                                                    <div className="row" style={{justifyContent:'flex-end'}}>
-                                                        {
-                                                        !this.props.disabledForm && this.state.initialQuestion &&
-                                                        <button
-                                                        onClick={()=>this.setState({modalDelete: true})}
-                                                        className="btn btn-icademy-primary btn-icademy-red float-right"
-                                                        style={{ padding: "7px 8px !important", margin:0, marginRight: 14 }}>
-                                                            <i className="fa fa-trash-alt"></i>
-                                                            Remove selected question
-                                                        </button>
-                                                        }
-                                                        {
-                                                        !this.props.disabledForm &&
-                                                        <button
-                                                        disabled={this.state.isSaving}
-                                                        onClick={this.save}
-                                                        className="btn btn-icademy-primary float-right"
-                                                        style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                            <i className="fa fa-save"></i>
-                                                            {this.state.isSaving ? 'Saving...' : 'Save'}
-                                                        </button>
-                                                        }
-                                                    </div>
                                                     </div>
                                                 }
+                                                <div className="row" style={{justifyContent:'flex-end'}}>
+                                                    {
+                                                    !this.props.disabledForm && this.state.initialQuestion && !this.state.generate &&
+                                                    <button
+                                                    onClick={()=>this.setState({modalDelete: true})}
+                                                    className="btn btn-icademy-primary btn-icademy-red float-right"
+                                                    style={{ padding: "7px 8px !important", margin:0, marginRight: 14 }}>
+                                                        <i className="fa fa-trash-alt"></i>
+                                                        Remove selected question
+                                                    </button>
+                                                    }
+                                                    {
+                                                    !this.props.disabledForm &&
+                                                    <button
+                                                    disabled={this.state.isSaving}
+                                                    onClick={this.save}
+                                                    className="btn btn-icademy-primary float-right"
+                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                        <i className="fa fa-save"></i>
+                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
+                                                    </button>
+                                                    }
+                                                </div>
                                             </div>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
