@@ -4,6 +4,7 @@ import { Modal, Form } from "react-bootstrap";
 import API, { API_SERVER } from "../../../repository/api";
 import { InputGroup, FormControl } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import { toast } from "react-toastify";
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
   MenuItem
@@ -251,10 +252,14 @@ export default class User extends Component {
 
     API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
       if (res.status === 200) {
-        if (!res.data.error) {
+        if (res.data.error) {
+          toast.error('Import failed. Please check the data.')
+        }
+        else{
           this.handleModalImport();
           this.fetchData();
           this.setState({ isLoading: false });
+          toast.success('Data imported. If your data not appear, please check your excel template data.')
         }
       }
     })

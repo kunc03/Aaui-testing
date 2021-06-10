@@ -7,6 +7,7 @@ import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MultiSelect } from 'react-sm-select';
+import { toast } from "react-toastify";
 
 
 class UserAdd extends Component {
@@ -94,25 +95,38 @@ class UserAdd extends Component {
       validity: this.state.validity.toISOString().split('T')[0]
     };
 
-    API.post(`${API_SERVER}v1/user`, formData).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          this.setState({ responseMessage: res.data.result })
-        } else {
-          if (Storage.get('User').data.level === 'superadmin') {
-            this.props.history.push('/user')
-          }
-          else {
+    if (
+      formData.company_id === '' ||
+      formData.group == '' ||
+      formData.grup_id === '' ||
+      formData.name === '' ||
+      formData.identity === '' ||
+      formData.email === '' ||
+      formData.level === ''
+    ){
+      toast.warning('Please fill required field.')
+    }
+    else{
+      API.post(`${API_SERVER}v1/user`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            this.setState({ responseMessage: res.data.result })
+          } else {
             if (Storage.get('User').data.level === 'superadmin') {
               this.props.history.push('/user')
             }
             else {
-              this.props.history.push('/my-company')
+              if (Storage.get('User').data.level === 'superadmin') {
+                this.props.history.push('/user')
+              }
+              else {
+                this.props.history.push('/my-company')
+              }
             }
           }
         }
-      }
-    })
+      })
+    }
   };
 
   componentDidMount() {

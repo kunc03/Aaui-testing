@@ -7,6 +7,7 @@ import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MultiSelect } from 'react-sm-select';
+import { toast } from "react-toastify";
 
 class UserEdit extends Component {
 
@@ -62,24 +63,36 @@ class UserEdit extends Component {
       validity: this.state.validity.toISOString().split('T')[0]
     };
 
-
-    API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(res => {
-      if (res.status === 200) {
-
-        if (this.state.password !== '') {
-          let formData = { password: this.state.password };
-          API.put(`${API_SERVER}v1/user/password/${this.state.user_id}`, formData).then(res => {
-            console.log('pass: ', res.data)
-          })
+    if (
+      formData.company_id === '' ||
+      formData.group == '' ||
+      formData.grup_id === '' ||
+      formData.name === '' ||
+      formData.identity === '' ||
+      formData.email === '' ||
+      formData.level === ''
+    ){
+      toast.warning('Please fill required field.')
+    }
+    else{
+      API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(res => {
+        if (res.status === 200) {
+  
+          if (this.state.password !== '') {
+            let formData = { password: this.state.password };
+            API.put(`${API_SERVER}v1/user/password/${this.state.user_id}`, formData).then(res => {
+              console.log('pass: ', res.data)
+            })
+          }
+  
+          if (Storage.get('user').data.level === 'superadmin') {
+            this.props.history.push('/user')
+          } else {
+            this.props.history.push(`/my-company`)
+          }
         }
-
-        if (Storage.get('user').data.level === 'superadmin') {
-          this.props.history.push('/user')
-        } else {
-          this.props.history.push(`/my-company`)
-        }
-      }
-    })
+      })
+    }
   }
 
   onChangeInput = (event) => {

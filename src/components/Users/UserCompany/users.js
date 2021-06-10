@@ -4,6 +4,7 @@ import { Modal, Form } from "react-bootstrap";
 import { InputGroup, FormControl } from 'react-bootstrap';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { toast } from "react-toastify";
 import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
@@ -238,11 +239,14 @@ export default class Users extends Component {
 
     API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
       if (res.status === 200) {
-        if (!res.data.error) {
+        if (res.data.error) {
+          toast.error('Import failed. Please check the data.')
+        }
+        else{
           this.handleModalImport();
           this.fetchData();
           this.setState({ isLoading: false });
-          console.log('RESS', res)
+          toast.success('Data imported. If your data not appear, please check your excel template data.')
         }
       }
     })
@@ -318,7 +322,7 @@ export default class Users extends Component {
             pullRight
             onSelect={(eventKey) => {
               if (eventKey === 1) {
-                window.open('/user-company-edit/' + row.id, "_self")
+                window.open(Storage.get('user').data.level === 'superadmin' ? '/user-edit/' : '/user-company-edit/' + row.id, "_self")
               }
             }}
           >
@@ -428,7 +432,7 @@ export default class Users extends Component {
         {
           this.state.limitCompany.user &&
           <Link
-            to={"/user-company-create"}
+            to={Storage.get('user').data.level === 'superadmin' ? "/user-create" : "/user-company-create"}
             className="btn btn-ideku ml-2 float-right"
             style={{ padding: "7px 8px !important" }}
           >
