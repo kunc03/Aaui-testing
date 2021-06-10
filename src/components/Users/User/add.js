@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
+import { toast } from "react-toastify";
 
 class UserAdd extends Component {
 
@@ -104,27 +105,40 @@ class UserAdd extends Component {
       validity: this.state.validity.toISOString().split('T')[0]
     };
 
-    API.post(`${API_SERVER}v1/user`, formData).then(res => {
-      if (res.status === 200) {
-        if (res.data.error) {
-          this.setState({ responseMessage: res.data.result })
-        } else {
-          let userId = res.data.result.user_id;
-          API.delete(`${API_SERVER}v1/user/assign/${res.data.result.user_id}`).then(res => {
-            if (res.status === 200) {
-              for (let i = 0; i < this.state.valueCompany.length; i++) {
-                let formData = {
-                  user_id: userId,
-                  company_id: this.state.valueCompany[i],
-                };
-                API.post(`${API_SERVER}v1/user/assign`, formData)
+    if (
+      formData.company_id === '' ||
+      formData.group == '' ||
+      formData.grup_id === '' ||
+      formData.name === '' ||
+      formData.identity === '' ||
+      formData.email === '' ||
+      formData.level === ''
+    ){
+      toast.warning('Please fill required field.')
+    }
+    else{
+      API.post(`${API_SERVER}v1/user`, formData).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            this.setState({ responseMessage: res.data.result })
+          } else {
+            let userId = res.data.result.user_id;
+            API.delete(`${API_SERVER}v1/user/assign/${res.data.result.user_id}`).then(res => {
+              if (res.status === 200) {
+                for (let i = 0; i < this.state.valueCompany.length; i++) {
+                  let formData = {
+                    user_id: userId,
+                    company_id: this.state.valueCompany[i],
+                  };
+                  API.post(`${API_SERVER}v1/user/assign`, formData)
+                }
               }
-            }
-          })
-          this.props.history.push(`/company-detail-super/${formData.company_id}`)
+            })
+            this.props.history.push(`/company-detail-super/${formData.company_id}`)
+          }
         }
-      }
-    })
+      })
+    }
   };
 
   showMultipleCompany(except) {
