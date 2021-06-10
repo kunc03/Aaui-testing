@@ -14,6 +14,7 @@ import '@trendmicro/react-buttons/dist/react-buttons.css';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import Storage from './../../../repository/storage';
+import { toast } from "react-toastify";
 
 export default class User extends Component {
   constructor(props) {
@@ -161,10 +162,14 @@ export default class User extends Component {
 
     API.post(`${API_SERVER}v1/user/import`, form).then((res) => {
       if (res.status === 200) {
-        if (!res.data.error) {
+        if (res.data.error) {
+          toast.error('Import failed. Please check the data.')
+        }
+        else{
           this.handleModalImport();
           this.fetchData();
           this.setState({ isLoading: false });
+          toast.success('Data imported. If your data not appear, please check your excel template data.')
         }
       }
     })
@@ -345,7 +350,7 @@ export default class User extends Component {
               <i className="fa fa-ellipsis-h"></i>
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> setState Voucher</MenuItem>
+              <MenuItem data-id={row.id} data-voucher={row.voucher} onClick={this.onClickModalVoucher}><i className="fa fa-tag" /> Set Voucher</MenuItem>
               <MenuItem data-id={row.id} onClick={this.onClickModalPassword}><i className="fa fa-key" /> Set Password</MenuItem>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
               <MenuItem data-id={row.id} data-status={row.status} onClick={this.onClickHapus}><i className="fa fa-trash" /> Delete</MenuItem>

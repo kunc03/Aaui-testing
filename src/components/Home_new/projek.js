@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
+import Select from 'react-select';
 import ToggleSwitch from "react-switch";
 import DataTable from 'react-data-table-component';
 import Moment from 'moment-timezone';
@@ -55,6 +56,8 @@ class ProjekNew extends Component {
     valueUser: [],
     share: [],
     projectShareId: '',
+    defaultProjectAdmin: [],
+    defaultUsers: [],
 
     gb: []
   }
@@ -78,7 +81,7 @@ class ProjekNew extends Component {
     this.setState({ modalNewFolder: false, alert: '', valueProjectAdmin: [], limited: false, valueUser: [] })
   }
   closeModalEdit = e => {
-    this.setState({ modalEdit: false, alert: '', folderName: '', valueProjectAdmin: [], limited: false, valueUser: [] })
+    this.setState({ modalEdit: false, alert: '', folderName: '', valueProjectAdmin: [], limited: false, valueUser: [], defaultProjectAdmin: [], defaultUsers: [] })
   }
   closeModalSharing = e => {
     this.setState({ modalSharing: false, projectShareId: '' })
@@ -109,7 +112,7 @@ class ProjekNew extends Component {
           this.setState({ alert: res.data.result });
         } else {
           toast.success(`Berhasil menambah project ${this.state.folderName}`)
-          this.setState({ modalNewFolder: false, alert: '', folderName: '', valueProjectAdmin: [], valueUser: [], limited: false })
+          this.setState({ modalNewFolder: false, alert: '', folderName: '', valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }
       }
@@ -146,7 +149,17 @@ class ProjekNew extends Component {
           editProjectName: res.data.result.name,
           valueProjectAdmin: res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [],
           valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
-          limited: res.data.result.is_limit === 0 ? false : true,
+          limited: res.data.result.is_limit === 0 ? false : true
+        })
+        let defValPA = res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [];
+        let defValU = res.data.result.user ? res.data.result.user.split(',').map(Number) : [];
+        defValPA.map(item=>{
+          this.state.defaultProjectAdmin.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+        })
+        defValU.map(item=>{
+          this.state.defaultUsers.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+        })
+        this.setState({
           modalEdit: true
         })
       }
@@ -229,7 +242,7 @@ class ProjekNew extends Component {
           toast.error(`Failed to modify the project ${this.state.editProjectName}`)
         } else {
           toast.success(`Successfully modified project ${this.state.editProjectName}`)
-          this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false })
+          this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }
       }
@@ -353,7 +366,7 @@ class ProjekNew extends Component {
             </div>
 
             {
-              cdProject &&
+              cdProject ?
 
               <div>
                 {
@@ -369,6 +382,7 @@ class ProjekNew extends Component {
                     null
                 }
               </div>
+              :null
             }
 
 
@@ -450,16 +464,11 @@ class ProjekNew extends Component {
                       <Form.Label className="f-w-bold">
                         Project Admin
                             </Form.Label>
-                      <MultiSelect
-                        id="moderator"
+                      <Select
                         options={this.state.optionsProjectAdmin}
-                        value={this.state.valueProjectAdmin}
-                        onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
-                        mode="tags"
-                        required
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Pilih Project Admin"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={valueProjectAdmin => { let arr = []; valueProjectAdmin.map((item) => arr.push(item.value)); this.setState({ valueProjectAdmin: arr })}}
                       />
                       <Form.Text className="text-muted">
                         Project admins can manage meetings, webinars, and files.
@@ -486,15 +495,11 @@ class ProjekNew extends Component {
                         <Form.Label className="f-w-bold">
                           Users
                           </Form.Label>
-                        <MultiSelect
-                          id="user"
+                        <Select
                           options={this.state.optionsProjectAdmin}
-                          value={this.state.valueUser}
-                          onChange={valueUser => this.setState({ valueUser })}
-                          mode="tags"
-                          enableSearch={true}
-                          resetable={true}
-                          valuePlaceholder="Select User"
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valueUser => { let arr = []; valueUser.map((item) => arr.push(item.value)); this.setState({ valueUser: arr })}}
                         />
                       </Form.Group>
                     }
@@ -559,15 +564,12 @@ class ProjekNew extends Component {
                       <Form.Label className="f-w-bold">
                         Project Admin
                             </Form.Label>
-                      <MultiSelect
-                        id="moderator"
+                      <Select
                         options={this.state.optionsProjectAdmin}
-                        value={this.state.valueProjectAdmin}
-                        onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
-                        mode="tags"
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Pilih Project Admin"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={valueProjectAdmin => { let arr = []; valueProjectAdmin.map((item) => arr.push(item.value)); this.setState({ valueProjectAdmin: arr })}}
+                        defaultValue={this.state.defaultProjectAdmin}
                       />
                       <Form.Text className="text-muted">
                         Project admins can manage meetings, webinars, and files.
@@ -575,14 +577,14 @@ class ProjekNew extends Component {
                     </Form.Group>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                        Limit
+                        Limit Users
                             </Form.Label>
                       <div style={{ width: '100%' }}>
                         <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
                       </div>
                       <Form.Text className="text-muted">
                         {
-                          this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
+                          this.state.limited ? 'Only people who are registered as participants can access the project.'
                             :
                             'The meeting room is open. All users can join.'
                         }
@@ -594,15 +596,12 @@ class ProjekNew extends Component {
                         <Form.Label className="f-w-bold">
                           User
                           </Form.Label>
-                        <MultiSelect
-                          id="user"
+                        <Select
                           options={this.state.optionsProjectAdmin}
-                          value={this.state.valueUser}
-                          onChange={valueUser => this.setState({ valueUser })}
-                          mode="tags"
-                          enableSearch={true}
-                          resetable={true}
-                          valuePlaceholder="Select User"
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valueUser => { let arr = []; valueUser.map((item) => arr.push(item.value)); this.setState({ valueUser: arr })}}
+                          defaultValue={this.state.defaultUsers}
                         />
                       </Form.Group>
                     }

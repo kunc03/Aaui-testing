@@ -645,7 +645,7 @@ export default class CompanyDetail extends Component {
 				)
 			}
 		};
-
+		const levelUser = Storage.get('user').data.level;
 		return (
 			<div className="pcoded-main-container">
 				<div className="pcoded-wrapper">
@@ -694,45 +694,50 @@ export default class CompanyDetail extends Component {
 																	showTimeSelect
 																	className="form-control"
 																	dateFormat="yyyy-MM-dd"
+																	disabled={levelUser !== 'superadmin'}
 																/>
 															</div>
-															<div className="form-group">
-																<label>Status Company</label>
-																<br />
-																{statusCompany.map(item => {
-																	return (
-																		<div
-																			className="pretty p-default p-round p-thick m-b-35"
-																			style={{ marginBottom: "5px" }}
-																		>
-																			<input
-																				onChange={this.onChangeInput}
-																				name="status"
-																				checked={this.state.status === item}
-																				value={item}
-																				type="radio"
-																			/>
-																			<div className="state p-success-o">
-																				<label
-																					className="f-18"
-																					style={{
-																						whiteSpace: "normal !important"
-																					}}
-																				>
-																					<small
+															{
+																levelUser === 'superadmin' &&
+																<div className="form-group">
+																	<label>Status Company</label>
+																	<br />
+																	{statusCompany.map(item => {
+																		return (
+																			<div
+																				className="pretty p-default p-round p-thick m-b-35"
+																				style={{ marginBottom: "5px" }}
+																			>
+																				<input
+																					onChange={this.onChangeInput}
+																					name="status"
+																					checked={this.state.status === item}
+																					value={item}
+																					type="radio"
+																					disabled={levelUser !== 'superadmin'}
+																				/>
+																				<div className="state p-success-o">
+																					<label
+																						className="f-18"
 																						style={{
-																							textTransform: "capitalize"
+																							whiteSpace: "normal !important"
 																						}}
-																						className="f-w-bold f-18 text-c-black small-text"
 																					>
-																						{item}
-																					</small>
-																				</label>
+																						<small
+																							style={{
+																								textTransform: "capitalize"
+																							}}
+																							className="f-w-bold f-18 text-c-black small-text"
+																						>
+																							{item}
+																						</small>
+																					</label>
+																				</div>
 																			</div>
-																		</div>
-																	);
-																})}
-															</div>
+																		);
+																	})}
+																</div>
+															}
 															<div className="form-group">
 																<label>Logo Company</label>
 																<Form.Control
@@ -752,8 +757,8 @@ export default class CompanyDetail extends Component {
 																className="btn btn-sm btn-ideku"
 																onClick={this.onClickUpdate}
 															>
-																<i className="fa fa-edit"></i>
-                                Edit
+																<i className="fa fa-save"></i>
+                                Save
                               </button>
 														</Col>
 													</Row>

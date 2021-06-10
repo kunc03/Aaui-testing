@@ -21,6 +21,8 @@ class Header extends Component {
     sideMenu: false,
     sideMenuCollapse: false,
     dateNow: Date.now(),
+    logo: '',
+    logoMulti: ''
   };
 
   pilihCompany = (e) => {
@@ -47,6 +49,7 @@ class Header extends Component {
         } else {
           this.setState({ company: response.data.result.company });
         }
+        this.setState({ logoMulti: this.state.company.filter((item)=> item.company_id == localStorage.getItem('companyID'))[0].logo })
       })
       .catch(function (error) {
         console.log(error);
@@ -91,7 +94,6 @@ class Header extends Component {
         };
 
         Storage.set('user', { data: addStorage });
-        console.log('ALVIN', res.data.result)
 
         this.setState({
           logo: res.data.result.logo,
@@ -604,9 +606,10 @@ class Header extends Component {
                 <img
                   alt="Media"
                   style={{ height: 26 }}
+                  alt=""
                   src={
-                    localStorage.getItem('logo')
-                      ? localStorage.getItem('logo')
+                    localStorage.getItem('companyID')
+                      ? this.state.logoMulti
                       : this.state.logo
                   }
                 />
