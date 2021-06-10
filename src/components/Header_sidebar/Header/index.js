@@ -654,7 +654,7 @@ class Header extends Component {
                               data-logo={this.state.logo}
                               className="img-radius"
                               src={this.state.logo}
-                              alt="Generic placeholder image"
+                              alt=""
                             />
                             <div
                               className="media-body"
@@ -704,7 +704,7 @@ class Header extends Component {
                               data-logo={item.logo}
                               className="img-radius"
                               src={item.logo}
-                              alt="Generic placeholder image"
+                              alt=""
                             />
                             <div
                               className="media-body"
