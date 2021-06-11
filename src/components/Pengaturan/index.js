@@ -235,14 +235,14 @@ class Pengaturan extends Component {
 
                             <div
                               className="col-xl-12 p-10 mb-3"
-                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              style={{ cursor: 'pointer' }}
                               onClick={this.tabChoice.bind(this, 'webinar')}
                             >
                               <span style={{marginLeft : '20px'}} className={this.state.webinar ? 'fc-skyblue' : ''}>Webinar</span>
                             </div>
                             <div
                               className="col-xl-12 p-10 mb-3"
-                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              style={{ cursor: 'pointer' }}
                               onClick={this.tabChoice.bind(this, 'meeting')}
                             >
                               <span style={{ marginLeft: '20px'}} className={this.state.meeting ? 'fc-skyblue' : ''}>Meeting</span>
