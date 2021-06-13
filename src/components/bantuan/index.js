@@ -262,10 +262,6 @@ class ClassBantuan extends Component {
 
                                     </>
                               }
-
-
-
-
                             </div>
                           </div>
                         </div>
