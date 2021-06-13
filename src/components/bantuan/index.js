@@ -137,7 +137,7 @@ class ClassBantuan extends Component {
                     <div className="col-sm-4">
                       <div className="card">
                         <div className="card-block">
-                          <h3 className="f-w-bold f-18 fc-blue mb-4">BANTUAN</h3>
+                          {/* <h3 className="f-w-bold f-18 fc-blue mb-4">BANTUAN</h3> */}
                           <div className="row m-b-100">
 
                             <div className="col-sm-12">
@@ -184,7 +184,7 @@ class ClassBantuan extends Component {
                               : this.state.two ? 'Cara Memasukan Materi di Guru'
                                 : this.state.three ? 'Cara Input Kurikulum dan Jadwal'
                                   : 'Cara Membuat Course dan Pertanyaan dalam modul Training'}</h3>
-                          <div className="row m-b-100">
+                          <div className="row m-b-10">
 
                             <div className="col-xl-12">
                               {this.state.one ?
@@ -206,59 +206,59 @@ class ClassBantuan extends Component {
 
                                 // </Carousel>
                                 <>
-                                  <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
+                                  <div>
                                     {filteredData1.map((item, i) => {
                                       return (
 
-                                        <img style={{ width: '100%', borderTop: '2px solid #9b9b9b' }} src={item.full_path_name} />
+                                        <img style={{ width: '100%', borderTop: '1px solid #9b9b9b' }} src={item.full_path_name} />
 
                                       )
                                     })}
 
                                   </div>
-                                  <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData1.length} of {this.state.fileData1.length} </h3>
+                                  {/* <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData1.length} of {this.state.fileData1.length} </h3> */}
                                 </>
 
                                 : this.state.two ?
                                   <>
-                                    <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
+                                    <div>
                                       {filteredData2.map((item, i) => {
                                         return (
 
-                                          <img style={{ width: '100%', borderTop: '2px solid #9b9b9b' }} src={item.full_path_name} />
+                                          <img style={{ width: '100%', borderTop: '1px solid #9b9b9b' }} src={item.full_path_name} />
 
                                         )
                                       })}
                                     </div>
-                                    <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData2.length} of {this.state.fileData2.length} </h3>
+                                    {/* <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData2.length} of {this.state.fileData2.length} </h3> */}
 
                                   </>
                                   : this.state.three ?
                                     <>
-                                      <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
+                                      <div>
                                         {filteredData3.map((item, i) => {
                                           return (
 
-                                            <img style={{ width: '100%', borderTop: '2px solid #9b9b9b' }} src={item.full_path_name} />
+                                            <img style={{ width: '100%', borderTop: '1px solid #9b9b9b' }} src={item.full_path_name} />
 
                                           )
                                         })}
                                       </div>
-                                      <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData3.length} of {this.state.fileData3.length} </h3>
+                                      {/* <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData3.length} of {this.state.fileData3.length} </h3> */}
 
                                     </>
                                     :
                                     <>
-                                      <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '520px', }}>
+                                      <div>
                                         {filteredData4.map((item, i) => {
                                           return (
 
-                                            <img style={{ width: '100%', borderTop: '2px solid #9b9b9b' }} src={item.full_path_name} />
+                                            <img style={{ width: '100%', borderTop: '1px solid #9b9b9b' }} src={item.full_path_name} />
 
                                           )
                                         })}
                                       </div>
-                                      <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData4.length} of {this.state.fileData4.length} </h3>
+                                      {/* <h3 className="f-w-bold f-16" style={{ textAlign: 'center' }}> {filteredData4.length} of {this.state.fileData4.length} </h3> */}
 
                                     </>
                               }

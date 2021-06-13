@@ -21,13 +21,17 @@ class Header extends Component {
     sideMenu: false,
     sideMenuCollapse: false,
     dateNow: Date.now(),
+    logo: '',
+    logoMulti: ''
   };
 
   pilihCompany = (e) => {
     e.preventDefault();
     const id = e.target.getAttribute('data-id');
     const logo = e.target.getAttribute('data-logo');
+    const name = e.target.getAttribute('data-name');
     localStorage.setItem('companyID', id);
+    localStorage.setItem('companyName', name);
     localStorage.setItem('logo', logo);
     window.location.reload();
   };
@@ -45,6 +49,7 @@ class Header extends Component {
         } else {
           this.setState({ company: response.data.result.company });
         }
+        this.setState({ logoMulti: this.state.company.filter((item)=> item.company_id == localStorage.getItem('companyID'))[0].logo })
       })
       .catch(function (error) {
         console.log(error);
@@ -80,6 +85,7 @@ class Header extends Component {
           ...userStorage,
           logo: res.data.result.logo,
           company_id: res.data.result.company_id,
+          company_name: res.data.result.company_name,
           company_type: res.data.result.company_type,
           grup_id: res.data.result.grup_id,
           grup_name: res.data.result.grup_name,
@@ -88,7 +94,6 @@ class Header extends Component {
         };
 
         Storage.set('user', { data: addStorage });
-        console.log('ALVIN', res.data.result)
 
         this.setState({
           logo: res.data.result.logo,
@@ -601,9 +606,10 @@ class Header extends Component {
                 <img
                   alt="Media"
                   style={{ height: 26 }}
+                  alt=""
                   src={
-                    localStorage.getItem('logo')
-                      ? localStorage.getItem('logo')
+                    localStorage.getItem('companyID')
+                      ? this.state.logoMulti
                       : this.state.logo
                   }
                 />
@@ -651,7 +657,7 @@ class Header extends Component {
                               data-logo={this.state.logo}
                               className="img-radius"
                               src={this.state.logo}
-                              alt="Generic placeholder image"
+                              alt=""
                             />
                             <div
                               className="media-body"
@@ -690,31 +696,37 @@ class Header extends Component {
                           onClick={this.pilihCompany}
                           data-id={item.company_id}
                           data-logo={item.logo}
+                          data-name={item.company_name}
                         >
                           <div
                             className="media"
                             data-id={item.company_id}
                             data-logo={item.logo}
+                            data-name={item.company_name}
                           >
                             <img
                               data-id={item.company_id}
                               data-logo={item.logo}
+                              data-name={item.company_name}
                               className="img-radius"
                               src={item.logo}
-                              alt="Generic placeholder image"
+                              alt=""
                             />
                             <div
                               className="media-body"
                               data-id={item.company_id}
                               data-logo={item.logo}
+                              data-name={item.company_name}
                             >
                               <p
                                 data-id={item.company_id}
                                 data-logo={item.logo}
+                                data-name={item.company_name}
                               >
                                 <b
                                   data-id={item.company_id}
                                   data-logo={item.logo}
+                                  data-name={item.company_name}
                                 >
                                   {item.company_name}
                                 </b>
