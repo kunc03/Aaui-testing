@@ -1089,9 +1089,9 @@ export default class MeetingRoom extends Component {
                             </div>
                             {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
-
-                            <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
-
+                            <div style={{background:`url('newasset/user-computer.svg') center center no-repeat`}}>
+                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                            </div>
                             {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>
                               <ChimeMeeting

@@ -32,6 +32,7 @@ class SidebarClass extends Component {
       menuAktif: '/',
       sideMenu: true,
       sideMenuCollapse: false,
+      companyName: '',
 
       notifUnread: 0,
 
@@ -43,6 +44,9 @@ class SidebarClass extends Component {
   //     console.log('side menu',this.state.sideMenu);
   // }
   componentDidMount() {
+    API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
+      this.setState({companyName: res.data.result.company_name})
+    })
     this.setState({ menuAktif: window.location.pathname })
 
     this.fetchNotif()
@@ -152,14 +156,15 @@ class SidebarClass extends Component {
       other: {
         submenu: [
           // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
-          { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+          { iconOn: 'news-sidebar.svg', iconOff: 'news-sidebar.svg', label: "News", link: '/news' },
+          { iconOn: 'files.svg', iconOff: 'files.svg', label: "Project", link: '/project' },
+          { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "User's Task Report", link: '/gantt/report' },
           // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus', access: 'course' },
           // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum', access: 'forum' },
           // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting', access: access.manage_group_meeting ? 'manage_group_meeting' : 'group_meeting' },
           // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi', access: 'manage_course' },
           // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
-          { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+          { iconOn: 'logout-sidebar.svg', iconOff: 'logout-sidebar.svg', label: 'Logout', link: '/logout' },
         ],
       },
 
@@ -193,19 +198,19 @@ class SidebarClass extends Component {
     let menuAdmins = {
       submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+        { iconOn: 'news-sidebar.svg', iconOff: 'news-sidebar.svg', label: "News", link: '/news' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: "Project", link: '/project' },
+        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "User's Task Report", link: '/gantt/report' },
         // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user-company' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Notification', link: '/notification-alert' },
+        { iconOn: 'company-sidebar.svg', iconOff: 'company-sidebar.svg', label: 'My Company', link: '/my-company' },
+        { iconOn: 'user-sidebar.svg', iconOff: 'user-sidebar.svg', label: 'Users', link: '/user-company' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Global Settings', link: '/global-settings' },
-        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        { iconOn: 'logout-sidebar.svg', iconOff: 'logout-sidebar.svg', label: 'Logout', link: '/logout' },
       ],
       submenuPendidikan: [
         { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'My Company', link: '/my-company' },
@@ -237,17 +242,19 @@ class SidebarClass extends Component {
     let menuSuperAdmins = {
       submenu: [
         // { iconOn: 'files.svg', iconOff: 'files.svg', label: 'Files', link: '/files' },
-        { iconOn: 'materi.svg', iconOff: 'materi.svg', label: "News", link: '/news' },
-        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: "User's Task Report", link: '/gantt/report' },
+        { iconOn: 'news-sidebar.svg', iconOff: 'news-sidebar.svg', label: "News", link: '/news' },
+        { iconOn: 'files.svg', iconOff: 'files.svg', label: "Project", link: '/project' },
+        { iconOn: 'info.svg', iconOff: 'info.svg', label: "User's Task Report", link: '/gantt/report' },
         // { iconOn: 'materi.svg', iconOff: 'materi.svg', label: 'Kursus & Materi', link: '/kursus' },
         // { iconOn: 'forum.svg', iconOff: 'forum.svg', label: 'Forum', link: '/forum' },
         // { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Group Meeting', link: '/meeting' },
         // { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Manage Courses', link: '/kursus-materi' },
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Certificate', link: '/certificate' },
         // { iconOn: 'sertifikat.svg', iconOff: 'sertifikat.svg', label: 'Manage Certificates', link: '/certificate-admin' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Company', link: '/company' },
-        { iconOn: 'conference.svg', iconOff: 'conference.svg', label: 'Users', link: '/user' },
-        { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
+        { iconOn: 'company-sidebar.svg', iconOff: 'company-sidebar.svg', label: 'Company', link: '/company' },
+        { iconOn: 'company-sidebar.svg', iconOff: 'company-sidebar.svg', label: 'My Company', link: '/my-company' },
+        { iconOn: 'user-sidebar.svg', iconOff: 'user-sidebar.svg', label: 'Users', link: '/user' },
+        { iconOn: 'logout-sidebar.svg', iconOff: 'logout-sidebar.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtas: [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
@@ -445,23 +452,29 @@ class SidebarClass extends Component {
         </div>
 
         <div className="custom-side-bar">
-          <h4 className="p-20 mt-5" style={{ borderBottom: '1px solid #E6E6E6' }}><strong> Menu </strong></h4>
+          <h6 className="p-20 mt-5" style={{textAlign:'center'}}><strong>{localStorage.getItem("companyName") ? localStorage.getItem("companyName") : this.state.companyName}</strong></h6>
           <div>
             {
               menuContent.map((item, i) => {
                 if (item.access == undefined || access[item.access]) {
                   return (
-                    <Link to={item.link} style={{ color: '#797979' }}>
-                      <div className="p-10" style={{ borderBottom: '1px solid #E6E6E6', paddingLeft: 28 }}>
-                        <img
-                          src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
-                          style={{ marginRight: 15 }}
-                          alt=""
-                          height={15}
-                        ></img>
-                        {item.label}
-                      </div>
-                    </Link>
+                    <div>
+                      {item.label === 'News' && <div className="side-submenu-groupname">MENU</div>}
+                      {item.label === 'Logout' && <div className="side-submenu-groupname">SESSION</div>}
+                      {item.label === 'My Company' && <div className="side-submenu-groupname">{localStorage.getItem("companyName") ? localStorage.getItem("companyName").toUpperCase() : this.state.companyName.toUpperCase()}</div>}
+                      <Link to={item.link} style={{ color: '#797979' }}>
+                        <div className="side-submenu">
+                          <img
+                            src={`newasset/${menuAktif === item.link ? item.iconOn : item.iconOff}`}
+                            style={{ marginRight: 15 }}
+                            alt=""
+                            height={15}
+                            width={15}
+                          ></img>
+                          {item.label}
+                        </div>
+                      </Link>
+                    </div>
                   )
                 }
               })

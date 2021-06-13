@@ -52,7 +52,7 @@ class ListToDoNew extends Component {
         {
           lists.length == 0 ?
             <div className="col-sm-12 mb-1">
-              There is no
+              No Documents
             </div>
             :
             <DataTable

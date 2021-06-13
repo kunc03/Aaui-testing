@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import API, { USER_ME, API_SERVER } from '../../repository/api';
 import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
+import Select from 'react-select';
 import ToggleSwitch from "react-switch";
 import DataTable from 'react-data-table-component';
 import Moment from 'moment-timezone';
@@ -55,6 +56,8 @@ class ProjekNew extends Component {
     valueUser: [],
     share: [],
     projectShareId: '',
+    defaultProjectAdmin: [],
+    defaultUsers: [],
 
     gb: []
   }
@@ -78,7 +81,7 @@ class ProjekNew extends Component {
     this.setState({ modalNewFolder: false, alert: '', valueProjectAdmin: [], limited: false, valueUser: [] })
   }
   closeModalEdit = e => {
-    this.setState({ modalEdit: false, alert: '', folderName: '', valueProjectAdmin: [], limited: false, valueUser: [] })
+    this.setState({ modalEdit: false, alert: '', folderName: '', valueProjectAdmin: [], limited: false, valueUser: [], defaultProjectAdmin: [], defaultUsers: [] })
   }
   closeModalSharing = e => {
     this.setState({ modalSharing: false, projectShareId: '' })
@@ -109,7 +112,7 @@ class ProjekNew extends Component {
           this.setState({ alert: res.data.result });
         } else {
           toast.success(`Berhasil menambah project ${this.state.folderName}`)
-          this.setState({ modalNewFolder: false, alert: '', folderName: '', valueProjectAdmin: [], valueUser: [], limited: false })
+          this.setState({ modalNewFolder: false, alert: '', folderName: '', valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }
       }
@@ -146,7 +149,17 @@ class ProjekNew extends Component {
           editProjectName: res.data.result.name,
           valueProjectAdmin: res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [],
           valueUser: res.data.result.user ? res.data.result.user.split(',').map(Number) : [],
-          limited: res.data.result.is_limit === 0 ? false : true,
+          limited: res.data.result.is_limit === 0 ? false : true
+        })
+        let defValPA = res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [];
+        let defValU = res.data.result.user ? res.data.result.user.split(',').map(Number) : [];
+        defValPA.map(item=>{
+          this.state.defaultProjectAdmin.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+        })
+        defValU.map(item=>{
+          this.state.defaultUsers.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+        })
+        this.setState({
           modalEdit: true
         })
       }
@@ -229,7 +242,7 @@ class ProjekNew extends Component {
           toast.error(`Failed to modify the project ${this.state.editProjectName}`)
         } else {
           toast.success(`Successfully modified project ${this.state.editProjectName}`)
-          this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false })
+          this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }
       }
@@ -284,7 +297,7 @@ class ProjekNew extends Component {
       {
         name: 'Name',
         selector: 'title',
-        width: '30%',
+        width: '40%',
         sortable: true,
         cell: row =>
           <Link to={`detail-project/${row.id}`}>
@@ -297,16 +310,16 @@ class ProjekNew extends Component {
           </Link>,
       },
       {
-        name: 'Recent Project',
+        name: 'Last Activity',
         selector: 'recent_project',
-        width: '30%',
+        width: '25%',
         sortable: true,
         cell: row =>
           <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
-        name: 'Info',
-        width: '30%',
+        name: 'Information',
+        width: '22%',
         cell: row =>
           <span style={{ inlineSize: '-webkit-fill-available' }}>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
@@ -315,7 +328,7 @@ class ProjekNew extends Component {
         center: true,
       },
       {
-        name: 'Action',
+        name: '',
         width: '10%',
         cell: row =>
           accessProjectManager ?
@@ -343,7 +356,7 @@ class ProjekNew extends Component {
 
     return (
       <div className="row">
-        <div className={location ? 'col-sm-8' : 'hidden'}>
+        <div className='col-sm-8'>
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
@@ -352,7 +365,7 @@ class ProjekNew extends Component {
             </div>
 
             {
-              cdProject &&
+              cdProject ?
 
               <div>
                 {
@@ -368,24 +381,29 @@ class ProjekNew extends Component {
                     null
                 }
               </div>
+              :null
             }
 
 
           </div>
         </div>
-
+        <div className="col-sm-4 text-right">
+          <p className="m-b-0">
+            <Link to={"project"}>
+              <span className=" f-12 fc-skyblue">See all</span>
+            </Link>
+          </p>
+        </div>
         <div className="col-sm-12" style={{ marginTop: '-20px' }}>
 
-          {
-            lists.length === 0 ?
-              <div className="col-sm-12 mb-1">
-                Not available
-                </div>
-              :
-              <DataTable
+        <DataTable
                 style={{ marginTop: 20 }} columns={columns} data={lists} striped={false} noHeader={true} customStyles={customStyles}
+                noDataComponent="There are no project to display"
+                pagination
+                fixedHeader
+                paginationPerPage = {5}
+                paginationRowsPerPageOptions = {[5, 10, 15, 20, 25, 30]}
               />
-          }
           {/* <div className="col-sm-12 mb-1">
             <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
               <div className="box-project">
@@ -445,16 +463,11 @@ class ProjekNew extends Component {
                       <Form.Label className="f-w-bold">
                         Project Admin
                             </Form.Label>
-                      <MultiSelect
-                        id="moderator"
+                      <Select
                         options={this.state.optionsProjectAdmin}
-                        value={this.state.valueProjectAdmin}
-                        onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
-                        mode="tags"
-                        required
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Pilih Project Admin"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={valueProjectAdmin => { let arr = []; valueProjectAdmin.map((item) => arr.push(item.value)); this.setState({ valueProjectAdmin: arr })}}
                       />
                       <Form.Text className="text-muted">
                         Project admins can manage meetings, webinars, and files.
@@ -481,15 +494,11 @@ class ProjekNew extends Component {
                         <Form.Label className="f-w-bold">
                           Users
                           </Form.Label>
-                        <MultiSelect
-                          id="user"
+                        <Select
                           options={this.state.optionsProjectAdmin}
-                          value={this.state.valueUser}
-                          onChange={valueUser => this.setState({ valueUser })}
-                          mode="tags"
-                          enableSearch={true}
-                          resetable={true}
-                          valuePlaceholder="Select User"
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valueUser => { let arr = []; valueUser.map((item) => arr.push(item.value)); this.setState({ valueUser: arr })}}
                         />
                       </Form.Group>
                     }
@@ -554,15 +563,12 @@ class ProjekNew extends Component {
                       <Form.Label className="f-w-bold">
                         Project Admin
                             </Form.Label>
-                      <MultiSelect
-                        id="moderator"
+                      <Select
                         options={this.state.optionsProjectAdmin}
-                        value={this.state.valueProjectAdmin}
-                        onChange={valueProjectAdmin => this.setState({ valueProjectAdmin })}
-                        mode="tags"
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Pilih Project Admin"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={valueProjectAdmin => { let arr = []; valueProjectAdmin.map((item) => arr.push(item.value)); this.setState({ valueProjectAdmin: arr })}}
+                        defaultValue={this.state.defaultProjectAdmin}
                       />
                       <Form.Text className="text-muted">
                         Project admins can manage meetings, webinars, and files.
@@ -570,14 +576,14 @@ class ProjekNew extends Component {
                     </Form.Group>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
-                        Limit
+                        Limit Users
                             </Form.Label>
                       <div style={{ width: '100%' }}>
                         <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.limited} />
                       </div>
                       <Form.Text className="text-muted">
                         {
-                          this.state.limited ? 'Hanya orang yang didaftarkan sebagai peserta yang bisa mengakses project.'
+                          this.state.limited ? 'Only people who are registered as participants can access the project.'
                             :
                             'The meeting room is open. All users can join.'
                         }
@@ -589,15 +595,12 @@ class ProjekNew extends Component {
                         <Form.Label className="f-w-bold">
                           User
                           </Form.Label>
-                        <MultiSelect
-                          id="user"
+                        <Select
                           options={this.state.optionsProjectAdmin}
-                          value={this.state.valueUser}
-                          onChange={valueUser => this.setState({ valueUser })}
-                          mode="tags"
-                          enableSearch={true}
-                          resetable={true}
-                          valuePlaceholder="Select User"
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valueUser => { let arr = []; valueUser.map((item) => arr.push(item.value)); this.setState({ valueUser: arr })}}
+                          defaultValue={this.state.defaultUsers}
                         />
                       </Form.Group>
                     }
