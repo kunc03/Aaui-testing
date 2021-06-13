@@ -15,6 +15,9 @@ import Moderator from '../Global_setting/moderator';
 import Speaker from '../Global_setting/speaker';
 import Participant from '../Global_setting/participant';
 
+const ZOOM_API_KEY        = "TRFWZeTPTQGtFcnhA_06fA"
+const ZOOM_REDIRECT_URL   = "http://localhost:3000/zoom/callback"
+
 
 class Pengaturan extends Component {
   constructor(props) {
@@ -49,6 +52,9 @@ class Pengaturan extends Component {
       speaker: false,
       participant: false,
 
+      zoom: false,
+      checkZoom: [],
+
       isModalResponse: false,
     };
   }
@@ -66,6 +72,7 @@ class Pengaturan extends Component {
   componentDidMount() {
     this.fetchData();
     this.fetchGlobalSettings(Storage.get('user').data.company_id);
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
   toggleModal = () => {
@@ -73,6 +80,14 @@ class Pengaturan extends Component {
       isOpen: !this.state.isOpen,
     });
   };
+
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
+  }
 
   onClickSubmitSetting = (e) => {
     let formData = {
@@ -140,6 +155,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'profile') {
       this.setState({
@@ -148,6 +164,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'webinar') {
       this.setState({
@@ -156,6 +173,7 @@ class Pengaturan extends Component {
         webinar: true,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'meeting') {
       this.setState({
@@ -164,6 +182,17 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: true,
         notification: false,
+        zoom: false
+      });
+    }
+    else if (a === 'zoom') {
+      this.setState({
+        security: false,
+        profile: false,
+        webinar: false,
+        meeting: false,
+        notification: false,
+        zoom: true
       });
     }
     else  {
@@ -173,6 +202,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: true,
+        zoom: false
       });
     }
   }
@@ -185,14 +215,19 @@ class Pengaturan extends Component {
     })
   }
 
+  deauthZoom(e) {
+    API.delete(`${API_SERVER}v3/zoom/user/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: [] })
+      }
+    })
+  }
+
   render() {
     console.log('response: ', this.state);
     let levelUser = Storage.get('user').data.level === 'client' ? false : true;
 
     return (
-
-
-
       <div className="pcoded-main-container" style={{ backgroundColor: '#F6F6FD' }}>
         <div className="pcoded-wrapper">
           <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
@@ -255,6 +290,15 @@ class Pengaturan extends Component {
                             >
                               <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
                             </div>
+                                
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'zoom')}
+                            >
+                              <span className={this.state.zoom ? 'fc-skyblue' : ''}>Zoom Account</span>
+                            </div>
+                                
                           </div>
                           :
                           <div className="row m-b-100">
@@ -287,6 +331,15 @@ class Pengaturan extends Component {
                             >
                               <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
                             </div>
+                                
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'zoom')}
+                            >
+                              <span className={this.state.zoom ? 'fc-skyblue' : ''}>Zoom Account</span>
+                            </div>
+                            
                           </div>
                           }
 
@@ -297,6 +350,25 @@ class Pengaturan extends Component {
                     <div className="col-sm-8">
                       <div className="row m-b-100">
                         <div className="col-xl-12">
+                          {
+                            this.state.zoom ?
+                              <div className="card">
+                                <div className="card-body">
+                                  <h4 className="mb-3">Zoom Sync</h4>
+
+                                  {
+                                    this.state.checkZoom.length === 1 ?
+                                      <button onClick={e => this.deauthZoom(e)} className="btn btn-danger rounded">Deauthentication</button>
+                                      :
+                                      <a className="btn btn-primary" href={`https://zoom.us/oauth/authorize?response_type=code&client_id=${ZOOM_API_KEY}&redirect_uri=${ZOOM_REDIRECT_URL}`}>
+                                        Connect Zoom
+                                      </a>
+                                  }
+                                </div>
+                              </div>
+                              : null
+                          }
+
                           {this.state.security ? (
                             <div className="card">
                               <div className="card-block">
