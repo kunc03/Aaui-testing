@@ -206,7 +206,7 @@ class ClassBantuan extends Component {
 
                                 // </Carousel>
                                 <>
-                                  <div>
+                                  <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
                                     {filteredData1.map((item, i) => {
                                       return (
 
@@ -221,7 +221,7 @@ class ClassBantuan extends Component {
 
                                 : this.state.two ?
                                   <>
-                                    <div>
+                                    <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
                                       {filteredData2.map((item, i) => {
                                         return (
 
@@ -235,7 +235,7 @@ class ClassBantuan extends Component {
                                   </>
                                   : this.state.three ?
                                     <>
-                                      <div>
+                                      <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
                                         {filteredData3.map((item, i) => {
                                           return (
 
@@ -249,7 +249,7 @@ class ClassBantuan extends Component {
                                     </>
                                     :
                                     <>
-                                      <div>
+                                      <div style={{ border: '16px solid #e4e4e4', borderRadius: '10px', overflowX: 'auto', overflowY: 'scroll', height: '365px', }}>
                                         {filteredData4.map((item, i) => {
                                           return (
 
