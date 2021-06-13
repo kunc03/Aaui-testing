@@ -17,6 +17,8 @@ import Notification from "./components/Notification/index";
 import Pengumuman from "./components/Pengumuman/index";
 import Pengaturan from "./components/Pengaturan/index";
 
+import ZoomCallback from './components/zoom/call'
+
 import ClassBantuan from "./components/bantuan/index";
 import GlobalSettings from "./components/Global_setting/index";
 import NotificationAlert from "./components/Global_setting/notification";
@@ -326,6 +328,8 @@ export class SuperAdminSwitch extends React.Component {
         <Route path="/learning" component={LearningAdmin} />
         <Route path="/full-kalender" component={FullCalender} />
 
+        <Route path="/zoom/callback" component={ZoomCallback} />
+
         <Route path="/detail-project/:project_id" component={DetailProject} />
         {/* <Route path="/webinar/:webinar_id" component={WebinarDetail} /> */}
         <Route path="/project" component={Project} />
@@ -456,6 +460,8 @@ export class AdminSwitch extends React.Component {
         <Route path="/" exact component={Home} />
         <Route path="/full-kalender" component={FullCalender} />
 
+        <Route path="/zoom/callback" component={ZoomCallback} />
+
         <Route path="/informasi" component={InformasiAdmin} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
@@ -585,6 +591,8 @@ export class ClientSwitch extends React.Component {
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/full-kalender" component={FullCalender} />
+
+        <Route path="/zoom/callback" component={ZoomCallback} />
 
         <Route path="/murid" component={LearningMurid} />
         <Route path="/guru" component={LearningGuru} />
