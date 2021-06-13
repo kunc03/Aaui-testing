@@ -36,8 +36,18 @@ class WebinarTable extends Component {
         { title: 'Date', width: null, status: true },
         { title: 'Participants', width: null, status: true },
         // {title : 'File Project', width: null, status: true},
-      ]
+      ],
+
+      checkZoom: []
     };
+  }
+
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
   }
 
   checkLimitCompany(){
@@ -55,7 +65,7 @@ class WebinarTable extends Component {
     this.fetchData();
     this.checkLimitCompany();
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_WEBINAR'])
-
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
   fetchData() {
@@ -271,7 +281,7 @@ class WebinarTable extends Component {
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={(item.engine === 'zoom') ? LINK_ZOOM : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
+                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
