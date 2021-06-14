@@ -1507,7 +1507,7 @@ class MeetingTable extends Component {
                 <div className="col-sm-6">
                   <Form.Label className="f-w-bold">Engine</Form.Label>
                   <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
-                    <option value="bbb">BigBlueButton</option>
+                    <option value="bbb">ICADEMY</option>
                     <option value="zoom">Zoom</option>
                   </select>
                   <Form.Text className="text-muted">

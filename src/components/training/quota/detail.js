@@ -147,6 +147,39 @@ class Allocation extends Component {
         sortable: true
       },
     ];
+    const columnsCompany = [
+      {
+        name: 'Time',
+        selector: 'created_at',
+        sortable: true
+      },
+      {
+        name: 'Amount',
+        selector: 'amount',
+        sortable: true
+      },
+      {
+        cell: row => row.transaction_type.capitalize(),
+        name: 'Transaction Type',
+        selector: 'transaction_type',
+        sortable: true
+      },
+      {
+        name: 'Licenses Type',
+        selector: 'type',
+        sortable: true
+      },
+      {
+        name: 'Training Company',
+        selector: 'training_company',
+        sortable: true
+      },
+      {
+        name: 'Created By',
+        selector: 'created_by',
+        sortable: true
+      },
+    ];
     const columnsLicenses = [
       {
         name: 'Type',
@@ -234,7 +267,7 @@ class Allocation extends Component {
                             onChange={this.filterHistory}
                             className="form-control float-right col-sm-3"/>
                             <DataTable
-                            columns={columns}
+                            columns={this.props.lockEdit ? columnsCompany : columns}
                             data={data}
                             highlightOnHover
                             pagination

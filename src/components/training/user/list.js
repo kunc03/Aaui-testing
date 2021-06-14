@@ -410,7 +410,10 @@ class User extends Component {
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
                                                         <div className="float-right col-sm-3 lite-filter">
-                                                          <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                          {
+                                                            Storage.get('user').data.level === 'client' ? null :
+                                                            <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                          }
                                                         </div>
                                                         <DataTable
                                                         columns={columns}
