@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import ModalEmail from './modalemail';
 import { Link, NavLink, Switch, Route } from 'react-router-dom';
 import ModalPassword from './modalpassword';
-import API, { API_SERVER } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import Profile from '../Profile/index';
@@ -16,7 +16,7 @@ import Speaker from '../Global_setting/speaker';
 import Participant from '../Global_setting/participant';
 
 const ZOOM_API_KEY        = "TRFWZeTPTQGtFcnhA_06fA"
-const ZOOM_REDIRECT_URL   = "http://localhost:3000/zoom/callback"
+const ZOOM_REDIRECT_URL   = APPS_SERVER + "zoom/callback"
 
 
 class Pengaturan extends Component {
