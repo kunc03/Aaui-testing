@@ -48,6 +48,8 @@ export default class WebinarCreate extends Component {
     folderId: 0,
     prevFolderId: 0,
 
+    checkZoom: [],
+
     navigation: ['Home'],
 
     // isModalDokumen: false,
@@ -106,7 +108,28 @@ export default class WebinarCreate extends Component {
     this.fetchData();
     this.forceUpdate();
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CRUD_ROLES'])
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
+  }
 
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
+  }
+
+  handleEngine(e) {
+    if (e.target.value === 'zoom') {
+      if (this.state.checkZoom.length !== 1) {
+        toast.warning(`Silahkan konek dan sinkronisasi akun zoom Anda pada menu Pengaturan.`)
+      }
+      else {
+        this.setState({ engine: e.target.value })
+      }
+    } else {
+      this.setState({ engine: e.target.value })
+    }
   }
 
   fetchData() {
@@ -283,7 +306,7 @@ export default class WebinarCreate extends Component {
                       <Form.Group className="row" controlId="formJudul">
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">Engine</Form.Label>
-                          <select value={this.state.engine} onChange={e => this.setState({ engine: e.target.value })} name="engine" className="form-control">
+                          <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
                             <option value="bbb">Big Blue Button</option>
                             <option value="zoom">Zoom</option>
                           </select>
