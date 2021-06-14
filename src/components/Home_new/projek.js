@@ -270,13 +270,12 @@ class ProjekNew extends Component {
     this.fetchProject()
     this.fetchOtherData()
     this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
-    ['CD_PROJECT'])
+      ['CD_PROJECT'])
   }
 
-  fetchCheckAccess(role, company_id, level, param)
-  {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then( res => {
-      this.setState({ gb : res.data.result})
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
+      this.setState({ gb: res.data.result })
     })
   }
 
@@ -285,7 +284,7 @@ class ProjekNew extends Component {
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser === 'client' ? false : true;
     let cdProject = '';
-    if( levelUser === 'admin' || levelUser === 'superadmin'){
+    if (levelUser === 'admin' || levelUser === 'superadmin') {
       cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
     }
     console.log(cdProject, 'kk')

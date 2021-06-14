@@ -120,8 +120,8 @@ class KalenderNew extends Component {
               }}
               views={['month', 'week', 'day', 'agenda']}
               components={{ event: Event }}
-            // min={new Date(0, 0, 0, 0, 8, 0)}
-            // max={new Date(0, 0, 0, 0, 20, 0)}
+              min={new Date(0, 0, 0, 0, 8, 0)}
+              max={new Date(0, 0, 0, 0, 20, 0)}
             // min={new Date(2016, 10, 0, 2, 0, 0)}
             // scrollToTime={new Date(0, 0, 0, 0, 8, 0)}
             // step={3}

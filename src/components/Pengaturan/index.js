@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import ModalEmail from './modalemail';
 import { Link, NavLink, Switch, Route } from 'react-router-dom';
 import ModalPassword from './modalpassword';
-import API, { API_SERVER } from '../../repository/api';
+import API, { API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 
 import Profile from '../Profile/index';
@@ -14,6 +14,9 @@ import Secretary from '../Global_setting/secretary';
 import Moderator from '../Global_setting/moderator';
 import Speaker from '../Global_setting/speaker';
 import Participant from '../Global_setting/participant';
+
+const ZOOM_API_KEY        = "TRFWZeTPTQGtFcnhA_06fA"
+const ZOOM_REDIRECT_URL   = APPS_SERVER + "zoom/callback"
 
 
 class Pengaturan extends Component {
@@ -49,6 +52,9 @@ class Pengaturan extends Component {
       speaker: false,
       participant: false,
 
+      zoom: false,
+      checkZoom: [],
+
       isModalResponse: false,
     };
   }
@@ -66,6 +72,7 @@ class Pengaturan extends Component {
   componentDidMount() {
     this.fetchData();
     this.fetchGlobalSettings(Storage.get('user').data.company_id);
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
   toggleModal = () => {
@@ -73,6 +80,14 @@ class Pengaturan extends Component {
       isOpen: !this.state.isOpen,
     });
   };
+
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
+  }
 
   onClickSubmitSetting = (e) => {
     let formData = {
@@ -119,9 +134,9 @@ class Pengaturan extends Component {
 
   tabTitle(a) {
     if (a === 'Project Admin') {
-      this.setState({ projectAdmin: true, secretary: false });
+      this.setState({ projectAdmin: true, secretary: false, moderator: false, speaker: false, participant: false });
     } else if (a === 'secretary') {
-      this.setState({ projectAdmin: false, secretary: true });
+      this.setState({ projectAdmin: false, secretary: true, moderator: false, speaker: false, participant: false });
     } else if ( a === 'moderator'){
       this.setState({ projectAdmin: false, secretary: false, moderator: true, speaker: false, participant: false})
     }
@@ -140,6 +155,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'profile') {
       this.setState({
@@ -148,6 +164,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'webinar') {
       this.setState({
@@ -156,6 +173,7 @@ class Pengaturan extends Component {
         webinar: true,
         meeting: false,
         notification: false,
+        zoom: false
       });
     } else if (a === 'meeting') {
       this.setState({
@@ -164,6 +182,17 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: true,
         notification: false,
+        zoom: false
+      });
+    }
+    else if (a === 'zoom') {
+      this.setState({
+        security: false,
+        profile: false,
+        webinar: false,
+        meeting: false,
+        notification: false,
+        zoom: true
       });
     }
     else  {
@@ -173,6 +202,7 @@ class Pengaturan extends Component {
         webinar: false,
         meeting: false,
         notification: true,
+        zoom: false
       });
     }
   }
@@ -185,14 +215,19 @@ class Pengaturan extends Component {
     })
   }
 
+  deauthZoom(e) {
+    API.delete(`${API_SERVER}v3/zoom/user/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: [] })
+      }
+    })
+  }
+
   render() {
     console.log('response: ', this.state);
     let levelUser = Storage.get('user').data.level === 'client' ? false : true;
 
     return (
-
-
-
       <div className="pcoded-main-container" style={{ backgroundColor: '#F6F6FD' }}>
         <div className="pcoded-wrapper">
           <div className="pcoded-content" style={{ padding: '40px 40px 0 40px' }}>
@@ -235,14 +270,14 @@ class Pengaturan extends Component {
 
                             <div
                               className="col-xl-12 p-10 mb-3"
-                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              style={{ cursor: 'pointer' }}
                               onClick={this.tabChoice.bind(this, 'webinar')}
                             >
                               <span style={{marginLeft : '20px'}} className={this.state.webinar ? 'fc-skyblue' : ''}>Webinar</span>
                             </div>
                             <div
                               className="col-xl-12 p-10 mb-3"
-                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              style={{ cursor: 'pointer' }}
                               onClick={this.tabChoice.bind(this, 'meeting')}
                             >
                               <span style={{ marginLeft: '20px'}} className={this.state.meeting ? 'fc-skyblue' : ''}>Meeting</span>
@@ -255,6 +290,15 @@ class Pengaturan extends Component {
                             >
                               <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
                             </div>
+                                
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'zoom')}
+                            >
+                              <span className={this.state.zoom ? 'fc-skyblue' : ''}>Zoom Account</span>
+                            </div>
+                                
                           </div>
                           :
                           <div className="row m-b-100">
@@ -287,6 +331,15 @@ class Pengaturan extends Component {
                             >
                               <span className={this.state.notification ? 'fc-skyblue' : ''}>Notification</span>
                             </div>
+                                
+                            <div
+                              className="col-xl-12 p-10 mb-3"
+                              style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
+                              onClick={this.tabChoice.bind(this, 'zoom')}
+                            >
+                              <span className={this.state.zoom ? 'fc-skyblue' : ''}>Zoom Account</span>
+                            </div>
+                            
                           </div>
                           }
 
@@ -297,6 +350,25 @@ class Pengaturan extends Component {
                     <div className="col-sm-8">
                       <div className="row m-b-100">
                         <div className="col-xl-12">
+                          {
+                            this.state.zoom ?
+                              <div className="card">
+                                <div className="card-body">
+                                  <h4 className="mb-3">Zoom Sync</h4>
+
+                                  {
+                                    this.state.checkZoom.length === 1 ?
+                                      <button onClick={e => this.deauthZoom(e)} className="btn btn-danger rounded">Deauthentication</button>
+                                      :
+                                      <a className="btn btn-primary" href={`https://zoom.us/oauth/authorize?response_type=code&client_id=${ZOOM_API_KEY}&redirect_uri=${ZOOM_REDIRECT_URL}`}>
+                                        Connect Zoom
+                                      </a>
+                                  }
+                                </div>
+                              </div>
+                              : null
+                          }
+
                           {this.state.security ? (
                             <div className="card">
                               <div className="card-block">
@@ -408,8 +480,8 @@ class Pengaturan extends Component {
                             <div className="row">
                               <div className="col">
                                 <div className="row">
-                                  <div className="col-sm-3">
-                                    <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
+                                  <div className="col-sm-8">
+                                    <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings | <span className="fc-black f-18">Webinar</span></h3>
                                   </div>
                                 </div>
 
@@ -418,13 +490,13 @@ class Pengaturan extends Component {
                                     <ul style={{ paddingBottom: '0px' }} className="nav nav-pills">
 
 
-                                      <li className={`nav-item`}>
+                                      <li className={`nav-item`} activeClassname="active">
                                         <div
                                           className="col-xl-12 p-10 mb-3"
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'Project Admin')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Project Admin</span>
+                                          <span className={this.state.projectAdmin ? 'fc-skyblue' : ''}>Project Admin</span>
                                         </div>
                                       </li>
 
@@ -434,7 +506,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'secretary')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Secretary</span>
+                                          <span className={this.state.secretary ? 'fc-skyblue' : ''}>Secretary</span>
                                         </div>
                                       </li>
 
@@ -444,7 +516,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'moderator')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Moderator</span>
+                                          <span className={this.state.moderator ? 'fc-skyblue' : ''}>Moderator</span>
                                         </div>
                                       </li>
                                       <li className={`nav-item`}>
@@ -453,7 +525,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'speaker')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Speaker</span>
+                                          <span className={this.state.speaker ? 'fc-skyblue' : ''}>Speaker</span>
                                         </div>
                                       </li>
                                       <li className={`nav-item`}>
@@ -462,7 +534,7 @@ class Pengaturan extends Component {
                                           style={{ cursor: 'pointer' }}
                                           onClick={this.tabTitle.bind(this, 'participant')}
                                         >
-                                          <span className={this.state.webinar ? 'fc-skyblue' : ''}>Participant</span>
+                                          <span className={this.state.participant ? 'fc-skyblue' : ''}>Participant</span>
                                         </div>
                                       </li>
                                     </ul>
@@ -491,8 +563,8 @@ class Pengaturan extends Component {
                               <div className="row">
                                 <div className="col">
                                   <div className="row">
-                                    <div className="col-sm-3">
-                                      <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings</h3>
+                                    <div className="col-sm-8">
+                                      <h3 className="f-w-bold f-21 fc-blue mb-4">Global Settings | <span className="fc-black f-18"> Meeting</span></h3>
                                     </div>
                                   </div>
 
@@ -505,7 +577,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'Project Admin')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''} activeClassname='active'>Project Admin</span>
+                                            <span className={this.state.projectAdmin ? 'fc-skyblue' : ''} activeClassname='active'>Project Admin</span>
                                           </div>
                                         </li>
 
@@ -524,7 +596,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'moderator')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''}>Moderator</span>
+                                            <span className={this.state.moderator ? 'fc-skyblue' : ''}>Moderator</span>
                                           </div>
                                         </li>
                                         {/* <li className={`nav-item`}>
@@ -542,7 +614,7 @@ class Pengaturan extends Component {
                                             style={{ cursor: 'pointer' }}
                                             onClick={this.tabTitle.bind(this, 'participant')}
                                           >
-                                            <span className={this.state.meeting ? 'fc-skyblue' : ''}>Participant</span>
+                                            <span className={this.state.participant ? 'fc-skyblue' : ''}>Participant</span>
                                           </div>
                                         </li>
                                       </ul>

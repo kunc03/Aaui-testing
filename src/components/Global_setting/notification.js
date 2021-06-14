@@ -44,8 +44,9 @@ const datas = [
       if(res.status === 200){
         const meeting = res.data.result.filter(item => item.sub === 'meeting');
         const training = res.data.result.filter(item => item.sub === 'training');
+        const ghantt = res.data.result.filter(item => item.sub === 'gantt');
 
-        this.setState({ meeting, training })
+        this.setState({ meeting, training, ghantt  })
       }
     })
   }
