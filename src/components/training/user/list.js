@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-bootstrap';
 import Moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
+import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class User extends Component {
   constructor(props) {
@@ -26,6 +28,7 @@ class User extends Component {
         import: true,
         file:'',
         isUploading: false,
+        isLoading: false,
         modalAssignee: false,
         userAssigneeId: '',
         assignee: [{
@@ -165,23 +168,27 @@ class User extends Component {
   }
 
   getUser(id){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
 
   getUserTrainingCompany(id){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/training-company/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+          this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -489,6 +496,10 @@ class User extends Component {
                                                 </div>
                                             </div>
         }
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -522,6 +533,8 @@ class User extends Component {
                                                         />
                                                     </div>
                                                 </div>
+                                            </div>
+                                            </LoadingOverlay>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
@@ -596,7 +609,6 @@ class User extends Component {
             </button>
           </Modal.Footer>
         </Modal>
-                                            </div>
       </div>
     )
   }

@@ -9,6 +9,7 @@ import { MultiSelect } from 'react-sm-select';
 import Moment from 'moment-timezone';
 import { Modal, Button, Form, Badge } from 'react-bootstrap';
 import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
@@ -507,8 +508,7 @@ class Report extends Component {
                                             </div>
                                             <LoadingOverlay
                                               active={this.state.isLoading}
-                                              spinner
-                                              text='Loading...'
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
                                             >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">

@@ -65,6 +65,7 @@
     "react-select": "^4.3.1",
     "react-sm-select": "^1.0.9",
     "react-speech-recognition": "^3.6.0",
+    "react-spinners": "^0.11.0",
     "react-switch": "^5.0.1",
     "react-tagsinput": "^3.19.0",
     "react-to-pdf": "0.0.13",
