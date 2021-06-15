@@ -12449,3 +12449,10 @@ required {
   border:2px solid #007adc;
   color: #FFF;
 }
+.react-datepicker-popper{
+  z-index:1041 !important;
+}
+
+.MultiSelect .DropDown{
+  z-index:1041 !important;
+}
