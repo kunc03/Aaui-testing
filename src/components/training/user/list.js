@@ -298,6 +298,104 @@ class User extends Component {
         },
       },
       {
+        name: 'Identity Number',
+        selector: 'identity',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'License Number',
+        selector: 'license_number',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row =>
+        <Dropdown
+          pullRight
+          onSelect={(eventKey) => {
+            switch (eventKey){
+              case 1 : this.readAssign(row.id);break;
+              case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
+              case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
+              case 4 : this.onClickHapus(row.id);break;
+              default : this.props.goTo('/training/user');break;
+            }
+          }}
+        >
+          <Dropdown.Toggle
+            btnStyle="flat"
+            noCaret
+            iconOnly
+          >
+            <i className="fa fa-ellipsis-h"></i>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
+            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
+            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+          </Dropdown.Menu>
+        </Dropdown>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      },
+    ];
+    const columnsClient = [
+      {
+        name: 'Image',
+        selector: 'image',
+        sortable: true,
+        cell: row => <img height="36px" alt={row.name} src={row.image ? row.image : 'assets/images/no-profile-picture.jpg'} />
+      },
+      {
+        cell: row => <Link to={'/training/user/detail/'+row.id}>{row.name}</Link>,
+        name: 'Name',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        name: 'Created at',
+        selector: 'created_at',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Phone',
+        selector: 'phone',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Email',
+        selector: 'email',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Identity Number',
+        selector: 'identity',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         name: 'License Number',
         selector: 'license_number',
         sortable: true,
@@ -416,7 +514,7 @@ class User extends Component {
                                                           }
                                                         </div>
                                                         <DataTable
-                                                        columns={columns}
+                                                        columns={Storage.get('user').data.level === 'client' ? columnsClient : columns}
                                                         data={data}
                                                         highlightOnHover
                                                         pagination

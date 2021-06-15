@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import DataTable from 'react-data-table-component';
+import DataTableExtensions from "react-data-table-component-extensions";
+import "react-data-table-component-extensions/dist/index.css";
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
   MenuItem,
@@ -10,6 +12,8 @@ import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import Moment from 'moment-timezone';
+import DatePicker from "react-datepicker";
+import LoadingOverlay from 'react-loading-overlay';
 
 class Membership extends Component {
   constructor(props) {
@@ -17,7 +21,12 @@ class Membership extends Component {
     this.state = {
         data : [],
         filter:'',
-        training_company_id: ''
+        training_company_id: '',
+        start: null,
+        end: null,
+        range1: false,
+        range2: false,
+        isLoading: false,
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -26,10 +35,25 @@ class Membership extends Component {
     this.props.history.goBack();
   }
 
+  handleChangeFilter = (name, e) => {
+    this.setState({[name]: e}, () => {
+        console.log(null)
+    })
+  }
+  changeFilterRange (range){
+    if (range === 'range1'){
+      this.setState({range1: !this.state.range1, range2: false, start: new Date(), end: new Date(new Date().setMonth(new Date().getMonth()+1))})
+    }
+    else if (range === 'range2'){
+      this.setState({range2: !this.state.range2, range1: false, start: new Date(), end: new Date(new Date().setMonth(new Date().getMonth()+3))})
+    }
+  }
+
   getData(companyId){
     let level = Storage.get('user').data.level;
     let grupName = Storage.get('user').data.grup_name;
     let sql = '';
+    this.setState({isLoading: true});
     if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
       sql = `${API_SERVER}v2/training/membership-training/${this.state.training_company_id}`
     }
@@ -39,9 +63,10 @@ class Membership extends Component {
     API.get(sql).then(res => {
         if (res.data.error){
             toast.error('Error read membership list')
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -83,7 +108,8 @@ class Membership extends Component {
         name: 'Member Card',
         selector: 'license_card',
         sortable: true,
-        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>
+        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>,
+        cellExport: row => row.license_card
       },
       {
         cell: row => <Link to={'/training/membership/edit/'+row.id}>{row.license_number}</Link>,
@@ -92,12 +118,21 @@ class Membership extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        cellExport: row => row.license_number
       },
       {
         name: 'Name',
         selector: 'name',
         sortable: true,
         grow: 2,
+      },
+      {
+        name: 'Last Generated From Exam',
+        selector: 'last_passed_generate_membership_exam',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
       },
       {
         name: 'Company',
@@ -140,15 +175,19 @@ class Membership extends Component {
         allowOverflow: true,
         button: true,
         width: '56px',
+        cellExport: row => ({})
       },
     ];
-    let {data, filter} = this.state;
+    let {data, filter, start, end} = this.state;
     if (filter != "") {
       data = data.filter(x =>
         JSON.stringify(
           Object.values(x)
         ).match(new RegExp(filter, "gmi"))
       )
+    }
+    if (start != null && end != null) {
+      data = data.filter(x => Moment.tz(x.expired, 'Asia/Jakarta') >= start && Moment.tz(x.expired, 'Asia/Jakarta') <= end)
     }
     return(
         <div className="pcoded-main-container">
@@ -172,22 +211,52 @@ class Membership extends Component {
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Search"
-                                                            onChange={this.filter}
-                                                            className="form-control float-right col-sm-3"/>
-                                                        <DataTable
-                                                        columns={columns}
-                                                        data={data}
-                                                        highlightOnHover
-                                                        pagination
-                                                        fixedHeader
-                                                        />
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Filter</strong>
+                                                        <div className="form-section no-border">
+                                                            <div className="row">
+                                                                <div className="form-field-top-label">
+                                                                    <label for="start">Expired Start Date</label>
+                                                                    <DatePicker dateFormat="dd-MM-yyyy" selected={this.state.start} onChange={e => this.handleChangeFilter('start', e)} />
+                                                                </div>
+                                                                <div className="form-field-top-label">
+                                                                    <label for="end">Expired End Date</label>
+                                                                    <DatePicker dateFormat="dd-MM-yyyy" selected={this.state.end} onChange={e => this.handleChangeFilter('end', e)} />
+                                                                </div>
+                                                                <div className="form-field-top-label">
+                                                                    <label>&nbsp;</label>
+                                                                    <div className={`filter-button ${this.state.range1 && 'filter-button-selected'}`} onClick={this.changeFilterRange.bind(this, 'range1')}>Expires in a month</div>
+                                                                </div>
+                                                                <div className="form-field-top-label">
+                                                                    <label>&nbsp;</label>
+                                                                    <div className={`filter-button ${this.state.range2 && 'filter-button-selected'}`} onClick={this.changeFilterRange.bind(this, 'range2')}>Expires in 3 months</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner
+                                              text='Loading...'
+                                            >
+                                            <div className="card p-20 main-tab-container">
+                                                <div className="row">
+                                                    <div className="col-sm-12 m-b-20">
+                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
+                                                        <DataTableExtensions print={false} export exportHeaders columns={columns} data={data} filterPlaceholder='Filter Data'>
+                                                          <DataTable
+                                                          columns={columns}
+                                                          data={data}
+                                                          highlightOnHover
+                                                          pagination
+                                                          fixedHeader
+                                                          />
+                                                        </DataTableExtensions>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </LoadingOverlay>
                                         </div>
                                     </div>
                                 </div>

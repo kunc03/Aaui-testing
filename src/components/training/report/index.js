@@ -1,12 +1,6 @@
 import React, { Component } from "react";
-import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { toast } from "react-toastify";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import { Link } from "react-router-dom";
-import Dropdown, {
-  MenuItem,
-} from '@trendmicro/react-dropdown';
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
@@ -14,6 +8,10 @@ import DatePicker from "react-datepicker";
 import { MultiSelect } from 'react-sm-select';
 import Moment from 'moment-timezone';
 import { Modal, Button, Form, Badge } from 'react-bootstrap';
+import LoadingOverlay from 'react-loading-overlay';
+import DataTable from 'react-data-table-component';
+import DataTableExtensions from "react-data-table-component-extensions";
+import "react-data-table-component-extensions/dist/index.css";
 
 class Report extends Component {
   constructor(props) {
@@ -21,10 +19,12 @@ class Report extends Component {
     this.state = {
       companyId: '',
       data : [],
+      dataSelected : [],
       filter:'',
       file:'',
       deleteId: '',
       isUploading: false,
+      isLoading: false,
 
       start: new Date(new Date().setMonth(new Date().getMonth()-1)),
       end: new Date(),
@@ -64,7 +64,7 @@ class Report extends Component {
   }
 
   modalSertifikat() {
-    if (this.state.data.filter((item) => item.checked === true).length > 0) {
+    if (this.state.dataSelected.length > 0) {
       this.fetchCompanyInfo();
       this.setState({ isModalSertifikat: true });
     }
@@ -97,8 +97,8 @@ class Report extends Component {
       toast.warning('Signature name and signature image is mandatory')
     }
     else {
-      let items = this.state.data;
-      let sertifikat = items.filter(e => { return e.checked }).map(e => {
+      let items = this.state.dataSelected;
+      let sertifikat = items.map(e => {
         return {
           result_id: e.id,
           company_id: this.state.companyId,
@@ -160,6 +160,9 @@ class Report extends Component {
   handleChangeChecked(e, item) {
     item['checked'] = e.target.checked;
   }
+  onSelectDataTable = (e) => {
+    this.setState({dataSelected: e.selectedRows})
+  }
   checkAll(e) {
     let item = this.state.data;
     let filter = this.state.filter;
@@ -177,6 +180,7 @@ class Report extends Component {
   }
 
   getList(){
+    this.setState({isLoading: true})
     let form = {
         start: this.state.start,
         end: this.state.end,
@@ -189,9 +193,10 @@ class Report extends Component {
     API.post(`${API_SERVER}v2/training/report`, form).then(res => {
         if (res.data.error){
             toast.error('Error read company list')
+            this.setState({isLoading: false})
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -260,66 +265,187 @@ class Report extends Component {
         ).match(new RegExp(filter, "gmi"))
       )
     }
-    const Table = ({ items }) => (
-      <div>
-      <div className="wrap col-sm-12" style={{ marginTop: 40, maxHeight: 500, overflowY: 'scroll', overflowX: 'scroll', paddingRight: 10 }}>
-        <table id="table-data" className="table table-striped">
-          <thead>
-            <tr>
-              { Storage.get('user').data.level !== 'client' ? <th><input type="checkbox" checked={this.state.checkAll} onChange={(e) => this.checkAll(e)} /></th> : null }
-              <th>Name</th>
-              <th>Email</th>
-              <th>Company</th>
-              <th>License Type</th>
-              <th>Type</th>
-              <th>Title</th>
-              <th>Course</th>
-              <th>Submission</th>
-              <th>Work Time (Minute)</th>
-              <th>Minimum Score</th>
-              <th>Score</th>
-              <th>Pass</th>
-              <th>License Number</th>
-              <th>Certificate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-            items.length ?
-              items.map((item, i) => {
-                return (<tr key={i}>
-                  { Storage.get('user').data.level !== 'client' ? <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /></td> : null }
-                  <td>{item.name}</td>
-                  <td>{item.email}</td>
-                  <td>{item.training_company}</td>
-                  <td>{item.licenses_type}</td>
-                  <td>{item.exam_type}</td>
-                  <td>{item.exam_name}</td>
-                  <td>{item.course_name}</td>
-                  <td>{Moment.tz(item.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
-                  <td>{item.work_time}</td>
-                  <td>{item.minimum_score}</td>
-                  <td>{item.score}</td>
-                  <td>{item.pass ? 'Yes' : 'No'}</td>
-                  <td>{item.license_number}</td>
-                  <td>
+    const columns = [
+      {
+        name: 'Name',
+        selector: 'name',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        name: 'Email',
+        selector: 'email',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Training Company',
+        selector: 'training_company',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'License Type',
+        selector: 'licenses_type',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Exam/Quiz',
+        selector: 'exam_type',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Exam Name',
+        selector: 'exam_name',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Course',
+        selector: 'course_name',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => Moment.tz(row.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        name: 'Submission Time',
+        selector: 'submission_time',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Work Time (Minute)',
+        selector: 'work_time',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Min Score',
+        selector: 'minimum_score',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Score',
+        selector: 'score',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => row.pass ? 'Yes' : 'No',
+        name: 'Pass',
+        selector: 'pass',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'License Number',
+        selector: 'license_number',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => row.certificate_status === null ? '-' :
+        row.certificate_status === 'Sent' ? <a href={row.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+        row.certificate_status === 'Processing' ? <Badge variant="warning">{row.certificate_status}</Badge> :
+        <Badge variant="danger">{row.certificate_status}</Badge>,
+        name: 'Certificate',
+        selector: 'certificate_status',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      }
+    ];
+    const ExpanableComponent = ({data}) =>(
+      <table className="expandTable">
+        <tr>
+          <td>Name</td>
+          <td>:</td>
+          <td>{data.name}</td>
+          <td>Exam</td>
+          <td>:</td>
+          <td>{data.exam_name}</td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>:</td>
+          <td>{data.email}</td>
+          <td>Work Time (Minute)</td>
+          <td>:</td>
+          <td>{data.work_time}</td>
+        </tr>
+        <tr>
+          <td>Training Company</td>
+          <td>:</td>
+          <td>{data.training_company}</td>
+          <td>Minimum Score</td>
+          <td>:</td>
+          <td>{data.minimum_score}</td>
+        </tr>
+        <tr>
+          <td>License type</td>
+          <td>:</td>
+          <td>{data.licenses_type}</td>
+          <td>Score</td>
+          <td>:</td>
+          <td>{data.score}</td>
+        </tr>
+        <tr>
+          <td>Exam</td>
+          <td>:</td>
+          <td>{data.exam_type}</td>
+          <td>Pass</td>
+          <td>:</td>
+          <td>{data.pass ? 'Yes' : 'No'}</td>
+        </tr>
+        <tr>
+          <td>Submission Time</td>
+          <td>:</td>
+          <td>{Moment.tz(data.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
+          <td>License number</td>
+          <td>:</td>
+          <td>{data.license_number}</td>
+        </tr>
+        <tr>
+          <td>Certificate</td>
+          <td>:</td>
+          <td>
                     {
-                    item.certificate_status === null ? '-' :
-                    item.certificate_status === 'Sent' ? <a href={item.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
-                    item.certificate_status === 'Processing' ? <Badge variant="warning">{item.certificate_status}</Badge> :
-                    <Badge variant="danger">{item.certificate_status}</Badge>
+                    data.certificate_status === null ? '-' :
+                    data.certificate_status === 'Sent' ? <a href={data.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+                    data.certificate_status === 'Processing' ? <Badge variant="warning">{data.certificate_status}</Badge> :
+                    <Badge variant="danger">{data.certificate_status}</Badge>
                     }
-                  </td>
-                </tr>)
-              })
-              :
-              <tr><td colspan='15'>No Data</td></tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      { Storage.get('user').data.level !== 'client' ? <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button> : null }
-      </div>
+          </td>
+        </tr>
+      </table>
     );
     return(
         <div className="pcoded-main-container">
@@ -374,29 +500,40 @@ class Report extends Component {
                                                                     <label for="cert">Certificate</label>
                                                                     <MultiSelect id="cert" options={this.state.optionsCert} value={this.state.valueCert} onChange={e => this.handleChangeFilter('valueCert', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Certificate Status" />
                                                                 </div>
-                                                                <div className="form-field-top-label">
-                                                                    <label for="filter">Search</label>  
-                                                                    <input type="text" placeholder="Search" onChange={this.filter}/>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner
+                                              text='Loading...'
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Data</strong>
-                                                        <ReactHTMLTableToExcel
-                                                            className="btn btn-icademy-warning btn-12 float-right col-sm-3"
-                                                            table="table-data"
-                                                            filename={'Training Report'}
-                                                            sheet="Sheet 1"
-                                                            buttonText="Export to Excel" />
-                                                        <Table items={data} />
+                                                    <div className="col-sm-12 m-b-20 table-f-small">
+                                                        <strong className="f-w-bold f-18" style={{color:'#000', marginBottom:20}}>Data</strong>
+                                                        <DataTableExtensions print={false} export exportHeaders columns={columns} data={data} filterPlaceholder='Filter Data'>
+                                                          <DataTable
+                                                          columns={columns}
+                                                          data={data}
+                                                          highlightOnHover
+                                                          pagination
+                                                          fixedHeader
+                                                          selectableRows={Storage.get('user').data.level !== 'client'}
+                                                          expandableRows
+                                                          expandableRowsComponent={<ExpanableComponent />}
+                                                          paginationPerPage={10}
+                                                          paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100, 250]}
+                                                          onSelectedRowsChange={this.onSelectDataTable}
+                                                          />
+                                                        </DataTableExtensions>
+                                                        { Storage.get('user').data.level !== 'client' ? <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button> : null }
                                                     </div>
                                                 </div>
                                             </div>
+                                            </LoadingOverlay>
                                         </div>
                                     </div>
                                 </div>
