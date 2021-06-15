@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import { toast } from "react-toastify";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
@@ -450,12 +449,6 @@ class Report extends Component {
     );
     return(
         <div className="pcoded-main-container">
-        <LoadingOverlay
-          active={this.state.isLoading}
-          spinner
-          text='Loading...'
-        >
-        </LoadingOverlay>
             <div className="pcoded-wrapper">
                 <div className="pcoded-content">
                     <div className="pcoded-inner-content">
@@ -507,15 +500,16 @@ class Report extends Component {
                                                                     <label for="cert">Certificate</label>
                                                                     <MultiSelect id="cert" options={this.state.optionsCert} value={this.state.valueCert} onChange={e => this.handleChangeFilter('valueCert', e)} mode="tags" enableSearch={true} resetable={true} valuePlaceholder="Certificate Status" />
                                                                 </div>
-                                                                <div className="form-field-top-label">
-                                                                    <label for="filter">Search</label>  
-                                                                    <input type="text" placeholder="Search" onChange={this.filter}/>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner
+                                              text='Loading...'
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20 table-f-small">
@@ -539,6 +533,7 @@ class Report extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                            </LoadingOverlay>
                                         </div>
                                     </div>
                                 </div>

@@ -12402,16 +12402,16 @@ required {
 
 
 ._loading_overlay_wrapper--active {
-  position: fixed !important;
-  top:0px !important;
-  left:0px !important;
-  width:100% !important;
-  height:100% !important;
+  /* position: fixed !important; */
+  /* top:0px !important; */
+  /* left:0px !important; */
+  /* width:100% !important; */
+  /* height:100% !important; */
   z-index: 1040 !important;
 }
 
 .data-table-extensions > .data-table-extensions-action{
-  z-index:1028;
+  z-index:1;
 }
 .data-table-extensions{
   margin-top:20px;
@@ -12422,4 +12422,21 @@ required {
 }
 .expandTable tr td{
   padding:5px 10px !important;
+}
+
+.filter-button{
+  background:#FFF;
+  border-radius:10px;
+  padding:16px 20px;
+  float:left;
+  clear:both;
+  border:2px solid #007adc;
+  color: #007adc;
+  cursor:pointer;
+}
+
+.filter-button-selected{
+  background:#007adc;
+  border:2px solid #007adc;
+  color: #FFF;
 }
