@@ -11,6 +11,8 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
 import Moment from 'moment-timezone';
+import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class Course extends Component {
   constructor(props) {
@@ -20,7 +22,8 @@ class Course extends Component {
       data : [],
       filter:'',
       modalDelete: false,
-      deleteId: ''
+      deleteId: '',
+      isLoading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -56,12 +59,14 @@ class Course extends Component {
   }
 
   getCourseList(companyId){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/course-list-admin/${companyId}`).then(res => {
         if (res.data.error){
             toast.error('Error read course list')
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -182,6 +187,10 @@ class Course extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Course'/>
                                         <div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -211,6 +220,7 @@ class Course extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                          </LoadingOverlay>
                                         </div>
                                     </div>
                                 </div>
