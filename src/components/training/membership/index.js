@@ -100,6 +100,14 @@ class Membership extends Component {
         grow: 2,
       },
       {
+        name: 'Last Generated From Exam',
+        selector: 'last_passed_generate_membership_exam',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         name: 'Company',
         selector: 'company_name',
         sortable: true,
