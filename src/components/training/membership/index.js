@@ -128,8 +128,8 @@ class Membership extends Component {
         grow: 2,
       },
       {
-        name: 'Last Generated From Exam',
-        selector: 'last_passed_generate_membership_exam',
+        name: 'Passed',
+        selector: 'passed',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -179,6 +179,40 @@ class Membership extends Component {
         cellExport: row => ({})
       },
     ];
+    const ExpanableComponent = ({data}) =>(
+      <table className="expandTable">
+        <tr>
+          <td rowspan='6'>License Card</td>
+          <td rowspan='6'>:</td>
+          <td rowspan='6'><a href={data.license_card} target="_blank"><img height="100px" alt={data.license_number} src={data.license_card ? data.license_card : 'assets/images/no-image.png'} /></a></td>
+        </tr>
+        <tr>
+          <td>License Number</td>
+          <td>:</td>
+          <td>{data.license_number}</td>
+        </tr>
+        <tr>
+          <td>Expired Date</td>
+          <td>:</td>
+          <td>{Moment.tz(data.expired, 'Asia/Jakarta').format("DD-MM-YYYY")}</td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>:</td>
+          <td>{data.name}</td>
+        </tr>
+        <tr>
+          <td>Passed</td>
+          <td>:</td>
+          <td>{data.passed}</td>
+        </tr>
+        <tr>
+          <td>Training Company</td>
+          <td>:</td>
+          <td>{data.company_name}</td>
+        </tr>
+      </table>
+    );
     let {data, filter, start, end} = this.state;
     if (filter != "") {
       data = data.filter(x =>
@@ -251,6 +285,8 @@ class Membership extends Component {
                                                           highlightOnHover
                                                           pagination
                                                           fixedHeader
+                                                          expandableRows
+                                                          expandableRowsComponent={<ExpanableComponent />}
                                                           />
                                                         </DataTableExtensions>
                                                     </div>
