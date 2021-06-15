@@ -154,9 +154,6 @@ label.Option {
   box-shadow: 0 0 0 1px #2684FF !important;
 }
 
-
-
-
 *:focus {
   outline: none;
 }
@@ -12294,6 +12291,14 @@ required {
   min-height:150px !important;
 }
 
+.table-f-small .rdt_TableCell{
+  font-size:11px !important;
+}
+
+.table-f-small .rdt_TableCol{
+  font-size:11px !important;
+}
+
 .tox .tox-editor-header{
   z-index: unset !important;
 }
@@ -12393,4 +12398,45 @@ required {
   font-size: 12px;
   color:#0085e3;
   padding: 10px 14px;
+}
+
+
+._loading_overlay_wrapper--active {
+  /* position: fixed !important; */
+  /* top:0px !important; */
+  /* left:0px !important; */
+  /* width:100% !important; */
+  /* height:100% !important; */
+  z-index: 1040 !important;
+}
+
+.data-table-extensions > .data-table-extensions-action{
+  z-index:1;
+}
+.data-table-extensions{
+  margin-top:20px;
+}
+
+.expandTable{
+  margin-left:100px;
+}
+.expandTable tr td{
+  padding:5px 10px !important;
+}
+
+.filter-button{
+  background:#FFF;
+  border-radius:10px;
+  padding:16px 20px;
+  float:left;
+  clear:both;
+  border:2px solid #007adc;
+  color: #007adc;
+  cursor:pointer;
+}
+
+.filter-button-selected{
+  background:#007adc;
+  border:2px solid #007adc;
+  color: #FFF;
 }
