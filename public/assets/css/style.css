@@ -12410,6 +12410,15 @@ required {
   z-index: 1040 !important;
 }
 
+._loading_overlay_overlay{
+  background: #ffffffa6 !important;
+  color:#000 !important;
+}
+._loading_overlay_spinner{
+  background: #000;
+  border-radius: 50px;
+}
+
 .data-table-extensions > .data-table-extensions-action{
   z-index:1;
 }

@@ -14,6 +14,7 @@ import Storage from '../../../repository/storage';
 import Moment from 'moment-timezone';
 import DatePicker from "react-datepicker";
 import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class Membership extends Component {
   constructor(props) {
@@ -237,8 +238,7 @@ class Membership extends Component {
                                             </div>
                                             <LoadingOverlay
                                               active={this.state.isLoading}
-                                              spinner
-                                              text='Loading...'
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
                                             >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
