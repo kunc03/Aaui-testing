@@ -12,17 +12,21 @@ import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
+import Select from 'react-select';
 // import moment from "react-moment";
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
 import SocketContext from '../../socket';
+import { isMobile } from 'react-device-detect';
 
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
 
 const bbb = require('bigbluebutton-js')
+
+const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09'
 
 class MeetingTable extends Component {
   constructor(props) {
@@ -49,6 +53,11 @@ class MeetingTable extends Component {
       jamSelesai: '',
       keterangan: '',
       bookingMeetingId: '',
+
+      engine: 'bbb',
+      mode: 'web',
+
+      checkZoom: [],
 
       imgPreview: '',
 
@@ -134,8 +143,8 @@ class MeetingTable extends Component {
   }
   onClickSubmitInvite = e => {
     e.preventDefault();
-    if (this.state.emailInvite == '' && this.state.userInvite == '') {
-      toast.warning('Silahkan pilih user atau email yang diundang.')
+    if (this.state.emailInvite == '' && this.state.valueInvite == '') {
+      toast.warning(`Select user or insert participant's email`);
     }
     else {
       this.setState({ sendingEmail: true })
@@ -162,10 +171,10 @@ class MeetingTable extends Component {
               emailResponse: res.data.result,
               sendingEmail: false
             });
-            toast.success("Mengirim email ke peserta.")
+            toast.success("Sending invitation to participant's Email.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
-            console.log('RESS GAGAL', res)
+            this.setState({ sendingEmail: false })
           }
         }
       })
@@ -255,6 +264,9 @@ class MeetingTable extends Component {
   }
 
   fetchMeetingInfo(id) {
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + id))
+    }
     API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
       console.log(res.data.result, 'prop informationId');
       if (res.status === 200) {
@@ -282,8 +294,11 @@ class MeetingTable extends Component {
     this.setState({ modalDelete: false, deleteMeetingName: '', deleteMeetingId: '' })
   }
   onClickInfo(class_id) {
-    this.setState({ isModalConfirmation: true })
-    this.fetchMeetingInfo(class_id)
+    this.setState({ isModalConfirmation: true });
+    this.fetchMeetingInfo(class_id);
+
+    // console.log(this.props.projectId, 'pROJECTY');
+    API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
   }
 
   fetchMeeting() {
@@ -299,6 +314,7 @@ class MeetingTable extends Component {
     else if (this.props.allMeeting) {
       apiMeeting = `${API_SERVER}v1/liveclass/company-user/${levelUser}/${userId}/${this.state.companyId}`
     }
+
     API.get(apiMeeting).then(res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
@@ -479,211 +495,226 @@ class MeetingTable extends Component {
       toast.warning('Judul meeting dan folder project wajib diisi')
     }
     else {
-      if (this.state.classId) {
-        let isPrivate = this.state.private == true ? 1 : 0;
-        let isAkses = this.state.akses == true ? 1 : 0;
-        let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
-        let isScheduled = this.state.scheduled == true ? 1 : 0;
-        let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-        let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-        let form = {
-          room_name: this.state.roomName,
-          moderator: this.state.valueModerator,
-          folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
-          webinar_id: this.state.webinar_id,
-          is_private: isPrivate,
-          is_akses: isAkses,
-          is_required_confirmation: isRequiredConfirmation,
-          is_scheduled: isScheduled,
-          schedule_start: startDateJkt,
-          schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
-        }
+      if (this.state.checkZoom.length === 1) {
+        if (this.state.classId) {
+          let isPrivate = this.state.private == true ? 1 : 0;
+          let isAkses = this.state.akses == true ? 1 : 0;
+          let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
+          let isScheduled = this.state.scheduled == true ? 1 : 0;
+          let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let form = {
+            room_name: this.state.roomName,
+            moderator: this.state.valueModerator,
+            folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
+            webinar_id: this.state.webinar_id,
+            is_private: isPrivate,
+            is_akses: isAkses,
+            is_required_confirmation: isRequiredConfirmation,
+            is_scheduled: isScheduled,
+            schedule_start: startDateJkt,
+            schedule_end: endDateJkt,
+            peserta: this.state.valuePeserta,
 
-        if ((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
-          let userNotif = this.state.valuePeserta.concat(this.state.infoParticipant.map(item => item.user_id));
-          for (var i = 0; i < userNotif.length; i++) {
-            console.log('User: ', userNotif[i])
-            // send notif
-            let notif = {
-              user_id: userNotif[i],
-              activity_id: this.state.valueFolder[0],
-              type: 3,
-              desc: `Meeting "${form.room_name}" pada tanggal ${moment(this.state.oldStartDate).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')} diubah ke tanggal ${moment(startDateJkt).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
-              dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
-            }
-            API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
+            engine: this.state.engine,
+            mode: this.state.mode
           }
-        }
 
-        API.put(`${API_SERVER}v1/liveclass/id/${this.state.classId}`, form).then(async res => {
-          if (res.status === 200) {
-            // END BBB START
-            let api = bbb.api(BBB_URL, BBB_KEY)
-            let http = bbb.http
-            let meetingEndUrl = api.administration.end(this.state.classId, 'moderator')
-            http(meetingEndUrl).then((result) => {
-              if (result.returncode = 'SUCCESS') {
-                // BBB CREATE START
-                let meetingCreateUrl = api.administration.create(this.state.roomName, this.state.classId, {
-                  attendeePW: 'Participants',
-                  moderatorPW: 'moderator',
-                  allowModsToUnmuteUsers: true,
-                  record: true
-                })
-                http(meetingCreateUrl).then((result) => {
-                  if (result.returncode = 'SUCCESS') {
-                    console.log('BBB SUCCESS CREATE')
-                  }
-                  else {
-                    console.log('GAGAL', result)
-                  }
-                })
-                // BBB CREATE END
+          console.log(form)
+
+          if ((this.state.oldStartDate != startDateJkt) && (this.state.oldEndDate != endDateJkt)) {
+            let userNotif = this.state.valuePeserta.concat(this.state.infoParticipant.map(item => item.user_id));
+            for (var i = 0; i < userNotif.length; i++) {
+              console.log('User: ', userNotif[i])
+              // send notif
+              let notif = {
+                user_id: userNotif[i],
+                activity_id: this.state.valueFolder[0],
+                type: 3,
+                desc: `Meeting "${form.room_name}" pada tanggal ${moment(this.state.oldStartDate).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')} diubah ke tanggal ${moment(startDateJkt).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
+                dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                types: 2
               }
-              else {
-                console.log('ERROR', result)
-              }
-            })
-            // END BBB END
-            if (this.state.cover) {
-              let formData = new FormData();
-              formData.append('cover', this.state.cover);
-              await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
+              API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
             }
-            if (res.data.result.is_private == 1) {
-              this.setState({ sendingEmail: true })
-              let form = {
-                user: Storage.get('user').data.user,
-                email: [],
-                room_name: res.data.result.room_name,
-                is_private: res.data.result.is_private,
-                is_scheduled: res.data.result.is_scheduled,
-                schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
-                //url
-                message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
-                messageNonStaff: APPS_SERVER + 'meeting/' + res.data.result.room_name
-              }
-              API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-                if (res.status === 200) {
-                  if (!res.data.error) {
-                    this.setState({ sendingEmail: false })
-                    this.fetchMeeting();
-                    this.closeClassModal();
-                  } else {
-                    console.log('RESS GAGAL', res)
-                  }
+          }
+
+          API.put(`${API_SERVER}v1/liveclass/id/${this.state.classId}`, form).then(async res => {
+            if (res.status === 200) {
+              // END BBB START
+              let api = bbb.api(BBB_URL, BBB_KEY)
+              let http = bbb.http
+              let meetingEndUrl = api.administration.end(this.state.classId, 'moderator')
+              http(meetingEndUrl).then((result) => {
+                if (result.returncode = 'SUCCESS') {
+                  // BBB CREATE START
+                  let meetingCreateUrl = api.administration.create(this.state.roomName, this.state.classId, {
+                    attendeePW: 'Participants',
+                    moderatorPW: 'moderator',
+                    allowModsToUnmuteUsers: true,
+                    record: true
+                  })
+                  http(meetingCreateUrl).then((result) => {
+                    if (result.returncode = 'SUCCESS') {
+                      console.log('BBB SUCCESS CREATE')
+                    }
+                    else {
+                      console.log('GAGAL', result)
+                    }
+                  })
+                  // BBB CREATE END
+                }
+                else {
+                  console.log('ERROR', result)
                 }
               })
+              // END BBB END
+              if (this.state.cover) {
+                let formData = new FormData();
+                formData.append('cover', this.state.cover);
+                await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
+              }
+              if (res.data.result.is_private == 1) {
+                this.setState({ sendingEmail: true })
+                let form = {
+                  user: Storage.get('user').data.user,
+                  email: [],
+                  room_name: res.data.result.room_name,
+                  is_private: res.data.result.is_private,
+                  is_scheduled: res.data.result.is_scheduled,
+                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+                  //url
+                  message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
+                  messageNonStaff: APPS_SERVER + 'meeting/' + res.data.result.room_name
+                }
+                API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+                  if (res.status === 200) {
+                    if (!res.data.error) {
+                      this.setState({ sendingEmail: false })
+                      this.fetchMeeting();
+                      this.closeClassModal();
+                    } else {
+                      console.log('RESS GAGAL', res)
+                    }
+                  }
+                })
+              }
+              else {
+                this.fetchMeeting();
+                this.closeClassModal();
+              }
             }
-            else {
-              this.fetchMeeting();
-              this.closeClassModal();
-            }
+          })
+
+        } else {
+          let isPrivate = this.state.private == true ? 1 : 0;
+          let isAkses = this.state.akses == true ? 1 : 0;
+          let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
+          let isScheduled = this.state.scheduled == true ? 1 : 0;
+          let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let form = {
+            user_id: Storage.get('user').data.user_id,
+            company_id: this.state.companyId,
+            folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
+            webinar_id: this.state.webinar_id,
+            speaker: this.state.speaker,
+            room_name: this.state.roomName,
+            moderator: this.state.valueModerator,
+            is_private: isPrivate,
+            is_akses: isAkses,
+            is_required_confirmation: isRequiredConfirmation,
+            is_scheduled: isScheduled,
+            schedule_start: startDateJkt,
+            schedule_end: endDateJkt,
+            peserta: this.state.valuePeserta,
+
+            engine: this.state.engine,
+            mode: this.state.mode
           }
-        })
+
+          API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
+
+            console.log('RES: ', res.data);
+
+            if (res.status === 200) {
+              // BBB CREATE START
+              let api = bbb.api(BBB_URL, BBB_KEY)
+              let http = bbb.http
+              let meetingCreateUrl = api.administration.create(this.state.roomName, res.data.result.class_id, {
+                attendeePW: 'Participants',
+                moderatorPW: 'moderator',
+                allowModsToUnmuteUsers: true,
+                record: true
+              })
+              http(meetingCreateUrl).then((result) => {
+                if (result.returncode = 'SUCCESS') {
+                  console.log('BBB SUCCESS CREATE')
+                }
+                else {
+                  console.log('GAGAL', result)
+                }
+              })
+              // BBB CREATE END
+
+              if (this.state.cover) {
+                let formData = new FormData();
+                formData.append('cover', this.state.cover);
+                await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
+              }
+              if (res.data.result.is_private == 1) {
+                this.setState({ sendingEmail: true })
+                let form = {
+                  user: Storage.get('user').data.user,
+                  email: [],
+                  room_name: res.data.result.room_name,
+                  is_private: res.data.result.is_private,
+                  is_scheduled: res.data.result.is_scheduled,
+                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+                  //url
+                  message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
+                  messageNonStaff: APPS_SERVER + 'meeting/' + res.data.result.room_name
+                }
+                API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
+                  if (res.status === 200) {
+                    if (!res.data.error) {
+                      this.setState({ sendingEmail: false })
+                      this.fetchMeeting();
+                      this.closeClassModal();
+                    } else {
+                      console.log('RESS GAGAL', res)
+                    }
+                  }
+                })
+
+                let userNotif = this.state.valuePeserta;
+                for (var i = 0; i < userNotif.length; i++) {
+                  // send notif
+                  let notif = {
+                    user_id: userNotif[i],
+                    activity_id: this.state.valueFolder[0],
+                    type: 3,
+                    desc: `Silahkan konfirmasi undangan Anda pada meeting "${res.data.result.room_name}"`,
+                    dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                    types : 1
+                  }
+                  API.post(`${API_SERVER}v1/notification/broadcast`, notif);
+                }
+              }
+              else {
+                this.fetchMeeting();
+                this.closeClassModal();
+                toast.success('Berhasil membuat meeting baru');
+              }
+            }
+          })
+        }
       } else {
-        let isPrivate = this.state.private == true ? 1 : 0;
-        let isAkses = this.state.akses == true ? 1 : 0;
-        let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
-        let isScheduled = this.state.scheduled == true ? 1 : 0;
-        let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-        let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-        let form = {
-          user_id: Storage.get('user').data.user_id,
-          company_id: this.state.companyId,
-          folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
-          webinar_id: this.state.webinar_id,
-          speaker: this.state.speaker,
-          room_name: this.state.roomName,
-          moderator: this.state.valueModerator,
-          is_private: isPrivate,
-          is_akses: isAkses,
-          is_required_confirmation: isRequiredConfirmation,
-          is_scheduled: isScheduled,
-          schedule_start: startDateJkt,
-          schedule_end: endDateJkt,
-          peserta: this.state.valuePeserta
-        }
-
-        API.post(`${API_SERVER}v1/liveclass`, form).then(async res => {
-
-          console.log('RES: ', res.data);
-
-          if (res.status === 200) {
-            // BBB CREATE START
-            let api = bbb.api(BBB_URL, BBB_KEY)
-            let http = bbb.http
-            let meetingCreateUrl = api.administration.create(this.state.roomName, res.data.result.class_id, {
-              attendeePW: 'Participants',
-              moderatorPW: 'moderator',
-              allowModsToUnmuteUsers: true,
-              record: true
-            })
-            http(meetingCreateUrl).then((result) => {
-              if (result.returncode = 'SUCCESS') {
-                console.log('BBB SUCCESS CREATE')
-              }
-              else {
-                console.log('GAGAL', result)
-              }
-            })
-            // BBB CREATE END
-
-            if (this.state.cover) {
-              let formData = new FormData();
-              formData.append('cover', this.state.cover);
-              await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
-            }
-            if (res.data.result.is_private == 1) {
-              this.setState({ sendingEmail: true })
-              let form = {
-                user: Storage.get('user').data.user,
-                email: [],
-                room_name: res.data.result.room_name,
-                is_private: res.data.result.is_private,
-                is_scheduled: res.data.result.is_scheduled,
-                schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
-                //url
-                message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
-                messageNonStaff: APPS_SERVER + 'meeting/' + res.data.result.room_name
-              }
-              API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-                if (res.status === 200) {
-                  if (!res.data.error) {
-                    this.setState({ sendingEmail: false })
-                    this.fetchMeeting();
-                    this.closeClassModal();
-                  } else {
-                    console.log('RESS GAGAL', res)
-                  }
-                }
-              })
-
-              let userNotif = this.state.valuePeserta;
-              for (var i = 0; i < userNotif.length; i++) {
-                // send notif
-                let notif = {
-                  user_id: userNotif[i],
-                  activity_id: this.state.valueFolder[0],
-                  type: 3,
-                  desc: `Silahkan konfirmasi undangan Anda pada meeting "${res.data.result.room_name}"`,
-                  dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`
-                }
-                API.post(`${API_SERVER}v1/notification/broadcast`, notif);
-              }
-            }
-            else {
-              this.fetchMeeting();
-              this.closeClassModal();
-              toast.success('Berhasil membuat meeting baru');
-            }
-          }
-        })
+        toast.warning(`Silahkan sinkronisasi akun zoom Anda di menu pengaturan.`)
       }
     }
 
@@ -743,6 +774,10 @@ class MeetingTable extends Component {
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
     const schedule_start_jkt = new Date(Moment.tz(schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
     const schedule_end_jkt = new Date(Moment.tz(schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+
+    const engine = e.target.getAttribute('data-engine')
+    const mode = e.target.getAttribute('data-mode')
+
     this.setState({
       isClassModal: true,
       classId: classId,
@@ -757,7 +792,10 @@ class MeetingTable extends Component {
       scheduled: isscheduled == 1 ? true : false,
       startDate: schedule_start_jkt,
       endDate: schedule_end_jkt,
-      akses: isakses == 1 ? true : false
+      akses: isakses == 1 ? true : false,
+
+      engine: engine,
+      mode: mode
     })
 
     this.fetchMeetingInfo(classId)
@@ -833,12 +871,15 @@ class MeetingTable extends Component {
       this.fetchMeetingInfo(this.props.informationId)
     }
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_MEETING'])
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+      ['CD_MEETING', 'R_MEETINGS', 'R_MEETING', 'R_ATTENDANCE']);
+    
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
 
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
       if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
@@ -871,8 +912,46 @@ class MeetingTable extends Component {
     //}
   }
 
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
+  }
+
+  handleEngine(e) {
+    if (e.target.value === 'zoom') {
+      if (this.state.checkZoom.length !== 1) {
+        toast.warning(`Silahkan konek dan sinkronisasi akun zoom Anda pada menu Pengaturan.`)
+      }
+      else {
+        this.setState({ engine: e.target.value })
+      }
+    } else {
+      this.setState({ engine: e.target.value })
+    }
+  }
+
   render() {
-    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+
+    // ** GLOBAL SETTINGS ** //
+    let cdMeeting =  this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    console.log(cdMeeting, 'cdMeeting')
+
+    // All MEETING ROOMS { SEMUA RUANGAN MEETING }
+    let Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
+
+    // DISABLE { SALAH SATU RUANG MEETING }
+    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+
+    // let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
+
+    // ========= End ======== //
+
+    const notify = () => toast.warning("Access Denied");
+
+
     // const headerTabble = [
     //   // {title : 'Meeting Name', width: null, status: true},
     //   {title : 'Moderator', width: null, status: true},
@@ -967,6 +1046,8 @@ class MeetingTable extends Component {
               data-start={row.schedule_start}
               data-end={row.schedule_end}
               data-folder={row.folder_id}
+              data-engine={row.engine}
+              data-mode={row.mode}
             >
               Edit
                         </button>}
@@ -983,17 +1064,22 @@ class MeetingTable extends Component {
         button: true,
         width: '56px',
       },
+      Rmeeting ?
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={this.onClickInfo.bind(this, row.class_id)}>{row.status == 'Open' || row.status == 'Active' ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
-      },
+      }
+      :
+      {
+        name: 'Action',
+      }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1001,6 +1087,10 @@ class MeetingTable extends Component {
     if (access_project_admin === false) {
       bodyTabble = bodyTabble.filter(item => item.status !== 'Locked')
     }
+
+    console.log(bodyTabble, 'bodyTabble')
+    console.log(this.state.infoClass, 'bodyTabble')
+
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
     let infoDateStart = new Date(this.state.infoClass.schedule_start);
@@ -1049,9 +1139,15 @@ class MeetingTable extends Component {
             You cannot create a new meeting because you have reached the limit.
           </span>
         }
-        <DataTable
-          style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
-        />
+        {
+          Rmeetings ?
+            <DataTable
+              style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
+            />
+            :
+            <span>sorry your access is not allowed to access the meeting room</span>
+        }
+
         <div className="table-responsive">
           {/*
           <table className="table table-hover">
@@ -1201,7 +1297,7 @@ class MeetingTable extends Component {
         <Modal show={this.state.isClassModal} onHide={this.closeClassModal} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              {this.state.classId ? 'Change Group Meeting' : 'Create Group Meeting'}
+              {this.state.classId ? 'Edit Group Meeting' : 'Create Group Meeting'}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1362,6 +1458,63 @@ class MeetingTable extends Component {
                 </Form.Text>
                 </Form.Group>
               }
+                    <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                          Invite Participants
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              From User
+                          </Form.Label>
+                            <Select
+                              options={this.state.optionsInvite}
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                            />
+                            <Form.Text className="text-muted">
+                              Select user to invite.
+                          </Form.Text>
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChange.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: `Participant's Email` }}
+                            />
+                            <Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
+                          </div>
+                        </div>
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.handleCloseInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                        </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.onClickSubmitInvite}>
+                          Cancel
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+              <Form.Group className="row" controlId="formJudul">
+                <div className="col-sm-6">
+                  <Form.Label className="f-w-bold">Engine</Form.Label>
+                  <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
+                    <option value="bbb">ICADEMY</option>
+                    <option value="zoom">Zoom</option>
+                  </select>
+                  <Form.Text className="text-muted">
+                    Pilih engine yang akan dipakai untuk meeting.
+                  </Form.Text>
+                </div>
+              </Form.Group>
 
             </Form>
           </Modal.Body>
@@ -1422,10 +1575,10 @@ class MeetingTable extends Component {
                   <div class="row">
                     <div className="col-sm-6">
                       {this.state.infoClass.is_akses ?
-                      <h3 className="f-14">
-                        Moderator : {this.state.infoClass.name}
-                      </h3>
-                      :null
+                        <h3 className="f-14">
+                          Moderator : {this.state.infoClass.name}
+                        </h3>
+                        : null
                       }
                       <h3 className="f-14">
                         Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
@@ -1484,15 +1637,14 @@ class MeetingTable extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
+            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
-                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
-                // style={{width:'100%'}}
-                >
+              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
+              <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
                   <i className="fa fa-video"></i> Masuk
-              </button>
-              </Link>
+                  </button>
+              </a>
               : null}
           </Modal.Footer>
         </Modal>
@@ -1517,38 +1669,49 @@ class MeetingTable extends Component {
         </Modal>
 
         <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
-          <Modal.Header closeButton>
-            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Undang Peserta
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="form-vertical">
-              <Form.Group controlId="formJudul">
-                <Form.Label className="f-w-bold">
-                  Invite User
-                </Form.Label>
-                <MultiSelect id="peserta" options={this.state.optionsInvite} value={this.state.valueInvite} onChange={valueInvite => this.setState({ valueInvite })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Pilih" />
-                <Form.Text className="text-muted">
-                  Pilih user yang ingin diundang.
-                  </Form.Text>
-              </Form.Group>
-              <div className="form-group">
-                <label style={{ fontWeight: "bold" }}>Email</label>
-                <TagsInput value={this.state.emailInvite} onChange={this.handleChangeEmail.bind(this)} addOnPaste={true} addOnBlur={true} inputProps={{ placeholder: 'Email Peserta' }} />
-                <Form.Text>
-                  Masukkan email yang ingin di invite.
-                </Form.Text>
-              </div>
-            </div>
-            <button style={{ marginTop: "30px" }} disabled={this.state.sendingEmail} type="button" onClick={this.onClickSubmitInvite} className="btn btn-block btn-ideku f-w-bold">
-              {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
-            </button>
-            <button type="button" className="btn btn-block f-w-bold" onClick={this.handleCloseInvite}>
-              Tidak
-            </button>
-          </Modal.Body>
-        </Modal>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                          Invite Participants
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              From User
+                          </Form.Label>
+                            <Select
+                              options={this.state.optionsInvite}
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                            />
+                            <Form.Text className="text-muted">
+                              Select user to invite.
+                          </Form.Text>
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChangeEmail.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: `Participant's Email` }}
+                            />
+                            <Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
+                          </div>
+                        </div>
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                        </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                          Cancel
+                        </button>
+                      </Modal.Body>
+                    </Modal>
       </div>
     );
   }

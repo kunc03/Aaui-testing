@@ -121,6 +121,10 @@ class Event extends Component {
     }
   }
 
+  updateRecent() {
+    console.log('ke apdet')
+  }
+
   render() {
     const access_project_admin = this.props.access_project_admin;
     let access = Storage.get('access');
@@ -282,12 +286,13 @@ class Event extends Component {
             {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
               <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
-                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}
-                // style={{width:'100%'}}
-                >
-                  <i className="fa fa-video"></i> Masuk
+              <button className="btn btn-icademy-primary" onClick={this.updateRecent.bind(this)}
+              // style={{width:'100%'}}
+              //  onClick={e => this.closeModalConfirmation()}
+              >
+                <i className="fa fa-video"></i> Masuk
               </button>
-              </Link>
+            </Link>
               : null}
           </Modal.Footer>
         </Modal>

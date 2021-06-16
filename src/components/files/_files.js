@@ -75,7 +75,8 @@ class FilesTableClass extends Component {
       filterFolder: true,
       filterFiles: true,
       filterMOM: true,
-      filterRecord: true
+      filterRecord: true,
+      gb : [],
     };
   }
 
@@ -555,6 +556,10 @@ fetchRekamanBBB(folder){
         this.selectFolder(data.folderId);
       }
     });
+
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
+  ,'R_FILES_FOLDER','U_FILES'])
+
   }
 
   handleChangeFilter = (filter) => {
@@ -563,7 +568,23 @@ fetchRekamanBBB(folder){
     });
   }
 
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
+      if(res.status === 200) {
+        this.setState({ gb: res.data.result })
+      }
+    })
+  }
+
   render() {
+    // * GLOBAL SETTINGS * //
+
+    let cdFile = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_FILE_FOLDER')[0].status;
+    let read_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_FILES_FOLDER')[0].status;
+    let upload_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'U_FILES')[0].status;
+
+    const notify = () => toast.warning('Access denied')
+
     const headerTabble = [
       // {title : 'Date', width: null, status: true},
       // {title : 'By', width: null, status: true},
@@ -612,7 +633,7 @@ fetchRekamanBBB(folder){
           {
             this.props.guest === false || !this.props.guest ?
             <button
-              onClick={e => this.setState({ modalUpload: true })}
+              onClick={upload_file ? e => this.setState({ modalUpload: true }) : notify}
               className="btn btn-icademy-primary float-right"
               style={{ padding: "7px 8px !important", marginLeft: 14 }}
             >
@@ -621,9 +642,8 @@ fetchRekamanBBB(folder){
                   Upload
                   </button>:null
           }
-
-          {access_project_admin == true ? <button
-            onClick={e => this.setState({ modalNewFolder: true })}
+          { access_project_admin == true ? <button
+            onClick={cdFile ? e => this.setState({ modalNewFolder: true }) : notify}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important" }}
           >
@@ -687,6 +707,7 @@ fetchRekamanBBB(folder){
                     </tr>
                   </tbody>
                   :
+                  read_file ?
                   <tbody>
                     {
                       this.state.folderId !== 0 &&
@@ -735,7 +756,10 @@ fetchRekamanBBB(folder){
                                       >
                                         Edit
                                         </button>
+                                        {
+                                          cdFile &&
                                       <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.name)}> Delete </button>
+                                        }
                                     </div>
                                   </span>
                                   :
@@ -920,6 +944,8 @@ fetchRekamanBBB(folder){
                       )
                     }
                   </tbody>
+                  :
+                  <span>access denied</span>
             }
           </table>
         </div>

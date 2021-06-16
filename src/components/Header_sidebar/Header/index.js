@@ -29,7 +29,9 @@ class Header extends Component {
     e.preventDefault();
     const id = e.target.getAttribute('data-id');
     const logo = e.target.getAttribute('data-logo');
+    const name = e.target.getAttribute('data-name');
     localStorage.setItem('companyID', id);
+    localStorage.setItem('companyName', name);
     localStorage.setItem('logo', logo);
     window.location.reload();
   };
@@ -83,6 +85,7 @@ class Header extends Component {
           ...userStorage,
           logo: res.data.result.logo,
           company_id: res.data.result.company_id,
+          company_name: res.data.result.company_name,
           company_type: res.data.result.company_type,
           grup_id: res.data.result.grup_id,
           grup_name: res.data.result.grup_name,
@@ -539,7 +542,7 @@ class Header extends Component {
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item dropdown">
-              <Link to="/Profile">
+              <Link to="/pengaturan">
                 <div className="media">
                   <img
                     alt="Media"
@@ -693,15 +696,18 @@ class Header extends Component {
                           onClick={this.pilihCompany}
                           data-id={item.company_id}
                           data-logo={item.logo}
+                          data-name={item.company_name}
                         >
                           <div
                             className="media"
                             data-id={item.company_id}
                             data-logo={item.logo}
+                            data-name={item.company_name}
                           >
                             <img
                               data-id={item.company_id}
                               data-logo={item.logo}
+                              data-name={item.company_name}
                               className="img-radius"
                               src={item.logo}
                               alt=""
@@ -710,14 +716,17 @@ class Header extends Component {
                               className="media-body"
                               data-id={item.company_id}
                               data-logo={item.logo}
+                              data-name={item.company_name}
                             >
                               <p
                                 data-id={item.company_id}
                                 data-logo={item.logo}
+                                data-name={item.company_name}
                               >
                                 <b
                                   data-id={item.company_id}
                                   data-logo={item.logo}
+                                  data-name={item.company_name}
                                 >
                                   {item.company_name}
                                 </b>

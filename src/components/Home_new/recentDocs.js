@@ -14,7 +14,6 @@ class ListToDoNew extends Component {
 
   render() {
     const lists = this.props.lists;
-    console.log(this.props, 'props evenntttt');
 
     const columns = [
       {
@@ -23,7 +22,7 @@ class ListToDoNew extends Component {
         cell: row =>
           <a href={row.url} target="_blank" className="substring" style={{ width: 300 }}>
             <img src={
-              row.type == 'png' || row.type == 'pdf' || row.type == 'doc' || row.type == 'docx' || row.type == 'ppt' || row.type == 'pptx' || row.type == 'rar' || row.type == 'zip' || row.type == 'jpg' || row.type == 'csv'
+              row.type === 'png' || row.type === 'pdf' || row.type === 'doc' || row.type === 'docx' || row.type === 'ppt' || row.type === 'pptx' || row.type === 'rar' || row.type === 'zip' || row.type === 'jpg' || row.type === 'csv'
                 ? `assets/images/files/${row.type}.svg`
                 : 'assets/images/files/file.svg'
             } width="32" /> &nbsp;{row.filename}</a>,
@@ -53,7 +52,7 @@ class ListToDoNew extends Component {
         {
           lists.length == 0 ?
             <div className="col-sm-12 mb-1">
-              There is no
+              No Documents
             </div>
             :
             <DataTable

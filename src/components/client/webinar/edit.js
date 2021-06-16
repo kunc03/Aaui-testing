@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Card } from 'react-bootstrap';
+import { Modal, Card, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import API, { API_SERVER } from '../../../repository/api';
@@ -16,12 +16,17 @@ export default class WebinarEdit extends Component {
 
     optionNames: [],
 
+    checkZoom: [],
+
     isStep1: true,
     judul: "",
     moderatorId: [],
     sekretarisId: [],
     pembicaraId: [],
     ownerId: [],
+
+    engine: 'bbb',
+    mode: 'web',
 
     isStep2: false,
     accessPembicara: false,
@@ -90,6 +95,28 @@ export default class WebinarEdit extends Component {
   componentDidMount() {
     this.fetchData();
     this.fetchWebinar();
+    this.fetchSyncZoom(Storage.get('user').data.user_id)
+  }
+
+  fetchSyncZoom(userId) {
+    API.get(`${API_SERVER}v3/zoom/user/${userId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({ checkZoom: res.data.result })
+      }
+    })
+  }
+
+  handleEngine(e) {
+    if (e.target.value === 'zoom') {
+      if (this.state.checkZoom.length !== 1) {
+        toast.warning(`Silahkan konek dan sinkronisasi akun zoom Anda pada menu Pengaturan.`)
+      }
+      else {
+        this.setState({ engine: e.target.value })
+      }
+    } else {
+      this.setState({ engine: e.target.value })
+    }
   }
 
   fetchData() {
@@ -142,7 +169,10 @@ export default class WebinarEdit extends Component {
           valueCourse: [Number(res.data.result.training_course_id)],
           folderId: res.data.result.dokumen_id,
           judul: res.data.result.judul,
-          status: res.data.result.status
+          status: res.data.result.status,
+
+          engine: res.data.result.engine,
+          mode: res.data.result.mode
         })
       let tempSekretaris = [];
       let tempPembicara = [];
@@ -206,7 +236,10 @@ export default class WebinarEdit extends Component {
       ownerId: this.state.ownerId,
       dokumenId: this.state.folderId,
       projectId: this.state.projectId,
-      course_id: String(this.state.valueCourse)
+      course_id: String(this.state.valueCourse),
+
+      engine: this.state.engine,
+      mode: this.state.mode
     }
 
 
@@ -253,7 +286,7 @@ export default class WebinarEdit extends Component {
                       }}>
                         <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                       </Link>
-                      Create a Webinar
+                      Edit a Webinar
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
@@ -273,6 +306,20 @@ export default class WebinarEdit extends Component {
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
+
+                      <Form.Group className="row" controlId="formJudul">
+                        <div className="col-sm-6">
+                          <Form.Label className="f-w-bold">Engine</Form.Label>
+                          <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
+                            <option value="bbb">Big Blue Button</option>
+                            <option value="zoom">Zoom</option>
+                          </select>
+                          <Form.Text className="text-muted">
+                            Pilih engine yang akan dipakai untuk meeting.
+                          </Form.Text>
+                        </div>
+                      </Form.Group>
+
                       {/* <div className="form-group">
                           <label className="bold">Project</label>
                           <MultiSelect

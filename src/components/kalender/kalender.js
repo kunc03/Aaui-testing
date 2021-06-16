@@ -120,19 +120,24 @@ class KalenderNew extends Component {
               }}
               views={['month', 'week', 'day', 'agenda']}
               components={{ event: Event }}
+              min={new Date(0, 0, 0, 8, 0, 0)}
+              max={new Date(0, 0, 0, 20, 0, 0)}
+            // min={new Date(2016, 10, 0, 2, 0, 0)}
+            // scrollToTime={new Date(0, 0, 0, 0, 8, 0)}
+            // step={3}
+            // timeslots={10}
             />
             <div className="p-l-20 m-t-10">
               <span className="p-r-5" style={{ color: '#0091FF' }}>
                 <i className="fa fa-square"></i>
               </span>
               Group Meeting
-              <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
-                <i className="fa fa-square"></i>
-              </span>
+
               <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
                 <i className="fa fa-square"></i>
               </span>
               Webinar
+
               <span className="float-right">
                 <Link to="/full-kalender">Lihat Selengkapnya</Link>
               </span>

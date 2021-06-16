@@ -18,7 +18,9 @@ class NotificationClass extends Component {
       badgeNotif: 0,
       badgeRemind: 0,
       filterType: '',
-      filterNotification: ''
+      filterNotification: '',
+      notif : [],
+      notifFilter : []
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
@@ -38,6 +40,7 @@ class NotificationClass extends Component {
 
   componentDidMount() {
     this.fetchNotif();
+    this.fetchCheckAccess(Storage.get('user').data.company_id, ['R_CONFIRMATION']);
 
     this.props.socket.on('broadcast', data => {
       this.fetchNotif()
@@ -149,8 +152,36 @@ class NotificationClass extends Component {
     })
   }
 
+  fetchCheckAccess(company_id, param)
+  {
+    API.get(`${API_SERVER}v2/notification-alert/check-access`, {company_id, param}).then(res => {
+      if(res.status === 200){
+        console.log(res.data.result, 'test')
+        this.setState({ notif : res.data.result})
+      }
+    })
+  }
+
+  fetchNotification()
+  {
+   let url = '';
+   let types = '';
+
+   if ( types === 1 ) {
+      url = `${API_SERVER}v2/notif?user_id=${Storage.get('user').data.user_id}&type=3&tag=1&types=1`
+  } else if ( types === 2 ){
+    url = `${API_SERVER}v2/notif?user_id=${Storage.get('user').data.user_id}&type=3&tag=1&types=2`
+  }
+  API.get(url).then(res => {
+    if ( res.status === 200 ){
+      this.setState({ notifFilter : res.data.result});
+    }
+  })
+}
+
+
   render() {
-    let { notificationData, filterType, filterNotification } = this.state;
+    let { notificationData, filterType, filterNotification} = this.state;
 
     if (filterType != "") {
       notificationData = notificationData.filter(item => item.type == filterType);
@@ -162,9 +193,13 @@ class NotificationClass extends Component {
         ).match(new RegExp(filterNotification, "gmi"))
       )
     }
-    const dataNotif = notificationData.filter(item => item.tag == 1);
-    const dataRemind = notificationData.filter(item => item.tag == 2);
-    // console.log(dataNotif, 'dadadadadadads')
+    let dataNotif = notificationData.filter(item => item.tag === 1);
+    const dataRemind = notificationData.filter(item => item.tag === 2);
+
+    let meetingNotif = this.state.notifFilter.filter(item => item.types === 1 )
+    if ( meetingNotif ){
+      
+    }
 
     return (
       <div className="pcoded-main-container">

@@ -6,8 +6,7 @@ import {
 import ReactFullScreenElement from "react-fullscreen-element";
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { MultiSelect } from 'react-sm-select';
-import 'react-sm-select/dist/styles.css';
+import Select from 'react-select';
 
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
@@ -31,9 +30,9 @@ import FileViewer from 'react-file-viewer';
 
 import { toast } from "react-toastify";
 
-import { ThemeProvider } from 'styled-components';
-import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
-import ChimeMeeting from '../meeting/chime'
+// import { ThemeProvider } from 'styled-components';
+// import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
+// import ChimeMeeting from '../meeting/chime'
 import axios from 'axios'
 
 import Dictation from './dictation';
@@ -79,6 +78,9 @@ export default class MeetingRoom extends Component {
     subtitle: '',
     sendingEmail: false,
 
+    engine: 'bbb',
+    mode: 'web',
+
     folder: [],
     mom: [],
     recordedMeeting: [],
@@ -120,7 +122,8 @@ export default class MeetingRoom extends Component {
 
     attendee: {},
     zoomUrl: '',
-    isZoom: false
+    isZoom: false,
+    gb: []
   }
 
   closeModalGantt = e => {
@@ -316,16 +319,6 @@ export default class MeetingRoom extends Component {
     this.setState({ isLive: false, liveURL: '' })
   }
 
-  joinChime = async (e) => {
-    const title = this.state.classRooms.room_name + '-' + moment(new Date).format('YYYY-MM-DD-HH') + '-' + (new Date()).getMinutes().toString().charAt(0);
-    const name = Storage.get('user').data.user;
-    const region = `ap-southeast-1`;
-
-    axios.post(`${CHIME_URL}/join?title=${title}&name=${name}&region=${region}`).then(res => {
-      this.setState({ attendee: res.data.JoinInfo })
-    })
-  }
-
   fetchProject() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
@@ -340,6 +333,8 @@ export default class MeetingRoom extends Component {
   }
 
   componentDidMount() {
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+    ['SHARE_FILES','C_MOM'])
     // this.onBotoomScroll();
     this.fetchProject()
     socket.on("broadcast", data => {
@@ -356,6 +351,7 @@ export default class MeetingRoom extends Component {
         })
       }
     });
+
     this.fetchData();
 
     var links = document.getElementsByTagName('a');
@@ -412,7 +408,7 @@ export default class MeetingRoom extends Component {
 
         let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-        this.setState({ isZoom: zoomUrl.data.result.length ? true : false });
+        this.setState({ isZoom: zoomUrl.data.result.length ? true : false, engine: zoomUrl.data.result.length ? 'zoom' : 'bbb' });
 
         var data = liveClass.data.result
         /*mark api get new history course*/
@@ -452,7 +448,6 @@ export default class MeetingRoom extends Component {
           // jwt: token.data.token
         });
 
-        this.joinChime()
         // BBB JOIN START
         let api = bbb.api(BBB_URL, BBB_KEY)
         let http = bbb.http
@@ -486,7 +481,7 @@ export default class MeetingRoom extends Component {
                 console.log('joinUrl: ', joinUrl)
                 this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
                 if (isMobile) {
-                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+                  window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.props.match.params.roomid))
                 }
               }
               else {
@@ -507,7 +502,7 @@ export default class MeetingRoom extends Component {
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
             if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/' + this.props.match.params.roomid))
             }
           }
         })
@@ -591,8 +586,8 @@ export default class MeetingRoom extends Component {
 
   onClickSubmitInvite = e => {
     e.preventDefault();
-    if (this.state.emailInvite == '' && this.state.userInvite == '') {
-      toast.warning('Silahkan pilih user atau email yang diundang.')
+    if (this.state.emailInvite == '' && this.state.valueInvite == '') {
+      toast.warning(`Select user or insert participant's email`);
     }
     else {
       this.setState({ sendingEmail: true })
@@ -619,10 +614,10 @@ export default class MeetingRoom extends Component {
               emailResponse: res.data.result,
               sendingEmail: false
             });
-            toast.success("Mengirim email ke peserta.")
+            toast.success("Sending invitation to participant's Email.")
           } else {
             toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
-            console.log('RESS GAGAL', res)
+            this.setState({ sendingEmail: false })
           }
         }
       })
@@ -909,12 +904,24 @@ export default class MeetingRoom extends Component {
     window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
   }
 
+  fetchCheckAccess(role, company_id, level, param)
+  {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
+      if(res.status === 200){
+        this.setState({ gb : res.data.result})
+      }
+    })
+  }
+
   render() {
 
     const { classRooms, user } = this.state;
 
     // let levelUser = Storage.get('user').data.level;
     const dataMOM = this.state.listSubtitle;
+    let sharing_file = this.state.gb.length && this.state.gb.filter(item => item.code === 'SHARE_FILES')[0].status;
+    let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
+    const notify = () => toast.warning('Access denied')
 
     let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
     let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
@@ -1016,7 +1023,7 @@ export default class MeetingRoom extends Component {
 
                               <Tooltip title="MOM" arrow placement="top">
 
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalMOM: true })} className="float-right m-b-10">
+                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ create_mom ? () => this.setState({ modalMOM: true }) : notify} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-mom.svg`}
                                     alt=""
@@ -1027,16 +1034,15 @@ export default class MeetingRoom extends Component {
                               </Tooltip>
 
                               <Tooltip title="File Sharing" arrow placement="top">
-
-                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={() => this.setState({ modalFileSharing: true })} className="float-right m-b-10">
+                                    <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
                                   <img
                                     src={`newasset/room/room-share.svg`}
                                     alt=""
                                     width={32}
-                                  ></img>
+                                    ></img>
                                 </span>
-
                               </Tooltip>
+
                               <Tooltip title="Task & Timeline" arrow placement="top">
 
                                 <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
@@ -1083,9 +1089,9 @@ export default class MeetingRoom extends Component {
                             </div>
                             {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
-
-                            <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
-
+                            <div style={{background:`url('newasset/user-computer.svg') center center no-repeat`}}>
+                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                            </div>
                             {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>
                               <ChimeMeeting
@@ -1200,30 +1206,23 @@ export default class MeetingRoom extends Component {
                     <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                          Undang Peserta
+                          Invite Participants
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <div className="form-vertical">
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Invite User
+                              From User
                           </Form.Label>
-                            <MultiSelect
-                              id="peserta"
+                            <Select
                               options={this.state.optionsInvite}
-                              value={this.state.valueInvite}
-                              onChange={valueInvite => this.setState({ valueInvite })}
-                              mode="tags"
-                              removableTags={true}
-                              hasSelectAll={true}
-                              selectAllLabel="Pilih Semua"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Pilih"
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
                             />
                             <Form.Text className="text-muted">
-                              Pilih user yang ingin diundang.
+                              Select user to invite.
                           </Form.Text>
                           </Form.Group>
                           <div className="form-group">
@@ -1233,30 +1232,19 @@ export default class MeetingRoom extends Component {
                               onChange={this.handleChange.bind(this)}
                               addOnPaste={true}
                               addOnBlur={true}
-                              inputProps={{ placeholder: 'Email Peserta' }}
+                              inputProps={{ placeholder: `Participant's Email` }}
                             />
                             <Form.Text>
-                              Masukkan email yang ingin di invite.
-                </Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
                           </div>
                         </div>
-
-                        <button
-                          style={{ marginTop: "30px" }}
-                          disabled={this.state.sendingEmail}
-                          type="button"
-                          onClick={this.onClickSubmitInvite}
-                          className="btn btn-block btn-ideku f-w-bold"
-                        >
-                          {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
                         </button>
-                        <button
-                          type="button"
-                          className="btn btn-block f-w-bold"
-                          onClick={this.handleCloseInvite}
-                        >
-                          Tidak
-            </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                          Cancel
+                        </button>
                       </Modal.Body>
                     </Modal>
 

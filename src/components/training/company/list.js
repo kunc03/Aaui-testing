@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
+import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class Company extends Component {
   constructor(props) {
@@ -21,7 +23,8 @@ class Company extends Component {
         modalDelete: false,
         deleteId: '',
         file:'',
-        isUploading: false
+        isUploading: false,
+        isLoading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -66,12 +69,14 @@ class Company extends Component {
   }
 
   getCompany(id){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/company/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error read company')
+            toast.error('Error read company');
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -236,6 +241,10 @@ class Company extends Component {
                                                     </form>
                                                 </div>
                                             </div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -265,6 +274,7 @@ class Company extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                          </LoadingOverlay>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>

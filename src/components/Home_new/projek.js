@@ -7,6 +7,28 @@ import { Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import { MultiSelect } from 'react-sm-select';
 import Select from 'react-select';
 import ToggleSwitch from "react-switch";
+import DataTable from 'react-data-table-component';
+import Moment from 'moment-timezone';
+
+const customStyles = {
+  rows: {
+    style: {
+      minHeight: '72px', // override the row height
+    }
+  },
+  headCells: {
+    style: {
+      paddingLeft: '8px', // override the cell padding for head cells
+      paddingRight: '8px',
+    },
+  },
+  cells: {
+    style: {
+      paddingLeft: '8px', // override the cell padding for data cells
+      paddingRight: '8px',
+    },
+  },
+};
 
 
 class ProjekNew extends Component {
@@ -97,11 +119,12 @@ class ProjekNew extends Component {
     })
   }
   fetchProject() {
+
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
         API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
-          console.log(response.data.result, 'RESULLTT PROJECT')
+          // console.log(response.data.result, 'RESULLTT PROJECT')
           this.setState({ project: response.data.result });
         }).catch(function (error) {
           console.log(error);
@@ -230,7 +253,7 @@ class ProjekNew extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
       if (res.status === 200) {
         this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        if (this.state.optionsProjectAdmin.length == 0 || this.state.optionsProjectAdmin.length == 0) {
+        if (this.state.optionsProjectAdmin.length === 0 || this.state.optionsProjectAdmin.length === 0) {
           API.get(`${API_SERVER}v1/user/company/${this.state.companyId}`).then(response => {
             response.data.result.map(item => {
               this.state.optionsProjectAdmin.push({ value: item.user_id, label: item.name });
@@ -246,31 +269,94 @@ class ProjekNew extends Component {
   componentDidMount() {
     this.fetchProject()
     this.fetchOtherData()
-
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_PROJECT'])
-
+    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+      ['CD_PROJECT'])
   }
 
-  fetchCheckAccess(role, companyId, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, companyId, level, param }).then(res => {
-      if (res.status === 200) {
-        this.setState({ gb: res.data.result })
-      }
+  fetchCheckAccess(role, company_id, level, param) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
+      this.setState({ gb: res.data.result })
     })
   }
 
-  render() {
-    // let access = Storage.get('access');
-    let levelUser = Storage.get('user').data.level;
-    let accessProjectManager = levelUser == 'client' ? false : true;
-    //  console.log(this.props, 'props evenntttt')
-    const lists = this.state.project;
 
-    let cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
+  render() {
+    let levelUser = Storage.get('user').data.level;
+    let accessProjectManager = levelUser === 'client' ? false : true;
+    let cdProject = '';
+    if (levelUser === 'admin' || levelUser === 'superadmin') {
+      cdProject = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_PROJECT')[0].status;
+    }
+    console.log(cdProject, 'kk')
+    const location = window.location.href.split('/')[3] === 'project' ? true : false;
+
+    const lists = this.state.project;
+    console.log(lists, 'projekckkakkr');
+
+    const columns = [
+      {
+        name: 'Name',
+        selector: 'title',
+        width: '40%',
+        sortable: true,
+        cell: row =>
+          <Link to={`detail-project/${row.id}`}>
+            <div className="box-project">
+              <div className=" f-w-800 fc-black">
+                {row.title}
+              </div>
+              {row.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{row.share_from}</span>}
+            </div>
+          </Link>,
+      },
+      {
+        name: 'Last Activity',
+        selector: 'recent_project',
+        width: '25%',
+        sortable: true,
+        cell: row =>
+          <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
+      },
+      {
+        name: 'Information',
+        width: '22%',
+        cell: row =>
+          <span style={{ inlineSize: '-webkit-fill-available' }}>
+            <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
+            <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.webinar} Webinar</span></Link>
+          </span>,
+        center: true,
+      },
+      {
+        name: '',
+        width: '10%',
+        cell: row =>
+          accessProjectManager ?
+            <span className="btn-group dropleft col-sm-1">
+              <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i
+                  className="fa fa-ellipsis-v"
+                  style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                />
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, row.id)}>Edit</button>
+                <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, row.id)}>Sharing</button>
+                {
+                  cdProject &&
+                  <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, row.id, row.title)}>Delete</button>
+                }
+              </div>
+            </span>
+            : null
+        ,
+      },
+    ]
+
 
     return (
       <div className="row">
-        <div className="col-sm-8">
+        <div className='col-sm-8'>
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
@@ -308,55 +394,16 @@ class ProjekNew extends Component {
             </Link>
           </p>
         </div>
-        <div className="col-sm-12" style={{ marginTop: '10px' }}>
-          <div className="wrap" style={{ height: '310px', overflowY: 'scroll', overflowX: 'hidden' }}>
-          {
-            lists.length == 0 ?
-              <div className="col-sm-12 mb-1">
-                Not available
-                </div>
-              :
-              lists.map((item, i) => (
-                <div className="col-sm-12 mb-1">
-                  <div className="row p-10 p-t-15 p-b-15" style={{ borderBottom: '1px solid #E6E6E6' }}>
-                    <Link to={`detail-project/${item.id}`} className={accessProjectManager ? "col-sm-4" : "col-sm-5"}>
-                      <div className="box-project">
-                        <div className=" f-w-800 f-16 fc-black">
-                          {item.title}
-                        </div>
-                        {item.share_from && <span class="badge badge-pill badge-secondary" style={{ fontSize: 8, backgroundColor: '#007bff' }}>{item.share_from}</span>}
-                      </div>
-                    </Link>
-                    <span className="col-sm-7">
-                      <Link to={`detail-project/${item.id}`}><span className={item.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.meeting} Meeting</span></Link>
-                      <Link to={`detail-project/${item.id}`}><span className={item.webinar === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{item.webinar} Webinar</span></Link>
-                    </span>
+        <div className="col-sm-12" style={{ marginTop: '-20px' }}>
 
-                    {
-                      accessProjectManager ?
-                        <span class="btn-group dropleft col-sm-1">
-                          <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i
-                              className="fa fa-ellipsis-v"
-                              style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                            />
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalEdit.bind(this, item.id)}>Edit</button>
-                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.openModalSharing.bind(this, item.id)}>Sharing</button>
-                            {
-                              cdProject &&
-                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.title)}>Delete</button>
-                            }
-                          </div>
-                        </span>
-                        : null
-                    }
-
-                  </div>
-                </div>
-              ))
-          }
+        <DataTable
+                style={{ marginTop: 20 }} columns={columns} data={lists} striped={false} noHeader={true} customStyles={customStyles}
+                noDataComponent="There are no project to display"
+                pagination
+                fixedHeader
+                paginationPerPage = {5}
+                paginationRowsPerPageOptions = {[5, 10, 15, 20, 25, 30]}
+              />
           {/* <div className="col-sm-12 mb-1">
             <div className="p-10" style={{borderBottom: '1px solid #E6E6E6'}}>
               <div className="box-project">
@@ -375,7 +422,7 @@ class ProjekNew extends Component {
               </div>
             </div>
         </div> */}
-          </div>
+          {/* </div> */}
         </div>
         <Modal
           show={this.state.modalNewFolder}

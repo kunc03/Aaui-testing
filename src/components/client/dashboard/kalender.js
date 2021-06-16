@@ -39,6 +39,8 @@ class EventNew extends Component {
               return {};
             }}
             views={['month', 'day']}
+            min={new Date(0, 0, 0, 8, 0, 0)}
+            max={new Date(0, 0, 0, 20, 0, 0)}
           />
 
           <div className="p-l-20">

@@ -143,7 +143,7 @@ class Mengajar extends React.Component {
             this.setState({ joinUrl: joinUrl })
 
             if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/redirect/' + this.state.classId))
             }
 
           }
@@ -165,7 +165,7 @@ class Mengajar extends React.Component {
         this.setState({ joinUrl: joinUrl })
 
         if (isMobile) {
-          window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(this.state.joinUrl))
+          window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/redirect/' + this.state.classId))
         }
       }
     })

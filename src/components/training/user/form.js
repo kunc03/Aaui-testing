@@ -249,26 +249,29 @@ class FormUser extends Component {
                                                         }
                                                     </div>
                                                 </div>
-                                                <div className="form-section">
-                                                    <div className="row">
-                                                        <div className="col-sm-12 m-b-20">
-                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
+                                                {
+                                                    Storage.get('user').data.level === 'client' ? null :
+                                                    <div className="form-section">
+                                                        <div className="row">
+                                                            <div className="col-sm-12 m-b-20">
+                                                                <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company</strong>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row">
+                                                            <div className="form-field-top-label">
+                                                                <label for="training_company_id">Company Name<required>*</required></label>
+                                                                <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
+                                                                    <option value="">Select Company</option>
+                                                                    {
+                                                                        this.state.optionCompany.map(item=>
+                                                                            <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
+                                                                        )
+                                                                    }
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="row">
-                                                        <div className="form-field-top-label">
-                                                            <label for="training_company_id">Company Name<required>*</required></label>
-                                                            <select name="training_company_id" value={this.state.training_company_id} id="training_company_id" onChange={this.handleChange} disabled={this.state.disabledForm}>
-                                                                <option value="">Select Company</option>
-                                                                {
-                                                                    this.state.optionCompany.map(item=>
-                                                                        <option value={item.id} selected={this.state.training_company_id===item.id}>{item.name}</option>
-                                                                    )
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                }
                                                 <div className="form-section">
                                                     <div className="row">
                                                         <div className="col-sm-12 m-b-20">
@@ -380,7 +383,7 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
-                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm || this.props.match.params.id}/>
+                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                             <label for="phone" style={{marginTop:10}}>By default the password is the same as email<required>*</required></label>
                                                         </div>
                                                     </div>

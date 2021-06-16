@@ -9,7 +9,8 @@ import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import { Modal } from 'react-bootstrap';
+import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class Quota extends Component {
   constructor(props) {
@@ -21,7 +22,8 @@ class Quota extends Component {
       file:'',
       modalDelete: false,
       deleteId: '',
-      isUploading: false
+      isUploading: false,
+      isLoading: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -50,12 +52,14 @@ class Quota extends Component {
   }
 
   getList(){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/quota/company`).then(res => {
         if (res.data.error){
             toast.error('Error read company list')
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -156,6 +160,10 @@ class Quota extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Quota'/>
                                         <div>
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -176,6 +184,7 @@ class Quota extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                            </LoadingOverlay>
                                         </div>
                                     </div>
                                 </div>

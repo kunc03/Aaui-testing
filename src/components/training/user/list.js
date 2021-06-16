@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-bootstrap';
 import Moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
+import LoadingOverlay from 'react-loading-overlay';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class User extends Component {
   constructor(props) {
@@ -26,6 +28,7 @@ class User extends Component {
         import: true,
         file:'',
         isUploading: false,
+        isLoading: false,
         modalAssignee: false,
         userAssigneeId: '',
         assignee: [{
@@ -165,23 +168,27 @@ class User extends Component {
   }
 
   getUser(id){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+            this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
 
   getUserTrainingCompany(id){
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/training-company/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
+            this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result})
+          this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
@@ -298,6 +305,104 @@ class User extends Component {
         },
       },
       {
+        name: 'Identity Number',
+        selector: 'identity',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'License Number',
+        selector: 'license_number',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row =>
+        <Dropdown
+          pullRight
+          onSelect={(eventKey) => {
+            switch (eventKey){
+              case 1 : this.readAssign(row.id);break;
+              case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
+              case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
+              case 4 : this.onClickHapus(row.id);break;
+              default : this.props.goTo('/training/user');break;
+            }
+          }}
+        >
+          <Dropdown.Toggle
+            btnStyle="flat"
+            noCaret
+            iconOnly
+          >
+            <i className="fa fa-ellipsis-h"></i>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
+            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
+            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+          </Dropdown.Menu>
+        </Dropdown>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      },
+    ];
+    const columnsClient = [
+      {
+        name: 'Image',
+        selector: 'image',
+        sortable: true,
+        cell: row => <img height="36px" alt={row.name} src={row.image ? row.image : 'assets/images/no-profile-picture.jpg'} />
+      },
+      {
+        cell: row => <Link to={'/training/user/detail/'+row.id}>{row.name}</Link>,
+        name: 'Name',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        name: 'Created at',
+        selector: 'created_at',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Phone',
+        selector: 'phone',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Email',
+        selector: 'email',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Identity Number',
+        selector: 'identity',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         name: 'License Number',
         selector: 'license_number',
         sortable: true,
@@ -391,6 +496,10 @@ class User extends Component {
                                                 </div>
                                             </div>
         }
+                                            <LoadingOverlay
+                                              active={this.state.isLoading}
+                                              spinner={<BeatLoader size='30' color='#008ae6' />}
+                                            >
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
@@ -410,10 +519,13 @@ class User extends Component {
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
                                                         <div className="float-right col-sm-3 lite-filter">
-                                                          <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                          {
+                                                            Storage.get('user').data.level === 'client' ? null :
+                                                            <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                          }
                                                         </div>
                                                         <DataTable
-                                                        columns={columns}
+                                                        columns={Storage.get('user').data.level === 'client' ? columnsClient : columns}
                                                         data={data}
                                                         highlightOnHover
                                                         pagination
@@ -421,6 +533,8 @@ class User extends Component {
                                                         />
                                                     </div>
                                                 </div>
+                                            </div>
+                                            </LoadingOverlay>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
@@ -495,7 +609,6 @@ class User extends Component {
             </button>
           </Modal.Footer>
         </Modal>
-                                            </div>
       </div>
     )
   }
