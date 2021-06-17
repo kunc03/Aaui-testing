@@ -17,7 +17,7 @@ class ProjectAdmin extends React.Component {
   }
 
   fetchAccess() {
-    API.get(`${API_SERVER}v2/global-settings/${Storage.get('user').data.company_id}/moderator`).then((res) => {
+    API.get(`${API_SERVER}v2/global-settings/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}/moderator`).then((res) => {
       if (res.status === 200) {
         const general = res.data.result.filter((item) => item.sub === this.props.sub && item.level === 'admin' && item.role === 'moderator');
         this.setState({ meeting :  general });

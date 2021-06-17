@@ -71,7 +71,7 @@ class Pengaturan extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.fetchGlobalSettings(Storage.get('user').data.company_id);
+    this.fetchGlobalSettings(localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id);
     this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
@@ -209,7 +209,7 @@ class Pengaturan extends Component {
 
   fetchGlobalSettings(companyId)
   {
-    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${companyId}`).then(res =>{
+    API.get(`${API_SERVER}v2/global-settings/check-access-all?company_id=${companyId}`).then(res =>{
 
       this.setState({ gSetting : res.data.result });
     })

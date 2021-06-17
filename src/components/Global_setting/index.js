@@ -37,7 +37,7 @@ export default class GlobalSetting extends Component {
 
   fetchRoles() {
     if (this.state.cType === 'pendidikan') {
-      API.get(`${API_SERVER}v1/grup/company/${Storage.get('user').data.company_id}`).then(res => {
+      API.get(`${API_SERVER}v1/grup/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}`).then(res => {
         if (res.status === 200) {
           this.setState({ roles: res.data.result })
         }
