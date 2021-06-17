@@ -71,7 +71,7 @@ class Pengaturan extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.fetchGlobalSettings(Storage.get('user').data.company_id);
+    this.fetchGlobalSettings(localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id);
     this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
@@ -209,7 +209,7 @@ class Pengaturan extends Component {
 
   fetchGlobalSettings(companyId)
   {
-    API.get(`${API_SERVER}v2/global-settings/check-access?company_id=${companyId}`).then(res =>{
+    API.get(`${API_SERVER}v2/global-settings/check-access-all?company_id=${companyId}`).then(res =>{
 
       this.setState({ gSetting : res.data.result });
     })
@@ -358,7 +358,7 @@ class Pengaturan extends Component {
 
                                   {
                                     this.state.checkZoom.length === 1 ?
-                                      <button onClick={e => this.deauthZoom(e)} className="btn btn-danger rounded">Deauthentication</button>
+                                      <button onClick={e => this.deauthZoom(e)} className="btn btn-danger rounded">Unsync</button>
                                       :
                                       <a className="btn btn-primary" href={`https://zoom.us/oauth/authorize?response_type=code&client_id=${ZOOM_API_KEY}&redirect_uri=${ZOOM_REDIRECT_URL}`}>
                                         Connect Zoom
@@ -374,7 +374,7 @@ class Pengaturan extends Component {
                               <div className="card-block">
                                 <div className="row m-b-100">
                                   <div className="col-xl-2">
-                                    <h3 className="f-w-bold f-18 fc-blue mb-4">security</h3>
+                                    <h3 className="f-w-bold f-18 fc-blue mb-4">Security</h3>
                                   </div>
                                   <div className="col-xl-10">
                                     <form>
@@ -639,9 +639,9 @@ class Pengaturan extends Component {
                                 </div>
                               </div>
                             ) :
-
+                            this.state.notification ? (
                             <Notification />
-
+                            ) : null
                           )}
                         </div>
                       </div>
