@@ -26,7 +26,7 @@ const datas = [
   componentDidMount() {
     API.get(
       `${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${
-        Storage.get('user').data.company_id
+        localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id
       }`,
     ).then((response) => {
       if (response.data.result.length) {
@@ -40,7 +40,7 @@ const datas = [
 
   fetchAccess()
   {
-    API.get(`${API_SERVER}v2/notification-alert/${Storage.get('user').data.company_id}/admin`).then(res => {
+    API.get(`${API_SERVER}v2/notification-alert/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}/admin`).then(res => {
       if(res.status === 200){
         const meeting = res.data.result.filter(item => item.sub === 'meeting');
         const training = res.data.result.filter(item => item.sub === 'training');

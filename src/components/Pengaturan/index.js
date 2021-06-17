@@ -71,7 +71,7 @@ class Pengaturan extends Component {
 
   componentDidMount() {
     this.fetchData();
-    this.fetchGlobalSettings(Storage.get('user').data.company_id);
+    this.fetchGlobalSettings(localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id);
     this.fetchSyncZoom(Storage.get('user').data.user_id)
   }
 
