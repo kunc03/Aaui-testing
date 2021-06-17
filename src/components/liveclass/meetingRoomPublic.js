@@ -413,7 +413,7 @@ export default class MeetingRoomPublic extends Component {
                         {
                           user.name && classRooms.room_name && this.state.join ?
   
-                          <div style={{background:`url('newasset/user-computer.svg') center center no-repeat`}}>
+                          <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                             <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
                               height="600px"
