@@ -1,4 +1,4 @@
-import React from "react";
+import React, {lazy} from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
@@ -6,10 +6,6 @@ import API, { API_SERVER, API_SOCKET } from './repository/api';
 import Storage from './repository/storage';
 
 import io from 'socket.io-client';
-
-import SuperAdminSwitch from "./routes/superadmin";
-import ClientSwitch from "./routes/client";
-import AdminSwitch from "./routes/admin";
 
 import Header from "./components/Header_sidebar/Header";
 import Sidebar from "./components/Header_sidebar/Sidebar";
@@ -33,6 +29,9 @@ const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   console.log("Loading App");
 });
+const ClientSwitch = lazy(()=> import("./routes/client"));
+const AdminSwitch = lazy(()=> import("./routes/admin"));
+const SuperAdminSwitch = lazy(()=> import("./routes/superadmin"));
 
 export default class App extends React.Component {
   constructor(props) {
