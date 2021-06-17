@@ -413,6 +413,7 @@ export default class MeetingRoomPublic extends Component {
                         {
                           user.name && classRooms.room_name && this.state.join ?
   
+                          <div style={{background:`url('newasset/user-computer.svg') center center no-repeat`}}>
                             <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
                               height="600px"
@@ -420,6 +421,7 @@ export default class MeetingRoomPublic extends Component {
                               frameBorder="0"
                               allow="fullscreen *;geolocation *; microphone *; camera *"
                               position="relative" />
+                          </div>
   
                             // <ThemeProvider theme={lightTheme}>
                             //   <MeetingProvider>
