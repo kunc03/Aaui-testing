@@ -12,11 +12,7 @@ import Sidebar from "./components/Header_sidebar/Sidebar";
 import Loader from "./components/Header_sidebar/Loader";
 
 //gantt public
-import GanttPublic from "./components/Gantt/GanttPublic";
 import Login from "./components/Login/index";
-import MobileMeeting from "./components/liveclass/mobileMeeting";
-import MeetingRoomPublic from "./components/liveclass/meetingRoomPublic";
-import WebinarLivePublic from "./components/client/webinar/livePublic";
 
 import ForgotPassword from './components/forgotPassword';
 import OTP from './components/OTP';
@@ -32,6 +28,11 @@ socket.on("connect", () => {
 const ClientSwitch = lazy(()=> import("./routes/client"));
 const AdminSwitch = lazy(()=> import("./routes/admin"));
 const SuperAdminSwitch = lazy(()=> import("./routes/superadmin"));
+
+const MeetingRoomPublic = lazy(()=> import("./components/liveclass/meetingRoomPublic"));
+const GanttPublic = lazy(()=> import("./components/Gantt/GanttPublic"));
+const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
+const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
 
 export default class App extends React.Component {
   constructor(props) {

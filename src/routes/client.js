@@ -1,84 +1,65 @@
-import React from "react";
-import Logout from "./logout";
-
+import React, { lazy } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-// import Home from "../components/Home/index";
-import Home from "../components/Home_new/index";
-import Activity from "../components/Activity/index";
-import Notification from "../components/Notification/index";
-import Pengumuman from "../components/Pengumuman/index";
-import Pengaturan from "../components/Pengaturan/index";
 
-import ZoomCallback from '../components/zoom/call'
-
-import ClassBantuan from "../components/bantuan/index";
-import Profile from "../components/Profile/index";
-import FullCalender from "../components/kalender/fullKalender"
-import News from "../components/news/index";
-import NewsView from "../components/news/view";
-
-// Dashboard New Home Detail
-import DetailProject from "../components/detail_project/index";
-
-import GanttReport from "../components/Gantt/report"
-
-import Project from "../components/project/index";
-import Meeting from "../components/meeting";
-import TrainingReport from "../components/training/report";
-import TrainingUser from "../components/training/user";
-import TrainingCourse from "../components/training/course";
-import TrainingMembership from "../components/training/membership";
-import TrainingMembershipForm from "../components/training/membership/form";
-import TrainingUserForm from "../components/training/user/form";
-import TrainingUserDetail from "../components/training/user/detail";
-import MeetingRoom from "../components/liveclass/meetingRoom";
-import Webinar from "../components/webinar";
-
-import Kursus from "../components/Kursus";
-import WebinarClient from '../components/client/webinar/index';
-
-import LearningGuru from '../components/learning/guru';
-import LearningGuruInfo from '../components/learning/guruinfo';
-import LearningMurid from '../components/learning/murid';
-
-// ======= IMPORT COMPONENT GURU ======== //
-import GuruPersonalia from '../components/guruPersonalia/index';
-import GuruKurusus from '../components/guruKursus/index';
-import GuruUjian from '../components/guruUjian/index';
-import GuruJadwal from '../components/jadwal_mengajar/guru';
-import InformasiKelas from '../components/guruInformasiKelas/index';
-import GuruKPI from '../components/guruKPI/index';
-import DetailMurid from '../components/detail_murid/index';
-import DetailKelas from '../components/detail_kelas/index';
-import DetailRapor from '../components/detail_rapor/index';
-import LaporanForGuru from '../components/laporan/laporanguru';
-
-
-// ======= IMPORT COMPONENT MURID ======== //
-import MuridLaporanRapor from '../components/muridLaporanRapor/index';
-
-// ======= IMPORT COMPONENT PARENT ======== //
-import LaporanPembelajaranMurid from '../components/parentLearning/index';
-import KurikulumParent from '../components/parentLearning/kurikulum';
-import ParentSylabus from '../components/parentSilabus/index';
-import ParentRapor from '../components/parentRapor/index';
-
-
-import PembelajaranPrincipal from '../components/principalPembelajaran/index';
-import LaporanPrincipal from '../components/principalLaporan/index';
-import LaporanPrincipalMurid from '../components/principalLaporan/murid';
-import LaporanKurikulum from '../components/principalLaporan/kurikulum';
-import KinerjaPrincipal from '../components/principalKpi/index';
-import EvaluasiPrincipal from '../components/principalEvaluasi/index';
-
-// ======= IMPORT COMPONENT RUANGAN ======== //
-import LearningRuangan from '../components/learning/ruangan';
-
-import Ptc from '../components/ptc/index';
-import KursusNew from '../components/learning/kursus';
-
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// Components
+const Logout = lazy(()=> import("./logout"));
+const Home = lazy(()=> import("../components/Home_new/index"));
+const Activity = lazy(()=> import("../components/Activity/index"));
+const Notification = lazy(()=> import("../components/Notification/index"));
+const Pengumuman = lazy(()=> import("../components/Pengumuman/index"));
+const Pengaturan = lazy(()=> import("../components/Pengaturan/index"));
+const ZoomCallback = lazy(()=> import('../components/zoom/call'));
+const ClassBantuan = lazy(()=> import("../components/bantuan/index"));
+const Profile = lazy(()=> import("../components/Profile/index"));
+const FullCalender = lazy(()=> import("../components/kalender/fullKalender"));
+const News = lazy(()=> import("../components/news/index"));
+const NewsView = lazy(()=> import("../components/news/view"));
+const DetailProject = lazy(()=> import("../components/detail_project/index"));
+const GanttReport = lazy(()=> import("../components/Gantt/report"));
+const Project = lazy(()=> import("../components/project/index"));
+const Meeting = lazy(()=> import("../components/meeting"));
+const TrainingReport = lazy(()=> import("../components/training/report"));
+const TrainingUser = lazy(()=> import("../components/training/user"));
+const TrainingCourse = lazy(()=> import("../components/training/course"));
+const TrainingMembership = lazy(()=> import("../components/training/membership"));
+const TrainingMembershipForm = lazy(()=> import("../components/training/membership/form"));
+const TrainingUserForm = lazy(()=> import("../components/training/user/form"));
+const TrainingUserDetail = lazy(()=> import("../components/training/user/detail"));
+const MeetingRoom = lazy(()=> import("../components/liveclass/meetingRoom"));
+const Webinar = lazy(()=> import("../components/webinar"));
+const Kursus = lazy(()=> import("../components/Kursus"));
+const WebinarClient = lazy(()=> import('../components/client/webinar/index'));
+const LearningGuru = lazy(()=> import('../components/learning/guru'));
+const LearningGuruInfo = lazy(()=> import('../components/learning/guruinfo'));
+const LearningMurid = lazy(()=> import('../components/learning/murid'));
+// ======= const COMPONENT GURU ======== //
+const GuruPersonalia = lazy(()=> import('../components/guruPersonalia/index'));
+const GuruKurusus = lazy(()=> import('../components/guruKursus/index'));
+const GuruUjian = lazy(()=> import('../components/guruUjian/index'));
+const GuruJadwal = lazy(()=> import('../components/jadwal_mengajar/guru'));
+const InformasiKelas = lazy(()=> import('../components/guruInformasiKelas/index'));
+const GuruKPI = lazy(()=> import('../components/guruKPI/index'));
+const DetailMurid = lazy(()=> import('../components/detail_murid/index'));
+const DetailKelas = lazy(()=> import('../components/detail_kelas/index'));
+const DetailRapor = lazy(()=> import('../components/detail_rapor/index'));
+const LaporanForGuru = lazy(()=> import('../components/laporan/laporanguru'));
+// ======= const COMPONENT MURID ======== //
+const MuridLaporanRapor = lazy(()=> import('../components/muridLaporanRapor/index'));
+// ======= const COMPONENT PARENT ======== //
+const LaporanPembelajaranMurid = lazy(()=> import('../components/parentLearning/index'));
+const KurikulumParent = lazy(()=> import('../components/parentLearning/kurikulum'));
+const ParentSylabus = lazy(()=> import('../components/parentSilabus/index'));
+const ParentRapor = lazy(()=> import('../components/parentRapor/index'));
+const PembelajaranPrincipal = lazy(()=> import('../components/principalPembelajaran/index'));
+const LaporanPrincipal = lazy(()=> import('../components/principalLaporan/index'));
+const LaporanPrincipalMurid = lazy(()=> import('../components/principalLaporan/murid'));
+const LaporanKurikulum = lazy(()=> import('../components/principalLaporan/kurikulum'));
+const KinerjaPrincipal = lazy(()=> import('../components/principalKpi/index'));
+const EvaluasiPrincipal = lazy(()=> import('../components/principalEvaluasi/index'));
+// ======= const COMPONENT RUANGAN ======== //
+const LearningRuangan = lazy(()=> import('../components/learning/ruangan'));
+const Ptc = lazy(()=> import('../components/ptc/index'));
+const KursusNew = lazy(()=> import('../components/learning/kursus'));
 
 export default class ClientSwitch extends React.Component {
     render() {
