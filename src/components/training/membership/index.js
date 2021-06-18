@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
-import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
   MenuItem,
 } from '@trendmicro/react-dropdown';
