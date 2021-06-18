@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import DataTable from 'react-data-table-component';
-import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
   MenuItem,
 } from '@trendmicro/react-dropdown';
