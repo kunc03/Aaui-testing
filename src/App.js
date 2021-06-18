@@ -19,6 +19,7 @@ import OTP from './components/OTP';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-sm-select/dist/styles.css';
 
 import SocketContext from './socket';
 const socket = io(`${API_SOCKET}`);
