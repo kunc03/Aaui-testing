@@ -1,5 +1,8 @@
 import React, { lazy } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import "react-datepicker/dist/react-datepicker.css";
+import '@trendmicro/react-buttons/dist/react-buttons.css';
+import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 // Components
 const Logout = lazy(()=> import("./logout"));
