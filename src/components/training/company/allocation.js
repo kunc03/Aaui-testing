@@ -20,7 +20,8 @@ class Allocation extends Component {
         licensesTypeId: '',
         modalAllocation: false,
         amount: '',
-        mode: ''
+        mode: '',
+        note: ''
     };
   }
   
@@ -45,6 +46,7 @@ class Allocation extends Component {
               licenses_allocation_id: this.state.licensesId,
               amount : this.state.amount,
               type : this.state.mode,
+              note : this.state.note,
               created_by : this.state.userId,
           }
           API.post(`${API_SERVER}v2/training/licenses-allocation-transaction`, form).then(res => {
@@ -123,6 +125,11 @@ class Allocation extends Component {
       {
         name: 'Licenses Type',
         selector: 'type',
+        sortable: true
+      },
+      {
+        name: 'Note',
+        selector: 'note',
         sortable: true
       },
       {
@@ -218,6 +225,10 @@ class Allocation extends Component {
                 <div className="form-field-top-label">
                     <label for="amount">Amount of {this.state.mode === 'addition' ? 'Addition' : 'Reduction'}<required>*</required></label>
                     <input type="number" name="amount" size="50" id="amount" placeholder="0" value={this.state.amount} onChange={this.handleChange}/>
+                </div>
+                <div className="form-field-top-label" style={{width:'100%'}}>
+                    <label for="note">Note</label>
+                    <textarea name="note" onChange={this.handleChange} value={this.state.note} style={{width:'80%'}}></textarea>
                 </div>
             </Modal.Body>
             <Modal.Footer>
