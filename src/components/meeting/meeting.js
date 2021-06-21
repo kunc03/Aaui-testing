@@ -495,7 +495,7 @@ class MeetingTable extends Component {
       toast.warning('Judul meeting dan folder project wajib diisi')
     }
     else {
-      if (this.state.checkZoom.length === 1) {
+      if ((this.state.checkZoom.length === 1 && this.state.engine === 'zoom') || (this.state.engine === 'bbb')) {
         if (this.state.classId) {
           let isPrivate = this.state.private == true ? 1 : 0;
           let isAkses = this.state.akses == true ? 1 : 0;
