@@ -440,31 +440,38 @@ export default class User extends Component {
                       </div>
                       {
                         this.state.limitCompany.user &&
-                        <Link to="#" onClick={() => this.setState({ isModalImport: true })} className="btn btn-ideku">
-                          <i className="fa fa-plus"></i>
-                          Import User
+                        <Link
+                        to="#" onClick={() => this.setState({ isModalImport: true })}>
+                            <button
+                            className="btn btn-icademy-primary"
+                            style={{ padding: "7px 8px !important" }}>
+                                <i className="fa fa-plus"></i>
+                                Import User
+                            </button>
                         </Link>
                       }
                       {
                         this.state.limitCompany.user &&
-                      <a href={`${API_SERVER}user/format-users.xlsx`} className="btn btn-ideku ml-2" alt="Link">
-                        <i className="fa fa-download"></i>
-                        Download Format
-                      </a>
+                                                        <a href={`${API_SERVER}user/format-users.xlsx`} style={{marginLeft:10}} alt="Link">
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
                       }
                       {
                         this.state.limitCompany.user &&
                         <Link
-                          to='/user-create'
-                          className="btn btn-ideku float-right"
-                          style={{ padding: "7px 8px !important" }}
-                        >
-                          <img
-                            src="assets/images/component/person_add.png"
-                            className="button-img"
-                            alt=""
-                          />
-                                    Create New
+                        to='/user-create'>
+                            <button
+                            className="btn btn-icademy-primary float-right"
+                            style={{ padding: "7px 8px !important" }}>
+                                <i className="fa fa-plus"></i>
+                                Create New
+                            </button>
                         </Link>
                       }
 
