@@ -12456,3 +12456,11 @@ required {
 .MultiSelect .DropDown{
   z-index:1041 !important;
 }
+
+table.table-note-settings > tr > th{
+  color:#424242;
+  text-align: center;
+}
+table.table-note-settings > tr > td{
+  padding: 2px 4px;
+}
