@@ -20,9 +20,21 @@ class SettingsTraining extends Component {
         data: [],
         modalCreate: false,
         modalDelete: false,
+        modalOther: false,
         typeName: '',
         typeId:'',
-        licenseFormat:''
+        dataOthers :
+        [
+          {
+            id: 0,
+            setting: 'License Number Format',
+            value: '',
+            placeholder: '[YYYY][MM][DD].A0[GENDER]-[NUMBER]',
+            default: '[YYYY][MM][DD].A0[GENDER]-[NUMBER]'
+          }
+        ],
+        otherSettingActive: '',
+        otherSettingActiveValue: ''
     };
   }
 
@@ -31,6 +43,9 @@ class SettingsTraining extends Component {
   }
   closeModalDelete = e => {
     this.setState({ modalDelete: false, typeId: '' })
+  }
+  closeModalOther = e => {
+    this.setState({ modalOther: false })
   }
 
   goTo(url) {
@@ -43,9 +58,9 @@ class SettingsTraining extends Component {
   }
 
   handleChange = e => {
-      let {name, value} = e.target;
-      this.setState({[name]: value})
-  }
+    let {name, value} = e.target;
+    this.setState({[name]: value})
+}
 
   save(){
       if (this.state.typeName === ''){
@@ -87,19 +102,22 @@ class SettingsTraining extends Component {
       }
   }
 
-  saveFormat(){
+  saveOther(){
+    if (this.state.otherSettingActive === 0){
       let form = {
-          format : this.state.licenseFormat
+          format : this.state.otherSettingActiveValue
       }
       API.put(`${API_SERVER}v2/training/settings/license-format/${this.state.companyId}`, form).then(res => {
         if (res.data.error){
-            toast.error(`Error save licenses format`)
+            toast.error(`Error save licenses format`);
         }
         else{
-            toast.success(`Licenses format saved`)
-            this.getLicensesFormat(this.state.companyId)
+            toast.success(`Licenses format saved`);
+            this.getLicensesFormat(this.state.companyId);
+            this.closeModalOther();
         }
       })
+    }
   }
   
   delete(id){
@@ -143,7 +161,9 @@ class SettingsTraining extends Component {
         }
         else{
             if (res.data.result){
-              this.setState({licenseFormat: res.data.result.format})
+              let otherSetting = this.state.dataOthers;
+              otherSetting[0].value = res.data.result.format;
+              this.setState({ otherSetting })
             }
             else{
               this.setState({licenseFormat: ''})
@@ -191,7 +211,51 @@ class SettingsTraining extends Component {
         width: '56px',
       }
     ];
-    let {data} = this.state;
+
+    const columnsOthers =
+    [
+      {
+        name: 'Setting',
+        selector: 'setting',
+        sortable: true
+      },
+      {
+        name: 'Value',
+        selector: 'value',
+        cell: row => row.value.length ? row.value : row.default,
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row =>
+          <Dropdown
+            pullRight
+            onSelect={(eventKey) => {
+              switch (eventKey){
+                case 1 : this.setState({modalOther: true, otherSettingActive: row.id, otherSettingActiveValue: row.value.length ? row.value : row.default});break;
+                default : this.setState({modalOther: true, otherSettingActive: row.id, otherSettingActiveValue: row.value});break;
+              }
+            }}
+          >
+            <Dropdown.Toggle
+              btnStyle="flat"
+              noCaret
+              iconOnly
+            >
+              <i className="fa fa-ellipsis-h"></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <MenuItem eventKey={1}><i className="fa fa-edit" /> Edit</MenuItem>
+            </Dropdown.Menu>
+          </Dropdown>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      }
+    ];
+    let {data, dataOthers} = this.state;
     return(
         <div className="pcoded-main-container">
             <div className="pcoded-wrapper">
@@ -241,24 +305,20 @@ class SettingsTraining extends Component {
                                         <div className="card p-20 main-tab-container">
                                             <div className="row">
                                                 <div className="col-sm-12 m-b-20">
-                                                        <button
-                                                        onClick={this.saveFormat.bind(this)}
-                                                        className="btn btn-icademy-primary float-right"
-                                                        style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                                                            <i className="fa fa-save"></i>
-                                                            Save
-                                                        </button>
-                                                    <div className="form-field-top-label">
-                                                        <label for="licenseFormat">Licenses Number Format<required>*</required></label>
-                                                        <input style={{marginBottom:10}} type="text" name="licenseFormat" size="50" id="licenseFormat" placeholder="[YYYY][MM][DD].A0[GENDER]-[NUMBER]" value={this.state.licenseFormat} onChange={this.handleChange}/>
-                                                        <p className="form-notes">Default : [YYYY][MM][DD].A0[GENDER]-[NUMBER]</p>
-                                                        <p className="form-notes">Example : 20210525.A01-000000001</p>
-                                                        <p className="form-notes">[YYYY] = Year, example is 2021</p>
-                                                        <p className="form-notes">[MM] = Month, example is 05</p>
-                                                        <p className="form-notes">[DD] = Day, example is 25</p>
-                                                        <p className="form-notes">[GENDER] = Gender, 1 for male and 0 for female</p>
-                                                        <p className="form-notes">[NUMBER] = 9 digits increment numbers of the day and by gender, example is 000000001</p>
-                                                    </div>
+                                                    <strong className="f-w-bold f-18" style={{color:'#000'}}>Other Settings</strong>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 m-b-20">
+                                                        <DataTable
+                                                            columns={columnsOthers}
+                                                            data={dataOthers}
+                                                            highlightOnHover
+                                                            defaultSortField="name"
+                                                            pagination
+                                                            fixedHeader
+                                                            noDataComponent="There are no licenses type. Please create the licenses type."
+                                                        />
                                                 </div>
                                             </div>
                                         </div>
@@ -273,6 +333,88 @@ class SettingsTraining extends Component {
                     </div>
                 </div>
             </div>
+          <Modal show={this.state.modalOther} onHide={this.closeModalOther} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Settings
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="form-field-top-label">
+                    <label for="typeName">{this.state.modalOther ? this.state.dataOthers[this.state.otherSettingActive].setting : null}</label>
+                    <input
+                    type="text"
+                    name="otherSettingActiveValue"
+                    size="50"
+                    id="otherSettingActiveValue"
+                    placeholder={this.state.modalOther ? this.state.dataOthers[this.state.otherSettingActive].placeholder : null}
+                    value={this.state.otherSettingActiveValue}
+                    onChange={this.handleChange}/>
+                </div>
+                {
+                  this.state.modalOther && this.state.dataOthers[this.state.otherSettingActive].setting === 'License Number Format' ?
+                  <div className="form-field-top-label">
+                    <label for="licenseFormat">Notes</label>
+                    <table className="table-note-settings" style={{clear:'both'}}>
+                      <tr>
+                        <td>Default Format</td>
+                        <td>:</td>
+                        <td>[YYYY][MM][DD].A0[GENDER]-[NUMBER]</td>
+                      </tr>
+                      <tr>
+                        <td>Example</td>
+                        <td>:</td>
+                        <td>20210525.A01-000000001</td>
+                      </tr>
+                    </table>
+                    <table className="table-note-settings" style={{clear:'both'}} border="1">
+                      <tr>
+                        <th colspan="3">Available Formats</th>
+                      </tr>
+                      <tr>
+                        <th>Format</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                      </tr>
+                      <tr>
+                        <td>[YYYY]</td>
+                        <td>2021</td>
+                        <td>Year</td>
+                      </tr>
+                      <tr>
+                        <td>[MM]</td>
+                        <td>05</td>
+                        <td>Month</td>
+                      </tr>
+                      <tr>
+                        <td>[DD]</td>
+                        <td>25</td>
+                        <td>Day</td>
+                      </tr>
+                      <tr>
+                        <td>[GENDER]</td>
+                        <td>1</td>
+                        <td>Gender, 1 for male and 0 for female</td>
+                      </tr>
+                      <tr>
+                        <td>[NUMBER]</td>
+                        <td>000000001</td>
+                        <td>9 digits increment numbers of the day and by gender</td>
+                      </tr>
+                    </table>                              
+                  </div>
+                  : null
+                }
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalOther.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.saveOther.bind(this)}>
+                <i className="fa fa-save"></i> Save
+              </button>
+            </Modal.Footer>
+          </Modal>
           <Modal show={this.state.modalCreate} onHide={this.closeModalCreate} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
