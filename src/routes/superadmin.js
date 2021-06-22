@@ -5,6 +5,7 @@ import '@trendmicro/react-buttons/dist/react-buttons.css';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 // Components
+const ThankYou = lazy(()=> import("../components/public/thankyou"));
 const Logout = lazy(()=> import('./logout'));
 const Home = lazy(()=> import('../components/Home_new/index'));
 const Activity = lazy(()=> import('../components/Activity/index'));
@@ -70,6 +71,7 @@ export default class SuperAdminSwitch extends React.Component {
     return (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/thankyou" component={ThankYou} />
         <Route path="/webinar" component={WebinarClient} />
         <Route path="/learning" component={LearningAdmin} />
         <Route path="/full-kalender" component={FullCalender} />
