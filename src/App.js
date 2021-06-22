@@ -34,6 +34,7 @@ const MeetingRoomPublic = lazy(()=> import("./components/liveclass/meetingRoomPu
 const GanttPublic = lazy(()=> import("./components/Gantt/GanttPublic"));
 const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
 const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
+const ThankYou = lazy(()=> import("./components/public/thankyou"));
 
 export default class App extends React.Component {
   constructor(props) {
@@ -92,6 +93,7 @@ export class PublicContent extends React.Component {
           <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/OTP/:id' component={OTP} />
           <Route path='/reset-password/:id/:key' component={Login} />
+          <Route path="/thankyou" exact component={ThankYou} />
           <Route component={Login} />
         </Switch>
       </div>
