@@ -8,7 +8,7 @@ import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 const ThankYou = lazy(()=> import("../components/public/thankyou"));
 const Logout = lazy(()=> import("./logout"));
 const Home = lazy(()=> import("../components/Home_new/index"));
-const Activity = lazy(()=> import("../components/Activity/index"));
+const Calendar = lazy(()=> import("../components/Home_new/calendar"));
 const Notification = lazy(()=> import("../components/Notification/index"));
 const Pengumuman = lazy(()=> import("../components/Pengumuman/index"));
 const Pengaturan = lazy(()=> import("../components/Pengaturan/index"));
@@ -55,6 +55,7 @@ const TrainingCourseForm = lazy(()=> import("../components/training/course/form"
 const TrainingQuiz = lazy(()=> import("../components/training/quiz"));
 const TrainingExamForm = lazy(()=> import("../components/training/exam/form"));
 const TrainingExam = lazy(()=> import("../components/training/exam"));
+const TrainingExamAssignment = lazy(()=> import( "../components/training/exam/assignment"));
 const TrainingMembership = lazy(()=> import("../components/training/membership"));
 const TrainingMembershipForm = lazy(()=> import("../components/training/membership/form"));
 const TrainingWebinar = lazy(()=> import("../components/training/webinar"));
@@ -93,7 +94,7 @@ export default class AdminSwitch extends React.Component {
           <Route path="/gantt/report" component={GanttReport} />
   
           <Route path="/ptc" component={Ptc} />
-          <Route path="/aktivitas" component={Activity} />
+          <Route path="/calendar" component={Calendar} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/bantuan" component={ClassBantuan} />
   
@@ -134,6 +135,7 @@ export default class AdminSwitch extends React.Component {
           <Route path="/training/exam" exact component={TrainingExam} />
           <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
           <Route path="/training/exam/edit/:id" exact component={TrainingExamForm} />
+          <Route path="/training/exam/assignment/:id" exact component={TrainingExamAssignment} />
           <Route path="/training/membership" exact component={TrainingMembership} />
           <Route path="/training/membership/edit/:id" exact component={TrainingMembershipForm} />
           <Route path="/training/webinar" exact component={TrainingWebinar} />

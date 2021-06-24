@@ -54,7 +54,7 @@ class User extends Component {
       let form = {
         exam_id : String(this.state.valueExam),
         training_user_id : this.state.userAssigneeId,
-        created_by : this.state.userAssigneeId
+        created_by : this.state.userId
       }
       API.post(`${API_SERVER}v2/training/assign`, form).then(res => {
           if (res.data.error){
@@ -243,6 +243,11 @@ class User extends Component {
             assignee: res.data.result,
             valueExam: []
           });
+          this.state.optionsExam.map(item=>{
+            if (this.state.assignee.assignee.filter(x=> x.exam_id === item.value && x.status === 'Open').length){
+              item.label = '✅ ' + item.label;
+            }
+          })
         }
       }
     })
