@@ -35,6 +35,7 @@ const GanttPublic = lazy(()=> import("./components/Gantt/GanttPublic"));
 const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
 const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
 const ThankYou = lazy(()=> import("./components/public/thankyou"));
+const MeetingRoom = lazy(()=> import( "./components/liveclass/meetingRoom"));
 
 export default class App extends React.Component {
   constructor(props) {
@@ -90,6 +91,7 @@ export class PublicContent extends React.Component {
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
           <Route path="/redirect/:url+" exact component={RedirectPage} />
+          <Route path="/meeting-room/:roomid" exact component={RedirectPageMeeting} />
           <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/OTP/:id' component={OTP} />
           <Route path='/reset-password/:id/:key' component={Login} />
@@ -109,6 +111,18 @@ export class RedirectPage extends React.Component {
     }
     else {
       return <Login redirectUrl={'/' + this.props.match.params.url} />
+    }
+  }
+}
+
+export class RedirectPageMeeting extends React.Component {
+  render() {
+    let userInfo = localStorage.getItem("user");
+    if (!userInfo) {
+      return <Login redirectUrl={'/meeting-room/' + this.props.match.params.roomid} />
+    }
+    else{
+      return <Route path="/meeting-room/:roomid" component={MeetingRoom} />
     }
   }
 }
