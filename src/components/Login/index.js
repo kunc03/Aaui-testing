@@ -243,7 +243,7 @@ class Login extends Component {
   render() {
     const { toggle_alert, isVoucher } = this.state;
     let formKu = null;
-    let plainURL = decodeURIComponent(this.props.redirectUrl ? APPS_SERVER+'redirect'+this.props.redirectUrl : APPS_SERVER);
+    let plainURL = decodeURIComponent(this.props.redirectUrl ? APPS_SERVER+this.props.redirectUrl.slice(1, this.props.redirectUrl.length) : APPS_SERVER);
     let lengthURL = plainURL.length;
     let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
     if (isVoucher) {
