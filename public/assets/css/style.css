@@ -12464,3 +12464,22 @@ table.table-note-settings > tr > th{
 table.table-note-settings > tr > td{
   padding: 2px 4px;
 }
+
+table.info-exam{
+  float:left;
+  margin-left: 20px;
+}
+table.info-exam > tr > td{
+  padding: 2px 8px;
+}
+
+.field-white .MultiSelect .Header {
+  background:#FFF !important;
+}
+.field-white .form-control{
+  border-radius:4px;
+}
+
+.rdt_ExpanderRow{
+  background: #f7f7f7 !important;
+}

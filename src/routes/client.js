@@ -8,7 +8,7 @@ import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 const ThankYou = lazy(()=> import("../components/public/thankyou"));
 const Logout = lazy(()=> import("./logout"));
 const Home = lazy(()=> import("../components/Home_new/index"));
-const Activity = lazy(()=> import("../components/Activity/index"));
+const Calendar = lazy(()=> import("../components/Home_new/calendar"));
 const Notification = lazy(()=> import("../components/Notification/index"));
 const Pengumuman = lazy(()=> import("../components/Pengumuman/index"));
 const Pengaturan = lazy(()=> import("../components/Pengaturan/index"));
@@ -91,7 +91,7 @@ export default class ClientSwitch extends React.Component {
   
           <Route path="/jadwal-mengajar" component={GuruJadwal} />
   
-          <Route path="/aktivitas" component={Activity} />
+          <Route path="/calendar" component={Calendar} />
   
           <Route path="/pengumuman" component={Pengumuman} />
           <Route path="/notification" component={Notification} />
