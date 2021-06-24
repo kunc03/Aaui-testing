@@ -101,9 +101,23 @@ class KalenderNew extends Component {
         >
         <div className="card">
           <div className="card-body">
-            <h3 className="f-w-900 f-18 fc-blue">Calendar</h3>
-            <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
-              <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
+          <div className="row">
+              <div className='col-sm-8'>
+                <div className="row">
+                  <div style={{ padding: '10px 20px' }}>
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      Calendar
+                  </h3>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-4 text-right">
+                <p className="m-b-0">
+                  <Link to={"calendar"}>
+                    <span className=" f-12 fc-skyblue">Maximize</span>
+                  </Link>
+                </p>
+              </div>
             </div>
             <Calendar
               popup

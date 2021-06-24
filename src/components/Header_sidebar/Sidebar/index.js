@@ -171,7 +171,7 @@ class SidebarClass extends Component {
       menuAtas: [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Announcement', link: '/pengumuman' },
-        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
+        // { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
@@ -228,7 +228,7 @@ class SidebarClass extends Component {
       menuAtas: [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Announcement', link: '/pengumuman' },
-        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
+        // { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
@@ -259,7 +259,7 @@ class SidebarClass extends Component {
       menuAtas: [
         { iconOn: 'notification.svg', iconOff: 'notification.svg', label: 'Notification', link: '/notification', isBadge: true },
         { iconOn: 'mail-2.svg', iconOff: 'mail-2.svg', label: 'Announcement', link: '/pengumuman' },
-        { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
+        // { iconOn: 'calendar-on.svg', iconOff: 'calendar.svg', label: 'Calendar', link: '/calendar' },
       ],
       menuBawah: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
