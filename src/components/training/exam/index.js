@@ -137,8 +137,9 @@ class Exam extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id) : this.props.history.push(`/training/exam/edit/` + row.id);break;
-                case 2 : this.onClickHapus(row.id);break;
+                case 1 : this.props.quiz ? this.props.goTo(`/training/exam/assignment/` + row.id) : this.props.history.push(`/training/exam/assignment/` + row.id);break;
+                case 2 : this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id) : this.props.history.push(`/training/exam/edit/` + row.id);break;
+                case 3 : this.onClickHapus(row.id);break;
                 default : this.props.goTo('/training/course');break;
               }
             }}
@@ -151,8 +152,9 @@ class Exam extends Component {
               <i className="fa fa-ellipsis-h"></i>
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-user-tag" /> Assignment</MenuItem>
+              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,

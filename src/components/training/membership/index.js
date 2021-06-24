@@ -75,18 +75,23 @@ class Membership extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-          this.getData(this.state.companyId)
+          
+          if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
+            API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
+              if (res.status === 200) {
+                this.setState({ training_company_id: res.data.result.training_company_id },()=>{
+                  this.getData(this.state.companyId)
+                })
+              }
+            })
+          }
+          else{
+            this.getData(this.state.companyId)
+          }
         }
     })
     let level = Storage.get('user').data.level;
     let grupName = Storage.get('user').data.grup_name;
-    if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
-      API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
-        if (res.status === 200) {
-          this.setState({ training_company_id: res.data.result .training_company_id })
-        }
-      })
-    }
   }
 
   componentDidMount(){
@@ -108,7 +113,7 @@ class Membership extends Component {
         name: 'Member Card',
         selector: 'license_card',
         sortable: true,
-        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt={row.license_number} src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>,
+        cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt='License Card' src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>,
         cellExport: row => row.license_card
       },
       {
@@ -118,7 +123,8 @@ class Membership extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
-        cellExport: row => row.license_number
+        cellExport: row => row.license_number,
+        minWidth: '224px'
       },
       {
         name: 'Name',
@@ -133,6 +139,7 @@ class Membership extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        maxWidth: '180px'
       },
       {
         name: 'Company',

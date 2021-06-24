@@ -99,7 +99,8 @@ class KalenderNew extends Component {
           fullScreen={this.state.fullscreen}
           allowScrollbar={false}
         >
-          <div className="card p-10">
+        <div className="card">
+          <div className="card-body">
             <h3 className="f-w-900 f-18 fc-blue">Calendar</h3>
             <div style={{ position: 'absolute', top: 10, right: this.state.fullscreen ? 30 : 10 }}>
               <i onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: '0px !important', fontSize: '20px', cursor: 'pointer' }}></i>
@@ -109,7 +110,7 @@ class KalenderNew extends Component {
               events={event}
               // defaultDate={new Date()}
               localizer={localizer}
-              style={{ height: 400 }}
+              style={{ height: this.props.height ? this.props.height : 400 }}
               eventPropGetter={(event, start, end, isSelected) => {
                 if (event.bgColor) {
                   return {
@@ -138,13 +139,13 @@ class KalenderNew extends Component {
               </span>
               Webinar
 
-              <span className="float-right">
+              {/* <span className="float-right">
                 <Link to="/full-kalender">Lihat Selengkapnya</Link>
-              </span>
+              </span> */}
             </div>
+           </div>
           </div>
         </ReactFullScreenElement>
-
       </div >
     );
 
