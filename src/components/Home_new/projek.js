@@ -390,7 +390,7 @@ class ProjekNew extends Component {
         <div className="col-sm-4 text-right">
           <p className="m-b-0">
             <Link to={"project"}>
-              <span className=" f-12 fc-skyblue">See all</span>
+              <span className=" f-12 fc-skyblue">Maximize</span>
             </Link>
           </p>
         </div>

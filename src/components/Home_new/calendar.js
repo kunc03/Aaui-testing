@@ -41,13 +41,13 @@ class Calendar extends Component {
               <div className="pcoded-inner-content">
                 <div className="main-body">
                   <div className="page-wrapper">
-                  {/* <Link to="#" onClick={() => this.props.history.goBack()} className="floating-back">
+                  <Link to="/" className="floating-back">
                     <img
                       src={`newasset/back-button.svg`}
                       alt=""
                       width={90}
                     ></img>
-                  </Link> */}
+                  </Link>
         <div className="row">
           <div className='col-sm-12 col-xl-12' style={{ paddingLeft: 0, paddingRight: 0 }}>
             <div className="col-sm-12">
