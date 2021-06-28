@@ -65,6 +65,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/course'
     },
     {
+        label: 'Live Class',
+        icon: 'webinars.svg',
+        iconActive: 'webinars-active.svg',
+        route: '/training/webinar'
+    },
+    {
         label: 'Quiz',
         icon: 'practice.svg',
         iconActive: 'practice-active.svg',
@@ -77,28 +83,22 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Live Class',
-        icon: 'webinars.svg',
-        iconActive: 'webinars-active.svg',
-        route: '/training/webinar'
-    },
-    {
         label: 'Membership',
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
         route: '/training/membership'
     },
     {
-        label: 'Questions',
-        icon: 'questions.svg',
-        iconActive: 'questions-active.svg',
-        route: '/training/questions'
-    },
-    {
         label: 'Report',
         icon: 'reports.svg',
         iconActive: 'reports-active.svg',
         route: '/training/report'
+    },
+    {
+        label: 'Questions',
+        icon: 'questions.svg',
+        iconActive: 'questions-active.svg',
+        route: '/training/questions'
     },
     {
         label: 'Settings',
@@ -140,6 +140,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/course'
     },
     {
+        label: 'Live Class',
+        icon: 'webinars.svg',
+        iconActive: 'webinars-active.svg',
+        route: '/training/webinar'
+    },
+    {
         label: 'Quiz',
         icon: 'practice.svg',
         iconActive: 'practice-active.svg',
@@ -152,28 +158,22 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
-        label: 'Live Class',
-        icon: 'webinars.svg',
-        iconActive: 'webinars-active.svg',
-        route: '/training/webinar'
-    },
-    {
         label: 'Membership',
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
         route: '/training/membership'
     },
     {
-        label: 'Questions',
-        icon: 'questions.svg',
-        iconActive: 'questions-active.svg',
-        route: '/training/questions'
-    },
-    {
         label: 'Report',
         icon: 'reports.svg',
         iconActive: 'reports-active.svg',
         route: '/training/report'
+    },
+    {
+        label: 'Questions',
+        icon: 'questions.svg',
+        iconActive: 'questions-active.svg',
+        route: '/training/questions'
     },
     {
         label: 'Settings',
