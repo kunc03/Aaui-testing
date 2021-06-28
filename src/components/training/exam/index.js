@@ -23,6 +23,9 @@ class Exam extends Component {
       filter:'',
       modalDelete: false,
       deleteId: '',
+      modalActivate: false,
+      activateId: '',
+      dataState: false,
       exam: this.props.quiz ? 0 : 1,
       isLoading: false
     };
@@ -41,9 +44,15 @@ class Exam extends Component {
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
   }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
+  }
 
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
+  }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
   }
 
   delete (id){
@@ -58,6 +67,18 @@ class Exam extends Component {
         }
     })
   }
+  activate (id){
+    API.put(`${API_SERVER}v2/training/exam-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate exam')
+        }
+        else{
+          this.getDataArchived(this.state.companyId);
+          this.closeModalActivate();
+          toast.success('exam activated');
+        }
+    })
+  }
   
   filter = (e) => {
     e.preventDefault();
@@ -65,8 +86,20 @@ class Exam extends Component {
   }
 
   getData(companyId){
-    this.setState({isLoading: true})
+    this.setState({isLoading: true, dataState:true})
     API.get(`${API_SERVER}v2/training/exam/${companyId}/${this.state.exam}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read exam list')
+            this.setState({isLoading: false})
+        }
+        else{
+            this.setState({data: res.data.result, isLoading: false})
+        }
+    })
+  }
+  getDataArchived(companyId){
+    this.setState({isLoading: true, dataState:false})
+    API.get(`${API_SERVER}v2/training/exam-archived/${companyId}/${this.state.exam}`).then(res => {
         if (res.data.error){
             toast.error('Error read exam list')
             this.setState({isLoading: false})
@@ -140,6 +173,7 @@ class Exam extends Component {
                 case 1 : this.props.quiz ? this.props.goTo(`/training/exam/assignment/` + row.id) : this.props.history.push(`/training/exam/assignment/` + row.id);break;
                 case 2 : this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id) : this.props.history.push(`/training/exam/edit/` + row.id);break;
                 case 3 : this.onClickHapus(row.id);break;
+                case 4 : this.onClickActivate(row.id);break;
                 default : this.props.goTo('/training/course');break;
               }
             }}
@@ -152,9 +186,10 @@ class Exam extends Component {
               <i className="fa fa-ellipsis-h"></i>
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-user-tag" /> Assignment</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-user-tag" /> Assignment</MenuItem> : null}
               <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -211,6 +246,8 @@ class Exam extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getDataArchived.bind(this, this.state.companyId)}>Deleted</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getData.bind(this, this.state.companyId)}>Active</div>
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
@@ -238,7 +275,7 @@ class Exam extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this exam ?</div>
+              <div>Are you sure want to delete this {this.state.exam ? 'exam' : 'quiz'} ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
@@ -246,6 +283,24 @@ class Exam extends Component {
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
                 <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this {this.state.exam ? 'exam' : 'quiz'} ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
+                <i className="fa fa-trash"></i> Activate
               </button>
             </Modal.Footer>
           </Modal>

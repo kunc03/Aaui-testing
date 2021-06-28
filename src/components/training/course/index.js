@@ -23,6 +23,9 @@ class Course extends Component {
       filter:'',
       modalDelete: false,
       deleteId: '',
+      modalActivate: false,
+      activateId: '',
+      dataState: false,
       isLoading: false
     };
     this.goBack = this.goBack.bind(this);
@@ -35,9 +38,15 @@ class Course extends Component {
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
   }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
+  }
 
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
+  }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
   }
 
   delete (id){
@@ -52,14 +61,40 @@ class Course extends Component {
         }
     })
   }
+
+  activate (id){
+    API.put(`${API_SERVER}v2/training/course-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate course')
+        }
+        else{
+          this.closeModalActivate();
+          this.getCourseListArchived(this.state.companyId);
+          toast.success('Course activated');
+        }
+    })
+  }
   
   filter = (e) => {
     e.preventDefault();
     this.setState({ filter: e.target.value });
   }
 
+  getCourseListArchived(companyId){
+    this.setState({isLoading: true, dataState:false});
+    API.get(`${API_SERVER}v2/training/course-list-admin-archived/${companyId}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read course list')
+            this.setState({isLoading: false});
+        }
+        else{
+            this.setState({data: res.data.result, isLoading: false})
+        }
+    })
+  }
+
   getCourseList(companyId){
-    this.setState({isLoading: true});
+    this.setState({isLoading: true, dataState:true});
     API.get(`${API_SERVER}v2/training/course-list-admin/${companyId}`).then(res => {
         if (res.data.error){
             toast.error('Error read course list')
@@ -75,7 +110,7 @@ class Course extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-          this.getCourseList(this.state.companyId)
+          this.getCourseList(this.state.companyId);
         }
     })
   }
@@ -139,6 +174,7 @@ class Course extends Component {
               switch (eventKey){
                 case 1 : this.props.history.push('/training/course/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
+                case 3 : this.onClickActivate(row.id);break;
                 default : this.props.goTo('/training/course');break;
               }
             }}
@@ -152,7 +188,8 @@ class Course extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -209,6 +246,8 @@ class Course extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getCourseListArchived.bind(this, this.state.companyId)}>Deleted</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getCourseList.bind(this, this.state.companyId)}>Active</div>
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
@@ -244,6 +283,24 @@ class Course extends Component {
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
                 <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this course ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
+                <i className="fa fa-trash"></i> Activate
               </button>
             </Modal.Footer>
           </Modal>
