@@ -229,7 +229,8 @@ class User extends Component {
   readAssign(id){
     this.setState({
       modalAssignee: true,
-      userAssigneeId: id
+      userAssigneeId: id,
+      optionsExam:[]
     });
     this.getExam(this.state.companyId);
     
