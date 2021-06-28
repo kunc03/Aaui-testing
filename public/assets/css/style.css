@@ -12483,3 +12483,27 @@ table.info-exam > tr > td{
 .rdt_ExpanderRow{
   background: #f7f7f7 !important;
 }
+
+.text-menu{
+  margin-top:20px;
+  float:right;
+  color:#0091FF;
+  cursor:pointer;
+  padding:5px 10px;
+}
+.text-menu:hover{
+  text-decoration: underline;
+}
+
+.text-menu.active{
+  margin-top:20px;
+  float:right;
+  color:#575757;
+  cursor:unset;
+  padding:5px 10px;
+  border-radius:4px;
+  background: rgb(231, 231, 231);
+}
+.text-menu.active:hover{
+  text-decoration: none;
+}

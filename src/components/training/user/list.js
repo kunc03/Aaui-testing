@@ -229,7 +229,8 @@ class User extends Component {
   readAssign(id){
     this.setState({
       modalAssignee: true,
-      userAssigneeId: id
+      userAssigneeId: id,
+      optionsExam:[]
     });
     this.getExam(this.state.companyId);
     
@@ -524,7 +525,7 @@ class User extends Component {
                                                             className="form-control float-right col-sm-3"/>
                                                         <div className="float-right col-sm-3 lite-filter">
                                                           {
-                                                            Storage.get('user').data.level === 'client' ? null :
+                                                            Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null :
                                                             <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
                                                           }
                                                         </div>
