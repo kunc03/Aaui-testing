@@ -47,6 +47,7 @@ class FormExam extends Component {
         generate: false,
         scheduled: false,
         generate_membership: false,
+        see_correct_answer: false,
         session_title : '',
         file: '',
         selectedQuestion: '',
@@ -75,6 +76,9 @@ class FormExam extends Component {
   }
   ToggleSwitchMembership(checked) {
     this.setState({ generate_membership: !this.state.generate_membership, edited: true });
+  }
+  ToggleSwitchSeeCorrectAnswer(checked) {
+    this.setState({ see_correct_answer: !this.state.see_correct_answer, edited: true });
   }
 
   goBack() {
@@ -115,6 +119,7 @@ class FormExam extends Component {
                 composition: this.state.composition,
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
+                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -122,6 +127,7 @@ class FormExam extends Component {
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit')
+                    this.setState({isSaving: false})
                 }
                 else{
                     if (this.state.image){
@@ -168,6 +174,7 @@ class FormExam extends Component {
                 course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
+                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -175,6 +182,7 @@ class FormExam extends Component {
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit')
+                    this.setState({isSaving: false})
                 }
                 else{
                     if (this.state.image){
@@ -224,6 +232,7 @@ class FormExam extends Component {
                 course_id: String(this.state.valueCourse2),
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
+                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
@@ -380,6 +389,7 @@ handleChangeAnswer = (value) => {
                 generate: res.data.result.generate_question ? true : false,
                 scheduled: res.data.result.scheduled ? true : false,
                 generate_membership: res.data.result.generate_membership ? true : false,
+                see_correct_answer: res.data.result.see_correct_answer ? true : false,
                 start_date: res.data.result.start_time ? new Date(res.data.result.start_time) : new Date(),
                 end_date: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
@@ -750,8 +760,13 @@ handleChangeAnswer = (value) => {
                                                         }
                                                         <div className="form-field-top-label">
                                                             <label for="scheduled">Generate Membership</label>
-                                                            <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
+                                                            <ToggleSwitch className="form-toggle-switch" name="membership" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
                                                             <p className="form-notes">{this.state.generate_membership ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
+                                                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="scheduled">Correct Answer Information</label>
+                                                            <ToggleSwitch className="form-toggle-switch" name="seecorrectanswer" onChange={this.ToggleSwitchSeeCorrectAnswer.bind(this)} checked={this.state.see_correct_answer} />
+                                                            <p className="form-notes">{this.state.see_correct_answer ? 'Users will be ale to see their answer and the correct answer' : 'Users will only see the result'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
