@@ -560,7 +560,7 @@ handleOverview = (e) => {
                                                             <input type="text" name="title" size="50" id="name" placeholder="XXXXX XXXXX XXXXX" value={this.state.title} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label" style={{width:'80%'}}>
-                                                                    <label for="overview">Overview</label>
+                                                                    <label for="overview">Overview<required>*</required></label>
                                                                     <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
                                                                     {
                                                                         this.state.overview !== 'Loading...' ?
