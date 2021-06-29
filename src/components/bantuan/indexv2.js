@@ -107,7 +107,7 @@ filterTags(val){
             </div>
           </div>
         </div>
-          <Modal show={this.state.modalVid} onHide={this.closeModalVid} dialogClassName="modal-lg" centered>
+          <Modal show={this.state.modalVid} onHide={this.closeModalVid} dialogClassName="modal-lg" className="xlarge-modal" centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 <h5>{this.state.title}</h5>
@@ -116,11 +116,17 @@ filterTags(val){
             <Modal.Body>
                 {
                     this.state.type === 'video' ?
-                    <iframe src={this.state.url} height="431" allow="autoplay" style={{border:'none', width: '100%'}}></iframe>
+                    <div className="tutorial-video-container">
+                        <iframe src={this.state.url} allow="autoplay" style={{border:'none', width: '100%', height:'100%'}}></iframe>
+                        <div className="tutorial-video-popout"> </div>
+                    </div>
                     : this.state.type === 'ppt' ?
-                    <iframe src={this.state.url} frameborder="0" height="464" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style={{border:'none', width: '100%'}}></iframe>
+                    <iframe src={this.state.url} frameborder="0" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style={{border:'none', width: '100%'}}></iframe>
                     :
-                    <iframe src={this.state.url} height="431" allow="autoplay" style={{border:'none', width: '100%'}}></iframe>
+                    <div className="tutorial-video-container">
+                        <iframe src={this.state.url} height="431" allow="autoplay" style={{border:'none', width: '100%', height:'100%'}}></iframe>
+                        <div className="tutorial-video-popout"> </div>
+                    </div>
                 }
             </Modal.Body>
           </Modal>
