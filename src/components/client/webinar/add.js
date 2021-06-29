@@ -224,7 +224,7 @@ class WebinarAddClass extends Component {
         id: this.state.webinarId,
         gambar: res.data.result.gambar,
         judul: res.data.result.judul,
-        isi: res.data.result.isi,
+        isi: res.data.result.isi ? res.data.result.isi : '',
         tanggal: tanggal,
         jamMulai: jam_mulai,
         jamSelesai: jam_selesai,

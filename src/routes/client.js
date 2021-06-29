@@ -13,7 +13,7 @@ const Notification = lazy(()=> import("../components/Notification/index"));
 const Pengumuman = lazy(()=> import("../components/Pengumuman/index"));
 const Pengaturan = lazy(()=> import("../components/Pengaturan/index"));
 const ZoomCallback = lazy(()=> import('../components/zoom/call'));
-const ClassBantuan = lazy(()=> import("../components/bantuan/index"));
+const ClassBantuan = lazy(()=> import("../components/bantuan/indexv2"));
 const Profile = lazy(()=> import("../components/Profile/index"));
 const FullCalender = lazy(()=> import("../components/kalender/fullKalender"));
 const News = lazy(()=> import("../components/news/index"));

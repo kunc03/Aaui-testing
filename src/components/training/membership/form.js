@@ -169,7 +169,7 @@ class FormMembership extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number<required>*</required></label>
-                                                            <input type="text" name="license_number" size="50" id="license_number" placeholder="123456" value={this.state.license_number} onChange={this.handleChange} disabled/>
+                                                            <input type="text" name="license_number" size="50" id="license_number" placeholder="" value={this.state.license_number} onChange={this.handleChange} disabled/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="expired">Expired<required>*</required></label>

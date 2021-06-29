@@ -286,7 +286,7 @@ export default class WebinarCreate extends Component {
                       {
                         this.state.projectId == 0 ?
                           <div className="form-group">
-                            <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}</label>
+                            <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}<required>*</required></label>
                             <MultiSelect
                               id="folder"
                               options={this.state.optionsFolder}
