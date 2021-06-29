@@ -48,6 +48,7 @@ class FormExam extends Component {
         scheduled: false,
         generate_membership: false,
         see_correct_answer: false,
+        multiple_assign: false,
         session_title : '',
         file: '',
         selectedQuestion: '',
@@ -79,6 +80,9 @@ class FormExam extends Component {
   }
   ToggleSwitchSeeCorrectAnswer(checked) {
     this.setState({ see_correct_answer: !this.state.see_correct_answer, edited: true });
+  }
+  ToggleSwitchMultipleAssign(checked) {
+    this.setState({ multiple_assign: !this.state.multiple_assign, edited: true });
   }
 
   goBack() {
@@ -120,6 +124,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                multiple_assign: this.state.see_correct_answer ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -175,6 +180,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                multiple_assign: this.state.multiple_assign ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
@@ -233,6 +239,7 @@ class FormExam extends Component {
                 scheduled: this.state.scheduled ? 1 : 0,
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                multiple_assign: this.state.multiple_assign ? 1 : 0,
                 start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
@@ -390,6 +397,7 @@ handleChangeAnswer = (value) => {
                 scheduled: res.data.result.scheduled ? true : false,
                 generate_membership: res.data.result.generate_membership ? true : false,
                 see_correct_answer: res.data.result.see_correct_answer ? true : false,
+                multiple_assign: res.data.result.multiple_assign ? true : false,
                 start_date: res.data.result.start_time ? new Date(res.data.result.start_time) : new Date(),
                 end_date: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
@@ -732,12 +740,12 @@ handleChangeAnswer = (value) => {
                                                             <label for="minScore">Minimum Score<required>*</required></label>
                                                             <input type="number" name="minScore" style={{width:100}} id="minScore" placeholder="0" value={this.state.minScore} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
-                                                        <div className="form-field-top-label">
+                                                        <div className="form-field-top-label" style={{maxWidth:240}}>
                                                             <label for="generate">Generate Question</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="generate" onChange={this.ToggleSwitch.bind(this)} checked={this.state.generate} />
                                                             <p className="form-notes">{this.state.generate ? 'Generate questions from question database' : 'Input questions manually'}</p>
                                                         </div>
-                                                        <div className="form-field-top-label">
+                                                        <div className="form-field-top-label" style={{maxWidth:240}}>
                                                             <label for="scheduled">Scheduled</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
                                                             <p className="form-notes">{this.state.scheduled ? 'Exam will available for certain schedule' : 'Exam always available'}</p>
@@ -758,12 +766,21 @@ handleChangeAnswer = (value) => {
                                                             </div>
                                                             : null
                                                         }
-                                                        <div className="form-field-top-label">
+                                                        <div className="form-field-top-label" style={{maxWidth:240}}>
                                                             <label for="scheduled">Generate Membership</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="membership" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
                                                             <p className="form-notes">{this.state.generate_membership ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
                                                         </div>
-                                                        <div className="form-field-top-label">
+                                                        {
+                                                            this.state.generate_membership ?
+                                                            <div className="form-field-top-label" style={{maxWidth:240}}>
+                                                                <label for="scheduled">Multiple Assign</label>
+                                                                <ToggleSwitch className="form-toggle-switch" name="multipleassign" onChange={this.ToggleSwitchMultipleAssign.bind(this)} checked={this.state.multiple_assign} />
+                                                                <p className="form-notes">{this.state.multiple_assign ? 'Admin can assign this exam to user more than once' : 'This exam will be able to assign to user once when user have active license'}</p>
+                                                            </div>
+                                                            : null
+                                                        }
+                                                        <div className="form-field-top-label" style={{maxWidth:240}}>
                                                             <label for="scheduled">Correct Answer Information</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="seecorrectanswer" onChange={this.ToggleSwitchSeeCorrectAnswer.bind(this)} checked={this.state.see_correct_answer} />
                                                             <p className="form-notes">{this.state.see_correct_answer ? 'Users will be ale to see their answer and the correct answer' : 'Users will only see the result'}</p>
