@@ -108,11 +108,6 @@ filterTags(val){
           </div>
         </div>
           <Modal show={this.state.modalVid} onHide={this.closeModalVid} dialogClassName="modal-lg" className="xlarge-modal" centered>
-            <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                <h5>{this.state.title}</h5>
-              </Modal.Title>
-            </Modal.Header>
             <Modal.Body>
                 {
                     this.state.type === 'video' ?

@@ -230,7 +230,9 @@ class User extends Component {
     this.setState({
       modalAssignee: true,
       userAssigneeId: id,
-      optionsExam:[]
+      valueExam:[]
+    },()=>{
+      this.setState({optionsExam:[]})
     });
     this.getExam(this.state.companyId);
     

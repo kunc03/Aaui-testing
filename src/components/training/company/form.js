@@ -221,7 +221,7 @@ class FormCompany extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="name">Company Name<required>*</required></label>
-                                                            <input type="text" name="name" size="50" id="name" placeholder="PT XXX XXX" value={this.state.name} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="name" size="50" id="name" placeholder={!this.state.disabledForm && "PT XXX XXX"} value={this.state.name} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -234,7 +234,7 @@ class FormCompany extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="address">Address<required>*</required></label>
-                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder="Jl.Pahlawan Seribu, BSD City, Tangerang, 15322" value={this.state.address} onChange={this.handleChange} disabled={this.state.disabledForm}></textarea>
+                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder={!this.state.disabledForm && "Jl.Pahlawan Seribu, BSD City, Tangerang, 15322"} value={this.state.address} onChange={this.handleChange} disabled={this.state.disabledForm}></textarea>
                                                         </div>
                                                         {/* <div className="form-field-top-label">
                                                             <label for="street">Street<required>*</required></label>
@@ -271,19 +271,19 @@ class FormCompany extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="telephone">Telephone Number<required>*</required></label>
-                                                            <input type="number" name="telephone" id="telephone" placeholder="021231231" value={this.state.telephone} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="number" name="telephone" id="telephone" placeholder={!this.state.disabledForm && "021231231"} value={this.state.telephone} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="fax">Fax Number</label>
-                                                            <input type="number" name="fax" id="fax" placeholder="021231231" value={this.state.fax} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="number" name="fax" id="fax" placeholder={!this.state.disabledForm && "021231231"} value={this.state.fax} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="website">Website</label>
-                                                            <input type="text" name="website" id="website" placeholder="domain.com" value={this.state.website} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="website" id="website" placeholder={!this.state.disabledForm && "domain.com"} value={this.state.website} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
-                                                            <input type="text" size="50" name="email" id="email" placeholder="email@host.com" value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" size="50" name="email" id="email" placeholder={!this.state.disabledForm && "email@host.com"} value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                     </div>
                                                 </div>

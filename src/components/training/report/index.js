@@ -419,7 +419,7 @@ class Report extends Component {
           <td>{data.score}</td>
         </tr>
         <tr>
-          <td>Exam</td>
+          <td>Exam / Quiz</td>
           <td>:</td>
           <td>{data.exam_type}</td>
           <td>Pass</td>
@@ -445,6 +445,9 @@ class Report extends Component {
                     <Badge variant="danger">{data.certificate_status}</Badge>
                     }
           </td>
+          <td>Submission Condition</td>
+          <td>:</td>
+          <td>{data.submission_condition}</td>
         </tr>
       </table>
     );

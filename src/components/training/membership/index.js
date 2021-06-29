@@ -14,6 +14,7 @@ import Moment from 'moment-timezone';
 import DatePicker from "react-datepicker";
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
+import { Modal } from 'react-bootstrap';
 
 class Membership extends Component {
   constructor(props) {
@@ -27,12 +28,55 @@ class Membership extends Component {
         range1: false,
         range2: false,
         isLoading: false,
+        modalDelete: false,
+        deleteId: '',
+        modalActivate: false,
+        activateId: '',
+        dataState: false
     };
     this.goBack = this.goBack.bind(this);
   }
-  
+
   goBack() {
     this.props.history.goBack();
+  }
+  
+  closeModalDelete = e => {
+    this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
+  }
+  onClickHapus(id){
+    this.setState({modalDelete: true, deleteId: id})
+  }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
+  }
+  delete (id){
+    API.delete(`${API_SERVER}v2/training/membership/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error delete membership')
+        }
+        else{
+          this.getData(this.state.companyId, true);
+          this.closeModalDelete();
+          toast.success('Membership deleted');
+        }
+    })
+  }
+
+  activate (id){
+    API.put(`${API_SERVER}v2/training/membership-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate membership')
+        }
+        else{
+          this.closeModalActivate();
+          this.getData(this.state.companyId, false);
+          toast.success('Membership activated');
+        }
+    })
   }
 
   handleChangeFilter = (name, e) => {
@@ -49,16 +93,16 @@ class Membership extends Component {
     }
   }
 
-  getData(companyId){
+  getData(companyId, state){
     let level = Storage.get('user').data.level;
     let grupName = Storage.get('user').data.grup_name;
     let sql = '';
-    this.setState({isLoading: true});
+    this.setState({isLoading: true, dataState:state});
     if (level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training'){
-      sql = `${API_SERVER}v2/training/membership-training/${this.state.training_company_id}`
+      sql = `${API_SERVER}v2/training/membership-training/${this.state.training_company_id}/${state ? 'Active' : 'Inactive'}`
     }
     else{
-      sql = `${API_SERVER}v2/training/membership/${companyId}`
+      sql = `${API_SERVER}v2/training/membership-company/${companyId}/${state ? 'Active' : 'Inactive'}`
     }
     API.get(sql).then(res => {
         if (res.data.error){
@@ -80,13 +124,13 @@ class Membership extends Component {
             API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
               if (res.status === 200) {
                 this.setState({ training_company_id: res.data.result.training_company_id },()=>{
-                  this.getData(this.state.companyId)
+                  this.getData(this.state.companyId, true)
                 })
               }
             })
           }
           else{
-            this.getData(this.state.companyId)
+            this.getData(this.state.companyId, true)
           }
         }
     })
@@ -96,10 +140,6 @@ class Membership extends Component {
 
   componentDidMount(){
     this.getUserData()
-  }
-
-  onClickHapus(){
-      toast.warning('Delete button clicked');
   }
   
   filter = (e) => {
@@ -166,6 +206,12 @@ class Membership extends Component {
               if (eventKey === 1) {
                 this.props.history.push('/training/membership/edit/' + row.id);
               }
+              else if (eventKey === 2){
+                this.onClickHapus(row.id);
+              }
+              else if (eventKey === 3){
+                this.onClickActivate(row.id);
+              }
             }}
           >
             <Dropdown.Toggle
@@ -177,6 +223,8 @@ class Membership extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -284,6 +332,8 @@ class Membership extends Component {
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getData.bind(this, this.state.companyId, false)}>Deleted</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getData.bind(this, this.state.companyId, true)}>Active</div>
                                                         <DataTableExtensions print={false} export exportHeaders columns={columns} data={data} filterPlaceholder='Filter Data'>
                                                           <DataTable
                                                           columns={columns}
@@ -307,6 +357,42 @@ class Membership extends Component {
                     </div>
                 </div>
             </div>
+          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this membership ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this membership ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
+                <i className="fa fa-trash"></i> Activate
+              </button>
+            </Modal.Footer>
+          </Modal>
         </div>
     )
   }
