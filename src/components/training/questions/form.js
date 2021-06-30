@@ -67,7 +67,7 @@ class FormQuestions extends Component {
 autoSave = (isDrag) =>{
     this.setState({isSaving: true})
     if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
-    if (!this.state.title || !this.state.overview){
+    if (!this.state.title || !this.state.overview || !this.state.answer.length){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
     }
@@ -111,7 +111,7 @@ autoSave = (isDrag) =>{
   save = (e, newSession) =>{
     this.setState({isSaving: true})
     e.preventDefault();
-    if (!this.state.valueLicensesType.length || !this.state.valueCourse.length){
+    if (!this.state.valueLicensesType.length || !this.state.valueCourse.length || !this.state.answer.length){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
     }
