@@ -27,6 +27,7 @@ class FormExam extends Component {
         start_date: new Date(),
         end_date: new Date(),
         edited: false,
+        totalQuestionsOnCourse: '',
 
         isSaving: false,
         id: this.props.match.params.id ? this.props.match.params.id : '',
@@ -106,6 +107,18 @@ class FormExam extends Component {
 
   autoSave = (isDrag) =>{
     this.setState({isSaving: true})
+    if (this.state.generate){
+        let error = false;
+        this.state.composition.map((item)=>{
+            if (item.course_id[0] !== 0 && item.total > (this.state.optionsCourse.filter(x=> x.value === item.course_id[0]).length ? this.state.optionsCourse.filter(x=> x.value === item.course_id[0])[0].total_questions : this.state.totalQuestionsOnCourse)){
+                toast.warning(`You don't have many questions for that composition`);
+                this.setState({isSaving: false});
+                error = true;
+                return;
+            }
+        })
+        if (error){return;}
+    }
     if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.valueLicensesType || !this.state.time || !this.state.minScore){
         toast.warning('Some field is required, please check your data.')
@@ -162,6 +175,18 @@ class FormExam extends Component {
   save = (e, newQuestion) =>{
     e.preventDefault();
     this.setState({isSaving: true})
+    if (this.state.generate){
+        let error = false;
+        this.state.composition.map((item)=>{
+            if (item.course_id[0] !== 0 && item.total > (this.state.optionsCourse.filter(x=> x.value === item.course_id[0]).length ? this.state.optionsCourse.filter(x=> x.value === item.course_id[0])[0].total_questions : this.state.totalQuestionsOnCourse)){
+                toast.warning(`You don't have many questions for that composition`);
+                this.setState({isSaving: false});
+                error = true;
+                return;
+            }
+        })
+        if (error){return;}
+    }
     if (!this.state.edited && !newQuestion) {this.setState({isSaving: false}); return;}
     if (!this.state.title || !this.state.valueLicensesType || !this.state.time || !this.state.minScore){
         toast.warning('Some field is required, please check your data.')
@@ -431,13 +456,14 @@ handleChangeAnswer = (value) => {
                     res.data.result.map((item)=>{
                         this.state.optionsLicensesType.push({label: item.name, value: item.id})
                     })
-                    API.get(`${API_SERVER}v2/training/course-list-admin/${this.state.companyId}`).then(res => {
+                    API.get(`${API_SERVER}v2/training/course-list-question/${this.state.companyId}`).then(res => {
                         if (res.data.error){
                             toast.error(`Error read course list`)
                         }
                         else{
+                            this.setState({totalQuestionsOnCourse: res.data.total_questions})
                             res.data.result.map((item)=>{
-                                this.state.optionsCourse.push({label: item.title, value: item.id})
+                                this.state.optionsCourse.push({label: item.title+' ('+item.total_questions+')', value: item.id, total_questions: item.total_questions})
                             })
                             if (this.state.id){
                                 this.getData(this.state.id);
