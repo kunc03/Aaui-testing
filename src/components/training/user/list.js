@@ -121,7 +121,7 @@ class User extends Component {
         else{
           this.getUserData(true);
           this.closeModalDelete();
-          toast.success(`${this.state.level} deleted`);
+          toast.success(`${this.state.level} deactivated`);
         }
     })
   }
@@ -376,7 +376,7 @@ class User extends Component {
             <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
             <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
             <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              {this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
               {!this.state.dataState? <MenuItem eventKey={5} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
           </Dropdown.Menu>
         </Dropdown>,
@@ -554,7 +554,7 @@ class User extends Component {
                                                             <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
                                                           }
                                                         </div>
-                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getUserData.bind(this, false)}>Deleted</div>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getUserData.bind(this, false)}>Inactive</div>
                                                         <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getUserData.bind(this, true)}>Active</div>
                                                         <DataTable
                                                         columns={Storage.get('user').data.level === 'client' ? columnsClient : columns}
@@ -574,14 +574,14 @@ class User extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this {this.state.level} ?</div>
+              <div>Are you sure want to deactivate this {this.state.level} ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
                 Cancel
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Deactivate
               </button>
             </Modal.Footer>
           </Modal>

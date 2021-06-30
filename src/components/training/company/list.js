@@ -61,7 +61,7 @@ class Company extends Component {
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.success('Company deleted');
+          toast.success('Company deactivated');
           this.setState({isActionWorking: false})
         }
     })
@@ -229,7 +229,7 @@ class Company extends Component {
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
               <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              {this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
               {!this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
@@ -306,7 +306,7 @@ class Company extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
-                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getCompanyArchived.bind(this, this.state.companyId)}>Deleted</div>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getCompanyArchived.bind(this, this.state.companyId)}>Inactive</div>
                                                         <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getCompany.bind(this, this.state.companyId)}>Active</div>
                                                         <DataTable
                                                         columns={columns}
@@ -327,14 +327,14 @@ class Company extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this company ?</div>
+              <div>Are you sure want to deactivate this company ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
                 Cancel
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)} disabled={this.state.isActionWorking}>
-                <i className="fa fa-trash"></i> {this.state.isActionWorking ? 'Deleting...' : 'Delete'}
+                <i className="fa fa-trash"></i> {this.state.isActionWorking ? 'Deactivating...' : 'Deactivate'}
               </button>
             </Modal.Footer>
           </Modal>
