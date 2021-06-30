@@ -23,6 +23,9 @@ class User extends Component {
         filter:'',
         modalDelete:false,
         deleteId:'',
+        modalActivate: false,
+        activateId: '',
+        dataState: false,
         level:'',
         import: true,
         file:'',
@@ -47,6 +50,9 @@ class User extends Component {
   }
   closeModalAssignee = e => {
     this.setState({ modalAssignee: false, userAssigneeId: '', valueExam: [] })
+  }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
   }
 
   assign (){
@@ -103,6 +109,9 @@ class User extends Component {
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
   }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
+  }
 
   delete (id){
     API.delete(`${API_SERVER}v2/training/user/${id}`).then(res => {
@@ -110,9 +119,21 @@ class User extends Component {
             toast.error(`Error delete ${this.state.level}`)
         }
         else{
-          this.getUserData();
+          this.getUserData(true);
           this.closeModalDelete();
           toast.success(`${this.state.level} deleted`);
+        }
+    })
+  }
+  activate (id){
+    API.put(`${API_SERVER}v2/training/user-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate user')
+        }
+        else{
+          this.closeModalActivate();
+          this.getUserData(false);
+          toast.success('User activated');
         }
     })
   }
@@ -126,16 +147,16 @@ class User extends Component {
     this.setState({ filter: e.target.value });
   }
 
-  getUserData(){
+  getUserData(state){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
           this.getCompany(this.state.companyId);
           if (this.props.trainingCompany){
-            this.getUserTrainingCompany(this.props.trainingCompany)
+            this.getUserTrainingCompany(this.props.trainingCompany, state)
           }
           else{
-            this.getUser(this.state.companyId)
+            this.getUser(this.state.companyId, state)
           }
         }
     })
@@ -166,9 +187,9 @@ class User extends Component {
     })
   }
 
-  getUser(id){
-    this.setState({isLoading: true});
-    API.get(`${API_SERVER}v2/training/user/${this.state.level}/${id}`).then(res => {
+  getUser(id, state){
+    this.setState({isLoading: true, dataState:state});
+    API.get(`${API_SERVER}v2/training/user${state ? '' : '-archived'}/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
             this.setState({isLoading: false});
@@ -179,9 +200,9 @@ class User extends Component {
     })
   }
 
-  getUserTrainingCompany(id){
-    this.setState({isLoading: true});
-    API.get(`${API_SERVER}v2/training/user/training-company/${this.state.level}/${id}`).then(res => {
+  getUserTrainingCompany(id, state){
+    this.setState({isLoading: true, dataState:state});
+    API.get(`${API_SERVER}v2/training/user${state ? '' : '-archived'}/training-company/${this.state.level}/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read ${this.state.level}`)
             this.setState({isLoading: false});
@@ -217,7 +238,7 @@ class User extends Component {
             this.setState({ isUploading: false, file: '' });
           }
           else{
-            this.getUserData();
+            this.getUserData(true);
             toast.success('Data import success')
             this.setState({ isUploading: false, file: '' });
           }
@@ -257,7 +278,7 @@ class User extends Component {
   }
 
   componentDidMount(){
-    this.getUserData();
+    this.getUserData(true);
     this.setState({
       level: this.props.level ? this.props.level : 'user',
       import: this.props.import ? this.props.import : false
@@ -339,6 +360,7 @@ class User extends Component {
               case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
               case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
               case 4 : this.onClickHapus(row.id);break;
+              case 5 : this.onClickActivate(row.id);break;
               default : this.props.goTo('/training/user');break;
             }
           }}
@@ -354,7 +376,8 @@ class User extends Component {
             <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
             <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
             <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={5} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
           </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
@@ -531,6 +554,8 @@ class User extends Component {
                                                             <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.setState({ valueCompany })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
                                                           }
                                                         </div>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getUserData.bind(this, false)}>Deleted</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getUserData.bind(this, true)}>Active</div>
                                                         <DataTable
                                                         columns={Storage.get('user').data.level === 'client' ? columnsClient : columns}
                                                         data={data}
@@ -616,6 +641,24 @@ class User extends Component {
             </button>
           </Modal.Footer>
         </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this user ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
+                <i className="fa fa-trash"></i> Activate
+              </button>
+            </Modal.Footer>
+          </Modal>
       </div>
     )
   }

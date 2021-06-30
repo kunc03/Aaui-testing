@@ -24,6 +24,9 @@ class Questions extends Component {
       file:'',
       modalDelete: false,
       deleteId: '',
+      modalActivate: false,
+      activateId: '',
+      dataState: false,
       isUploading: false,
       modalResultImport: false,
       resultImport: {field: [], data: []},
@@ -73,20 +76,38 @@ class Questions extends Component {
   closeModalResult = e => {
     this.setState({ modalResultImport: false })
   }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
+  }
 
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
+  }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
   }
 
   delete (id){
     API.delete(`${API_SERVER}v2/training/questions/${id}`).then(res => {
         if (res.data.error){
-            toast.error('Error delete questions')
+            toast.error('Error delete question')
         }
         else{
           this.getUserData();
           this.closeModalDelete();
           toast.success('Question deleted');
+        }
+    })
+  }
+  activate (id){
+    API.put(`${API_SERVER}v2/training/questions-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate question')
+        }
+        else{
+          this.closeModalActivate();
+          this.getListArchived(this.state.companyId);
+          toast.success('Question activated');
         }
     })
   }
@@ -97,8 +118,20 @@ class Questions extends Component {
   }
 
   getList(companyId){
-    this.setState({isLoading: true});
+    this.setState({isLoading: true, dataState:true});
     API.get(`${API_SERVER}v2/training/questions/${companyId}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read questions list')
+            this.setState({isLoading: false});
+        }
+        else{
+            this.setState({data: res.data.result, isLoading: false})
+        }
+    })
+  }
+  getListArchived(companyId){
+    this.setState({isLoading: true, dataState:false});
+    API.get(`${API_SERVER}v2/training/questions-archived/${companyId}`).then(res => {
         if (res.data.error){
             toast.error('Error read questions list')
             this.setState({isLoading: false});
@@ -159,6 +192,7 @@ class Questions extends Component {
               switch (eventKey){
                 case 1 : this.props.history.push('/training/questions/edit/' + row.id);break;
                 case 2 : this.onClickHapus(row.id);break;
+                case 3 : this.onClickActivate(row.id);break;
                 default : this.props.goTo('/training/questions');break;
               }
             }}
@@ -172,7 +206,8 @@ class Questions extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -276,6 +311,8 @@ class Questions extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getListArchived.bind(this, this.state.companyId)}>Deleted</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getList.bind(this, this.state.companyId)}>Active</div>
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
@@ -358,6 +395,24 @@ class Questions extends Component {
                 <div>No result</div>
               }
             </Modal.Body>
+          </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this question ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
+                <i className="fa fa-trash"></i> Activate
+              </button>
+            </Modal.Footer>
           </Modal>
         </div>
     )
