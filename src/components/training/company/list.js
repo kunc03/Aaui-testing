@@ -22,8 +22,12 @@ class Company extends Component {
         filter:'',
         modalDelete: false,
         deleteId: '',
+        modalActivate: false,
+        activateId: '',
+        dataState: false,
         file:'',
         isUploading: false,
+        isActionWorking: false,
         isLoading: false
     };
     this.goBack = this.goBack.bind(this);
@@ -31,6 +35,9 @@ class Company extends Component {
 
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalActivate = e => {
+    this.setState({ modalActivate: false, activateId: '' })
   }
 
   goBack() {
@@ -40,16 +47,37 @@ class Company extends Component {
   onClickHapus(id){
     this.setState({modalDelete: true, deleteId: id})
   }
+  onClickActivate(id){
+    this.setState({modalActivate: true, activateId: id})
+  }
 
   delete (id){
+    this.setState({isActionWorking: true})
     API.delete(`${API_SERVER}v2/training/company/${id}`).then(res => {
         if (res.data.error){
             toast.error('Error delete company')
+            this.setState({isActionWorking: false})
         }
         else{
           this.getUserData();
           this.closeModalDelete();
-          toast.success('Company deleted');
+          toast.success('Company deactivated');
+          this.setState({isActionWorking: false})
+        }
+    })
+  }
+  activate (id){
+    this.setState({isActionWorking: true})
+    API.put(`${API_SERVER}v2/training/company-activate/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error activate company')
+            this.setState({isActionWorking: false})
+        }
+        else{
+          this.closeModalActivate();
+          this.getCompanyArchived(this.state.companyId);
+          toast.success('Company activated');
+          this.setState({isActionWorking: false})
         }
     })
   }
@@ -69,8 +97,21 @@ class Company extends Component {
   }
 
   getCompany(id){
-    this.setState({isLoading: true});
+    this.setState({isLoading: true, dataState:true});
     API.get(`${API_SERVER}v2/training/company/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read company');
+            this.setState({isLoading: false});
+        }
+        else{
+            this.setState({data: res.data.result, isLoading: false})
+        }
+    })
+  }
+
+  getCompanyArchived(id){
+    this.setState({isLoading: true, dataState:false});
+    API.get(`${API_SERVER}v2/training/company-archived/${id}`).then(res => {
         if (res.data.error){
             toast.error('Error read company');
             this.setState({isLoading: false});
@@ -173,6 +214,7 @@ class Company extends Component {
                 case 1 : this.props.goTo('/training/company/detail/'+row.id);break;
                 case 2 : this.props.goTo('/training/company/edit/'+row.id);break;
                 case 3 : this.onClickHapus(row.id);break;
+                case 4 : this.onClickActivate(row.id);break;
                 default : this.props.goTo('/training');break;
               }
             }}
@@ -187,7 +229,8 @@ class Company extends Component {
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
               <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
         allowOverflow: true,
@@ -263,6 +306,8 @@ class Company extends Component {
                                                             placeholder="Search"
                                                             onChange={this.filter}
                                                             className="form-control float-right col-sm-3"/>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getCompanyArchived.bind(this, this.state.companyId)}>Inactive</div>
+                                                        <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getCompany.bind(this, this.state.companyId)}>Active</div>
                                                         <DataTable
                                                         columns={columns}
                                                         data={data}
@@ -282,14 +327,32 @@ class Company extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this company ?</div>
+              <div>Are you sure want to deactivate this company ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
                 Cancel
               </button>
-              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Delete
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)} disabled={this.state.isActionWorking}>
+                <i className="fa fa-trash"></i> {this.state.isActionWorking ? 'Deactivating...' : 'Deactivate'}
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to activate this company ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)} disabled={this.state.isActionWorking}>
+                <i className="fa fa-trash"></i> {this.state.isActionWorking ? 'Activating...' : 'Activate'}
               </button>
             </Modal.Footer>
           </Modal>

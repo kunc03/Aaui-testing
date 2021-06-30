@@ -61,7 +61,7 @@ class Membership extends Component {
         else{
           this.getData(this.state.companyId, true);
           this.closeModalDelete();
-          toast.success('Membership deleted');
+          toast.success('Membership deactivated');
         }
     })
   }
@@ -223,7 +223,7 @@ class Membership extends Component {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              {this.state.dataState? <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem> : null}
+              {this.state.dataState? <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
               {!this.state.dataState? <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
             </Dropdown.Menu>
           </Dropdown>,
@@ -332,7 +332,7 @@ class Membership extends Component {
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20">
                                                         <strong className="f-w-bold f-18" style={{color:'#000'}}>Membership List</strong>
-                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getData.bind(this, this.state.companyId, false)}>Deleted</div>
+                                                        <div class={`text-menu ${!this.state.dataState && 'active'}`} style={{clear:'both'}} onClick={this.getData.bind(this, this.state.companyId, false)}>Inactive</div>
                                                         <div class={`text-menu ${this.state.dataState && 'active'}`} onClick={this.getData.bind(this, this.state.companyId, true)}>Active</div>
                                                         <DataTableExtensions print={false} export exportHeaders columns={columns} data={data} filterPlaceholder='Filter Data'>
                                                           <DataTable
@@ -364,14 +364,14 @@ class Membership extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div>Are you sure want to delete this membership ?</div>
+              <div>Are you sure want to deactivate this membership ?</div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
                 Cancel
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Deactivate
               </button>
             </Modal.Footer>
           </Modal>
