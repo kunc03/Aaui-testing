@@ -557,8 +557,28 @@ fetchRekamanBBB(folder){
       }
     });
 
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
-  ,'R_FILES_FOLDER','U_FILES'])
+    if (!this.props.guest){
+      this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
+    ,'R_FILES_FOLDER','U_FILES'])
+    }
+    else{
+      this.setState({
+        gb: [
+          {
+            code: 'CD_FILE_FOLDER',
+            status: false
+          },
+          {
+            code: 'R_FILES_FOLDER',
+            status: true
+          },
+          {
+            code: 'U_FILES',
+            status: false
+          },
+        ]
+      })
+    }
 
   }
 

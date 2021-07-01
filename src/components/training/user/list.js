@@ -88,9 +88,11 @@ class User extends Component {
             toast.error('Error read company')
         }
         else{
+          if (!this.state.optionsCompany.length){
             res.data.result.map(item=>{
                 this.state.optionsCompany.push({label: item.name, value: item.id})
             })
+          }
         }
     })
   }
