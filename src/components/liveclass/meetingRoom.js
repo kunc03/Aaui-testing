@@ -370,6 +370,24 @@ export default class MeetingRoom extends Component {
         console.log('Kehadiran Aktual : Hadir')
       }
     })
+    let conference_id = this.props.match.params.roomid;
+    let user_id = Storage.get('user').data.user_id;
+    window.receiveMessageFromIndex = function ( event ) {
+      console.log('ALVIN',event);
+        if(event!=undefined){
+            let form = {
+                conference_id : conference_id,
+                user_id : user_id,
+                event : event.data.response
+            }
+            API.post(`${API_SERVER}v2/conference-logs`, form).then(res => {
+                if (res.data.error){
+                    console.log('Logging Failed')
+                }
+            })
+        }
+    }
+    window.addEventListener("message", window.receiveMessageFromIndex, false);
   }
 
   onClickInfo(class_id) {
@@ -1090,7 +1108,9 @@ export default class MeetingRoom extends Component {
                             {/*
                           <p className="fc-muted mt-1 mb-4">Moderator : {classRooms.name}</p> */}
                             <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
-                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                              <Iframe
+                                id="iframemeeting"
+                                url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="display-capture *; fullscreen *;geolocation *; microphone *; camera *;" position="relative" />
                             </div>
                             {/* <ThemeProvider theme={lightTheme}>
                             <MeetingProvider>

@@ -156,7 +156,6 @@ class Event extends Component {
                   <p className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                     {event.title}
                   </p>
-                  <h6>pembicara  : </h6>
                   <h6>{Moment.tz(event.create, 'Asia/Jakarta').format("DD MMMM YYYY")}, &nbsp;
                   {Moment.tz(event.start, 'Asia/Jakarta').format("HH:mm:ss")} -
                   {Moment.tz(event.end, 'Asia/Jakarta').format("HH:mm:ss")}</h6>
@@ -165,11 +164,11 @@ class Event extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-
+          <Link target='_blank' to={`/webinar/live/${this.props.event.activity_id}`}>
             <button className="btn btn-icademy-primary">
               <i className="fa fa-video"></i> Masuk
               </button>
-
+          </Link>
           </Modal.Footer>
         </Modal>
 

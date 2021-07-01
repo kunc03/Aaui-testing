@@ -304,6 +304,7 @@ export default class WebinarLive extends Component {
           webinar_id: res.data.result.webinar_id,
           email: res.data.result.email,
           description: res.data.result.description,
+          jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
           timestamp: new Date()
         })
         this.fetchQNAByUser()
@@ -667,7 +668,10 @@ export default class WebinarLive extends Component {
         else {
           this.fetchWebinar()
         }
+      }
+      if (data.description && data.webinar_id == this.state.webinarId) {
         this.setState({ qna: [data, ...this.state.qna] })
+        console.log('ALVINS', data)
       }
       if (data.socketAction == 'pemenangDoorprize' && data.webinar_id === this.state.webinarId) {
         this.state.pemenangDoorprize.push(data.name)
@@ -703,6 +707,24 @@ export default class WebinarLive extends Component {
       this.fetchWebinar()
     }
     this.fetchQNA()
+    let conference_id = this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId;
+    let user_id = this.props.voucher ? this.props.voucher : Storage.get('user').data.user_id;
+    window.receiveMessageFromIndex = function ( event ) {
+        if(event!=undefined){
+            console.log( 'ALVINSSS:', event.data.response );
+            let form = {
+                conference_id : conference_id,
+                user_id : user_id,
+                event : event.data.response
+            }
+            API.post(`${API_SERVER}v2/conference-logs`, form).then(res => {
+                if (res.data.error){
+                    console.log('Logging Failed')
+                }
+            })
+        }
+    }
+    window.addEventListener("message", window.receiveMessageFromIndex, false);
   }
   checkProjectAccess() {
     if (this.props.voucher) {
@@ -956,6 +978,7 @@ export default class WebinarLive extends Component {
                       <div className="col-sm-12">
                         {
                           this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+                          <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                             <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
                               height="600px"
@@ -963,6 +986,7 @@ export default class WebinarLive extends Component {
                               frameBorder="0"
                               allow="fullscreen *;geolocation *; microphone *; camera *"
                               position="relative" />
+                          </div>
                             :
                             this.state.status == 3 ?
                               <h3>Webinar telah berakhir</h3>
