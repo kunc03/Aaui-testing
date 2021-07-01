@@ -17,6 +17,8 @@ class SettingsTraining extends Component {
     this.state = {
         userId: '',
         companyId: '',
+        image:'',
+        imagePreview: API_SERVER+'training/membership/card.svg',
         data: [],
         modalCreate: false,
         modalDelete: false,
@@ -34,12 +36,13 @@ class SettingsTraining extends Component {
           }
         ],
         otherSettingActive: '',
-        otherSettingActiveValue: ''
+        otherSettingActiveValue: '',
+        isSaving: false
     };
   }
 
   closeModalCreate = e => {
-    this.setState({ modalCreate: false, typeName: '', typeId: '' })
+    this.setState({ modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg' })
   }
   closeModalDelete = e => {
     this.setState({ modalDelete: false, typeId: '' })
@@ -59,7 +62,23 @@ class SettingsTraining extends Component {
 
   handleChange = e => {
     let {name, value} = e.target;
-    this.setState({[name]: value})
+    if (name==='image'){
+      if (e.target.files.length){
+          if (e.target.files[0].size <= 5000000) {
+              let image = {
+                  image: e.target.files[0],
+                  imagePreview: URL.createObjectURL(e.target.files[0])
+              }
+              this.setState(image)
+          } else {
+            e.target.value = null;
+            toast.warning('Image size cannot larger than 5MB and must be an image file')
+          }
+      }
+    }
+    else{
+      this.setState({[name]: value})
+    }
 }
 
   save(){
@@ -67,6 +86,7 @@ class SettingsTraining extends Component {
           toast.warning('Please fill License Type Name')
       }
       else{
+        this.setState({isSaving: true});
           if (this.state.typeId === ''){
             let form = {
                 company_id: this.state.companyId,
@@ -77,9 +97,27 @@ class SettingsTraining extends Component {
                     toast.error(`Error create licenses type`)
                 }
                 else{
-                    toast.success(`New licenses type created`)
-                    this.closeModalCreate();
-                    this.getLicensesType(this.state.companyId)
+                    if (this.state.image){
+                        let formData = new FormData();
+                        formData.append("image", this.state.image)
+                        API.put(`${API_SERVER}v2/training/settings/licenses-type/image/${res.data.result.insertId}`, formData).then(res2 => {
+                            if (res2.data.error){
+                                toast.warning(`Licenses type edited but fail to upload image`)
+                            }
+                            else{
+                              this.setState({isSaving: true});
+                              toast.success(`New licenses type created`)
+                              this.closeModalCreate();
+                              this.getLicensesType(this.state.companyId)
+                            }
+                        })
+                    }
+                    else{
+                      this.setState({isSaving: true});
+                      toast.success(`New licenses type created`)
+                      this.closeModalCreate();
+                      this.getLicensesType(this.state.companyId)
+                    }
                 }
             })
           }
@@ -93,9 +131,27 @@ class SettingsTraining extends Component {
                     toast.error(`Error edit licenses type`)
                 }
                 else{
+                  if (this.state.image){
+                      let formData = new FormData();
+                      formData.append("image", this.state.image)
+                      API.put(`${API_SERVER}v2/training/settings/licenses-type/image/${form.id}`, formData).then(res2 => {
+                          if (res2.data.error){
+                              toast.warning(`Licenses type edited but fail to upload image`)
+                          }
+                          else{
+                            this.setState({isSaving: true});
+                            toast.success(`Licenses type edited`)
+                            this.closeModalCreate();
+                            this.getLicensesType(this.state.companyId)
+                          }
+                      })
+                  }
+                  else{
+                    this.setState({isSaving: true});
                     toast.success(`Licenses type edited`)
                     this.closeModalCreate();
                     this.getLicensesType(this.state.companyId)
+                  }
                 }
             })
           }
@@ -189,7 +245,7 @@ class SettingsTraining extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true, typeId: row.id, typeName: row.name});break;
+                case 1 : this.setState({modalCreate: true, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}
@@ -418,7 +474,7 @@ class SettingsTraining extends Component {
           <Modal show={this.state.modalCreate} onHide={this.closeModalCreate} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Create New Licenses Type
+                {this.state.typeId !== '' ? 'Edit' : 'Create New'} Licenses Type
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -426,13 +482,20 @@ class SettingsTraining extends Component {
                     <label for="typeName">Licenses Type Name<required>*</required></label>
                     <input type="text" name="typeName" size="50" id="typeName" placeholder="Example : Main Exam" value={this.state.typeName} onChange={this.handleChange}/>
                 </div>
+                <div className="form-field-top-label">
+                  <label for="image">Member Card Background</label>
+                  <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
+                    <img src={this.state.imagePreview} height="140px" />
+                  </label>
+                  <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                </div>
             </Modal.Body>
             <Modal.Footer>
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalCreate.bind(this)}>
                 Cancel
               </button>
-              <button className="btn btn-icademy-primary" onClick={this.save.bind(this)}>
-                <i className="fa fa-save"></i> Save
+              <button className="btn btn-icademy-primary" onClick={this.save.bind(this)} disabled={this.state.isSaving}>
+                <i className="fa fa-save"></i> {this.state.isSaving ? 'Saving...' : 'Save'}
               </button>
             </Modal.Footer>
           </Modal>
