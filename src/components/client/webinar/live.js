@@ -671,7 +671,6 @@ export default class WebinarLive extends Component {
       }
       if (data.description && data.webinar_id == this.state.webinarId) {
         this.setState({ qna: [data, ...this.state.qna] })
-        console.log('ALVINS', data)
       }
       if (data.socketAction == 'pemenangDoorprize' && data.webinar_id === this.state.webinarId) {
         this.state.pemenangDoorprize.push(data.name)
@@ -711,7 +710,6 @@ export default class WebinarLive extends Component {
     let user_id = this.props.voucher ? this.props.voucher : Storage.get('user').data.user_id;
     window.receiveMessageFromIndex = function ( event ) {
         if(event!=undefined){
-            console.log( 'ALVINSSS:', event.data.response );
             let form = {
                 conference_id : conference_id,
                 user_id : user_id,

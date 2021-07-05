@@ -322,7 +322,7 @@ export default class Users extends Component {
             pullRight
             onSelect={(eventKey) => {
               if (eventKey === 1) {
-                window.open(Storage.get('user').data.level === 'superadmin' ? '/user-edit/' : '/user-company-edit/' + row.id, "_self")
+                window.open((Storage.get('user').data.level === 'superadmin' ? '/user-edit/' : '/user-company-edit/') + row.id, "_self")
               }
             }}
           >

@@ -373,7 +373,6 @@ export default class MeetingRoom extends Component {
     let conference_id = this.props.match.params.roomid;
     let user_id = Storage.get('user').data.user_id;
     window.receiveMessageFromIndex = function ( event ) {
-      console.log('ALVIN',event);
         if(event!=undefined){
             let form = {
                 conference_id : conference_id,
@@ -542,7 +541,6 @@ export default class MeetingRoom extends Component {
           this.setState({
             fileChat: res.data.result
           })
-          console.log('ALVIN FILENAME', this.state.fileChat)
 
           API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
             if (res.status === 200) {
