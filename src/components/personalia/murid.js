@@ -116,9 +116,10 @@ class Murid extends React.Component {
   }
 
   fetchMurid() {
-    // dari table learning_murid : API.get(`${API_SERVER}v2/murid/company/${Storage.get('user').data.company_id}`).then(res => {
+    API.get(`${API_SERVER}v2/murid/company/${Storage.get('user').data.company_id}`).then(res => {
 
-    API.get(`${API_SERVER}v3/allUser/company/${Storage.get('user').data.company_id}`).then(res => {
+    // semua
+    // API.get(`${API_SERVER}v3/allUser/company/${Storage.get('user').data.company_id}`).then(res => {
       if (res.data.error) toast.warning("Error fetch murid");
 
       this.setState({ dataMurid: res.data.result })
