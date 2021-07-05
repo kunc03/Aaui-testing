@@ -66,8 +66,10 @@ class JadwalMengajar extends React.Component {
       }
 
       API.put(`${API_SERVER}v2/jadwal-mengajar/${this.state.idJadwal}`, form).then(res => {
-        if (res.data.error) toast.warning("Error update jadwal")
+        if (res.data.error) toast.warning("Error update jadwal");
 
+        toast.success("Schedule edited");
+        this.clearForm();
         this.fetchJadwal(companyId)
       })
 
