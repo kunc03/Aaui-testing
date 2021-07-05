@@ -291,8 +291,11 @@ class Tugas extends React.Component {
                       <td>{moment(item.created_at).format('DD/MM/YYYY HH:mm')}</td>
                       <td>
                         {
-                          this.state.infoExam.tipe_jawab == '1' ?
+                          this.state.tipe === "tugas" && this.state.infoExam.tipe_jawab == '1' ?
                             <a href={item.answer_file} target="_blank" className="silabus">Open</a>
+                            :
+                            this.state.tipe !== "tugas" && this.state.infoExam.tipe_jawab == '2' ?
+                            <a onClick={this.state.tipe === "tugas" ? this.detailMengumpulkan : this.detailMengumpulkanKuis} data-nama={item.nama} data-tugas={item.exam_id} data-user={item.user_id} data-id={item.answer_id} className="silabus">Open</a>
                             :
                             <div dangerouslySetInnerHTML={{ __html: item.answer_file }} />
                         }
