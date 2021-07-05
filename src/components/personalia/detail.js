@@ -238,7 +238,7 @@ class PersonaliaDetail extends React.Component {
         <div className="col-sm-12">
 
           <div className="card">
-            <div className="card-header">Student Detail Information</div>
+            <div className="card-header">{this.state.tipe === 'guru' ? 'Teacher' : 'Student'} Detail Information</div>
             <div className="card-body" style={{ padding: '5px' }}>
               <h5 style={{ color: '#004887', fontSize: '15px', margin: '20px' }}>Personal Info</h5>
               <form onSubmit={this.simpanData}>
@@ -316,7 +316,8 @@ class PersonaliaDetail extends React.Component {
           </div>
 
         </div>
-
+        {
+        this.state.tipe === 'murid' ?
         <div className="col-sm-12">
 
           <div className="card">
@@ -451,6 +452,8 @@ class PersonaliaDetail extends React.Component {
           </div>
 
         </div>
+        : null
+        }
       </div>
     );
   }
