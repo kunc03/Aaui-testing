@@ -26,7 +26,7 @@ class Allocation extends Component {
   }
   
   closeModalAllocation = e => {
-    this.setState({ modalAllocation: false, amount: '', licensesId: '', mode: '' })
+    this.setState({ modalAllocation: false, amount: '', licensesId: '', mode: '', note: '' })
   }
 
   handleChange = e => {
