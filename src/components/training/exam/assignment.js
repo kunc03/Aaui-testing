@@ -204,6 +204,7 @@ class Assignment extends Component {
 
   assign = (e) => {
     e.preventDefault();
+    this.setState({isSaving: true});
     let items = this.state.usersSelected;
     let training_user_id = items.map(x => {
       return x.id;
@@ -217,15 +218,18 @@ class Assignment extends Component {
     API.post(`${API_SERVER}v2/training/bulk-assign`, form).then(res => {
         if (res.data.error){
             toast.error(`Error assign`)
+            this.setState({isSaving: false});
         }
         else{
           if (res.data.result === 'validationError'){
             toast.error(res.data.message);
+            this.setState({isSaving: false});
           }
           else{
             this.setState({toggledClearRows: true})
             this.getAssignee(this.props.match.params.id)
             toast.success(`Assignment success`);
+            this.setState({isSaving: false});
           }
         }
     })
