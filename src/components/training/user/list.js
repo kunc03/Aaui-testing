@@ -21,6 +21,11 @@ class User extends Component {
         companyId:'',
         data : [],
         filter:'',
+        isSending: false,
+        notifMessage: '',
+        modalNotif: false,
+        notifUserId: '',
+        notifUserName: '',
         modalDelete:false,
         deleteId:'',
         modalActivate: false,
@@ -47,6 +52,9 @@ class User extends Component {
   
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteId: '' })
+  }
+  closeModalNotif = e => {
+    this.setState({ modalNotif: false, notifUserId: '' })
   }
   closeModalAssignee = e => {
     this.setState({ modalAssignee: false, userAssigneeId: '', valueExam: [] })
@@ -139,6 +147,26 @@ class User extends Component {
         }
     })
   }
+  sendNotif (){
+    this.setState({isSending: true});
+    let form = {
+      user_id: this.state.notifUserId,
+      type: 12,
+      activity_id: 0,
+      desc: this.state.notifMessage,
+      dest: ''
+    }
+    API.post(`${API_SERVER}v1/notification/broadcast`, form).then(res => {
+        if (res.data.error){
+            toast.error('Error send notification')
+        }
+        else{
+          this.closeModalNotif();
+          toast.success('Notification sent');
+          this.setState({isSending: false, notifMessage: ''});
+        }
+    })
+  }
 
   goBack() {
     this.props.history.goBack();
@@ -220,6 +248,10 @@ class User extends Component {
     this.setState({
       file: e.target.files[0]
     });
+  }
+  handleChange = e => {
+      let {name, value} = e.target;
+      this.setState({[name]: value})
   }
 
   uploadData = e => {
@@ -360,10 +392,11 @@ class User extends Component {
           onSelect={(eventKey) => {
             switch (eventKey){
               case 1 : this.readAssign(row.id);break;
-              case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
-              case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
-              case 4 : this.onClickHapus(row.id);break;
-              case 5 : this.onClickActivate(row.id);break;
+              case 2 : this.setState({modalNotif: true, notifUserId: row.id, notifUserName: row.name});break;
+              case 3 : this.props.goTo('/training/user/detail/'+row.id);break;
+              case 4 : this.props.goTo('/training/user/edit/'+row.id);break;
+              case 5 : this.onClickHapus(row.id);break;
+              case 6 : this.onClickActivate(row.id);break;
               default : this.props.goTo('/training/user');break;
             }
           }}
@@ -377,10 +410,11 @@ class User extends Component {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
-            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
-            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-              {this.state.dataState? <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
-              {!this.state.dataState? <MenuItem eventKey={5} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
+            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-bell" /> Notification</MenuItem>
+            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-info-circle" /> Detail</MenuItem>
+            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={5} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={6} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
           </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
@@ -451,9 +485,11 @@ class User extends Component {
           onSelect={(eventKey) => {
             switch (eventKey){
               case 1 : this.readAssign(row.id);break;
-              case 2 : this.props.goTo('/training/user/detail/'+row.id);break;
-              case 3 : this.props.goTo('/training/user/edit/'+row.id);break;
-              case 4 : this.onClickHapus(row.id);break;
+              case 2 : this.setState({modalNotif: true, notifUserId: row.id, notifUserName: row.name});break;
+              case 3 : this.props.goTo('/training/user/detail/'+row.id);break;
+              case 4 : this.props.goTo('/training/user/edit/'+row.id);break;
+              case 5 : this.onClickHapus(row.id);break;
+              case 6 : this.onClickActivate(row.id);break;
               default : this.props.goTo('/training/user');break;
             }
           }}
@@ -467,9 +503,11 @@ class User extends Component {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-tags" /> Assignment</MenuItem>
-            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-edit" /> Detail</MenuItem>
-            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
-            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+            <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-bell" /> Notification</MenuItem>
+            <MenuItem eventKey={3} data-id={row.id}><i className="fa fa-info-circle" /> Detail</MenuItem>
+            <MenuItem eventKey={4} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              {this.state.dataState? <MenuItem eventKey={5} data-id={row.id}><i className="fa fa-trash" /> Deactivate</MenuItem> : null}
+              {!this.state.dataState? <MenuItem eventKey={6} data-id={row.id}><i className="fa fa-save" /> Activate</MenuItem> : null}
           </Dropdown.Menu>
         </Dropdown>,
         allowOverflow: true,
@@ -659,6 +697,27 @@ class User extends Component {
               </button>
               <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
                 <i className="fa fa-trash"></i> Activate
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.modalNotif} onHide={this.closeModalNotif} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Send Notification to {this.state.notifUserName}
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                                                        <div className="form-field-top-label">
+                                                            <label for="notifMessage">Notification<required>*</required></label>
+                                                            <textarea name="notifMessage" rows="3" cols="60" id="address" placeholder={!this.state.disabledForm && "Message..."} value={this.state.notifMessage} onChange={this.handleChange}></textarea>
+                                                        </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalNotif.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.sendNotif.bind(this)} disabled={this.state.isSending}>
+                <i className="fa fa-paper-plane"></i> {this.state.isSending ? 'Sending...' : 'Send'}
               </button>
             </Modal.Footer>
           </Modal>
