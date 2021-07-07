@@ -129,26 +129,32 @@ class User extends Component {
   }
 
   delete (id){
+    this.setState({isSaving: true});
     API.delete(`${API_SERVER}v2/training/user/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error delete ${this.state.level}`)
+            this.setState({isSaving: false});
         }
         else{
           this.getUserData(true);
           this.closeModalDelete();
           toast.success(`${this.state.level} deactivated`);
+          this.setState({isSaving: false});
         }
     })
   }
   activate (id){
+    this.setState({isSaving: true});
     API.put(`${API_SERVER}v2/training/user-activate/${id}`).then(res => {
         if (res.data.error){
             toast.error('Error activate user')
+            this.setState({isSaving: false});
         }
         else{
           this.closeModalActivate();
           this.getUserData(false);
           toast.success('User activated');
+          this.setState({isSaving: false});
         }
     })
   }
@@ -626,8 +632,8 @@ class User extends Component {
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
                 Cancel
               </button>
-              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Deactivate
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)} disabled={this.state.isSaving}>
+                <i className="fa fa-trash"></i> {this.state.isSaving ? 'Deactivating...' : 'Deactivate'}
               </button>
             </Modal.Footer>
           </Modal>
@@ -700,8 +706,8 @@ class User extends Component {
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
                 Cancel
               </button>
-              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
-                <i className="fa fa-trash"></i> Activate
+              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)} disabled={this.state.isSaving}>
+                <i className="fa fa-trash"></i> {this.state.isSaving ? 'Activating...' : 'Activate'}
               </button>
             </Modal.Footer>
           </Modal>
