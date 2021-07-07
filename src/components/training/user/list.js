@@ -45,7 +45,8 @@ class User extends Component {
         optionsExam: [],
         valueExam: [],
         optionsCompany: [],
-        valueCompany: []
+        valueCompany: [],
+        isSaving: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -64,6 +65,7 @@ class User extends Component {
   }
 
   assign (){
+    this.setState({isSaving: true});
     if (this.state.valueExam.length){
       let form = {
         exam_id : String(this.state.valueExam),
@@ -73,6 +75,7 @@ class User extends Component {
       API.post(`${API_SERVER}v2/training/assign`, form).then(res => {
           if (res.data.error){
               toast.error(`Error assign`)
+              this.setState({isSaving: false});
           }
           else{
             if (res.data.result === 'validationError'){
@@ -81,12 +84,14 @@ class User extends Component {
             else{
               this.readAssign(form.training_user_id);
               toast.success(`Assignment success`);
+              this.setState({isSaving: false});
             }
           }
       })
     }
     else{
       toast.warning('Select exam')
+      this.setState({isSaving: false});
     }
   }
 
@@ -677,8 +682,8 @@ class User extends Component {
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalAssignee}>
               Cancel
             </button>
-            <button className="btn btn-icademy-primary" onClick={this.assign.bind(this)}>
-              <i className="fa fa-save"></i> Assign
+            <button className="btn btn-icademy-primary" onClick={this.assign.bind(this)} disabled={this.state.isSaving}>
+              <i className="fa fa-save"></i> {this.state.isSaving ? 'Assigning...' : 'Assign'}
             </button>
           </Modal.Footer>
         </Modal>
