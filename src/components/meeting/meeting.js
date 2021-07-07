@@ -225,7 +225,11 @@ class MeetingTable extends Component {
   };
 
   toggleSwitchAkses(checked) {
-    this.setState({ akses: !this.state.akses });
+    this.setState({ akses: !this.state.akses },()=>{
+      if (!this.state.akses){
+        this.setState({valueModerator: []})
+      }
+    });
   }
   toggleSwitch(checked) {
     this.setState({ private: !this.state.private });
