@@ -105,11 +105,11 @@ class Event extends Component {
         this.setState({
           infoClass: res.data.result[0],
           infoParticipant: res.data.result[1],
-          countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
-          countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
-          countTentative: res.data.result[1].filter((item) => item.confirmation == '').length,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length,
-          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
+          countHadir: res.data.result[1] ? res.data.result[1].filter((item) => item.confirmation == 'Hadir').length : 0,
+          countTidakHadir: res.data.result[1] ? res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length : 0,
+          countTentative: res.data.result[1] ? res.data.result[1].filter((item) => item.confirmation == '').length : 0,
+          needConfirmation: res.data.result[1] ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation == '').length : 0,
+          attendanceConfirmation: res.data.result[1] ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null : null
         })
       }
     })
