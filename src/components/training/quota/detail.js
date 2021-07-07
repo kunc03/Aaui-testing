@@ -22,7 +22,8 @@ class Allocation extends Component {
         amount: '',
         mode: '',
         id: '',
-        note:''
+        note:'',
+        isSaving: false
     };
   }
   
@@ -37,8 +38,10 @@ class Allocation extends Component {
 
   
   save(){
+    this.setState({isSaving: true});
     if (this.state.amount === '' || this.state.amount === '0'){
         toast.warning('Please fill amount')
+        this.setState({isSaving: false});
     }
     else{
           let form = {
@@ -53,12 +56,14 @@ class Allocation extends Component {
           API.post(`${API_SERVER}v2/training/quota/company/transaction`, form).then(res => {
               if (res.data.error){
                   toast.error(res.data.result)
+                  this.setState({isSaving: false});
               }
               else{
                   toast.success(`Success for licenses allocation ${this.state.mode}`)
                   this.closeModalAllocation();
                   this.getAllocation();
                   this.getHistory();
+                  this.setState({isSaving: false});
               }
           })
     }
@@ -308,7 +313,7 @@ class Allocation extends Component {
               <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalAllocation.bind(this)}>
                 Cancel
               </button>
-              <button className="btn btn-icademy-primary" onClick={this.save.bind(this)}>
+              <button className="btn btn-icademy-primary" onClick={this.save.bind(this)} disabled={this.state.isSaving}>
                 <i className={`fa fa-${this.state.mode === 'addition' ? 'plus' : 'minus'}`}></i> {this.state.mode === 'addition' ? 'Add' : 'Reduce'}
               </button>
             </Modal.Footer>

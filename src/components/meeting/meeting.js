@@ -225,7 +225,11 @@ class MeetingTable extends Component {
   };
 
   toggleSwitchAkses(checked) {
-    this.setState({ akses: !this.state.akses });
+    this.setState({ akses: !this.state.akses },()=>{
+      if (!this.state.akses){
+        this.setState({valueModerator: []})
+      }
+    });
   }
   toggleSwitch(checked) {
     this.setState({ private: !this.state.private });
@@ -505,7 +509,7 @@ class MeetingTable extends Component {
           let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
           let form = {
             room_name: this.state.roomName,
-            moderator: this.state.valueModerator,
+            moderator: this.state.akses ? this.state.valueModerator : [],
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
             webinar_id: this.state.webinar_id,
             is_private: isPrivate,
@@ -622,7 +626,7 @@ class MeetingTable extends Component {
             webinar_id: this.state.webinar_id,
             speaker: this.state.speaker,
             room_name: this.state.roomName,
-            moderator: this.state.valueModerator,
+            moderator: this.state.akses ? this.state.valueModerator : [],
             is_private: isPrivate,
             is_akses: isAkses,
             is_required_confirmation: isRequiredConfirmation,

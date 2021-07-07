@@ -22,6 +22,7 @@ class FormUser extends Component {
         email:'',
         level: '',
         license_number: '',
+        expired: '',
         optionCompany:[],
         companyId:'',
         disabledForm: this.props.disabledForm && this.props.id
@@ -40,7 +41,7 @@ class FormUser extends Component {
 
   save = (e) => {
     e.preventDefault();
-    if (!this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+    if ((!this.props.match.params.id && !this.state.expired) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
     }
     else{
@@ -97,6 +98,7 @@ class FormUser extends Component {
               identity: this.state.identity,
               tin: this.state.tin,
               license_number: this.state.license_number,
+              expired: this.state.expired,
               address: this.state.address,
               city: this.state.city,
               phone: this.state.phone,
@@ -327,6 +329,14 @@ class FormUser extends Component {
                                                             <label for="license_number">License Number</label>
                                                             <input type="text" name="license_number" id="license_number" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
+                                                        {
+                                                            this.state.license_number.length && !this.props.match.params.id && !this.state.disabledForm ?
+                                                            <div className="form-field-top-label">
+                                                                <label for="expired">License Expired<required style={{fontSize:'11px'}}>*Required if License Number filled</required></label>
+                                                                <input type="date" name="expired" id="expired" value={this.state.expired} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            </div>
+                                                            : null
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="form-section">
