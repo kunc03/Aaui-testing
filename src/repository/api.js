@@ -18,13 +18,13 @@ export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MO
 export const API_JITSI = 'meet.icademy.id';
 export const API_SOCKET = "https://socket.icademy.stg.kelola.co.id";
 
-export const BBB_URL = "https://manager.bigbluemeeting.com/bigbluebutton";
-export const BBB_KEY = "9LtSXn4QcsiyWU0UEXirBJMUuSXgltFEHcCBOYAat0";
+export const BBB_URL = "https://con.icademy.id/bigbluebutton/";
+export const BBB_KEY = "4fXLSWqBe6AqYaBPlSbHa1BNEPhMMfctlzmG0WcFdw";
 
 export const BBB_SERVER_LIST = [
-  // { server: 'https://bbb.kelola.co.id/bigbluebutton/', key: '19be6111e03f04d35272bb3a1c1b1ff8b836bdb25ecae852a2b013aec59ce11d' },
+  { server: 'https://con.icademy.id/bigbluebutton/', key: '4fXLSWqBe6AqYaBPlSbHa1BNEPhMMfctlzmG0WcFdw' },
   { server: 'https://manager.bigbluemeeting.com/bigbluebutton/', key: '9LtSXn4QcsiyWU0UEXirBJMUuSXgltFEHcCBOYAat0' },
-  { server: 'https://con1.icademy.id/bigbluebutton/', key: 'bemKTwkzELgFHhrmy0YstNLhBIvHumXJAK8s8DZrvYc' }
+  // { server: 'https://con1.icademy.id/bigbluebutton/', key: 'bemKTwkzELgFHhrmy0YstNLhBIvHumXJAK8s8DZrvYc' }
 ]
 
 export const CHIME_URL = `https://ftabz8v877.execute-api.ap-southeast-1.amazonaws.com/Prod`;
