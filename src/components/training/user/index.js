@@ -10,7 +10,8 @@ class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      training_company_id : ''
+      training_company_id : '',
+      isLoading: false
     };
   }
 
@@ -24,9 +25,10 @@ class User extends Component {
   }
 
   fetchDataUser() {
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
       if (res.status === 200) {
-        this.setState({ training_company_id: res.data.result .training_company_id })
+        this.setState({ training_company_id: res.data.result .training_company_id, isLoading: false })
       }
     })
   }
@@ -58,7 +60,11 @@ class User extends Component {
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='User'/>
                                         <div>
+                                          {
+                                            !this.state.isLoading ?
                                             <ListData goTo={this.goTo.bind(this)} import={true} trainingCompany={this.state.training_company_id !== '' ? this.state.training_company_id : false}/>
+                                            : null
+                                          }
                                         </div>
                                     </div>
                                 </div>
