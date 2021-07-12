@@ -284,9 +284,9 @@ export default class WebinarCreate extends Component {
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
                       {
-                        this.state.projectId == 0 ?
+                        this.state.projectId !== 0 ?
                           <div className="form-group">
-                            <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}<required>*</required></label>
+                            <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}</label>
                             <MultiSelect
                               id="folder"
                               options={this.state.optionsFolder}
@@ -307,7 +307,7 @@ export default class WebinarCreate extends Component {
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">Engine</Form.Label>
                           <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
-                            <option value="bbb">Big Blue Button</option>
+                            <option value="bbb">ICADEMY</option>
                             <option value="zoom">Zoom</option>
                           </select>
                           <Form.Text className="text-muted">
