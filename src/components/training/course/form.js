@@ -68,7 +68,7 @@ class FormCourse extends Component {
 
 autoSave = (isDrag) =>{
     this.setState({isSaving: true})
-    if (!this.state.edited && !isDrag){this.setState({isSaving: false}); return;}
+    if (!this.state.edited && !isDrag){this.setState({isSaving: false});return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
@@ -116,7 +116,7 @@ autoSave = (isDrag) =>{
   save = (e, newSession) =>{
     this.setState({isSaving: true})
     e.preventDefault();
-    if (!this.state.edited && !newSession) {this.setState({isSaving: false}); return;}
+    if (!this.state.edited && !newSession) {this.setState({isSaving: false});return;}
     if (!this.state.title || !this.state.overview){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
@@ -254,13 +254,21 @@ handleOverview = (e) => {
       if (name==='media'){
         if (e.target.files.length){
             if (e.target.files[0].size <= 500000000) {
-                this.setState({isUploading: true})
+                // this.setState({isUploading: true})
+                let selectedSession = this.state.selectedSession;
+                let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === selectedSession)[0]);
+                let session = this.state.session;
+                session[i].isUploading = true;
+                this.setState({session: session})
                 let formData = new FormData();
                 formData.append("media", e.target.files[0])
                 let token = Storage.get('token');
                 var config = {
                   onUploadProgress: progressEvent => {
-                    this.setState({progressUploadMedia: Math.round( (progressEvent.loaded * 100) / progressEvent.total )});
+                    // this.setState({progressUploadMedia: Math.round( (progressEvent.loaded * 100) / progressEvent.total )});
+                    let session = this.state.session;
+                    session[i].progressUploadMedia = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
+                    this.setState({session: session})
                   },
                   headers: {
                     Authorization: token.data,
@@ -269,17 +277,23 @@ handleOverview = (e) => {
                 axios.post(`${API_SERVER}v2/training/course/session/media/${this.state.selectedSession}`, formData, config).then(res => {
                     if (res.data.error){
                         toast.warning('Fail to upload image')
-                        this.setState({isUploading: false, progressUploadMedia: 0})
+                        // this.setState({isUploading: false, progressUploadMedia: 0})
+                        let session = this.state.session;
+                        session[i].progressUploadMedia = 0;
+                        session[i].isUploading = false;
+                        this.setState({session: session})
                     }
                     else{
-                        let i = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
-                        let media = this.state.media;
-                        media.push({
+                        this.state.session[i].media.push({
                             id: res.data.result.id,
                             name: res.data.result.name,
                             url: res.data.result.url
                         })
-                        this.setState({media: media, isUploading: false, progressUploadMedia: 0})
+                        // this.setState({isUploading: false, progressUploadMedia: 0})
+                        let session = this.state.session;
+                        session[i].progressUploadMedia = 0;
+                        session[i].isUploading = false;
+                        this.setState({session: session})
                     }
                 })
             } else {
@@ -505,6 +519,7 @@ handleOverview = (e) => {
   }
   render() {
     let {session, media} = this.state;
+    let indexSession = this.state.session.indexOf(this.state.session.filter(item=> item.id === this.state.selectedSession)[0]);
     return(
         <div className="pcoded-main-container">
             <div className="pcoded-wrapper">
@@ -786,12 +801,18 @@ handleOverview = (e) => {
                                                                             })
                                                                         }
                                                                     </div>
-                                                                    <label for="media" className="form-control" disabled={this.state.isUploading}>
-                                                                        <div className='loading-button' style={{width:this.state.progressUploadMedia+'%'}}></div>
-                                                                        {this.state.isUploading ? null : <i className="fa fa-plus"></i>}&nbsp;
-                                                                        {this.state.isUploading ? `Uploading... ${this.state.progressUploadMedia}%` : 'Add media'}
-                                                                    </label>
-                                                                    <input type="file" id="media" name="media" disabled={this.state.isUploading} class="form-control file-upload-icademy" onChange={this.handleChange} />
+                                                                    {
+                                                                        this.state.session[indexSession] ?
+                                                                        <>
+                                                                            <label for="media" className="form-control" disabled={this.state.session[indexSession].progressUploadMedia}>
+                                                                                <div className='loading-button' style={{width: this.state.session[indexSession].progressUploadMedia ? this.state.session[indexSession].progressUploadMedia : '0' +'%'}}></div>
+                                                                                {this.state.session[indexSession].progressUploadMedia ? null : <i className="fa fa-plus"></i>}&nbsp;
+                                                                                {this.state.session[indexSession].progressUploadMedia ? this.state.session[indexSession].progressUploadMedia === 100 ? 'Uploaded. Processing file...' : `Uploading... ${this.state.session[indexSession].progressUploadMedia}%` : 'Add media'}
+                                                                            </label>
+                                                                            <input type="file" id="media" name="media" disabled={this.state.session[indexSession].progressUploadMedia} class="form-control file-upload-icademy" onChange={this.handleChange} onClick={e=> e.target.value = null} />
+                                                                        </>
+                                                                        : null
+                                                                    }
                                                                 </div>
                                                             </div>
                                                             : null
@@ -812,12 +833,12 @@ handleOverview = (e) => {
                                                     {
                                                     !this.props.disabledForm &&
                                                     <button
-                                                    disabled={this.state.isSaving}
+                                                    disabled={this.state.isSaving || !this.state.edited}
                                                     onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>
-                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
+                                                        {this.state.isSaving ? 'Saving...' : this.state.edited ? 'Save' : 'No changes to save'}
                                                     </button>
                                                     }
                                                 </div>

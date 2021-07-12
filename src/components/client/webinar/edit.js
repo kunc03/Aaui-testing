@@ -311,7 +311,7 @@ export default class WebinarEdit extends Component {
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">Engine</Form.Label>
                           <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
-                            <option value="bbb">Big Blue Button</option>
+                            <option value="bbb">ICADEMY</option>
                             <option value="zoom">Zoom</option>
                           </select>
                           <Form.Text className="text-muted">
@@ -320,20 +320,25 @@ export default class WebinarEdit extends Component {
                         </div>
                       </Form.Group>
 
-                      {/* <div className="form-group">
-                          <label className="bold">Project</label>
-                          <MultiSelect
-                              id="folder"
-                              options={this.state.optionsFolder}
-                              value={this.state.projectId}
-                              onChange={projectId => this.setState({ projectId })}
-                              mode="single"
-                              enableSearch={true}
-                              resetable={true}
-                              valuePlaceholder="Select Folder Project"
-                            />
-                          <small className="form-text text-muted">Pilih project folder.</small>
-                        </div> */}
+                      {
+                        this.state.projectId !== 0 ?
+                        <div className="form-group">
+                            <label className="bold">Project</label>
+                            <MultiSelect
+                                id="folder"
+                                options={this.state.optionsFolder}
+                                value={this.state.projectId}
+                                onChange={projectId => this.setState({ projectId })}
+                                mode="single"
+                                enableSearch={true}
+                                resetable={true}
+                                valuePlaceholder="Select Folder Project"
+                              />
+                            <small className="form-text text-muted">Pilih project folder.</small>
+                          </div>
+                          :
+                          null
+                      }
 
                       <h4>Select Roles</h4>
                       <div className="form-group row">
