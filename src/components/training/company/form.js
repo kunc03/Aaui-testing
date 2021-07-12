@@ -17,7 +17,8 @@ class FormCompany extends Component {
         fax: '',
         website: '',
         email: '',
-        disabledForm: this.props.disabledForm
+        disabledForm: this.props.disabledForm,
+        isSaving: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -32,6 +33,7 @@ class FormCompany extends Component {
   }
 
   save = (e) =>{
+    this.setState({isSaving: true});
     e.preventDefault();
     if (!this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
         toast.warning('Some field is required, please check your data.')
@@ -61,12 +63,14 @@ class FormCompany extends Component {
                             }
                             else{
                                 toast.success('Company edited')
+                                this.setState({isSaving: false});
                                 this.props.history.push(`/training/company/detail/${this.props.match.params.id}`)
                             }
                         })
                     }
                     else{
                         toast.success('Company edited')
+                        this.setState({isSaving: false});
                         this.props.history.push(`/training/company/detail/${this.props.match.params.id}`)
                     }
                 }
@@ -97,12 +101,14 @@ class FormCompany extends Component {
                             }
                             else{
                                 toast.success('New company added')
+                                this.setState({isSaving: false});
                                 this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
                             }
                         })
                     }
                     else{
                         toast.success('New company added')
+                        this.setState({isSaving: false});
                         this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
                     }
                 }

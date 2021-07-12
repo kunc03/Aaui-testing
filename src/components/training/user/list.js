@@ -194,10 +194,10 @@ class User extends Component {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
           this.getCompany(this.state.companyId);
           let level = Storage.get('user').data.level;
-          if (level.toLowerCase() === 'client' && this.props.trainingCompany){
+          if (this.props.trainingCompany){
               this.getUserTrainingCompany(this.props.trainingCompany, state)
           }
-          else if (level.toLowerCase() !== 'client'){
+          else {
             this.getUser(this.state.companyId, state)
           }
         }

@@ -25,7 +25,8 @@ class FormUser extends Component {
         expired: '',
         optionCompany:[],
         companyId:'',
-        disabledForm: this.props.disabledForm && this.props.id
+        disabledForm: this.props.disabledForm && this.props.id,
+        isSaving: false
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -40,8 +41,9 @@ class FormUser extends Component {
   }
 
   save = (e) => {
+    this.setState({isSaving: true})
     e.preventDefault();
-    if ((!this.props.match.params.id && !this.state.expired) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
     }
     else{
@@ -76,12 +78,14 @@ class FormUser extends Component {
                         }
                         else{
                             toast.success(`${this.state.level} edited`)
+                            this.setState({isSaving: false})
                             this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                         }
                     })
                 }
                 else{
                     toast.success(`${this.state.level} edited`)
+                    this.setState({isSaving: false})
                     this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
                 }
               }
@@ -121,12 +125,14 @@ class FormUser extends Component {
                         }
                         else{
                             toast.success(`New ${this.state.level} added`)
+                            this.setState({isSaving: false})
                             this.goBack()
                         }
                     })
                 }
                 else{
                     toast.success(`New ${this.state.level} added`)
+                    this.setState({isSaving: false})
                     this.goBack()
                 }
               }
@@ -403,10 +409,11 @@ class FormUser extends Component {
                                                     !this.props.disabledForm &&
                                                     <button
                                                     onClick={this.save}
+                                                    disabled={this.state.isSaving}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>
-                                                        Save
+                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
                                                     </button>
                                                     }
                                                 </div>

@@ -105,7 +105,7 @@ class SettingsTraining extends Component {
                                 toast.warning(`Licenses type edited but fail to upload image`)
                             }
                             else{
-                              this.setState({isSaving: true});
+                              this.setState({isSaving: false});
                               toast.success(`New licenses type created`)
                               this.closeModalCreate();
                               this.getLicensesType(this.state.companyId)
@@ -113,7 +113,7 @@ class SettingsTraining extends Component {
                         })
                     }
                     else{
-                      this.setState({isSaving: true});
+                      this.setState({isSaving: false});
                       toast.success(`New licenses type created`)
                       this.closeModalCreate();
                       this.getLicensesType(this.state.companyId)
@@ -139,7 +139,7 @@ class SettingsTraining extends Component {
                               toast.warning(`Licenses type edited but fail to upload image`)
                           }
                           else{
-                            this.setState({isSaving: true});
+                            this.setState({isSaving: false});
                             toast.success(`Licenses type edited`)
                             this.closeModalCreate();
                             this.getLicensesType(this.state.companyId)
@@ -147,7 +147,7 @@ class SettingsTraining extends Component {
                       })
                   }
                   else{
-                    this.setState({isSaving: true});
+                    this.setState({isSaving: false});
                     toast.success(`Licenses type edited`)
                     this.closeModalCreate();
                     this.getLicensesType(this.state.companyId)
