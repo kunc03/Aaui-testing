@@ -774,7 +774,7 @@ handleChangeAnswer = (value) => {
                                                         <div className="form-field-top-label" style={{maxWidth:240}}>
                                                             <label for="scheduled">Scheduled</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
-                                                            <p className="form-notes">{this.state.scheduled ? 'Exam will available for certain schedule' : 'Exam always available'}</p>
+                                                            <p className="form-notes">{this.state.scheduled ? `${this.state.exam ? 'Exam' : 'Quiz'} will available for certain schedule` : `${this.state.exam ? 'Exam' : 'Quiz'} always available`}</p>
                                                         </div>
                                                         {
                                                             this.state.scheduled ?
@@ -802,7 +802,7 @@ handleChangeAnswer = (value) => {
                                                             <div className="form-field-top-label" style={{maxWidth:240}}>
                                                                 <label for="scheduled">Multiple Assign</label>
                                                                 <ToggleSwitch className="form-toggle-switch" name="multipleassign" onChange={this.ToggleSwitchMultipleAssign.bind(this)} checked={this.state.multiple_assign} />
-                                                                <p className="form-notes">{this.state.multiple_assign ? 'Admin can assign this exam to user more than once' : 'This exam will be able to assign to user once when user have active license'}</p>
+                                                                <p className="form-notes">{this.state.multiple_assign ? `Admin can assign this ${this.state.exam ? 'exam' : 'quiz'} to user more than once` : `This ${this.state.exam ? 'exam' : 'quiz'} will be able to assign to user once when user have active license`}</p>
                                                             </div>
                                                             : null
                                                         }
@@ -841,7 +841,7 @@ handleChangeAnswer = (value) => {
                                                             <div className="row">
                                                                 <div className="form-field-top-label">
                                                                     <label for="numberQuestions">Number of Questions<required>*</required></label>
-                                                                    <input type="number" name="numberQuestions" size="50" id="numberQuestions" placeholder="0" value={this.state.composition[index].total} onChange={e=> this.handleChangeComposition('total', index, e)} disabled={this.state.disabledForm}/>
+                                                                    <input type="number" name="numberQuestions" min='0' size="50" id="numberQuestions" placeholder="0" value={this.state.composition[index].total} onChange={e=> this.handleChangeComposition('total', index, e)} disabled={this.state.disabledForm}/>
                                                                 </div>
                                                                 <div className="form-field-top-label" style={{width:400}}>
                                                                     <label for="valueCourse">Course</label>
@@ -886,7 +886,7 @@ handleChangeAnswer = (value) => {
                                                                     {this.state.file ? this.state.file.name : 'Choose'}
                                                                 </div>
                                                                 </label>
-                                                                <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                                <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
                                                                 <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
                                                                     <i
                                                                         className="fa fa-upload"
@@ -1048,12 +1048,12 @@ handleChangeAnswer = (value) => {
                                                     {
                                                     !this.props.disabledForm &&
                                                     <button
-                                                    disabled={this.state.isSaving}
+                                                    disabled={this.state.isSaving || !this.state.edited}
                                                     onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>
-                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
+                                                        {this.state.isSaving ? 'Saving...' : this.state.edited ? 'Save' : 'No changes to save'}
                                                     </button>
                                                     }
                                                 </div>

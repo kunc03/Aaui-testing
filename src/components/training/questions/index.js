@@ -267,7 +267,7 @@ class Questions extends Component {
                                                               {this.state.file ? this.state.file.name : 'Choose'}
                                                           </div>
                                                         </label>
-                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} />
+                                                        <input type="file" id="file-import" name="file-import" onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
                                                         <button type="submit" className="button-gradient-blue" style={{marginLeft:20}} disabled={this.state.isUploading}>
                                                             <i
                                                                 className="fa fa-upload"

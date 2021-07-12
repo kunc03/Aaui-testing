@@ -80,6 +80,7 @@ class User extends Component {
           else{
             if (res.data.result === 'validationError'){
               toast.error(res.data.message);
+              this.setState({isSaving: false});
             }
             else{
               this.readAssign(form.training_user_id);
@@ -566,7 +567,7 @@ class User extends Component {
                                                               {this.state.file ? this.state.file.name : 'Choose'}
                                                           </div>
                                                         </label>
-                                                        <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'}onChange={this.handleChangeFile} />
+                                                        <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
                                                         <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
                                                             <i
                                                                 className="fa fa-upload"
