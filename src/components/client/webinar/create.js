@@ -284,7 +284,7 @@ export default class WebinarCreate extends Component {
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
                       {
-                        this.state.projectId !== 0 ?
+                        this.props.match.params.training !== 'by-training' ?
                           <div className="form-group">
                             <label className="bold">Project{this.props.match.params.training === 'default' ? <required>*</required> : null}</label>
                             <MultiSelect

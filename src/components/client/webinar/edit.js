@@ -321,7 +321,7 @@ export default class WebinarEdit extends Component {
                       </Form.Group>
 
                       {
-                        this.state.projectId !== 0 ?
+                        this.props.match.params.training !== 'by-training' ?
                         <div className="form-group">
                             <label className="bold">Project</label>
                             <MultiSelect
