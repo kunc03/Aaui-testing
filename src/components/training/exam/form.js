@@ -792,11 +792,15 @@ handleChangeAnswer = (value) => {
                                                             </div>
                                                             : null
                                                         }
-                                                        <div className="form-field-top-label" style={{maxWidth:240}}>
-                                                            <label for="scheduled">Generate Membership</label>
-                                                            <ToggleSwitch className="form-toggle-switch" name="membership" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
-                                                            <p className="form-notes">{this.state.generate_membership ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
-                                                        </div>
+                                                        {
+                                                        this.state.exam ?
+                                                            <div className="form-field-top-label" style={{maxWidth:240}}>
+                                                                <label for="scheduled">Generate Membership</label>
+                                                                <ToggleSwitch className="form-toggle-switch" name="membership" onChange={this.ToggleSwitchMembership.bind(this)} checked={this.state.generate_membership} />
+                                                                <p className="form-notes">{this.state.generate_membership ? 'Users with scores above the minimum will get/renew membership' : 'Users will not get/renew membership'}</p>
+                                                            </div>
+                                                            : null
+                                                        }
                                                         {
                                                             this.state.generate_membership ?
                                                             <div className="form-field-top-label" style={{maxWidth:240}}>
