@@ -43,7 +43,7 @@ class Assignment extends Component {
 
         isSaving: false,
         id: this.props.match.params.id ? this.props.match.params.id : '',
-        exam: this.props.match.params.type === 'quiz' ? 0 : 1,
+        exam: true,
         answer: '',
         question_text:'',
         title: '',
@@ -118,7 +118,8 @@ class Assignment extends Component {
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
                 valueCourse2: [Number(res.data.result.course_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
-                question: res.data.result.question
+                question: res.data.result.question,
+                exam: res.data.result.exam
             })
             if (res.data.result.composition.length){
                 let composition = res.data.result.composition;
