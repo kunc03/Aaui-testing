@@ -161,23 +161,29 @@ class User extends Component {
   }
   sendNotif (){
     this.setState({isSending: true});
-    let form = {
-      user_id: this.state.notifUserId,
-      type: 12,
-      activity_id: 0,
-      desc: this.state.notifMessage,
-      dest: ''
+    if (!this.state.notifMessage){
+      toast.warning('Message is required. Please fill notification message.');
+      this.setState({isSending: false});
     }
-    API.post(`${API_SERVER}v1/notification/broadcast`, form).then(res => {
-        if (res.data.error){
-            toast.error('Error send notification')
-        }
-        else{
-          this.closeModalNotif();
-          toast.success('Notification sent');
-          this.setState({isSending: false, notifMessage: ''});
-        }
-    })
+    else{
+      let form = {
+        user_id: this.state.notifUserId,
+        type: 12,
+        activity_id: 0,
+        desc: this.state.notifMessage,
+        dest: ''
+      }
+      API.post(`${API_SERVER}v1/notification/broadcast`, form).then(res => {
+          if (res.data.error){
+              toast.error('Error send notification')
+          }
+          else{
+            this.closeModalNotif();
+            toast.success('Notification sent');
+            this.setState({isSending: false, notifMessage: ''});
+          }
+      })
+    }
   }
 
   goBack() {
