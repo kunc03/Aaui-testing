@@ -298,7 +298,7 @@ class Report extends Component {
         },
       },
       {
-        name: 'Exam/Quiz',
+        name: 'Type',
         selector: 'exam_type',
         sortable: true,
         style: {
@@ -325,6 +325,14 @@ class Report extends Component {
         cell: row => Moment.tz(row.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
         name: 'Submission Time',
         selector: 'submission_time',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Submission Condition',
+        selector: 'submission_condition',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -419,7 +427,7 @@ class Report extends Component {
           <td>{data.score}</td>
         </tr>
         <tr>
-          <td>Exam / Quiz</td>
+          <td>Type</td>
           <td>:</td>
           <td>{data.exam_type}</td>
           <td>Pass</td>
