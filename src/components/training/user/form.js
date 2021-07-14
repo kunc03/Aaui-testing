@@ -45,6 +45,7 @@ class FormUser extends Component {
     e.preventDefault();
     if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.props.match.params.id){
