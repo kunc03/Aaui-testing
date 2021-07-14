@@ -301,9 +301,10 @@ class MeetingTable extends Component {
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteMeetingName: '', deleteMeetingId: '' })
   }
-  onClickInfo(class_id) {
+  onClickInfo(class_id, room_name) {
     this.setState({ isModalConfirmation: true });
     this.fetchMeetingInfo(class_id);
+    this.fetchBooking(class_id, room_name)
 
     // console.log(this.props.projectId, 'pROJECTY');
     API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
@@ -789,9 +790,13 @@ class MeetingTable extends Component {
 
   onClickJadwal(id, room_name) {
     this.setState({ modalJadwal: true, bookingMeetingId: id })
+    this.fetchBooking(id, room_name)
+  }
+
+  fetchBooking(id, room) {
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200) {
-        this.setState({ dataBooking: { room_name: room_name, booking: res.data.result } })
+        this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
       }
     })
   }
@@ -834,7 +839,7 @@ class MeetingTable extends Component {
             toast.success('Menyimpan booking jadwal meeting')
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-              isAkses: 0, isPrivate: 0, isRequiredConfirmation: 0, valueModerator: [], valuePeserta: [],
+              akses: 0, private: 0, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
               modalJadwal: false
             })
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
@@ -1076,7 +1081,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id, row.room_name)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1551,7 +1556,9 @@ class MeetingTable extends Component {
                     </div>
                   </div>
                 </div>
-                : null}<div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                : null}
+            
+            <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <div className="card">
                 <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
 
@@ -1591,7 +1598,7 @@ class MeetingTable extends Component {
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                         Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
-                  </div>
+                      </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
                         <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
@@ -1608,18 +1615,75 @@ class MeetingTable extends Component {
                     </div>
                     : null}
 
-                  {this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
+                  {
+                    this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                         Kehadiran Aktual
-                  </div>
+                      </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                        {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
+                        {this.state.infoParticipant.map(item => item.actual === 'Hadir' &&
                           <div className='peserta aktual-hadir'>{item.name}</div>
                         )}
                       </div>
                     </div>
-                    : null}
+                    : null
+                  }
+                  
+                  <div class="title-head f-w-900 f-16 mt-4" >Schedule & Booking</div>
+                  <table className="table table-hover">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+                        <td> Date </td>
+                        <td> Starting Hours </td>
+                        <td> End Hours </td>
+                        <td>By</td>
+                        <td>Keterangan</td>
+                        <td></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        this.state.dataBooking.booking.length ?
+                          this.state.dataBooking.booking.map((item) => {
+                            const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
+
+                            const split = item.tanggal.split('-')
+                            const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                            const jamIni = moment()
+                            const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                            const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                            const range = jamIni.isBetween(sJadwal, eJadwal)
+
+                            return (
+                              <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                                <td>{item.jam_mulai}</td>
+                                <td>{item.jam_selesai}</td>
+                                <td>{item.name}</td>
+                                <td>{item.keterangan ? item.keterangan : '-'}</td>
+                                <td>
+                                  {
+                                    item.user_id === Storage.get('user').data.user_id &&
+                                    <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                  }
+                                  {
+                                    range ?
+                                      <span className="badge badge-pill badge-success ml-2" style={{ cursor: 'pointer' }}>Masuk</span>
+                                    : null
+                                  }
+                                </td>
+                              </tr>
+                            )
+                          })
+                          :
+                          (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td colspan='5'>There is no booking</td>
+                          </tr>)
+                      }
+                    </tbody>
+                  </table>
+
                 </div>
               </div>
             </div>
