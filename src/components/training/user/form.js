@@ -113,6 +113,7 @@ class FormUser extends Component {
           API.post(`${API_SERVER}v2/training/user`, form).then(res => {
               if (res.data.error){
                   toast.error(`Error create ${this.state.level} : ${res.data.result}`)
+                  this.setState({isSaving: false})
               }
               else{
                 if (this.state.image){
@@ -122,6 +123,7 @@ class FormUser extends Component {
                         if (res2.data.error){
                             toast.warning(`${this.state.level} created but fail to upload image`)
                             this.goBack()
+                            this.setState({isSaving: false})
                         }
                         else{
                             toast.success(`New ${this.state.level} added`)
