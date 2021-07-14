@@ -594,7 +594,7 @@ class WebinarAddClass extends Component {
                     }}>
                       <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                     </Link>
-                    Detail Webinar
+                    Detail {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
@@ -621,7 +621,7 @@ class WebinarAddClass extends Component {
                 <div className="row">
                   <div className="col-sm-12">
                     <div className="form-group">
-                      <label className="bold">Gambar Webinar</label>
+                      <label className="bold">Gambar {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
                       <div className="row">
                         <div className="col-sm-3">
                           <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar} />
@@ -633,18 +633,18 @@ class WebinarAddClass extends Component {
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">Judul Webinar</label>
+                      <label className="bold">Judul {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
                       <input type="text" className="form-control" name="judul" onChange={e => this.setState({ judul: e.target.value })} value={this.state.judul} />
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">Isi Webinar</label>
+                      <label className="bold">Isi {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
                       <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
                     </div>
 
                     <div className="form-group row">
                       <div className="col-sm-4">
-                        <label className="bold col-sm-12">Tanggal Webinar</label>
+                        <label className="bold col-sm-12">Tanggal {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
                         <DatePicker
                           dateFormat="yyyy-MM-dd"
                           selected={this.state.tanggal}
