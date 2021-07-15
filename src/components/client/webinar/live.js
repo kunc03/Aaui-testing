@@ -706,23 +706,25 @@ export default class WebinarLive extends Component {
       this.fetchWebinar()
     }
     this.fetchQNA()
-    let conference_id = this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId;
-    let user_id = this.props.voucher ? this.props.voucher : Storage.get('user').data.user_id;
-    window.receiveMessageFromIndex = function ( event ) {
-        if(event!=undefined){
-            let form = {
-                conference_id : conference_id,
-                user_id : user_id,
-                event : event.data.response
-            }
-            API.post(`${API_SERVER}v2/conference-logs`, form).then(res => {
-                if (res.data.error){
-                    console.log('Logging Failed')
-                }
-            })
-        }
-    }
-    window.addEventListener("message", window.receiveMessageFromIndex, false);
+    // INI SCRIPT JIKA BBB HOOKS MATI
+
+    // let conference_id = this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId;
+    // let user_id = this.props.voucher ? this.props.voucher : Storage.get('user').data.user_id;
+    // window.receiveMessageFromIndex = function ( event ) {
+    //     if(event!=undefined){
+    //         let form = {
+    //             conference_id : conference_id,
+    //             user_id : user_id,
+    //             event : event.data.response
+    //         }
+    //         API.post(`${API_SERVER}v2/conference-logs`, form).then(res => {
+    //             if (res.data.error){
+    //                 console.log('Logging Failed')
+    //             }
+    //         })
+    //     }
+    // }
+    // window.addEventListener("message", window.receiveMessageFromIndex, false);
   }
   checkProjectAccess() {
     if (this.props.voucher) {
