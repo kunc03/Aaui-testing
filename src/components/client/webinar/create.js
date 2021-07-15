@@ -38,7 +38,7 @@ export default class WebinarCreate extends Component {
     recordedMeeting: [],
 
     optionsFolder: [],
-    valuesFolder: this.props.match.params.projectId !== '0' ? [Number(this.props.match.params.projectId)] : [],
+    valuesFolder: [],
 
     //form upload folder
     folderName: "",
@@ -141,9 +141,14 @@ export default class WebinarCreate extends Component {
       });
       if (this.state.optionsFolder.length == 0) {
         API.get(`${API_SERVER}v1/folder/${this.state.companyId}/0`).then(response => {
+          let optionsFolder = this.state.optionsFolder;
           response.data.result.map(item => {
-            this.state.optionsFolder.push({ value: item.id, label: item.name });
+            optionsFolder.push({ value: item.id, label: item.name });
           });
+          this.setState({optionsFolder: optionsFolder},()=>{
+            this.setState({valuesFolder: [Number(this.props.match.params.projectId)]})
+            console.log('ALVIN',this.state.valuesFolder)
+          })
         })
           .catch(function (error) {
             console.log(error);
