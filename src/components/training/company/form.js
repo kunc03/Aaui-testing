@@ -37,6 +37,7 @@ class FormCompany extends Component {
     e.preventDefault();
     if (!this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false});
     }
     else{
         if (this.props.match.params.id){
@@ -52,6 +53,7 @@ class FormCompany extends Component {
             API.put(`${API_SERVER}v2/training/company/${this.props.match.params.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit company')
+                    this.setState({isSaving: false});
                 }
                 else{
                     if (this.state.image){
@@ -60,6 +62,7 @@ class FormCompany extends Component {
                         API.put(`${API_SERVER}v2/training/company/image/${this.props.match.params.id}`, formData).then(res2 => {
                             if (res2.data.error){
                                 toast.warning('Company edited but fail to upload image')
+                                this.setState({isSaving: false});
                             }
                             else{
                                 toast.success('Company edited')
@@ -90,6 +93,7 @@ class FormCompany extends Component {
             API.post(`${API_SERVER}v2/training/company`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error create company')
+                    this.setState({isSaving: false});
                 }
                 else{
                     if (this.state.image){
@@ -98,6 +102,7 @@ class FormCompany extends Component {
                         API.put(`${API_SERVER}v2/training/company/image/${res.data.result.insertId}`, formData).then(res2 => {
                             if (res2.data.error){
                                 toast.warning('Company created but fail to upload image')
+                                this.setState({isSaving: false});
                             }
                             else{
                                 toast.success('New company added')
@@ -297,11 +302,12 @@ class FormCompany extends Component {
                                                     {
                                                     !this.state.disabledForm &&
                                                     <button
+                                                    disabled={this.state.isSaving}
                                                     onClick={this.save}
                                                     className="btn btn-icademy-primary float-right"
                                                     style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                         <i className="fa fa-save"></i>
-                                                        Save
+                                                        {this.state.isSaving ? 'Saving...' : 'Save'}
                                                     </button>
                                                     }
                                                 </div>
