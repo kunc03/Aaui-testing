@@ -26,6 +26,7 @@ import moment from 'moment-timezone'
 import LoadingOverlay from "react-loading-overlay";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { Fragment } from "react";
+import { compose } from "redux";
 
 const bbb = require('bigbluebutton-js')
 
@@ -122,7 +123,12 @@ class MeetingTable extends Component {
 
       limitCompany: [],
 
-      gb: []
+      gb: [],
+
+      bookingToday: {
+        meeting_id: null,
+        booking_id: null
+      }
     };
   }
   handleChangeEmail(emailInvite) {
@@ -268,7 +274,7 @@ class MeetingTable extends Component {
   }
 
   closeModalConfirmation = e => {
-    this.setState({ isModalConfirmation: false });
+    this.setState({ isModalConfirmation: false, dataBooking: { room_name: '', booking: [] } });
   }
 
   fetchMeetingInfo(id) {
@@ -281,15 +287,36 @@ class MeetingTable extends Component {
         this.setState({
           infoClass: res.data.result[0],
           infoParticipant: res.data.result[1],
-          countHadir: res.data.result[1].filter((item) => item.confirmation == 'Hadir').length,
-          countTidakHadir: res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length,
-          countTentative: res.data.result[1].filter((item) => item.confirmation == '').length,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length,
-          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
+          countHadir: res.data.result[1].filter((item) => item.confirmation === 'Hadir').length,
+          countTidakHadir: res.data.result[1].filter((item) => item.confirmation === 'Tidak Hadir').length,
+          countTentative: res.data.result[1].filter((item) => item.confirmation === '').length,
+          needConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id && item.confirmation === '').length,
+          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
         })
       }
     })
   }
+
+  fetchMeetingInfoBooking(meetingId, bookingId) {
+    if (isMobile) {
+      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + meetingId))
+    }
+    API.post(`${API_SERVER}v1/liveclass/meeting-booking-info`, {meeting_id: meetingId, booking_id: bookingId}).then(res => {
+      console.log(res.data.result, 'prop informationId');
+      if (res.status === 200) {
+        this.setState({
+          infoClass: res.data.result[0],
+          infoParticipant: res.data.result[1],
+          countHadir: res.data.result[1].length ? res.data.result[1].filter((item) => item.confirmation == 'Hadir').length : 0,
+          countTidakHadir: res.data.result[1].length ? res.data.result[1].filter((item) => item.confirmation == 'Tidak Hadir').length : 0,
+          countTentative: res.data.result[1].length ? res.data.result[1].filter((item) => item.confirmation == '').length : 0,
+          needConfirmation: res.data.result[1].length ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length : 0,
+          attendanceConfirmation: res.data.result[1].length ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null : ''
+        })
+      }
+    })
+  }
+
   deleteParticipant(id, classId) {
     API.delete(`${API_SERVER}v1/liveclass/participant/delete/${id}`).then(res => {
       if (res.status === 200) {
@@ -303,7 +330,8 @@ class MeetingTable extends Component {
   }
   onClickInfo(class_id, room_name) {
     this.setState({ isModalConfirmation: true });
-    this.fetchMeetingInfo(class_id);
+    // this.fetchMeetingInfo(class_id);
+    this.fetchMeetingInfoBooking(class_id, 0);
     this.fetchBooking(class_id, room_name)
 
     // console.log(this.props.projectId, 'pROJECTY');
@@ -796,6 +824,22 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200) {
+        res.data.result.map(item => {
+          const split = item.tanggal.split('-')
+          const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+          const jamIni = moment()
+          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+          const range = jamIni.isBetween(sJadwal, eJadwal)
+
+          item.hariini = range
+          if (range) {
+            this.setState({ bookingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
+            console.log('run range')
+            this.fetchMeetingInfoBooking(item.meeting_id, item.id);
+          }
+        })
+        console.log('result', res.data.result, this.state.bookingToday)
         this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
       }
     })
@@ -1582,16 +1626,20 @@ class MeetingTable extends Component {
                           Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
                         </h3> : null}
                     </div>
-                    {this.state.infoClass.is_scheduled ?
-                      <div className="col-sm-6">
-                        <h3 className="f-14">
-                          Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                        </h3>
-                        <h3 className="f-14">
-                          End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                        </h3>
-                      </div>
-                      : null}
+                    {
+                      /**
+                      this.state.infoClass.is_scheduled ?
+                        <div className="col-sm-6">
+                          <h3 className="f-14">
+                            Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          </h3>
+                          <h3 className="f-14">
+                            End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          </h3>
+                        </div>
+                        : null
+                      */
+                    }
                   </div>
 
                   {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
@@ -1664,12 +1712,10 @@ class MeetingTable extends Component {
                                 <td>{item.keterangan ? item.keterangan : '-'}</td>
                                 <td>
                                   {
-                                    item.user_id === Storage.get('user').data.user_id &&
-                                    <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
-                                  }
-                                  {
                                     range ?
-                                      <span className="badge badge-pill badge-success ml-2" style={{ cursor: 'pointer' }}>Masuk</span>
+                                      <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                                        <span className="badge badge-pill badge-success ml-2">Masuk</span>
+                                      </a>
                                     : null
                                   }
                                 </td>
