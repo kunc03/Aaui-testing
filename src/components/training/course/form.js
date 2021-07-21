@@ -8,7 +8,8 @@ import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import Moment from 'moment-timezone';
-import axios from 'axios'
+import axios from 'axios';
+import { MultiSelect } from 'react-sm-select';
 
 class FormCourse extends Component {
   constructor(props) {
@@ -44,7 +45,9 @@ class FormCourse extends Component {
         progressUploadMedia: 0,
         modalDelete: false,
         disabledForm: this.props.disabledForm && this.props.id,
-        session: []
+        session: [],
+        optionsCourse: [],
+        valueCourse: []
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -79,6 +82,7 @@ autoSave = (isDrag) =>{
                 image: this.state.image,
                 title: this.state.title,
                 overview: this.state.overview,
+                require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -127,6 +131,7 @@ autoSave = (isDrag) =>{
                 image: this.state.image,
                 title: this.state.title,
                 overview: this.state.overview,
+                require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -178,6 +183,7 @@ autoSave = (isDrag) =>{
                 company_id: this.state.companyId,
                 title: this.state.title,
                 overview: this.state.overview,
+                require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
                 start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
@@ -371,6 +377,7 @@ handleOverview = (e) => {
                 id: res.data.result.id,
                 title: res.data.result.title,
                 overview: res.data.result.overview === null || res.data.result.overview === 'Loading...' ? '' : res.data.result.overview,
+                valueCourse: res.data.result.require_course_id === null || res.data.result.require_course_id === 0 ? [] : [Number(res.data.result.require_course_id)],
                 scheduled: res.data.result.scheduled ? true : false,
                 start_time: res.data.result.start_time ? new Date(res.data.result.start_time) : new Date(),
                 end_time: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
@@ -387,21 +394,32 @@ handleOverview = (e) => {
   getUserData(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
-          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id },()=>{
+            API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
+                if (res.data.error){
+                    toast.error(`Error read course list`)
+                }
+                else{
+                    res.data.result.map((item)=>{
+                        this.state.optionsCourse.push({label: item.title, value: item.id})
+                    })
+                    if (this.props.disabledForm && this.props.id){
+                        this.getCourse(this.props.id);
+                    }
+                    else if (this.props.match.params.id){
+                        this.getCourse(this.props.match.params.id);
+                    }
+                    else{
+                        this.setState({overview: ''})
+                    }
+                }
+            })
+          });
         }
     })
   }
   componentDidMount(){
     this.getUserData();
-    if (this.props.disabledForm && this.props.id){
-        this.getCourse(this.props.id);
-    }
-    else if (this.props.match.params.id){
-        this.getCourse(this.props.match.params.id);
-    }
-    else{
-        this.setState({overview: ''})
-    }
   }
 
   selectSession = (id) => {
@@ -643,6 +661,11 @@ handleOverview = (e) => {
                                                         </div>
                                                     </div>
                                                     <div className="row">
+                                                        <div className="form-field-top-label" style={{width:400}}>
+                                                            <label for="valueCourse">Required Course</label>
+                                                            <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={this.state.valueCourse} onChange={valueCourse => this.setState({ valueCourse, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                            <p className="form-notes">Keep empty if you don't want this course require other course's exam</p>
+                                                        </div>
                                                         <div className="form-field-top-label">
                                                             <label for="scheduled">Scheduled</label>
                                                             <ToggleSwitch className="form-toggle-switch" name="scheduled" onChange={this.ToggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
