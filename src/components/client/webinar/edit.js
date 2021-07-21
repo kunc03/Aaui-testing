@@ -286,13 +286,18 @@ export default class WebinarEdit extends Component {
                       }}>
                         <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                       </Link>
-                      Edit a Webinar
+                      Edit a {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
                     <p className="m-b-0">
                       <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&bull;</span>
+                      {
+                      this.props.match.params.training === 'by-training' ?
+                      null
+                      :
                       <span className={`f-16 mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&bull;</span>
+                      }
                       <span className="f-16"> Done </span>
                     </p>
                   </div>
@@ -302,7 +307,7 @@ export default class WebinarEdit extends Component {
                     <div className="col-sm-12">
 
                       <div className="form-group">
-                        <label className="bold">Title Webinar</label>
+                        <label className="bold">Title {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
@@ -321,7 +326,7 @@ export default class WebinarEdit extends Component {
                       </Form.Group>
 
                       {
-                        this.state.projectId !== 0 ?
+                        this.props.match.params.training !== 'by-training' ?
                         <div className="form-group">
                             <label className="bold">Project</label>
                             <MultiSelect

@@ -198,7 +198,7 @@ class WebinarTable extends Component {
                 <table className="table table-hover">
                 <thead>
                     <tr style={{borderBottom: '1px solid #C7C7C7'}}>
-                    <td>Nama Webinar</td>
+                    <td>Nama {this.props.training ? 'Live Class' : 'Webinar'}</td>
                     {
                         headerTabble.map((item, i) => {
                             return (
@@ -307,7 +307,7 @@ class WebinarTable extends Component {
                   </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus webinar ini ?</div>
+            <div>Anda yakin akan menghapus {this.props.training ? 'Live Class' : 'Webinar'} ini ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button

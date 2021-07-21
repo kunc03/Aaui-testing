@@ -45,6 +45,7 @@ class FormUser extends Component {
     e.preventDefault();
     if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
+        this.setState({isSaving: false})
     }
     else{
         if (this.props.match.params.id){
@@ -113,6 +114,7 @@ class FormUser extends Component {
           API.post(`${API_SERVER}v2/training/user`, form).then(res => {
               if (res.data.error){
                   toast.error(`Error create ${this.state.level} : ${res.data.result}`)
+                  this.setState({isSaving: false})
               }
               else{
                 if (this.state.image){
@@ -122,6 +124,7 @@ class FormUser extends Component {
                         if (res2.data.error){
                             toast.warning(`${this.state.level} created but fail to upload image`)
                             this.goBack()
+                            this.setState({isSaving: false})
                         }
                         else{
                             toast.success(`New ${this.state.level} added`)
