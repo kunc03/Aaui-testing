@@ -45,7 +45,7 @@ class FormUser extends Component {
   save = (e) => {
     this.setState({isSaving: true})
     e.preventDefault();
-    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || this.state.imageIdentityPreview === 'assets/images/no-image.png' || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
     }
@@ -413,7 +413,7 @@ class FormUser extends Component {
                                                     </div>
                                                     <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="imageIdentity">Identity Card Photo</label>
+                                                            <label for="imageIdentity">Identity Card Photo<required>*</required></label>
                                                             <label for="imageIdentity" style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
                                                                 <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
                                                             </label>

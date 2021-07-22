@@ -42,7 +42,7 @@ class SettingsTraining extends Component {
   }
 
   closeModalCreate = e => {
-    this.setState({ modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg' })
+    this.setState({ modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '' })
   }
   closeModalDelete = e => {
     this.setState({ modalDelete: false, typeId: '' })
@@ -396,6 +396,15 @@ class SettingsTraining extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                {
+                  this.state.modalOther && this.state.dataOthers[this.state.otherSettingActive].setting === 'License Number Format' ?
+                  <div className="form-field-top-label">
+                    <p>
+                    License Number Format is used for numbering settings and is applied to the entire company. You can change numbering settings anytime with the consequences of changing numbering settings for the entire company.
+                    </p>                             
+                  </div>
+                  : null
+                }
                 <div className="form-field-top-label">
                     <label for="typeName">{this.state.modalOther ? this.state.dataOthers[this.state.otherSettingActive].setting : null}</label>
                     <input
@@ -487,6 +496,11 @@ class SettingsTraining extends Component {
                   <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
                     <img src={this.state.imagePreview} height="140px" />
                   </label>
+                                                        <label for='image' style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.image ? this.state.image.name : 'Choose'}
+                                                          </div>
+                                                        </label>
                   <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                 </div>
             </Modal.Body>
