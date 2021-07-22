@@ -289,7 +289,7 @@ export default class WebinarCreate extends Component {
                     <div className="col-sm-12">
 
                       <div className="form-group">
-                        <label className="bold">Title {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}<required>*</required></label>
+                        <label className="bold">Title<required>*</required></label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
                         <small className="form-text text-muted">The title cannot use special characters.</small>
                       </div>
@@ -321,19 +321,19 @@ export default class WebinarCreate extends Component {
                             <option value="zoom">Zoom</option>
                           </select>
                           <Form.Text className="text-muted">
-                            Pilih engine yang akan dipakai untuk meeting.
+                            Choose meeting engine
                           </Form.Text>
                         </div>
                       </Form.Group>
 
-                      <h4>Pilih Roles</h4>
+                      <h4>Roles</h4>
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label className="bold">Role</label>
-                          <input type="text" className="form-control" value="Sekretaris" disabled="disabled" />
+                          <input type="text" className="form-control" value="Secretary" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Sekretaris<required>*</required></label>
+                          <label className="bold">Secretary<required>*</required></label>
                           {
                             crudRoles ?
                               <MultiSelect
@@ -344,8 +344,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -370,8 +370,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -382,10 +382,10 @@ export default class WebinarCreate extends Component {
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label className="bold">Role</label>
-                          <input type="text" className="form-control" value="Pembicara" disabled="disabled" />
+                          <input type="text" className="form-control" value="Speaker" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Pembicara<required>*</required></label>
+                          <label className="bold">Speaker<required>*</required></label>
                           {
                             crudRoles ?
                               <MultiSelect
@@ -396,8 +396,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -422,8 +422,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>

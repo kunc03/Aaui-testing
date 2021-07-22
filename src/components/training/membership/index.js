@@ -191,7 +191,7 @@ class Membership extends Component {
       },
       {
         cell: row => Moment.tz(row.expired, 'Asia/Jakarta').format("DD-MM-YYYY"),
-        name: 'Expired Date',
+        name: 'Expiration Date',
         selector: 'expired',
         sortable: true,
         style: {
@@ -246,7 +246,7 @@ class Membership extends Component {
           <td>{data.license_number}</td>
         </tr>
         <tr>
-          <td>Expired Date</td>
+          <td>Expiration Date</td>
           <td>:</td>
           <td>{Moment.tz(data.expired, 'Asia/Jakarta').format("DD-MM-YYYY")}</td>
         </tr>
@@ -304,11 +304,11 @@ class Membership extends Component {
                                                         <div className="form-section no-border">
                                                             <div className="row">
                                                                 <div className="form-field-top-label">
-                                                                    <label for="start">Expired Start Date</label>
+                                                                    <label for="start">Expiration Start Date</label>
                                                                     <DatePicker dateFormat="dd-MM-yyyy" selected={this.state.start} onChange={e => this.handleChangeFilter('start', e)} />
                                                                 </div>
                                                                 <div className="form-field-top-label">
-                                                                    <label for="end">Expired End Date</label>
+                                                                    <label for="end">Expiration End Date</label>
                                                                     <DatePicker dateFormat="dd-MM-yyyy" selected={this.state.end} onChange={e => this.handleChangeFilter('end', e)} />
                                                                 </div>
                                                                 <div className="form-field-top-label">

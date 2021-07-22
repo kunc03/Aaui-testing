@@ -35,7 +35,7 @@ class Report extends Component {
       valueLicensesType: [],
       optionsPass: [{label: 'Yes', value: '1'},{label: 'No', value: '0'}],
       valuePass: [],
-      optionsCert: [{label: 'No', value: 'No'},{label: 'Sent', value: 'Sent'},{label: 'Failed', value: 'Failed'}],
+      optionsCert: [{label: 'None', value: 'No'},{label: 'Sent', value: 'Sent'},{label: 'Failed', value: 'Failed'}],
       valueCert: [],
       user: '',
       checkAll: false,
