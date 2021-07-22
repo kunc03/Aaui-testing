@@ -204,7 +204,7 @@ export default class KursusMateriEdit extends Component {
                                 value={this.state.title}
                                 name="title"
                                 className="form-control"
-                                placeholder="Title"
+                                placeholder="judul"
                                 onChange={this.onChangeInput}
                               />
                             </div>

@@ -1129,7 +1129,7 @@ export default class LiveStream extends Component {
                                   Moderator : {this.state.infoClass.name}
                                 </h3>
                                 <h3 className="f-14">
-                                  {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
+                                  Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                 </h3>
                               </div>
                               {
@@ -1149,12 +1149,12 @@ export default class LiveStream extends Component {
                               this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Attendance Confirmation of {this.state.infoParticipant.length} Participant
+                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
                                     </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                    <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
-                                    <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
-                                    <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
+                                    <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                                    <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                                    <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
                                   </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {
@@ -1170,7 +1170,7 @@ export default class LiveStream extends Component {
                               this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Actual Attendance In Meeting Room
+                                    Kehadiran Aktual
                                     </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {

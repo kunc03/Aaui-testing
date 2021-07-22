@@ -15,7 +15,7 @@ import Gantt from '../Gantt';
 import { MultiSelect } from 'react-sm-select';
 
 const titleTabs = [
-  { name: 'All' },
+  { name: 'Semua' },
   { name: 'Meeting' },
   { name: 'Webinar' },
   { name: 'Timeline Chart' },
@@ -83,7 +83,7 @@ export default class User extends Component {
 
   choiceTab(item) {
     console.log(item, 'tabbb wooiii')
-    if (item === 'All') return this.setState({ contentAll: true, contentMeeting: true, contentWebinar: true, contentGanttChart: true, contentFiles: true });
+    if (item === 'Semua') return this.setState({ contentAll: true, contentMeeting: true, contentWebinar: true, contentGanttChart: true, contentFiles: true });
     if (item === 'Meeting') return this.setState({ contentAll: false, contentMeeting: true, contentWebinar: false, contentGanttChart: false, contentFiles: false });
     if (item === 'Webinar') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: true, contentGanttChart: false, contentFiles: false });
     if (item === 'Timeline Chart') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: false, contentGanttChart: true, contentFiles: false });
