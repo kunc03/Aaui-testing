@@ -496,7 +496,7 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     e.preventDefault();
     if (this.state.roomName === '' || !this.state.valueFolder.length) {
-      toast.warning('Judul meeting dan folder project wajib diisi')
+      toast.warning('Title dan folder project wajib diisi')
     }
     else {
       if ((this.state.checkZoom.length === 1 && this.state.engine === 'zoom') || (this.state.engine === 'bbb')) {
@@ -1315,19 +1315,19 @@ class MeetingTable extends Component {
                   className="img-fluid" style={{ width: "200px", height: "160px" }} />
 
                 <Form.Label className="f-w-bold ml-4">
-                  <h4 className="btn-default">Masukkan Gambar</h4>
+                  <h4 className="btn-default">Image</h4>
                   <input accept="image/*" className="btn-default" name="cover" type="file" onChange={this.handleChange} />
                   <Form.Text className="text-muted">
-                    Ukuran gambar 200x200 piksel.
+                    Optimum image size is 200x200
                   </Form.Text>
                 </Form.Label>
               </Form.Group>
 
               <Form.Group controlId="formJudul">
                 <Form.Label className="f-w-bold">
-                  Judul Meeting
+                  Title
                 </Form.Label>
-                <FormControl type="text" placeholder="Judul" value={this.state.roomName} onChange={e =>
+                <FormControl type="text" placeholder="Title" value={this.state.roomName} onChange={e =>
                   this.setState({ roomName: e.target.value })} />
                 <Form.Text className="text-muted">
                   The title cannot use special characters
@@ -1340,7 +1340,7 @@ class MeetingTable extends Component {
                 </Form.Label>
                 <MultiSelect id="folder" options={this.state.optionsFolder} value={this.state.valueFolder} onChange={valueFolder => this.setState({ valueFolder })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Folder Project" />
                 <Form.Text className="text-muted">
-                  Seluruh MOM akan dikumpulkan dalam 1 folder project pada menu Files.
+                  All MOM are stored in the project’s file folder.
                   </Form.Text>
               </Form.Group>
 
@@ -1364,7 +1364,7 @@ class MeetingTable extends Component {
                   <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                 </div>
                 <Form.Text className="text-muted">
-                  {this.state.akses ? 'Meetings are arranged by 1 moderator' : 'The meeting room is free '}
+                  {this.state.akses ? 'Meeting room is arranged by 1 moderator' : 'Meeting room is always accessible for Users.*'}
                 </Form.Text>
               </Form.Group>
               {this.state.akses &&
@@ -1445,7 +1445,7 @@ class MeetingTable extends Component {
                   <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
                 </div>
                 <Form.Text className="text-muted">
-                  {this.state.scheduled ? 'Meeting terjadwal.' : 'Meeting tidak terjadwal. Selalu dapat diakses.'}
+                  {this.state.scheduled ? 'Scheduled meeting.' : 'Unscheduled meeting. Meeting room is always open.'}
                 </Form.Text>
               </Form.Group>
               {this.state.scheduled &&
@@ -1515,7 +1515,7 @@ class MeetingTable extends Component {
                     <option value="zoom">Zoom</option>
                   </select>
                   <Form.Text className="text-muted">
-                    Pilih engine yang akan dipakai untuk meeting.
+                    Choose meeting engine.
                   </Form.Text>
                 </div>
               </Form.Group>
@@ -1560,10 +1560,10 @@ class MeetingTable extends Component {
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
-                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
-                      </div>
-                      <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                      {/* <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                        You have confirmed : {this.state.attendanceConfirmation}
+                      </div> */}
+                      <h3 className="f-14">You have confirmed your attendance status on this meeting.</h3>
                     </div>
                   </div>
                 </div>
@@ -1585,10 +1585,10 @@ class MeetingTable extends Component {
                         : null
                       }
                       <h3 className="f-14">
-                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                        {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                       </h3> {this.state.infoClass.is_private ?
                         <h3 className="f-14">
-                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                          {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
                         </h3> : null}
                     </div>
                     {this.state.infoClass.is_scheduled ?
@@ -1606,15 +1606,15 @@ class MeetingTable extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                        Attendance Confirmation of {this.state.infoParticipant.length} Participant
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
                         <div className='legend-kehadiran tidak-hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                         <div className='legend-kehadiran tentative'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
                       </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item =>
@@ -1627,7 +1627,7 @@ class MeetingTable extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Kehadiran Aktual
+                        Actual Attendance In Meeting Room
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&

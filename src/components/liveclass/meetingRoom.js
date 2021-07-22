@@ -361,13 +361,13 @@ export default class MeetingRoom extends Component {
       links[i].target = "_blank";
     }
 
-    // Update kehadiran aktual
+    // Update Actual Attendance In Meeting Room
     let form = {
       confirmation: 'Hadir',
     }
     API.put(`${API_SERVER}v1/liveclass/actualattendance/${this.state.classId}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        console.log('Kehadiran Aktual : Hadir')
+        console.log('Actual Attendance In Meeting Room : Hadir')
       }
     })
     let conference_id = this.props.match.params.roomid;
@@ -1168,7 +1168,7 @@ export default class MeetingRoom extends Component {
                                   :null
                                   }
                                   <h3 className="f-14">
-                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                    {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                                   </h3>
                                 </div>
                                 {this.state.infoClass.is_scheduled ?
@@ -1185,15 +1185,15 @@ export default class MeetingRoom extends Component {
                               {this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                                    Attendance Confirmation of {this.state.infoParticipant.length} Participant
                                 </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     <div className='legend-kehadiran hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
                                     <div className='legend-kehadiran tidak-hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                                     <div className='legend-kehadiran tentative'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
                                   </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {this.state.infoParticipant.map(item =>
@@ -1204,7 +1204,7 @@ export default class MeetingRoom extends Component {
                                 : null} {this.state.infoClass.is_private ?
                                   <div>
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Kehadiran Aktual
+                                      Actual Attendance In Meeting Room
                                 </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&

@@ -381,9 +381,9 @@ export default class LiveClass extends Component {
                               <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                                 <div className="card-carousel col-sm-8">
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation[0].confirmation}
+                                    You have confirmed : {this.state.attendanceConfirmation[0].confirmation}
                                   </div>
-                                  <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                                  <h3 className="f-14">You have confirmed your attendance status on this meeting.</h3>
                                 </div>
                               </div>
                             </div>
@@ -403,12 +403,12 @@ export default class LiveClass extends Component {
                                   Moderator : {this.state.infoClass.name}
                                 </h3>
                                 <h3 className="f-14">
-                                  Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                  {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                                 </h3>
                                 {
                                   this.state.infoClass.is_private &&
                                   <h3 className="f-14">
-                                    Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                                    {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
                                   </h3>
                                 }
                               </div>

@@ -1355,11 +1355,11 @@ export default class ChapterPreview extends Component {
 
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Judul Meeting
+                              Title
                           </Form.Label>
                             <FormControl
                               type="text"
-                              placeholder="Judul"
+                              placeholder="Title"
                               value={this.state.chapterTitle}
                               onChange={e =>
                                 this.setState({ chapterTitle: e.target.value })
