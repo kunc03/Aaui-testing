@@ -488,7 +488,7 @@ class MeetingTable extends Component {
     e.preventDefault();
     
     if (this.state.roomName === '' || !this.state.valueFolder.length) {
-      toast.warning('Judul meeting dan folder project wajib diisi')
+      toast.warning('Title dan folder project wajib diisi')
     }
     else {
       if ((this.state.checkZoom.length === 1 && this.state.engine === 'zoom') || (this.state.engine === 'bbb')) {
@@ -1507,23 +1507,69 @@ class MeetingTable extends Component {
                   className="img-fluid" style={{ width: "200px", height: "160px" }} />
 
                 <Form.Label className="f-w-bold ml-4">
-                  <h4 className="btn-default">Masukkan Gambar</h4>
+                  <h4 className="btn-default">Image</h4>
                   <input accept="image/*" className="btn-default" name="cover" type="file" onChange={this.handleChange} />
                   <Form.Text className="text-muted">
-                    Ukuran gambar 200x200 piksel.
+                    Optimum image size is 200x200
                   </Form.Text>
                 </Form.Label>
               </Form.Group>
 
-              <div className="row">
-                <div className="form-field-top-label">
-                  <label for="time">Judul Meeting<required>*</required></label>
-                  <input type="text" value={this.state.roomName} onChange={e => this.setState({ roomName: e.target.value })} name="judul" style={{ width: '450px' }} id="judul" placeholder="Enter judul meeting" />
-                  <p className="form-notes">
-                    The title cannot use special characters.
-                  </p>
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Title
+                </Form.Label>
+                <FormControl type="text" placeholder="Title" value={this.state.roomName} onChange={e =>
+                  this.setState({ roomName: e.target.value })} />
+                <Form.Text className="text-muted">
+                  The title cannot use special characters
+                  </Form.Text>
+              </Form.Group>
+
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Folder Project
+                </Form.Label>
+                <MultiSelect id="folder" options={this.state.optionsFolder} value={this.state.valueFolder} onChange={valueFolder => this.setState({ valueFolder })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Folder Project" />
+                <Form.Text className="text-muted">
+                  All MOM are stored in the project’s file folder.
+                  </Form.Text>
+              </Form.Group>
+
+              {/*
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Pengisi Class
+                </Form.Label>
+                <FormControl type="text" placeholder="Pengisi Class" value={this.state.speaker} onChange={e=>
+                  this.setState({ speaker: e.target.value }) } />
+                  <Form.Text className="text-muted">
+                    Nama pengisi kelas atau speaker.
+                  </Form.Text>
+              </Form.Group> */}
+
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Access Restrictions
+                </Form.Label>
+                <div style={{ width: '100%' }}>
+                  <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                 </div>
-              </div>
+                <Form.Text className="text-muted">
+                  {this.state.akses ? 'Meeting room is arranged by 1 moderator' : 'Meeting room is always accessible for Users.*'}
+                </Form.Text>
+              </Form.Group>
+              {this.state.akses &&
+                <Form.Group controlId="formJudul">
+                  <Form.Label className="f-w-bold">
+                    Moderator
+                </Form.Label>
+                  <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
+                  <Form.Text className="text-muted">
+                    Pengisi kelas, moderator, atau speaker.
+                  </Form.Text>
+                </Form.Group>
+              }
 
               <div className="row">
                 <div className="form-field-top-label">
@@ -1535,21 +1581,86 @@ class MeetingTable extends Component {
                 </div>
               </div>
 
-              <div className="row">
-                <div className="form-field-top-label">
-                  <label for="time">Engine<required>*</required></label>
-                  <MultiSelect id="engine"
-                    options={[
-                      {label: 'ICADEMY', value: 'bbb'},
-                      {label: 'ZOOM', value: 'zoom'}
-                    ]}
-                    value={[this.state.engine]}
-                    onChange={engine => this.setState({ engine: engine.length ? engine[0] : [] })}
-                    mode="single"
-                    enableSearch={true} resetable={true} valuePlaceholder="Select Engine" />
-                  <p className="form-notes">
-                    Pilih engine yang akan dipakai untuk meeting.
-                  </p>
+              <Form.Group controlId="formJudul">
+                <Form.Label className="f-w-bold">
+                  Scheduled Meeting
+                </Form.Label>
+                <div style={{ width: '100%' }}>
+                  <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
+                </div>
+                <Form.Text className="text-muted">
+                  {this.state.scheduled ? 'Scheduled meeting.' : 'Unscheduled meeting. Meeting room is always open.'}
+                </Form.Text>
+              </Form.Group>
+              {this.state.scheduled &&
+                <Form.Group controlId="formJudul">
+                  <Form.Label className="f-w-bold">
+                    Waktu
+                </Form.Label>
+                  <div style={{ width: '100%' }}>
+                    <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" /> &nbsp;&mdash;&nbsp;
+                  <DatePicker selected={this.state.endDate} onChange={this.handleChangeDateEnd} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
+                  </div>
+                  <Form.Text className="text-muted">
+                    Pilih waktu meeting akan berlangsung.
+                </Form.Text>
+                </Form.Group>
+              }
+                    <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+                      <Modal.Header closeButton>
+                        <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                          Invite Participants
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="form-vertical">
+                          <Form.Group controlId="formJudul">
+                            <Form.Label className="f-w-bold">
+                              From User
+                          </Form.Label>
+                            <Select
+                              options={this.state.optionsInvite}
+                              isMulti
+                              closeMenuOnSelect={false}
+                              onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                            />
+                            <Form.Text className="text-muted">
+                              Select user to invite.
+                          </Form.Text>
+                          </Form.Group>
+                          <div className="form-group">
+                            <label style={{ fontWeight: "bold" }}>Email</label>
+                            <TagsInput
+                              value={this.state.emailInvite}
+                              onChange={this.handleChange.bind(this)}
+                              addOnPaste={true}
+                              addOnBlur={true}
+                              inputProps={{ placeholder: `Participant's Email` }}
+                            />
+                            <Form.Text>
+                              Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                            </Form.Text>
+                          </div>
+                        </div>
+                        <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.handleCloseInvite}>
+                          <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                        </button>
+                        <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.onClickSubmitInvite}>
+                          Cancel
+                        </button>
+                      </Modal.Body>
+                    </Modal>
+
+              <Form.Group className="row" controlId="formJudul">
+                <div className="col-sm-6">
+                  <Form.Label className="f-w-bold">Engine</Form.Label>
+                  <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
+                    <option value="bbb">ICADEMY</option>
+                    <option value="zoom">Zoom</option>
+                  </select>
+                  <Form.Text className="text-muted">
+                    Choose meeting engine.
+                  </Form.Text>
                 </div>
               </div>
 
@@ -1593,10 +1704,10 @@ class MeetingTable extends Component {
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
-                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
-                      </div>
-                      <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                      {/* <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                        You have confirmed : {this.state.attendanceConfirmation}
+                      </div> */}
+                      <h3 className="f-14">You have confirmed your attendance status on this meeting.</h3>
                     </div>
                   </div>
                 </div>
@@ -1620,10 +1731,10 @@ class MeetingTable extends Component {
                         : null
                       }
                       <h3 className="f-14">
-                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                        {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                       </h3> {this.state.infoClass.is_private ?
                         <h3 className="f-14">
-                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                          {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
                         </h3> : null}
                     </div>
                     {
@@ -1645,15 +1756,15 @@ class MeetingTable extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
-                      </div>
+                        Attendance Confirmation of {this.state.infoParticipant.length} Participant
+                  </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
                         <div className='legend-kehadiran tidak-hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                         <div className='legend-kehadiran tentative'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
                       </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item =>
@@ -1667,8 +1778,8 @@ class MeetingTable extends Component {
                     this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Kehadiran Aktual
-                      </div>
+                        Actual Attendance In Meeting Room
+                  </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item => item.actual === 'Hadir' &&
                           <div className='peserta aktual-hadir'>{item.name}</div>

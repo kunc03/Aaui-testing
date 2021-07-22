@@ -257,7 +257,7 @@ export default class KursusMateriAdd extends Component {
                                   type="text"
                                   name="title"
                                   className="form-control"
-                                  placeholder="judul"
+                                  placeholder="Title"
                                   onChange={this.onChangeInput}
                                 />
                               </div>

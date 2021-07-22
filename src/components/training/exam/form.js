@@ -736,10 +736,19 @@ handleChangeAnswer = (value) => {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="image">Thumbnail</label>
-                                                            <label for="image" style={{cursor:'pointer', borderRadius:'10px', overflow:'hidden'}}>
-                                                                <img src={this.state.imagePreview} height="54.8px" />
-                                                            </label>
-                                                            <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <center>
+                                                                <label style={{cursor:'pointer', borderRadius:'10px', overflow:'hidden'}}>
+                                                                    <a href={this.state.imagePreview} target="_blank">
+                                                                     <img src={this.state.imagePreview} height="54.8px" />
+                                                                    </a>
+                                                                </label>
+                                                                <label for='image' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
+                                                                    <div className="button-bordered-grey">
+                                                                        {this.state.image ? this.state.image.name : 'Choose file'}
+                                                                    </div>
+                                                                </label>
+                                                            </center>
+                                                            <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm} onClick={e=> e.target.value = null}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="title">Title<required>*</required></label>

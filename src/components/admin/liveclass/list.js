@@ -509,7 +509,7 @@ export default class LiveClassAdmin extends Component {
                   Moderator : {item.name}
                 </h3>
                 <h3 className="f-12" style={{ color: '#797979' }}>
-                  Jenis Meeting : {item.is_private == 1 ? 'Private' : 'Public'}
+                  {item.is_private == 1 ? 'Private' : 'Public'} Meeting
                 </h3>
               </Link>
               {
@@ -707,7 +707,7 @@ export default class LiveClassAdmin extends Component {
                             />
 
                             <Form.Label className="f-w-bold ml-4">
-                              <h4 className="btn-default">Masukkan Gambar</h4>
+                              <h4 className="btn-default">Image</h4>
                               <input
                                 accept="image/*"
                                 className="btn-default"
@@ -716,18 +716,18 @@ export default class LiveClassAdmin extends Component {
                                 onChange={this.handleChange}
                               />
                               <Form.Text className="text-muted">
-                                Ukuran gambar 200x200 piksel.
+                                Optimum image size is 200x200
                             </Form.Text>
                             </Form.Label>
                           </Form.Group>
 
                           <Form.Group controlId="formJudul">
                             <Form.Label className="f-w-bold">
-                              Judul Meeting
+                              Title
                           </Form.Label>
                             <FormControl
                               type="text"
-                              placeholder="Judul"
+                              placeholder="Title"
                               value={this.state.roomName}
                               onChange={e =>
                                 this.setState({ roomName: e.target.value })
