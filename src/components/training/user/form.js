@@ -379,7 +379,9 @@ class FormUser extends Component {
                                                         <div className="form-field-top-label">
                                                             <label for="image">Profile Picture</label>
                                                             <label for="image" style={{cursor:'pointer', borderRadius:'50px', overflow:'hidden'}}>
-                                                                <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                <a href={this.state.imagePreview} target="_blank">
+                                                                    <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                </a>
                                                             </label>
                                                             <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
@@ -415,7 +417,9 @@ class FormUser extends Component {
                                                         <div className="form-field-top-label">
                                                             <label for="imageIdentity">Identity Card Photo<required>*</required></label>
                                                             <label for="imageIdentity" style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
-                                                                <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                <a href={this.state.imageIdentityPreview} target="_blank">
+                                                                    <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                </a>
                                                             </label>
                                                             <input type="file" accept="image/*" name="imageIdentity" id="imageIdentity" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
