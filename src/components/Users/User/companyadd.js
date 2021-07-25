@@ -180,10 +180,10 @@ class UserAdd extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Pilih Group"
+                                valuePlaceholder="Select Group"
                               />
                               {/* <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id}>{item.branch_name}</option>
@@ -196,7 +196,7 @@ class UserAdd extends Component {
                               <label className="label-input">Role</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   this.state.listGrup.map(item => (
                                     <option value={item.grup_id}>{item.grup_name}</option>
@@ -213,7 +213,7 @@ class UserAdd extends Component {
                                 type="text"
                                 name="name"
                                 className="form-control"
-                                placeholder="Nama"
+                                placeholder="Name"
                                 onChange={this.onChangeInput}
                               />
                             </div>
@@ -237,7 +237,7 @@ class UserAdd extends Component {
                                 required
                                 name="email"
                                 className="form-control"
-                                placeholder="emailanda@domain.com"
+                                placeholder="example@domain.com"
                                 onChange={this.onChangeInput}
                               />
                               <Form.Text className="text-danger">{this.state.alertemail}</Form.Text>
@@ -257,8 +257,8 @@ class UserAdd extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Alamat</label>
-                              <textarea maxLength="100" name="address" className="form-control" placeholder="Alamat" onChange={this.onChangeInput}></textarea>
+                              <label className="label-input">Address</label>
+                              <textarea maxLength="100" name="address" className="form-control" placeholder="Address" onChange={this.onChangeInput}></textarea>
                               <Form.Text className="text-muted">
                                 Maksimal 100 karakter untuk alamat
                               </Form.Text>
@@ -268,7 +268,7 @@ class UserAdd extends Component {
                               <label className="label-input">Level</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <select name="level" className="form-control" onChange={this.onChangeInput} required style={{ textTransform: 'capitalize' }}>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   levelUser.map(item => (
                                     <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
@@ -291,7 +291,7 @@ class UserAdd extends Component {
 
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Batasi Waktu
+                                Time Limit
                               </label>
                               <div style={{ width: '100%' }}>
                                 <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />

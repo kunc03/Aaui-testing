@@ -657,18 +657,18 @@ export default class CompanyDetail extends Component {
                               <div className="form-group">
                                 <label>Tipe Company</label>
                                 <select onChange={this.onChangeInput} name="tipe" className="form-control" style={{ textTransform: 'capitalize' }}>
-                                  <option value="">Pilih tipe company</option>
+                                  <option value="">Select Company Type</option>
                                   <option value="perusahaan" selected={this.state.tipe == 'perusahaan' ? 'selected' : ''}>Perusahaan</option>
                                   <option value="pendidikan" selected={this.state.tipe == 'pendidikan' ? 'selected' : ''}>Pendidikan</option>
                                 </select>
                               </div>
                               <div className="form-group">
-                                <label>Nama Company</label>
+                                <label>Company Name</label>
                                 <Form.Control
                                   type="text"
                                   name="nama"
                                   onChange={this.onChangeInput}
-                                  placeholder="Nama Company"
+                                  placeholder="Company Name"
                                   value={this.state.nama}
                                 />
                               </div>
@@ -743,7 +743,7 @@ export default class CompanyDetail extends Component {
                                   type="file"
                                   onChange={this.onChangeInput}
                                   name="logo"
-                                  placeholder="Nama Company"
+                                  placeholder="Company Name"
                                 />
                                 <Form.Text>
                                   Make sure the file is in png, jpg, jpeg, or
@@ -961,7 +961,7 @@ export default class CompanyDetail extends Component {
                                         onClick={this.onClickTambahGrup}
                                         className="btn btn-block btn-ideku f-w-bold"
                                       >
-                                        Simpan
+                                        Save
                                       </button>
                                       <button
                                         type="button"
@@ -1001,7 +1001,7 @@ export default class CompanyDetail extends Component {
                                         onClick={this.onClickUpdate}
                                       >
                                         <i className="fa fa-save"></i>
-				                                Simpan
+				                                Save
 				                              </button>
                                     </div>
                                   }
@@ -1049,7 +1049,7 @@ export default class CompanyDetail extends Component {
                                             onClick={this.onClickTambahSemester}
                                             className="btn btn-block btn-ideku f-w-bold"
                                           >
-                                            Simpan
+                                            Save
 		                                      </button>
                                           <button
                                             type="button"

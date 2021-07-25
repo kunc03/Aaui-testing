@@ -119,7 +119,6 @@ export default class ChapterPreview extends Component {
       }
     } else if (name === 'attachmentId') {
       this.setState({ [name]: e.target.files });
-      console.log('ALVIN LAMPIRAN', this.state.attachmentId)
     } else {
       this.setState({ [name]: value });
     }
@@ -1089,7 +1088,7 @@ export default class ChapterPreview extends Component {
                               onClick={this.onSubmitChapterForum}
                               className="btn btn-primary f-w-bold"
                             >
-                              Simpan
+                              Save
                           </button>
                             <button
                               type="button"
@@ -1227,7 +1226,7 @@ export default class ChapterPreview extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label>Lampiran</label>
+                              <label>Attachment</label>
                               <input
                                 accept="application/pdf"
                                 name="attachmentId"
@@ -1273,7 +1272,7 @@ export default class ChapterPreview extends Component {
                               type="submit"
                               className="btn btn-primary f-w-bold"
                             >
-                              Simpan
+                              Save
                           </button>
                             <button
                               style={{ marginTop: "50px" }}

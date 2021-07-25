@@ -7,7 +7,7 @@ class Lists extends Component {
 
 	render() {
 		const items = this.props.items;
-		const headers = ["Nama Webinar", "Pembicara", "Status", "Time", "Date", "Peserta", "Attachment", "Action"];
+		const headers = ["Webinar Name", "Pembicara", "Status", "Time", "Date", "Peserta", "Attachment", "Action"];
 
 		return (
 			<table className="table table-striped">

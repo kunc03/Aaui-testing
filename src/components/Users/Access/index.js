@@ -303,7 +303,7 @@ export default class UserAccess extends Component {
 													<div style={{ marginTop: '20px' }} className="form-group">
 														<label>Nama User</label>
 														<select name="user_id" className="form-control" onChange={this.handleChangeInput}>
-															<option value="">-- pilih --</option>
+															<option value="">-- Select --</option>
 															{
 																users.map(item => (
 																	<option key={item.user_id} value={item.user_id}>{item.name}</option>

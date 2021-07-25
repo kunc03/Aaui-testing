@@ -56,9 +56,9 @@ export default class WebinarPretestAdd extends Component {
     let dataIndex = e.target.getAttribute('data-id');
     let dataID = e.target.getAttribute('data-index');
     API.delete(`${API_SERVER}v2/webinar-test/pertanyaan/${dataIndex}`).then(res => {
-      if (res.data.error) toast.warning("Gagal menghapus data");
+      if (res.data.error) toast.warning("Delete failed");
 
-      toast.success("Pertanyaan Pre Test terhapus")
+      toast.success("Pre-test question deleted")
       let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
       this.setState({
         pertanyaan: kurangi
@@ -83,7 +83,7 @@ export default class WebinarPretestAdd extends Component {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            toast.success(`Menyimpan Pre Test`)
+            toast.success(`Saved`)
             this.props.closeModal()
           }
         }
@@ -100,7 +100,7 @@ export default class WebinarPretestAdd extends Component {
     };
 
     if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-      toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+      toast.warning(`Question ${form.webinar_test.filter(item => !item.jawab)[0].tanya} has not been set the answer`)
     }
     else {
       API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -108,7 +108,7 @@ export default class WebinarPretestAdd extends Component {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            toast.success(`Menyimpan Pre Test`)
+            toast.success(`Saved`)
             this.props.closeModal()
           }
         }
@@ -149,7 +149,7 @@ export default class WebinarPretestAdd extends Component {
     API.post(`${API_SERVER}v2/webinar-test/import`, form).then(res => {
       if (res.data.error) toast.warning("Error import data");
 
-      toast.success("Berhasil import kuesioner")
+      toast.success("Success import questionnaire")
       this.setState({ loading: false })
       this.fetchData();
     })
@@ -244,14 +244,14 @@ export default class WebinarPretestAdd extends Component {
             <div className="row mt-4">
               <div className="col-sm-12">
                 <div className="form-group">
-                  <label className="bold"> Time Mengerjakan (Menit)</label>
+                  <label className="bold"> Working Duration (Minutes)</label>
                   <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
                 </div>
 
                 {
                   this.state.pertanyaan.map((item, i) => (
                     <div className="form-group">
-                      <label>Pertanyaan {i + 1}</label>
+                      <label>Question {i + 1}</label>
                       <span className="float-right">
                         <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                       </span>
@@ -304,7 +304,7 @@ export default class WebinarPretestAdd extends Component {
                   ))
                 }
 
-                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Pertanyaan</button>
+                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Question</button>
 
                 <button
                   type="button"
@@ -312,7 +312,7 @@ export default class WebinarPretestAdd extends Component {
                   onClick={this.state.update ? this.updateKuesioner.bind(this) : this.saveKuesioner.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                      Simpan
+                      Save
                     </button>
               </div>
             </div>

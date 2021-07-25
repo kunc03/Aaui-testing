@@ -95,7 +95,7 @@ export default class WebinarKuesioner extends Component {
                     }}>
                       <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                     </Link>
-                    Hasil Kuesioner Peserta
+                    Questionnaire Result
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">

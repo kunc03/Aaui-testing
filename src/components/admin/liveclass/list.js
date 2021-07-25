@@ -751,7 +751,7 @@ export default class LiveClassAdmin extends Component {
                               mode="single"
                               enableSearch={true}
                               resetable={true}
-                              valuePlaceholder="Select Folder Project"
+                              valuePlaceholder="Select project folder"
                             />
                             <Form.Text className="text-muted">
                               All MOM will be collected in 1 project folder on the Files menu.

@@ -139,9 +139,9 @@ class Event extends Component {
                     <div className="card" style={{background:'#dac88c',flex:1, alignItems:'center', justifyContent:'flex-start', flexDirection:'row'}}>
                     <div className="card-carousel col-sm-8">
                         <div className="title-head f-w-900 f-16" style={{marginTop:20}}>
-                        Konfirmasi Kehadiran
+                        Attendance Confirmation
                         </div>
-                        <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                        <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                     </div>
                     <div className="card-carousel col-sm-4">
                         <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{padding: '5px 10px'}}>

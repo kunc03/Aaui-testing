@@ -204,10 +204,10 @@ class UserEdit extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Pilih Group"
+                                valuePlaceholder="Select Group"
                               />
                               {/* <select required className="form-control" name="branch_id" onChange={this.onChangeInput}>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   this.state.listBranch.map(item => (
                                     <option value={item.branch_id} selected={(item.branch_id === this.state.user.branch_id) ? 'selected': ''}>{item.branch_name}</option>
@@ -220,7 +220,7 @@ class UserEdit extends Component {
                               <label className="label-input">Role</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <select required className="form-control" name="grup_id" onChange={this.onChangeInput}>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   this.state.listGrup.map(item => (
                                     <option value={item.grup_id} selected={(item.grup_id === this.state.user.grup_id) ? 'selected' : ''}>{item.grup_name}</option>
@@ -237,7 +237,7 @@ class UserEdit extends Component {
                                 type="text"
                                 name="name"
                                 className="form-control"
-                                placeholder="nama"
+                                placeholder="Name"
                                 value={this.state.name}
                                 onChange={this.onChangeInput}
                               />
@@ -283,15 +283,15 @@ class UserEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Alamat</label>
-                              <textarea value={this.state.address} name="address" className="form-control" placeholder="alamat" onChange={this.onChangeInput} />
+                              <label className="label-input">Address</label>
+                              <textarea value={this.state.address} name="address" className="form-control" placeholder="Address" onChange={this.onChangeInput} />
                             </div>
 
                             <div className="form-group">
                               <label className="label-input">Level</label>
                               <Form.Text className="text-danger">Required</Form.Text>
                               <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {
                                   levelUser.map(item => (
                                     <option value={item.level} selected={(item.level === this.state.user.level) ? 'selected' : ''}>{item.level === 'client' ? 'User' : item.level}</option>
@@ -312,7 +312,7 @@ class UserEdit extends Component {
                             </div> */}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Batasi Waktu
+                                Time Limit
                               </label>
                               <div style={{ width: '100%' }}>
                                 <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />

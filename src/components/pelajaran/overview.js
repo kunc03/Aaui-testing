@@ -131,7 +131,7 @@ class Overview extends React.Component {
 
               <div className="form-group">
                 <button onClick={this.simpanOverview} type="button" className="btn btn-v2 btn-success">
-                  <i className="fa fa-save"></i> Simpan
+                  <i className="fa fa-save"></i> Save
                 </button>
               </div>
             </div>

@@ -199,7 +199,7 @@ class Files extends Component {
                               className="folder-icon"
                             />
                             <div className="filename">
-                              Kembali
+                              Back
                                   </div>
                           </div>
                         }
@@ -290,7 +290,7 @@ class Files extends Component {
                         name="folderName"
                         value={this.state.folderName}
                         className="form-control"
-                        placeholder="Nama Folder Project"
+                        placeholder="Name"
                         onChange={this.onChangeInput}
                         required
                       />
@@ -299,7 +299,7 @@ class Files extends Component {
                   </Col>
                 </Row>
                 <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{ padding: '10px 17px', width: '100%', marginTop: 20 }}>
-                  <i className="fa fa-save"></i>Simpan
+                  <i className="fa fa-save"></i>Save
                       </Link>
                 <button
                   type="button"
@@ -326,7 +326,7 @@ class Files extends Component {
                 <Row>
                   <Col>
                     <div className="form-group">
-                      <label>Lampiran</label>
+                      <label>Attachment</label>
                       <input
                         accept="all"
                         name="attachmentId"
@@ -338,7 +338,7 @@ class Files extends Component {
                       />
                       <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.attachmentId.length} File</label>
                       <Form.Text>
-                        Bisa banyak file, pastikan file tidak melebihi 500MB
+                        Support multiple files (make sure all the files does not exceed 500MB)
                               {/* dan ukuran file tidak melebihi 20MB. */}
                       </Form.Text>
                     </div>

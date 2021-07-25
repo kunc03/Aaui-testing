@@ -154,7 +154,7 @@ export default class LiveStream extends Component {
           console.log('RESS SUKSES', res)
         } else {
           this.setState({
-            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+            emailResponse: "Email failed to send, please check the email address."
           });
           console.log('RESS GAGAL', res)
         }
@@ -391,7 +391,7 @@ export default class LiveStream extends Component {
                                   type="text"
                                   value={this.state.user.name}
                                   className="form-control"
-                                  placeholder="Nama"
+                                  placeholder="Name"
                                   onChange={this.onChangeName}
                                   required
                                 />

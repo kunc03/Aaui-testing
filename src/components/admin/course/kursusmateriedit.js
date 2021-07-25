@@ -228,7 +228,7 @@ export default class KursusMateriEdit extends Component {
                                   name="category_id"
                                   onChange={this.onChangeInput}
                                 >
-                                  <option value="">-- pilih --</option>
+                                  <option value="">-- Select --</option>
                                   {this.state.kategori.map(item => (
                                     <option
                                       value={item.category_id}
@@ -352,7 +352,7 @@ export default class KursusMateriEdit extends Component {
                               type="submit"
                               className="btn btn-block btn-ideku f-w-bold"
                             >
-                              Simpan Materi & Kursus
+                              Save Materi & Kursus
                             </button>
                           </form>
                         </div>
@@ -402,7 +402,7 @@ export default class KursusMateriEdit extends Component {
                                     }}
                                     id="basic-addon2"
                                   >
-                                    Simpan
+                                    Save
                                   </span>
                                 </div>
                               </div>

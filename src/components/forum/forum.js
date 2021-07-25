@@ -277,7 +277,7 @@ export default class Forum extends Component {
                           />
                           <InputGroup.Append style={{ cursor: "pointer" }}>
                             <InputGroup.Text id="basic-addon2">
-                              Pencarian
+                              Search
                             </InputGroup.Text>
                           </InputGroup.Append>
                         </InputGroup>
@@ -509,7 +509,7 @@ export default class Forum extends Component {
                             onClick={_addforum.bind(this)}
                             className="btn btn-primary f-w-bold"
                           >
-                            Simpan
+                            Save
                           </button>
                           &nbsp;
                           <button

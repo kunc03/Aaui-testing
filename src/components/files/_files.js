@@ -1048,7 +1048,7 @@ fetchRekamanBBB(folder){
                         name="folderName"
                         value={this.state.folderName}
                         className="form-control"
-                        placeholder="Nama Folder"
+                        placeholder="Folder Name"
                         onChange={this.onChangeInput}
                         required
                       />
@@ -1143,7 +1143,7 @@ fetchRekamanBBB(folder){
                   onClick={this.saveFolder.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Simpan
+                        Save
                       </button>
               </Modal.Footer>
             </Card>
@@ -1170,7 +1170,7 @@ fetchRekamanBBB(folder){
                         name="editProjectName"
                         value={this.state.editProjectName}
                         className="form-control"
-                        placeholder="Nama Folder"
+                        placeholder="Folder Name"
                         onChange={this.onChangeInput}
                         required
                       />
@@ -1334,7 +1334,7 @@ fetchRekamanBBB(folder){
                 <Row>
                   <Col>
                     <div className="form-group">
-                      <label>Lampiran</label>
+                      <label>Attachment</label>
                       {this.state.attachmentId.length ? <label for="attachmentId" className="label-upload-icademy"> : {this.state.attachmentId.length} File</label> :null}
                       <input
                         accept="all"
@@ -1347,7 +1347,7 @@ fetchRekamanBBB(folder){
                         className="form-control file-upload-icademy"
                       />
                       <Form.Text>
-                        Bisa banyak file, pastikan file tidak melebihi 500MB
+                        Support multiple files (make sure all the files does not exceed 500MB)
                               {/* dan ukuran file tidak melebihi 20MB. */}
                       </Form.Text>
                     </div>

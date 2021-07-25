@@ -592,7 +592,7 @@ class Report extends Component {
                       </label>
                       <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
                       <span style={{ fontSize: '12px' }}>
-                        <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Nama Tanda Tangan' value={this.state.cert_sign_name} />
+                        <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Signature Name' value={this.state.cert_sign_name} />
                       </span>
                     </div>
                   </div>

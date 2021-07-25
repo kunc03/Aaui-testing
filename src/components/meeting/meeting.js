@@ -173,7 +173,7 @@ class MeetingTable extends Component {
             });
             toast.success("Sending invitation to participant's Email.")
           } else {
-            toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
+            toast.error("Email failed to send, please check the email address.")
             this.setState({ sendingEmail: false })
           }
         }
@@ -456,7 +456,7 @@ class MeetingTable extends Component {
         API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
           if (res.status === 200) {
             if (!res.data.error) {
-              console.log('sukses konfirmasi')
+              console.log('Confirmation Success')
             } else {
               alert('Email error');
             }
@@ -496,7 +496,7 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     e.preventDefault();
     if (this.state.roomName === '' || !this.state.valueFolder.length) {
-      toast.warning('Title dan folder project wajib diisi')
+      toast.warning('Title and folder project is mandatory')
     }
     else {
       if ((this.state.checkZoom.length === 1 && this.state.engine === 'zoom') || (this.state.engine === 'bbb')) {
@@ -702,7 +702,7 @@ class MeetingTable extends Component {
                     user_id: userNotif[i],
                     activity_id: this.state.valueFolder[0],
                     type: 3,
-                    desc: `Silahkan konfirmasi undangan Anda pada meeting "${res.data.result.room_name}"`,
+                    desc: `Please confirm your meeting attendance at "${res.data.result.room_name}"`,
                     dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
                     types : 1
                   }
@@ -712,13 +712,13 @@ class MeetingTable extends Component {
               else {
                 this.fetchMeeting();
                 this.closeClassModal();
-                toast.success('Berhasil membuat meeting baru');
+                toast.success('Success create new meeting');
               }
             }
           })
         }
       } else {
-        toast.warning(`Silahkan sinkronisasi akun zoom Anda di menu pengaturan.`)
+        toast.warning(`Sync your zoom account at Settings menu`)
       }
     }
 
@@ -750,7 +750,7 @@ class MeetingTable extends Component {
           }
         })
         // END BBB END
-        toast.success('Berhasil menghapus meeting')
+        toast.success('Meeting Deleted')
       }
     })
   }
@@ -1327,7 +1327,7 @@ class MeetingTable extends Component {
                 <Form.Label className="f-w-bold">
                   Title
                 </Form.Label>
-                <FormControl type="text" placeholder="Title" value={this.state.roomName} onChange={e =>
+                <FormControl type="text" placeholder="Insert Title" value={this.state.roomName} onChange={e =>
                   this.setState({ roomName: e.target.value })} />
                 <Form.Text className="text-muted">
                   The title cannot use special characters
@@ -1338,7 +1338,7 @@ class MeetingTable extends Component {
                 <Form.Label className="f-w-bold">
                   Folder Project
                 </Form.Label>
-                <MultiSelect id="folder" options={this.state.optionsFolder} value={this.state.valueFolder} onChange={valueFolder => this.setState({ valueFolder })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Folder Project" />
+                <MultiSelect id="folder" options={this.state.optionsFolder} value={this.state.valueFolder} onChange={valueFolder => this.setState({ valueFolder })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select project folder" />
                 <Form.Text className="text-muted">
                   All MOM are stored in the project’s file folder.
                   </Form.Text>
@@ -1393,23 +1393,23 @@ class MeetingTable extends Component {
               {this.state.private ?
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
-                    Wajib Konfirmasi Kehadiran
+                    Attendance confirmation is mandatory
                 </Form.Label>
                   <div style={{ width: '100%' }}>
                     <ToggleSwitch checked={false} onChange={this.toggleSwitchRequiredConfirmation.bind(this)} checked={this.state.requireConfirmation} />
                   </div>
                   <Form.Text className="text-muted">
-                    {this.state.requireConfirmation ? 'Hanya peserta yang konfirmasi hadir yang dapat bergabung ke meeting.' : 'Semua peserta meeting dapat gabung ke meeting.'}
+                    {this.state.requireConfirmation ? 'Only participants who confirm attendance can join the meeting.' : 'All meeting participants can join the meeting.'}
                   </Form.Text>
                 </Form.Group>
                 : null} {this.state.private ?
                   <Form.Group controlId="formJudul">
                     <Form.Label className="f-w-bold">
-                      Peserta Dari Group
+                      Add Participants From Group
                 </Form.Label>
                     <MultiSelect id="group" options={this.state.optionsGroup} value={this.state.valueGroup} onChange={valueGroup => this.groupSelect(valueGroup)} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
                     <Form.Text className="text-muted">
-                      Pilih peserta dari group untuk private meeting.
+                      Select participants from the group for a private meeting.
                   </Form.Text>
                   </Form.Group>
                   : null} {this.state.private ?
@@ -1432,7 +1432,7 @@ class MeetingTable extends Component {
                 </Form.Label>
                       <MultiSelect id="peserta" options={this.state.optionsPeserta} value={this.state.valuePeserta} onChange={valuePeserta => this.setState({ valuePeserta })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
                       <Form.Text className="text-muted">
-                        Pilih peserta untuk private meeting.
+                        Select participants for the private meeting.
                   </Form.Text>
                     </Form.Group>
                     : null}
@@ -1445,20 +1445,20 @@ class MeetingTable extends Component {
                   <ToggleSwitch checked={false} onChange={this.toggleSwitchScheduled.bind(this)} checked={this.state.scheduled} />
                 </div>
                 <Form.Text className="text-muted">
-                  {this.state.scheduled ? 'Scheduled meeting.' : 'Unscheduled meeting. Meeting room is always open.'}
+                  {this.state.scheduled ? 'Scheduled meeting.' : 'Meetings are not scheduled. Always accessible.'}
                 </Form.Text>
               </Form.Group>
               {this.state.scheduled &&
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
-                    Waktu
+                    Time
                 </Form.Label>
                   <div style={{ width: '100%' }}>
                     <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" /> &nbsp;&mdash;&nbsp;
                   <DatePicker selected={this.state.endDate} onChange={this.handleChangeDateEnd} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
                   </div>
                   <Form.Text className="text-muted">
-                    Pilih waktu meeting akan berlangsung.
+                    Select the time the meeting will take place.
                 </Form.Text>
                 </Form.Group>
               }
@@ -1527,7 +1527,7 @@ class MeetingTable extends Component {
               Cancel
             </button>
             <button className={`btn btn-icademy-primary ${this.state.sendingEmail && 'btn-icademy-grey'}`} onClick={this.onSubmitForm} disabled={this.state.sendingEmail}>
-              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
+              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Save'}
             </button>
           </Modal.Footer>
         </Modal>
@@ -1544,14 +1544,14 @@ class MeetingTable extends Component {
                 <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                   <div className="card-carousel col-sm-8">
                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                      Konfirmasi Kehadiran
+                      Attendance Confirmation
                   </div>
-                    <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                    <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                   </div>
                   <div className="card-carousel col-sm-4">
-                    <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
+                    <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Not Present
                   </Link>
-                    <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
+                    <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Present
                   </Link>
                   </div>
                 </div>
@@ -1646,7 +1646,7 @@ class MeetingTable extends Component {
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
               <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
-                  <i className="fa fa-video"></i> Masuk
+                  <i className="fa fa-video"></i> Join
                   </button>
               </a>
               : null}
@@ -1656,18 +1656,18 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus meeting <b>{this.state.deleteMeetingName}</b> ?</div>
+            <div>Are you sure you want to delete the meeting <b>{this.state.deleteMeetingName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
               Cancel
             </button>
             <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.onSubmitDelete.bind(this, this.state.deleteMeetingId)}>
-              <i className="fa fa-trash"></i> Hapus
+              <i className="fa fa-trash"></i> Delete
             </button>
           </Modal.Footer>
         </Modal>

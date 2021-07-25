@@ -30,9 +30,9 @@ export default function Call(props) {
               <div className="page-wrapper">
               
                 <h4>Zoom</h4>
-                <p>{loading ? 'Proses sinkronisasi...' : 'Sinkronisasi selesai.'}</p>
+                <p>{loading ? 'Syncing...' : 'Success Sync.'}</p>
 
-                {loading ? null : <Link to="/" className="btn btn-primary">Kembali ke Home</Link> }
+                {loading ? null : <Link to="/" className="btn btn-primary">Back to Home</Link> }
               
               </div>
             </div>

@@ -169,7 +169,7 @@ export default class KursusMateriEdit extends Component {
                               <label className="label-input"> Category </label>
                               <div className="input-group mb-3">
                                 <select required className="form-control" name="category_id" onChange={this.onChangeInput}>
-                                  <option value="">-- pilih --</option>
+                                  <option value="">-- Select --</option>
                                   {
                                     this.state.kategori.map(item => (
                                       <option value={item.category_id} selected={(item.category_id === this.state.category_id) ? 'selected' : ''}>{item.category_name}</option>
@@ -243,7 +243,7 @@ export default class KursusMateriEdit extends Component {
                             </div>
                             <button style={{ marginTop: '50px' }} type="submit"
                               className="btn btn-block btn-ideku f-w-bold">
-                              Simpan Materi & Kursus
+                              Save Materi & Kursus
 		                        </button>
                           </form>
                         </div>
