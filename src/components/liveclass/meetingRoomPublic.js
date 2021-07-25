@@ -265,7 +265,7 @@ export default class MeetingRoomPublic extends Component {
             });
             toast.success("Mengirim email ke peserta.")
           } else {
-            toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
+            toast.error("Email failed to send, please check the email address.")
             this.setState({ sendingEmail: false })
           }
         }

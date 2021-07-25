@@ -135,7 +135,7 @@ class UserCompany extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-14 text-c-grey-t ">
-                      Waktu Terbatas
+                      Limited Time
                     </small>
                     <h5 className="f-w-bold f-16 text-c-purple3">
                       {item.unlimited ? 'Tidak' : item.validity.toString().substring(0, 10)}
@@ -159,10 +159,10 @@ class UserCompany extends Component {
                 <div className="row align-items-center justify-content-center">
                   <div className="col">
                     <small className="f-w-600 f-14 text-c-grey-t ">
-                      Jenis
+                      Type
                     </small>
                     <h5 style={{ textTransform: 'capitalize' }} className="f-w-bold f-16 text-c-purple3">
-                      {item.company_type ? item.company_type : 'Not Set'}
+                      {item.company_type ? item.company_type === 'Perusahaan' ? 'Corporate' : 'Education' : 'Not Set'}
                     </h5>
                   </div>
                 </div>

@@ -676,12 +676,12 @@ export default class CompanyDetail extends Component {
 														</Col>
 														<Col md={9}>
 															<div className="form-group">
-																<label>Nama Company</label>
+																<label>Company Name</label>
 																<Form.Control
 																	type="text"
 																	name="nama"
 																	onChange={this.onChangeInput}
-																	placeholder="Nama Company"
+																	placeholder="Company Name"
 																	value={this.state.nama}
 																/>
 															</div>
@@ -746,11 +746,10 @@ export default class CompanyDetail extends Component {
 																	type="file"
 																	onChange={this.onChangeInput}
 																	name="logo"
-																	placeholder="Nama Company"
+																	placeholder="Company Name"
 																/>
 																<Form.Text className="text-muted">
-																	Pastikan file berformat png, jpg, jpeg, atau
-																	gif dan ukuran tidak melebihi 500KB
+																Make sure the file is in png, jpg, jpeg, or gif format and does not exceed 500KB
                                 </Form.Text>
 															</div>
 															<button
@@ -811,14 +810,14 @@ export default class CompanyDetail extends Component {
 																				style={{ marginTop: "20px" }}
 																				className="form-group"
 																			>
-																				<label>Nama {this.state.tipe == 'pendidikan' ? 'Major' : 'Group'}</label>
+																				<label>{this.state.tipe == 'pendidikan' ? 'Major' : 'Group'} Name</label>
 																				<input
 																					value={this.state.namacabang}
 																					className="form-control"
 																					type="text"
 																					name="namacabang"
 																					onChange={this.onChangeInput}
-																					placeholder="Nama"
+																					placeholder="Fill the name here"
 																				/>
 																			</div>
 																			<button
@@ -828,14 +827,14 @@ export default class CompanyDetail extends Component {
 																				onClick={this.onClickTambahCabang}
 																				className="btn btn-block btn-ideku f-w-bold"
 																			>
-																				Simpan
+																				Save
                                       </button>
 																			<button
 																				type="button"
 																				className="btn btn-block f-w-bold"
 																				onClick={this.handleCloseCabang}
 																			>
-																				Tidak
+																				Cancel
                                       </button>
 																		</Modal.Body>
 																	</Modal>
@@ -862,23 +861,23 @@ export default class CompanyDetail extends Component {
 																	>
 																		<Modal.Body>
 																			<Modal.Title className="text-c-purple3 f-w-bold">
-																				Role Baru
+																				New Role
                                       </Modal.Title>
 																			<div
 																				style={{ marginTop: "20px" }}
 																				className="form-group"
 																			>
-																				<label>Nama Role</label>
+																				<label>Role Name</label>
 																				<input
 																					value={this.state.namagrup}
 																					className="form-control"
 																					type="text"
 																					name="namagrup"
 																					onChange={this.onChangeInput}
-																					placeholder="Nama Role"
+																					placeholder="Type Role Name Here"
 																				/>
 
-																				<table
+																				{/* <table
 																					className="table-curved"
 																					style={{ width: "100%" }}>
 																					<tr>
@@ -905,7 +904,7 @@ export default class CompanyDetail extends Component {
 																						<td>Kelola Group Meeting</td>
 																						<td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
 																					</tr>
-																				</table>
+																				</table> */}
 																			</div>
 																			<button
 																				style={{ marginTop: "50px" }}
@@ -914,14 +913,14 @@ export default class CompanyDetail extends Component {
 																				onClick={this.onClickTambahGrup}
 																				className="btn btn-block btn-ideku f-w-bold"
 																			>
-																				Simpan
+																				Save
                                       </button>
 																			<button
 																				type="button"
 																				className="btn btn-block f-w-bold"
 																				onClick={this.handleCloseGrup}
 																			>
-																				Tidak
+																				Cancel
                                       </button>
 																		</Modal.Body>
 																	</Modal>
@@ -950,7 +949,7 @@ export default class CompanyDetail extends Component {
 																				onClick={this.onClickUpdate}
 																			>
 																				<i className="fa fa-save"></i>
-				                                Simpan
+				                                Save
 				                              </button>
 																		</div>
 																	}
@@ -981,14 +980,14 @@ export default class CompanyDetail extends Component {
 																						style={{ marginTop: "20px" }}
 																						className="form-group"
 																					>
-																						<label>Nama Semester</label>
+																						<label>Semester Name</label>
 																						<input
 																							value={this.state.namasemester}
 																							className="form-control"
 																							type="text"
 																							name="namasemester"
 																							onChange={this.onChangeInput}
-																							placeholder="Nama Semester"
+																							placeholder="Fill semester name here"
 																						/>
 																					</div>
 																					<button
@@ -998,7 +997,7 @@ export default class CompanyDetail extends Component {
 																						onClick={this.onClickTambahSemester}
 																						className="btn btn-block btn-ideku f-w-bold"
 																					>
-																						Simpan
+																						Save
 		                                      </button>
 																					<button
 																						type="button"
@@ -1029,7 +1028,7 @@ export default class CompanyDetail extends Component {
 											>
 												<Modal.Body>
 													<Modal.Title className="text-c-purple3 f-w-bold">
-														Notifikasi
+														Alert
                           </Modal.Title>
 
 													<p style={{ color: "black", margin: "20px 0px" }}>
@@ -1041,7 +1040,7 @@ export default class CompanyDetail extends Component {
 														className="btn btn-block f-w-bold"
 														onClick={this.closeNotifikasi}
 													>
-														Mengerti
+														Yes
                           </button>
 												</Modal.Body>
 											</Modal>
@@ -1052,11 +1051,11 @@ export default class CompanyDetail extends Component {
 											>
 												<Modal.Body>
 													<Modal.Title className="text-c-purple3 f-w-bold">
-														Notifikasi
+														Alert
                           </Modal.Title>
 
 													<p style={{ color: "black", margin: "20px 0px" }}>
-														Apakah Anda yakin akan menghapus data ini ?
+														Are you sure want to delete this data ?
                           </p>
 
 													<button
@@ -1064,14 +1063,14 @@ export default class CompanyDetail extends Component {
 														className="btn btn-block btn-ideku f-w-bold"
 														onClick={this.onClickHapus}
 													>
-														Ya, Hapus
+														Yes, Delete
                           </button>
 													<button
 														type="button"
 														className="btn btn-block f-w-bold"
 														onClick={this.closeKonfirmasi}
 													>
-														Tidak
+														No
                           </button>
 												</Modal.Body>
 											</Modal>

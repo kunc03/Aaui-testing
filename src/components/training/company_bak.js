@@ -56,7 +56,7 @@ class Company extends Component {
         cell: row => <img height="26px" alt={row.name} src={row.image} />
       },
       {
-        name: 'Nama',
+        name: 'Name',
         selector: 'name',
         sortable: true,
         grow: 2,

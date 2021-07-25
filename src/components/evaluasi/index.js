@@ -283,7 +283,7 @@ class Evaluasi extends React.Component {
               ))
             }
 
-            <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Pertanyaan</button>
+            <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Question</button>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -297,7 +297,7 @@ class Evaluasi extends React.Component {
               onClick={this.saveRuangan}
             >
               <i className="fa fa-save"></i>
-              Simpan
+              Save
             </button>
           </Modal.Footer>
         </Modal>

@@ -57,7 +57,7 @@ export default class LiveClassAdminJoin extends Component {
           });
         } else {
           this.setState({
-            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+            emailResponse: "Email failed to send, please check the email address."
           });
         }
       }

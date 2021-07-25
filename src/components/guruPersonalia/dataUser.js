@@ -29,7 +29,7 @@ class DataUser extends Component {
                 <table className="table table-hover">
                     <thead>
                         <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                            <td>Nama Webinar</td>
+                            <td>Webinar Name</td>
                             {
                                 headerTabble.map((item, i) => {
                                     return (

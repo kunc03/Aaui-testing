@@ -403,7 +403,7 @@ class Mengajar extends React.Component {
             >
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                  Konfirmasi Kehadiran
+                  Attendance Confirmation
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>

@@ -9,6 +9,8 @@ class FormUser extends Component {
     this.state = {
         image:'',
         imagePreview:'assets/images/no-profile-picture.jpg',
+        imageIdentity:'',
+        imageIdentityPreview:'assets/images/no-image.png',
         training_company_id:'',
         name:'',
         born_place:'',
@@ -43,7 +45,7 @@ class FormUser extends Component {
   save = (e) => {
     this.setState({isSaving: true})
     e.preventDefault();
-    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || this.state.imageIdentityPreview === 'assets/images/no-image.png' || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
     }
@@ -71,6 +73,7 @@ class FormUser extends Component {
               }
               else{
                 if (this.state.image){
+                    this.setState({isSaving: true})
                     let formData = new FormData();
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${this.props.match.params.id}`, formData).then(res2 => {
@@ -78,16 +81,50 @@ class FormUser extends Component {
                             toast.warning(`${this.state.level} edited but fail to upload image`)
                         }
                         else{
-                            toast.success(`${this.state.level} edited`)
-                            this.setState({isSaving: false})
-                            this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                            if (this.state.imageIdentity){
+                                this.setState({isSaving: true})
+                                let formData = new FormData();
+                                formData.append("image", this.state.imageIdentity)
+                                API.put(`${API_SERVER}v2/training/user/image-identity/${this.props.match.params.id}`, formData).then(res2 => {
+                                    if (res2.data.error){
+                                        toast.warning(`${this.state.level} edited but fail to upload identity image`)
+                                    }
+                                    else{
+                                        toast.success(`${this.state.level} edited`)
+                                        this.setState({isSaving: false})
+                                        this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                                    }
+                                })
+                            }
+                            else{
+                                toast.success(`${this.state.level} edited`)
+                                this.setState({isSaving: false})
+                                this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                            }
                         }
                     })
                 }
                 else{
-                    toast.success(`${this.state.level} edited`)
-                    this.setState({isSaving: false})
-                    this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                    if (this.state.imageIdentity){
+                        this.setState({isSaving: true})
+                        let formData = new FormData();
+                        formData.append("image", this.state.imageIdentity)
+                        API.put(`${API_SERVER}v2/training/user/image-identity/${this.props.match.params.id}`, formData).then(res2 => {
+                            if (res2.data.error){
+                                toast.warning(`${this.state.level} edited but fail to upload identity image`)
+                            }
+                            else{
+                                toast.success(`${this.state.level} edited`)
+                                this.setState({isSaving: false})
+                                this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                            }
+                        })
+                    }
+                    else{
+                        toast.success(`${this.state.level} edited`)
+                        this.setState({isSaving: false})
+                        this.props.history.push(`/training/user/detail/${this.props.match.params.id}`)
+                    }
                 }
               }
           })
@@ -118,6 +155,7 @@ class FormUser extends Component {
               }
               else{
                 if (this.state.image){
+                    this.setState({isSaving: true})
                     let formData = new FormData();
                     formData.append("image", this.state.image)
                     API.put(`${API_SERVER}v2/training/user/image/${res.data.result.insertId}`, formData).then(res2 => {
@@ -127,16 +165,50 @@ class FormUser extends Component {
                             this.setState({isSaving: false})
                         }
                         else{
-                            toast.success(`New ${this.state.level} added`)
-                            this.setState({isSaving: false})
-                            this.goBack()
+                            if (this.state.imageIdentity){
+                                this.setState({isSaving: true})
+                                let formData = new FormData();
+                                formData.append("image", this.state.imageIdentity)
+                                API.put(`${API_SERVER}v2/training/user/image-identity/${res.data.result.insertId}`, formData).then(res2 => {
+                                    if (res2.data.error){
+                                        toast.warning(`${this.state.level} edited but fail to upload identity image`)
+                                    }
+                                    else{
+                                        toast.success(`${this.state.level} edited`)
+                                        this.setState({isSaving: false})
+                                        this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                                    }
+                                })
+                            }
+                            else{
+                                toast.success(`${this.state.level} edited`)
+                                this.setState({isSaving: false})
+                                this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                            }
                         }
                     })
                 }
                 else{
-                    toast.success(`New ${this.state.level} added`)
-                    this.setState({isSaving: false})
-                    this.goBack()
+                    if (this.state.imageIdentity){
+                        this.setState({isSaving: true})
+                        let formData = new FormData();
+                        formData.append("image", this.state.imageIdentity)
+                        API.put(`${API_SERVER}v2/training/user/image-identity/${res.data.result.insertId}`, formData).then(res2 => {
+                            if (res2.data.error){
+                                toast.warning(`${this.state.level} edited but fail to upload identity image`)
+                            }
+                            else{
+                                toast.success(`${this.state.level} edited`)
+                                this.setState({isSaving: false})
+                                this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                            }
+                        })
+                    }
+                    else{
+                        toast.success(`${this.state.level} edited`)
+                        this.setState({isSaving: false})
+                        this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
+                    }
                 }
               }
           })
@@ -156,6 +228,19 @@ class FormUser extends Component {
             } else {
               e.target.value = null;
               toast.warning('Image size cannot larger than 5MB')
+            }
+        }
+      }
+      else if (name==='imageIdentity'){
+        if (e.target.files.length){
+            if (e.target.files[0].size <= 5000000) {
+              this.setState({
+                imageIdentity: e.target.files[0],
+                imageIdentityPreview: URL.createObjectURL(e.target.files[0])
+              });
+            } else {
+              e.target.value = null;
+              toast.warning('Identity Image size cannot larger than 5MB')
             }
         }
       }
@@ -183,7 +268,8 @@ class FormUser extends Component {
                 city: res.data.result.city,
                 phone: res.data.result.phone,
                 email: res.data.result.email,
-                imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview
+                imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
+                imageIdentityPreview: res.data.result.identity_image ? res.data.result.identity_image : this.state.imageIdentityPreview
             })
         }
     })
@@ -292,9 +378,18 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="image">Profile Picture</label>
-                                                            <label for="image" style={{cursor:'pointer', borderRadius:'50px', overflow:'hidden'}}>
-                                                                <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
-                                                            </label>
+                                                            <center>
+                                                                <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
+                                                                    <a href={this.state.imagePreview} target="_blank">
+                                                                        <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                    </a>
+                                                                </label>
+                                                                <label for='image' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
+                                                                    <div className="button-bordered-grey">
+                                                                        {this.state.image ? this.state.image.name : 'Choose file'}
+                                                                    </div>
+                                                                </label>
+                                                            </center>
                                                             <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
@@ -326,6 +421,22 @@ class FormUser extends Component {
                                                         </div>
                                                     </div>
                                                     <div className="row">
+                                                        <div className="form-field-top-label">
+                                                            <label for="imageIdentity">Identity Card Photo<required>*</required></label>
+                                                            <center>
+                                                                <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
+                                                                    <a href={this.state.imageIdentityPreview} target="_blank">
+                                                                        <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                    </a>
+                                                                </label>
+                                                                <label for='imageIdentity' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
+                                                                    <div className="button-bordered-grey">
+                                                                        {this.state.imageIdentity ? this.state.imageIdentity.name : 'Choose file'}
+                                                                    </div>
+                                                                </label>
+                                                            </center>
+                                                            <input type="file" accept="image/*" name="imageIdentity" id="imageIdentity" onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                        </div>
                                                         <div className="form-field-top-label">
                                                             <label for="identity">Identity Card Number<required>*</required></label>
                                                             <input type="text" name="identity" id="identity" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>

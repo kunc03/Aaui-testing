@@ -253,7 +253,7 @@ export default class User extends Component {
   render() {
     const columns = [
       {
-        name: 'Nama',
+        name: 'Name',
         selector: 'nama',
         sortable: true,
         grow: 2,
@@ -416,7 +416,7 @@ export default class User extends Component {
                             aria-describedby="basic-addon1"
                           />
                           <InputGroup.Append style={{ cursor: 'pointer' }}>
-                            <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                            <InputGroup.Text id="basic-addon2">Search</InputGroup.Text>
                           </InputGroup.Append>
                         </InputGroup>
                       </div>
@@ -537,7 +537,7 @@ export default class User extends Component {
                           <form style={{ marginTop: '10px' }} onSubmit={this.onClickSubmitVoucer}>
                             <div className="form-group">
                               <label>Voucher</label>
-                              <input type="text" placeholder="voucher baru" className="form-control" value={this.state.voucher} name="voucher" onChange={this.handleChangeInput} />
+                              <input type="text" placeholder="New Voucher" className="form-control" value={this.state.voucher} name="voucher" onChange={this.handleChangeInput} />
                               {this.state.notif && (
                                 <Form.Text className="text-danger">{this.state.notif}</Form.Text>
                               )}

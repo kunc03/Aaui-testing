@@ -221,13 +221,13 @@ export default class WebinarRiwayat extends Component {
       this.setState({ isModalSertifikat: true });
     }
     else {
-      toast.warning('Silahkan pilih dahulu peserta yang ingin dibuatkan sertifikat')
+      toast.warning('Please select the participant you want to make a certificate')
     }
   }
 
   sertifikat = () => {
     if (this.state.cert_sign_name === '' || (this.state.signature === '' || this.state.signature === null)) {
-      toast.warning('Silahkan isi nama dan gambar tanda tangan')
+      toast.warning('Please fill signature name and signature image')
     }
     else {
       let items = this.state.peserta;
@@ -383,7 +383,7 @@ export default class WebinarRiwayat extends Component {
               }
             </tbody>
           </table>
-          <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Buat Sertifikat</Button>
+          <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
         </div>
       )
     };
@@ -478,8 +478,8 @@ export default class WebinarRiwayat extends Component {
 
     const dataSelesai = {
       labels: [
-        'Hadir',
-        'Tidak Hadir',
+        'Present',
+        'Not Present',
       ],
       datasets: [{
         data: [this.state.jumlahHadir, this.state.jumlahTidakHadir],
@@ -495,8 +495,8 @@ export default class WebinarRiwayat extends Component {
     };
     const dataVia = {
       labels: [
-        'Peserta',
-        'Tamu',
+        'User',
+        'Guest',
       ],
       datasets: [{
         data: [this.state.jumlahPeserta, this.state.jumlahTamu],
@@ -545,7 +545,7 @@ export default class WebinarRiwayat extends Component {
                     }}>
                       <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                     </Link>
-                    Riwayat
+                    History
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
@@ -558,7 +558,7 @@ export default class WebinarRiwayat extends Component {
                 <div className="row">
                   <div className="col-sm-8">
                     <h5 style={{fontSize:17}}>{this.state.judul}</h5>
-                    <h6>Pembicara : {this.state.pembicara.toString()}</h6>
+                    <h6>Speaker : {this.state.pembicara.toString()}</h6>
                     <p>
                       {this.state.isi}
                     </p>
@@ -587,7 +587,7 @@ export default class WebinarRiwayat extends Component {
                         className="btn btn-icademy-primary"
                       >
                         <i className="fa fa-file"></i>
-                        Kuesioner
+                        Questionnaire
                       </button></Link> */}
                   </div>
                 </div>
@@ -607,9 +607,9 @@ export default class WebinarRiwayat extends Component {
                   <ReactHTMLTableToExcel
                     className="btn btn-icademy-warning btn-12"
                     table="table-peserta"
-                    filename={'Kehadiran ' + this.state.judul}
-                    sheet="Kehadiran"
-                    buttonText="Export Kehadiran Peserta ke Excel" />
+                    filename={'Attendance ' + this.state.judul}
+                    sheet="Attendance"
+                    buttonText="Export Attendance to Excel" />
                   <Peserta items={this.state.peserta} />
                 </div>
               </div>
@@ -619,9 +619,9 @@ export default class WebinarRiwayat extends Component {
                   <ReactHTMLTableToExcel
                     className="btn btn-icademy-warning btn-12"
                     table="table-pertanyaan"
-                    filename={'Pertanyaan ' + this.state.judul}
-                    sheet="Kehadiran"
-                    buttonText="Export Pertanyaan ke Excel" />
+                    filename={'Questions ' + this.state.judul}
+                    sheet="Questions"
+                    buttonText="Export Questions to Excel" />
                   <Pertanyaan items={this.state.qna} />
                 </div>
               </div>
@@ -631,9 +631,9 @@ export default class WebinarRiwayat extends Component {
                   <ReactHTMLTableToExcel
                     className="btn btn-icademy-warning btn-12"
                     table="table-kuesioner"
-                    filename={'Jawaban Kuesioner ' + this.state.judul}
-                    sheet="Kehadiran"
-                    buttonText="Export Jawaban Kuesioner ke Excel" />
+                    filename={'Questionnaire Result ' + this.state.judul}
+                    sheet="Questionnaire"
+                    buttonText="Export Questionnaire to Excel" />
                   <JawabanKuesioner items={this.state.jawabanKuesioner} />
                 </div>
               </div>
@@ -643,9 +643,9 @@ export default class WebinarRiwayat extends Component {
                   <ReactHTMLTableToExcel
                     className="btn btn-icademy-warning btn-12"
                     table="table-test"
-                    filename={'Hasil Test ' + this.state.judul}
-                    sheet="Kehadiran"
-                    buttonText="Export Hasil Test ke Excel" />
+                    filename={'Test Result ' + this.state.judul}
+                    sheet="Test"
+                    buttonText="Export Test Result to Excel" />
                   <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
                 </div>
               </div>
@@ -661,7 +661,7 @@ export default class WebinarRiwayat extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Buat Sertifikat
+                Create Certificate
           </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -693,7 +693,7 @@ export default class WebinarRiwayat extends Component {
                       </label>
                       <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
                       <span style={{ fontSize: '12px' }}>
-                        <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Nama Tanda Tangan' value={this.state.cert_sign_name} />
+                        <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Signature Name' value={this.state.cert_sign_name} />
                       </span>
                     </div>
                   </div>
@@ -703,7 +703,7 @@ export default class WebinarRiwayat extends Component {
             </Modal.Body>
             <Modal.Footer>
               <Button className="btn btn-icademy-primary" onClick={() => this.sertifikat()}>
-                Kirim Sertifikat
+              Send Certificate to Selected Participant's Email
           </Button>
             </Modal.Footer>
           </Modal>

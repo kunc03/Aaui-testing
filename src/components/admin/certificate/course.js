@@ -87,7 +87,7 @@ export default class Course extends Component {
                 aria-describedby="basic-addon1"
               />
               <InputGroup.Append style={{ cursor: 'pointer' }}>
-                <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+                <InputGroup.Text id="basic-addon2">Search</InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>
           </div>

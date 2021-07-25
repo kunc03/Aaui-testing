@@ -654,7 +654,7 @@ class GanttChart extends Component {
                   <div className="form-group">
                     <button type="submit" className="btn btn-block btn-v2 btn-primary">
                       <i className="fa fa-save"></i>
-                      Simpan
+                      Save
                     </button>
                   </div>
                 </form>

@@ -268,7 +268,7 @@ class RuanganMengajar extends React.Component {
               onClick={this.saveRuangan}
             >
               <i className="fa fa-save"></i>
-              Simpan
+              Save
             </button>
           </Modal.Footer>
         </Modal>

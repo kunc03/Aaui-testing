@@ -178,7 +178,7 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
-        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ],
 
       submenuTraining: [
@@ -191,7 +191,7 @@ class SidebarClass extends Component {
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
-        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ]
     };
 
@@ -235,7 +235,7 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
-        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ]
     };
 
@@ -266,7 +266,7 @@ class SidebarClass extends Component {
         { iconOn: 'ptcon.svg', iconOff: 'ptcoff.svg', label: 'PTC', link: '/ptc' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
         // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
-        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Bantuan', link: '/bantuan' },
+        { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ]
     };
 

@@ -413,7 +413,7 @@ class Tugas extends React.Component {
 
                       <div className="form-group mt-4">
                         <button onClick={this.saveKuis} type="button" className="btn btn-v2 btn-success">
-                          <i className="fa fa-save"></i> Simpan
+                          <i className="fa fa-save"></i> Save
                         </button>
                         {
                           this.state.examId &&
@@ -455,7 +455,7 @@ class Tugas extends React.Component {
                         </div>
                         <div className="col-sm-3">
                           <button style={{ marginTop: '28px' }} className="btn btn-v2 btn-primary" type="submit">
-                            <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Simpan"}
+                            <i className="fa fa-save"></i> {this.state.loading ? "Sedang proses..." : "Save"}
                           </button>
                         </div>
                       </div>
@@ -562,7 +562,7 @@ class Tugas extends React.Component {
                       onClick={this.saveKuesioner.bind(this)}
                     >
                       <i className="fa fa-save"></i>
-                      Simpan
+                      Save
                     </button>
                   </div>
                 </div>

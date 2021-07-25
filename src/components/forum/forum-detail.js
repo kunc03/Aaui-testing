@@ -322,7 +322,7 @@ export default class ForumDetail extends Component {
                                   onClick={this.onClickSubmitKomentar}
                                   className="btn btn-primary f-w-bold"
                                 >
-                                  Simpan
+                                  Save
                               </button>
                               </div>
                             </Form>

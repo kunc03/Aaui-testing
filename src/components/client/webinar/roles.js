@@ -113,7 +113,7 @@ export default class WebinarRoles extends Component {
                         <input type="text" className="form-control" name="name" onChange={this.handleInput} value={this.state.name} />
                         <span className="input-group-btn">
                           <button onClick={this.onClickSimpan} className="btn btn-default">
-                            <i className="fa fa-plus"></i> Simpan
+                            <i className="fa fa-plus"></i> Save
                           </button>
                         </span>
                       </div>

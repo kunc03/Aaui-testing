@@ -264,7 +264,7 @@ class Kpi extends React.Component {
 
                   <div className="col-sm-6">
                     <button className="btn btn-v2 btn-success mt-4">
-                      <i className="fa fa-save"></i> Simpan
+                      <i className="fa fa-save"></i> Save
                     </button>
                     <button type="reset" onClick={() => this.clearFormNilai()} className="ml-2 btn btn-v2 btn-default mt-4">
                       Reset

@@ -192,7 +192,7 @@ class Overview extends React.Component {
       })
     }
     else {
-      toast.info(`Isi form dan klik tombol Simpan terlebih dahulu, setelah itu dapat memilih tugas ataupun kuis.`)
+      toast.info(`Isi form dan klik tombol Save terlebih dahulu, setelah itu dapat memilih tugas ataupun kuis.`)
     }
     this.setState({ setTugas: [], setKuis: [], setUjian: [] })
   }
@@ -463,7 +463,7 @@ class Overview extends React.Component {
 
                                         <div className="form-group mt-4">
                                           <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
-                                            <Spinner animation="border" /> {this.state.uploading ? 'Uploading...' : 'Simpan'}
+                                            <Spinner animation="border" /> {this.state.uploading ? 'Uploading...' : 'Save'}
                                           </Button>
                                         </div>
 
@@ -676,7 +676,7 @@ class Overview extends React.Component {
 
                                     <div className="form-group mt-4">
                                       <Button onClick={e => { item.chapter_id ? this.editChapter(e, i) : this.saveChapter(e, i) }}>
-                                        <Spinner animation="border" /> Simpan
+                                        <Spinner animation="border" /> Save
                                       </Button>
                                     </div>
 

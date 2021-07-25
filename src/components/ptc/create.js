@@ -290,7 +290,7 @@ class PtcCreate extends React.Component {
                   }
                   <div className="form-group">
                     <button type="submit" className="btn btn-v2 btn-primary">
-                      <i className="fa fa-save"></i> Simpan
+                      <i className="fa fa-save"></i> Save
                   </button>
                   </div>
                 </form>

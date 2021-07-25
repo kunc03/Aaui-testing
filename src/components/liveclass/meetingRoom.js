@@ -361,13 +361,13 @@ export default class MeetingRoom extends Component {
       links[i].target = "_blank";
     }
 
-    // Update kehadiran aktual
+    // Update Actual Attendance In Meeting Room
     let form = {
       confirmation: 'Hadir',
     }
     API.put(`${API_SERVER}v1/liveclass/actualattendance/${this.state.classId}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        console.log('Kehadiran Aktual : Hadir')
+        console.log('Actual Attendance In Meeting Room : Hadir')
       }
     })
     let conference_id = this.props.match.params.roomid;
@@ -583,10 +583,10 @@ export default class MeetingRoom extends Component {
     http(endMeeting).then((result) => {
       if (result.returncode == 'SUCCESS') {
         this.closeModalEnd()
-        toast.success('Mengakhiri meeting untuk semua peserta.')
+        toast.success('Meeting ended')
         API.delete(`${API_SERVER}v1/liveclass/file/delete/${this.state.classRooms.class_id}`).then(res => {
           if (res.status === 200) {
-            toast.success('Menghapus semua file sharing.')
+            toast.success('All file sharing deleted')
             window.close()
           }
         })
@@ -632,7 +632,7 @@ export default class MeetingRoom extends Component {
             });
             toast.success("Sending invitation to participant's Email.")
           } else {
-            toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
+            toast.error("Email failed to send, please check the email address.")
             this.setState({ sendingEmail: false })
           }
         }
@@ -1138,9 +1138,9 @@ export default class MeetingRoom extends Component {
                             <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                               <div className="card-carousel col-sm-8">
                                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                  Konfirmasi Kehadiran
+                                  Attendance Confirmation
                               </div>
-                                <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                                <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                               </div>
                               <div className="card-carousel col-sm-4">
                                 <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
@@ -1168,16 +1168,16 @@ export default class MeetingRoom extends Component {
                                   :null
                                   }
                                   <h3 className="f-14">
-                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                    {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                                   </h3>
                                 </div>
                                 {this.state.infoClass.is_scheduled ?
                                   <div className="col-sm-6">
                                     <h3 className="f-14">
-                                      Mulai : {infoDateStart}
+                                      Start : {infoDateStart}
                                     </h3>
                                     <h3 className="f-14">
-                                      Selesai : {infoDateEnd}
+                                      End : {infoDateEnd}
                                     </h3>
                                   </div>
                                   : null}
@@ -1185,15 +1185,15 @@ export default class MeetingRoom extends Component {
                               {this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                                    Attendance Confirmation of {this.state.infoParticipant.length} Participant
                                 </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     <div className='legend-kehadiran hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
                                     <div className='legend-kehadiran tidak-hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                                     <div className='legend-kehadiran tentative'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
                                   </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {this.state.infoParticipant.map(item =>
@@ -1204,7 +1204,7 @@ export default class MeetingRoom extends Component {
                                 : null} {this.state.infoClass.is_private ?
                                   <div>
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Kehadiran Aktual
+                                      Actual Attendance In Meeting Room
                                 </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
@@ -1269,18 +1269,18 @@ export default class MeetingRoom extends Component {
                     <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
                       <Modal.Header closeButton>
                         <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                          Konfirmasi
+                          Confirmation
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <div>Anda yakin akan mengakhiri meeting untuk semua peserta ?</div>
+                        <div>Are you sure you want to end the meeting for all participants?</div>
                       </Modal.Body>
                       <Modal.Footer>
                         <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalEnd.bind(this)}>
                           Cancel
                         </button>
                         <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.endMeeting.bind(this)}>
-                          <i className="fa fa-trash"></i> Akhiri Meeting
+                          <i className="fa fa-trash"></i> End The Meeting
                         </button>
                       </Modal.Footer>
                     </Modal>
@@ -1309,7 +1309,7 @@ export default class MeetingRoom extends Component {
                                         {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
                                           {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
                                       </small> { classRooms.moderator == Storage.get("user").data.user_id &&
-                                        <button style={{ cursor: 'pointer' }} className="btn btn-sm"><i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash"></i></button>
+                                        <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash" style={{cursor:'pointer'}}></i>
                                       }
                                     </div>
                                   )
@@ -1321,7 +1321,7 @@ export default class MeetingRoom extends Component {
                               <Row className='filesharing'>
                                 <Col sm={10}>
                                   <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                                    < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Pilih File' : this.state.nameFile}
+                                    < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Choose File' : this.state.nameFile}
                                   </label>
                                   <input className="hidden" type="file" id="attachment" name="attachment" onChange={this.onChangeInput} />
                                 </Col>
@@ -1379,18 +1379,18 @@ export default class MeetingRoom extends Component {
                               </div>
                               :
                               <div>
-                                <Link to='#' title="Kembali" onClick={this.backMOM}>
+                                <Link to='#' title="Back" onClick={this.backMOM}>
                                   <h4 className="f-20 f-w-800 p-10">
-                                    <i className="fa fa-arrow-left"></i> Kembali
+                                    <i className="fa fa-arrow-left"></i> Back
                                         </h4>
                                 </Link>
                                 <h4 className="p-10">{classRooms.room_name}</h4>
                                 <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                   <Form.Label className="f-w-bold">
-                                    Title MOM
+                                    MOM Title
                                 </Form.Label>
                                   <div style={{ width: '100%' }}>
-                                    <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="isi judul MOM..." onChange={this.onChangeInputMOM} />
+                                    <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="Insert MOM Title" onChange={this.onChangeInputMOM} />
                                   </div>
                                 </Form.Group>
                                 <Form.Group controlId="formJudul" style={{ padding: 10 }}>

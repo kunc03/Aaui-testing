@@ -319,7 +319,7 @@ class Murid extends React.Component {
                     <div className="form-group row">
                       <div className="col-sm-12">
                         <button type="submit" className="btn btn-v2 btn-success">
-                          <i className="fa fa-save"></i> Simpan
+                          <i className="fa fa-save"></i> Save
                         </button>
                         <button onClick={() => this.clearForm()} type="button" className="btn btn-v2 btn-primary ml-2">
                           <i className="fa fa-history"></i> Reset

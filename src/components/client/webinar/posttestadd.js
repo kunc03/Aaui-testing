@@ -244,7 +244,7 @@ export default class WebinarPosttestAdd extends Component {
             <div className="row mt-4">
               <div className="col-sm-12">
                 <div className="form-group">
-                  <label className="bold"> Time Mengerjakan (Menit)</label>
+                  <label className="bold"> Working Duration (Minutes)</label>
                   <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
                 </div>
 
@@ -304,7 +304,7 @@ export default class WebinarPosttestAdd extends Component {
                   ))
                 }
 
-                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Pertanyaan</button>
+                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Question</button>
 
                 <button
                   type="button"
@@ -312,7 +312,7 @@ export default class WebinarPosttestAdd extends Component {
                   onClick={this.state.update ? this.updateKuesioner.bind(this) : this.saveKuesioner.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                      Simpan
+                      Save
                     </button>
               </div>
             </div>

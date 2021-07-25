@@ -268,7 +268,7 @@ export default class User extends Component {
   render() {
     const columns = [
       {
-        name: 'Nama',
+        name: 'Name',
         selector: 'nama',
         sortable: true,
         grow: 2,
@@ -458,7 +458,7 @@ export default class User extends Component {
               aria-describedby="basic-addon1"
             />
             <InputGroup.Append style={{ cursor: 'pointer' }}>
-              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+              <InputGroup.Text id="basic-addon2">Search</InputGroup.Text>
             </InputGroup.Append>
           </InputGroup>
         </div>
@@ -534,10 +534,10 @@ export default class User extends Component {
         <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
           <Modal.Body>
             <Modal.Title className="text-c-purple3 f-w-bold">
-              Hapus User
+              Delete User
               </Modal.Title>
             <p className="f-w-bold">
-              Apakah Anda yakin untuk menghapus user ini ?
+              Are you sure you want to delete this user?
               </p>
             <button
               style={{ marginTop: "50px" }}
@@ -546,14 +546,14 @@ export default class User extends Component {
               onClick={this.onClickSubmitHapus}
               className="btn btn-block btn-ideku f-w-bold"
             >
-              Hapus
+              Delete
               </button>
             <button
               type="button"
               className="btn btn-block f-w-bold"
               onClick={this.handleModalHapus}
             >
-              Tidak
+              Cancel
               </button>
           </Modal.Body>
         </Modal>
@@ -614,7 +614,7 @@ export default class User extends Component {
                 <label>Voucher</label>
                 <input
                   type="text"
-                  placeholder="voucher baru"
+                  placeholder="New Voucher"
                   className="form-control"
                   name="voucher"
                   value={this.state.voucher}
@@ -637,7 +637,7 @@ export default class User extends Component {
                 className="btn btn-block f-w-bold"
                 onClick={this.handleModalVoucher}
               >
-                Tidak
+                Cancel
                 </button>
             </form>
           </Modal.Body>
@@ -663,7 +663,7 @@ export default class User extends Component {
               <button type="button"
                 className="btn btn-block f-w-bold"
                 onClick={this.handleModalImport}>
-                Tidak
+                Cancel
                 </button>
             </form>
           </Modal.Body>

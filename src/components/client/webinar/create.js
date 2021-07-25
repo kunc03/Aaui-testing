@@ -289,9 +289,9 @@ export default class WebinarCreate extends Component {
                     <div className="col-sm-12">
 
                       <div className="form-group">
-                        <label className="bold">Title {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}<required>*</required></label>
+                        <label className="bold">Title<required>*</required></label>
                         <input type="text" value={this.state.judul} onChange={e => this.setState({ judul: e.target.value })} className="form-control" />
-                        <small className="form-text text-muted">The title cannot use special characters.</small>
+                        <small className="form-text text-muted">Do not use special character for Webinar Title</small>
                       </div>
                       {
                         this.props.match.params.training !== 'by-training' ?
@@ -305,7 +305,7 @@ export default class WebinarCreate extends Component {
                               mode="single"
                               enableSearch={true}
                               resetable={true}
-                              valuePlaceholder="Select Folder Project"
+                              valuePlaceholder="Select project folder"
                             />
                             <small className="form-text text-muted">Pilih project folder.</small>
                           </div>
@@ -321,19 +321,19 @@ export default class WebinarCreate extends Component {
                             <option value="zoom">Zoom</option>
                           </select>
                           <Form.Text className="text-muted">
-                            Pilih engine yang akan dipakai untuk meeting.
+                            Choose meeting engine
                           </Form.Text>
                         </div>
                       </Form.Group>
 
-                      <h4>Pilih Roles</h4>
+                      <h4>Roles</h4>
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label className="bold">Role</label>
-                          <input type="text" className="form-control" value="Sekretaris" disabled="disabled" />
+                          <input type="text" className="form-control" value="Secretary" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Sekretaris<required>*</required></label>
+                          <label className="bold">Secretary<required>*</required></label>
                           {
                             crudRoles ?
                               <MultiSelect
@@ -344,8 +344,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -370,8 +370,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -382,10 +382,10 @@ export default class WebinarCreate extends Component {
                       <div className="form-group row">
                         <div className="col-sm-3">
                           <label className="bold">Role</label>
-                          <input type="text" className="form-control" value="Pembicara" disabled="disabled" />
+                          <input type="text" className="form-control" value="Speaker" disabled="disabled" />
                         </div>
                         <div className="col-sm-9">
-                          <label className="bold">Pembicara<required>*</required></label>
+                          <label className="bold">Speaker<required>*</required></label>
                           {
                             crudRoles ?
                               <MultiSelect
@@ -396,8 +396,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -422,8 +422,8 @@ export default class WebinarCreate extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Silahkan Pilih User"
-                                allSelectedLabel="Silahkan Pilih User"
+                                valuePlaceholder="Select User"
+                                allSelectedLabel="Select User"
                               />
                               :
                               <small className="form-text text-muted">Sorry. access denied</small>
@@ -451,7 +451,7 @@ export default class WebinarCreate extends Component {
                     </div>
                     <div className="col-sm-12">
                       <button onClick={e => this.nextStep(e)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-file"></i> &nbsp; {this.props.match.params.training === 'by-training' ? 'Save' : 'Atur Folder dan File'}
+                        <i className="fa fa-file"></i> &nbsp; {this.props.match.params.training === 'by-training' ? 'Save' : 'Organize Folder and File'}
                       </button>
                     </div>
                   </div>
@@ -477,7 +477,7 @@ export default class WebinarCreate extends Component {
                       }}>
                         <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                       </a>
-                      Folder Dokumen
+                      Document & Folder
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
@@ -498,7 +498,7 @@ export default class WebinarCreate extends Component {
                     </div>
                     <div className="col-sm-12">
                       <button onClick={this.simpanWebinar} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-save"></i> &nbsp; Simpan Webinar
+                        <i className="fa fa-save"></i> &nbsp; Save
                       </button>
                     </div>
                   </div>
@@ -520,7 +520,7 @@ export default class WebinarCreate extends Component {
                   !this.state.isModalFile &&
                   <div style={{ marginTop: "20px" }} className="form-group">
                     <div className="form-group">
-                      <input onChange={e => this.setState({ nameFile: e.target.value })} type="text" placeHolder="Nama Folder Dokumen" className="form-control" />
+                      <input onChange={e => this.setState({ nameFile: e.target.value })} type="text" placeHolder="Name" className="form-control" />
                     </div>
                   </div>
                 }
@@ -529,7 +529,7 @@ export default class WebinarCreate extends Component {
                   this.state.isModalFile &&
                   <div style={{ marginTop: "20px" }} className="form-group">
                     <div className="form-group">
-                      <input onChange={this.handleFile} type="file" placeHolder="Nama Folder Dokumen" className="form-control" />
+                      <input onChange={this.handleFile} type="file" placeHolder="Name" className="form-control" />
                     </div>
                   </div>
                 }
@@ -557,7 +557,7 @@ export default class WebinarCreate extends Component {
                   className="btn btn-v2 btn-primary f-w-bold mr-2"
                 >
                   <i className="fa fa-save"></i>
-                  Simpan
+                  Save
                 </button>
                 <button
                   type="button"
