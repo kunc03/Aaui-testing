@@ -93,7 +93,7 @@ class WebinarTable extends Component {
       if (res.data.error)
         toast.warning("Error fetch API")
       else
-        toast.success('Webinar dimulai, silahkan gunakan tombol masuk untuk join')
+        toast.success('The webinar starts, please press the join button for entering ')
       this.fetchData()
     })
   }
@@ -102,7 +102,7 @@ class WebinarTable extends Component {
       if (res.data.error)
         toast.warning("Error fetch API")
       else
-        toast.success('Menghapus webinar')
+        toast.success('Webinar deleted')
       this.closeModalDelete()
       this.fetchData()
     })
@@ -198,7 +198,7 @@ class WebinarTable extends Component {
                 <table className="table table-hover">
                 <thead>
                     <tr style={{borderBottom: '1px solid #C7C7C7'}}>
-                    <td>Nama {this.props.training ? 'Live Class' : 'Webinar'}</td>
+                    <td>{this.props.training ? 'Live Class' : 'Webinar'} Name</td>
                     {
                         headerTabble.map((item, i) => {
                             return (
@@ -207,7 +207,7 @@ class WebinarTable extends Component {
                         })
                     }
                     <td align="center"></td>
-                    <td align="center">Aksi</td>
+                    <td align="center">Action</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -277,15 +277,15 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
-                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">Riwayat</Link>
+                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">History</Link>
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={`/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Masuk</a>
+                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Join</a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
-                                        <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Mulai</Link>
+                                        <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Start</Link>
                                     }
                                 </td>
                             </tr>
@@ -303,11 +303,11 @@ class WebinarTable extends Component {
               >
                 <Modal.Header closeButton>
                   <Modal.Title className="text-c-purple3 f-w-bold" style={{color:'#00478C'}}>
-                  Konfirmasi
+                  Confirmation
                   </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus {this.props.training ? 'Live Class' : 'Webinar'} ini ?</div>
+            <div>Are you sure you want to delete this {this.props.training ? 'Live Class' : 'Webinar'} ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -321,7 +321,7 @@ class WebinarTable extends Component {
               onClick={this.deleteWebinar.bind(this, this.state.deleteWebinarId)}
             >
               <i className="fa fa-trash"></i>
-                              Hapus
+                              Delete
                             </button>
           </Modal.Footer>
         </Modal>

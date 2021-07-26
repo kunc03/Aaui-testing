@@ -444,7 +444,7 @@ class Pengaturan extends Component {
                                   onClick={this.onClickSubmitSetting}
                                   className="btn btn-primary btn-block m-t-100 f-20 f-w-600"
                                 >
-                                  Simpan
+                                  Save
                                 </button>
                               </div>
 

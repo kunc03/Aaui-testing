@@ -157,10 +157,19 @@ class FormMembership extends Component {
                                                     </div>
                                                     <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="image">Photo</label>
-                                                            <label for="image" style={{cursor:'pointer', borderRadius:'10px', overflow:'hidden'}}>
-                                                                <img src={this.state.imagePreview} height="54.8px" />
-                                                            </label>
+                                                            <label for="image">Member's Photo</label>
+                                                            <center>
+                                                                <label style={{cursor:'pointer', borderRadius:'10px', overflow:'hidden'}}>
+                                                                    <a href={this.state.imagePreview} target="_blank">
+                                                                        <img src={this.state.imagePreview} height="54.8px" />
+                                                                    </a>
+                                                                </label>
+                                                                <label for='image' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
+                                                                    <div className="button-bordered-grey">
+                                                                        {this.state.image ? this.state.image.name : 'Choose file'}
+                                                                    </div>
+                                                                </label>
+                                                            </center>
                                                             <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
@@ -172,7 +181,7 @@ class FormMembership extends Component {
                                                             <input type="text" name="license_number" size="50" id="license_number" placeholder="" value={this.state.license_number} onChange={this.handleChange} disabled/>
                                                         </div>
                                                         <div className="form-field-top-label">
-                                                            <label for="expired">Expired<required>*</required></label>
+                                                            <label for="expired">Expiration Date<required>*</required></label>
                                                             <input type="text" name="expired" size="50" id="expired" placeholder="2021-02-02" value={this.state.expired} onChange={this.handleChange} disabled/>
                                                         </div>
                                                     </div>

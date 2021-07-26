@@ -168,9 +168,9 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
         if (res.data.error)
-          toast.error('Gagal mengirim jawaban post test webinar')
+          toast.error('Failed to submit answer')
         else
-          toast.success('Mengirim jawaban post test webinar')
+          toast.success('Post-test submission sent')
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
@@ -183,7 +183,7 @@ export default class WebinarLive extends Component {
       })
     }
     else {
-      toast.warning('Wajib menjawab post-test')
+      toast.warning('Post-test is mandatory')
     }
   }
   kirimJawabanPretest() {
@@ -197,16 +197,16 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
         if (res.data.error)
-          toast.error('Gagal mengirim jawaban pre test webinar')
+          toast.error('Failed to Submit Pre-Test answers webinar')
         else
-          toast.success('Mengirim jawaban pre test webinar')
+          toast.success('Submit Pre-Test answers webinar')
         this.fetchPreTest()
         this.fetchResultPretest();
         this.openModalPretest();
       })
     }
     else {
-      toast.warning('Wajib menjawab pre-test')
+      toast.warning('Pre-test is mandatory')
     }
   }
   waktuPretestHabis() {
@@ -219,10 +219,10 @@ export default class WebinarLive extends Component {
     if (this.state.resultPretest.list.length === 0) {
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
         if (res.data.error)
-          toast.error('Gagal mengirim jawaban pre test webinar')
+          toast.error('Failed to Submit Pre-Test answers webinar')
         else
           toast.warning('Waktu habis')
-        toast.success('Mengirim jawaban pre test webinar')
+        toast.success('Submit Pre-Test answers webinar')
         this.fetchPreTest()
         this.fetchResultPretest();
         this.openModalPretest();
@@ -239,10 +239,10 @@ export default class WebinarLive extends Component {
     if (this.state.resultPosttest.list.length === 0) {
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
         if (res.data.error)
-          toast.error('Gagal mengirim jawaban post test webinar')
+          toast.error('Failed')
         else
-          toast.warning('Waktu habis')
-        toast.success('Mengirim jawaban post test webinar')
+          toast.warning('Time out')
+        toast.success('Post-test submission sent')
         this.fetchPostTest();
         this.fetchResultPosttest();
       })
@@ -258,20 +258,20 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
         if (res.data.error)
-          toast.error('Sudah pernah mengirim jawaban kuesioner pada webinar ini')
+          toast.error('Already sent answers to the questionnaire on this webinar')
         else
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
             webinar_id: this.state.webinarId,
             name: this.state.user.name
           })
-        toast.success('Mengirim jawaban kuesioner webinar')
+        toast.success('Questionnaire submission sent')
         this.closeModalKuesionerPeserta()
         this.setState({ startKuesioner: false })
       })
     }
     else {
-      toast.warning('Wajib menjawab semua pertanyaan')
+      toast.warning('You must answer all questions')
     }
   }
   postLog(webinar_id, peserta_id, type, action) {
@@ -284,7 +284,7 @@ export default class WebinarLive extends Component {
   }
   sendQNA() {
     if (this.state.pertanyaanQNA.length < 10) {
-      toast.warning('Pertanyaan minimal 10 karakter')
+      toast.warning('Question at least 10 characters')
     }
     else {
       let form = {
@@ -295,9 +295,9 @@ export default class WebinarLive extends Component {
       }
       API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
         if (res.data.error)
-          toast.error('Error mengirim pertanyaan')
+          toast.error('Failed to send quistionnaire')
         else
-          toast.success('Mengirim pertanyaan')
+          toast.success('Question sent')
         this.setState({ pertanyaanQNA: '' })
         socket.emit('send', {
           name: res.data.result.name,
@@ -760,7 +760,7 @@ export default class WebinarLive extends Component {
         toast.warning("Error fetch API")
       else
         status == 3 &&
-          toast.success('Webinar selesai')
+          toast.success('Webinar has ended')
     })
   }
   endMeeting() {
@@ -772,7 +772,7 @@ export default class WebinarLive extends Component {
     http(endMeeting).then((result) => {
       if (result.returncode == 'SUCCESS') {
         this.closeModalEnd()
-        toast.success('Mengakhiri webinar untuk semua peserta.')
+        toast.success('Webinar ended')
         this.updateStatus(this.state.webinar.id, 3)
         socket.emit('send', {
           socketAction: 'fetchPostTest',
@@ -789,7 +789,7 @@ export default class WebinarLive extends Component {
           socketAction: 'sendKuesioner',
           webinar_id: this.state.webinarId
         })
-        toast.success('Kuesioner dikirim ke peserta');
+        toast.success('Questionnaire sent to participants');
         this.setState({ waitingKuesioner: true })
       }
     })
@@ -842,7 +842,7 @@ export default class WebinarLive extends Component {
                 <div className="box-lampiran">
                   <div className="">
                     <span style={{ fontWeight: 'bold' }}>{item.name}</span>
-                    <span className="float-right">{item.jenis_peserta == 'peserta' ? 'Pengguna' : 'Tamu'}</span>
+                    <span className="float-right">{item.jenis_peserta == 'peserta' ? 'User' : 'Guest'}</span>
                     <br />
                     <p style={{ marginBottom: '1px' }}>
                       {item.description}
@@ -871,14 +871,14 @@ export default class WebinarLive extends Component {
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link> */}
                     {this.state.webinar.judul}
-                    <p>Pembicara : {this.state.pembicara.toString()}</p>
+                    <p>Speaker : {this.state.pembicara.toString()}</p>
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">
                   {
                     this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.status == 2 ?
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-primary btn-icademy-red">
-                        <i className="fa fa-stop-circle"></i>Akhiri Webinar
+                        <i className="fa fa-stop-circle"></i>End Webinar
                       </button>
                       :
                       null
@@ -886,7 +886,7 @@ export default class WebinarLive extends Component {
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Kuesioner & Doorprize
+                        <i className="fa fa-clipboard-list"></i>Questionnaire & Doorprize
                       </button>
                       :
                       null
@@ -902,7 +902,7 @@ export default class WebinarLive extends Component {
                   {
                     (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner ?
                       <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Kuesioner
+                        <i className="fa fa-clipboard-list"></i>Questionnaire
                       </button>
                       :
                       null
@@ -910,7 +910,7 @@ export default class WebinarLive extends Component {
                   {
                     this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1 ?
                       <button onClick={this.openModalPretest.bind(this)} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Hasil Pre Test
+                        <i className="fa fa-clipboard-list"></i>Pre-Test Result
                       </button>
                       :
                       null
@@ -931,7 +931,9 @@ export default class WebinarLive extends Component {
               {
                 this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                   <div>
-                    <h4>Sebelum memasuki Webinar, mohon menjawab pertanyaan yang ada di bawah ini sesuai dengan waktu yang telah ditentukan ({this.state.waktuPretest} menit).<br /> Jika sudah selesai menjawab pertanyaan, silakan klik "Kirim Jawaban Pre Test".<br /> Pengerjaan soal melebihi waktu yang telah ditentukan akan mengakibatkan pre test otomatis tertutup dan langsung memasuki ruang Webinar<br /></h4>
+                  <h4>Before entering the Webinar, please answer the questions below (in {this.state.waktuPretest} minutes).<br />
+If you have finished answering the questions, please click ""Send Pre-Test Answers"".<br />
+Please complete the answers for not over than allotted time, orherwise the result in the pre-test will  be automatically closed and directed in to the Webinar room<br /></h4>
                     <div className="fc-blue" style={{ position: 'absolute', right: 20, top: 10, fontSize: '18px', fontWeight: 'bold' }}>
                       <Timer
                         initialTime={this.state.waktuPretest * 60000}
@@ -945,7 +947,7 @@ export default class WebinarLive extends Component {
                       >
                         {() => (
                           <React.Fragment>
-                            Batas Waktu <Timer.Hours />:
+                            Time limit <Timer.Hours />:
                             <Timer.Minutes />:
                             <Timer.Seconds />
                           </React.Fragment>
@@ -969,7 +971,7 @@ export default class WebinarLive extends Component {
                       onClick={this.kirimJawabanPretest.bind(this)}
                     >
                       <i className="fa fa-paper-plane"></i>
-                    Kirim Jawaban Pre Test
+                    Send Pre-Test Answers
                   </button>
                   </div>
                   :
@@ -989,21 +991,21 @@ export default class WebinarLive extends Component {
                           </div>
                             :
                             this.state.status == 3 ?
-                              <h3>Webinar telah berakhir</h3>
+                              <h3>The webinar has ended</h3>
                               :
-                              <h3>Webinar berlangsung pada tanggal {this.state.tanggal} jam {this.state.jamMulai} sampai {this.state.jamSelesai}</h3>
+                              <h3>Webinars start on {this.state.tanggal} at {this.state.jamMulai} until {this.state.jamSelesai}</h3>
                         }
                         {
                           this.state.status !== 3 &&
                           <div className="dekripsi" style={{ marginTop: '20px' }}>
-                            <h4>Deskripsi</h4>
+                            <h4>Description</h4>
                             <div dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
                           </div>
                         }
                         {
                           this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div>
-                            <h4>Silahkan jawab post test</h4>
+                            <h4>Answer the post-test</h4>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
                                 initialTime={this.state.waktuPosttest * 60000}
@@ -1041,7 +1043,7 @@ export default class WebinarLive extends Component {
                               onClick={this.kirimJawabanPosttest.bind(this)}
                             >
                               <i className="fa fa-paper-plane"></i>
-                    Kirim Jawaban Post Test
+                    Send Post-Test Answers
                   </button>
                           </div>
                         }
@@ -1063,7 +1065,7 @@ export default class WebinarLive extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      Dokumen
+                      Documents
                     </h3>
                   </div>
                   <div className="col-sm-6 text-right">
@@ -1087,7 +1089,7 @@ export default class WebinarLive extends Component {
                   <div className="row">
                     <div className="col-sm-6">
                       <h3 className="f-w-900 f-18 fc-blue">
-                        Pertanyaan
+                        Question
                     </h3>
                     </div>
                   </div>
@@ -1096,7 +1098,7 @@ export default class WebinarLive extends Component {
                       this.state.qna.length ?
                         <Pertanyaan items={this.state.qna} />
                         :
-                        <p>Tidak ada pertanyaan</p>
+                        <p>There is no question</p>
                     }
                   </div>
                 </Card.Body>
@@ -1111,7 +1113,7 @@ export default class WebinarLive extends Component {
                       <div className="row">
                         <div className="col-sm-6">
                           <h3 className="f-w-900 f-18 fc-blue">
-                            Pertanyaan Anda
+                          Your Question
                     </h3>
                         </div>
                       </div>
@@ -1120,7 +1122,7 @@ export default class WebinarLive extends Component {
                           this.state.qnaPeserta.length ?
                             <Pertanyaan items={this.state.qnaPeserta} />
                             :
-                            <p>Tidak ada pertanyaan</p>
+                            <p>There is no question</p>
                         }
                       </div>
                     </Card.Body>
@@ -1132,7 +1134,7 @@ export default class WebinarLive extends Component {
                       <div className="row">
                         <div className="col-sm-6">
                           <h3 className="f-w-900 f-18 fc-blue">
-                            Kirim Pertanyaan
+                            Send Your Question
                     </h3>
                         </div>
                         <div className="col-sm-6 text-right">
@@ -1144,14 +1146,14 @@ export default class WebinarLive extends Component {
                       <div style={{ marginTop: '10px' }}>
                         {/* <Pertanyaan items={this.state.pertanyaans} /> */}
                         <div className="form-group">
-                          <textarea placeholder="Saya kurang jelas di point yang..." rows="4" className="form-control" value={this.state.pertanyaanQNA} onChange={e => this.setState({ pertanyaanQNA: e.target.value })} />
+                          <textarea placeholder="Type your question here..." rows="4" className="form-control" value={this.state.pertanyaanQNA} onChange={e => this.setState({ pertanyaanQNA: e.target.value })} />
                         </div>
                         <button
                           className="btn btn-icademy-primary float-right"
                           onClick={this.sendQNA.bind(this)}
                         >
                           <i className="fa fa-paper-plane"></i>
-                          Kirim
+                          Send
                         </button>
                       </div>
                     </Card.Body>
@@ -1168,25 +1170,25 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan mengakhiri webinar untuk semua peserta ?</div>
+            <div>Are you sure you want to end the webinar for all participants?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={this.closeModalEnd.bind(this)}
             >
-              Batal
+              Cancel
                       </button>
             <button
               className="btn btn-icademy-primary btn-icademy-red"
               onClick={this.endMeeting.bind(this)}
             >
               <i className="fa fa-trash"></i>
-                        Akhiri Webinar
+                        End Webinar
                       </button>
           </Modal.Footer>
         </Modal>
@@ -1221,20 +1223,20 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Kuesioner
+            Questionnaire
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {
               this.state.waitingKuesioner &&
               <div>
-                <h4>Menunggu...</h4>
-                <div>Jumlah peserta telah menjawab kuesioner <b>{this.state.jawabKuesioner.length}</b></div>
+                <h4>Waiting...</h4>
+                <div>Number of participants who have answered the questionnaire = <b>{this.state.jawabKuesioner.length}</b></div>
               </div>
             }
             {
               this.state.waitingKuesioner == false &&
-              <div>Kirim kuesioner ke semua peserta sekarang ?</div>
+              <div>Send the questionnaire to all participants now?</div>
             }
           </Modal.Body>
           <Modal.Footer>
@@ -1245,7 +1247,7 @@ export default class WebinarLive extends Component {
                 onClick={this.acakDoorprize.bind(this)}
               >
                 <i className="fa fa-gift"></i>
-                Acak Doorprize
+                Random doorprize
               </button>
             }
             {
@@ -1255,7 +1257,7 @@ export default class WebinarLive extends Component {
                 onClick={this.sendKuesioner.bind(this)}
               >
                 <i className="fa fa-paper-plane"></i>
-                Kirim Kuesioner
+                Send Questionnaire
               </button>
             }
           </Modal.Footer>
@@ -1299,7 +1301,7 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Jawab Kuesioner
+              Submit Questionnaire
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1322,7 +1324,7 @@ export default class WebinarLive extends Component {
               onClick={this.kirimJawabanKuesioner.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Kirim Jawaban Kuesioner
+                Submit Questionnaire
               </button>
           </Modal.Footer>
         </Modal>
@@ -1333,11 +1335,11 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Pemenang Doorprize
+              Doorprize winner
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Selamat kepada : <br />
+            Congratulation to : <br />
             {
               this.state.pemenangDoorprize.length && this.state.pemenangDoorprize.map((item) => (
                 <span>
@@ -1355,7 +1357,7 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Hasil Pre Test
+              Pre-Test Result
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1364,9 +1366,9 @@ export default class WebinarLive extends Component {
               <div>Loading...</div>
               :
               <div>
-              <div>Nilai : {this.state.resultPretest.nilai}</div>
-              <div>Jawaban Benar : {this.state.resultPretest.benar}</div>
-              <div>Jawaban Salah : {this.state.resultPretest.salah}</div>
+              <div>Score : {this.state.resultPretest.nilai}</div>
+              <div>Correct Answer : {this.state.resultPretest.benar}</div>
+              <div>Wrong Answer : {this.state.resultPretest.salah}</div>
               {
                     this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
                       <div className="mb-3 mt-3">
@@ -1391,7 +1393,7 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Hasil Post Test
+              Post-Test Result
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1400,9 +1402,9 @@ export default class WebinarLive extends Component {
               <div>Loading...</div>
               :
               <div>
-            <div>Nilai : {this.state.resultPosttest.nilai}</div>
-            <div>Jawaban Benar : {this.state.resultPosttest.benar}</div>
-            <div>Jawaban Salah : {this.state.resultPosttest.salah}</div>
+            <div>Score : {this.state.resultPosttest.nilai}</div>
+            <div>Correct Answer : {this.state.resultPosttest.benar}</div>
+            <div>Wrong Answer : {this.state.resultPosttest.salah}</div>
             {
               this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
                 <div className="mb-3 mt-3">

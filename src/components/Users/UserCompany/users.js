@@ -255,7 +255,7 @@ export default class Users extends Component {
   render() {
     const columns = [
       {
-        name: 'Nama',
+        name: 'Name',
         selector: 'nama',
         sortable: true,
         grow: 2,
@@ -411,7 +411,7 @@ export default class Users extends Component {
               aria-describedby="basic-addon1"
             />
             <InputGroup.Append style={{ cursor: 'pointer' }}>
-              <InputGroup.Text id="basic-addon2">Pencarian</InputGroup.Text>
+              <InputGroup.Text id="basic-addon2">Search</InputGroup.Text>
             </InputGroup.Append>
           </InputGroup>
         </div>
@@ -488,18 +488,18 @@ export default class Users extends Component {
 
         <Modal show={this.state.isModalHapus} onHide={this.handleModalHapus}>
           <Modal.Body>
-            <Modal.Title className="text-c-purple3 f-w-bold">Hapus User</Modal.Title>
-            <p className="f-w-bold">Apakah Anda yakin untuk menghapus user ini ?</p>
+            <Modal.Title className="text-c-purple3 f-w-bold">Delete User</Modal.Title>
+            <p className="f-w-bold">Are you sure you want to delete this user?</p>
             <button style={{ marginTop: '50px' }} type="button"
               data-grup={this.state.namacabang}
               onClick={this.onClickSubmitHapus}
               className="btn btn-block btn-ideku f-w-bold">
-              Hapus
+              Delete
               </button>
             <button type="button"
               className="btn btn-block f-w-bold"
               onClick={this.handleModalHapus}>
-              Tidak
+              No
               </button>
           </Modal.Body>
         </Modal>
@@ -531,7 +531,7 @@ export default class Users extends Component {
             <form style={{ marginTop: '10px' }} onSubmit={this.onClickSubmitVoucer}>
               <div className="form-group">
                 <label>Voucher</label>
-                <input type="text" placeholder="voucher baru" className="form-control" name="voucher" value={this.state.voucher} onChange={this.handleChangeInput} />
+                <input type="text" placeholder="New Voucher" className="form-control" name="voucher" value={this.state.voucher} onChange={this.handleChangeInput} />
                 {this.state.notif && <Form.Text className="text-danger">{this.state.notif}</Form.Text>}
               </div>
 
@@ -542,7 +542,7 @@ export default class Users extends Component {
               <button type="button"
                 className="btn btn-block f-w-bold"
                 onClick={this.handleModalVoucher}>
-                Tidak
+                Cancel
                 </button>
             </form>
           </Modal.Body>
@@ -568,7 +568,7 @@ export default class Users extends Component {
               <button type="button"
                 className="btn btn-block f-w-bold"
                 onClick={this.handleModalImport}>
-                Tidak
+                Cancel
                 </button>
             </form>
           </Modal.Body>

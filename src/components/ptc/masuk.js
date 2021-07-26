@@ -555,7 +555,7 @@ class Mengajar extends React.Component {
                     <Row>
                       <Col>
                         <div className="form-group">
-                          <label>Lampiran</label>
+                          <label>Attachment</label>
                           <input
                             accept="all"
                             name="attachmentId"
@@ -567,7 +567,7 @@ class Mengajar extends React.Component {
                           />
                           <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.attachmentId.length} File</label>
                           <Form.Text>
-                            Bisa banyak file, pastikan file tidak melebihi 500MB
+                            Support multiple files (make sure all the files does not exceed 500MB)
                                   {/* dan ukuran file tidak melebihi 20MB. */}
                           </Form.Text>
                         </div>
@@ -633,7 +633,7 @@ class Mengajar extends React.Component {
             >
               <Modal.Header closeButton>
                 <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                  Konfirmasi Kehadiran
+                  Attendance Confirmation
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>

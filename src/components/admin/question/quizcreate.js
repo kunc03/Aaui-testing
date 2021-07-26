@@ -226,7 +226,7 @@ export default class QuestionQuizCreate extends Component {
                               type="button"
                               style={{ marginLeft: "10px" }}
                             >
-                              Kembali
+                              Back
                             </Button>
                           </Form>
                         </Card.Body>
@@ -383,7 +383,7 @@ export default class QuestionQuizCreate extends Component {
                             type="submit"
                             className="btn btn-block btn-ideku f-w-bold"
                           >
-                            Simpan
+                            Save
                           </button>
                         </Form>
 

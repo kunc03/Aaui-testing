@@ -633,8 +633,8 @@ class Header extends Component {
                     <div className="noti-head">
                       <h6 className="d-inline-block m-b-0">
                         <b>{this.state.company.length > 0
-                          ? 'Pilih Perusahaan'
-                          : 'Tidak multiple company'}
+                          ? 'Select Company'
+                          : 'Not multiple company'}
                         </b>
                       </h6>
                     </div>

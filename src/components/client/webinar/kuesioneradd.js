@@ -277,7 +277,7 @@ export default class WebinarKuesionerAdd extends Component {
                   ))
                 }
 
-                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Pertanyaan</button>
+                <button onClick={this.onClickTambahPertanyaan} className="btn btn-v2 btn-icademy-grey" style={{ width: '100%' }}><i className="fa fa-plus"></i> Add Question</button>
 
                 <button
                   type="button"
@@ -285,7 +285,7 @@ export default class WebinarKuesionerAdd extends Component {
                   onClick={this.state.update ? this.updateKuesioner.bind(this) : this.saveKuesioner.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                      Simpan
+                      Save
                     </button>
               </div>
             </div>

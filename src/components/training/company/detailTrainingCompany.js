@@ -41,7 +41,11 @@ class DetailCompany extends Component {
             </div>
         </div>
       </div>
-      <FormCompany disabledForm={true} match={{params:{}}} id={this.props.id} goEdit={this.goEdit.bind(this)} goBack={this.goBack.bind(this)} lockEdit={true}/>
+      {
+        this.props.id ?
+        <FormCompany disabledForm={true} match={{params:{}}} id={this.props.id} goEdit={this.goEdit.bind(this)} goBack={this.goBack.bind(this)} lockEdit={true}/>
+        : null
+      }
         <div className="pcoded-main-container">
           <div className="pcoded-wrapper">
               <div className="pcoded-contents">

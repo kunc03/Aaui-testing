@@ -412,7 +412,7 @@ export default class QuizList extends Component {
 																name="quizAt"
 																onChange={this.onChangeInput}
 															>
-																<option value="">-- pilih --</option>
+																<option value="">-- Select --</option>
 																{this.state.chapters.map((item, i) => (
 																	<option
 																		selected={
@@ -433,7 +433,7 @@ export default class QuizList extends Component {
 															type="submit"
 															className="btn btn-block btn-ideku f-w-bold"
 														>
-															Simpan
+															Save
                           </button>
 													</form>
 

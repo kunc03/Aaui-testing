@@ -327,7 +327,7 @@ class InformasiAdmin extends Component {
             <button style={{ marginTop: '30px' }} type="button"
               onClick={this.onClickSubmitSave}
               className="btn btn-block btn-ideku f-w-bold">
-              Simpan
+              Save
             </button>
             <button type="button"
               className="btn btn-block f-w-bold"

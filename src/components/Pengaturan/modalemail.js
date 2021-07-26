@@ -115,7 +115,7 @@ class ModalEmail extends Component {
                 </div>
                 <div className="modal-footer mt-4 p-b-0" style={{ borderTop: "0 !important" }}>
                   <button type="submit" className="btn btn-icademy-primary ml-2">
-                    Simpan
+                    Save
                   </button>
                 </div>
               </form>

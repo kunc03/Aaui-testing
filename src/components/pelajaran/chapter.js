@@ -315,7 +315,7 @@ class Chapter extends React.Component {
 
                 <div className="form-group mt-4">
                   <button onClick={this.state.id ? this.editChapter : this.saveChapter} type="button" className="btn btn-v2 btn-success">
-                    <i className="fa fa-save"></i> Simpan
+                    <i className="fa fa-save"></i> Save
                   </button>
                   {
                     this.state.id &&

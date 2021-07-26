@@ -174,7 +174,7 @@ class WebinarAddClass extends Component {
           toast.error('Error sending email')
           this.setState({ isSending: false })
         } else {
-          toast.success(`Berhasil mengirim email undangan`)
+          toast.success(`Successfully sent invitation email`)
           this.setState({ isSending: false })
           this.fetchData();
         }
@@ -601,7 +601,7 @@ class WebinarAddClass extends Component {
                   <div className="form-group">
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Kuesioner</button>
+                      <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Questionnaire</button>
                     }
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
@@ -621,7 +621,7 @@ class WebinarAddClass extends Component {
                 <div className="row">
                   <div className="col-sm-12">
                     <div className="form-group">
-                      <label className="bold">Gambar {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
+                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Image</label>
                       <div className="row">
                         <div className="col-sm-3">
                           <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar} />
@@ -633,18 +633,18 @@ class WebinarAddClass extends Component {
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">Judul {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
+                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Title</label>
                       <input type="text" className="form-control" name="judul" onChange={e => this.setState({ judul: e.target.value })} value={this.state.judul} />
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">Isi {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
+                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Content</label>
                       <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
                     </div>
 
                     <div className="form-group row">
                       <div className="col-sm-4">
-                        <label className="bold col-sm-12">Tanggal {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}</label>
+                        <label className="bold col-sm-12">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Date</label>
                         <DatePicker
                           dateFormat="yyyy-MM-dd"
                           selected={this.state.tanggal}
@@ -679,7 +679,7 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group row">
                       <div className="col-sm-6">
-                        <label className="bold">Pembicara</label>
+                        <label className="bold">Speaker</label>
                         <div class="input-group">
                           <input disabled type="text" value={this.state.pembicara.toString()} className="form-control" />
                           {/* <span className="input-group-btn">
@@ -721,7 +721,7 @@ class WebinarAddClass extends Component {
                       null :
                       <div className="form-group row">
                         <div className="col-sm-12">
-                          <label className="bold">Ruang Meeting</label>
+                          <label className="bold">Meeting Room</label>
                           <div className="col-sm-12">
                             <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
                               <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
@@ -754,7 +754,7 @@ class WebinarAddClass extends Component {
                     </div> */}
 
                     <div className="form-group">
-                      <button onClick={this.updateWebinar.bind(this, true)} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Simpan</button>
+                      <button onClick={this.updateWebinar.bind(this, true)} className="btn btn-icademy-primary float-right"><i className="fa fa-save"></i> Save</button>
                     </div>
 
                   </div>
@@ -795,14 +795,14 @@ class WebinarAddClass extends Component {
                 className="btn btn-v2 btn-primary f-w-bold mr-2"
               >
                 <i className="fa fa-envelope"></i>
-                Kirim email
+                Send email
               </button>
               <button
                 type="button"
                 className="btn btn-v2 btn-success f-w-bold mr-2"
               >
                 <i className="fa fa-save"></i>
-                Simpan
+                Save
               </button>
               <button
                 type="button"
@@ -886,8 +886,8 @@ class WebinarAddClass extends Component {
                       mode="single"
                       enableSearch={true}
                       resetable={true}
-                      valuePlaceholder="Silahkan Pilih User"
-                      allSelectedLabel="Silahkan Pilih User"
+                      valuePlaceholder="Please select user"
+                      allSelectedLabel="Please select user"
                     />
                     <span className="input-group-btn">
                       <button className="btn btn-default" onClick={this.addPeserta.bind(this)}>
@@ -929,7 +929,7 @@ class WebinarAddClass extends Component {
                 onClick={this.kirimEmail.bind(this)}
               >
                 <i className="fa fa-envelope"></i>
-                {this.state.isSending ? 'Mengirim Undangan...' : 'Kirim Email'}
+                {this.state.isSending ? 'Sending Invitation...' : 'Send email'}
               </button>
               <button
                 type="button"
@@ -955,7 +955,7 @@ class WebinarAddClass extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Kuesioner
+              Questionnaire
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>

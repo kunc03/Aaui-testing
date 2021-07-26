@@ -153,7 +153,7 @@ class ModalPassword extends Component {
                     type="submit"
                     className="btn btn-icademy-primary mt-3"
                   >
-                    Simpan
+                    Save
                   </button>
                 </div>
               </form>

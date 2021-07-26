@@ -400,7 +400,7 @@ export default class LiveStream extends Component {
           });
         } else {
           this.setState({
-            emailResponse: "Email tidak terkirim, periksa kembali email yang dimasukkan."
+            emailResponse: "Email failed to send, please check the email address."
           });
           console.log('RESS GAGAL', res)
         }
@@ -864,7 +864,7 @@ export default class LiveStream extends Component {
                                   className="folder-icon"
                                   />
                                   <div className="filename">
-                                      Kembali
+                                      Back
                                   </div>
                               </div>
                             }
@@ -968,15 +968,15 @@ export default class LiveStream extends Component {
 
                             :
                             <div>
-                              <Link to='#' title="Kembali" onClick={this.backMOM}>
+                              <Link to='#' title="Back" onClick={this.backMOM}>
                                 <h4 className="f-20 f-w-800 p-10">
-                                  <i className="fa fa-arrow-left"></i> Kembali
+                                  <i className="fa fa-arrow-left"></i> Back
                         </h4>
                               </Link>
                               <h4 className="p-10">{classRooms.room_name}</h4>
                               <Form.Group controlId="formJudul" style={{ padding: 10 }}>
                                 <Form.Label className="f-w-bold">
-                                  Judul MOM
+                                  MOM Title
                           </Form.Label>
                                 <div style={{ width: '100%' }}>
                                   <input
@@ -985,7 +985,7 @@ export default class LiveStream extends Component {
                                     name="title"
                                     value={this.state.title}
                                     className="form-control"
-                                    placeholder="isi judul MOM..."
+                                    placeholder="Insert MOM Title"
                                     onChange={this.onChangeInputMOM}
                                   />
                                 </div>
@@ -1068,7 +1068,7 @@ export default class LiveStream extends Component {
                                   onClick={this.addMOM}
                                   className="btn btn-icademy-primary ml-2 float-right col-2 f-14"
                                   style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                                  Simpan
+                                  Save
                       </button>
                               </div>
                             </div>
@@ -1099,9 +1099,9 @@ export default class LiveStream extends Component {
                             <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                               <div className="card-carousel col-sm-8">
                                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                  Konfirmasi Kehadiran
+                                  Attendance Confirmation
                               </div>
-                                <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                                <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                               </div>
                               <div className="card-carousel col-sm-4">
                                 <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}>
@@ -1129,7 +1129,7 @@ export default class LiveStream extends Component {
                                   Moderator : {this.state.infoClass.name}
                                 </h3>
                                 <h3 className="f-14">
-                                  Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
+                                  {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
                                 </h3>
                               </div>
                               {
@@ -1149,12 +1149,12 @@ export default class LiveStream extends Component {
                               this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                                    Attendance Confirmation of {this.state.infoParticipant.length} Participant
                                     </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                    <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                                    <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                                    <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                                    <div className='legend-kehadiran hadir'></div><h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
+                                    <div className='legend-kehadiran tidak-hadir'></div><h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
+                                    <div className='legend-kehadiran tentative'></div><h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
                                   </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {
@@ -1170,7 +1170,7 @@ export default class LiveStream extends Component {
                               this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Kehadiran Aktual
+                                    Actual Attendance In Meeting Room
                                     </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {
@@ -1252,7 +1252,7 @@ export default class LiveStream extends Component {
                         onClick={this.onClickSubmitInvite}
                         className="btn btn-block btn-ideku f-w-bold"
                       >
-                        {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Undang'}
+                        {this.state.sendingEmail ? 'Sending Invitation...' : 'Undang'}
                       </button>
                       <button
                         type="button"
@@ -1303,7 +1303,7 @@ export default class LiveStream extends Component {
                   >
                     <Modal.Header>
                       <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                        Tambah Folder Project
+                        Add New Project Folder
             </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -1317,7 +1317,7 @@ export default class LiveStream extends Component {
                                   name="folderName"
                                   value={this.state.folderName}
                                   className="form-control"
-                                  placeholder="Nama Folder Project"
+                                  placeholder="Name"
                                   onChange={this.onChangeInputFile}
                                   required
                                 />
@@ -1326,7 +1326,7 @@ export default class LiveStream extends Component {
                             </Col>
                           </Row>
                           <Link onClick={this.saveFolder.bind(this)} to="#" className="btn btn-sm btn-ideku" style={{ padding: '10px 17px', width: '100%', marginTop: 20 }}>
-                            <i className="fa fa-save"></i>Simpan
+                            <i className="fa fa-save"></i>Save
                       </Link>
                           <button
                             type="button"
@@ -1353,7 +1353,7 @@ export default class LiveStream extends Component {
                           <Row>
                             <Col>
                               <div className="form-group">
-                                <label>Lampiran</label>
+                                <label>Attachment</label>
                                 <input
                                   accept="all"
                                   name="attachmentId"
@@ -1365,7 +1365,7 @@ export default class LiveStream extends Component {
                                 />
                                 <label style={{ color: '#000', padding: '5px 10px' }}>{this.state.attachmentId.length} File</label>
                                 <Form.Text>
-                                  Bisa banyak file, pastikan file tidak melebihi 500MB
+                                  Support multiple files (make sure all the files does not exceed 500MB)
                               {/* dan ukuran file tidak melebihi 20MB. */}
                                 </Form.Text>
                               </div>

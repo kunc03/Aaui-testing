@@ -165,7 +165,7 @@ class ModalAdd extends Component {
                 type="button"
                 className="btn btn-primary btn-block f-18 f-w-bold openalertedit"
               >
-                Simpan
+                Save
               </button>
             </div>
             <div
@@ -177,7 +177,7 @@ class ModalAdd extends Component {
                 className="btn btn-block bg-c-white text-c-grey3 f-18 f-w-bold"
                 data-dismiss="modal"
               >
-                Kembali
+                Back
               </button>
             </div>
           </div>

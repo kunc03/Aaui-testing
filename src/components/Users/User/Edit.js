@@ -248,7 +248,7 @@ class UserEdit extends Component {
                                 name="company_id"
                                 onChange={this.onChangeInput}
                               >
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {this.state.listCompany.map(item => (
                                   <option
                                     value={item.company_id}
@@ -277,7 +277,7 @@ class UserEdit extends Component {
                                 selectAllLabel="Choose all"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Pilih Company"
+                                valuePlaceholder="Select Company"
                               />
                             </div>
                             <div className="form-group">
@@ -291,7 +291,7 @@ class UserEdit extends Component {
                                 mode="tags"
                                 enableSearch={true}
                                 resetable={true}
-                                valuePlaceholder="Pilih Group"
+                                valuePlaceholder="Select Group"
                               />
                               {/* <select
                                 required
@@ -299,7 +299,7 @@ class UserEdit extends Component {
                                 name="branch_id"
                                 onChange={this.onChangeInput}
                               >
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {this.state.listBranch.map(item => (
                                   <option
                                     value={item.branch_id}
@@ -325,7 +325,7 @@ class UserEdit extends Component {
                                 name="grup_id"
                                 onChange={this.onChangeInput}
                               >
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {this.state.listGrup.map(item => (
                                   <option
                                     value={item.grup_id}
@@ -350,7 +350,7 @@ class UserEdit extends Component {
                                 type="text"
                                 name="name"
                                 className="form-control"
-                                placeholder="nama"
+                                placeholder="Name"
                                 value={this.state.name}
                                 onChange={this.onChangeInput}
                               />
@@ -393,12 +393,12 @@ class UserEdit extends Component {
                               />
                             </div>
                             <div className="form-group">
-                              <label className="label-input">Alamat</label>
+                              <label className="label-input">Address</label>
                               <textarea
                                 value={this.state.address}
                                 name="address"
                                 className="form-control"
-                                placeholder="alamat"
+                                placeholder="Address"
                                 onChange={this.onChangeInput}
                               />
                             </div>
@@ -413,7 +413,7 @@ class UserEdit extends Component {
                                 onChange={this.onChangeInput}
                                 required
                               >
-                                <option value="">-- pilih --</option>
+                                <option value="">-- Select --</option>
                                 {levelUser.map(item => (
                                   <option
                                     value={item.level}
@@ -441,7 +441,7 @@ class UserEdit extends Component {
                             </div> */}
                             <div className="form-group">
                               <label className="label-input" htmlFor>
-                                Batasi Waktu
+                                Time Limit
                               </label>
                               <div style={{ width: '100%' }}>
                                 <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.unlimited} />

@@ -62,7 +62,7 @@ class InfoRapor extends Component {
                     required
                     name="quizAt"
                   >
-                    <option value="">-- pilih --</option>
+                    <option value="">-- Select --</option>
                     <option value="1">Ssatu</option>
                     <option value="2">Dua</option>
                   </select>
@@ -79,7 +79,7 @@ class InfoRapor extends Component {
                     required
                     name="quizAt"
                   >
-                    <option value="">-- pilih --</option>
+                    <option value="">-- Select --</option>
                     <option value="1">Ssatu</option>
                     <option value="2">Dua</option>
                   </select>

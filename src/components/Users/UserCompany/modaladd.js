@@ -22,7 +22,7 @@ class ModalAdd extends Component {
       tipe: "",
       status: "active",
       logo: "",
-      notif: "Pastikan file berformat png, jpeg, jpg, atau gif dan ukuran tidak melebihi 500KB",
+      notif: "Make sure the file is in png, jpeg, jpg or gif format and does not exceed 500KB",
       unlimited: false,
       access_training: false,
       validity: new Date(),
@@ -164,7 +164,7 @@ class ModalAdd extends Component {
                     Type
                   </label>
                   <select onChange={this.onChangeTipe} className="form-control" style={{ textTransform: "capitalize" }}>
-                    <option value="">Pilih tipe company</option>
+                    <option value="">Select Company Type</option>
                     <option value="perusahaan">Perusahaan</option>
                     <option value="pendidikan">Pendidikan</option>
                   </select>
@@ -176,7 +176,7 @@ class ModalAdd extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="nama company"
+                    placeholder="Company Name"
                     onChange={this.onChangeNama}
                     value={this.state.nama}
                   />
@@ -303,7 +303,7 @@ class ModalAdd extends Component {
                 onClick={this.onClickSimpan}
                 className="btn btn-primary btn-block f-18 f-w-bold openalertedit"
               >
-                Simpan
+                Save
               </button>
 
               <button
@@ -311,7 +311,7 @@ class ModalAdd extends Component {
                 className="btn btn-block bg-c-white text-c-grey3 f-18 f-w-bold"
                 data-dismiss="modal"
               >
-                Kembali
+                Back
               </button>
             </div>
           </div>

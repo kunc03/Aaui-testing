@@ -524,7 +524,7 @@ export default class QuizList extends Component {
 															type="submit"
 															className="btn btn-block btn-ideku f-w-bold"
 														>
-															Simpan
+															Save
                           </button>
 													</form>
 

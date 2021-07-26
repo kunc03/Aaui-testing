@@ -473,7 +473,7 @@ class JadwalMengajar extends React.Component {
                     className="btn btn-icademy-primary btn-icademy-blue"
                   >
                     <i className="fa fa-save"></i>
-                    Simpan
+                    Save
                   </button>
                   <button
                     className="btn btm-icademy-primary btn-icademy-grey ml-2"
@@ -605,7 +605,7 @@ class JadwalMengajar extends React.Component {
                     className="btn btn-icademy-primary btn-icademy-blue"
                   >
                     <i className="fa fa-save"></i>
-                    Simpan
+                    Save
                   </button>
                   <button
                     className="btn btm-icademy-primary btn-icademy-grey ml-2"
