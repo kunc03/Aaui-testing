@@ -220,9 +220,9 @@ class ProjekNew extends Component {
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchProject();
         }

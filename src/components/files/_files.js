@@ -170,7 +170,7 @@ class FilesTableClass extends Component {
       })
     }
 
-    let msg = `${Storage.get('user').data.user} berhasil menambahkan ${this.state.attachmentId.length} file`;
+    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} files`;
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
@@ -290,13 +290,13 @@ class FilesTableClass extends Component {
         if (res.data.error) {
           toast.error('Error : ' + res.data.result)
         } else {
-          let msg = `${Storage.get('user').data.user} berhasil menambakan folder baru dengan nama "${formData.name}"`;
+          let msg = `${Storage.get('user').data.user} successfully to added a new folder with the name "${formData.name}"`;
           this.sendNotifToAll(msg);
 
           this.closeModalAdd()
           this.fetchFolder(this.state.folderId);
           socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
-          toast.success('Berhasil menambah folder baru')
+          toast.success('New folder added')
         }
       }
     })
@@ -492,12 +492,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          let msg = `${Storage.get('user').data.user} menghapus project ${this.state.deleteProjectName}`;
+          let msg = `${Storage.get('user').data.user} deleted the ${this.state.deleteProjectName} project`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchFolder(this.state.folderId);
         }
@@ -508,12 +508,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          let msg = `${Storage.get('user').data.user} menghapus file`;
+          let msg = `${Storage.get('user').data.user} deleted the file`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
           this.fetchFile(this.state.folderId);
         }
@@ -980,7 +980,7 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+            <div>Are you sure you want to delete the file <b>{this.state.deleteFileName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -1009,7 +1009,7 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus project <b>{this.state.deleteProjectName}</b> ?</div>
+            <div>Are you sure you want to delete the project <b>{this.state.deleteProjectName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button

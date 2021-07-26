@@ -338,7 +338,7 @@ class WebinarAddClass extends Component {
       let sendNotif = {
         type: 7,
         peserta: this.state.peserta.map(item => item.id),
-        description: `Training "${this.state.judul}" pada tanggal ${oldJamMul} diubah ke tanggal ${jamMul}`,
+        description: `"${this.state.judul}" on ${oldJamMul} changed to ${jamMul}`,
         destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
       };
       API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {

@@ -282,7 +282,7 @@ class NotificationClass extends Component {
 
                                       {
                                         item.destination &&
-                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Cek Sekarang</a>
+                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Check Now</a>
                                       }
                                       {
                                         item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} data-activity={item.activity_id} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
