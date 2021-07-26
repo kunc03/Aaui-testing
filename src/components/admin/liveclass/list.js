@@ -4,7 +4,7 @@ import { Link, Switch, Route } from "react-router-dom";
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 // import moment from "react-moment";
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 import ToggleSwitch from "react-switch";
 
@@ -181,8 +181,8 @@ export default class LiveClassAdmin extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
-          schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -291,8 +291,8 @@ export default class LiveClassAdmin extends Component {
       let isPrivate = this.state.private == true ? 1 : 0;
       let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
       let isScheduled = this.state.scheduled == true ? 1 : 0;
-      let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-      let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+      let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
       let form = {
         room_name: this.state.roomName,
         moderator: this.state.valueModerator,
@@ -322,8 +322,8 @@ export default class LiveClassAdmin extends Component {
               room_name: res.data.result.room_name,
               is_private: res.data.result.is_private,
               is_scheduled: res.data.result.is_scheduled,
-              schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
-              schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+              schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+              schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
               //url
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -351,8 +351,8 @@ export default class LiveClassAdmin extends Component {
       let isPrivate = this.state.private == true ? 1 : 0;
       let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
       let isScheduled = this.state.scheduled == true ? 1 : 0;
-      let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-      let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+      let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+      let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
       let form = {
         user_id: Storage.get('user').data.user_id,
         company_id: this.state.companyId,
@@ -386,8 +386,8 @@ export default class LiveClassAdmin extends Component {
               room_name: res.data.result.room_name,
               is_private: res.data.result.is_private,
               is_scheduled: res.data.result.is_scheduled,
-              schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
-              schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+              schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+              schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
               userInvite: this.state.valuePeserta.concat(this.state.valueModerator),
               //url
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 import {
   Modal
@@ -234,8 +234,8 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />
                                 </td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai ? moment(item.jam_mulai, 'HH:mm').local().format('HH:mm') : null} - {item.jam_selesai ? moment(item.jam_selesai, 'HH:mm').local().format('HH:mm') : null}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? moment.tz(item.tanggal, moment.tz.guess(true)).format("DD-MM-YYYY") : null}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length+item.tamu.length}</td>
                                 {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >

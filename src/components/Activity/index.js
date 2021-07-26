@@ -19,8 +19,7 @@ import { dataBar, dataUser, dataRadar, dataPie } from './data';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 // import Toolbar from 'react-big-calendar/lib/Toolbar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment';
-import MomentTZ from 'moment-timezone';
+import moment from 'moment-timezone';
 const localizer = momentLocalizer(moment);
 const bbb = require('bigbluebutton-js')
 
@@ -104,8 +103,8 @@ class Aktivity extends Component {
     this.setState({
       startDate: date
     }, () => {
-      let start = MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD");
-      let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      let start = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD");
+      let end = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD");
       this.fetchDataChart(start, end);
     });
   };
@@ -113,8 +112,8 @@ class Aktivity extends Component {
     this.setState({
       endDate: date
     }, () => {
-      let start = MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD");
-      let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+      let start = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD");
+      let end = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD");
       this.fetchDataChart(start, end);
     });
   };
@@ -126,8 +125,8 @@ class Aktivity extends Component {
     this.fetchDataRekaman();
 
     this.setState({ startDate: moment(this.state.startDate).subtract(1, 'month')._d })
-    let start = MomentTZ.tz(moment(this.state.startDate).subtract(1, 'month'), 'Asia/Jakarta').format("YYYY-MM-DD");
-    let end = MomentTZ.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD");
+    let start = moment.tz(moment(this.state.startDate).subtract(1, 'month'), moment.tz.guess(true)).format("YYYY-MM-DD");
+    let end = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD");
     this.fetchDataChart(start, end);
 
     console.log('RECENTS DID', this.state.recentCourse);

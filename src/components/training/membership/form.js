@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 class FormMembership extends Component {
   constructor(props) {
@@ -90,7 +90,7 @@ class FormMembership extends Component {
                 phone: res.data.result.phone,
                 email: res.data.result.email,
                 license_number: res.data.result.license_number,
-                expired: Moment.tz(res.data.result.expired, 'Asia/Jakarta').format("DD-MM-YYYY"),
+                expired: moment.tz(res.data.result.expired, moment.tz.guess(true)).format("DD-MM-YYYY"),
                 imagePreview: res.data.result.photo ? res.data.result.photo : this.state.imagePreview
             })
         }

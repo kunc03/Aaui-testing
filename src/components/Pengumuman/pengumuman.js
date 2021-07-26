@@ -231,8 +231,8 @@ class PengumumanTableClass extends Component {
                 </small>
               </div>
               <div className="col-sm-2 text-right">
-                {moment(item.created_at).tz('Asia/Jakarta').format('hh:mm A')} &nbsp;
-              {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}
+                {moment(item.created_at).tz(moment.tz.guess(true)).format('hh:mm A')} &nbsp;
+              {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}
               </div>
               <div className="col-sm-1 text-right">
                 {

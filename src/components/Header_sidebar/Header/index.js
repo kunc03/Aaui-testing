@@ -152,7 +152,7 @@ class Header extends Component {
     //                 <span className="n-time text-muted">
     //                   <i className="icon feather icon-clock m-r-10" />
     //                   {moment(item.created_at)
-    //                     .tz('Asia/Jakarta')
+    //                     .tz(moment.tz.guess(true))
     //                     .format('DD MMMM YYYY')}
     //                 </span>
     //               </p>
@@ -189,7 +189,7 @@ class Header extends Component {
     //                 <span className="n-time text-muted">
     //                   <i className="icon feather icon-clock m-r-10" />
     //                   {moment(item.created_at)
-    //                     .tz('Asia/Jakarta')
+    //                     .tz(moment.tz.guess(true))
     //                     .format('DD MMMM YYYY')}
     //                 </span>
     //               </p>
@@ -569,7 +569,7 @@ class Header extends Component {
 
           <ul className="navbar-nav ml-auto">
 
-            <span className="fc-muted">{moment(this.state.dateNow).tz('Asia/Jakarta').format('DD/MM/YYYY')}</span>
+            <span className="fc-muted">{moment(this.state.dateNow).local().format('DD MMMM YYYY')} ({moment.tz.guess(true)})</span>
             {/* <li>
               <div className="dropdown">
                 <a className href="javascript:" data-toggle="dropdown">

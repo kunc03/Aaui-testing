@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button, Form, Card } from 'react-bootstrap';
 import API, { API_SERVER } from '../../../repository/api';
 import { Link } from 'react-router-dom';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 import TableFiles from '../../files/_files';
 import Storage from './../../../repository/storage';
@@ -122,7 +122,7 @@ export default class WebinarRiwayat extends Component {
         judul: res.data.result.judul,
         cert_topic: res.data.result.judul,
         isi: res.data.result.isi,
-        tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD MMMM YYYY"),
+        tanggal: moment.tz(res.data.result.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY"),
         jamMulai: res.data.result.jam_mulai,
         jamSelesai: res.data.result.jam_selesai,
         // projectId: res.data.result.projectId,
@@ -373,7 +373,7 @@ export default class WebinarRiwayat extends Component {
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
                     <td>{item.status == 2 ? 'Present' : 'Not present'}</td>
-                    <td>{jamMulai}</td>
+                    <td>{moment(jamMulai, 'HH:mm').local().format('HH:mm')}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
                     <td>{item.audio}</td>
@@ -562,7 +562,7 @@ export default class WebinarRiwayat extends Component {
                     <p>
                       {this.state.isi}
                     </p>
-                    <h6>{this.state.tanggal}, &nbsp; {this.state.jamMulai} - {this.state.jamSelesai}</h6>
+                    <h6>{this.state.tanggal}, &nbsp; {moment(this.state.jamMulai, 'HH:mm').local().format('HH:mm')} - {moment(this.state.jamSelesai, 'HH:mm').local().format('HH:mm')}</h6>
                   </div>
 
                   <div className="col-sm-4">

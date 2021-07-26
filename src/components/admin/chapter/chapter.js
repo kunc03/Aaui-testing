@@ -17,7 +17,7 @@ import '@phuocng/react-pdf-viewer/cjs/react-pdf-viewer.css';
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -206,15 +206,15 @@ export default class ChapterPreview extends Component {
     e.preventDefault();
     if (this.state.chapterId !== "") {
       // action for edit
-      let sDate = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
-      let eDate = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+      let sDate = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss");
+      let eDate = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss");
       let form = {
         course_id: this.state.courseId,
         company_id: this.state.companyId,
         chapter_title: this.state.chapterTitle,
         chapter_body: this.state.chapterBody,
-        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_mulai: moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
         moderator: this.state.valueModerator.length ? this.state.valueModerator[0] : null,
         start_date: this.state.scheduled ? sDate : null,
         end_date: this.state.scheduled ? eDate : null,
@@ -245,15 +245,15 @@ export default class ChapterPreview extends Component {
     } else {
       // action for insert
       if (this.state.chapterVideo !== "") {
-        let sDate = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
-        let eDate = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss");
+        let sDate = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss");
+        let eDate = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss");
         let form = new FormData();
         form.append('course_id', this.state.courseId);
         form.append('company_id', this.state.companyId);
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
-        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
-        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_mulai', moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_video', this.state.chapterVideo);
         form.append('moderator', this.state.valueModerator.length ? this.state.valueModerator[0] : null);
         form.append('start_date', this.state.scheduled ? sDate : null);
@@ -282,8 +282,8 @@ export default class ChapterPreview extends Component {
         course_id: this.state.courseId,
         company_id: this.state.companyId,
         tags: this.state.tagsForum,
-        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_mulai: moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
         chapter_title: this.state.chapterTitle,
         chapter_body: this.state.chapterBody,
       };
@@ -316,8 +316,8 @@ export default class ChapterPreview extends Component {
         let form = new FormData();
         form.append('course_id', this.state.courseId);
         form.append('company_id', this.state.companyId);
-        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
-        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_mulai', moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
         form.append('chapter_video', this.state.chapterVideo);
@@ -348,8 +348,8 @@ export default class ChapterPreview extends Component {
         chapter_number: this.state.chapterNumber,
         chapter_title: this.state.chapterTitle,
         chapter_body: this.state.chapterBody,
-        waktu_mulai: Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-        waktu_selesai: Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        waktu_mulai: moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+        waktu_selesai: moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
       }
 
       API.put(`${API_SERVER}v1/chapter/${this.state.chapterId}`, form).then(res => {
@@ -410,8 +410,8 @@ export default class ChapterPreview extends Component {
         form.append('chapter_number', this.state.chapterNumber);
         form.append('chapter_title', this.state.chapterTitle);
         form.append('chapter_body', this.state.chapterBody);
-        form.append('waktu_mulai', Moment.tz(this.state.waktuMulai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
-        form.append('waktu_selesai', Moment.tz(this.state.waktuSelesai, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_mulai', moment.tz(this.state.waktuMulai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
+        form.append('waktu_selesai', moment.tz(this.state.waktuSelesai, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
         form.append('chapter_video', this.state.chapterVideo);
         form.append('attachment_id', null);
 

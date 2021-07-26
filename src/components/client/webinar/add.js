@@ -165,7 +165,8 @@ class WebinarAddClass extends Component {
     let form = {
       id: this.state.webinarId,
       pengguna: this.state.kirimEmailPeserta,
-      tamu: this.state.kirimEmailTamu
+      tamu: this.state.kirimEmailTamu,
+      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY")} at ${moment(this.state.jamMulai, 'HH:mm').local().format('HH:mm')} until ${moment(this.state.jamSelesai, 'HH:mm').local().format('HH:mm')} (${moment.tz.guess(true)})`
     };
 
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
@@ -185,7 +186,7 @@ class WebinarAddClass extends Component {
     let sendNotif = {
       type: 7,
       peserta: form.pengguna,
-      description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
+      description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm')}`,
       destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
     };
     API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
@@ -332,8 +333,8 @@ class WebinarAddClass extends Component {
     })
 
     // send notification
-    let oldJamMul = moment(this.state.oldJamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
-    let jamMul = moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
+    let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm');
+    let jamMul = moment(this.state.jamMulai).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm');
     if (oldJamMul != jamMul) {
       let sendNotif = {
         type: 7,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { bodyTabble, headerTabble } from '../../modul/data';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 class DataUser extends Component {
     constructor(props) {

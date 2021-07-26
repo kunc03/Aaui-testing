@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
 import TableFiles from '../../files/_files';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import { isMobile } from 'react-device-detect';
@@ -363,7 +363,7 @@ export default class WebinarLive extends Component {
               projectId: res.data.result.project_id,
               dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
-              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
+              tanggal: moment.tz(res.data.result.tanggal, moment.tz.guess(true)).format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
@@ -481,7 +481,7 @@ export default class WebinarLive extends Component {
               projectId: res.data.result.project_id,
               dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
-              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
+              tanggal: moment.tz(res.data.result.tanggal, moment.tz.guess(true)).format("DD-MM-YYYY"),
               jamMulai: res.data.result.jam_mulai,
               jamSelesai: res.data.result.jam_selesai,
               peserta: res.data.result.peserta,
