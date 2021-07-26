@@ -655,11 +655,11 @@ export default class CompanyDetail extends Component {
                             </Col>
                             <Col md={9}>
                               <div className="form-group">
-                                <label>Tipe Company</label>
+                                <label>Company Type</label>
                                 <select onChange={this.onChangeInput} name="tipe" className="form-control" style={{ textTransform: 'capitalize' }}>
                                   <option value="">Select Company Type</option>
-                                  <option value="perusahaan" selected={this.state.tipe == 'perusahaan' ? 'selected' : ''}>Perusahaan</option>
-                                  <option value="pendidikan" selected={this.state.tipe == 'pendidikan' ? 'selected' : ''}>Pendidikan</option>
+                                  <option value="perusahaan" selected={this.state.tipe == 'perusahaan' ? 'selected' : ''}>Company</option>
+                                  <option value="pendidikan" selected={this.state.tipe == 'pendidikan' ? 'selected' : ''}>Education</option>
                                 </select>
                               </div>
                               <div className="form-group">

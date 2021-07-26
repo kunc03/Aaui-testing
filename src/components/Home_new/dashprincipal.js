@@ -384,7 +384,7 @@ class DashParent extends Component {
                             <table className="table table-striped">
                               <thead>
                                 <tr>
-                                  <th>Mata Pelajaran</th><th style={{ width: '40px' }}>Aksi</th>
+                                  <th>Mata Pelajaran</th><th style={{ width: '40px' }}>Action</th>
                                 </tr>
                               </thead>
                               <tbody>

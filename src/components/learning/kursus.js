@@ -66,7 +66,7 @@ export default class KursusNew extends Component {
                                 <th>Tugas</th>
                                 <th>Ujian</th>
                                 <th>Created At</th>
-                                <th className="text-center">Aksi</th>
+                                <th className="text-center">Action</th>
                               </tr>
                             </thead>
                             <tbody>

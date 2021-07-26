@@ -1072,7 +1072,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,

@@ -349,7 +349,7 @@ class Registasi extends React.Component {
                           <th>Tempat Lahir</th>
                           <th>Tanggal Lahir</th>
                           <th>Jenis Kelamin</th>
-                          <th>Aksi</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
