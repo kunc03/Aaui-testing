@@ -1115,7 +1115,7 @@ class MeetingTable extends Component {
           <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
 
           {
-            cdMeeting &&
+            cdMeeting ?
             <>
               {access_project_admin == true && this.state.limitCompany.meeting ? <button
                 onClick={this.handleCreateMeeting.bind(this)}
@@ -1127,6 +1127,7 @@ class MeetingTable extends Component {
               Create New
               </button> : null}
             </>
+            : null
           }
 
           <input
