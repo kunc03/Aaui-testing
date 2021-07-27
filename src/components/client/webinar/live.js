@@ -169,11 +169,16 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPosttest
       }
+      this.setState({isLoading: true})
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if (res.data.error)
+        if (res.data.error){
           toast.error('Failed to submit answer')
-        else
+          this.setState({isLoading: false})
+        }
+        else{
           toast.success('Post-test submission sent')
+          this.setState({isLoading: false})
+        }
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
@@ -198,11 +203,16 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPretest
       }
+      this.setState({isLoading: true})
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if (res.data.error)
+        if (res.data.error){
           toast.error('Failed to Submit Pre-Test answers webinar')
-        else
+          this.setState({isLoading: false})
+        }
+        else{
           toast.success('Submit Pre-Test answers webinar')
+          this.setState({isLoading: false})
+        }
         this.fetchPreTest()
         this.fetchResultPretest();
         this.openModalPretest();
@@ -972,11 +982,12 @@ Please complete the answers for not over than allotted time, orherwise the resul
                       ))
                     }
                     <button
+                      disabled={this.state.isLoading}
                       className="btn btn-icademy-primary"
                       onClick={this.kirimJawabanPretest.bind(this)}
                     >
                       <i className="fa fa-paper-plane"></i>
-                    Send Pre-Test Answers
+                    {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
                   </button>
                   </div>
                   :
@@ -1044,12 +1055,13 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               ))
                             }
                             <button
+                              disabled={this.state.isLoading}
                               className="btn btn-icademy-primary"
                               onClick={this.kirimJawabanPosttest.bind(this)}
                             >
                               <i className="fa fa-paper-plane"></i>
-                    Send Post-Test Answers
-                  </button>
+                              {this.state.isLoading ? 'Submitting...' : 'Send Post-Test Answers'}
+                            </button>
                           </div>
                         }
                       </div>
@@ -1280,7 +1292,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Modal.Header>
           <Modal.Body>
             <div>
-              Are you sure want to close questioner ?
+              Are you sure want to close Feedback Form ?
             </div>
           </Modal.Body>
           <Modal.Footer>

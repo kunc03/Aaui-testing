@@ -168,7 +168,7 @@ class WebinarAddClass extends Component {
       id: this.state.webinarId,
       pengguna: this.state.kirimEmailPeserta,
       tamu: this.state.kirimEmailTamu,
-      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} until ${moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)})`
+      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} until ${moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`
     };
 
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
@@ -182,17 +182,6 @@ class WebinarAddClass extends Component {
           this.fetchData();
         }
       }
-    })
-
-    // send notification
-    let sendNotif = {
-      type: 7,
-      peserta: form.pengguna,
-      description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm')}`,
-      destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
-    };
-    API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
-      this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
     })
   }
 
@@ -319,7 +308,6 @@ class WebinarAddClass extends Component {
       start_time: moment.tz(this.state.tanggal, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
       end_time: moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
       status: this.state.status
-      // pesertanya: this.state.pesertanya
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
       if (res.data.error)
@@ -331,26 +319,23 @@ class WebinarAddClass extends Component {
           await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
         }
 
+      // send notification
+      let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
+      let jamMul = moment(this.state.tanggal).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
+      if (oldJamMul != jamMul) {
+        let sendNotif = {
+          type: 7,
+          user_id: this.state.peserta.map(item => item.user_id),
+          activity_id: this.state.webinarId,
+          desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (${moment.tz.guess(true)} Time Zone)`,
+          dest: `${APPS_SERVER}webinars`,
+        };
+        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res=>{
+          back && this.props.history.goBack();
+        })
+      }
       toast.success("Save webinar information")
-      back && this.props.history.goBack();
     })
-
-    // send notification
-    let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm');
-    let jamMul = moment(this.state.tanggal).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm');
-    if (oldJamMul != jamMul) {
-      let sendNotif = {
-        type: 7,
-        peserta: this.state.peserta.map(item => item.id),
-        description: `"${this.state.judul}" on ${oldJamMul} changed to ${jamMul} (${moment.tz.guess(true)})`,
-        destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
-      };
-      API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
-        this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
-      })
-    }
-
-    console.log(form);
   }
 
   backButton() {
@@ -372,6 +357,14 @@ class WebinarAddClass extends Component {
             toast.success(`Berhasil menambah peserta`)
             this.setState({ pesertaId: [] })
             this.fetchData();
+            let sendNotif = {
+              type: 7,
+              user_id: formData.userId,
+              activity_id: this.state.webinarId,
+              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+              dest: `${APPS_SERVER}webinars`,
+            };
+            API.post(`${API_SERVER}v1/notification/broadcast`, sendNotif);
           }
         }
       })
@@ -668,18 +661,18 @@ class WebinarAddClass extends Component {
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Title</label>
+                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Title<required>*</required></label>
                       <input type="text" className="form-control" name="judul" onChange={e => this.setState({ judul: e.target.value })} value={this.state.judul} />
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Content</label>
+                      <label className="bold">Description<required>*</required></label>
                       <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
                     </div>
 
                     <div className="form-group row">
                       <div style={{paddingLeft:'15px'}}>
-                        <label>Start Time</label>
+                        <label>Start Time<required>*</required></label>
                         <div style={{clear:'both'}}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
@@ -691,7 +684,7 @@ class WebinarAddClass extends Component {
                         </div>
                       </div>
                       <div style={{marginLeft:20}}>
-                        <label>End Time</label>
+                        <label>End Time<required>*</required></label>
                         <div style={{clear:'both'}}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
