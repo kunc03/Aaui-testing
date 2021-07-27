@@ -465,8 +465,8 @@ class MeetingTable extends Component {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'Present' : 'Not Present') + ' on the meeting : ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
@@ -534,8 +534,8 @@ class MeetingTable extends Component {
                 user_id: userNotif[i],
                 activity_id: this.state.valueFolder[0],
                 type: 3,
-                desc: `"${form.room_name}" meeting on ${moment(this.state.oldStartDate).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm')} changed to ${moment(startDateJkt).tz(moment.tz.guess(true)).format('DD/MM/YYYY HH:mm')}`,
-                dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                desc: `"${form.room_name}" meeting has been updated`,
+                dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
                 types: 2
               }
               API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
@@ -701,8 +701,8 @@ class MeetingTable extends Component {
                     user_id: userNotif[i],
                     activity_id: this.state.valueFolder[0],
                     type: 3,
-                    desc: `Please confirm your meeting attendance at "${res.data.result.room_name}"`,
-                    dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                    desc: `You are invited to meeting "${res.data.result.room_name}". Please confirm your meeting attendance.`,
+                    dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
                     types : 1
                   }
                   API.post(`${API_SERVER}v1/notification/broadcast`, notif);

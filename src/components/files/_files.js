@@ -170,7 +170,7 @@ class FilesTableClass extends Component {
       })
     }
 
-    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} files`;
+    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} ${this.state.attachmentId.length > 1 ? 'files' : 'file'}`;
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
@@ -186,7 +186,7 @@ class FilesTableClass extends Component {
           type: 6,
           activity_id: this.state.folderId,
           desc: msg,
-          dest: `${APPS_SERVER}detail-project/${this.state.prevFolderId ? this.state.folderId : this.state.prevFolderId}`
+          dest: `${APPS_SERVER}detail-project/${this.props.projectId}`
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, notif);
       });
