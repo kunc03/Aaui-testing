@@ -68,6 +68,7 @@ export default class WebinarLive extends Component {
     mode: 'web',
 
     zoomUrl: '',
+    isLoading: false,
 
     //webinar role
     pembicara: [],
@@ -256,10 +257,13 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         kuesioner: this.state.jawaban
       }
+      this.setState({isLoading: true});
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
-        if (res.data.error)
+        if (res.data.error){
           toast.error('Already sent answers to the questionnaire on this webinar')
-        else
+          this.setState({isLoading: false});
+        }
+        else{
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
             webinar_id: this.state.webinarId,
@@ -267,7 +271,8 @@ export default class WebinarLive extends Component {
           })
         toast.success('Questionnaire submission sent')
         this.closeModalKuesionerPeserta()
-        this.setState({ startKuesioner: false })
+        this.setState({ startKuesioner: false, isLoading: false })
+        }
       })
     }
     else {
@@ -772,7 +777,7 @@ export default class WebinarLive extends Component {
     http(endMeeting).then((result) => {
       if (result.returncode == 'SUCCESS') {
         this.closeModalEnd()
-        toast.success('Webinar ended')
+        toast.success('You have ended the webinar for all participants')
         this.updateStatus(this.state.webinar.id, 3)
         socket.emit('send', {
           socketAction: 'fetchPostTest',
@@ -1004,7 +1009,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                         }
                         {
                           this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
-                          <div>
+                          <div style={{marginTop:20}}>
                             <h4>Answer the post-test</h4>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
@@ -1320,11 +1325,12 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Modal.Body>
           <Modal.Footer>
             <button
+              disabled={this.state.isLoading}
               className="btn btn-icademy-primary"
               onClick={this.kirimJawabanKuesioner.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Submit Questionnaire
+                {this.state.isLoading ? 'Submitting...' : 'Submit Questionnaire'}
               </button>
           </Modal.Footer>
         </Modal>

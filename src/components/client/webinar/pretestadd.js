@@ -67,52 +67,62 @@ export default class WebinarPretestAdd extends Component {
   }
 
   saveKuesioner() {
-    let form = {
-      id: this.state.webinarId,
-      webinar_test: this.state.pertanyaan,
-      jenis: 0,
-      waktu: this.state.waktu
-    };
-
-    if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-      toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+    if (this.state.waktu === 0){
+      toast.warning('You have to fill working duration');
     }
-    else {
-      API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
-        if (res.status === 200) {
-          if (res.data.error) {
-            toast.error('Error post data')
-          } else {
-            toast.success(`Saved`)
-            this.props.closeModal()
+    else{
+      let form = {
+        id: this.state.webinarId,
+        webinar_test: this.state.pertanyaan,
+        jenis: 0,
+        waktu: this.state.waktu
+      };
+  
+      if (form.webinar_test.filter(item => !item.jawab).length > 0) {
+        toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+      }
+      else {
+        API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
+          if (res.status === 200) {
+            if (res.data.error) {
+              toast.error('Error post data')
+            } else {
+              toast.success(`Saved`)
+              this.props.closeModal()
+            }
           }
-        }
-      })
+        })
+      }
     }
   }
 
   updateKuesioner() {
-    let form = {
-      id: this.state.webinarId,
-      webinar_test: this.state.pertanyaan,
-      jenis: 0,
-      waktu: this.state.waktu
-    };
-
-    if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-      toast.warning(`Question ${form.webinar_test.filter(item => !item.jawab)[0].tanya} has not been set the answer`)
+    if (this.state.waktu === 0){
+      toast.warning('You have to fill working duration');
     }
-    else {
-      API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
-        if (res.status === 200) {
-          if (res.data.error) {
-            toast.error('Error post data')
-          } else {
-            toast.success(`Saved`)
-            this.props.closeModal()
+    else{
+      let form = {
+        id: this.state.webinarId,
+        webinar_test: this.state.pertanyaan,
+        jenis: 0,
+        waktu: this.state.waktu
+      };
+  
+      if (form.webinar_test.filter(item => !item.jawab).length > 0) {
+        toast.warning(`Question ${form.webinar_test.filter(item => !item.jawab)[0].tanya} has not been set the answer`)
+      }
+      else {
+        API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
+          if (res.status === 200) {
+            if (res.data.error) {
+              toast.error('Error post data')
+            } else {
+              toast.success(`Saved`)
+              this.props.closeModal()
+            }
           }
-        }
-      })
+        })
+      }
     }
   }
 

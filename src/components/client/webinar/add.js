@@ -51,6 +51,7 @@ class WebinarAddClass extends Component {
 
     // form peserta
     pesertaId: [],
+    isUploading: false,
 
     //import from other webinar
     importId: [],
@@ -81,22 +82,22 @@ class WebinarAddClass extends Component {
     sekretarisId: [],
   }
 
-  addTamu = e => {
-    e.preventDefault();
-    if (!this.state.nama && !this.state.email && !this.state.telepon) {
-      toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
-    } else {
-      let form = {
-        nama: this.state.nama,
-        email: this.state.email,
-        telepon: this.state.telepon,
-        status: false,
-        checked: false
-      };
-      this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: '' });
-    }
+  // addTamu = e => {
+  //   e.preventDefault();
+  //   if (!this.state.nama && !this.state.email && !this.state.telepon) {
+  //     toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
+  //   } else {
+  //     let form = {
+  //       nama: this.state.nama,
+  //       email: this.state.email,
+  //       telepon: this.state.telepon,
+  //       status: false,
+  //       checked: false
+  //     };
+  //     this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: '' });
+  //   }
 
-  }
+  // }
 
   deleteTamu(id) {
     // let cpTamu = [...this.state.tamu];
@@ -401,6 +402,32 @@ class WebinarAddClass extends Component {
       toast.warning('Silahkan pilih webinar terlebih dahulu')
     }
   }
+
+  importGuest = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('webinar_id', this.state.webinarId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/webinar/tamu/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error(res.data.result)
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            toast.success('Data import success')
+            this.setState({ isUploading: false, file: '' });
+            this.fetchData();
+          }
+        }
+      })
+    }
+  }
   
   importPesertaTC = e => {
     e.preventDefault();
@@ -462,7 +489,12 @@ class WebinarAddClass extends Component {
         }
       })
       :
-      toast.warning('Silahkan masukkan data tamu terlebih dahulu')
+      toast.warning('Please fill guest data first')
+  }
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
   }
 
   render() {
@@ -693,7 +725,7 @@ class WebinarAddClass extends Component {
                       <div className="col-sm-6">
                         <label className="bold"> Participants </label>
                         <div class="input-group">
-                          <input value={this.state.peserta.length + this.state.tamu.length} type="text" className="form-control" />
+                          <input value={(this.state.peserta ? this.state.peserta.length : 0) + (this.state.tamu ? this.state.tamu.length : 0)} type="text" className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={this.showTambahPeserta.bind(this)} className="btn btn-default">
                               <i className="fa fa-plus"></i> Add
@@ -902,6 +934,33 @@ class WebinarAddClass extends Component {
               </div>
 
               <h5> Guest</h5>
+              <label>Import guest from excel</label>
+                                                    <div>
+                                                        <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
+                                                    </div>
+                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{paddingLeft:0}}>
+                                                        <label for='file-import' style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                            <i
+                                                                className="fa fa-upload"
+                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                            />
+                                                            {this.state.isUploading ? 'Uploading...' : 'Import'}
+                                                        </button>
+                                                    </form>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group row">
                   <div className="col-sm-3">
