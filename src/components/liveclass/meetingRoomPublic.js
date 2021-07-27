@@ -466,8 +466,8 @@ export default class MeetingRoomPublic extends Component {
                                     <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span><br />
                                     <p className="fc-skyblue"> {decodeURI(item.filenameattac)} <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a></p>
                                     <small >
-                                      {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
-                              {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
+                                      {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
+                              {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
                                     </small>
                                   </div>
                                 )

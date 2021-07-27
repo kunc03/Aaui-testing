@@ -11,7 +11,6 @@ import Select from 'react-select';
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
 
-import MomentTZ from 'moment-timezone';
 import moment from 'moment-timezone';
 
 import DatePicker from "react-datepicker";
@@ -613,8 +612,8 @@ export default class MeetingRoom extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: MomentTZ.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: MomentTZ.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: `${moment.tz(this.state.classRooms.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+        schedule_end: `${moment.tz(this.state.classRooms.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
@@ -792,7 +791,7 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        time: moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
         created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
@@ -819,7 +818,7 @@ export default class MeetingRoom extends Component {
         classId: this.state.classId,
         title: this.state.title,
         content: this.state.body.replace(/'/g, "\\'"),
-        time: MomentTZ.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+        time: moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
         created_by : Storage.get('user').data.user_id
       }
       console.log('MOM DATA', form)
@@ -939,8 +938,8 @@ export default class MeetingRoom extends Component {
     let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
     const notify = () => toast.warning('Access denied')
 
-    let infoDateStart = MomentTZ.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
-    let infoDateEnd = MomentTZ.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm");
+    let infoDateStart = moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm");
+    let infoDateEnd = moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm");
 
     // unutk banner photo, responsive center image FILE SHOW
     const CheckMedia = ({ media }) => {
@@ -1189,11 +1188,11 @@ export default class MeetingRoom extends Component {
                                 </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     <div className='legend-kehadiran hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
                                     <div className='legend-kehadiran tidak-hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
                                     <div className='legend-kehadiran tentative'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
+                                    <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                                   </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     {this.state.infoParticipant.map(item =>
@@ -1306,8 +1305,8 @@ export default class MeetingRoom extends Component {
                                         <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
                                       </p>
                                       <small>
-                                        {moment(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}  &nbsp;
-                                          {moment(item.created_at).tz('Asia/Jakarta').format('h:sA')}
+                                        {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
+                                          {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
                                       </small> { classRooms.moderator == Storage.get("user").data.user_id &&
                                         <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash" style={{cursor:'pointer'}}></i>
                                       }
@@ -1372,7 +1371,7 @@ export default class MeetingRoom extends Component {
                                           </Link>
                                         </span>
                                       </h3>
-                                      <p>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")}</p>
+                                      <p>{moment.tz(item.time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")}</p>
                                     </div>
                                   ))}
                                 </div>
@@ -1410,7 +1409,7 @@ export default class MeetingRoom extends Component {
                                     <option value="">Pilih</option>
                                     {dataMOM.map((item, index) => (
                                     <option value={index} selected={ item._id===this.state.selectSubtitle ? "selected" : "" }>
-                                      {MomentTZ.tz(item.start_time, 'Asia/Jakarta').format("DD MMMM YYYY, HH:mm") + " - " + MomentTZ.tz(item.end_time, 'Asia/Jakarta').format("HH:mm")}
+                                      {moment.tz(item.start_time, moment.tz.guess(true)).format("DD MMMM YYYY, HH:mm") + " - " + moment.tz(item.end_time, moment.tz.guess(true)).format("HH:mm")}
                                     </option>
                                     ))}
                                   </select>

@@ -8,7 +8,7 @@ import { MultiSelect } from 'react-sm-select';
 import Select from 'react-select';
 import ToggleSwitch from "react-switch";
 import DataTable from 'react-data-table-component';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 const customStyles = {
   rows: {
@@ -315,7 +315,7 @@ class ProjekNew extends Component {
         width: '25%',
         sortable: true,
         cell: row =>
-          <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
+          <div className="f-10">{moment.tz(row.recent_project, moment.tz.guess(true)).format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
         name: 'Information',

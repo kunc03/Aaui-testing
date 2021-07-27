@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
 import Storage from '../../../repository/storage';
 import TableFiles from '../../files/_files';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import { isMobile } from 'react-device-detect';
@@ -41,6 +41,8 @@ export default class WebinarLive extends Component {
     modalDoorprize: false,
     pembucara: '',
     joinUrl: '',
+    tanggal:'',
+    tanggalEnd:'',
     user: [],
     projectId: '',
     dokumenId: '',
@@ -68,6 +70,7 @@ export default class WebinarLive extends Component {
     mode: 'web',
 
     zoomUrl: '',
+    isLoading: false,
 
     //webinar role
     pembicara: [],
@@ -256,18 +259,22 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         kuesioner: this.state.jawaban
       }
+      this.setState({isLoading: true});
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
-        if (res.data.error)
-          toast.error('Already sent answers to the questionnaire on this webinar')
-        else
+        if (res.data.error){
+          toast.error('Already sent answers to the Feedback Form on this webinar')
+          this.setState({isLoading: false});
+        }
+        else{
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
             webinar_id: this.state.webinarId,
             name: this.state.user.name
           })
-        toast.success('Questionnaire submission sent')
+        toast.success('Feedback Form submission sent')
         this.closeModalKuesionerPeserta()
-        this.setState({ startKuesioner: false })
+        this.setState({ startKuesioner: false, isLoading: false })
+        }
       })
     }
     else {
@@ -363,9 +370,8 @@ export default class WebinarLive extends Component {
               projectId: res.data.result.project_id,
               dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
-              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
-              jamMulai: res.data.result.jam_mulai,
-              jamSelesai: res.data.result.jam_selesai,
+              tanggal: res.data.result.start_time,
+              tanggalEnd: res.data.result.end_time,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
 
@@ -383,14 +389,14 @@ export default class WebinarLive extends Component {
           this.checkProjectAccess()
           this.fetchResultPretest()
           this.fetchResultPosttest()
-          let tgl = new Date(res.data.result.tanggal)
-          let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
-          let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
+          // let tgl = new Date(res.data.result.tanggal)
+          // let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
+          // let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
 
-          let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0, 2)))
-          let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3, 5)))
+          // let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0, 2)))
+          // let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3, 5)))
 
-          let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
+          let isWebinarStartDate = moment(new Date()).local() >= moment(this.state.tanggal).local() && moment(new Date()).local() <= moment(this.state.tanggalEnd).local() ? true : false;
           this.setState({ isWebinarStartDate: isWebinarStartDate })
 
           if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)) {
@@ -481,9 +487,8 @@ export default class WebinarLive extends Component {
               projectId: res.data.result.project_id,
               dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
-              tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY"),
-              jamMulai: res.data.result.jam_mulai,
-              jamSelesai: res.data.result.jam_selesai,
+              tanggal: moment.tz(res.data.result.start_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
+              tanggalEnd: moment.tz(res.data.result.end_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
 
@@ -501,14 +506,14 @@ export default class WebinarLive extends Component {
           this.checkProjectAccess()
           this.fetchResultPretest()
           this.fetchResultPosttest()
-          let tgl = new Date(res.data.result.tanggal)
-          let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
-          let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
+          // let tgl = new Date(res.data.result.tanggal)
+          // let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
+          // let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
 
-          let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0, 2)))
-          let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3, 5)))
+          // let tglJamSelesai = new Date(tgl.setHours(this.state.jamSelesai.slice(0, 2)))
+          // let tglJamMenitSelesai = new Date(tglJamSelesai.setMinutes(this.state.jamSelesai.slice(3, 5)))
 
-          let isWebinarStartDate = new Date() >= tglJamMenit && new Date() <= tglJamMenitSelesai ? true : false;
+          let isWebinarStartDate = moment(new Date()).local() >= moment(this.state.tanggal).local() && moment(new Date()).local() <= moment(this.state.tanggalEnd).local() ? true : false;
           this.setState({ isWebinarStartDate: isWebinarStartDate })
 
           if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)) {
@@ -772,7 +777,7 @@ export default class WebinarLive extends Component {
     http(endMeeting).then((result) => {
       if (result.returncode == 'SUCCESS') {
         this.closeModalEnd()
-        toast.success('Webinar ended')
+        toast.success('You have ended the webinar for all participants')
         this.updateStatus(this.state.webinar.id, 3)
         socket.emit('send', {
           socketAction: 'fetchPostTest',
@@ -789,7 +794,7 @@ export default class WebinarLive extends Component {
           socketAction: 'sendKuesioner',
           webinar_id: this.state.webinarId
         })
-        toast.success('Questionnaire sent to participants');
+        toast.success('Feedback Form sent to participants');
         this.setState({ waitingKuesioner: true })
       }
     })
@@ -886,7 +891,7 @@ export default class WebinarLive extends Component {
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Questionnaire & Doorprize
+                        <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
                       :
                       null
@@ -902,7 +907,7 @@ export default class WebinarLive extends Component {
                   {
                     (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner ?
                       <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Questionnaire
+                        <i className="fa fa-clipboard-list"></i>Feedback Form
                       </button>
                       :
                       null
@@ -993,7 +998,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                             this.state.status == 3 ?
                               <h3>The webinar has ended</h3>
                               :
-                              <h3>Webinars start on {this.state.tanggal} at {this.state.jamMulai} until {this.state.jamSelesai}</h3>
+                              <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h3>
                         }
                         {
                           this.state.status !== 3 &&
@@ -1004,7 +1009,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                         }
                         {
                           this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
-                          <div>
+                          <div style={{marginTop:20}}>
                             <h4>Answer the post-test</h4>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
@@ -1223,7 +1228,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Questionnaire
+            Feedback Form
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1231,12 +1236,12 @@ Please complete the answers for not over than allotted time, orherwise the resul
               this.state.waitingKuesioner &&
               <div>
                 <h4>Waiting...</h4>
-                <div>Number of participants who have answered the questionnaire = <b>{this.state.jawabKuesioner.length}</b></div>
+                <div>Number of participants who have answered the Feedback Form = <b>{this.state.jawabKuesioner.length}</b></div>
               </div>
             }
             {
               this.state.waitingKuesioner == false &&
-              <div>Send the questionnaire to all participants now?</div>
+              <div>Send the Feedback Form to all participants now?</div>
             }
           </Modal.Body>
           <Modal.Footer>
@@ -1257,7 +1262,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                 onClick={this.sendKuesioner.bind(this)}
               >
                 <i className="fa fa-paper-plane"></i>
-                Send Questionnaire
+                Send Feedback Form
               </button>
             }
           </Modal.Footer>
@@ -1301,7 +1306,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Submit Questionnaire
+              Submit Feedback Form
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1320,11 +1325,12 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Modal.Body>
           <Modal.Footer>
             <button
+              disabled={this.state.isLoading}
               className="btn btn-icademy-primary"
               onClick={this.kirimJawabanKuesioner.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Submit Questionnaire
+                {this.state.isLoading ? 'Submitting...' : 'Submit Feedback Form'}
               </button>
           </Modal.Footer>
         </Modal>

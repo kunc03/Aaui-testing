@@ -92,7 +92,7 @@ export default class Component1 extends Component {
                           </div>
                           <div style={Style.TANGGAL}>
                             {moment(this.state.date)
-                              .tz('Asia/Jakarta')
+                              .tz(moment.tz.guess(true))
                               .format('DD MMMM YYYY')}
                           </div>
 

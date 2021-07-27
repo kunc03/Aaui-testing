@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import DataTable from 'react-data-table-component';
 import { MultiSelect } from 'react-sm-select';
 import LoadingOverlay from 'react-loading-overlay';
@@ -322,7 +322,7 @@ class Assignment extends Component {
         },
       },
       {
-        cell: row => Moment.tz(row.assignment_date, 'Asia/Jakarta').format("DD-MM-YYYY"),
+        cell: row => moment.tz(row.assignment_date, moment.tz.guess(true)).format("DD-MM-YYYY"),
         name: 'Date',
         sortable: true,
         style: {
@@ -456,7 +456,7 @@ class Assignment extends Component {
         <tr>
           <td>Assignment Date</td>
           <td>:</td>
-          <td>{Moment.tz(data.assignment_date, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm:ss")}</td>
+          <td>{moment.tz(data.assignment_date, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm:ss")}</td>
         </tr>
         <tr>
           <td>Assignment Status</td>
@@ -534,7 +534,7 @@ class Assignment extends Component {
                                                             <tr>
                                                                 <td>Schedule</td>
                                                                 <td>:</td>
-                                                                <td>{this.state.scheduled ? Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss") +' - '+ Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss") : '-'}</td>
+                                                                <td>{this.state.scheduled ? moment.tz(this.state.start_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss") +' - '+ moment.tz(this.state.end_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss") : '-'}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Generate Membership</td>

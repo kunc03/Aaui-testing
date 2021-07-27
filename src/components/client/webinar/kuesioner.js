@@ -64,7 +64,7 @@ export default class WebinarKuesioner extends Component {
           <h5>
             Ahmad Ardiansyah
           </h5>
-          <p>The results of the questionnaire that had been input by the participants.</p>
+          <p>The results of the Feedback Form that had been input by the participants.</p>
 
           <div style={{ marginTop: "20px" }} className="form-group">
 
@@ -95,7 +95,7 @@ export default class WebinarKuesioner extends Component {
                     }}>
                       <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
                     </Link>
-                    Questionnaire Result
+                    Feedback Form Result
                   </h3>
                 </div>
                 <div className="col-sm-6 text-right">

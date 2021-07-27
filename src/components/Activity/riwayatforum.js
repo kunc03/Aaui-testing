@@ -94,7 +94,7 @@ class RiwayatForum extends Component {
                 <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
                   <h3 className="f-18 f-w-bold f-w-800">
                     Anda Sedang Mengikuti Forum ({item.activity_title})
-                                        <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>{moment(item.created_at).tz('Asia/Jakarta').format('DD-MM-YYYY')}</span>
+                                        <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>{moment(item.created_at).tz(moment.tz.guess(true)).format('DD-MM-YYYY')}</span>
                   </h3>
                   <p>{item.description}</p>
                 </div>

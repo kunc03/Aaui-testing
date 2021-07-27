@@ -2,7 +2,7 @@ import React, { Component, useState } from "react";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 ;
 
@@ -46,8 +46,8 @@ class EventAgenda extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
-          schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -67,8 +67,8 @@ class EventAgenda extends Component {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'Present' : 'Not Present') + ' on the meeting : ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {

@@ -10,7 +10,7 @@ import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 
@@ -148,7 +148,7 @@ class Exam extends Component {
         sortable: true,
       },
       {
-        cell: row => row.scheduled === 1 ? Moment.tz(row.start_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm") : '-',
+        cell: row => row.scheduled === 1 ? moment.tz(row.start_time, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm") : '-',
         name: 'Time Start',
         selector: 'created_at',
         sortable: true,

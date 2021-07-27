@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Hidden } from '@material-ui/core';
 import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
+import moment from 'moment-timezone';
 
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -126,7 +127,7 @@ class MataPelajaran extends Component {
               </div>
               <div className="col-sm-2">
                 <small className="f-w-600 f-12 text-c-grey-t ">
-                  {item.jam_mulai} - {item.jam_selesai}
+                  {moment(item.jam_mulai, 'HH:mm').local().format('HH:mm')} - {moment(item.jam_selesai, 'HH:mm').local().format('HH:mm')}
                 </small>
               </div>
               <div className="col-sm-2">
@@ -168,7 +169,7 @@ class MataPelajaran extends Component {
               </tr>
               <tr>
                 <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Jam</span></td>
-                <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                <td>{moment(item.jam_mulai, 'HH:mm').local().format('HH:mm')} - {moment(item.jam_selesai, 'HH:mm').local().format('HH:mm')}</td>
               </tr>
               <tr>
                 <td><span className="f-w-800 f-14 text-c-grey " style={{ textTransform: 'uppercase' }}>Action</span></td>

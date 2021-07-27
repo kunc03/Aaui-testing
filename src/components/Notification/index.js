@@ -252,7 +252,7 @@ class NotificationClass extends Component {
                               dataNotif.map((item, i) => {
                                 return (
                                   <div onClick={() => this.readNotif(item.id)} className="row" key={item.id} style={{ background: '#FFF', borderRadius: 4, padding: '12px', margin: '10px 10px 10px -15px' }}>
-                                    <span style={{ width: '-webkit-fill-available' }}>
+                                    <span style={{ width: '-webkit-fill-available', position:'relative' }}>
                                       {
                                         item.isread == 0 &&
                                         <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
@@ -273,8 +273,8 @@ class NotificationClass extends Component {
                                       </b>
                                       &nbsp; &nbsp;
                                       <small>
-                                        {moment.utc(item.created_at).tz('Asia/Jakarta').format('HH:mm')} &nbsp;
-                                        {moment.utc(item.created_at).tz('Asia/Jakarta').format('DD/MM/YYYY')}
+                                        {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('HH:mm')} &nbsp;
+                                        {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}
                                       </small>
                                       <p className="fc-muted mt-1">
                                         {item.description}
@@ -282,12 +282,12 @@ class NotificationClass extends Component {
 
                                       {
                                         item.destination &&
-                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Check Now</a>
+                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} target="_blank" className="button-bordered-grey" style={{position:'absolute', bottom:'0px', right:'0px', fontSize:'10px', padding:'1px 4px'}}>Open</a>
                                       }
                                       {
                                         item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} data-activity={item.activity_id} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
                                       }
-                                      <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{ cursor: 'pointer' }}></i>
+                                      <i className="fa fa-trash float-right" style={{position:'absolute', top:'0px', right:'0px', cursor:'pointer'}} onClick={this.deleteNotif} data-id={item.id}></i>
                                     </span>
 
                                   </div>

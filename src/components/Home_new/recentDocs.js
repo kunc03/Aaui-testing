@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import DataTable from 'react-data-table-component';
 
 class ListToDoNew extends Component {
@@ -39,7 +39,7 @@ class ListToDoNew extends Component {
         name: 'Date',
         selector: 'date',
         sortable: true,
-        cell: row => <div>{Moment.tz(row.date, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
+        cell: row => <div>{moment.tz(row.date, moment.tz.guess(true)).format('DD-MM-YYYY HH:mm')}</div>,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',

@@ -3,7 +3,7 @@ import Storage from '../../repository/storage';
 import API, { API_SERVER } from '../../repository/api';
 
 import { bodyTabble } from '../../modul/data';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
 class TugasYangDikerjakan extends Component {
@@ -62,7 +62,7 @@ class TugasYangDikerjakan extends Component {
                       <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
                         <td className="fc-muted f-14 f-w-300 p-t-20">{item.title}</td>
                         <td className="fc-muted f-14 f-w-300 p-t-20" align="center">Andre</td>
-                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
+                        <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{moment(item.jam_mulai, 'HH:mm').local().format('HH:mm')} - {moment(item.jam_selesai, 'HH:mm').local().format('HH:mm')}</td>
                         <td className="fc-muted f-14 f-w-300" align="center">
                           <button className="btn btn-icademy-file" >
                             <i className="fa fa-download fc-skyblue"></i> Download File

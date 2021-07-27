@@ -9,7 +9,6 @@ import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
 
 import 'react-tagsinput/react-tagsinput.css'
-import Moment from 'react-moment';
 
 import JitsiMeetComponent from '../../liveclass/livejitsi';
 
