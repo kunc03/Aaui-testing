@@ -153,8 +153,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: `${moment.tz(this.state.classRooms.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
-        schedule_end: `${moment.tz(this.state.classRooms.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+        schedule_start: `${moment.tz(this.state.classRooms.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${moment.tz(this.state.classRooms.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -444,8 +444,8 @@ class MeetingTable extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
-          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -585,8 +585,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
-                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -675,8 +675,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
-                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -1004,7 +1004,7 @@ class MeetingTable extends Component {
       {
         name: 'Date',
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
-        cell: row => <div>{row.is_scheduled == 1 ? moment(row.tanggal).tz(moment.tz.guess(true)).format('DD/MM/YYYY') : '-'}</div>,
+        cell: row => <div>{row.is_scheduled == 1 ? moment(row.tanggal).tz(moment.tz.guess(true)).format('DD-MM-YYYY') : '-'}</div>,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',

@@ -264,7 +264,7 @@ class NotificationClass extends Component {
                                               item.type == 4 ? "Pengumuman" :
                                                 item.type == 5 ? "Task" :
                                                   item.type == 6 ? "Files" :
-                                                    item.type == 7 ? "Training" :
+                                                    item.type == 7 ? "Webinar" :
                                                       item.type == 8 ? "PTC" :
                                                         item.type == 9 ? "Tugas" :
                                                           item.type == 10 ? "Kuis" :

@@ -30,6 +30,7 @@ class WebinarTable extends Component {
       gb: [],
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
+        { title: 'Speaker', width: null, status: true },
         { title: 'Moderator', width: null, status: true },
         { title: 'Status', width: null, status: true },
         { title: 'Start Time', width: null, status: true },
@@ -136,19 +137,19 @@ class WebinarTable extends Component {
     const StatusBadge = ({ value }) => {
       if (value == 0) {
         return (
-          <span class="badge badge-pill badge-warning">Not finished</span>
+          <span class="badge badge-pill badge-warning">Need {this.props.training ? 'live Class' : 'webinar'} data fulfillment</span>
         )
       } else if (value == 1) {
         return (
-          <span class="badge badge-pill badge-primary">Not Started yet</span>
+          <span class="badge badge-pill badge-primary">Not started yet</span>
         )
       } else if (value == 2) {
         return (
-          <span class="badge badge-pill badge-success">In progress</span>
+          <span class="badge badge-pill badge-success">On going</span>
         )
       } else if (value == 3) {
         return (
-          <span class="badge badge-pill badge-secondary">Done</span>
+          <span class="badge badge-pill badge-secondary">Finished</span>
         )
       }
     }
@@ -236,6 +237,7 @@ class WebinarTable extends Component {
                                           {item.judul}
                                           </Link>
                                 </td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara.map((x, i)=> { return(x.name + (item.pembicara.length-1 === i ? '' : ', '))})}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.map((x, i)=> { return(x.name + (item.moderator.length-1 === i ? '' : ', '))})}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />
@@ -283,11 +285,11 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
-                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">History</Link>
+                                        <Link to={`/webinar/riwayat/${item.id}`}><button className="btn btn-icademy-primary btn-icademy-grey">History</button></Link>
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Join</a>
+                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank'><button className="btn btn-icademy-primary btn-icademy-warning">Join</button></a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
