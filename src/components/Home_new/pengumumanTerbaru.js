@@ -4,7 +4,7 @@ import API, { API_SERVER } from '../../repository/api';
 import { Link } from "react-router-dom";
 
 import { bodyTabble } from '../../modul/data';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 
 class PengumumanTerbaru extends Component {

@@ -10,7 +10,7 @@ import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal, Badge } from 'react-bootstrap';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 
@@ -176,7 +176,7 @@ class Questions extends Component {
         },
       },
       {
-        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        cell: row => moment(row.created_at).local().format("DD-MM-YYYY HH:mm"),
         name: 'Created at',
         selector: 'created_at',
         sortable: true,

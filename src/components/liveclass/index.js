@@ -99,6 +99,8 @@ export default class LiveClass extends Component {
           is_scheduled: this.state.infoClass.is_scheduled,
           schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
           schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,

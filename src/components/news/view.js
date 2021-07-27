@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { Link } from "react-router-dom";
 
 class ViewNews extends Component {
@@ -71,7 +71,7 @@ handleContent = (e) => {
                 title: res.data.result.title,
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 author: res.data.result.author,
-                created_at: Moment.tz(res.data.result.created_at, 'Asia/Jakarta').format("MMMM Do YYYY, h:mm:ss a")
+                created_at: moment.tz(res.data.result.created_at, moment.tz.guess(true)).format("MMMM Do YYYY, h:mm:ss a")
             })
         }
     })

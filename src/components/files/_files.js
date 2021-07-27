@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import io from 'socket.io-client';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -170,7 +170,7 @@ class FilesTableClass extends Component {
       })
     }
 
-    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} files`;
+    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} ${this.state.attachmentId.length > 1 ? 'files' : 'file'}`;
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
@@ -186,7 +186,7 @@ class FilesTableClass extends Component {
           type: 6,
           activity_id: this.state.folderId,
           desc: msg,
-          dest: `${APPS_SERVER}detail-project/${this.state.prevFolderId ? this.state.folderId : this.state.prevFolderId}`
+          dest: `${APPS_SERVER}detail-project/${this.props.projectId}`
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, notif);
       });
@@ -752,7 +752,7 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}
@@ -803,7 +803,7 @@ fetchRekamanBBB(folder){
                                 : 'assets/images/files/file.svg'
                             } width="32" /> &nbsp;{item.name}</td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}
@@ -852,7 +852,7 @@ fetchRekamanBBB(folder){
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.time, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.time, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}

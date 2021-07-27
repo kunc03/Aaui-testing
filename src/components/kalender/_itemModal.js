@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { dataKalender } from '../../modul/data';
 import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import { OverlayTrigger, Modal } from 'react-bootstrap';
@@ -63,8 +62,8 @@ class Event extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: start.toISOString().slice(0, 16).replace('T', ' '),
-          schedule_end: end.toISOString().slice(0, 16).replace('T', ' '),
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)})`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -84,8 +83,8 @@ class Event extends Component {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'Present' : 'Not Present') + ' on the meeting : ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
@@ -156,9 +155,8 @@ class Event extends Component {
                   <p className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                     {event.title}
                   </p>
-                  <h6>{Moment.tz(event.create, 'Asia/Jakarta').format("DD MMMM YYYY")}, &nbsp;
-                  {Moment.tz(event.start, 'Asia/Jakarta').format("HH:mm:ss")} -
-                  {Moment.tz(event.end, 'Asia/Jakarta').format("HH:mm:ss")}</h6>
+                  <h6>Start : {moment.tz(event.start, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")}</h6>
+                  <h6>End : {moment.tz(event.end, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")}</h6>
                 </div>
               </div>
             </div>
@@ -166,7 +164,7 @@ class Event extends Component {
           <Modal.Footer>
           <Link target='_blank' to={`/webinar/live/${this.props.event.activity_id}`}>
             <button className="btn btn-icademy-primary">
-              <i className="fa fa-video"></i> Masuk
+              <i className="fa fa-video"></i> Join
               </button>
           </Link>
           </Modal.Footer>
@@ -235,10 +233,10 @@ class Event extends Component {
                     {this.state.infoClass.is_scheduled ?
                       <div className="col-sm-6">
                         <h3 className="f-14">
-                          Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          Start : {moment.tz(infoDateStart, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}
                         </h3>
                         <h3 className="f-14">
-                          End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          End : {moment.tz(infoDateEnd, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}
                         </h3>
                       </div>
                       : null}
@@ -251,11 +249,11 @@ class Event extends Component {
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
                         <div className='legend-kehadiran tidak-hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
                         <div className='legend-kehadiran tentative'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                       </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item =>
@@ -282,14 +280,14 @@ class Event extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-              <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
+            {(this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(moment.tz(infoDateStart, moment.tz.guess(true))) && new Date()
+              <= new Date(moment.tz(infoDateEnd, moment.tz.guess(true)))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ? <Link target='_blank' to={`/meeting-room/${this.state.infoClass.class_id}`}>
               <button className="btn btn-icademy-primary" onClick={this.updateRecent.bind(this)}
               // style={{width:'100%'}}
               //  onClick={e => this.closeModalConfirmation()}
               >
-                <i className="fa fa-video"></i> Masuk
+                <i className="fa fa-video"></i> Join
               </button>
             </Link>
               : null}

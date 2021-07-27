@@ -255,11 +255,16 @@ export default class WebinarEdit extends Component {
   }
 
   nextStep = e => {
-    if (this.props.match.params.training === 'by-training'){
-      this.simpanWebinar(e)
+    if (this.state.judul == '' || this.state.moderatorId == '' || this.state.sekretarisId == '' || this.state.ownerId == '' || this.state.pembicaraId == '' || (this.props.match.params.training === 'by-training' && this.state.valueCourse == '') || (this.props.match.params.training === 'default' && this.state.valuesFolder == '')) {
+      toast.warning('Some field is required')
     }
     else{
-      this.setState({ isStep1: false, isStep2: true })
+      if (this.props.match.params.training === 'by-training'){
+        this.simpanWebinar(e)
+      }
+      else{
+        this.setState({ isStep1: false, isStep2: true })
+      }
     }
   }
 

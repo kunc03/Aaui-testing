@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import Webinars from '../../webinar/webinar';
 
 class Webinar extends Component {

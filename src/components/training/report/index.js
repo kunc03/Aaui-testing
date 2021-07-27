@@ -6,7 +6,7 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import DatePicker from "react-datepicker";
 import { MultiSelect } from 'react-sm-select';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { Modal, Button, Form, Badge } from 'react-bootstrap';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -322,7 +322,7 @@ class Report extends Component {
         },
       },
       {
-        cell: row => Moment.tz(row.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        cell: row => moment(row.submission_time).local().format("DD-MM-YYYY HH:mm"),
         name: 'Submission Time',
         selector: 'submission_time',
         sortable: true,
@@ -437,7 +437,7 @@ class Report extends Component {
         <tr>
           <td>Submission Time</td>
           <td>:</td>
-          <td>{Moment.tz(data.submission_time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
+          <td>{moment(data.submission_time).local().format("DD-MM-YYYY HH:mm")}</td>
           <td>License number</td>
           <td>:</td>
           <td>{data.license_number}</td>

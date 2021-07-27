@@ -225,7 +225,7 @@ export default class WebinarCreate extends Component {
       if (res.data.error)
         toast.warning("Error fetch API")
       else
-        toast.success("Berhasil menambah webinar")
+        toast.success("Webinar created")
       this.props.history.goBack();
     })
   }

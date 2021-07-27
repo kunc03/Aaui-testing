@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import API, { API_SERVER, USER_ME } from '../../repository/api';
 import Storage from '../../repository/storage';
 import { Modal, Badge } from 'react-bootstrap';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 class News extends Component {
   constructor(props) {
@@ -132,7 +132,7 @@ class News extends Component {
         cell: row => <Link to={'/news/'+row.id}>{row.title}</Link>
       },
       {
-        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        cell: row => moment(row.created_at).local().format("DD-MM-YYYY HH:mm"),
         name: 'Created at',
         selector: 'created_at',
         sortable: true,

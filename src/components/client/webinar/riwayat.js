@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button, Form, Card } from 'react-bootstrap';
 import API, { API_SERVER } from '../../../repository/api';
 import { Link } from 'react-router-dom';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 import TableFiles from '../../files/_files';
 import Storage from './../../../repository/storage';
@@ -20,6 +20,8 @@ export default class WebinarRiwayat extends Component {
     ttd: '',
     signature: '',
     checkAll: false,
+    tanggal:'',
+    tanggalEnd: '',
     company_id: '',
     filterPeserta: 'Semua',
     webinarId: this.props.match.params.webinarId,
@@ -122,9 +124,8 @@ export default class WebinarRiwayat extends Component {
         judul: res.data.result.judul,
         cert_topic: res.data.result.judul,
         isi: res.data.result.isi,
-        tanggal: Moment.tz(res.data.result.tanggal, 'Asia/Jakarta').format("DD MMMM YYYY"),
-        jamMulai: res.data.result.jam_mulai,
-        jamSelesai: res.data.result.jam_selesai,
+        tanggal: res.data.result.start_time,
+        tanggalEnd: res.data.result.end_time,
         // projectId: res.data.result.projectId,
         dokumenId: res.data.result.dokumenId,
         status: res.data.result.status,
@@ -276,7 +277,7 @@ export default class WebinarRiwayat extends Component {
     doc.text("Description", 20, 40);
     doc.text(`: ${this.state.isi}`, 50, 40);
     doc.text("Time", 20, 45);
-    doc.text(`: ${this.state.tanggal}, ${this.state.jamMulai} - ${this.state.jamSelesai}`, 50, 45);
+    doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 45);
     doc.text("Total Invitation", 20, 50);
     doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 50);
     doc.text("Present", 20, 55);
@@ -362,7 +363,7 @@ export default class WebinarRiwayat extends Component {
                 items.map((item, i) => {
                   let jamMl = new Date(item.jam_mulai);
                   let jamMulai = item.jam_mulai ? ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2) : '-';
-                  let jamSl = new Date(this.state.tanggal + ' ' + this.state.jamSelesai);
+                  let jamSl = new Date(this.state.tanggalEnd);
                   let diff = Math.abs(jamSl - jamMl);
                   let diffHour = Math.floor((diff % 86400000) / 3600000);
                   let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
@@ -373,7 +374,7 @@ export default class WebinarRiwayat extends Component {
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
                     <td>{item.status == 2 ? 'Present' : 'Not present'}</td>
-                    <td>{jamMulai}</td>
+                    <td>{moment(jamMulai, 'HH:mm').local().format('HH:mm')}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
                     <td>{item.audio}</td>
@@ -562,7 +563,7 @@ export default class WebinarRiwayat extends Component {
                     <p>
                       {this.state.isi}
                     </p>
-                    <h6>{this.state.tanggal}, &nbsp; {this.state.jamMulai} - {this.state.jamSelesai}</h6>
+                    <h6>{moment(this.state.tanggal, 'HH:mm').local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd, 'HH:mm').local().format('DD MMMM YYYY HH:mm')}</h6>
                   </div>
 
                   <div className="col-sm-4">
@@ -587,7 +588,7 @@ export default class WebinarRiwayat extends Component {
                         className="btn btn-icademy-primary"
                       >
                         <i className="fa fa-file"></i>
-                        Questionnaire
+                        Feedback Form
                       </button></Link> */}
                   </div>
                 </div>
@@ -631,9 +632,9 @@ export default class WebinarRiwayat extends Component {
                   <ReactHTMLTableToExcel
                     className="btn btn-icademy-warning btn-12"
                     table="table-kuesioner"
-                    filename={'Questionnaire Result ' + this.state.judul}
-                    sheet="Questionnaire"
-                    buttonText="Export Questionnaire to Excel" />
+                    filename={'Feedback Form Result ' + this.state.judul}
+                    sheet="Feedback Form"
+                    buttonText="Export Feedback Form to Excel" />
                   <JawabanKuesioner items={this.state.jawabanKuesioner} />
                 </div>
               </div>
