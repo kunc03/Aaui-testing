@@ -155,9 +155,8 @@ class Event extends Component {
                   <p className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                     {event.title}
                   </p>
-                  <h6>{moment.tz(event.create, moment.tz.guess(true)).format("DD MMMM YYYY")}, &nbsp;
-                  {moment.tz(event.start, moment.tz.guess(true)).format("HH:mm:ss")} -
-                  {moment.tz(event.end, moment.tz.guess(true)).format("HH:mm:ss")}</h6>
+                  <h6>Start : {moment.tz(event.start, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")}</h6>
+                  <h6>End : {moment.tz(event.end, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")}</h6>
                 </div>
               </div>
             </div>
@@ -165,7 +164,7 @@ class Event extends Component {
           <Modal.Footer>
           <Link target='_blank' to={`/webinar/live/${this.props.event.activity_id}`}>
             <button className="btn btn-icademy-primary">
-              <i className="fa fa-video"></i> Masuk
+              <i className="fa fa-video"></i> Join
               </button>
           </Link>
           </Modal.Footer>
@@ -288,7 +287,7 @@ class Event extends Component {
               // style={{width:'100%'}}
               //  onClick={e => this.closeModalConfirmation()}
               >
-                <i className="fa fa-video"></i> Masuk
+                <i className="fa fa-video"></i> Join
               </button>
             </Link>
               : null}

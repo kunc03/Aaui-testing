@@ -159,7 +159,7 @@ export default class WebinarPretestAdd extends Component {
     API.post(`${API_SERVER}v2/webinar-test/import`, form).then(res => {
       if (res.data.error) toast.warning("Error import data");
 
-      toast.success("Success import questionnaire")
+      toast.success("Success import Feedback Form")
       this.setState({ loading: false })
       this.fetchData();
     })

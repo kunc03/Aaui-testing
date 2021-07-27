@@ -231,7 +231,7 @@ export default class WebinarKuesionerAdd extends Component {
                       <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
 
                       <div className="jawaban mt-3 ml-4">
-                        <label>Add Answers to the Questionnaire</label>
+                        <label>Add Answers to the Feedback Form</label>
                         <tr>
                           <td>
                             A

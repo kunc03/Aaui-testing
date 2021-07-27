@@ -447,7 +447,7 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number</label>
-                                                            <input type="text" name="license_number" id="license_number" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         {
                                                             this.state.license_number.length && !this.props.match.params.id && !this.state.disabledForm ?
