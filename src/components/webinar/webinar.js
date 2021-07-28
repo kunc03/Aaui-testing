@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import API, { API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { toast } from "react-toastify";
 import {
   Modal
@@ -30,10 +30,11 @@ class WebinarTable extends Component {
       gb: [],
       companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
       headerWebinars: [
+        { title: 'Speaker', width: null, status: true },
         { title: 'Moderator', width: null, status: true },
         { title: 'Status', width: null, status: true },
-        { title: 'Time', width: null, status: true },
-        { title: 'Date', width: null, status: true },
+        { title: 'Start Time', width: null, status: true },
+        { title: 'Duration', width: null, status: true },
         { title: 'Participants', width: null, status: true },
         // {title : 'File Project', width: null, status: true},
       ],
@@ -136,19 +137,19 @@ class WebinarTable extends Component {
     const StatusBadge = ({ value }) => {
       if (value == 0) {
         return (
-          <span class="badge badge-pill badge-warning">Not finished</span>
+          <span class="badge badge-pill badge-warning">Need {this.props.training ? 'live Class' : 'webinar'} data fulfillment</span>
         )
       } else if (value == 1) {
         return (
-          <span class="badge badge-pill badge-primary">Not Started yet</span>
+          <span class="badge badge-pill badge-primary">Not started yet</span>
         )
       } else if (value == 2) {
         return (
-          <span class="badge badge-pill badge-success">In progress</span>
+          <span class="badge badge-pill badge-success">On going</span>
         )
       } else if (value == 3) {
         return (
-          <span class="badge badge-pill badge-secondary">Done</span>
+          <span class="badge badge-pill badge-secondary">Finished</span>
         )
       }
     }
@@ -223,6 +224,12 @@ class WebinarTable extends Component {
                         :
                         bodyTabble.map((item, i) => {
                             let levelUser = Storage.get('user').data.level;
+                            let jamMl = new Date(item.start_time);
+                            let jamSl = new Date(item.end_time);
+                            let diff = Math.abs(jamSl - jamMl);
+                            let diffHour = Math.floor((diff % 86400000) / 3600000);
+                            let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
+                            let durasi = item.start_time && item.end_time ? diffHour.toString().padStart(2, "0") + ':' + diffMin.toString().padStart(2, "0") : '-';
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
@@ -230,12 +237,13 @@ class WebinarTable extends Component {
                                           {item.judul}
                                           </Link>
                                 </td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.name}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.pembicara.map((x, i)=> { return(x.name + (item.pembicara.length-1 === i ? '' : ', '))})}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.moderator.map((x, i)=> { return(x.name + (item.moderator.length-1 === i ? '' : ', '))})}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">
                                     <StatusBadge value={item.status} />
                                 </td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.jam_mulai} - {item.jam_selesai}</td>
-                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.tanggal ? Moment.tz(item.tanggal, 'Asia/Jakarta').format("DD-MM-YYYY") : null}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.start_time ? moment.tz(item.start_time, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm") : null}</td>
+                                <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{durasi}</td>
                                 <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.peserta.length+item.tamu.length}</td>
                                 {/* <td className="fc-muted f-14 f-w-300" align="center" style={{borderRight: '1px solid #DDDDDD'}}>
                                     <button className="btn btn-icademy-file" >
@@ -277,11 +285,11 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
-                                        <Link to={`/webinar/riwayat/${item.id}`} className="btn btn-v2 btn-primary mr-2">History</Link>
+                                        <Link to={`/webinar/riwayat/${item.id}`}><button className="btn btn-icademy-primary btn-icademy-grey">History</button></Link>
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank' className="btn btn-v2 btn-success">Join</a>
+                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank'><button className="btn btn-icademy-primary btn-icademy-warning">Join</button></a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&

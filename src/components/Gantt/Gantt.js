@@ -7,7 +7,7 @@ import API, { API_SERVER } from '../../repository/api';
 import equal from 'fast-deep-equal';
 import Storage from '../../repository/storage';
 import {Modal} from 'react-bootstrap';
-import MomentTZ from 'moment-timezone';
+import moment from 'moment-timezone';
  
 export default class Gantt extends Component {
     constructor(props) {
@@ -99,7 +99,7 @@ export default class Gantt extends Component {
         gantt.templates.progress_text=function(start,end,task){
             let done = '';
             if (task.status==='Done'){
-                done = task.done_time !== null ? ' - Done : '+MomentTZ.tz(task.done_time, 'Asia/Jakarta').format("DD/MM/YYYY HH:mm") : '';
+                done = task.done_time !== null ? ' - Done : '+moment.tz(task.done_time, moment.tz.guess(true)).format("DD/MM/YYYY HH:mm") : '';
             }
             return Math.round(task.progress*100)+"%"+done;
         };
@@ -765,7 +765,7 @@ export default class Gantt extends Component {
                     {
                         this.state.history.map(item =>
                             <div>
-                                <div>{MomentTZ.tz(item.time, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")} - {item.description} by {item.name}</div>
+                                <div>{moment.tz(item.time, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} - {item.description} by {item.name}</div>
                             </div>    
                         )
                     }

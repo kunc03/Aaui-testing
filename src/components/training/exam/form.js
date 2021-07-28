@@ -7,7 +7,7 @@ import { Modal } from 'react-bootstrap';
 import ToggleSwitch from "react-switch";
 import { MultiSelect } from 'react-sm-select';
 import DatePicker from "react-datepicker";
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 class FormExam extends Component {
@@ -138,8 +138,8 @@ class FormExam extends Component {
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 multiple_assign: this.state.see_correct_answer ? 1 : 0,
-                start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
@@ -206,8 +206,8 @@ class FormExam extends Component {
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 multiple_assign: this.state.multiple_assign ? 1 : 0,
-                start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 question: this.state.question
             }
             API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
@@ -265,8 +265,8 @@ class FormExam extends Component {
                 generate_membership: this.state.generate_membership ? 1 : 0,
                 see_correct_answer: this.state.see_correct_answer ? 1 : 0,
                 multiple_assign: this.state.multiple_assign ? 1 : 0,
-                start_time: Moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_date, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 exam: this.state.exam,
                 created_by: Storage.get('user').data.user_id
             }

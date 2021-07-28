@@ -335,9 +335,9 @@ class Mengajar extends React.Component {
     API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project`)
+          toast.error(`Failed to delete project`)
         } else {
-          toast.success(`Berhasil menghapus file `)
+          toast.success(`File deleted `)
           this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
 
           this.props.socket.emit('send', {
@@ -1271,7 +1271,7 @@ class Mengajar extends React.Component {
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+                <div>Are you sure you want to delete the file <b>{this.state.deleteFileName}</b> ?</div>
               </Modal.Body>
               <Modal.Footer>
                 <button

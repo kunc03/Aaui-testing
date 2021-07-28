@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { MultiSelect } from 'react-sm-select';
 import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import io from 'socket.io-client';
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -170,7 +170,7 @@ class FilesTableClass extends Component {
       })
     }
 
-    let msg = `${Storage.get('user').data.user} berhasil menambahkan ${this.state.attachmentId.length} file`;
+    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} ${this.state.attachmentId.length > 1 ? 'files' : 'file'}`;
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
@@ -186,7 +186,7 @@ class FilesTableClass extends Component {
           type: 6,
           activity_id: this.state.folderId,
           desc: msg,
-          dest: `${APPS_SERVER}detail-project/${this.state.prevFolderId ? this.state.folderId : this.state.prevFolderId}`
+          dest: `${APPS_SERVER}detail-project/${this.props.projectId}`
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, notif);
       });
@@ -290,13 +290,13 @@ class FilesTableClass extends Component {
         if (res.data.error) {
           toast.error('Error : ' + res.data.result)
         } else {
-          let msg = `${Storage.get('user').data.user} berhasil menambakan folder baru dengan nama "${formData.name}"`;
+          let msg = `${Storage.get('user').data.user} successfully to added a new folder with the name "${formData.name}"`;
           this.sendNotifToAll(msg);
 
           this.closeModalAdd()
           this.fetchFolder(this.state.folderId);
           socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
-          toast.success('Berhasil menambah folder baru')
+          toast.success('New folder added')
         }
       }
     })
@@ -492,12 +492,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          let msg = `${Storage.get('user').data.user} menghapus project ${this.state.deleteProjectName}`;
+          let msg = `${Storage.get('user').data.user} deleted the ${this.state.deleteProjectName} project`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchFolder(this.state.folderId);
         }
@@ -508,12 +508,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          let msg = `${Storage.get('user').data.user} menghapus file`;
+          let msg = `${Storage.get('user').data.user} deleted the file`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
           this.fetchFile(this.state.folderId);
         }
@@ -752,7 +752,7 @@ fetchRekamanBBB(folder){
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
                             {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}
@@ -803,7 +803,7 @@ fetchRekamanBBB(folder){
                                 : 'assets/images/files/file.svg'
                             } width="32" /> &nbsp;{item.name}</td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.created_at, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}
@@ -852,7 +852,7 @@ fetchRekamanBBB(folder){
                           <td className="fc-muted f-14 f-w-300 p-t-20">
                             <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {Moment.tz(item.time, 'Asia/Jakarta').format('DD-MM-YYYY')}
+                            {moment.tz(item.time, moment.tz.guess(true)).format('DD-MM-YYYY')}
                           </td>
                           <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                             {item.creator ? item.creator : '-'}
@@ -980,7 +980,7 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus file <b>{this.state.deleteFileName}</b> ?</div>
+            <div>Are you sure you want to delete the file <b>{this.state.deleteFileName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -1009,7 +1009,7 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus project <b>{this.state.deleteProjectName}</b> ?</div>
+            <div>Are you sure you want to delete the project <b>{this.state.deleteProjectName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button

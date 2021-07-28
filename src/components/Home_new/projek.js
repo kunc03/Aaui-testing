@@ -10,7 +10,7 @@ import { MultiSelect } from 'react-sm-select';
 import Select from 'react-select';
 import ToggleSwitch from "react-switch";
 import DataTable from 'react-data-table-component';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 const customStyles = {
   rows: {
@@ -222,9 +222,9 @@ class ProjekNew extends Component {
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Gagal menghapus project ${this.state.deleteProjectName}`)
+          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
         } else {
-          toast.success(`Berhasil menghapus project ${this.state.deleteProjectName}`)
+          toast.success(`Project deleted ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchProject();
         }
@@ -319,7 +319,7 @@ class ProjekNew extends Component {
         width: '20%',
         sortable: true,
         cell: row =>
-          <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
+          <div className="f-10">{moment.tz(row.recent_project, moment.tz.guess(true)).format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
         name: 'Information',

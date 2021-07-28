@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import DatePicker from "react-datepicker";
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -190,7 +190,7 @@ class Membership extends Component {
         },
       },
       {
-        cell: row => Moment.tz(row.expired, 'Asia/Jakarta').format("DD-MM-YYYY"),
+        cell: row => moment.tz(row.expired, moment.tz.guess(true)).format("DD-MM-YYYY"),
         name: 'Expiration Date',
         selector: 'expired',
         sortable: true,
@@ -248,7 +248,7 @@ class Membership extends Component {
         <tr>
           <td>Expiration Date</td>
           <td>:</td>
-          <td>{Moment.tz(data.expired, 'Asia/Jakarta').format("DD-MM-YYYY")}</td>
+          <td>{moment.tz(data.expired, moment.tz.guess(true)).format("DD-MM-YYYY")}</td>
         </tr>
         <tr>
           <td>Name</td>
@@ -276,7 +276,7 @@ class Membership extends Component {
       )
     }
     if (start != null && end != null) {
-      data = data.filter(x => Moment.tz(x.expired, 'Asia/Jakarta') >= start && Moment.tz(x.expired, 'Asia/Jakarta') <= end)
+      data = data.filter(x => moment.tz(x.expired, moment.tz.guess(true)) >= start && moment.tz(x.expired, moment.tz.guess(true)) <= end)
     }
     return(
         <div className="pcoded-main-container">

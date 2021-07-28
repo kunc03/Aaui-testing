@@ -8,7 +8,7 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Modal } from 'react-bootstrap';
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -361,7 +361,7 @@ class User extends Component {
         },
       },
       {
-        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        cell: row => moment.tz(row.created_at, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm"),
         name: 'Created at',
         selector: 'created_at',
         sortable: true,
@@ -454,7 +454,7 @@ class User extends Component {
         grow: 2,
       },
       {
-        cell: row => Moment.tz(row.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        cell: row => moment(row.created_at).local().format("DD-MM-YYYY HH:mm"),
         name: 'Created at',
         selector: 'created_at',
         sortable: true,
@@ -666,7 +666,7 @@ class User extends Component {
                     this.state.assignee.assignee.map((item) => {
                       return (
                         <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td>{Moment.tz(item.created_at, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}</td>
+                          <td>{moment.tz(item.created_at, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}</td>
                           <td><span class={`badge badge-${item.exam ? 'primary' : 'secondary'}`}>{item.exam ? 'Exam' : 'Quiz'}</span> {item.title}</td>
                           <td>{item.status}</td>
                           <td>

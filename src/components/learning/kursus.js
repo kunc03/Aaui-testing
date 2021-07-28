@@ -66,7 +66,7 @@ export default class KursusNew extends Component {
                                 <th>Tugas</th>
                                 <th>Ujian</th>
                                 <th>Created At</th>
-                                <th className="text-center">Aksi</th>
+                                <th className="text-center">Action</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -76,7 +76,7 @@ export default class KursusNew extends Component {
                                     <td>{item.nama_pelajaran}</td>
                                     <td>{item.kelas_nama}</td>
                                     <td>{item.hari}</td>
-                                    <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                    <td>{moment(item.jam_mulai, 'HH:mm').local().format('HH:mm')} - {moment(item.jam_selesai, 'HH:mm').local().format('HH:mm')}</td>
                                     <td>{item.jumlah_pertemuan}</td>
                                     <td>{item.materi}</td>
                                     <td>{item.kuis}</td>

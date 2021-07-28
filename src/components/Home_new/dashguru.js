@@ -401,7 +401,7 @@ class DashGuru extends Component {
                                     <tr key={i} style={{ borderBottom: '1px solid #e9e9e9' }}>
                                       <td>{item.nama_pelajaran}</td>
                                       <td>{item.hari}</td>
-                                      <td>{item.jam_mulai} - {item.jam_selesai}</td>
+                                      <td>{moment(item.jam_mulai, 'HH:mm').local().format('HH:mm')} - {moment(item.jam_selesai, 'HH:mm').local().format('HH:mm')}</td>
                                       <td>{item.kelas_nama}</td>
                                       <td>
                                         <Link to={`/guru/pelajaran/${item.jadwal_id}`}>

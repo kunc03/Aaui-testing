@@ -14,7 +14,7 @@ import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
 import Select from 'react-select';
 // import moment from "react-moment";
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
@@ -155,8 +155,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: Moment.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: Moment.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: `${moment.tz(this.state.classRooms.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${moment.tz(this.state.classRooms.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -446,8 +446,8 @@ class MeetingTable extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: Moment.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-          schedule_end: Moment.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -467,8 +467,8 @@ class MeetingTable extends Component {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'Present' : 'Not Present') + ' on the meeting : ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
@@ -506,8 +506,8 @@ class MeetingTable extends Component {
           let isAkses = this.state.akses == true ? 1 : 0;
           let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
           let isScheduled = this.state.scheduled == true ? 1 : 0;
-          let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-          let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
           let form = {
             room_name: this.state.roomName,
             moderator: this.state.akses ? this.state.valueModerator : [],
@@ -536,8 +536,8 @@ class MeetingTable extends Component {
                 user_id: userNotif[i],
                 activity_id: this.state.valueFolder[0],
                 type: 3,
-                desc: `Meeting "${form.room_name}" pada tanggal ${moment(this.state.oldStartDate).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')} diubah ke tanggal ${moment(startDateJkt).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
-                dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                desc: `"${form.room_name}" meeting has been updated`,
+                dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
                 types: 2
               }
               API.post(`${API_SERVER}v1/notification/broadcast`, notif).then(res => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
@@ -587,8 +587,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -618,8 +618,8 @@ class MeetingTable extends Component {
           let isAkses = this.state.akses == true ? 1 : 0;
           let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
           let isScheduled = this.state.scheduled == true ? 1 : 0;
-          let startDateJkt = Moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-          let endDateJkt = Moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
           let form = {
             user_id: Storage.get('user').data.user_id,
             company_id: this.state.companyId,
@@ -677,8 +677,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_start: `${moment.tz(res.data.result.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${moment.tz(res.data.result.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -703,8 +703,8 @@ class MeetingTable extends Component {
                     user_id: userNotif[i],
                     activity_id: this.state.valueFolder[0],
                     type: 3,
-                    desc: `Please confirm your meeting attendance at "${res.data.result.room_name}"`,
-                    dest: `${APPS_SERVER}detail-project/${this.state.valueFolder[0]}`,
+                    desc: `You are invited to meeting "${res.data.result.room_name}". Please confirm your meeting attendance.`,
+                    dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
                     types : 1
                   }
                   API.post(`${API_SERVER}v1/notification/broadcast`, notif);
@@ -777,8 +777,8 @@ class MeetingTable extends Component {
     const schedule_start = new Date(e.target.getAttribute('data-start'));
     const schedule_end = new Date(e.target.getAttribute('data-end'));
     const valueFolder = [Number(e.target.getAttribute('data-folder'))];
-    const schedule_start_jkt = new Date(Moment.tz(schedule_start, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
-    const schedule_end_jkt = new Date(Moment.tz(schedule_end, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"));
+    const schedule_start_jkt = new Date(moment.tz(schedule_start, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
+    const schedule_end_jkt = new Date(moment.tz(schedule_end, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"));
 
     const engine = e.target.getAttribute('data-engine')
     const mode = e.target.getAttribute('data-mode')
@@ -999,7 +999,7 @@ class MeetingTable extends Component {
         name: 'Time',
         // selector: 'status',
         center: true,
-        cell: row => <div>{row.is_scheduled == 1 ? row.waktu_start + ' - ' + row.waktu_end : '-'} </div>,
+        cell: row => <div>{row.is_scheduled == 1 ? moment(row.schedule_start).local().format('HH:mm:ss') + ' - ' + moment(row.schedule_end).local().format('HH:mm:ss') : '-'} </div>,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
@@ -1007,7 +1007,7 @@ class MeetingTable extends Component {
       {
         name: 'Date',
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
-        cell: row => <div>{row.is_scheduled == 1 ? Moment(row.tanggal).tz('Asia/Jakarta').format('DD/MM/YYYY') : '-'}</div>,
+        cell: row => <div>{row.is_scheduled == 1 ? moment(row.tanggal).tz(moment.tz.guess(true)).format('DD-MM-YYYY') : '-'}</div>,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -1074,7 +1074,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1118,7 +1118,7 @@ class MeetingTable extends Component {
           <strong className="f-w-bold f-18 fc-skyblue ">{t('meeting')}</strong>
 
           {
-            cdMeeting &&
+            cdMeeting ?
             <>
               {access_project_admin == true && this.state.limitCompany.meeting ? <button
                 onClick={this.handleCreateMeeting.bind(this)}
@@ -1129,6 +1129,7 @@ class MeetingTable extends Component {
                 {t('create_new')}
               </button> : null}
             </>
+            : null
           }
 
           <input
@@ -1595,10 +1596,10 @@ class MeetingTable extends Component {
                     {this.state.infoClass.is_scheduled ?
                       <div className="col-sm-6">
                         <h3 className="f-14">
-                          Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          Start : {moment.tz(infoDateStart, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}
                         </h3>
                         <h3 className="f-14">
-                          End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                          End : {moment.tz(infoDateEnd, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}
                         </h3>
                       </div>
                       : null}
@@ -1611,11 +1612,11 @@ class MeetingTable extends Component {
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Confirmed ({this.state.countHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
                         <div className='legend-kehadiran tidak-hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
                         <div className='legend-kehadiran tentative'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Not confirmed yet ({this.state.countTidakHadir})</h3>
+                        <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
                       </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item =>
@@ -1642,8 +1643,8 @@ class MeetingTable extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-              <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
+            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(moment.tz(infoDateStart, moment.tz.guess(true))) && new Date()
+              <= new Date(moment.tz(infoDateEnd, moment.tz.guess(true)))))
               && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
               <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
                 <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>

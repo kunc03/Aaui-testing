@@ -333,7 +333,7 @@ class Overview extends React.Component {
                                 {
                                   item.start_date ?
                                     <>
-                                      {moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm')}
+                                      {moment.tz(item.start_date, moment.tz.guess(true)).format('DD/MM/YYYY HH:mm')}
                                     </>
                                     :
                                     <span className="label label-primary">Upload Materi</span>
@@ -430,7 +430,7 @@ class Overview extends React.Component {
                                             minDate={minDate}
                                             maxDate={maxDate}
                                             dateFormat="yyyy-MM-dd HH:mm"
-                                            selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()}
+                                            selected={item.start_date ? new Date(moment.tz(item.start_date, moment.tz.guess(true)).format('YYYY-MM-DD HH:mm')) : new Date()}
                                             onChange={date => this.handleDynamicDate(date, i)} />
                                         </div>
                                         <div className="form-group">
@@ -501,8 +501,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-tugas/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
-                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -539,8 +539,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-kuis/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
-                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -568,7 +568,7 @@ class Overview extends React.Component {
                                 {item.sesi}
                               </td>
                               <td colSpan="2" className="text-center">{item.jenis == 1 ? 'Kuis' : 'Ujian'}</td>
-                              <td className="text-center">{item.start_date ? moment.tz(item.start_date, 'Asia/Jakarta').format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis' : 'Ujian'}</span>}</td>
+                              <td className="text-center">{item.start_date ? moment.tz(item.start_date, moment.tz.guess(true)).format('DD/MM/YYYY HH:mm') : <span className="label label-primary">Pilih {item.jenis == 1 ? 'Kuis' : 'Ujian'}</span>}</td>
                               <td className="text-center">{item.periode}</td>
                               <td className="text-center">{item.durasi} menit</td>
                               <td className="text-center">
@@ -659,7 +659,7 @@ class Overview extends React.Component {
                                         dateFormat="yyyy-MM-dd HH:mm"
                                         minDate={minDate}
                                         maxDate={maxDate}
-                                        selected={item.start_date ? new Date(moment.tz(item.start_date, 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')) : new Date()}
+                                        selected={item.start_date ? new Date(moment.tz(item.start_date, moment.tz.guess(true)).format('YYYY-MM-DD HH:mm')) : new Date()}
                                         onChange={date => this.handleDynamicDate(date, i)} />
                                     </div>
                                     <div className="form-group">
@@ -716,8 +716,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
-                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))
@@ -728,8 +728,8 @@ class Overview extends React.Component {
                                           <tr>
                                             <td>{j + 1}</td>
                                             <td><Link to={`/guru/detail-${item.jenis === 1 ? 'kuis' : 'ujian'}/${this.state.jadwalId}/${row.exam_id}`}>{row.exam_title}</Link></td>
-                                            <td>{moment.tz(row.time_start, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
-                                            <td>{moment.tz(row.time_finish, "Asia/Jakarta").format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_start, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
+                                            <td>{moment.tz(row.time_finish, moment.tz.guess(true)).format('DD/MM/YYYY')}</td>
                                             <td><i className="fa fa-trash" onClick={e => this.deletePenugasan(row.id)}></i></td>
                                           </tr>
                                         ))

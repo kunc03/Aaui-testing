@@ -39,6 +39,7 @@ class WebinarAddClass extends Component {
     judul: '',
     isi: '',
     tanggal: '',
+    tanggalEnd: '',
     jamMulai: '',
     jamSelesai: '',
     projectId: '',
@@ -51,6 +52,7 @@ class WebinarAddClass extends Component {
 
     // form peserta
     pesertaId: [],
+    isUploading: false,
 
     //import from other webinar
     importId: [],
@@ -81,22 +83,22 @@ class WebinarAddClass extends Component {
     sekretarisId: [],
   }
 
-  addTamu = e => {
-    e.preventDefault();
-    if (!this.state.nama && !this.state.email && !this.state.telepon) {
-      toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
-    } else {
-      let form = {
-        nama: this.state.nama,
-        email: this.state.email,
-        telepon: this.state.telepon,
-        status: false,
-        checked: false
-      };
-      this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: '' });
-    }
+  // addTamu = e => {
+  //   e.preventDefault();
+  //   if (!this.state.nama && !this.state.email && !this.state.telepon) {
+  //     toast.warning("Semua kolom harus terisi. (nama, email, & telepon).")
+  //   } else {
+  //     let form = {
+  //       nama: this.state.nama,
+  //       email: this.state.email,
+  //       telepon: this.state.telepon,
+  //       status: false,
+  //       checked: false
+  //     };
+  //     this.setState({ tamu: [...this.state.tamu, form], nama: '', email: '', telepon: '' });
+  //   }
 
-  }
+  // }
 
   deleteTamu(id) {
     // let cpTamu = [...this.state.tamu];
@@ -165,7 +167,8 @@ class WebinarAddClass extends Component {
     let form = {
       id: this.state.webinarId,
       pengguna: this.state.kirimEmailPeserta,
-      tamu: this.state.kirimEmailTamu
+      tamu: this.state.kirimEmailTamu,
+      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} until ${moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`
     };
 
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
@@ -179,17 +182,6 @@ class WebinarAddClass extends Component {
           this.fetchData();
         }
       }
-    })
-
-    // send notification
-    let sendNotif = {
-      type: 7,
-      peserta: form.pengguna,
-      description: `Anda diundang untuk mengikuti training "${this.state.judul}" pada tanggal ${moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm')}`,
-      destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
-    };
-    API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
-      this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
     })
   }
 
@@ -217,7 +209,8 @@ class WebinarAddClass extends Component {
   fetchData() {
     API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
       if (res.data.error) toast.warning("Gagal fetch API");
-      const tanggal = res.data.result.tanggal ? new Date(res.data.result.tanggal) : '';
+      const tanggal = res.data.result.start_time ? new Date(res.data.result.start_time) : '';
+      const tanggalEnd = res.data.result.end_time ? new Date(res.data.result.end_time) : '';
       const jam_mulai = res.data.result.jam_mulai ? new Date('2020-09-19 ' + res.data.result.jam_mulai) : ''
       const jam_selesai = res.data.result.jam_selesai ? new Date('2020-09-19 ' + res.data.result.jam_selesai) : ''
       this.setState({
@@ -226,9 +219,10 @@ class WebinarAddClass extends Component {
         judul: res.data.result.judul,
         isi: res.data.result.isi ? res.data.result.isi : '',
         tanggal: tanggal,
+        tanggalEnd: tanggalEnd,
         jamMulai: jam_mulai,
         jamSelesai: jam_selesai,
-        oldJamMulai: jam_mulai,
+        oldJamMulai: tanggal,
         projectId: res.data.result.project_id,
         dokumenId: res.data.result.dokumen_id,
         peserta: res.data.result.peserta,
@@ -286,8 +280,8 @@ class WebinarAddClass extends Component {
   }
 
   showTambahPeserta() {
-    if (this.state.judul == '' || this.state.isi == '' || this.state.tanggal == '' || this.state.jamMulai == '' || this.state.jamSelesai == '') {
-      toast.warning('Silahkan lengkapi data acara terlebih dahulu.')
+    if (this.state.judul == '' || this.state.isi == '' || this.state.tanggal == '' || this.state.tanggalEnd == '') {
+      toast.warning('Please complete the event data first.')
     }
     else {
       this.updateWebinar()
@@ -298,24 +292,22 @@ class WebinarAddClass extends Component {
 
   updateWebinar(back) {
 
-    let dd = new Date(this.state.tanggal);
-    let tanggal = dd.getFullYear() + '-' + ('0' + (dd.getMonth() + 1)).slice(-2) + '-' + ('0' + dd.getDate()).slice(-2);
+    // let dd = new Date(this.state.tanggal);
+    // let tanggal = dd.getFullYear() + '-' + ('0' + (dd.getMonth() + 1)).slice(-2) + '-' + ('0' + dd.getDate()).slice(-2);
 
-    let jamMl = new Date(this.state.jamMulai);
-    let jamMulai = ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2);
+    // let jamMl = new Date(this.state.jamMulai);
+    // let jamMulai = ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2);
 
-    let jamSl = new Date(this.state.jamSelesai);
-    let jamSelesai = ('0' + jamSl.getHours()).slice(-2) + ':' + ('0' + jamSl.getMinutes()).slice(-2);
+    // let jamSl = new Date(this.state.jamSelesai);
+    // let jamSelesai = ('0' + jamSl.getHours()).slice(-2) + ':' + ('0' + jamSl.getMinutes()).slice(-2);
 
     let form = {
       id: this.state.webinarId,
       judul: this.state.judul,
       isi: this.state.isi,
-      tanggal: tanggal,
-      jam_mulai: jamMulai,
-      jam_selesai: jamSelesai,
+      start_time: moment.tz(this.state.tanggal, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
       status: this.state.status
-      // pesertanya: this.state.pesertanya
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
       if (res.data.error)
@@ -327,26 +319,23 @@ class WebinarAddClass extends Component {
           await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
         }
 
+      // send notification
+      let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
+      let jamMul = moment(this.state.tanggal).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
+      if (oldJamMul != jamMul) {
+        let sendNotif = {
+          type: 7,
+          user_id: this.state.peserta.map(item => item.user_id),
+          activity_id: this.state.webinarId,
+          desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (${moment.tz.guess(true)} Time Zone)`,
+          dest: `${APPS_SERVER}webinars`,
+        };
+        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res=>{
+          back && this.props.history.goBack();
+        })
+      }
       toast.success("Save webinar information")
-      back && this.props.history.goBack();
     })
-
-    // send notification
-    let oldJamMul = moment(this.state.oldJamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
-    let jamMul = moment(this.state.jamMulai).tz('Asia/Jakarta').format('DD/MM/YYYY HH:mm');
-    if (oldJamMul != jamMul) {
-      let sendNotif = {
-        type: 7,
-        peserta: this.state.peserta.map(item => item.id),
-        description: `Training "${this.state.judul}" pada tanggal ${oldJamMul} diubah ke tanggal ${jamMul}`,
-        destination: `${APPS_SERVER}detail-project/${this.props.match.params.projectId}`,
-      };
-      API.post(`${API_SERVER}v2/webinar/notif`, sendNotif).then(res => {
-        this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id })
-      })
-    }
-
-    console.log(form);
   }
 
   backButton() {
@@ -368,6 +357,14 @@ class WebinarAddClass extends Component {
             toast.success(`Berhasil menambah peserta`)
             this.setState({ pesertaId: [] })
             this.fetchData();
+            let sendNotif = {
+              type: 7,
+              user_id: formData.userId,
+              activity_id: this.state.webinarId,
+              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+              dest: `${APPS_SERVER}webinars`,
+            };
+            API.post(`${API_SERVER}v1/notification/broadcast`, sendNotif);
           }
         }
       })
@@ -398,6 +395,32 @@ class WebinarAddClass extends Component {
     }
     else{
       toast.warning('Silahkan pilih webinar terlebih dahulu')
+    }
+  }
+
+  importGuest = e => {
+    e.preventDefault();
+    if (!this.state.file){
+      toast.warning('Choose the file first')
+    }
+    else{
+      this.setState({isUploading: true})
+      let form = new FormData();
+      form.append('webinar_id', this.state.webinarId);
+      form.append('file', this.state.file)
+      API.post(`${API_SERVER}v2/webinar/tamu/import`, form).then((res) => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error(res.data.result)
+            this.setState({ isUploading: false, file: '' });
+          }
+          else{
+            toast.success('Data import success')
+            this.setState({ isUploading: false, file: '' });
+            this.fetchData();
+          }
+        }
+      })
     }
   }
   
@@ -461,7 +484,12 @@ class WebinarAddClass extends Component {
         }
       })
       :
-      toast.warning('Silahkan masukkan data tamu terlebih dahulu')
+      toast.warning('Please fill guest data first')
+  }
+  handleChangeFile = e => {
+    this.setState({
+      file: e.target.files[0]
+    });
   }
 
   render() {
@@ -601,7 +629,7 @@ class WebinarAddClass extends Component {
                   <div className="form-group">
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Questionnaire</button>
+                      <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Feedback Form</button>
                     }
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
@@ -633,25 +661,41 @@ class WebinarAddClass extends Component {
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Title</label>
+                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Title<required>*</required></label>
                       <input type="text" className="form-control" name="judul" onChange={e => this.setState({ judul: e.target.value })} value={this.state.judul} />
                     </div>
 
                     <div className="form-group">
-                      <label className="bold">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Content</label>
+                      <label className="bold">Description<required>*</required></label>
                       <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
                     </div>
 
                     <div className="form-group row">
-                      <div className="col-sm-4">
-                        <label className="bold col-sm-12">{this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'} Date</label>
-                        <DatePicker
-                          dateFormat="yyyy-MM-dd"
-                          selected={this.state.tanggal}
-                          onChange={e => this.setState({ tanggal: e })}
-                        />
+                      <div style={{paddingLeft:'15px'}}>
+                        <label>Start Time<required>*</required></label>
+                        <div style={{clear:'both'}}>
+                          <DatePicker
+                            dateFormat="dd MMMM yyyy HH:mm"
+                            selected={this.state.tanggal}
+                            onChange={e => this.setState({ tanggal: e })}
+                            showTimeSelect
+                            timeIntervals={30}
+                          />
+                        </div>
                       </div>
-                      <div className="col-sm-4">
+                      <div style={{marginLeft:20}}>
+                        <label>End Time<required>*</required></label>
+                        <div style={{clear:'both'}}>
+                          <DatePicker
+                            dateFormat="dd MMMM yyyy HH:mm"
+                            selected={this.state.tanggalEnd}
+                            onChange={e => this.setState({ tanggalEnd: e })}
+                            showTimeSelect
+                            timeIntervals={30}
+                          />
+                        </div>
+                      </div>
+                      {/* <div className="col-sm-4">
                         <label className="bold col-sm-12"> Starting Hours </label>
                         <DatePicker
                           selected={this.state.jamMulai}
@@ -674,7 +718,7 @@ class WebinarAddClass extends Component {
                           timeCaption="Time"
                           dateFormat="h:mm aa"
                         />
-                      </div>
+                      </div> */}
                     </div>
 
                     <div className="form-group row">
@@ -692,7 +736,7 @@ class WebinarAddClass extends Component {
                       <div className="col-sm-6">
                         <label className="bold"> Participants </label>
                         <div class="input-group">
-                          <input value={this.state.peserta.length + this.state.tamu.length} type="text" className="form-control" />
+                          <input value={(this.state.peserta ? this.state.peserta.length : 0) + (this.state.tamu ? this.state.tamu.length : 0)} type="text" className="form-control" />
                           <span className="input-group-btn">
                             <button onClick={this.showTambahPeserta.bind(this)} className="btn btn-default">
                               <i className="fa fa-plus"></i> Add
@@ -901,6 +945,33 @@ class WebinarAddClass extends Component {
               </div>
 
               <h5> Guest</h5>
+              <label>Import guest from excel</label>
+                                                    <div>
+                                                        <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
+                                                          <button className="button-bordered">
+                                                              <i
+                                                                  className="fa fa-download"
+                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                              />
+                                                              Download Template
+                                                          </button>
+                                                        </a>
+                                                    </div>
+                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{paddingLeft:0}}>
+                                                        <label for='file-import' style={{cursor:'pointer', overflow:'hidden'}}>
+                                                          <div className="button-bordered-grey">
+                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
+                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                            <i
+                                                                className="fa fa-upload"
+                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                            />
+                                                            {this.state.isUploading ? 'Uploading...' : 'Import'}
+                                                        </button>
+                                                    </form>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group row">
                   <div className="col-sm-3">
@@ -955,7 +1026,7 @@ class WebinarAddClass extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Questionnaire
+              Feedback Form
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>

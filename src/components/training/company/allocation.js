@@ -5,6 +5,7 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
 import Storage from '../../../repository/storage';
+import moment from 'moment-timezone';
 
 class Allocation extends Component {
   constructor(props) {
@@ -113,6 +114,7 @@ class Allocation extends Component {
   render() {
     const columns = [
       {
+        cell: row => moment.tz(row.created_at, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm"),
         name: 'Time',
         selector: 'created_at',
         sortable: true

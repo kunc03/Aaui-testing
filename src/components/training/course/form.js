@@ -7,7 +7,7 @@ import { Modal } from 'react-bootstrap';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import axios from 'axios';
 import { MultiSelect } from 'react-sm-select';
 
@@ -84,8 +84,8 @@ autoSave = (isDrag) =>{
                 overview: this.state.overview,
                 require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
-                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -133,8 +133,8 @@ autoSave = (isDrag) =>{
                 overview: this.state.overview,
                 require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
-                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
@@ -185,8 +185,8 @@ autoSave = (isDrag) =>{
                 overview: this.state.overview,
                 require_course_id: this.state.valueCourse,
                 scheduled: this.state.scheduled ? 1 : 0,
-                start_time: Moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: Moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                start_time: moment.tz(this.state.start_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+                end_time: moment.tz(this.state.end_time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id
             }
