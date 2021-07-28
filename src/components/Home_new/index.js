@@ -142,7 +142,6 @@ class HomeNew extends Component {
   }
 
   render() {
-    console.log('propsHomeNew: ', this.props)
     const { t } = this.props;
 
     const eventDashboard = this.state.event;
@@ -382,9 +381,9 @@ class HomeNew extends Component {
                           <Card>
                             <Card.Body>
                               <div className="row">
-                                <div className="col-sm-6">
+                                <div className="col-sm-12">
                                   <h3 className="f-w-900 f-18 fc-blue">
-                                    Recently Accessed Documents
+                                    {t('recently_accessed_documents')}
                                   </h3>
                                 </div>
                                 <div className="col-sm-6 text-right">

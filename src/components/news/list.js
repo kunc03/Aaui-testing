@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withTranslation } from "react-i18next";
 import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 import Dropdown, {
@@ -117,6 +118,7 @@ class News extends Component {
   }
 
   render() {
+    const {t} = this.props
     const columns = [
       {
         name: 'Thumbnail',
@@ -178,48 +180,49 @@ class News extends Component {
         ).match(new RegExp(filter, "gmi"))
       )
     }
+
     return(
-                                            <div className="card p-20 main-tab-container">
-                                                <div className="row">
-                                                    <div className="col-sm-12 m-b-20">
-                                                        {
-                                                            !this.props.widgetMode ?
-                                                                <strong className="f-w-bold f-18" style={{color:'#000'}}>News</strong>
-                                                            :
-                                                                <strong className="f-w-900 f-18 fc-blue">News</strong>
-                                                        }
-                                                        {
-                                                            Storage.get('user').data.level !== 'client' && !this.props.widgetMode ?
-                                                            <Link
-                                                            to={`/news/create`}>
-                                                                <button
-                                                                className="btn btn-icademy-primary float-right"
-                                                                style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                                                                    <i className="fa fa-plus"></i>
-                                                                    Create New
-                                                                </button>
-                                                            </Link>
-                                                            : null
-                                                        }
-                                                        {
-                                                            !this.props.widgetMode ?
-                                                            <input
-                                                                type="text"
-                                                                placeholder="Search"
-                                                                onChange={this.filter}
-                                                                className="form-control float-right col-sm-3"/>
-                                                            : null
-                                                        }
-                                                        <DataTable
-                                                        columns={columns}
-                                                        data={data}
-                                                        highlightOnHover
-                                                        noDataComponent="There are no news to display"
-                                                        pagination
-                                                        fixedHeader
-                                                        />
-                                                    </div>
-                                                </div>
+      <div className="card p-20 main-tab-container">
+          <div className="row">
+              <div className="col-sm-12 m-b-20">
+                  {
+                      !this.props.widgetMode ?
+                          <strong className="f-w-bold f-18" style={{color:'#000'}}>{t('news')}</strong>
+                      :
+                          <strong className="f-w-900 f-18 fc-blue">{t('news')}</strong>
+                  }
+                  {
+                      Storage.get('user').data.level !== 'client' && !this.props.widgetMode ?
+                      <Link
+                      to={`/news/create`}>
+                          <button
+                          className="btn btn-icademy-primary float-right"
+                          style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                              <i className="fa fa-plus"></i>
+                              Create New
+                          </button>
+                      </Link>
+                      : null
+                  }
+                  {
+                      !this.props.widgetMode ?
+                      <input
+                          type="text"
+                          placeholder="Search"
+                          onChange={this.filter}
+                          className="form-control float-right col-sm-3"/>
+                      : null
+                  }
+                  <DataTable
+                  columns={columns}
+                  data={data}
+                  highlightOnHover
+                  noDataComponent="There are no news to display"
+                  pagination
+                  fixedHeader
+                  />
+              </div>
+          </div>
           <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
@@ -238,9 +241,11 @@ class News extends Component {
               </button>
             </Modal.Footer>
           </Modal>
-                                            </div>
+      </div>
     )
   }
 }
 
-export default News;
+const NewsWithTranslation = withTranslation('common')(News)
+
+export default NewsWithTranslation;

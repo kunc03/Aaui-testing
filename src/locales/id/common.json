@@ -1,3 +1,22 @@
 {
-  "event": "Acara"
+  "event": "Acara",
+  "project": "Proyek",
+  "meeting": "Pertemuan",
+  "webinar": "Webinar",
+  "training": "Pelatihan",
+  "learning": "Pembelajaran",
+  "recently_accessed_documents": "Dokumen yang baru saja diakses",
+  "company": "Perusahaan",
+  "user": "Pengguna",
+  "notification": "Notifikasi",
+  "calendar": "Kalendar",
+  "news": "Berita",
+  "add": "Tambah",
+  "create_new": "Buat Baru",
+  "meeting_room_schedule": "Jadwal Ruang Rapat",
+  "date": "Tanggal",
+  "description": "Keterangan",
+  "by": "Oleh",
+  "end_hours": "Jam Akhir",
+  "starting_hours": "Jam Mulai"
 }

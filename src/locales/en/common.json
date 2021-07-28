@@ -1,3 +1,22 @@
 {
-  "event": "Event"
+  "event": "Event",
+  "project": "Project",
+  "meeting": "Meeting",
+  "webinar": "Webinar",
+  "training": "Training",
+  "learning": "Learning",
+  "recently_accessed_documents": "Recently Accessed Documents",
+  "company": "Company",
+  "user": "User",
+  "notification": "Notification",
+  "calendar": "Calendar",
+  "news": "News",
+  "add": "Add",
+  "create_new": "Create New",
+  "meeting_room_schedule": "Meeting Room Schedule",
+  "date": "Date",
+  "description": "Description",
+  "by": "By",
+  "end_hours": "End Hours",
+  "starting_hours": "Starting Hours"
 }

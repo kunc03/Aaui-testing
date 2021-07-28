@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { withTranslation } from 'react-i18next';
+
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
@@ -281,6 +283,8 @@ class ProjekNew extends Component {
 
 
   render() {
+    const { t } = this.props
+
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser === 'client' ? false : true;
     let cdProject = '';
@@ -297,7 +301,7 @@ class ProjekNew extends Component {
       {
         name: 'Name',
         selector: 'title',
-        width: '40%',
+        width: '30%',
         sortable: true,
         cell: row =>
           <Link to={`detail-project/${row.id}`}>
@@ -312,14 +316,14 @@ class ProjekNew extends Component {
       {
         name: 'Last Activity',
         selector: 'recent_project',
-        width: '25%',
+        width: '20%',
         sortable: true,
         cell: row =>
           <div className="f-10">{Moment.tz(row.recent_project, 'Asia/Jakarta').format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
         name: 'Information',
-        width: '22%',
+        width: '34%',
         cell: row =>
           <span style={{ inlineSize: '-webkit-fill-available' }}>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
@@ -360,7 +364,7 @@ class ProjekNew extends Component {
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
-                Project
+                {t('project')}
             </h3>
             </div>
 
@@ -375,7 +379,7 @@ class ProjekNew extends Component {
                       style={{ padding: "7px 8px !important" }}
                       onClick={e => this.setState({ modalNewFolder: true })}
                     >
-                      <i className="fa fa-plus"></i> Add
+                      <i className="fa fa-plus"></i> {t('add')}
                     </button>
                     :
                     null
@@ -737,4 +741,6 @@ class ProjekNew extends Component {
   }
 }
 
-export default ProjekNew;
+const ProjectWithTranslation = withTranslation('common')(ProjekNew)
+
+export default ProjectWithTranslation;
