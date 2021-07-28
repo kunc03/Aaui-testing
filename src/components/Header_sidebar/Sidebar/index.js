@@ -7,20 +7,30 @@ import SocketContext from '../../../socket';
 import { toast } from 'react-toastify'
 import moment from 'moment-timezone'
 
-const Msg = ({ id, desc, socket }) => {
+const Msg = ({ id, desc, socket, startTimer }) => {
   const readReminder = (id) => {
     API.put(`${API_SERVER}v1/notification/read`, { id }).then(res => {
       if (res.data.error) console.log('Gagal read')
-
       socket.emit('send', { companyId: Storage.get('user').data.company_id })
     })
+  }
+
+  const snoozeTime = (data, time) => {
+    console.log(data, time)
+    startTimer(time * 60)
   }
 
   return (
     <div>
       {desc}
       <br />
-      <button style={{ marginTop: '8px' }} onClick={e => readReminder(id)}>OK</button>
+      <div>
+        <label>Snooze&nbsp;</label>
+        <button style={{ marginTop: '8px', cursor: 'pointer' }} onClick={e => snoozeTime({id, desc}, 10)}>10 Minutes</button>
+        <button style={{ marginTop: '8px', cursor: 'pointer' }} onClick={e => snoozeTime({id, desc}, 30)}>30 Minutes</button>
+        
+        <button style={{ marginTop: '8px', cursor: 'pointer', float: 'right' }} onClick={e => readReminder(id)}>Dismiss</button>
+      </div>
     </div>
   )
 }
@@ -36,6 +46,51 @@ class SidebarClass extends Component {
 
       notifUnread: 0,
 
+      time: {},
+      seconds: 10
+    };
+
+    this.waktu = 10;
+    this.timer = 0;
+    this.startTimer = this.startTimer.bind(this);
+    this.countDown = this.countDown.bind(this);
+  }
+
+  secondsToTime(secs){
+    let hours = Math.floor(secs / (60 * 60));
+
+    let divisor_for_minutes = secs % (60 * 60);
+    let minutes = Math.floor(divisor_for_minutes / 60);
+
+    let divisor_for_seconds = divisor_for_minutes % 60;
+    let seconds = Math.ceil(divisor_for_seconds);
+
+    let obj = {
+      "h": hours,
+      "m": minutes,
+      "s": seconds
+    };
+    return obj;
+  }
+
+  startTimer(time) {
+    this.waktu = time
+    this.timer = 0
+    if (this.timer === 0 && this.waktu > 0) {
+      this.timer = setInterval(this.countDown, 1000);
+    }
+  }
+
+  countDown() {
+    // Remove one second, set state so a re-render happens.
+    let seconds = this.waktu - 1;
+    this.setState({ time: this.secondsToTime(seconds), seconds: seconds });
+    this.waktu = seconds
+    
+    // Check if we're at zero.
+    if (seconds === 0) {
+      toast(<Msg id={0} desc={`adsfasdf`} socket={this.props.socket} startTimer={this.startTimer} />, { autoClose: false, type: toast.TYPE.INFO })
+      clearInterval(this.timer);
     }
   }
 
@@ -52,9 +107,12 @@ class SidebarClass extends Component {
     this.fetchNotif()
     this.fetchReminder()
 
+    let timeLeftVar = this.secondsToTime(this.state.seconds);
+    this.setState({ time: timeLeftVar });
+
     this.props.socket.on('broadcast', data => {
       console.log('broadcast sidebar ', data)
-      if (data.companyId == Storage.get('user').data.company_id) {
+      if (data.companyId === Storage.get('user').data.company_id) {
         this.fetchNotif()
       }
     })
@@ -62,16 +120,18 @@ class SidebarClass extends Component {
 
   fetchReminder() {
     API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
-      const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
-
+      // const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
+      
       let now = moment(new Date()).format('YYYY-MM-DD')
       const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2).filter(item => item.created_at.substring(0, 10) === now);
 
-      // Remind.map((item, i) => {
-      //   if(i === 0) {
-      //     toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} />, { autoClose: false, type: toast.TYPE.INFO })
-      //   }
-      // })
+      Remind.map((item, i) => {
+        let dateNow = moment().format('LLL')
+        let fromNow = moment(item.created_at).format('LLL')
+        if(dateNow === fromNow) {
+          toast(<Msg id={item.id} desc={item.description} socket={this.props.socket} startTimer={this.startTimer} />, { autoClose: false, type: toast.TYPE.INFO })
+        }
+      })
     });
   }
 
