@@ -222,9 +222,9 @@ class ProjekNew extends Component {
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
+          toast.error(`${this.props.t('failed_delete_project')} ${this.state.deleteProjectName}`)
         } else {
-          toast.success(`Project deleted ${this.state.deleteProjectName}`)
+          toast.success(`${this.props.t('success_delete_project')} ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchProject();
         }
@@ -241,9 +241,9 @@ class ProjekNew extends Component {
     API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to modify the project ${this.state.editProjectName}`)
+          toast.error(`${this.props.t('failed_modify_project')} ${this.state.editProjectName}`)
         } else {
-          toast.success(`Successfully modified project ${this.state.editProjectName}`)
+          toast.success(`${this.props.t('success_modify_project')} ${this.state.editProjectName}`)
           this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }

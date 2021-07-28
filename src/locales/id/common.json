@@ -10,13 +10,33 @@
   "user": "Pengguna",
   "notification": "Notifikasi",
   "calendar": "Kalendar",
+  "name": "Nama",
+  "phone": "Telepon",
   "news": "Berita",
   "add": "Tambah",
+  "delete": "Hapus",
+  "cancel": "Batal",
+  "open": "Buka",
   "create_new": "Buat Baru",
+  "check_now": "Cek Sekarang",
   "meeting_room_schedule": "Jadwal Ruang Rapat",
   "date": "Tanggal",
   "description": "Keterangan",
   "by": "Oleh",
   "end_hours": "Jam Akhir",
-  "starting_hours": "Jam Mulai"
+  "starting_hours": "Jam Mulai",
+
+  "failed_modify_project": "Gagal mengubah proyek",
+  "success_modify_project": "Sukses mengubah proyek",
+  
+  "failed_delete_project": "Gagal menghapus proyek",
+  "success_delete_project": "Sukses menghapus proyek",
+  
+  "successfully_added": "berhasil menambahkan",
+  "successfully_to_added_a_new_folder_with_the_name": "berhasil menambahkan folder baru dengan nama",
+
+  "new_folder_added": "Folder baru ditambahkan",
+  "are_you_sure_you_want_to_delete_file": "Apakah kamu yakin akan menghapus file ini",
+  "are_you_sure_you_want_to_delete_project": "Apakah kamu yakin akan menghapus proyek ini"
+
 }

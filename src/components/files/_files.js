@@ -10,6 +10,7 @@ import ToggleSwitch from "react-switch";
 import SocketContext from '../../socket';
 import moment from 'moment-timezone';
 import io from 'socket.io-client';
+import { withTranslation } from "react-i18next";
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
   //console.log("connect ganihhhhhhh");
@@ -170,7 +171,7 @@ class FilesTableClass extends Component {
       })
     }
 
-    let msg = `${Storage.get('user').data.user} successfully added ${this.state.attachmentId.length} ${this.state.attachmentId.length > 1 ? 'files' : 'file'}`;
+    let msg = `${Storage.get('user').data.user} ${this.props.t('successfully_added')} ${this.state.attachmentId.length} ${this.state.attachmentId.length > 1 ? 'files' : 'file'}`;
     this.sendNotifToAll(msg);
 
     this.setState({ modalUpload: false, uploading: false, attachmentId: [] })
@@ -290,13 +291,13 @@ class FilesTableClass extends Component {
         if (res.data.error) {
           toast.error('Error : ' + res.data.result)
         } else {
-          let msg = `${Storage.get('user').data.user} successfully to added a new folder with the name "${formData.name}"`;
+          let msg = `${Storage.get('user').data.user} ${this.props.t('successfully_to_added_a_new_folder_with_the_name')} "${formData.name}"`;
           this.sendNotifToAll(msg);
 
           this.closeModalAdd()
           this.fetchFolder(this.state.folderId);
           socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
-          toast.success('New folder added')
+          toast.success(this.props.t('new_folder_added'))
         }
       }
     })
@@ -335,12 +336,12 @@ class FilesTableClass extends Component {
       console.log(res.data)
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to modify the project ${this.state.editProjectName}`)
+          toast.error(`${this.props.t('failed_modify_project')} ${this.state.editProjectName}`)
         } else {
           let msg = `${Storage.get('user').data.user} change the project name ${this.state.editProjectName}`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Successfully modified project ${this.state.editProjectName}`)
+          toast.success(`${this.props.t('success_modify_project')} ${this.state.editProjectName}`)
           this.setState({ editProjectId: '', editProjectName: '' })
           this.fetchFolder(this.state.folderId)
           this.closeModalEdit()
@@ -492,12 +493,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
+          toast.error(`${this.props.t('failed_delete_project')} ${this.state.deleteProjectName}`)
         } else {
           let msg = `${Storage.get('user').data.user} deleted the ${this.state.deleteProjectName} project`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Project deleted ${this.state.deleteProjectName}`)
+          toast.success(`${this.props.t('success_delete_project')} ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchFolder(this.state.folderId);
         }
@@ -508,12 +509,12 @@ fetchRekamanBBB(folder){
     API.delete(`${API_SERVER}v1/project-file/${this.state.deleteFileId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
+          toast.error(`${this.props.t('failed_delete_project')} ${this.state.deleteProjectName}`)
         } else {
           let msg = `${Storage.get('user').data.user} deleted the file`;
           this.sendNotifToAll(msg);
 
-          toast.success(`Project deleted ${this.state.deleteProjectName}`)
+          toast.success(`${this.props.t('success_delete_project')} ${this.state.deleteProjectName}`)
           this.setState({ deleteFileId: '', deleteFileName: '', modalDeleteFile: false })
           this.fetchFile(this.state.folderId);
         }
@@ -597,6 +598,7 @@ fetchRekamanBBB(folder){
   }
 
   render() {
+    const {t} = this.props
     // * GLOBAL SETTINGS * //
 
     let cdFile = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_FILE_FOLDER')[0].status;
@@ -980,22 +982,22 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Are you sure you want to delete the file <b>{this.state.deleteFileName}</b> ?</div>
+            <div>{t('are_you_sure_you_want_to_delete_file')} <b>{this.state.deleteFileName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
               className="btn btm-icademy-primary btn-icademy-grey"
               onClick={this.closeModalDeleteFile.bind(this)}
             >
-              Cancel
-                      </button>
+              {t('cancel')}
+            </button>
             <button
               className="btn btn-icademy-primary btn-icademy-red"
               onClick={this.deleteFile.bind(this)}
             >
               <i className="fa fa-trash"></i>
-                        Hapus
-                      </button>
+              {t('delete')}
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -1009,7 +1011,7 @@ fetchRekamanBBB(folder){
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Are you sure you want to delete the project <b>{this.state.deleteProjectName}</b> ?</div>
+            <div>{t('are_you_sure_you_want_to_delete_project')} <b>{this.state.deleteProjectName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -1386,4 +1388,6 @@ const FilesTable = props => (
   </SocketContext.Consumer>
 )
 
-export default FilesTable;
+const FilesWithTranslation = withTranslation('common')(FilesTable)
+
+export default FilesWithTranslation;

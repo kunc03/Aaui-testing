@@ -10,13 +10,32 @@
   "user": "User",
   "notification": "Notification",
   "calendar": "Calendar",
+  "name": "Name",
+  "phone": "Phone",
   "news": "News",
   "add": "Add",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "open": "Open",
   "create_new": "Create New",
+  "check_now": "Check Now",
   "meeting_room_schedule": "Meeting Room Schedule",
   "date": "Date",
   "description": "Description",
   "by": "By",
   "end_hours": "End Hours",
-  "starting_hours": "Starting Hours"
+  "starting_hours": "Starting Hours",
+  
+  "failed_modify_project": "Failed to modify the project",
+  "success_modify_project": "Successfully modified project",
+  
+  "failed_delete_project": "Failed to delete the project",
+  "success_delete_project": "Successfully delete project",
+  
+  "successfully_added": "successfully added",
+  "successfully_to_added_a_new_folder_with_the_name": "successfully to added a new folder with the name",
+
+  "new_folder_added": "New folder added",
+  "are_you_sure_you_want_to_delete_file": "Are you sure you want to delete the file",
+  "are_you_sure_you_want_to_delete_project": "Are you sure you want to delete the project"
 }

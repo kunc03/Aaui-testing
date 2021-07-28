@@ -4,6 +4,7 @@ import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
 import SocketContext from '../../socket';
+import { withTranslation } from "react-i18next";
 const tabs = [
   { title: 'Notification' },
   // { title: 'Reminder' },
@@ -181,6 +182,7 @@ class NotificationClass extends Component {
 
 
   render() {
+    const { t } = this.props
     let { notificationData, filterType, filterNotification} = this.state;
 
     if (filterType != "") {
@@ -210,7 +212,7 @@ class NotificationClass extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    <h3>Notifications</h3>
+                    <h3>{t('notification')}</h3>
                     {/* {console.log(this.state.tabIndex)} */}
                     {this.state.tabIndex === 1 ? (
                       // TAB NOTIFICATIOIN
@@ -244,10 +246,6 @@ class NotificationClass extends Component {
                           </div>
                           :
                           <span>
-
-
-
-
                             {
                               dataNotif.map((item, i) => {
                                 return (
@@ -349,7 +347,7 @@ class NotificationClass extends Component {
                                           {item.description}
                                         </p>
 
-                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">Check now</a>
+                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary">{t('check_now')}</a>
                                         <i className="fa fa-trash float-right" onClick={this.deleteNotif} data-id={item.id} style={{ cursor: 'pointer' }}></i>
                                       </span>
 
@@ -382,4 +380,6 @@ const Notification = props => (
   </SocketContext.Consumer>
 )
 
-export default Notification;
+const NotifWithTranslation = withTranslation('common')(Notification)
+
+export default NotifWithTranslation;
