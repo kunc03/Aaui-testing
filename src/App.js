@@ -1,4 +1,5 @@
-import React, {lazy} from "react";
+import React, { lazy, Suspense } from "react";
+import './actions/i18n';
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
@@ -35,7 +36,7 @@ const GanttPublic = lazy(()=> import("./components/Gantt/GanttPublic"));
 const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
 const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
 const ThankYou = lazy(()=> import("./components/public/thankyou"));
-const MeetingRoom = lazy(()=> import( "./components/liveclass/meetingRoom"));
+const MeetingRoom = lazy(() => import("./components/liveclass/meetingRoom"));
 
 export default class App extends React.Component {
   constructor(props) {
@@ -64,7 +65,7 @@ export default class App extends React.Component {
     }
 
     return (
-      <div>{workSpace}</div>
+      <Suspense fallback="loading">{workSpace}</Suspense>
     );
   }
 }
