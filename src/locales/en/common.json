@@ -23,6 +23,10 @@
   "check_now": "Check Now",
   "meeting_room_schedule": "Meeting Room Schedule",
   "date": "Date",
+  "time": "Time",
+  "start": "Start",
+  "history": "History",
+
   "description": "Description",
   "by": "By",
   "end_hours": "End Hours",

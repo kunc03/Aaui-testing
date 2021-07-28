@@ -24,6 +24,8 @@
   "meeting_room_schedule": "Jadwal Ruang Rapat",
   "date": "Tanggal",
   "time": "Waktu",
+  "start": "Mulai",
+  "history": "Histori",
 
   "description": "Keterangan",
   "by": "Oleh",
