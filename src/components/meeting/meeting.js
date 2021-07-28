@@ -22,6 +22,7 @@ import SocketContext from '../../socket';
 import { isMobile } from 'react-device-detect';
 
 import Storage from '../../repository/storage';
+import { withTranslation } from "react-i18next";
 
 const bbb = require('bigbluebutton-js')
 
@@ -937,6 +938,7 @@ class MeetingTable extends Component {
   }
 
   render() {
+    const { t } = this.props
 
     // ** GLOBAL SETTINGS ** //
     let cdMeeting =  this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
@@ -966,7 +968,7 @@ class MeetingTable extends Component {
     // ];
     const columns = [
       {
-        name: 'Meeting Name',
+        name: `${t('name')}`,
         selector: 'room_name',
         sortable: true,
         grow: 2,
@@ -993,7 +995,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Time',
+        name: t('time'),
         // selector: 'status',
         center: true,
         cell: row => <div>{row.is_scheduled == 1 ? moment(row.schedule_start).local().format('HH:mm:ss') + ' - ' + moment(row.schedule_end).local().format('HH:mm:ss') : '-'} </div>,
@@ -1002,7 +1004,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Date',
+        name: t('date'),
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
         cell: row => <div>{row.is_scheduled == 1 ? moment(row.tanggal).tz(moment.tz.guess(true)).format('DD-MM-YYYY') : '-'}</div>,
         center: true,
@@ -1071,7 +1073,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? this.props.t('join') : this.props.t('information')}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
@@ -1112,7 +1114,7 @@ class MeetingTable extends Component {
 
 
         <span className="">
-          <strong className="f-w-bold f-18 fc-skyblue ">Meeting</strong>
+          <strong className="f-w-bold f-18 fc-skyblue ">{t('meeting')}</strong>
 
           {
             cdMeeting ?
@@ -1123,8 +1125,7 @@ class MeetingTable extends Component {
                 style={{ padding: "7px 8px !important", marginLeft: 14 }}
               >
                 <i className="fa fa-plus"></i>
-
-              Create New
+                {t('create_new')}
               </button> : null}
             </>
             : null
@@ -1224,18 +1225,18 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalJadwal} onHide={this.closemodalJadwal} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Meeting Room Schedule : {this.state.dataBooking.room_name}
+              {t('meeting_room_schedule')} : {this.state.dataBooking.room_name}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <table className="table table-hover">
               <thead>
                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                  <td> Date </td>
-                  <td> Starting Hours </td>
-                  <td> End Hours </td>
-                  <td>By</td>
-                  <td>Keterangan</td>
+                  <td>{t('date')}</td>
+                  <td>{t('starting_hours')}</td>
+                  <td>{t('end_hours')}</td>
+                  <td>{t('by')}</td>
+                  <td>{t('description')}</td>
                   <td></td>
                 </tr>
               </thead>
@@ -1341,7 +1342,7 @@ class MeetingTable extends Component {
                 <MultiSelect id="folder" options={this.state.optionsFolder} value={this.state.valueFolder} onChange={valueFolder => this.setState({ valueFolder })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select project folder" />
                 <Form.Text className="text-muted">
                   All MOM are stored in the project’s file folder.
-                  </Form.Text>
+                </Form.Text>
               </Form.Group>
 
               {/*
@@ -1727,4 +1728,6 @@ const Meetings = props => (
   </SocketContext.Consumer>
 )
 
-export default Meetings;
+const MeetingWithTranslation = withTranslation('common')(Meetings)
+
+export default MeetingWithTranslation;

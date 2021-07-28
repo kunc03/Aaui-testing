@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { withTranslation } from 'react-i18next';
+
 import { Link } from "react-router-dom";
 import { Card } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER } from '../../repository/api';
@@ -140,6 +142,8 @@ class HomeNew extends Component {
   }
 
   render() {
+    const { t } = this.props;
+
     const eventDashboard = this.state.event;
     const projekDashboard = this.state.project;
     // const toDoDashboard = dataToDo;
@@ -355,7 +359,7 @@ class HomeNew extends Component {
                               <div className="row">
                                 <div className="col-sm-6">
                                   <h3 className="f-w-900 f-18 fc-blue">
-                                    Event
+                                    {t('event')}
                                   </h3>
                                 </div>
                                 <div className="col-sm-6 text-right">
@@ -377,9 +381,9 @@ class HomeNew extends Component {
                           <Card>
                             <Card.Body>
                               <div className="row">
-                                <div className="col-sm-6">
+                                <div className="col-sm-12">
                                   <h3 className="f-w-900 f-18 fc-blue">
-                                    Recently Accessed Documents
+                                    {t('recently_accessed_documents')}
                                   </h3>
                                 </div>
                                 <div className="col-sm-6 text-right">
@@ -485,7 +489,9 @@ const mapDispatchToProps = dispatch => ({
   initUser: () => dispatch(initUser())
 })
 
-const HomeNewProps = connect(mapStateToProps, mapDispatchToProps)(HomeNew);
+const HomeWithTranslate = withTranslation('common')(HomeNew)
+
+const HomeNewProps = connect(mapStateToProps, mapDispatchToProps)(HomeWithTranslate);
 
 class HomeV2 extends Component {
 

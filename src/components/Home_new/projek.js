@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { withTranslation } from 'react-i18next';
+
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { toast } from "react-toastify";
@@ -220,9 +222,9 @@ class ProjekNew extends Component {
     API.delete(`${API_SERVER}v1/project/${this.state.deleteProjectId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to delete project ${this.state.deleteProjectName}`)
+          toast.error(`${this.props.t('failed_delete_project')} ${this.state.deleteProjectName}`)
         } else {
-          toast.success(`Project deleted ${this.state.deleteProjectName}`)
+          toast.success(`${this.props.t('success_delete_project')} ${this.state.deleteProjectName}`)
           this.setState({ deleteProjectId: '', deleteProjectName: '', modalDelete: false })
           this.fetchProject();
         }
@@ -239,9 +241,9 @@ class ProjekNew extends Component {
     API.put(`${API_SERVER}v1/project/${this.state.editProjectId}`, form).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
-          toast.error(`Failed to modify the project ${this.state.editProjectName}`)
+          toast.error(`${this.props.t('failed_modify_project')} ${this.state.editProjectName}`)
         } else {
-          toast.success(`Successfully modified project ${this.state.editProjectName}`)
+          toast.success(`${this.props.t('success_modify_project')} ${this.state.editProjectName}`)
           this.setState({ editProjectId: '', editProjectName: '', modalEdit: false, valueProjectAdmin: [], valueUser: [], limited: false, defaultProjectAdmin: [], defaultUsers: [] })
           this.fetchProject();
         }
@@ -281,6 +283,8 @@ class ProjekNew extends Component {
 
 
   render() {
+    const { t } = this.props
+
     let levelUser = Storage.get('user').data.level;
     let accessProjectManager = levelUser === 'client' ? false : true;
     let cdProject = '';
@@ -297,7 +301,7 @@ class ProjekNew extends Component {
       {
         name: 'Name',
         selector: 'title',
-        width: '40%',
+        width: '30%',
         sortable: true,
         cell: row =>
           <Link to={`detail-project/${row.id}`}>
@@ -312,14 +316,14 @@ class ProjekNew extends Component {
       {
         name: 'Last Activity',
         selector: 'recent_project',
-        width: '25%',
+        width: '20%',
         sortable: true,
         cell: row =>
           <div className="f-10">{moment.tz(row.recent_project, moment.tz.guess(true)).format('DD-MM-YYYY HH:mm')}</div>,
       },
       {
         name: 'Information',
-        width: '22%',
+        width: '34%',
         cell: row =>
           <span style={{ inlineSize: '-webkit-fill-available' }}>
             <Link className="float-right" to={`detail-project/${row.id}`}><span className={row.meeting === 0 ? "project-info-disabled float-right" : "project-info float-right"}>{row.meeting} Meeting</span></Link>
@@ -360,7 +364,7 @@ class ProjekNew extends Component {
           <div className="row">
             <div style={{ padding: '10px 20px' }}>
               <h3 className="f-w-900 f-18 fc-blue">
-                Project
+                {t('project')}
             </h3>
             </div>
 
@@ -375,7 +379,7 @@ class ProjekNew extends Component {
                       style={{ padding: "7px 8px !important" }}
                       onClick={e => this.setState({ modalNewFolder: true })}
                     >
-                      <i className="fa fa-plus"></i> Add
+                      <i className="fa fa-plus"></i> {t('add')}
                     </button>
                     :
                     null
@@ -737,4 +741,6 @@ class ProjekNew extends Component {
   }
 }
 
-export default ProjekNew;
+const ProjectWithTranslation = withTranslation('common')(ProjekNew)
+
+export default ProjectWithTranslation;
