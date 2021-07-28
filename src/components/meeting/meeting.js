@@ -22,7 +22,6 @@ import SocketContext from '../../socket';
 import { isMobile } from 'react-device-detect';
 
 import Storage from '../../repository/storage';
-import moment from 'moment-timezone'
 import { withTranslation } from "react-i18next";
 
 const bbb = require('bigbluebutton-js')
@@ -969,7 +968,7 @@ class MeetingTable extends Component {
     // ];
     const columns = [
       {
-        name: 'Meeting Name',
+        name: `${t('name')}`,
         selector: 'room_name',
         sortable: true,
         grow: 2,
@@ -996,7 +995,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Time',
+        name: t('time'),
         // selector: 'status',
         center: true,
         cell: row => <div>{row.is_scheduled == 1 ? moment(row.schedule_start).local().format('HH:mm:ss') + ' - ' + moment(row.schedule_end).local().format('HH:mm:ss') : '-'} </div>,
@@ -1005,7 +1004,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Date',
+        name: t('date'),
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
         cell: row => <div>{row.is_scheduled == 1 ? moment(row.tanggal).tz(moment.tz.guess(true)).format('DD-MM-YYYY') : '-'}</div>,
         center: true,
@@ -1074,7 +1073,7 @@ class MeetingTable extends Component {
       {
         name: 'Action',
         cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
+          onClick={ this.onClickInfo.bind(this, row.class_id)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? this.props.t('join') : this.props.t('information')}</button>,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
