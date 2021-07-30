@@ -504,8 +504,8 @@ class MeetingTable extends Component {
           let isAkses = this.state.akses == true ? 1 : 0;
           let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
           let isScheduled = this.state.scheduled == true ? 1 : 0;
-          let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
-          let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+          let startDateJkt = moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
           let form = {
             room_name: this.state.roomName,
             moderator: this.state.akses ? this.state.valueModerator : [],
@@ -616,8 +616,8 @@ class MeetingTable extends Component {
           let isAkses = this.state.akses == true ? 1 : 0;
           let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
           let isScheduled = this.state.scheduled == true ? 1 : 0;
-          let startDateJkt = moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
-          let endDateJkt = moment.tz(this.state.endDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")
+          let startDateJkt = moment.tz(this.state.startDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+          let endDateJkt = moment.tz(this.state.endDate, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
           let form = {
             user_id: Storage.get('user').data.user_id,
             company_id: this.state.companyId,
@@ -702,7 +702,7 @@ class MeetingTable extends Component {
                     activity_id: this.state.valueFolder[0],
                     type: 3,
                     desc: `You are invited to meeting "${res.data.result.room_name}". Please confirm your meeting attendance.`,
-                    dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
+                    dest: `${APPS_SERVER}meeting/information/${res.data.result.class_id}`,
                     types : 1
                   }
                   API.post(`${API_SERVER}v1/notification/broadcast`, notif);
