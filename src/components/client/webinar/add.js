@@ -306,8 +306,8 @@ class WebinarAddClass extends Component {
       id: this.state.webinarId,
       judul: this.state.judul,
       isi: this.state.isi,
-      start_time: moment.tz(this.state.tanggal, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
-      end_time: moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+      start_time: moment.tz(this.state.tanggal, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.tanggalEnd, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       status: this.state.status
     };
     API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
