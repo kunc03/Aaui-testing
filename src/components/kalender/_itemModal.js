@@ -199,10 +199,10 @@ class Event extends Component {
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
-                      {/* <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        You have confirmed : {this.state.attendanceConfirmation}
-                      </div> */}
-                      <h3 className="f-14">You have confirmed your attendance status on this meeting.</h3>
+                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                        Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                      </div>
+                      <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
                     </div>
                   </div>
                 </div>
@@ -224,10 +224,10 @@ class Event extends Component {
                         : null
                       }
                       <h3 className="f-14">
-                        {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
+                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                       </h3> {this.state.infoClass.is_private ?
                         <h3 className="f-14">
-                          {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
+                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
                         </h3> : null}
                     </div>
                     {this.state.infoClass.is_scheduled ?
@@ -245,7 +245,7 @@ class Event extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Attendance Confirmation of {this.state.infoParticipant.length} Participant
+                        Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
@@ -266,7 +266,7 @@ class Event extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Actual Attendance In Meeting Room
+                        Kehadiran Aktual
                   </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&

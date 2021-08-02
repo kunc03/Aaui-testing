@@ -51,7 +51,7 @@ function JitsiMeetComponent(props) {
 
       API.put(`${API_SERVER}v1/liveclass/actualattendance/${konten.roomId}/${Storage.get('user').data.user_id}`, form).then(async res => {
         if (res.status === 200) {
-          console.log('Actual Attendance In Meeting Room : Hadir')
+          console.log('Kehadiran Aktual : Hadir')
         }
       })
 

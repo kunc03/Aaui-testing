@@ -360,13 +360,13 @@ export default class MeetingRoom extends Component {
       links[i].target = "_blank";
     }
 
-    // Update Actual Attendance In Meeting Room
+    // Update kehadiran aktual
     let form = {
       confirmation: 'Hadir',
     }
     API.put(`${API_SERVER}v1/liveclass/actualattendance/${this.state.classId}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        console.log('Actual Attendance In Meeting Room : Hadir')
+        console.log('Kehadiran Aktual : Hadir')
       }
     })
     let conference_id = this.props.match.params.roomid;
@@ -1167,7 +1167,7 @@ export default class MeetingRoom extends Component {
                                   :null
                                   }
                                   <h3 className="f-14">
-                                    {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
+                                    Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                                   </h3>
                                 </div>
                                 {this.state.infoClass.is_scheduled ?
@@ -1184,7 +1184,7 @@ export default class MeetingRoom extends Component {
                               {this.state.infoClass.is_private ?
                                 <div>
                                   <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                    Attendance Confirmation of {this.state.infoParticipant.length} Participant
+                                    Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
                                 </div>
                                   <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                     <div className='legend-kehadiran hadir'></div>
@@ -1203,7 +1203,7 @@ export default class MeetingRoom extends Component {
                                 : null} {this.state.infoClass.is_private ?
                                   <div>
                                     <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                      Actual Attendance In Meeting Room
+                                      Kehadiran Aktual
                                 </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&

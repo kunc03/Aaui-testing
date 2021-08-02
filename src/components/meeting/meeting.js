@@ -1316,10 +1316,10 @@ class MeetingTable extends Component {
                   className="img-fluid" style={{ width: "200px", height: "160px" }} />
 
                 <Form.Label className="f-w-bold ml-4">
-                  <h4 className="btn-default">Image</h4>
+                  <h4 className="btn-default">Masukkan Gambar</h4>
                   <input accept="image/*" className="btn-default" name="cover" type="file" onChange={this.handleChange} />
                   <Form.Text className="text-muted">
-                    Optimum image size is 200x200
+                    Ukuran gambar 200x200 piksel.
                   </Form.Text>
                 </Form.Label>
               </Form.Group>
@@ -1364,22 +1364,7 @@ class MeetingTable extends Component {
                 <div style={{ width: '100%' }}>
                   <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                 </div>
-                <Form.Text className="text-muted">
-                  {this.state.akses ? 'Meeting room is arranged by 1 moderator' : 'Meeting room is always accessible for Users.*'}
-                </Form.Text>
               </Form.Group>
-              {this.state.akses &&
-                <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
-                    Moderator
-                </Form.Label>
-                  <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
-                  <Form.Text className="text-muted">
-                    Pengisi kelas, moderator, atau speaker.
-                  </Form.Text>
-                </Form.Group>
-              }
-
               <Form.Group controlId="formJudul">
                 <Form.Label className="f-w-bold">
                   Private Meeting
@@ -1561,10 +1546,10 @@ class MeetingTable extends Component {
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
-                      {/* <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        You have confirmed : {this.state.attendanceConfirmation}
-                      </div> */}
-                      <h3 className="f-14">You have confirmed your attendance status on this meeting.</h3>
+                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                        Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                      </div>
+                      <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
                     </div>
                   </div>
                 </div>
@@ -1586,10 +1571,10 @@ class MeetingTable extends Component {
                         : null
                       }
                       <h3 className="f-14">
-                        {this.state.infoClass.is_private ? 'Private' : 'Public'} Meeting
+                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
                       </h3> {this.state.infoClass.is_private ?
                         <h3 className="f-14">
-                          {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
+                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
                         </h3> : null}
                     </div>
                     {this.state.infoClass.is_scheduled ?
@@ -1607,8 +1592,8 @@ class MeetingTable extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Attendance Confirmation of {this.state.infoParticipant.length} Participant
-                  </div>
+                        Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                      </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         <div className='legend-kehadiran hadir'></div>
                         <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
@@ -1628,8 +1613,8 @@ class MeetingTable extends Component {
                   {this.state.infoClass.is_private && ((levelUser == 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
                     <div>
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Actual Attendance In Meeting Room
-                  </div>
+                        Kehadiran Aktual
+                      </div>
                       <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                         {this.state.infoParticipant.map(item => item.actual == 'Hadir' &&
                           <div className='peserta aktual-hadir'>{item.name}</div>
