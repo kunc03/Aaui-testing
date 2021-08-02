@@ -370,8 +370,23 @@ export default class WebinarRiwayat extends Component {
                   let diffHour = Math.floor((diff % 86400000) / 3600000);
                   let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
                   let durasi = item.jam_mulai ? diffHour + ' hr ' + diffMin + ' min' : '-';
-                  let splitAudio = item.audio.split(':');
-                  let audio = splitAudio.length > 2 ? `${pad(splitAudio[0])}:${pad(splitAudio[1])}:${pad(splitAudio[2])}` : `${pad(splitAudio[0])}:${pad(splitAudio[1])}`; 
+                  
+                  let audio = '';
+                  if (item.audio !== 'Off') {
+                    let splitAudio = item.audio.split(':');
+                    audio = splitAudio.length > 2 ? `${pad(splitAudio[0])}:${pad(splitAudio[1])}:${pad(splitAudio[2])}` : `${pad(splitAudio[0])}:${pad(splitAudio[1])}`; 
+                  } else {
+                    audio = item.audio;
+                  }
+
+                  let camera = '';
+                  if (item.camera !== 'Off') {
+                    let splitCamera = item.camera.split(':');
+                    camera = splitCamera.length > 2 ? `${pad(splitCamera[0])}:${pad(splitCamera[1])}:${pad(splitCamera[2])}` : `${pad(splitCamera[0])}:${pad(splitCamera[1])}`; 
+                  } else {
+                    camera = item.camera;
+                  }
+
                   return (<tr key={i}>
                     <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                     <td>{item.name}</td>
@@ -382,7 +397,7 @@ export default class WebinarRiwayat extends Component {
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
                     <td>{audio}</td>
-                    <td>{item.camera}</td>
+                    <td>{camera}</td>
                   </tr>)
                 })
               }
