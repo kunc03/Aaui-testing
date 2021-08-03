@@ -277,7 +277,7 @@ class MeetingTable extends Component {
   }
 
   closeModalConfirmation = e => {
-    this.setState({ isModalConfirmation: false, dataBooking: { room_name: '', booking: [] } });
+    this.setState({ isModalConfirmation: false, dataBooking: { room_name: '', booking: [] }, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: false, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
 
   fetchMeetingInfo(id) {
@@ -1738,17 +1738,23 @@ class MeetingTable extends Component {
               </div>
             </div>
           </Modal.Body>
-          <Modal.Footer>
-            {(Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-              <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-              <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
-                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
-                  <i className="fa fa-video"></i> Masuk
-                  </button>
-              </a>
-              : null}
-          </Modal.Footer>
+          {
+            /**
+            <Modal.Footer>
+              {
+                (Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
+                <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
+                && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
+                <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                  <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
+                    <i className="fa fa-video"></i> Masuk
+                    </button>
+                </a>
+                : null  
+              }
+            </Modal.Footer>
+            */
+          }
         </Modal>
 
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
