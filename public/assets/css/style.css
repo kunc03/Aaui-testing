@@ -12577,7 +12577,7 @@ table.info-exam > tr > td{
 }
 
 .table-plan{
-  /* width:100%; */
+  width:100%;
   margin-top:20px;
 }
 .table-plan tr td, .table-plan tr th{
