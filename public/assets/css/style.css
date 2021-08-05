@@ -12047,7 +12047,7 @@ div.code-toolbar > .toolbar span:hover {
   width:400px;
   margin-bottom:10px;
 }
-.form-field-top-label > input[type=text], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea {
+.form-field-top-label > input[type=text], input[type=password], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea {
   padding:18px 20px;
   background: rgba(248,248,248,0.5);
   border: 1px solid #DDDDDD;
