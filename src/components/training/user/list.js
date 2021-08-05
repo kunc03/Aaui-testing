@@ -347,6 +347,12 @@ class User extends Component {
         cell: row => <img height="36px" alt={row.name} src={row.image ? row.image : 'assets/images/no-profile-picture.jpg'} />
       },
       {
+        name: 'Identity Image',
+        selector: 'identity_image',
+        sortable: true,
+        cell: row => <img height="36px" alt={row.identity} src={row.identity_image ? row.identity_image : 'assets/images/no-image.png'} />
+      },
+      {
         cell: row => <Link to={'/training/user/detail/'+row.id}>{row.name}</Link>,
         name: 'Name',
         sortable: true,

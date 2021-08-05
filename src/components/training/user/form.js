@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { Modal } from 'react-bootstrap';
 
 class FormUser extends Component {
   constructor(props) {
@@ -27,6 +28,8 @@ class FormUser extends Component {
         expired: '',
         optionCompany:[],
         companyId:'',
+        modalPassword: false,
+        newPassword: '',
         disabledForm: this.props.disabledForm && this.props.id,
         isSaving: false
     };
@@ -39,6 +42,30 @@ class FormUser extends Component {
     }
     else{
         this.props.history.goBack();
+    }
+  }
+
+  changePassword = (e) => {
+    this.setState({isSaving: true})
+    if (!this.state.newPassword){
+        toast.warning('Insert the new password')
+    }
+    else{
+        let form = {
+            training_user_id: this.props.id,
+            password: this.state.newPassword
+        }
+        API.put(`${API_SERVER}v2/training/user-password`, form).then(res => {
+            if (res.data.error){
+                toast.error(`Error change password`)
+                this.setState({isSaving: false});
+            }
+            else{
+                toast.success(`Success change user's password`);
+                this.setState({isSaving: false});
+                this.closeModalPassword();
+            }
+        })
     }
   }
 
@@ -309,6 +336,9 @@ class FormUser extends Component {
     })
   }
 
+  closeModalPassword = e => {
+    this.setState({ modalPassword: false, newPassword: '' })
+  }
   render() {
     return(
         <div className="pcoded-main-container">
@@ -342,6 +372,16 @@ class FormUser extends Component {
                                                         style={{ padding: "7px 8px !important", marginRight: 30 }}>
                                                             <i className="fa fa-edit"></i>
                                                             Edit
+                                                        </button>
+                                                        }
+                                                        {
+                                                        this.props.disabledForm &&
+                                                        <button
+                                                        onClick={()=>this.setState({modalPassword: true})}
+                                                        className="btn btn-icademy-primary float-right"
+                                                        style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                            <i className="fa fa-key"></i>
+                                                            Change Password
                                                         </button>
                                                         }
                                                     </div>
@@ -522,6 +562,27 @@ class FormUser extends Component {
                     </div>
                 </div>
             </div>
+        <Modal show={this.state.modalPassword} onHide={this.closeModalPassword}>
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Change Password
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+                                                        <div className="form-field-top-label">
+                                                            <label for="name">New Password<required>*</required></label>
+                                                            <input type="password" name="newPassword" id="newPassword" value={this.state.newPassword} onChange={this.handleChange}/>
+                                                        </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalPassword}>
+              Cancel
+            </button>
+            <button className="btn btn-icademy-primary" onClick={this.changePassword.bind(this)} disabled={this.state.isSaving}>
+              <i className="fa fa-save"></i> {this.state.isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </Modal.Footer>
+        </Modal>
         </div>
     )
   }
