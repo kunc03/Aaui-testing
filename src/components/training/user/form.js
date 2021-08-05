@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
+import moment from 'moment-timezone';
 
 class FormUser extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class FormUser extends Component {
         companyId:'',
         modalPassword: false,
         newPassword: '',
+        history: [],
         disabledForm: this.props.disabledForm && this.props.id,
         isSaving: false
     };
@@ -198,17 +200,17 @@ class FormUser extends Component {
                                 formData.append("image", this.state.imageIdentity)
                                 API.put(`${API_SERVER}v2/training/user/image-identity/${res.data.result.insertId}`, formData).then(res2 => {
                                     if (res2.data.error){
-                                        toast.warning(`${this.state.level} edited but fail to upload identity image`)
+                                        toast.warning(`${this.state.level} created but fail to upload identity image`)
                                     }
                                     else{
-                                        toast.success(`${this.state.level} edited`)
+                                        toast.success(`${this.state.level} created`)
                                         this.setState({isSaving: false})
                                         this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                                     }
                                 })
                             }
                             else{
-                                toast.success(`${this.state.level} edited`)
+                                toast.success(`${this.state.level} created`)
                                 this.setState({isSaving: false})
                                 this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                             }
@@ -225,14 +227,14 @@ class FormUser extends Component {
                                 toast.warning(`${this.state.level} edited but fail to upload identity image`)
                             }
                             else{
-                                toast.success(`${this.state.level} edited`)
+                                toast.success(`${this.state.level} created`)
                                 this.setState({isSaving: false})
                                 this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                             }
                         })
                     }
                     else{
-                        toast.success(`${this.state.level} edited`)
+                        toast.success(`${this.state.level} created`)
                         this.setState({isSaving: false})
                         this.props.history.push(`/training/user/detail/${res.data.result.insertId}`)
                     }
@@ -297,6 +299,19 @@ class FormUser extends Component {
                 email: res.data.result.email,
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 imageIdentityPreview: res.data.result.identity_image ? res.data.result.identity_image : this.state.imageIdentityPreview
+            })
+        }
+    })
+    this.getHistory(id);
+  }
+  getHistory(id){
+    API.get(`${API_SERVER}v2/training/user-history/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read history')
+        }
+        else{
+            this.setState({
+                history: res.data.result
             })
         }
     })
@@ -522,7 +537,7 @@ class FormUser extends Component {
                                                         </div> */}
                                                     </div>
                                                 </div>
-                                                <div className="form-section no-border">
+                                                <div className={`form-section ${!this.props.disabledForm && this.state.history.length ? 'no-border' : ''}`}>
                                                     <div className="row">
                                                         <div className="col-sm-12 m-b-20">
                                                             <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Contact</strong>
@@ -536,10 +551,43 @@ class FormUser extends Component {
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
                                                             <input type="text" size="50" name="email" id="email" placeholder={!this.state.disabledForm && "email@host.com"} value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
-                                                            <label for="phone" style={{marginTop:10}}>By default the password is the same as email<required>*</required></label>
+                                                            {/* <label for="phone" style={{marginTop:10}}>By default the password is the same as email<required>*</required></label> */}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {
+                                                this.state.history.length && this.props.disabledForm ?
+                                                <div className="form-section no-border">
+                                                    <div className="row">
+                                                        <div className="col-sm-12 m-b-20">
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company switch history</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <table className="table-log">
+                                                            <tr>
+                                                                <th>Time</th>
+                                                                <th>Source Company</th>
+                                                                <th>Destination Company</th>
+                                                                <th>By</th>
+                                                            </tr>
+                                                            {
+                                                                this.state.history.map((item)=>{
+                                                                    return(
+                                                                        <tr>
+                                                                            <td>{moment(item.created_at).local().format('DD-MM-YYYY HH:mm')}</td>
+                                                                            <td>{item.source}</td>
+                                                                            <td>{item.destination}</td>
+                                                                            <td>{item.creator}</td>
+                                                                        </tr>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                : null
+                                                }
                                                 <div className="row" style={{justifyContent:'flex-end'}}>
                                                     {
                                                     !this.props.disabledForm &&
