@@ -433,18 +433,9 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="image">Profile Picture</label>
-                                                            <center>
-                                                                <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
-                                                                    <a href={this.state.imagePreview} target="_blank">
-                                                                        <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
-                                                                    </a>
-                                                                </label>
-                                                                <label for='image' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
-                                                                    <div className="button-bordered-grey">
-                                                                        {this.state.image ? this.state.image.name : 'Choose file'}
-                                                                    </div>
-                                                                </label>
-                                                            </center>
+                                                            <label for="image" style={{cursor:'pointer', borderRadius:'50px', overflow:'hidden'}}>
+                                                                <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                            </label>
                                                             <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
@@ -478,18 +469,9 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="imageIdentity">Identity Card Photo<required>*</required></label>
-                                                            <center>
-                                                                <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
-                                                                    <a href={this.state.imageIdentityPreview} target="_blank">
-                                                                        <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
-                                                                    </a>
-                                                                </label>
-                                                                <label for='imageIdentity' style={{cursor:'pointer', overflow:'hidden', display: this.state.disabledForm ? 'none' : 'block'}}>
-                                                                    <div className="button-bordered-grey">
-                                                                        {this.state.imageIdentity ? this.state.imageIdentity.name : 'Choose file'}
-                                                                    </div>
-                                                                </label>
-                                                            </center>
+                                                            <label for="imageIdentity" style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
+                                                                <img src={this.state.imageIdentityPreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                            </label>
                                                             <input type="file" accept="image/*" name="imageIdentity" id="imageIdentity" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">

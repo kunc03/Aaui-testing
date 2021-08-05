@@ -325,7 +325,7 @@ export default class WebinarEdit extends Component {
                             <option value="zoom">Zoom</option>
                           </select>
                           <Form.Text className="text-muted">
-                            Choose meeting engine.
+                            Pilih engine yang akan dipakai untuk meeting.
                           </Form.Text>
                         </div>
                       </Form.Group>

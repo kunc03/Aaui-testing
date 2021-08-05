@@ -16,6 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SocketContext from '../../../socket';
 import moment from 'moment-timezone'
+import { withTranslation } from 'react-i18next';
 
 class WebinarAddClass extends Component {
 
@@ -493,6 +494,7 @@ class WebinarAddClass extends Component {
   }
 
   render() {
+    const { t } = this.props
 
     // const role = this.state.role
     let levelUser = Storage.get('user').data.level;
@@ -502,9 +504,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -535,9 +537,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -574,9 +576,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -1079,4 +1081,6 @@ const WebinarAdd = props => (
   </SocketContext.Consumer>
 )
 
-export default WebinarAdd;
+const WebinarWithTranslation = withTranslation('common')(WebinarAdd)
+
+export default WebinarWithTranslation;

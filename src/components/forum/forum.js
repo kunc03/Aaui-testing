@@ -433,7 +433,7 @@ export default class Forum extends Component {
                           />
 
                           <Form.Label className="f-w-bold ml-4">
-                            <h4 className="btn-default">Image</h4>
+                            <h4 className="btn-default">Masukkan Gambar</h4>
                             <input
                               accept="image/*"
                               className="btn-default"
@@ -443,7 +443,7 @@ export default class Forum extends Component {
                               required
                             />
                             <Form.Text className="text-muted">
-                              Optimum image size is 200x200
+                              Ukuran gambar 200x200 piksel.
                             </Form.Text>
                           </Form.Label>
                         </Form.Group>
