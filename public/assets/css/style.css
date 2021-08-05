@@ -12594,3 +12594,13 @@ table.info-exam > tr > td{
 .table-plan .MultiSelect{
   min-width:120px;
 }
+
+.table-log{
+  min-width:500px;
+  margin-top:20px;
+  margin-left:15px;
+}
+
+.table-log tr td, .table-log tr th{
+  padding:4px 14px;
+}
