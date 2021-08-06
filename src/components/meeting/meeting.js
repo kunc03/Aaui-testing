@@ -551,7 +551,7 @@ class MeetingTable extends Component {
                 if (result.returncode = 'SUCCESS') {
                   // BBB CREATE START
                   let meetingCreateUrl = api.administration.create(this.state.roomName, this.state.classId, {
-                    attendeePW: 'Participants',
+                    attendeePW: 'peserta',
                     moderatorPW: 'moderator',
                     allowModsToUnmuteUsers: true,
                     record: true
@@ -578,7 +578,6 @@ class MeetingTable extends Component {
                 await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
               }
 
-              /**
               if (res.data.result.is_private == 1) {
                 this.setState({ sendingEmail: true })
                 let form = {
@@ -610,7 +609,7 @@ class MeetingTable extends Component {
                 this.fetchMeeting();
                 this.closeClassModal();
               }
-              */
+
               this.fetchMeeting();
               this.closeClassModal();
             }
