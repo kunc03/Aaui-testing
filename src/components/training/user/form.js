@@ -578,7 +578,7 @@ class FormUser extends Component {
                                                 <div className="form-section no-border">
                                                     <div className="row">
                                                         <div className="col-sm-12 m-b-20">
-                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company switch history</strong>
+                                                            <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Company History</strong>
                                                         </div>
                                                     </div>
                                                     <div className="row">
