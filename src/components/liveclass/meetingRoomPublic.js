@@ -419,7 +419,7 @@ export default class MeetingRoomPublic extends Component {
                               height="600px"
                               display="initial"
                               frameBorder="0"
-                              allow="fullscreen *;geolocation *; microphone *; camera *"
+                              allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
                               position="relative" />
                           </div>
   

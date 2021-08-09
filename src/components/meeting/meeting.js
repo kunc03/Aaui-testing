@@ -696,7 +696,7 @@ class MeetingTable extends Component {
               let api = bbb.api(BBB_URL, BBB_KEY)
               let http = bbb.http
               let meetingCreateUrl = api.administration.create(this.state.roomName, res.data.result.class_id, {
-                attendeePW: 'Participants',
+                attendeePW: 'peserta',
                 moderatorPW: 'moderator',
                 allowModsToUnmuteUsers: true,
                 record: true

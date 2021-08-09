@@ -501,7 +501,7 @@ class Mengajar extends React.Component {
                     this.state.joinUrl ?
                       <div className="card-body p-1">
                         {
-                          <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *" position="relative" />
+                          <Iframe url={this.state.joinUrl} width="100%" height="600px" display="initial" frameBorder="0" allow="fullscreen *;geolocation *; microphone *; camera *; display-capture" position="relative" />
                         }
                       </div>
                     :

@@ -50,6 +50,7 @@ const TrainingCourseForm = lazy(()=> import( "../components/training/course/form
 const TrainingQuiz = lazy(()=> import( "../components/training/quiz"));
 const TrainingExamForm = lazy(()=> import( "../components/training/exam/form"));
 const TrainingExam = lazy(()=> import( "../components/training/exam"));
+const TrainingPlan = lazy(()=> import("../components/training/plan"));
 const TrainingExamAssignment = lazy(()=> import( "../components/training/exam/assignment"));
 const TrainingMembership = lazy(()=> import( "../components/training/membership"));
 const TrainingMembershipForm = lazy(()=> import( "../components/training/membership/form"));
@@ -101,6 +102,7 @@ export default class SuperAdminSwitch extends React.Component {
         <Route path="/training/questions/edit/:id" exact component={TrainingQuestionsForm} />
         <Route path="/training/quiz" exact component={TrainingQuiz} />
         <Route path="/training/exam" exact component={TrainingExam} />
+        <Route path="/training/plan" exact component={TrainingPlan} />
         <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
         <Route path="/training/exam/edit/:id" exact component={TrainingExamForm} />
         <Route path="/training/exam/assignment/:id" exact component={TrainingExamAssignment} />

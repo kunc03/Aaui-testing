@@ -16,7 +16,7 @@ class Allocation extends Component {
         data : [],
         dataLicenses : [],
         filter:'',
-        filterHistroy:'',
+        filterHistory:'',
         licensesId: '',
         licensesTypeId: '',
         modalAllocation: false,
@@ -79,7 +79,7 @@ class Allocation extends Component {
     this.setState({ filter: e.target.value });
   }
 
-  filterHistroy = (e) => {
+  filterHistory = (e) => {
     e.preventDefault();
     this.setState({ filterHistory: e.target.value });
   }
@@ -173,7 +173,7 @@ class Allocation extends Component {
       data = data.filter(x =>
         JSON.stringify(
           Object.values(x)
-        ).match(new RegExp(filter, "gmi"))
+        ).match(new RegExp(filterHistory, "gmi"))
       )
     }
     return(

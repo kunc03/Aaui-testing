@@ -12047,7 +12047,7 @@ div.code-toolbar > .toolbar span:hover {
   width:400px;
   margin-bottom:10px;
 }
-.form-field-top-label > input[type=text], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea {
+.form-field-top-label > input[type=text], input[type=password], .form-field-top-label > input[type=date], .form-field-top-label > input[type=number], .form-field-top-label > textarea {
   padding:18px 20px;
   background: rgba(248,248,248,0.5);
   border: 1px solid #DDDDDD;
@@ -12574,4 +12574,33 @@ table.info-exam > tr > td{
 
 .xlarge-modal > .modal-dialog{
   max-width: 80% !important;
+}
+
+.table-plan{
+  width:100%;
+  margin-top:20px;
+}
+.table-plan tr td, .table-plan tr th{
+  padding: 8px 16px;
+}
+.table-plan-course{
+  background:rgb(241, 241, 241);
+  border-bottom: 3px solid #FFF;
+}
+.table-plan-course td{
+  padding: 12px 16px !important;
+}
+
+.table-plan .MultiSelect{
+  min-width:120px;
+}
+
+.table-log{
+  min-width:500px;
+  margin-top:20px;
+  margin-left:15px;
+}
+
+.table-log tr td, .table-log tr th{
+  padding:4px 14px;
 }

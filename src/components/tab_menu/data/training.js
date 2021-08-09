@@ -83,6 +83,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         route: '/training/exam'
     },
     {
+        label: 'Plan',
+        icon: 'learning-plan.svg',
+        iconActive: 'learning-plan-active.svg',
+        route: '/training/plan'
+    },
+    {
         label: 'Membership',
         icon: 'membership.svg',
         iconActive: 'membership-active.svg',
@@ -156,6 +162,12 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
         icon: 'exam.svg',
         iconActive: 'exam-active.svg',
         route: '/training/exam'
+    },
+    {
+        label: 'Plan',
+        icon: 'learning-plan.svg',
+        iconActive: 'learning-plan-active.svg',
+        route: '/training/plan'
     },
     {
         label: 'Membership',

@@ -1002,7 +1002,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               height="600px"
                               display="initial"
                               frameBorder="0"
-                              allow="fullscreen *;geolocation *; microphone *; camera *"
+                              allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
                               position="relative" />
                           </div>
                             :
