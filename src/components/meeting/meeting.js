@@ -143,7 +143,7 @@ class MeetingTable extends Component {
   closeModalBooking = () => {
     this.setState({
       isModalBooking: false,
-      roomName: '',
+      // roomName: '',
       bookingToday: {
         meeting_id: null,
         booking_id: null
@@ -151,7 +151,8 @@ class MeetingTable extends Component {
       dataBooking: {
         room_name: '',
         booking: []
-      }
+      },
+      infoParticipant: [],
     })
   }
 
@@ -290,7 +291,7 @@ class MeetingTable extends Component {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: false, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
-    this.setState({ modalJadwal: false });
+    this.setState({ modalJadwal: false, infoParticipant: [] });
   }
 
   closeModalConfirmation = e => {
@@ -473,7 +474,8 @@ class MeetingTable extends Component {
 
     API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.infoClass.id}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        this.fetchMeetingInfo(this.state.infoClass.class_id)
+        // this.fetchMeetingInfo(this.state.infoClass.class_id)
+        this.fetchMeetingInfoBooking(this.state.infoClass.class_id, this.state.infoClass.id)
         let form = {
           confirmation: confirmation,
           user: Storage.get('user').data.user,
@@ -878,12 +880,12 @@ class MeetingTable extends Component {
           const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
-          item.hariini = range
-          if (range) {
-            this.setState({ bookingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
-            console.log('run range')
-            this.fetchMeetingInfoBooking(item.meeting_id, item.id);
-          }
+          // item.hariini = range
+          // if (range) {
+          //   this.setState({ bookingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
+          //   console.log('run range')
+          //   this.fetchMeetingInfoBooking(item.meeting_id, item.id);
+          // }
         })
         console.log('result', res.data.result, this.state.bookingToday)
         this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
@@ -1082,7 +1084,7 @@ class MeetingTable extends Component {
         grow: 2,
       },
       {
-        name: 'Upcoming Meetings',
+        name: 'Author',
         selector: 'name',
         sortable: true,
         style: {
@@ -1090,7 +1092,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Current / Upcoming Meeting',
+        name: 'Status',
         selector: 'status',
         sortable: true,
         center: true,
@@ -1112,7 +1114,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Status',
+        name: 'Date',
         // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
         cell: row => <div>{row.is_scheduled == 1 ? Moment(row.tanggal).tz('Asia/Jakarta').format('DD/MM/YYYY') : '-'}</div>,
         center: true,
@@ -1347,7 +1349,7 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalJadwal} onHide={this.closemodalJadwal} dialogClassName="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Meeting Room Schedule : {this.state.dataBooking.room_name}
+              Meeting Room Schedule : {this.state.roomName}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1667,12 +1669,9 @@ class MeetingTable extends Component {
                 <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
 
                 <div className="card-carousel">
-                  <div className="title-head f-w-900 f-16 mb-2">
-                    {this.state.infoClass.room_name}
-                  </div>
-
                   <div class="row">
                     <div className="col-sm-6">
+                      <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
                       {
                         this.state.infoClass.is_akses ?
                           <h3 className="f-14">
@@ -1693,10 +1692,10 @@ class MeetingTable extends Component {
                     </div>
                     <div className="col-sm-6">
                       <h3 className="f-14">
-                        Start : {Moment.tz(`${this.state.infoClass.tanggal} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                        Start : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                       </h3>
                       <h3 className="f-14">
-                        End : {Moment.tz(`${this.state.infoClass.tanggal} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                        End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
                       </h3>
                     </div>
                   </div>
@@ -1744,15 +1743,28 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              (Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-              <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-              && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-              <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
-                <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
-                  <i className="fa fa-video"></i> Masuk
-                  </button>
-              </a>
-              : null  
+              this.state.infoClass.is_private === 0 ?
+                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                  <i className="fa fa-video"></i> Enter
+                </a>
+                :
+                (
+                  this.state.infoClass.is_live &&
+                  (
+                    this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta'))
+                    &&
+                    new Date() <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))
+                  )
+                )
+                  &&
+                (
+                  this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')
+                )
+                  ?
+                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                  <i className="fa fa-video"></i> Enter
+                </a>
+                : null  
             }
           </Modal.Footer>
         </Modal>
@@ -1766,7 +1778,6 @@ class MeetingTable extends Component {
           <Modal.Body>
             <div className="title-head f-w-900 f-16 mb-2">
               Schedule & Booking Meeting
-              <button onClick={() => this.openBooking(this.state.classId, this.state.roomName)} className="btn btn-sm pull-right">Add</button>
             </div>
             <table className="table table-hover">
               <thead>
@@ -1807,7 +1818,7 @@ class MeetingTable extends Component {
                             <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                             {
                               range ?
-                                <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
+                                <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${item.meeting_id}`}>
                                   <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
                                 </a>
                               : null
@@ -1824,6 +1835,11 @@ class MeetingTable extends Component {
               </tbody>
             </table>
           </Modal.Body>
+          <Modal.Footer>
+            <button className="btn btn-icademy-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
+              <i className="fa fa-book"></i> Booking
+            </button>
+          </Modal.Footer>
         </Modal>
 
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
