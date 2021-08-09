@@ -1666,8 +1666,6 @@ class MeetingTable extends Component {
             
             <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <div className="card">
-                <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
-
                 <div className="card-carousel">
                   <div class="row">
                     <div className="col-sm-6">
