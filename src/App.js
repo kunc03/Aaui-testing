@@ -32,6 +32,7 @@ const AdminSwitch = lazy(()=> import("./routes/admin"));
 const SuperAdminSwitch = lazy(()=> import("./routes/superadmin"));
 
 const MeetingRoomPublic = lazy(()=> import("./components/liveclass/meetingRoomPublic"));
+const MeetRoomPub = lazy(()=> import("./components/liveclass/meetRoomPub"));
 const GanttPublic = lazy(()=> import("./components/Gantt/GanttPublic"));
 const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
 const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
@@ -88,6 +89,7 @@ export class PublicContent extends React.Component {
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/meeting/:roomid" exact component={MeetingRoomPublic} />
+          <Route path="/meet/:roomid" exact component={MeetRoomPub} />
           <Route path="/gantt/:companyId/:projectId/:userId" exact component={GanttPublic} />
           <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
           <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />

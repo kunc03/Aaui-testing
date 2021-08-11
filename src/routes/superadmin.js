@@ -23,7 +23,9 @@ const NewsView = lazy(()=> import('../components/news/view'));
 const DetailProject = lazy(()=> import('../components/detail_project/index'));
 const GanttReport = lazy(()=> import('../components/Gantt/report'));
 
-const Project = lazy(()=> import( "../components/project/index"));
+const Project = lazy(() => import("../components/project/index"));
+
+const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
 
 const User = lazy(()=> import( "../components/Users/User/index"));
 const UserAdd = lazy(()=> import( "../components/Users/User/add"));
@@ -124,6 +126,8 @@ export default class SuperAdminSwitch extends React.Component {
             <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
           )}
         />
+        <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
         <Route path="/meeting-room/:roomid" component={MeetingRoom} />

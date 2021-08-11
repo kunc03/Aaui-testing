@@ -63,7 +63,9 @@ const EvaluasiPrincipal = lazy(()=> import('../components/principalEvaluasi/inde
 // ======= const COMPONENT RUANGAN ======== //
 const LearningRuangan = lazy(()=> import('../components/learning/ruangan'));
 const Ptc = lazy(()=> import('../components/ptc/index'));
-const KursusNew = lazy(()=> import('../components/learning/kursus'));
+const KursusNew = lazy(() => import('../components/learning/kursus'));
+
+const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
 
 export default class ClientSwitch extends React.Component {
     render() {
@@ -117,6 +119,8 @@ export default class ClientSwitch extends React.Component {
           />
           <Route path="/meeting/information/:roomid" exact component={Meeting} />
           <Route path="/meeting-room/:roomid" component={MeetingRoom} />
+          <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+
           <Route path="/webinars" exact component={Webinar} />
           <Route path="/bantuan" component={ClassBantuan} />
   
