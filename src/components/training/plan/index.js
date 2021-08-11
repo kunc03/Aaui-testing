@@ -125,147 +125,115 @@ class Plan extends Component {
     })
   }
 
+  saveCourse = (index) => {
+    let data = this.state.data;
+    data[index].isSaving = true;
+    this.setState({data: data});
+    let form = {
+      require_course_id : this.state.data[index].require_course_id,
+      scheduled : this.state.data[index].scheduled.length ? this.state.data[index].scheduled : '0',
+      start_time: moment.tz(this.state.data[index].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.data[index].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+    }
+    API.put(`${API_SERVER}v2/training/plan/course/${this.state.data[index].id}`, form).then(res => {
+      if (res.data.error){
+          toast.error('Error edit plan')
+          let data = this.state.data;
+          data[index].isSaving = false;
+          this.setState({data: data});
+      }
+      else{
+        let data = this.state.data;
+        data[index].isSaving = false;
+        this.setState({data: data});
+        this.getCourseList(this.state.companyId);
+      }
+    })
+  }
+
+  saveLiveclass = (index, i) => {
+    let data = this.state.data;
+    data[index].liveclass[i].isSaving = true;
+    this.setState({data: data});
+    let form = {
+      training_course_id : this.state.data[index].liveclass[i].training_course_id,
+      start_time: moment.tz(this.state.data[index].liveclass[i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.data[index].liveclass[i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+    }
+    API.put(`${API_SERVER}v2/training/plan/liveclass/${this.state.data[index].liveclass[i].id}`, form).then(res => {
+      if (res.data.error){
+          toast.error('Error edit plan')
+          let data = this.state.data;
+          data[index].liveclass[i].isSaving = false;
+          this.setState({data: data});
+      }
+      else{
+        let data = this.state.data;
+        data[index].liveclass[i].isSaving = false;
+        this.setState({data: data});
+        this.getCourseList(this.state.companyId);
+      }
+    })
+  }
+
+  saveExam = (type, index, i) => {
+    let data = this.state.data;
+    data[index][type][i].isSaving = true;
+    this.setState({data: data});
+    let form = {
+      course_id : this.state.data[index][type][i].course_id,
+      scheduled : this.state.data[index][type][i].scheduled.length ? this.state.data[index][type][i].scheduled : '0',
+      start_time: moment.tz(this.state.data[index][type][i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.data[index][type][i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+    }
+    API.put(`${API_SERVER}v2/training/plan/exam/${this.state.data[index][type][i].id}`, form).then(res => {
+      if (res.data.error){
+          toast.error('Error edit plan')
+          let data = this.state.data;
+          data[index][type][i].isSaving = false;
+          this.setState({data: data});
+      }
+      else{
+        let data = this.state.data;
+        data[index][type][i].isSaving = false;
+        this.setState({data: data});
+        this.getCourseList(this.state.companyId);
+      }
+    })
+  }
+
+  saveUnassignedExam = (i) => {
+    let data = this.state.unassigned;
+    data[i].isSaving = true;
+    this.setState({unassigned: data});
+    let form = {
+      course_id : this.state.unassigned[i].course_id,
+      scheduled : this.state.unassigned[i].scheduled.length ? this.state.unassigned[i].scheduled : '0',
+      start_time: moment.tz(this.state.unassigned[i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+      end_time: moment.tz(this.state.unassigned[i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
+    }
+    API.put(`${API_SERVER}v2/training/plan/exam/${this.state.unassigned[i].id}`, form).then(res => {
+      if (res.data.error){
+          toast.error('Error edit plan')
+          let data = this.state.unassigned;
+          data[i].isSaving = false;
+          this.setState({unassigned: data});
+      }
+      else{
+        let data = this.state.unassigned;
+        data[i].isSaving = false;
+        this.setState({unassigned: data});
+        this.getCourseList(this.state.companyId);
+      }
+    })
+  }
+
   componentDidMount(){
     this.getUserData()
   }
 
   render() {
     let {filter, data, unassigned} = this.state;
-    let data2 = [
-        {
-            type: 'Course',
-            name : 'RD 001 Mengenal Dunia Reksa Dana',
-            scheduled: 1,
-            start_time: '2021-07-27T06:09:12.000Z',
-            end_time: '2021-07-27T06:12:15.000Z',
-            require: '',
-            time: 360,
-            session: [
-                {
-                    type: 'Session',
-                    name: 'Apa Itu Reksa Dana?',
-                    time: 60
-                },
-                {
-                    type: 'Session',
-                    name: 'Apa itu Manajer Investasi dan apa bedanya dengan broker?',
-                    time: 60
-                },
-                {
-                    type: 'Session',
-                    name: 'Berapa Jumlah investasi yang diperlukan untuk reksa dana?',
-                    time: 60
-                }
-            ],
-            quiz: [
-                {
-                    type: 'Quiz',
-                    name: 'RD 001 Mengenal Dunia Reksa Dana',
-                    scheduled: 0,
-                    start_time: null,
-                    end_time: null,
-                    work_time: 90,
-                    require_read_session: 1
-                }
-            ],
-            exam: [
-                {
-                    type: 'Exam',
-                    name: 'RD 001 Mengenal Dunia Reksa Dana',
-                    scheduled: 0,
-                    start_time: null,
-                    end_time: null,
-                    work_time: 90,
-                    require_read_session: 1
-                }
-            ],
-            liveclass: [
-                {
-                    type: 'Live Class',
-                    name: 'Webinar Mengenal Dunia Reksa Dana',
-                    scheduled: 1,
-                    start_time: '2021-07-27T06:09:12.000Z',
-                    end_time: '2021-07-27T06:09:12.000Z',
-                    duration: 90,
-                    require_read_session: 1
-                }
-            ]
-        },
-        {
-            type: 'Course',
-            name : 'RD 002 Transaksi Reksa Dana',
-            scheduled: 1,
-            start_time: '2021-07-27T06:09:12.000Z',
-            end_time: '2021-07-27T06:12:15.000Z',
-            require: 'RD 001 Mengenal Dunia Reksa Dana',
-            time: 225,
-            session: [
-                {
-                    type: 'Session',
-                    name: ' Apa dan Bagaimana mengisi formulir transaksi reksa dana?',
-                    time: 15
-                },
-                {
-                    type: 'Session',
-                    name: 'Bagaimana proses jual beli reksa dana yang aman dan benar?',
-                    time: 15
-                },
-                {
-                    type: 'Session',
-                    name: 'Bagaimana cara menghitung biaya dan keuntungan di Reksa Dana?',
-                    time: 15
-                }
-            ],
-            quiz: [
-                {
-                    type: 'Quiz',
-                    name: 'Quiz6: RD 006 Strategi Investasi Reksa Dana',
-                    scheduled: 0,
-                    start_time: null,
-                    end_time: null,
-                    work_time: 90,
-                    require_read_session: 1
-                }
-            ],
-            exam: [
-                {
-                    type: 'Exam',
-                    name: 'Final Test: Investasi Reksa Dana',
-                    scheduled: 0,
-                    start_time: null,
-                    end_time: null,
-                    work_time: 90,
-                    require_read_session: 1
-                }
-            ]
-        }
-    ]
-    let dataExamOpen = [
-        {
-            type: 'Quiz',
-            name: 'Quiz Bebas Reksadana',
-            scheduled: 0,
-            start_time: null,
-            end_time: null,
-            work_time: 90
-        },
-        {
-            type: 'Quiz',
-            name: 'Quiz Bebas Reksadana Terwaktu',
-            scheduled: 1,
-            start_time: '2021-07-27T06:09:12.000Z',
-            end_time: '2021-07-27T06:09:12.000Z',
-            work_time: 90
-        },
-        {
-            type: 'Exam',
-            name: 'Exam Latihan Bebas',
-            scheduled: 0,
-            start_time: null,
-            end_time: null,
-            work_time: 90
-        }
-    ]
     if (filter != "") {
       data = data.filter(x =>
         JSON.stringify(
@@ -324,7 +292,7 @@ class Plan extends Component {
                                                                     <td>
                                                                       {
                                                                         item.edit ?
-                                                                          <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[item.require_course_id]} onChange={valueCourse => {item.require_course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                          <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[Number(item.require_course_id)]} onChange={valueCourse => {item.require_course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                                                         :
                                                                           item.require_course_title ? item.require_course_title : '-'
                                                                       } 
@@ -362,7 +330,17 @@ class Plan extends Component {
                                                                       {new Date(item.start_time) <= new Date() && new Date(item.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
                                                                       {
                                                                         item.edit ?
-                                                                          <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {item.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                          <>
+                                                                            <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {item.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                            <button
+                                                                            disabled={item.isSaving}
+                                                                            onClick={this.saveCourse.bind(this, index)}
+                                                                            className="btn btn-icademy-primary float-right"
+                                                                            style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                                <i className="fa fa-save"></i>
+                                                                                {item.isSaving ? 'Saving...' : 'Save'}
+                                                                            </button>
+                                                                          </>
                                                                         :
                                                                           <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {item.edit = true; this.forceUpdate()}}></i>
                                                                       }
@@ -387,7 +365,7 @@ class Plan extends Component {
                                                                     ) : null
                                                                 }
                                                                 {
-                                                                    item.liveclass ? item.liveclass.map((row)=>{
+                                                                    item.liveclass ? item.liveclass.map((row, i)=>{
                                                                       return(
                                                                         <tr>
                                                                             <td align="center"><span class={`badge badge-pill badge-success`}>{row.type}</span></td>
@@ -397,7 +375,7 @@ class Plan extends Component {
                                                                             <td>
                                                                               {
                                                                                 row.edit ?
-                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[row.training_course_id]} onChange={valueCourse => {row.training_course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[Number(row.training_course_id)]} onChange={valueCourse => {row.training_course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                                                                 :
                                                                                   item.title
                                                                               } 
@@ -423,7 +401,17 @@ class Plan extends Component {
                                                                               {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
                                                                               {
                                                                                 row.edit ?
-                                                                                  <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                  <>
+                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                    <button
+                                                                                    disabled={row.isSaving}
+                                                                                    onClick={this.saveLiveclass.bind(this, index, i)}
+                                                                                    className="btn btn-icademy-primary float-right"
+                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                                        <i className="fa fa-save"></i>
+                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
+                                                                                    </button>
+                                                                                  </>
                                                                                 :
                                                                                   <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
                                                                               }
@@ -434,7 +422,7 @@ class Plan extends Component {
                                                                     ) : null
                                                                 }
                                                                 {
-                                                                    item.quiz ? item.quiz.map((row)=>{
+                                                                    item.quiz ? item.quiz.map((row, i)=>{
                                                                       return(
                                                                         <tr>
                                                                             <td align="center"><span class={`badge badge-pill badge-warning`}>{row.type}</span></td>
@@ -444,7 +432,7 @@ class Plan extends Component {
                                                                             <td>
                                                                               {
                                                                                 row.edit ?
-                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[row.course_id]} onChange={valueCourse => {row.course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[Number(row.course_id)]} onChange={valueCourse => {row.course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                                                                 :
                                                                                   item.title
                                                                               } 
@@ -481,7 +469,17 @@ class Plan extends Component {
                                                                               {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
                                                                               {
                                                                                 row.edit ?
-                                                                                  <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                  <>
+                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                    <button
+                                                                                    disabled={row.isSaving}
+                                                                                    onClick={this.saveExam.bind(this, 'quiz', index, i)}
+                                                                                    className="btn btn-icademy-primary float-right"
+                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                                        <i className="fa fa-save"></i>
+                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
+                                                                                    </button>
+                                                                                  </>
                                                                                 :
                                                                                   <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
                                                                               }
@@ -492,7 +490,7 @@ class Plan extends Component {
                                                                     ) : null
                                                                 }
                                                                 {
-                                                                    item.exam ? item.exam.map((row)=>{
+                                                                    item.exam ? item.exam.map((row, i)=>{
                                                                       return(
                                                                         <tr>
                                                                             <td align="center"><span class={`badge badge-pill badge-danger`}>{row.type}</span></td>
@@ -502,7 +500,7 @@ class Plan extends Component {
                                                                             <td>
                                                                               {
                                                                                 row.edit ?
-                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[row.course_id]} onChange={valueCourse => {row.course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
+                                                                                  <MultiSelect id="valueCourse" options={this.state.optionsCourse} value={[Number(row.course_id)]} onChange={valueCourse => {row.course_id = valueCourse; this.forceUpdate()}} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Course" />
                                                                                 :
                                                                                   item.title
                                                                               } 
@@ -539,7 +537,17 @@ class Plan extends Component {
                                                                               {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
                                                                               {
                                                                                 row.edit ?
-                                                                                  <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                  <>
+                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                    <button
+                                                                                    disabled={row.isSaving}
+                                                                                    onClick={this.saveExam.bind(this, 'exam', index, i)}
+                                                                                    className="btn btn-icademy-primary float-right"
+                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                                        <i className="fa fa-save"></i>
+                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
+                                                                                    </button>
+                                                                                  </>
                                                                                 :
                                                                                   <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
                                                                               }
@@ -562,7 +570,7 @@ class Plan extends Component {
                                                             </tr>
                                                             {
                                                               unassigned.length ?
-                                                                unassigned.map((row)=>{
+                                                                unassigned.map((row, i)=>{
                                                                   var m = row.time_limit % 60;
                                                                   var h = (row.time_limit-m)/60;
                                                                   var duration = (h<10?"0":"") + h.toString() + ":" + (m<10?"0":"") + m.toString();
@@ -612,7 +620,17 @@ class Plan extends Component {
                                                                               {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
                                                                               {
                                                                                 row.edit ?
-                                                                                  <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                  <>
+                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
+                                                                                    <button
+                                                                                    disabled={row.isSaving}
+                                                                                    onClick={this.saveUnassignedExam.bind(this, i)}
+                                                                                    className="btn btn-icademy-primary float-right"
+                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
+                                                                                        <i className="fa fa-save"></i>
+                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
+                                                                                    </button>
+                                                                                  </>
                                                                                 :
                                                                                   <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
                                                                               }
