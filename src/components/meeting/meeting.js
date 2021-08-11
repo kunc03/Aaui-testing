@@ -1835,7 +1835,7 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             <button className="btn btn-icademy-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
-              <i className="fa fa-book"></i> Booking
+              <i className="fa fa-book"></i> Book new meeting
             </button>
           </Modal.Footer>
         </Modal>
