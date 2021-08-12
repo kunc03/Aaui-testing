@@ -109,7 +109,7 @@ class UserProgression extends Component {
         cell: row => <img height="36px" alt={row.name} src={row.image ? row.image : 'assets/images/no-profile-picture.jpg'} />
       },
       {
-        cell: row => <Link to={'/training/user/detail/'+row.id}>{row.name}</Link>,
+        cell: row => <Link to={'/training/plan-user/'+row.id}>{row.name}</Link>,
         name: 'Name',
         sortable: true,
         grow: 2,
@@ -187,7 +187,7 @@ class UserProgression extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Plan'/>
-                                        <TabMenuPlan title='Training Plan' selected={`User's Progression`}/>
+                                        <TabMenuPlan title='' selected={`User's Progression`}/>
                                         <div>
                                             <LoadingOverlay
                                               active={this.state.isLoading}
