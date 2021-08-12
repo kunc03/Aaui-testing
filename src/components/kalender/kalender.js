@@ -148,7 +148,7 @@ class KalenderNew extends Component {
               <span className="p-r-5" style={{ color: '#0091FF' }}>
                 <i className="fa fa-square"></i>
               </span>
-              Group Meeting
+              Meeting
 
               <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
                 <i className="fa fa-square"></i>
