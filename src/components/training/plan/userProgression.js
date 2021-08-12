@@ -11,6 +11,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { MultiSelect } from 'react-sm-select';
 import { ProgressBar } from 'react-bootstrap';
+import { gridRowGap } from "styled-system";
 
 class UserProgression extends Component {
   constructor(props) {
@@ -47,13 +48,37 @@ class UserProgression extends Component {
 
   getUser(id){
     this.setState({isLoading: true});
-    API.get(`${API_SERVER}v2/training/user/user/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/training/plan/user/user/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read users`)
             this.setState({isLoading: false});
         }
         else{
             this.setState({data: res.data.result, isLoading: false})
+
+            // Jika ingin load progression terakhir setelah render data user
+
+            // let temp = this.state.data;
+            // temp.map((item)=>{
+            //   let progress = 0;
+            //   API.get(`${API_SERVER}v2/training/plan-user/${item.id}`).then(res => {
+            //       if (res.data.error){
+            //           console.log(`Error read progress user ${item.name}`)
+            //       }
+            //       else{
+            //         res.data.result.data.map((row)=>{
+            //             progress = progress + row.progress;
+            //         })
+            //         res.data.result.unassigned.map((row)=>{
+            //             progress = progress + (row.is_read ? 100 : 0);
+            //         })
+            //         let items = res.data.result.data.length + res.data.result.unassigned.length;
+            //         let finalProgress = progress / items;
+            //         item.progress =  Math.round(finalProgress);
+            //         this.setState({data: temp})
+            //       }
+            //   })
+            // })
         }
     })
   }
@@ -159,7 +184,7 @@ class UserProgression extends Component {
       {
         cell: row =>
         <div className="progressBar">
-            <ProgressBar now={50} label={`${50}%`} />
+            <ProgressBar now={row.progress ? row.progress : 0} label={`${row.progress ? row.progress : '0'}%`} />
         </div>,
         name: 'Progression',
         selector: 'progression',
