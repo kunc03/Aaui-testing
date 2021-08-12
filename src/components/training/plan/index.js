@@ -7,6 +7,7 @@ import Dropdown, {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import TabMenu from '../../tab_menu/route';
+import TabMenuPlan from '../../tab_menu/route_plan';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
@@ -259,6 +260,7 @@ class Plan extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Plan'/>
+                                        <TabMenuPlan title='' selected='Management'/>
                                         <div>
                                             <LoadingOverlay
                                               active={this.state.isLoading}
@@ -267,7 +269,6 @@ class Plan extends Component {
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20" style={{overflowX:'scroll'}}>
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Training Plan</strong>
                                                         <table className="table-plan">
                                                             <tr>
                                                                 <th style={{minWidth:'120px'}}>Type</th>
