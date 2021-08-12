@@ -338,12 +338,13 @@ export default class WebinarRiwayat extends Component {
       }
       return (
         <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
-          <div className="float-right" style={{ width: 200 }}>
-            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{fontSize:12}} onChange={(e) => this.filterPeserta(e)}>
+          <div className="float-right" style={{ width: 400 }}>
+            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{fontSize:12, width:'auto', float:'right'}} onChange={(e) => this.filterPeserta(e)}>
               <option value="Semua" selected> All</option>
               <option value="Hadir"> Present</option>
               <option value="Tidak Hadir"> Not Present</option>
             </select>
+            <Button className="btn btn-icademy-primary btn-12" style={{float:'right', marginRight:'20px'}} onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
           </div>
           <table id="table-peserta" className="table table-striped">
             <thead>
@@ -403,7 +404,6 @@ export default class WebinarRiwayat extends Component {
               }
             </tbody>
           </table>
-          <Button className="btn btn-icademy-primary btn-12" onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
         </div>
       )
     };
