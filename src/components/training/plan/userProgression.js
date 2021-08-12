@@ -48,7 +48,7 @@ class UserProgression extends Component {
 
   getUser(id){
     this.setState({isLoading: true});
-    API.get(`${API_SERVER}v2/training/plan/user/user/${id}`).then(res => {
+    API.get(`${API_SERVER}v2/training/user/user/${id}`).then(res => {
         if (res.data.error){
             toast.error(`Error read users`)
             this.setState({isLoading: false});
@@ -181,18 +181,18 @@ class UserProgression extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
-      {
-        cell: row =>
-        <div className="progressBar">
-            <ProgressBar now={row.progress ? row.progress : 0} label={`${row.progress ? row.progress : '0'}%`} />
-        </div>,
-        name: 'Progression',
-        selector: 'progression',
-        sortable: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      }
+      // {
+      //   cell: row =>
+      //   <div className="progressBar">
+      //       <ProgressBar now={row.progress ? row.progress : 0} label={`${row.progress ? row.progress : '0'}%`} />
+      //   </div>,
+      //   name: 'Progression',
+      //   selector: 'progression',
+      //   sortable: true,
+      //   style: {
+      //     color: 'rgba(0,0,0,.54)',
+      //   },
+      // }
     ];
     return(
         <div className="pcoded-main-container">
