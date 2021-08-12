@@ -20,6 +20,7 @@ import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
 import SocketContext from '../../socket';
 import { isMobile } from 'react-device-detect';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
@@ -99,7 +100,7 @@ class MeetingTable extends Component {
       valueGroup: [],
       //Toggle Switch
       akses: false,
-      private: false,
+      private: true,
       scheduled: false,
       requireConfirmation: false,
       startDate: new Date(),
@@ -1406,6 +1407,8 @@ class MeetingTable extends Component {
                   : null
                 }
 
+                {
+                /** 
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
                     Private Meeting
@@ -1417,6 +1420,8 @@ class MeetingTable extends Component {
                     {this.state.private ? 'Only people registered as participants can join the meeting.' : 'The meeting room is open. All users can join.'}
                   </Form.Text>
                 </Form.Group>
+                */
+                }
 
                 {
                   this.state.private ?
@@ -1773,6 +1778,7 @@ class MeetingTable extends Component {
                   <td>Moderator</td>
                   <td>Participants</td>
                   <td>Description</td>
+                  <td>Share</td>
                   <td></td>
                 </tr>
               </thead>
@@ -1798,6 +1804,12 @@ class MeetingTable extends Component {
                           <td>{item.moderator_name}</td>
                           <td>{item.participants.length}</td>
                           <td>{item.keterangan ? item.keterangan : '-'}</td>
+                          <td>
+                            <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                              onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                              <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                            </CopyToClipboard>
+                          </td>
                           <td>
                             <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                             {
