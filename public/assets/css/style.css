@@ -12604,3 +12604,28 @@ table.info-exam > tr > td{
 .table-log tr td, .table-log tr th{
   padding:4px 14px;
 }
+
+.progressBar .progress{
+  height:25px;
+  width:100px;
+  border-radius: 0px;
+}
+
+.progressBar .progress .progress-bar{
+  color:#FFF;
+  text-shadow: 1px 1px 4px #000;
+}
+
+.progressBarDetailUser{
+  float:right;
+}
+
+.progressBarDetailUser .progress{
+  height:40px;
+  width:300px;
+}
+.progressBarDetailUser .progress .progress-bar{
+  color:#FFF;
+  text-shadow: 1px 1px 4px #000;
+  font-size: 14px;
+}

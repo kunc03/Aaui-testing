@@ -16,11 +16,19 @@ import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { MultiSelect } from 'react-sm-select';
 import DatePicker from "react-datepicker";
+import { ProgressBar } from 'react-bootstrap';
 
-class Plan extends Component {
+class UserProgressionDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        id: '',
+        name: '',
+        email: '',
+        identity: '',
+        license_number: '',
+        training_company_name: '',
+        progress: 0,
       companyId: '',
       data : [],
       unassigned : [],
@@ -69,47 +77,21 @@ class Plan extends Component {
         }
     })
   }
-
-  activate (id){
-    API.put(`${API_SERVER}v2/training/course-activate/${id}`).then(res => {
-        if (res.data.error){
-            toast.error('Error activate course')
-        }
-        else{
-          this.closeModalActivate();
-          this.getCourseListArchived(this.state.companyId);
-          toast.success('Course activated');
-        }
-    })
-  }
   
   filter = (e) => {
     e.preventDefault();
     this.setState({ filter: e.target.value });
   }
 
-  getCourseListArchived(companyId){
-    this.setState({isLoading: true, dataState:false});
-    API.get(`${API_SERVER}v2/training/course-list-admin-archived/${companyId}`).then(res => {
-        if (res.data.error){
-            toast.error('Error read course list')
-            this.setState({isLoading: false});
-        }
-        else{
-            this.setState({data: res.data.result, isLoading: false})
-        }
-    })
-  }
-
-  getCourseList(companyId){
+  getCourseList(trainingUserId){
     this.setState({isLoading: true, dataState:true});
-    API.get(`${API_SERVER}v2/training/plan/${companyId}`).then(res => {
+    API.get(`${API_SERVER}v2/training/plan-user/${trainingUserId}`).then(res => {
         if (res.data.error){
             toast.error('Error read course list')
             this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result.data, unassigned: res.data.result.unassigned, isLoading: false})
+            this.setState({data: res.data.result.data, unassigned: res.data.result.unassigned, progress: res.data.result.progress, isLoading: false})
             res.data.result.data.map((item)=>{
                 this.state.optionsCourse.push({label: item.title, value: item.id})
             })
@@ -121,114 +103,29 @@ class Plan extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-          this.getCourseList(this.state.companyId);
+          this.getCourseList(this.props.match.params.id);
+          this.getUserDetail(this.props.match.params.id);
         }
     })
   }
 
-  saveCourse = (index) => {
-    let data = this.state.data;
-    data[index].isSaving = true;
-    this.setState({data: data});
-    let form = {
-      require_course_id : this.state.data[index].require_course_id,
-      scheduled : this.state.data[index].scheduled.length ? this.state.data[index].scheduled : '0',
-      start_time: moment.tz(this.state.data[index].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-      end_time: moment.tz(this.state.data[index].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-    }
-    API.put(`${API_SERVER}v2/training/plan/course/${this.state.data[index].id}`, form).then(res => {
-      if (res.data.error){
-          toast.error('Error edit plan')
-          let data = this.state.data;
-          data[index].isSaving = false;
-          this.setState({data: data});
-      }
-      else{
-        let data = this.state.data;
-        data[index].isSaving = false;
-        this.setState({data: data});
-        this.getCourseList(this.state.companyId);
-      }
+  getUserDetail(id){
+    API.get(`${API_SERVER}v2/training/user/read/${id}`).then(res => {
+        if (res.data.error){
+            toast.error('Error read user')
+        }
+        else{
+            this.setState({
+                id: res.data.result.id,
+                name: res.data.result.name,
+                email: res.data.result.email,
+                identity: res.data.result.identity,
+                license_number: res.data.result.license_number,
+                training_company_name: res.data.result.training_company_name
+            })
+        }
     })
   }
-
-  saveLiveclass = (index, i) => {
-    let data = this.state.data;
-    data[index].liveclass[i].isSaving = true;
-    this.setState({data: data});
-    let form = {
-      training_course_id : this.state.data[index].liveclass[i].training_course_id,
-      start_time: moment.tz(this.state.data[index].liveclass[i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-      end_time: moment.tz(this.state.data[index].liveclass[i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-    }
-    API.put(`${API_SERVER}v2/training/plan/liveclass/${this.state.data[index].liveclass[i].id}`, form).then(res => {
-      if (res.data.error){
-          toast.error('Error edit plan')
-          let data = this.state.data;
-          data[index].liveclass[i].isSaving = false;
-          this.setState({data: data});
-      }
-      else{
-        let data = this.state.data;
-        data[index].liveclass[i].isSaving = false;
-        this.setState({data: data});
-        this.getCourseList(this.state.companyId);
-      }
-    })
-  }
-
-  saveExam = (type, index, i) => {
-    let data = this.state.data;
-    data[index][type][i].isSaving = true;
-    this.setState({data: data});
-    let form = {
-      course_id : this.state.data[index][type][i].course_id,
-      scheduled : this.state.data[index][type][i].scheduled.length ? this.state.data[index][type][i].scheduled : '0',
-      start_time: moment.tz(this.state.data[index][type][i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-      end_time: moment.tz(this.state.data[index][type][i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-    }
-    API.put(`${API_SERVER}v2/training/plan/exam/${this.state.data[index][type][i].id}`, form).then(res => {
-      if (res.data.error){
-          toast.error('Error edit plan')
-          let data = this.state.data;
-          data[index][type][i].isSaving = false;
-          this.setState({data: data});
-      }
-      else{
-        let data = this.state.data;
-        data[index][type][i].isSaving = false;
-        this.setState({data: data});
-        this.getCourseList(this.state.companyId);
-      }
-    })
-  }
-
-  saveUnassignedExam = (i) => {
-    let data = this.state.unassigned;
-    data[i].isSaving = true;
-    this.setState({unassigned: data});
-    let form = {
-      course_id : this.state.unassigned[i].course_id,
-      scheduled : this.state.unassigned[i].scheduled.length ? this.state.unassigned[i].scheduled : '0',
-      start_time: moment.tz(this.state.unassigned[i].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-      end_time: moment.tz(this.state.unassigned[i].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
-    }
-    API.put(`${API_SERVER}v2/training/plan/exam/${this.state.unassigned[i].id}`, form).then(res => {
-      if (res.data.error){
-          toast.error('Error edit plan')
-          let data = this.state.unassigned;
-          data[i].isSaving = false;
-          this.setState({unassigned: data});
-      }
-      else{
-        let data = this.state.unassigned;
-        data[i].isSaving = false;
-        this.setState({unassigned: data});
-        this.getCourseList(this.state.companyId);
-      }
-    })
-  }
-
   componentDidMount(){
     this.getUserData()
   }
@@ -260,13 +157,47 @@ class Plan extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Plan'/>
-                                        <TabMenuPlan title='' selected='Management'/>
+                                        <TabMenuPlan title='' selected={`User's Progression`}/>
                                         <div>
                                             <LoadingOverlay
                                               active={this.state.isLoading}
                                               spinner={<BeatLoader size='30' color='#008ae6' />}
                                             >
                                             <div className="card p-20 main-tab-container">
+                                                <div className="row">
+                                                  <div className="col-sm-12 m-b-20">
+                                                    <table style={{float:'left'}}>
+                                                        <tr>
+                                                            <td>Name</td>
+                                                            <td>:</td>
+                                                            <td>{this.state.name}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Company</td>
+                                                            <td>:</td>
+                                                            <td>{this.state.training_company_name}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Email</td>
+                                                            <td>:</td>
+                                                            <td>{this.state.email}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Identity</td>
+                                                            <td>:</td>
+                                                            <td>{this.state.identity}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>License Number</td>
+                                                            <td>:</td>
+                                                            <td>{this.state.license_number}</td>
+                                                        </tr>
+                                                    </table>
+                                                    <div className="progressBarDetailUser">
+                                                      <ProgressBar now={this.state.progress} label={`Total : ${this.state.progress}%`} />
+                                                    </div>
+                                                  </div>
+                                                </div>
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20" style={{overflowX:'scroll'}}>
                                                         <table className="table-plan">
@@ -279,7 +210,7 @@ class Plan extends Component {
                                                                 <th>Scheduled</th>
                                                                 <th>Schedule Start</th>
                                                                 <th>Schedule End</th>
-                                                                <th></th>
+                                                                <th>Progression</th>
                                                             </tr>
                                                             {
                                                               data.length ?
@@ -328,23 +259,9 @@ class Plan extends Component {
                                                                       } 
                                                                     </td>
                                                                     <td>
-                                                                      {new Date(item.start_time) <= new Date() && new Date(item.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
-                                                                      {
-                                                                        item.edit ?
-                                                                          <>
-                                                                            <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {item.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
-                                                                            <button
-                                                                            disabled={item.isSaving}
-                                                                            onClick={this.saveCourse.bind(this, index)}
-                                                                            className="btn btn-icademy-primary float-right"
-                                                                            style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                                                <i className="fa fa-save"></i>
-                                                                                {item.isSaving ? 'Saving...' : 'Save'}
-                                                                            </button>
-                                                                          </>
-                                                                        :
-                                                                          <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {item.edit = true; this.forceUpdate()}}></i>
-                                                                      }
+                                                                      <div className="progressBar">
+                                                                          <ProgressBar now={item.progress} label={`${item.progress}%`} />
+                                                                      </div>
                                                                     </td>
                                                                 </tr>
                                                                 {
@@ -359,7 +276,9 @@ class Plan extends Component {
                                                                             <td>-</td>
                                                                             <td>-</td>
                                                                             <td>-</td>
-                                                                            <td>{new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}</td>
+                                                                            <td>
+                                                                              {row.is_read ? <i className="fa fa-check" style={{color:'#109810', fontSize:'11px'}}></i> : <i className="fa fa-hourglass-half" style={{color:'#dc3545', fontSize:'11px'}}></i>}
+                                                                            </td>
                                                                         </tr>
                                                                       )
                                                                     }
@@ -399,23 +318,7 @@ class Plan extends Component {
                                                                               } 
                                                                             </td>
                                                                             <td>
-                                                                              {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
-                                                                              {
-                                                                                row.edit ?
-                                                                                  <>
-                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
-                                                                                    <button
-                                                                                    disabled={row.isSaving}
-                                                                                    onClick={this.saveLiveclass.bind(this, index, i)}
-                                                                                    className="btn btn-icademy-primary float-right"
-                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                                                        <i className="fa fa-save"></i>
-                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
-                                                                                    </button>
-                                                                                  </>
-                                                                                :
-                                                                                  <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
-                                                                              }
+                                                                              {row.is_read ? <i className="fa fa-check" style={{color:'#109810', fontSize:'11px'}}></i> : <i className="fa fa-hourglass-half" style={{color:'#dc3545', fontSize:'11px'}}></i>}
                                                                             </td>
                                                                         </tr>
                                                                       )
@@ -467,23 +370,8 @@ class Plan extends Component {
                                                                               } 
                                                                             </td>
                                                                             <td>
-                                                                              {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
-                                                                              {
-                                                                                row.edit ?
-                                                                                  <>
-                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
-                                                                                    <button
-                                                                                    disabled={row.isSaving}
-                                                                                    onClick={this.saveExam.bind(this, 'quiz', index, i)}
-                                                                                    className="btn btn-icademy-primary float-right"
-                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                                                        <i className="fa fa-save"></i>
-                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
-                                                                                    </button>
-                                                                                  </>
-                                                                                :
-                                                                                  <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
-                                                                              }
+                                                                              {row.is_read ? <i className="fa fa-check" style={{color:'#109810', fontSize:'11px'}}></i> : <i className="fa fa-hourglass-half" style={{color:'#dc3545', fontSize:'11px'}}></i>}&nbsp;
+                                                                              {row.score && row.score.length ? `Score : ${row.score}` : ''}
                                                                             </td>
                                                                         </tr>
                                                                       )
@@ -535,23 +423,8 @@ class Plan extends Component {
                                                                               } 
                                                                             </td>
                                                                             <td>
-                                                                              {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
-                                                                              {
-                                                                                row.edit ?
-                                                                                  <>
-                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
-                                                                                    <button
-                                                                                    disabled={row.isSaving}
-                                                                                    onClick={this.saveExam.bind(this, 'exam', index, i)}
-                                                                                    className="btn btn-icademy-primary float-right"
-                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                                                        <i className="fa fa-save"></i>
-                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
-                                                                                    </button>
-                                                                                  </>
-                                                                                :
-                                                                                  <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
-                                                                              }
+                                                                              {row.is_read ? <i className="fa fa-check" style={{color:'#109810', fontSize:'11px'}}></i> : <i className="fa fa-hourglass-half" style={{color:'#dc3545', fontSize:'11px'}}></i>}&nbsp;
+                                                                              {row.score && row.score.length ? `Score : ${row.score}` : ''}
                                                                             </td>
                                                                         </tr>
                                                                       )
@@ -618,23 +491,7 @@ class Plan extends Component {
                                                                               } 
                                                                             </td>
                                                                             <td>
-                                                                              {new Date(row.start_time) <= new Date() && new Date(row.end_time) >= new Date() ? <span class={`badge badge-pill badge-success`}>On Schedule</span> : ''}
-                                                                              {
-                                                                                row.edit ?
-                                                                                  <>
-                                                                                    <i className="fa fa-times" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = false; this.setState({valueCourse: []}); this.forceUpdate()}}></i>
-                                                                                    <button
-                                                                                    disabled={row.isSaving}
-                                                                                    onClick={this.saveUnassignedExam.bind(this, i)}
-                                                                                    className="btn btn-icademy-primary float-right"
-                                                                                    style={{ padding: "7px 8px !important", marginRight: 30 }}>
-                                                                                        <i className="fa fa-save"></i>
-                                                                                        {row.isSaving ? 'Saving...' : 'Save'}
-                                                                                    </button>
-                                                                                  </>
-                                                                                :
-                                                                                  <i className="fa fa-edit" style={{cursor:'pointer', float:'right'}} onClick={()=> {row.edit = true; this.forceUpdate()}}></i>
-                                                                              }
+                                                                              {row.is_read ? <i className="fa fa-check" style={{color:'#109810', fontSize:'11px'}}></i> : <i className="fa fa-hourglass-half" style={{color:'#dc3545', fontSize:'11px'}}></i>}
                                                                             </td>
                                                                     </tr>
                                                                 )
@@ -657,45 +514,9 @@ class Plan extends Component {
                     </div>
                 </div>
             </div>
-          <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
-            <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Confirmation
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div>Are you sure want to delete this course ?</div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
-                Cancel
-              </button>
-              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.deleteId)}>
-                <i className="fa fa-trash"></i> Delete
-              </button>
-            </Modal.Footer>
-          </Modal>
-          <Modal show={this.state.modalActivate} onHide={this.closeModalActivate} centered>
-            <Modal.Header closeButton>
-              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                Confirmation
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div>Are you sure want to activate this course ?</div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalActivate.bind(this)}>
-                Cancel
-              </button>
-              <button className="btn btn-icademy-primary" onClick={this.activate.bind(this, this.state.activateId)}>
-                <i className="fa fa-trash"></i> Activate
-              </button>
-            </Modal.Footer>
-          </Modal>
         </div>
     )
   }
 }
 
-export default Plan;
+export default UserProgressionDetail;
