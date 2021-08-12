@@ -12612,5 +12612,20 @@ table.info-exam > tr > td{
 }
 
 .progressBar .progress .progress-bar{
-  color:#00478C;
+  color:#FFF;
+  text-shadow: 1px 1px 4px #000;
+}
+
+.progressBarDetailUser{
+  float:right;
+}
+
+.progressBarDetailUser .progress{
+  height:40px;
+  width:300px;
+}
+.progressBarDetailUser .progress .progress-bar{
+  color:#FFF;
+  text-shadow: 1px 1px 4px #000;
+  font-size: 14px;
 }
