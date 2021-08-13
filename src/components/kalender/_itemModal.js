@@ -98,8 +98,13 @@ class Event extends Component {
       }
     })
   }
-  fetchMeetingInfo(id) {
-    API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
+  fetchMeetingInfo(meeting_id) {
+    // let form = {
+      // meeting_id,
+      // booking_id
+    // }
+    // API.post(`${API_SERVER}v1/liveclass/meeting-booking-info`, form).then(res => {
+    API.get(`${API_SERVER}v1/liveclass/meeting-info/${meeting_id}`).then(res => {
       if (res.status === 200) {
         this.setState({
           infoClass: res.data.result[0],

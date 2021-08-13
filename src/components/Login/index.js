@@ -135,11 +135,20 @@ class Login extends Component {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
           else {
+            let dd = new URLSearchParams(window.location.search)
             if (res.data.result.is_new_password === 1) {
-              window.location.href = window.location.origin;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = window.location.origin;
+              }
             }
             else {
-              window.location.href = `${window.location.origin}/pengaturan`;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = `${window.location.origin}/pengaturan`;
+              }
             }
           }
 
@@ -204,11 +213,20 @@ class Login extends Component {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
           else {
+            let dd = new URLSearchParams(window.location.search)
             if (res.data.result.is_new_password === 1) {
-              window.location.href = window.location.origin;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = window.location.origin;
+              }
             }
             else {
-              window.location.href = `${window.location.origin}/pengaturan`;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = `${window.location.origin}/pengaturan`;
+              }
             }
           }
 
