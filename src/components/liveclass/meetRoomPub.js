@@ -169,11 +169,11 @@ export default class MeetRoomPub extends Component {
     let http = bbb.http
 
     // Check meeting info, apakah room sudah ada atau belum (keperluan migrasi)
-    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.booking_id)
     http(meetingInfo).then(async (result) => {
       if (result.returncode === 'FAILED' && result.messageKey === 'notFound') {
         // Jika belum ada, create room nya.
-        let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.class_id, {
+        let meetingCreateUrl = api.administration.create(this.state.classRooms.room_name, this.state.classRooms.booking_id, {
           attendeePW: 'peserta',
           moderatorPW: 'moderator',
           allowModsToUnmuteUsers: true,
@@ -184,7 +184,7 @@ export default class MeetRoomPub extends Component {
             // Setelah create, join
             let joinUrl = api.administration.join(
               this.state.user.name,
-              this.state.classRooms.class_id,
+              this.state.classRooms.booking_id,
               this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
               {
                 userID: this.state.user.user_id,
@@ -192,7 +192,7 @@ export default class MeetRoomPub extends Component {
               }
             )
 
-            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classId}`);
+            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
             let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
             this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
@@ -211,7 +211,7 @@ export default class MeetRoomPub extends Component {
         // Jika sudah ada, join
         let joinUrl = api.administration.join(
           this.state.user.name,
-          this.state.classRooms.class_id,
+          this.state.classRooms.booking_id,
           this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
           {
             userID: this.state.user.user_id,
@@ -219,7 +219,7 @@ export default class MeetRoomPub extends Component {
           }
         )
 
-        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.class_id}`);
+        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
         let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
         this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
         let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
@@ -301,8 +301,12 @@ export default class MeetRoomPub extends Component {
       this.setState({ [name]: e.target.value })
     }
   }
+
   onChangeName = (e) => {
-    this.setState({ user: { name: e.target.value } })
+    this.setState({ user: { ...this.state.user, name: e.target.value } })
+  }
+  onChangeEmail = (e) => {
+    this.setState({ user: { ...this.state.user, email: e.target.value } })
   }
 
   sendFileNew() {
@@ -346,13 +350,33 @@ export default class MeetRoomPub extends Component {
   }
 
   joinRoom() {
-    if (this.state.user.name) {
+    let { session } = this.state
+    if (this.state.user.name && this.state.user.email) {
+      if (!session) {
+        this.addParticipant(this.state.user)
+      }
       this.joinMeeting()
       this.setState({ join: true, modalStart: false, welcome: false });
     }
     else {
-      this.setState({ toggle_alert: true, alertMessage: 'Please insert your name.' });
+      this.setState({ toggle_alert: true, alertMessage: 'Please insert your name and email.' });
     }
+  }
+
+  addParticipant = (user) => {
+    let { name, email } = user
+    let { classRooms } = this.state
+    let form = {
+      meeting_id: classRooms.booking_id,
+      name,
+      email
+    }
+    API.post(`${API_SERVER}v2/meetpub/participant`, form)
+  }
+
+  notYetTime() {
+    let { classRooms } = this.state
+    toast.info(`Schedule at ${Moment(classRooms.tanggal).format('LL')} ${classRooms.jam_mulai} ${classRooms.jam_selesai}`)
   }
 
   addToCalendar = () => {
@@ -512,24 +536,27 @@ export default class MeetRoomPub extends Component {
                   </Fragment>
                   :
                   <Fragment>
-                    <Row style={{ margin: '0px'}}>
-                      <Col sm={12}>
-                        {
-                          user.name && classRooms.room_name && this.state.join ?
-                            <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
-                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
-                                width="100%"
-                                height="600px"
-                                display="initial"
-                                frameBorder="0"
-                                allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
-                                position="relative" />
-                            </div>
-                            :
-                            null
-                        }
-                      </Col>
-                    </Row>
+                    {
+                      user.name && classRooms.room_name && this.state.join ?
+                        <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
+                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
+                            display="initial"
+                            frameBorder="0"
+                            allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
+                            position='fixed'
+                            background='#000'
+                            border='none'
+                            top='0'
+                            right='0'
+                            bottom='0'
+                            left='0'
+                            width='100%'
+                            height='100%'
+                          />
+                        </div>
+                        :
+                        null
+                    }
                   </Fragment>
               }
             </Fragment>
@@ -575,7 +602,7 @@ export default class MeetRoomPub extends Component {
                               </div>
                             </div>
                           </div>
-                          <div className="auth-content mb-4" style={{}}>
+                          <div className="auth-content mb-4">
                             <div className="card b-r-15">
                               <div
                                 className="card-body"
@@ -621,13 +648,9 @@ export default class MeetRoomPub extends Component {
                                       : null
                                     }
 
-                                    {
-                                      jamNow.isBetween(infoStart, infoEnd) ?
-                                        <button onClick={this.joinRoom.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={{ height: 60 }}>
-                                          Join The Meeting
-                                        </button>
-                                      : null
-                                    }    
+                                    <button onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                                      Join The Meeting
+                                    </button>
                                     
                                     {
                                       session ?
@@ -731,27 +754,32 @@ export default class MeetRoomPub extends Component {
                           
                           {
                             jamNow.isBetween(infoStart, infoEnd) ?
-                              <div className="input-group mb-4 mt-5">
+                              <Fragment>
                                 <input
                                   type="text"
                                   value={this.state.user.name}
                                   className="form-control"
-                                  style={{ marginTop: 8 }}
+                                  style={{ marginTop: 8, minHeight: '40px' }}
                                   placeholder="Enter your name"
                                   onChange={this.onChangeName}
                                   required
                                 />
-                              </div>
+                                <input
+                                  type="text"
+                                  value={this.state.user.email}
+                                  className="form-control"
+                                  style={{ marginTop: 8, minHeight: '40px' }}
+                                  placeholder="Enter your email"
+                                  onChange={this.onChangeEmail}
+                                  required
+                                />
+                              </Fragment>
                             : null
                           }
                             
-                          {
-                            jamNow.isBetween(infoStart, infoEnd) ?
-                              <button onClick={this.joinRoom.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={{ height: 60 }}>
-                                Join The Meeting
-                              </button>
-                            : null
-                          }    
+                          <button onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                            Join The Meeting
+                          </button>
                           
                           {
                             session ?
