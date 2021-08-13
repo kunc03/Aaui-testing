@@ -181,6 +181,15 @@ class UserProgression extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
+      {
+        cell: row => <Link to={'/training/plan-user/'+row.id}>View Detail</Link>,
+        name: 'Progression',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
       // {
       //   cell: row =>
       //   <div className="progressBar">
