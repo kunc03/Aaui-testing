@@ -502,14 +502,16 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number</label>
-                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm || this.props.match.params.id}/>
                                                         </div>
                                                         {
+                                                            this.state.license_number ?
                                                             this.state.license_number.length && !this.props.match.params.id && !this.state.disabledForm ?
                                                             <div className="form-field-top-label">
                                                                 <label for="expired">License Expired<required style={{fontSize:'11px'}}>*Required if License Number filled</required></label>
                                                                 <input type="date" name="expired" id="expired" value={this.state.expired} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                             </div>
+                                                            : null
                                                             : null
                                                         }
                                                     </div>
