@@ -392,7 +392,37 @@ export default class MeetRoomPub extends Component {
     API.post(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`, form).then(res => {
       if (res.status === 200) {
         let { result, message } = res.data
-        toast.success(result.length === 0 ? 'Meeting added to My Calendar.' : message)
+        toast.success(message ? message : 'Meeting added to My Calendar.')
+      }
+    })
+  }
+
+  confirmAttendance(confirmation) {
+    let form = {
+      confirmation: confirmation,
+    }
+
+    API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.classRooms.id}/${Storage.get('user').data.user_id}`, form).then(async res => {
+      if (res.status === 200) {
+        this.fetchData()
+
+        let formNotif = {
+          user_id: this.state.classRooms.moderator,
+          type: 3,
+          activity_id: this.state.classRooms.class_id,
+          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.classRooms.room_name,
+          dest: null,
+        }
+        API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
+          if (res.status === 200) {
+            if (!res.data.error) {
+              console.log('Sukses Notif')
+            } else {
+              console.log('Gagal Notif')
+            }
+          }
+        })
+
       }
     })
   }
@@ -404,6 +434,12 @@ export default class MeetRoomPub extends Component {
     const jamNow = Moment()
     const infoStart = Moment(`${classRooms.tgl_mulai}`)
     const infoEnd = Moment(`${classRooms.tgl_selesai}`)
+
+    const me = [];
+    if (classRooms.hasOwnProperty('participants')) {
+      const filterMe = classRooms.participants.filter(i => i.user_id === Storage.get('user').data.user_id)
+      if(filterMe.length) me.push(filterMe[0])
+    }
 
     return (
       <Fragment>
@@ -631,30 +667,33 @@ export default class MeetRoomPub extends Component {
                                         </span>
                                       }    
                                     </p>
-                                      
+                                          
                                     {
-                                      jamNow.isBetween(infoStart, infoEnd) ?
-                                        <div className="input-group mb-4 mt-5">
-                                          <input
-                                            type="text"
-                                            value={this.state.user.name}
-                                            className="form-control"
-                                            style={{ marginTop: 8 }}
-                                            placeholder="Enter your name"
-                                            onChange={this.onChangeName}
-                                            required
-                                          />
+                                      classRooms.is_required_confirmation === 1 && me.length === 1 && me[0].confirmation === '' ? 
+                                        <div className="col-sm-12 mb-3">
+                                          <div className="card" style={{ background: '#dac88c', padding: 12 }}>
+                                            <div className="title-head f-w-900 f-16">
+                                              Confirmation of attendance
+                                            </div>
+                                            <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
+                                            <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}>
+                                              Present
+                                            </Link>
+                                            <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}>
+                                              Not present
+                                            </Link>
+                                          </div>
                                         </div>
                                       : null
                                     }
-
+                                      
                                     <button onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
                                       Join The Meeting
                                     </button>
                                     
                                     {
                                       session ?
-                                        <button onClick={() => this.addToCalendar()} className="btn btn-info-outline btn-block mt-2">Add to Calendar</button>
+                                        <button onClick={() => this.addToCalendar()} className="btn btn-info btn-block mt-2">Add to Calendar</button>
                                       : null
                                     }
                                       

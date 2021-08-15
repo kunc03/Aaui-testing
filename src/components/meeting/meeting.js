@@ -289,7 +289,7 @@ class MeetingTable extends Component {
     }
   }
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: false, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: true, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
     this.setState({ modalJadwal: false, infoParticipant: [] });
@@ -313,7 +313,7 @@ class MeetingTable extends Component {
       valuePeserta: [],
       valueFolder: [],
       infoClass: [],
-      private: false,
+      private: true,
       requireConfirmation: false,
       akses: false, 
       infoParticipant: [], 
@@ -932,7 +932,7 @@ class MeetingTable extends Component {
             toast.success('Menyimpan booking jadwal meeting')
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-              akses: 0, private: 0, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
               modalJadwal: false
             })
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
@@ -1271,14 +1271,11 @@ class MeetingTable extends Component {
             </div>
             :
             <Fragment>
-              {
-                Rmeetings ?
-                  <DataTable
-                    style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
-                  />
-                  :
-                  <span>sorry your access is not allowed to access the meeting room</span>
-              }
+              
+              <DataTable
+                style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
+              />
+              
             </Fragment>
         }
 
@@ -1455,20 +1452,8 @@ class MeetingTable extends Component {
                   
                 {
                   this.state.private ?
+                    
                     <Form.Group controlId="formJudul">
-                      <Form.Label className="f-w-bold">
-                        Peserta
-                      </Form.Label>
-                      <div className="row mt-1" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                        {this.state.infoParticipant && this.state.infoParticipant.map(item =>
-                          <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
-                            {item.name}
-                            <button type="button" className="" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(31 31 31)' }} onClick={this.deleteParticipant.bind(this, item.participant_id, item.class_id)}>
-                              X
-                            </button>
-                          </div>
-                        )}
-                      </div>
                       <Form.Label className="f-w-bold">
                         Add Participants
                       </Form.Label>
@@ -1631,7 +1616,7 @@ class MeetingTable extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              this.state.needConfirmation >= 1 && this.state.infoClass.is_private === 1 ?
+              this.state.needConfirmation >= 1 && this.state.infoClass.is_required_confirmation === 1 ?
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
@@ -1649,7 +1634,7 @@ class MeetingTable extends Component {
                   </div>
                 </div>
                 :
-                this.state.needConfirmation === 0 && this.state.infoClass.is_private === 1 ?
+                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
                   <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                       <div className="card-carousel col-sm-8">
@@ -1664,7 +1649,6 @@ class MeetingTable extends Component {
                 null
             }
             
-
             <div class="row">
               <div className="col-sm-6">
                 <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
@@ -1675,9 +1659,6 @@ class MeetingTable extends Component {
                     </h3>
                   : null
                 }
-                <h3 className="f-14">
-                  Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                </h3>
                 {
                   this.state.infoClass.is_private ?
                   <h3 className="f-14">
@@ -1738,7 +1719,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {
               this.state.infoClass.is_private === 0 ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.id}`}>
+                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
                   <i className="fa fa-video"></i> Enter
                 </a>
                 :
@@ -1750,7 +1731,7 @@ class MeetingTable extends Component {
                   this.state.infoClass.is_required_confirmation === 0 || (this.state.infoClass.is_required_confirmation === 1 && this.state.attendanceConfirmation === 'Hadir')
                 )
                   ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.id}`}>
+                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
                   <i className="fa fa-video"></i> Enter
                 </a>
                 : null  
@@ -1768,7 +1749,7 @@ class MeetingTable extends Component {
             <div className="title-head f-w-900 f-16 mb-2">
               Schedule & Booking Meeting
             </div>
-            <table className="table table-hover">
+            <table className="table table-hover table-striped">
               <thead>
                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                   <td>Date</td>
@@ -1776,7 +1757,7 @@ class MeetingTable extends Component {
                   <td>End Hours</td>
                   <td>By</td>
                   <td>Moderator</td>
-                  <td>Participants</td>
+                  <td className="text-center">Participants</td>
                   <td>Description</td>
                   <td>Share</td>
                   <td></td>
@@ -1796,31 +1777,55 @@ class MeetingTable extends Component {
                       const range = jamIni.isBetween(sJadwal, eJadwal)
 
                       return (
-                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                          <td>{item.jam_mulai}</td>
-                          <td>{item.jam_selesai}</td>
-                          <td>{item.name}</td>
-                          <td>{item.moderator_name}</td>
-                          <td>{item.participants.length}</td>
-                          <td>{item.keterangan ? item.keterangan : '-'}</td>
-                          <td>
-                            <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                              onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                              <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                            </CopyToClipboard>
-                          </td>
-                          <td>
-                            <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
-                            {
-                              range ?
-                                <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${item.id}`}>
-                                  <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
-                                </a>
-                              : null
-                            }
-                          </td>
-                        </tr>
+                        <Fragment>
+                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                            <td>{item.jam_mulai}</td>
+                            <td>{item.jam_selesai}</td>
+                            <td>{item.name}</td>
+                            <td>{item.moderator_name}</td>
+                            <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                            <td>{item.keterangan ? item.keterangan : '-'}</td>
+                            <td>
+                              <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                              </CopyToClipboard>
+                            </td>
+                            <td>
+                              <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                              {
+                                range ?
+                                  <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                    <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                  </a>
+                                : null
+                              }
+                            </td>
+                          </tr>
+                          <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                            <td colSpan="9">
+                              <div className="title-head f-w-900 f-16">
+                                Confirmation Attendace {item.participants.length} Participants
+                              </div>
+                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                <div className='legend-kehadiran hadir'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                <div className='legend-kehadiran tidak-hadir'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                <div className='legend-kehadiran tentative'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                              </div>
+                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                              {
+                                item.participants.map(r => (
+                                  <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                ))
+                              }
+                              </div>
+                            </td>
+                          </tr>
+                        </Fragment>
                       )
                     })
                     :
