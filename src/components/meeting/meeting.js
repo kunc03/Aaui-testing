@@ -921,7 +921,6 @@ class MeetingTable extends Component {
         
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
-        
       }
 
       console.log(form)
@@ -1356,24 +1355,113 @@ class MeetingTable extends Component {
           </Modal.Header>
           <Modal.Body>
             <div className="row">
-              <div className="col-sm-6">
+              <div className="col-sm-12">
+                <table className="table table-hover">
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+                      <td>Date </td>
+                      <td>Starting Hours </td>
+                      <td>End Hours </td>
+                      <td>By</td>
+                      <td>Moderator</td>
+                      <td>Participants</td>
+                      <td>Description</td>
+                      <td>Share</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.state.dataBooking.booking.length ?
+                        this.state.dataBooking.booking.map((item) => {
+                          const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
+
+                          const split = item.tanggal.split('-')
+                          const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                          const jamIni = moment()
+                          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                          const range = jamIni.isBetween(sJadwal, eJadwal)
+
+                          return (
+                            <Fragment>
+                              <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                                <td>{item.jam_mulai}</td>
+                                <td>{item.jam_selesai}</td>
+                                <td>{item.name}</td>
+                                <td>{item.moderator_name}</td>
+                                <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                                <td>{item.keterangan ? item.keterangan : '-'}</td>
+                                <td>
+                                  <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                    <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                  </CopyToClipboard>
+                                </td>
+                                <td>
+                                  <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                  {
+                                    range ?
+                                      <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                        <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                      </a>
+                                    : null
+                                  }
+                                </td>
+                              </tr>
+                              <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                                <td colSpan="9">
+                                  <div className="title-head f-w-900 f-16">
+                                    Confirmation Attendace {item.participants.length} Participants
+                                  </div>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                    <div className='legend-kehadiran hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                    <div className='legend-kehadiran tidak-hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                    <div className='legend-kehadiran tentative'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                  </div>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  {
+                                    item.participants.map(r => (
+                                      <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                    ))
+                                  }
+                                  </div>
+                                </td>
+                              </tr>
+                            </Fragment>
+                          )
+                        })
+                        :
+                        (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                          <td colspan='9'>There is no booking</td>
+                        </tr>)
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="col-sm-12">
                 <h4>Booking</h4>
                 <div className="form-group row">
-                  <div className="col-sm-4">
+                  <div className="col-sm-2">
                     <label className="bold col-sm-12"> Date </label>
                     <DatePicker dateFormat="yyyy-MM-dd" selected={this.state.tanggal} onChange={e => this.setState({ tanggal: e })} />
                   </div>
-                  <div className="col-sm-4">
+                  <div className="col-sm-2">
                     <label className="bold col-sm-12"> Starting Hours </label>
                     <DatePicker selected={this.state.jamMulai} onChange={date => this.setState({ jamMulai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
                   </div>
-                  <div className="col-sm-4">
+                  <div className="col-sm-2">
                     <label className="bold col-sm-12"> End Hours </label>
                     <DatePicker selected={this.state.jamSelesai} onChange={date => this.setState({ jamSelesai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
                   </div>
                 </div>
                 <div className="form-group row">
-                  <div className="col-sm-12">
+                  <div className="col-sm-6">
                     <label className="bold col-sm-12">Keterangan (optional)</label>
                     <textarea rows="4" className="form-control" value={this.state.keterangan} onChange={e => this.setState({ keterangan: e.target.value })} />
                   </div>
@@ -1470,45 +1558,6 @@ class MeetingTable extends Component {
                 </button>
               </div>
 
-              <div className="col-sm-6">
-                <table className="table table-hover">
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                      <td> Date </td>
-                      <td> Starting Hours </td>
-                      <td> End Hours </td>
-                      <td>By</td>
-                      <td>Keterangan</td>
-                      <td></td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      this.state.dataBooking.booking.length ?
-                        this.state.dataBooking.booking.map((item) => {
-                          const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
-                          return (
-                            <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                              <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                              <td>{item.jam_mulai}</td>
-                              <td>{item.jam_selesai}</td>
-                              <td>{item.name}</td>
-                              <td>{item.keterangan ? item.keterangan : '-'}</td>
-                              <td>
-                                {item.user_id === Storage.get('user').data.user_id &&
-                                  <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>}
-                              </td>
-                            </tr>
-                          )
-                        })
-                        :
-                        (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td colspan='5'>There is no booking</td>
-                        </tr>)
-                    }
-                  </tbody>
-                </table>
-              </div>
             </div>
 
             {/** 
@@ -1830,7 +1879,7 @@ class MeetingTable extends Component {
                     })
                     :
                     (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                      <td colspan='5'>There is no booking</td>
+                      <td colspan='9'>There is no booking</td>
                     </tr>)
                 }
               </tbody>
