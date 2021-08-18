@@ -18,7 +18,7 @@ import Storage from '../../repository/storage';
 import io from 'socket.io-client';
 import Iframe from 'react-iframe';
 import { isMobile, isIOS } from 'react-device-detect';
-
+import ReactFullScreenElement from "react-fullscreen-element";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -200,6 +200,7 @@ export default class MeetRoomPub extends Component {
         isLoading: false,
         classRooms: response.data.result,
         user: {
+          user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
           name: Storage.get('user').data ? Storage.get('user').data.user : '',
           email: Storage.get('user').data ? Storage.get('user').data.email : '',
           avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
@@ -685,16 +686,19 @@ export default class MeetRoomPub extends Component {
   }
 
   fetchProject() {
-    API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if (res.status === 200) {
-        this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
-        API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
-          this.setState({ project: response.data.result });
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
-    })
+    let { session } = this.state
+    if (session) {
+      API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
+          API.get(`${API_SERVER}v1/project/${Storage.get('user').data.level}/${Storage.get('user').data.user_id}/${this.state.companyId}`).then(response => {
+            this.setState({ project: response.data.result });
+          }).catch(function (error) {
+            console.log(error);
+          });
+        }
+      })
+    }
   }
 
   endMeeting() {
@@ -847,452 +851,104 @@ export default class MeetRoomPub extends Component {
                           <div className="pcoded-inner-content">
                             <div className="main-body">
                               <div className="page-wrapper">
-                                <Row>
-                                  <Col sm={12} style={{ marginBottom: '20px' }}>
+                                <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
+                                  <Row>
+                                    <Col sm={12} style={{ marginBottom: '20px' }}>
 
-                                    <div className="card p-20">
-                                      <div>
-                                        <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
-
-                                        <div className="float-right dropleft">
-                                          <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight: 0, color: 'rgb(148 148 148)' }} />
-                                          </button>
-                                          <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                            <button style={{ cursor: 'pointer' }} onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} type="button" class="dropdown-item">
-                                              <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: 10 }}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
-                                            </button>
-                                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite}>
-                                              <i className="fa fa-user-plus" style={{ marginRight: 10 }}></i> Invite People
-                                          </button>
-                                            {
-                                              (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
-                                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.class_id, classRooms.is_live)}>
-                                                <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{ marginRight: 10 }}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
-                                              </button>
-                                            }
-                                            {user.user_id == classRooms.moderator &&
-                                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => this.setState({ modalEnd: true })}>
-                                                <i className="fa fa-stop-circle" style={{ marginRight: 10 }}></i> End Meeting
-                                          </button>
-                                            }
-                                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => window.close()}>
-                                              <i className="fa fa-sign-out-alt" style={{ marginRight: 10 }}></i> Exit Meeting
-                                          </button>
-                                          </div>
-                                        </div>
-
-                                        <Tooltip title="MOM" arrow placement="top">
-                                          <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !create_mom ? () => this.setState({ modalMOM: true }) : notify } className="float-right m-b-10">
-                                            <img
-                                              src={`newasset/room/room-mom.svg`}
-                                              alt=""
-                                              width={32}
-                                            ></img>
-                                          </span>
-                                        </Tooltip>
-
-                                        <Tooltip title="File Sharing" arrow placement="top">
-                                              <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
-                                            <img
-                                              src={`newasset/room/room-share.svg`}
-                                              alt=""
-                                              width={32}
-                                              ></img>
-                                          </span>
-                                        </Tooltip>
-
-                                        <Tooltip title="Task & Timeline" arrow placement="top">
-
-                                          <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
-                                            <img
-                                              src={`newasset/room/room-task.svg`}
-                                              alt=""
-                                              width={32}
-                                            ></img>
-                                          </span>
-
-                                        </Tooltip>
-                                        <Tooltip title="File Show" arrow placement="top">
-                                          <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false }, () => {this.setState({selectedFileShow: this.state.selectedFileShow})})} className="float-right m-b-10">
-                                            <img
-                                              src={`newasset/room/room-file.svg`}
-                                              alt=""
-                                              width={32}
-                                            ></img>
-                                          </span>
-                                        </Tooltip>
-
-                                        {
-                                          user.name && classRooms.room_name && this.state.join ?
-                  
-                                          <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
-                                            <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
-                                              width="100%"
-                                              height="600px"
-                                              display="initial"
-                                              frameBorder="0"
-                                              allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
-                                              position="relative" />
-                                          </div>
-                  
-                                            
-                                            :
-                                            null
-                                        }
-
-                                      </div>
-                                    </div>
-                                  </Col>
-                                </Row>
-              
-                                <Modal show={this.state.isModalConfirmation} onHide={this.closeModalConfirmation} dialogClassName="modal-lg">
-                                  <Modal.Body>
-                                    <Modal.Title className="text-c-purple3 f-w-bold f-21" style={{ marginBottom: "30px" }}>
-                                      Meeting and Attendance Information
-                                    </Modal.Title>
-
-                                    {this.state.needConfirmation >= 1 ?
-                                      <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                        <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
-                                          <div className="card-carousel col-sm-8">
-                                            <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                              Attendance Confirmation
-                                          </div>
-                                            <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
-                                          </div>
-                                          <div className="card-carousel col-sm-4">
-                                            <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
-                                          </Link>
-                                            <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
-                                          </Link>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      : null}
-                                    <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                      <div className="card">
-                                        <div className="card-carousel">
-                                          <div className="title-head f-w-900 f-16">
-                                            {classRooms.room_name}
-                                          </div>
-                                          <div class="row">
-                                            <div className="col-sm-6">
-                                              {classRooms.is_akses ?
-                                              <h3 className="f-14">
-                                                Moderator : {classRooms.name}
-                                              </h3>
-                                              :null
-                                              }
-                                              <h3 className="f-14">
-                                                {classRooms.is_private ? 'Private' : 'Public'} Meeting
-                                              </h3>
-                                            </div>
-                                            {classRooms.is_scheduled ?
-                                              <div className="col-sm-6">
-                                                <h3 className="f-14">
-                                                  Start : {infoStart}
-                                                </h3>
-                                                <h3 className="f-14">
-                                                  End : {infoEnd}
-                                                </h3>
-                                              </div>
-                                              : null}
-                                          </div>
-                                          {classRooms.is_private ?
-                                            <div>
-                                              <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                                Attendance Confirmation of {classRooms.participants.length} Participant
-                                            </div>
-                                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                                <div className='legend-kehadiran hadir'></div>
-                                                <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
-                                                <div className='legend-kehadiran tidak-hadir'></div>
-                                                <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
-                                                <div className='legend-kehadiran tentative'></div>
-                                                <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
-                                              </div>
-                                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                                {classRooms.participants.map(item =>
-                                                  <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                                                )}
-                                              </div>
-                                            </div>
-                                            : null} {classRooms.is_private ?
-                                              <div>
-                                                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                                                  Actual Attendance In Meeting Room
-                                            </div>
-                                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                                  {classRooms.participants.map(item => item.actual == 'Hadir' &&
-                                                    <div className='peserta aktual-hadir'>{item.name}</div>
-                                                  )}
-                                                </div>
-                                              </div>
-                                              : null}
-                                        </div>
-                                      </div>
-                                      <button type="button" className="btn btn-block f-w-bold" onClick={e => this.closeModalConfirmation()} > Close
-                                      </button>
-                                    </div>
-                                  </Modal.Body>
-                                </Modal>
-
-                                <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
-                                    <Modal.Header closeButton>
-                                      <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                        Invite Participants
-                                      </Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                      <div className="form-vertical">
-                                        <div className="form-group">
-                                          <label style={{ fontWeight: "bold" }}>Email</label>
-                                          <TagsInput
-                                            value={this.state.emailInvite}
-                                            onChange={this.handleChange.bind(this)}
-                                            addOnPaste={true}
-                                            addOnBlur={true}
-                                            inputProps={{ placeholder: `Participant's Email` }}
-                                          />
-                                          <Form.Text>
-                                            Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
-                                          </Form.Text>
-                                        </div>
-                                      </div>
-                                      <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
-                                        <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
-                                      </button>
-                                      <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
-                                        Cancel
-                                      </button>
-                                    </Modal.Body>
-                                  </Modal>
-                                  
-                                <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
-                                  <Modal.Header closeButton>
-                                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                      Confirmation
-                                    </Modal.Title>
-                                  </Modal.Header>
-                                  <Modal.Body>
-                                    <div>Are you sure you want to end the meeting for all participants?</div>
-                                  </Modal.Body>
-                                  <Modal.Footer>
-                                    <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalEnd.bind(this)}>
-                                      Cancel
-                                    </button>
-                                    <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.endMeeting.bind(this)}>
-                                      <i className="fa fa-trash"></i> End The Meeting
-                                    </button>
-                                  </Modal.Footer>
-                                </Modal>
-
-                                <Modal show={this.state.modalFileSharing} onHide={this.closeModalFileSharing} centered>
-                                  <Modal.Header closeButton>
-                                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                      File Sharing
-                                    </Modal.Title>
-                                  </Modal.Header>
-                                  <Modal.Body>
-
-                                    <div>
-                                      <div className="col-sm-12">
-                                        <div id="scrollin" className='card ' style={{ height: '400px', marginBottom: '0px' }}>
-                                          <div style={{ height: '100%', overflowY: 'scroll' }}>
-                                            {this.state.fileChat.map((item, i) => {
-                                              return (
-                                                <div className='box-chat-send-left'>
-                                                  <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
-                                                  <br />
-                                                  <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
-                                                    <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
-                                                  </p>
-                                                  <small>
-                                                    {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
-                                                      {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
-                                                  </small> { classRooms.moderator == Storage.get("user").data.user_id &&
-                                                    <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash" style={{cursor:'pointer'}}></i>
-                                                  }
-                                                </div>
-                                              )
-                                            })}
-                                          </div>
-                                        </div>
-
-                                        <div className='card p-20'>
-                                          <Row className='filesharing'>
-                                            <Col sm={10}>
-                                              <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                                                < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Choose File' : this.state.nameFile}
-                                              </label>
-                                              <input className="hidden" type="file" id="attachment" name="attachment" onChange={this.onChangeInput} />
-                                            </Col>
-                                            <Col sm={2}>
-                                              <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                                                {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
-                                              </button>
-                                              {/*
-                                              <button onClick={this.onBotoomScroll}>coba</button> */}
-                                            </Col>
-                                          </Row>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </Modal.Body>
-                                </Modal>
-
-                                <Modal show={this.state.modalMOM} onHide={this.closeModalMOM} dialogClassName='modal-lg' centered>
-                                  <Modal.Header closeButton>
-                                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                      Minutes Of Meeting
-                                    </Modal.Title>
-                                  </Modal.Header>
-                                  <Modal.Body>
-
-                                    <div className="col-sm-12">{/* CHATING SEND FILE */}
-                                      <div id="scrollin" className="card" style={{ padding: 10 }}>
-                                        <div className={this.state.editMOM ? 'hidden' : ''}>
-                                          <button to={"#"} onClick={(a) => { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
-                                          </button>
-                                        </div>
-                                        {!this.state.editMOM ?
-                                          <div className="card">
-                                            <div className="col-sm-12">
-                                              {this.state.listMOM.map((item, i) => (
-                                                <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
-                                                  <h3 className="f-18 f-w-bold f-w-800">
-                                                    {item.title}
-                                                    <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
-                                                      <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
-                                                        Export PDF
-                                                                </Link>
-                                                      <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
-                                                        <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
-                                                      </Link>
-                                                      <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
-                                                        <i data-id={item.id} className="fa fa-trash"></i>
-                                                      </Link>
-                                                    </span>
-                                                  </h3>
-                                                  <p>{moment.tz(item.time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")}</p>
-                                                </div>
-                                              ))}
-                                            </div>
-                                          </div>
-                                          :
-                                          <div>
-                                            <Link to='#' title="Back" onClick={this.backMOM}>
-                                              <h4 className="f-20 f-w-800 p-10">
-                                                <i className="fa fa-arrow-left"></i> Back
-                                                    </h4>
-                                            </Link>
-                                            <h4 className="p-10">{classRooms.room_name}</h4>
-                                            <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                              <Form.Label className="f-w-bold">
-                                                MOM Title
-                                            </Form.Label>
-                                              <div style={{ width: '100%' }}>
-                                                <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="Insert MOM Title" onChange={this.onChangeInputMOM} />
-                                              </div>
-                                            </Form.Group>
-                                            <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                              <Form.Label className="f-w-bold">
-                                                Time
-                                            </Form.Label>
-                                              <div style={{ width: '100%' }}>
-                                                <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
-                                              </div>
-                                            </Form.Group>
-                                            {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                            <Form.Label className="f-w-bold">
-                                              Text Dari Subtitle
-                                            </Form.Label>
-                                            <div style={{ width: '100%' }}>
-                                              <select style={{ textTransform: 'capitalize', width: '40%', display: 'inline-block' }} name="subtitle" className="form-control" onChange={this.onChangeInputMOM} required>
-                                                <option value="">Pilih</option>
-                                                {dataMOM.map((item, index) => (
-                                                <option value={index} selected={ item._id===this.state.selectSubtitle ? "selected" : "" }>
-                                                  {moment.tz(item.start_time, moment.tz.guess(true)).format("DD MMMM YYYY, HH:mm") + " - " + moment.tz(item.end_time, moment.tz.guess(true)).format("HH:mm")}
-                                                </option>
-                                                ))}
-                                              </select>
-                                              <button to={ "#"} onClick={this.addSubsToMOM} className="btn btn-icademy-primary ml-2">
-                                                Add to MOM
-                                              </button>
-                                            </div>
-                                          </Form.Group> */}
-
-
-                                            <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                                              <Form.Label className="f-w-bold">
-                                                Speech recognition
-                                            </Form.Label>
-                                              <Dictation newTranscript={this.handleTranscript} />
-                                            </Form.Group>
-
-                                            <div className="chart-container" style={{ position: "relative", margin: 20 }}>
-                                              <div className="form-group">
-                                                <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{
-                                                  height: 400, menubar: true, plugins: [
-                                                    "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount"], toolbar: "undo redo | formatselect | bold italic backcolor | \
-                                                        alignleft aligncenter alignright alignjustify | \
-                                                        bullist numlist outdent indent | removeformat | help" }} />
-                                              </div>
-                                            </div>
-                                            <div>
-                                              <button to={"#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                                                Save
-                                            </button>
-                                            </div>
-                                          </div>
-                                        }
-                                      </div>
-                                    </div>
-                                  </Modal.Body>
-                                </Modal>
-
-                                <Modal show={this.state.modalGantt} onHide={this.closeModalGantt} dialogClassName='modal-2xl' centered>
-                                  <Modal.Header closeButton>
-                                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                      Task & Timeline - &nbsp;
-                                      <select className="select-project" name="shareGantt" value={this.state.shareGantt} onChange={this.changeShareGantt}>
-                                        <option value={0}>Project Not Selected</option>
-                                        {this.state.project.map(item =>
-                                          <option value={item.id}>{item.title}</option>
-                                        )}
-                                      </select>
-                                    </Modal.Title>
-                                  </Modal.Header>
-                                  <Modal.Body>
-                                    <div className="gantt-container">
-                                      {this.state.shareGantt != 0 &&
-                                        <Gantt projectId={this.state.shareGantt} />}
-                                    </div>
-                                  </Modal.Body>
-                                </Modal>
-
-                                <Modal show={this.state.modalFileShow} onHide={this.closeModalFileShow} dialogClassName='modal-2xl' centered>
-                                  <Modal.Header closeButton>
-                                    <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-                                      Files on project {classRooms.project_name}
-                                    </Modal.Title>
-                                  </Modal.Header>
-                                  <Modal.Body>
-                                    <div className="wrap" style={{ marginTop: '10px', overflowY: 'scroll' }}>
-                                      {this.state.selectedFileShow === '' && <TableFiles access_project_admin={false} projectId={classRooms.folder_id} selectedFileShow={this.handleSelectFileShow} />}
-                                      {this.state.selectedFileShow !== '' &&
+                                      <div className="card p-20">
                                         <div>
-                                          <button to={"#"} onClick={this.handleSelectFileShow.bind(this, '')} className="btn btn-icademy-primary ml-2 col-2 f-14">
-                                            <i className="fa fa-stop" style={{ marginRight: 10 }}></i> Stop File Show
-                                        </button>
-                                          <CheckMedia media={this.state.selectedFileShow} />
-                                        </div>
-                                      }
-                                    </div>
-                                  </Modal.Body>
-                                </Modal>
+                                          <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
 
+                                          <div className="float-right dropleft">
+                                            <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight: 0, color: 'rgb(148 148 148)' }} />
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                              <button style={{ cursor: 'pointer' }} onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} type="button" class="dropdown-item">
+                                                <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: 10 }}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
+                                              </button>
+                                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite}>
+                                                <i className="fa fa-user-plus" style={{ marginRight: 10 }}></i> Invite People
+                                              </button>
+                                              {
+                                                (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
+                                                <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.id, classRooms.is_live)}>
+                                                  <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{ marginRight: 10 }}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                                </button>
+                                              }
+                                              {user.user_id == classRooms.moderator &&
+                                                <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => this.setState({ modalEnd: true })}>
+                                                  <i className="fa fa-stop-circle" style={{ marginRight: 10 }}></i> End Meeting
+                                            </button>
+                                              }
+                                              <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => window.close()}>
+                                                <i className="fa fa-sign-out-alt" style={{ marginRight: 10 }}></i> Exit Meeting
+                                            </button>
+                                            </div>
+                                          </div>
+
+                                          <Tooltip title="MOM" arrow placement="top">
+                                            <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !create_mom ? () => this.setState({ modalMOM: true }) : notify } className="float-right m-b-10">
+                                              <img
+                                                src={`newasset/room/room-mom.svg`}
+                                                alt=""
+                                                width={32}
+                                              ></img>
+                                            </span>
+                                          </Tooltip>
+
+                                          <Tooltip title="File Sharing" arrow placement="top">
+                                                <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
+                                              <img
+                                                src={`newasset/room/room-share.svg`}
+                                                alt=""
+                                                width={32}
+                                                ></img>
+                                            </span>
+                                          </Tooltip>
+
+                                          <Tooltip title="Task & Timeline" arrow placement="top">
+                                            <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newShareGantt ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalGantt: true, newShareGantt: false })} className="float-right m-b-10">
+                                              <img
+                                                src={`newasset/room/room-task.svg`}
+                                                alt=""
+                                                width={32}
+                                              ></img>
+                                            </span>
+                                          </Tooltip>
+                                          <Tooltip title="File Show" arrow placement="top">
+                                            <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important', borderRadius:50, border: this.state.newFileShow ? '4px solid #12db9f' : 'none' }} onClick={() => this.setState({ modalFileShow: true, newFileShow: false }, () => {this.setState({selectedFileShow: this.state.selectedFileShow})})} className="float-right m-b-10">
+                                              <img
+                                                src={`newasset/room/room-file.svg`}
+                                                alt=""
+                                                width={32}
+                                              ></img>
+                                            </span>
+                                          </Tooltip>
+
+                                          {
+                                            user.name && classRooms.room_name && this.state.join ?
+                    
+                                            <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
+                                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
+                                                width="100%"
+                                                height="600px"
+                                                display="initial"
+                                                frameBorder="0"
+                                                allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
+                                                position="relative" />
+                                            </div>
+                    
+                                              
+                                              :
+                                              null
+                                          }
+
+                                        </div>
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </ReactFullScreenElement>
                               </div>
                             </div>
                           </div>
@@ -1302,29 +958,407 @@ export default class MeetRoomPub extends Component {
                   </Fragment>
                   :
                   <Fragment>
-                    {
-                      user.name && classRooms.room_name && this.state.join ?
-                        <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
-                          <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
-                            display="initial"
-                            frameBorder="0"
-                            allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
-                            position='fixed'
-                            background='#000'
-                            border='none'
-                            top='0'
-                            right='0'
-                            bottom='0'
-                            left='0'
-                            width='100%'
-                            height='100%'
-                          />
+                    <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
+                      <div>
+                        <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+
+                        <div className="float-right dropleft">
+                          <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight: 0, color: 'rgb(148 148 148)' }} />
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                            <button style={{ cursor: 'pointer' }} onClick={() => this.setState({ fullscreen: !this.state.fullscreen })} type="button" class="dropdown-item">
+                              <i className={this.state.fullscreen ? 'fa fa-compress' : 'fa fa-expand'} style={{ marginRight: 10 }}></i> {this.state.fullscreen ? 'Minimize' : 'Maximize'}
+                            </button>
+                            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => window.close()}>
+                              <i className="fa fa-sign-out-alt" style={{ marginRight: 10 }}></i> Exit Meeting
+                            </button>
+                          </div>
                         </div>
-                        :
-                        null
-                    }
+
+                        <Tooltip title="File Sharing" arrow placement="top">
+                              <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !sharing_file ? () => this.setState({ modalFileSharing: true }) : notify} className="float-right m-b-10">
+                            <img
+                              src={`newasset/room/room-share.svg`}
+                              alt=""
+                              width={32}
+                              ></img>
+                          </span>
+                        </Tooltip>
+
+                        {
+                          user.name && classRooms.room_name && this.state.join ?
+                            <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
+                              <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
+                                display="initial"
+                                frameBorder="0"
+                                allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
+                                position='fixed'
+                                background='#000'
+                                border='none'
+                                top='0'
+                                right='0'
+                                bottom='0'
+                                left='0'
+                                width='100%'
+                                height='100%'
+                              />
+                            </div>
+                            :
+                            null
+                        }
+
+                      </div>
+                    </ReactFullScreenElement>
                   </Fragment>
               }
+
+              <Modal show={this.state.isModalConfirmation} onHide={this.closeModalConfirmation} dialogClassName="modal-lg">
+                <Modal.Body>
+                  <Modal.Title className="text-c-purple3 f-w-bold f-21" style={{ marginBottom: "30px" }}>
+                    Meeting and Attendance Information
+                  </Modal.Title>
+
+                  {this.state.needConfirmation >= 1 ?
+                    <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                      <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                        <div className="card-carousel col-sm-8">
+                          <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                            Attendance Confirmation
+                        </div>
+                          <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
+                        </div>
+                        <div className="card-carousel col-sm-4">
+                          <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
+                        </Link>
+                          <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
+                        </Link>
+                        </div>
+                      </div>
+                    </div>
+                    : null}
+                  <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="card">
+                      <div className="card-carousel">
+                        <div className="title-head f-w-900 f-16">
+                          {classRooms.room_name}
+                        </div>
+                        <div class="row">
+                          <div className="col-sm-6">
+                            {classRooms.is_akses ?
+                            <h3 className="f-14">
+                              Moderator : {classRooms.name}
+                            </h3>
+                            :null
+                            }
+                            <h3 className="f-14">
+                              {classRooms.is_private ? 'Private' : 'Public'} Meeting
+                            </h3>
+                          </div>
+                          {classRooms.is_scheduled ?
+                            <div className="col-sm-6">
+                              <h3 className="f-14">
+                                Start : {infoStart}
+                              </h3>
+                              <h3 className="f-14">
+                                End : {infoEnd}
+                              </h3>
+                            </div>
+                            : null}
+                        </div>
+                        {classRooms.is_private ?
+                          <div>
+                            <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                              Attendance Confirmation of {classRooms.participants.length} Participant
+                          </div>
+                            <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                              <div className='legend-kehadiran hadir'></div>
+                              <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
+                              <div className='legend-kehadiran tidak-hadir'></div>
+                              <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
+                              <div className='legend-kehadiran tentative'></div>
+                              <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTidakHadir})</h3>
+                            </div>
+                            <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                              {classRooms.participants.map(item =>
+                                <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                              )}
+                            </div>
+                          </div>
+                          : null} {classRooms.is_private ?
+                            <div>
+                              <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                                Actual Attendance In Meeting Room
+                          </div>
+                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                {classRooms.participants.map(item => item.actual == 'Hadir' &&
+                                  <div className='peserta aktual-hadir'>{item.name}</div>
+                                )}
+                              </div>
+                            </div>
+                            : null}
+                      </div>
+                    </div>
+                    <button type="button" className="btn btn-block f-w-bold" onClick={e => this.closeModalConfirmation()} > Close
+                    </button>
+                  </div>
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Invite Participants
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="form-vertical">
+                    <div className="form-group">
+                      <label style={{ fontWeight: "bold" }}>Email</label>
+                      <TagsInput
+                        value={this.state.emailInvite}
+                        onChange={this.handleChange.bind(this)}
+                        addOnPaste={true}
+                        addOnBlur={true}
+                        inputProps={{ placeholder: `Participant's Email` }}
+                      />
+                      <Form.Text>
+                        Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                      </Form.Text>
+                    </div>
+                  </div>
+                  <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
+                    <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
+                  </button>
+                  <button className="btn btm-icademy-primary btn-icademy-grey float-right" onClick={this.handleCloseInvite}>
+                    Cancel
+                  </button>
+                </Modal.Body>
+              </Modal>
+                
+              <Modal show={this.state.modalEnd} onHide={this.closeModalEnd} centered>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Confirmation
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div>Are you sure you want to end the meeting for all participants?</div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalEnd.bind(this)}>
+                    Cancel
+                  </button>
+                  <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.endMeeting.bind(this)}>
+                    <i className="fa fa-trash"></i> End The Meeting
+                  </button>
+                </Modal.Footer>
+              </Modal>
+
+              <Modal show={this.state.modalFileSharing} onHide={this.closeModalFileSharing} centered>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    File Sharing
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                  <div>
+                    <div className="col-sm-12">
+                      <div id="scrollin" className='card ' style={{ height: '400px', marginBottom: '0px' }}>
+                        <div style={{ height: '100%', overflowY: 'scroll' }}>
+                          {this.state.fileChat.map((item, i) => {
+                            return (
+                              <div className='box-chat-send-left'>
+                                <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
+                                <br />
+                                <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
+                                  <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
+                                </p>
+                                <small>
+                                  {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
+                                    {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
+                                </small> { classRooms.moderator == Storage.get("user").data.user_id &&
+                                  <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash" style={{cursor:'pointer'}}></i>
+                                }
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className='card p-20'>
+                        <Row className='filesharing'>
+                          <Col sm={10}>
+                            <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                              < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Choose File' : this.state.nameFile}
+                            </label>
+                            <input className="hidden" type="file" id="attachment" name="attachment" onChange={this.onChangeInput} />
+                          </Col>
+                          <Col sm={2}>
+                            <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                              {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
+                            </button>
+                            {/*
+                            <button onClick={this.onBotoomScroll}>coba</button> */}
+                          </Col>
+                        </Row>
+                      </div>
+                    </div>
+                  </div>
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={this.state.modalMOM} onHide={this.closeModalMOM} dialogClassName='modal-lg' centered>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Minutes Of Meeting
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                  <div className="col-sm-12">{/* CHATING SEND FILE */}
+                    <div id="scrollin" className="card" style={{ padding: 10 }}>
+                      <div className={this.state.editMOM ? 'hidden' : ''}>
+                        <button to={"#"} onClick={(a) => { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
+                        </button>
+                      </div>
+                      {!this.state.editMOM ?
+                        <div className="card">
+                          <div className="col-sm-12">
+                            {this.state.listMOM.map((item, i) => (
+                              <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
+                                <h3 className="f-18 f-w-bold f-w-800">
+                                  {item.title}
+                                  <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
+                                    <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
+                                      Export PDF
+                                              </Link>
+                                    <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
+                                      <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
+                                    </Link>
+                                    <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
+                                      <i data-id={item.id} className="fa fa-trash"></i>
+                                    </Link>
+                                  </span>
+                                </h3>
+                                <p>{moment.tz(item.time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        :
+                        <div>
+                          <Link to='#' title="Back" onClick={this.backMOM}>
+                            <h4 className="f-20 f-w-800 p-10">
+                              <i className="fa fa-arrow-left"></i> Back
+                                  </h4>
+                          </Link>
+                          <h4 className="p-10">{classRooms.room_name}</h4>
+                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                            <Form.Label className="f-w-bold">
+                              MOM Title
+                          </Form.Label>
+                            <div style={{ width: '100%' }}>
+                              <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="Insert MOM Title" onChange={this.onChangeInputMOM} />
+                            </div>
+                          </Form.Group>
+                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                            <Form.Label className="f-w-bold">
+                              Time
+                          </Form.Label>
+                            <div style={{ width: '100%' }}>
+                              <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
+                            </div>
+                          </Form.Group>
+                          {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                          <Form.Label className="f-w-bold">
+                            Text Dari Subtitle
+                          </Form.Label>
+                          <div style={{ width: '100%' }}>
+                            <select style={{ textTransform: 'capitalize', width: '40%', display: 'inline-block' }} name="subtitle" className="form-control" onChange={this.onChangeInputMOM} required>
+                              <option value="">Pilih</option>
+                              {dataMOM.map((item, index) => (
+                              <option value={index} selected={ item._id===this.state.selectSubtitle ? "selected" : "" }>
+                                {moment.tz(item.start_time, moment.tz.guess(true)).format("DD MMMM YYYY, HH:mm") + " - " + moment.tz(item.end_time, moment.tz.guess(true)).format("HH:mm")}
+                              </option>
+                              ))}
+                            </select>
+                            <button to={ "#"} onClick={this.addSubsToMOM} className="btn btn-icademy-primary ml-2">
+                              Add to MOM
+                            </button>
+                          </div>
+                        </Form.Group> */}
+
+
+                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                            <Form.Label className="f-w-bold">
+                              Speech recognition
+                          </Form.Label>
+                            <Dictation newTranscript={this.handleTranscript} />
+                          </Form.Group>
+
+                          <div className="chart-container" style={{ position: "relative", margin: 20 }}>
+                            <div className="form-group">
+                              <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{
+                                height: 400, menubar: true, plugins: [
+                                  "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount"], toolbar: "undo redo | formatselect | bold italic backcolor | \
+                                      alignleft aligncenter alignright alignjustify | \
+                                      bullist numlist outdent indent | removeformat | help" }} />
+                            </div>
+                          </div>
+                          <div>
+                            <button to={"#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                              Save
+                          </button>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={this.state.modalGantt} onHide={this.closeModalGantt} dialogClassName='modal-2xl' centered>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Task & Timeline - &nbsp;
+                    <select className="select-project" name="shareGantt" value={this.state.shareGantt} onChange={this.changeShareGantt}>
+                      <option value={0}>Project Not Selected</option>
+                      {this.state.project.map(item =>
+                        <option value={item.id}>{item.title}</option>
+                      )}
+                    </select>
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="gantt-container">
+                    {this.state.shareGantt != 0 &&
+                      <Gantt projectId={this.state.shareGantt} />}
+                  </div>
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={this.state.modalFileShow} onHide={this.closeModalFileShow} dialogClassName='modal-2xl' centered>
+                <Modal.Header closeButton>
+                  <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                    Files on project {classRooms.project_name}
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="wrap" style={{ marginTop: '10px', overflowY: 'scroll' }}>
+                    {this.state.selectedFileShow === '' && <TableFiles access_project_admin={false} projectId={classRooms.folder_id} selectedFileShow={this.handleSelectFileShow} />}
+                    {this.state.selectedFileShow !== '' &&
+                      <div>
+                        <button to={"#"} onClick={this.handleSelectFileShow.bind(this, '')} className="btn btn-icademy-primary ml-2 col-2 f-14">
+                          <i className="fa fa-stop" style={{ marginRight: 10 }}></i> Stop File Show
+                      </button>
+                        <CheckMedia media={this.state.selectedFileShow} />
+                      </div>
+                    }
+                  </div>
+                </Modal.Body>
+              </Modal>
             </Fragment>
         :
         <Fragment>
