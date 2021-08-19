@@ -374,6 +374,18 @@ export default class MeetRoomPub extends Component {
     this.setState({ user: { ...this.state.user, email: e.target.value } })
   }
 
+  onChangeInputFile = e => {
+    // const target = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    if (name === 'attachmentId') {
+      this.setState({ [name]: e.target.files });
+    } else {
+      this.setState({ [name]: value });
+    }
+  }
+
   sendFileNew() {
 
     let form = new FormData();
@@ -721,7 +733,128 @@ export default class MeetRoomPub extends Component {
     })
   }
 
- backMOM = e => {
+  onChangeInputMOM = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({ [name]: value })
+  }
+
+  addSubsToMOM = e => {
+    e.preventDefault();
+    if (this.state.subtitle == '') {
+      alert('Silahkan pilih subtitle')
+    }
+    else {
+      let subsContainer = ''
+      this.state.listSubtitle[this.state.subtitle].events.map((item, i) => {
+        subsContainer = subsContainer + this.state.listSubtitle[this.state.subtitle].events[i].participant.name + " : " + this.state.listSubtitle[this.state.subtitle].events[i].transcript[0].text + "<br>"
+      })
+      this.setState({
+        body: this.state.body + "<br>" + subsContainer + "<br>"
+      })
+    }
+  }
+
+  addMOM = e => {
+    e.preventDefault();
+
+    if (this.state.momid) {
+      let form = {
+        classId: this.state.classId,
+        title: this.state.title,
+        content: this.state.body.replace(/'/g, "\\'"),
+        time: moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
+      }
+      console.log('MOM DATA', form)
+
+      API.put(`${API_SERVER}v1/liveclass/mom/${this.state.momid}`, form).then(res => {
+        if (res.status === 200) {
+          if (!res.data.error) {
+            this.setState({
+              editMOM: false
+            });
+            this.fetchData();
+            this.setState({
+              momid: '',
+              title: '',
+              body: '',
+              time: new Date()
+            })
+          }
+        }
+      })
+    }
+    else {
+      let form = {
+        classId: this.state.classId,
+        title: this.state.title,
+        content: this.state.body.replace(/'/g, "\\'"),
+        time: moment.tz(this.state.startDate, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss"),
+        created_by : Storage.get('user').data.user_id
+      }
+      console.log('MOM DATA', form)
+
+      API.post(`${API_SERVER}v1/liveclass/mom`, form).then(res => {
+        if (res.status === 200) {
+          if (!res.data.error) {
+            this.setState({
+              editMOM: false
+            });
+            this.fetchData();
+            this.setState({
+              momid: '',
+              title: '',
+              body: '',
+              time: new Date()
+            })
+          }
+        }
+      })
+    }
+  }
+
+  handleChangeDateFrom = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+
+  onClickEditMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    const title = e.target.getAttribute('data-title');
+    const content = e.target.getAttribute('data-content');
+    const time = new Date(e.target.getAttribute('data-time'));
+    this.setState({
+      editMOM: true,
+      momid: momid,
+      title: title,
+      body: content,
+      startDate: time
+    })
+    console.log('MOM DATA STATE', this.state.title)
+  }
+
+  exportMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    window.open(`${APPS_SERVER}mom/?id=${momid}`, "_blank");
+  }
+
+  deleteMOM = e => {
+    e.preventDefault();
+    const momid = e.target.getAttribute('data-id');
+    API.delete(`${API_SERVER}v1/liveclass/mom/delete/${momid}`).then(res => {
+      if (res.status === 200) {
+        this.fetchData();
+      }
+    })
+  }
+
+  backMOM = e => {
     e.preventDefault();
     this.setState({
       momid: '',
@@ -1233,7 +1366,7 @@ export default class MeetRoomPub extends Component {
                                   <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
                                     <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
                                       Export PDF
-                                              </Link>
+                                    </Link>
                                     <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
                                       <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
                                     </Link>
