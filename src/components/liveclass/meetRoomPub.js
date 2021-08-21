@@ -969,6 +969,7 @@ export default class MeetRoomPub extends Component {
       return null
     };
 
+    let checkMeParti = classRooms.participants.filter(item => item.user_id === Storage.get('user').data.user_id).length
 
     return (
       <Fragment>
@@ -1589,7 +1590,7 @@ export default class MeetRoomPub extends Component {
                                     </button>
                                     
                                     {
-                                      session ?
+                                      checkMeParti.length === 1 && session ?
                                         <button onClick={() => this.addToCalendar()} className="btn btn-info btn-block mt-2">Add to Calendar</button>
                                       : null
                                     }
