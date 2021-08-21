@@ -40,6 +40,8 @@ class MeetingTable extends Component {
   constructor(props) {
     super(props);
 
+    this.roomId = null;
+
     // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
@@ -873,7 +875,7 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200 && res.data.result.length > 0) {
-        res.data.result.map(item => {
+        res.data.result.reverse().map(item => {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
           const jamIni = moment()
@@ -882,11 +884,12 @@ class MeetingTable extends Component {
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
-          // if (range) {
-          //   this.setState({ bookingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
-          //   console.log('run range')
-          //   this.fetchMeetingInfoBooking(item.meeting_id, item.id);
-          // }
+          if (range) {
+            // this.setState({ bokingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
+            // console.log('run range')
+            // this.fetchMeetingInfoBooking(item.meeting_id, item.id);
+            this.roomId = item.id
+          }
         })
         console.log('result', res.data.result, this.state.bookingToday)
         this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
@@ -1046,6 +1049,43 @@ class MeetingTable extends Component {
   openBooking = (classId, roomName) => {
     this.closeModalBooking()
     this.onClickJadwal(classId, roomName);
+  }
+
+  startMeetingNow = (classId, roomName) => {
+    let form = {
+      meeting_id: classId,
+      tanggal: Moment().local().format('YYYY-MM-DD'),
+      jam_mulai: Moment().local().format('HH:mm'),
+      jam_selesai: Moment().add(1, 'hours').format('HH:mm'),
+      user_id: Storage.get('user').data.user_id,
+      keterangan: `Meeting by ${Storage.get('user').data.user}`,
+
+      is_private: 1,
+      is_required_confirmation: 0,
+      peserta: [],
+      
+      is_akses: 1,
+      moderator: [Storage.get('user').data.user_id],
+    }
+
+    API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          toast.success('Menyimpan booking jadwal meeting')
+          this.setState({
+            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
+            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+            modalJadwal: false
+          })
+          
+          this.fetchBooking(classId, roomName)
+          
+          window.open(`/meet/${res.data.result.id}`, '_blank').focus();
+        } else {
+          toast.error("Error, gagal booking jadwal meeting")
+        }
+      }
+    })
   }
 
   render() {
@@ -1765,27 +1805,19 @@ class MeetingTable extends Component {
             }
                
           </Modal.Body>
-          <Modal.Footer>
-            {
-              this.state.infoClass.is_private === 0 ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
-                  <i className="fa fa-video"></i> Enter
+          {
+            (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
+              <Modal.Footer>
+                <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+                  onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                  <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor">&nbsp; Copy</i></button>
+                </CopyToClipboard>
+                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                  <i className="fa fa-video"></i> Join
                 </a>
-                :
-                (
-                  Moment().isBetween(infoDateStart, infoDateEnd)
-                )
-                  &&
-                (
-                  this.state.infoClass.is_required_confirmation === 0 || (this.state.infoClass.is_required_confirmation === 1 && this.state.attendanceConfirmation === 'Hadir')
-                )
-                  ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
-                  <i className="fa fa-video"></i> Enter
-                </a>
-                : null  
-            }
-          </Modal.Footer>
+              </Modal.Footer>
+              : null
+          }
         </Modal>
 
         <Modal show={this.state.isModalBooking} onHide={() => this.closeModalBooking()} dialogClassName="modal-xlg">
@@ -1886,7 +1918,17 @@ class MeetingTable extends Component {
             </table>
           </Modal.Body>
           <Modal.Footer>
-            <button className="btn btn-icademy-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
+            {
+              this.state.dataBooking.booking.length === 0 ?
+                <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
+                  Start meeting now
+                </button>
+                :
+                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
+                  <i className="fa fa-video"></i> Join
+                </a>
+            }
+            <button className="btn btn-v2 btn-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
               <i className="fa fa-book"></i> Book new meeting
             </button>
           </Modal.Footer>
