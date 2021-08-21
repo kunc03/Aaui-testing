@@ -148,8 +148,12 @@ class Event extends Component {
     const access_project_admin = this.props.access_project_admin;
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
-    let infoDateStart = new Date(this.state.infoClass.schedule_start);
-    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+    
+    let jamSekarang = Moment()
+    let infoDateStart = Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, Moment.tz.guess(true));
+    let infoDateEnd = Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, Moment.tz.guess(true));
+    
+    console.log('jamSekarang', { jamSekarang, infoDateStart, infoDateEnd, kondisi: jamSekarang.isBetween(infoDateStart, infoDateEnd) })
     const event = this.props.event;
     return (
       <div>
@@ -298,27 +302,16 @@ class Event extends Component {
               : null
             }
           </Modal.Body>
-          <Modal.Footer>
-            {
-              this.state.infoClass.is_private === 0 ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
-                  <i className="fa fa-video"></i> Enter
+          {
+            (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
+              <Modal.Footer>
+                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                  <i className="fa fa-video"></i> Join
                 </a>
-                :
-                (
-                  Moment().isBetween(infoDateStart, infoDateEnd)
-                )
-                  &&
-                (
-                  this.state.infoClass.is_required_confirmation === 0 || (this.state.infoClass.is_required_confirmation === 1 && this.state.attendanceConfirmation === 'Hadir')
-                )
-                  ?
-                <a className="btn btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
-                  <i className="fa fa-video"></i> Enter
-                </a>
-                : null  
-            }
-          </Modal.Footer>
+              </Modal.Footer>
+            : null
+          }
+
         </Modal>
       </div>
     );
