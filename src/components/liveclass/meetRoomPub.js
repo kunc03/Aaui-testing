@@ -43,6 +43,7 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    fileKey: Math.random().toString(36),
     session: Storage.get('user').data,
     welcome: true,
     fullscreen: false,
@@ -218,9 +219,29 @@ export default class MeetRoomPub extends Component {
             fileChat: res.data.result
           })
 
+          API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
+            if (res.status === 200) {
+              this.setState({
+                listMOM: res.data.result
+              })
+              API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
+                if (res.status === 200) {
+                  let publishSubsSelect = []
+                  res.data.result.map((item, i) => {
+                    if (item.events.length > 0) {
+                      publishSubsSelect.push(item)
+                    }
+                  })
+                  this.setState({
+                    listSubtitle: publishSubsSelect
+                  })
 
+                }
+
+              })
+            }
+          })
         }
-
       })
     })
       .catch(function (error) {
@@ -415,6 +436,8 @@ export default class MeetRoomPub extends Component {
             filenameattac: datas.filenameattac,
             created_at: new Date()
           })
+
+          this.setState({ fileKey: Math.random().toString(36) })
         } else {
           alert('File yang anda input salah')
         }
@@ -495,7 +518,7 @@ export default class MeetRoomPub extends Component {
         let formNotif = {
           user_id: this.state.classRooms.moderator,
           type: 3,
-          activity_id: this.state.classRooms.class_id,
+          activity_id: this.state.classRooms.id,
           desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.classRooms.room_name,
           dest: null,
         }
@@ -534,7 +557,7 @@ export default class MeetRoomPub extends Component {
   handleSelectFileShow = (val) => {
     let api = bbb.api(BBB_URL, BBB_KEY)
     let http = bbb.http
-    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+    let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.id)
     http(meetingInfo).then((result) => {
       let role = 'VIEWER';
       if (this.state.isZoom) {
@@ -553,14 +576,14 @@ export default class MeetRoomPub extends Component {
         let form = {
           selectedFileShow: val
         }
-        API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.class_id}`, form).then(res => {
+        API.put(`${API_SERVER}v1/liveclass/share-file/${this.state.classRooms.id}`, form).then(res => {
           if (res.status === 200) {
             if (!res.data.error) {
               this.setState({ selectedFileShow: val })
               socket.emit('send', {
                 socketAction: 'fileShow',
                 userId: this.state.user.user_id,
-                meetingId: this.state.classRooms.class_id,
+                meetingId: this.state.classRooms.id,
                 selectedFileShow: val
               })
             } else {
@@ -1308,50 +1331,50 @@ export default class MeetRoomPub extends Component {
                     File Sharing
                   </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-
-                  <div>
-                    <div className="col-sm-12">
-                      <div id="scrollin" className='card ' style={{ height: '400px', marginBottom: '0px' }}>
-                        <div style={{ height: '100%', overflowY: 'scroll' }}>
-                          {this.state.fileChat.map((item, i) => {
-                            return (
-                              <div className='box-chat-send-left'>
-                                <span className="m-b-5"><Link to='#'><b>{item.name} </b></Link></span>
-                                <br />
-                                <p className="fc-skyblue"> {decodeURI(item.filenameattac)}
-                                  <a target='_blank' className="float-right" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
-                                </p>
-                                <small>
-                                  {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
-                                    {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
-                                </small> { classRooms.moderator == Storage.get("user").data.user_id &&
-                                  <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="fa fa-trash" style={{cursor:'pointer'}}></i>
-                                }
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-
-                      <div className='card p-20'>
-                        <Row className='filesharing'>
-                          <Col sm={10}>
-                            <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
-                              < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Choose File' : this.state.nameFile}
-                            </label>
-                            <input className="hidden" type="file" id="attachment" name="attachment" onChange={this.onChangeInput} />
-                          </Col>
-                          <Col sm={2}>
-                            <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
-                              {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
-                            </button>
-                            {/*
-                            <button onClick={this.onBotoomScroll}>coba</button> */}
-                          </Col>
-                        </Row>
-                      </div>
+                <Modal.Body style={{padding: 0}}>
+                  <div id="scrollin" className='card ' style={{ height: '400px', marginBottom: '0px' }}>
+                    <div style={{ height: '100%', overflowY: 'scroll' }}>
+                      {this.state.fileChat.map((item, i) => {
+                        return (
+                          <div className='box-chat-send-left'>
+                            <span>
+                              <b>{item.name} </b>
+                              <small className="float-right">
+                                {moment(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}  &nbsp;
+                                {moment(item.created_at).tz(moment.tz.guess(true)).format('h:sA')}
+                              </small>
+                            </span>
+                            <br />
+                            <p className="fc-skyblue mt-2"> {decodeURI(item.filenameattac)}
+                              {
+                                classRooms.moderator == Storage.get("user").data.user_id ?
+                                  <i data-file={item.attachment} onClick={this.onClickRemoveChat} className="float-right fa fa-trash" style={{ cursor: 'pointer' }}></i>
+                                : null
+                              }
+                              <a target='_blank' rel="noopener noreferrer" className="float-right mr-2" href={item.attachment}> <i className="fa fa-download" aria-hidden="true"></i></a>
+                            </p>
+                          </div>
+                        )
+                      })}
                     </div>
+                  </div>
+
+                  <div className='card p-20' style={{marginBottom: 0}}>
+                    <Row className='filesharing'>
+                      <Col sm={10}>
+                        <label for="attachment" class="custom-file-upload" onChange={this.onChangeInput}>
+                          < i className="fa fa-paperclip m-t-10 p-r-5" aria-hidden="true"></i> {this.state.nameFile === null ? 'Choose File' : this.state.nameFile}
+                        </label>
+                        <input key={this.state.fileKey} className="hidden" type="file" id="attachment" name="attachment" onChange={this.onChangeInput} />
+                      </Col>
+                      <Col sm={2}>
+                        <button onClick={this.sendFileNew.bind(this)} to="#" className="float-right btn btn-icademy-primary ml-2">
+                          {this.state.loadingFileSharing ? 'Sending...' : 'Send'}
+                        </button>
+                        {/*
+                        <button onClick={this.onBotoomScroll}>coba</button> */}
+                      </Col>
+                    </Row>
                   </div>
                 </Modal.Body>
               </Modal>
@@ -1399,7 +1422,7 @@ export default class MeetRoomPub extends Component {
                           <Link to='#' title="Back" onClick={this.backMOM}>
                             <h4 className="f-20 f-w-800 p-10">
                               <i className="fa fa-arrow-left"></i> Back
-                                  </h4>
+                            </h4>
                           </Link>
                           <h4 className="p-10">{classRooms.room_name}</h4>
                           <Form.Group controlId="formJudul" style={{ padding: 10 }}>
