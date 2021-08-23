@@ -45,6 +45,7 @@ class MeetingTable extends Component {
     // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
+      isLoadBooking: false,
       isFetch: false,
       users: [],
       dataUser: [],
@@ -873,6 +874,7 @@ class MeetingTable extends Component {
   }
 
   fetchBooking(id, room) {
+    this.setState({ isLoadBooking: true })
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200 && res.data.result.length > 0) {
         res.data.result.reverse().map(item => {
@@ -884,15 +886,14 @@ class MeetingTable extends Component {
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
-          if (range) {
+          if (range && item.running) {
             // this.setState({ bokingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
             // console.log('run range')
             // this.fetchMeetingInfoBooking(item.meeting_id, item.id);
             this.roomId = item.id
           }
         })
-        console.log('result', res.data.result, this.state.bookingToday)
-        this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
+        this.setState({ dataBooking: { room_name: room, booking: res.data.result }, isLoadBooking: false })
       }
     })
   }
@@ -1412,73 +1413,78 @@ class MeetingTable extends Component {
                   </thead>
                   <tbody>
                     {
-                      this.state.dataBooking.booking.length ?
-                        this.state.dataBooking.booking.map((item) => {
-                          const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
+                      this.state.isLoadBooking ?
+                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                          <td colspan='9'>Loading</td>
+                        </tr>
+                        : 
+                        !this.state.isLoadBooking && this.state.dataBooking.booking.length ?
+                          this.state.dataBooking.booking.map((item) => {
+                            const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
 
-                          const split = item.tanggal.split('-')
-                          const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
-                          const jamIni = moment()
-                          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
-                          const range = jamIni.isBetween(sJadwal, eJadwal)
+                            const split = item.tanggal.split('-')
+                            const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                            const jamIni = moment()
+                            const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                            const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                            const range = jamIni.isBetween(sJadwal, eJadwal)
 
-                          return (
-                            <Fragment>
-                              <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                                <td>{item.jam_mulai}</td>
-                                <td>{item.jam_selesai}</td>
-                                <td>{item.name}</td>
-                                <td>{item.moderator_name}</td>
-                                <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
-                                <td>{item.keterangan ? item.keterangan : '-'}</td>
-                                <td>
-                                  <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                                    <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                                  </CopyToClipboard>
-                                </td>
-                                <td>
-                                  <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
-                                  {
-                                    range ?
-                                      <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                        <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
-                                      </a>
-                                    : null
-                                  }
-                                </td>
-                              </tr>
-                              <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
-                                <td colSpan="9">
-                                  <div className="title-head f-w-900 f-16">
-                                    Confirmation Attendace {item.participants.length} Participants
-                                  </div>
-                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                    <div className='legend-kehadiran hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
-                                    <div className='legend-kehadiran tidak-hadir'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
-                                    <div className='legend-kehadiran tentative'></div>
-                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
-                                  </div>
-                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                  {
-                                    item.participants.map(r => (
-                                      <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
-                                    ))
-                                  }
-                                  </div>
-                                </td>
-                              </tr>
-                            </Fragment>
-                          )
-                        })
-                        :
-                        (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td colspan='9'>There is no booking</td>
-                        </tr>)
+                            return (
+                              <Fragment>
+                                <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                                  <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                                  <td>{item.jam_mulai}</td>
+                                  <td>{item.jam_selesai}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.moderator_name}</td>
+                                  <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                                  <td>{item.keterangan ? item.keterangan : '-'}</td>
+                                  <td>
+                                    <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                      onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                    </CopyToClipboard>
+                                  </td>
+                                  <td>
+                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                    {
+                                      range ?
+                                        <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                          <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                        </a>
+                                      : null
+                                    }
+                                  </td>
+                                </tr>
+                                <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                                  <td colSpan="9">
+                                    <div className="title-head f-w-900 f-16">
+                                      Confirmation Attendace {item.participants.length} Participants
+                                    </div>
+                                    <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                      <div className='legend-kehadiran hadir'></div>
+                                      <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                      <div className='legend-kehadiran tidak-hadir'></div>
+                                      <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                      <div className='legend-kehadiran tentative'></div>
+                                      <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                    </div>
+                                    <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                    {
+                                      item.participants.map(r => (
+                                        <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                      ))
+                                    }
+                                    </div>
+                                  </td>
+                                </tr>
+                              </Fragment>
+                            )
+                          })
+                          :
+                          (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td colspan='9'>There is no booking</td>
+                          </tr>)
                     }
                   </tbody>
                 </table>
@@ -1846,87 +1852,92 @@ class MeetingTable extends Component {
               </thead>
               <tbody>
                 {
-                  this.state.dataBooking.booking.length ?
-                    this.state.dataBooking.booking.map((item) => {
-                      const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
+                  this.state.isLoadBooking ?
+                    <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                      <td colspan='9'>Loading</td>
+                    </tr>
+                    : 
+                    !this.state.isLoadBooking && this.state.dataBooking.booking.length ?
+                      this.state.dataBooking.booking.map((item) => {
+                        const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
 
-                      const split = item.tanggal.split('-')
-                      const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
-                      const jamIni = moment()
-                      const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                      const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
-                      const range = jamIni.isBetween(sJadwal, eJadwal)
+                        const split = item.tanggal.split('-')
+                        const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                        const jamIni = moment()
+                        const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                        const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                        const range = jamIni.isBetween(sJadwal, eJadwal)
 
-                      return (
-                        <Fragment>
-                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                            <td>{item.jam_mulai}</td>
-                            <td>{item.jam_selesai}</td>
-                            <td>{item.name}</td>
-                            <td>{item.moderator_name}</td>
-                            <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
-                            <td>{item.keterangan ? item.keterangan : '-'}</td>
-                            <td>
-                              <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                                onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                                <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                              </CopyToClipboard>
-                            </td>
-                            <td>
-                              <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
-                              {
-                                range ?
-                                  <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                    <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
-                                  </a>
-                                : null
-                              }
-                            </td>
-                          </tr>
-                          <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
-                            <td colSpan="9">
-                              <div className="title-head f-w-900 f-16">
-                                Confirmation Attendace {item.participants.length} Participants
-                              </div>
-                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                                <div className='legend-kehadiran hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
-                                <div className='legend-kehadiran tidak-hadir'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
-                                <div className='legend-kehadiran tentative'></div>
-                                <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
-                              </div>
-                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                              {
-                                item.participants.map(r => (
-                                  <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
-                                ))
-                              }
-                              </div>
-                            </td>
-                          </tr>
-                        </Fragment>
-                      )
-                    })
-                    :
-                    (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                      <td colspan='9'>There is no booking</td>
-                    </tr>)
+                        return (
+                          <Fragment>
+                            <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                              <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                              <td>{item.jam_mulai}</td>
+                              <td>{item.jam_selesai}</td>
+                              <td>{item.name}</td>
+                              <td>{item.moderator_name}</td>
+                              <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                              <td>{item.keterangan ? item.keterangan : '-'}</td>
+                              <td>
+                                <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                  onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                  <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                </CopyToClipboard>
+                              </td>
+                              <td>
+                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                {
+                                  range ?
+                                    <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                      <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                    </a>
+                                  : null
+                                }
+                              </td>
+                            </tr>
+                            <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                              <td colSpan="9">
+                                <div className="title-head f-w-900 f-16">
+                                  Confirmation Attendace {item.participants.length} Participants
+                                </div>
+                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  <div className='legend-kehadiran hadir'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                  <div className='legend-kehadiran tidak-hadir'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                  <div className='legend-kehadiran tentative'></div>
+                                  <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                </div>
+                                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                {
+                                  item.participants.map(r => (
+                                    <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                  ))
+                                }
+                                </div>
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )
+                      })
+                      :
+                      (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                        <td colspan='9'>There is no booking</td>
+                      </tr>)
                 }
               </tbody>
             </table>
           </Modal.Body>
           <Modal.Footer>
             {
-              this.state.dataBooking.booking.length === 0 ?
-                <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
-                  Start meeting now
-                </button>
-                :
+              this.roomId ?
                 <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
                   <i className="fa fa-video"></i> Join
                 </a>
+                :
+                <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
+                  <i className="fa fa-video"></i> Start meeting now
+                </button>
             }
             <button className="btn btn-v2 btn-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
               <i className="fa fa-book"></i> Book new meeting
