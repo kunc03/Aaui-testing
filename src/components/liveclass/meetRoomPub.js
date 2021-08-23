@@ -470,6 +470,15 @@ export default class MeetRoomPub extends Component {
       if (res.status === 200) {
         let { result, message } = res.data
         toast.success(message ? message : 'Meeting added to My Calendar.')
+
+        if (!message) {
+          // insert to parti
+          let form = {
+            meeting_id: classRooms.booking_id,
+            user_id: Storage.get('user').data.user_id
+          }
+          API.post(`${API_SERVER}v2/meetpub/participant`, form)
+        }
       }
     })
   }
@@ -1595,8 +1604,9 @@ export default class MeetRoomPub extends Component {
                                     
                                     {
                                       checkMeParti === 1 && session ?
+                                        null
+                                      :
                                         <button onClick={() => this.addToCalendar()} className="btn btn-info btn-block mt-2">Add to Calendar</button>
-                                      : null
                                     }
                                       
                                     {
