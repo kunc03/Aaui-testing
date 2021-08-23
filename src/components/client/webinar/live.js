@@ -44,6 +44,7 @@ export default class WebinarLive extends Component {
     tanggal:'',
     tanggalEnd:'',
     user: [],
+    joined: false,
     projectId: '',
     dokumenId: '',
     modalConfirmClose: false,
@@ -453,21 +454,42 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                // Jika sudah ada, join
-                let joinUrl = api.administration.join(
-                  this.state.user.name,
-                  this.state.webinar.id,
-                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
-                  { userID: this.state.user.user_id }
-                )
-
-                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
-                let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
-
-                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-
-                this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                let checkAttendee = Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x=>
+                  x.userID === this.state.user.user_id &&
+                  (
+                    x.isListeningOnly ||
+                    x.hasJoinedVoice ||
+                    x.hasVideo
+                  )
+                ).length
+                :
+                result.attendees.attendee.userID === this.state.user.user_id &&
+                (
+                  result.attendees.attendee.isListeningOnly ||
+                  result.attendees.attendee.hasJoinedVoice ||
+                  result.attendees.attendee.hasVideo
+                );
+                if (checkAttendee){
+                  this.setState({joined: true});
+                }
+                else{
+                  // Jika sudah ada, join
+                  let joinUrl = api.administration.join(
+                    this.state.user.name,
+                    this.state.webinar.id,
+                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    { userID: this.state.user.user_id }
+                  )
+  
+                  let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                  let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                  let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
+  
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+  
+                  this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                }
               }
             })
             // BBB JOIN END
@@ -570,21 +592,42 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                // Jika sudah ada, join
-                let joinUrl = api.administration.join(
-                  this.state.user.name,
-                  this.state.webinar.id,
-                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
-                  { userID: this.state.user.user_id }
-                )
-
-                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
-                let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
-
-                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-
-                this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                let checkAttendee = Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x=>
+                  x.userID === this.state.user.user_id &&
+                  (
+                    x.isListeningOnly ||
+                    x.hasJoinedVoice ||
+                    x.hasVideo
+                  )
+                ).length
+                :
+                result.attendees.attendee.userID === this.state.user.user_id &&
+                (
+                  result.attendees.attendee.isListeningOnly ||
+                  result.attendees.attendee.hasJoinedVoice ||
+                  result.attendees.attendee.hasVideo
+                );
+                if (checkAttendee){
+                  this.setState({joined: true});
+                }
+                else{
+                  // Jika sudah ada, join
+                  let joinUrl = api.administration.join(
+                    this.state.user.name,
+                    this.state.webinar.id,
+                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    { userID: this.state.user.user_id }
+                  )
+  
+                  let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                  let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                  let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
+  
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+  
+                  this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                }
               }
             })
             // BBB JOIN END
@@ -995,7 +1038,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                     <div className="row">
                       <div className="col-sm-12">
                         {
-                          this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+                          (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
                           <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                             <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
@@ -1010,6 +1053,11 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               <h3>The webinar has ended</h3>
                               :
                               <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h3>
+                        }
+                        {
+                          this.state.joined ?
+                          <h4 style={{marginTop:'20px'}}>This voucher has joined this webinar. You can't multiple access the webinar.<br/>If you want to access the webinar from this page, simply exit from other device or tab and refresh this page.</h4>
+                          : null
                         }
                         {
                           this.state.status !== 3 &&
