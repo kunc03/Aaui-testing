@@ -206,7 +206,7 @@ export default class MeetingRoomPublic extends Component {
         let joinUrl = api.administration.join(
           this.state.user.name,
           this.state.classRooms.class_id,
-          this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
+          this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
           {
             userID: this.state.user.user_id,
             guest: true
