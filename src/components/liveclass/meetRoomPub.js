@@ -222,7 +222,7 @@ export default class MeetRoomPub extends Component {
           API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
             if (res.status === 200) {
               this.setState({
-                listMOM: res.data.result
+                listMOM: res.data.result ? res.data.result : []
               })
               API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
                 if (res.status === 200) {
@@ -338,8 +338,8 @@ export default class MeetRoomPub extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: new Date(this.state.classRooms.schedule_start).toISOString().slice(0, 16).replace('T', ' '),
-        schedule_end: new Date(this.state.classRooms.schedule_end).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_start: new Date(this.state.classRooms.tgl_mulai).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_end: new Date(this.state.classRooms.tgl_selesai).toISOString().slice(0, 16).replace('T', ' '),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
@@ -944,8 +944,22 @@ export default class MeetRoomPub extends Component {
     })
   }
 
-
-
+  onClickRemoveChat = e => {
+    e.preventDefault();
+    let form = { attachment: e.target.getAttribute('data-file') };
+    API.post(`${API_SERVER}v1/liveclass/file/remove`, form).then(res => {
+      if (res.status === 200) {
+        this.fetchData();
+        socket.emit('send', {
+          pengirim: this.state.user.user_id,
+          room: this.state.classId,
+          attachment: form.attachment,
+          filenameattac: form.attachment,
+          created_at: new Date()
+        })
+      }
+    })
+  }
 
   render() {
 
@@ -1006,6 +1020,8 @@ export default class MeetRoomPub extends Component {
     if (classRooms && classRooms.hasOwnProperty('participants')) {
       checkMeParti = classRooms.participants.filter(item => item.user_id === Storage.get('user').data.user_id).length;
     }
+
+    console.log('listMOM', this.state.listMOM)
 
     return (
       <Fragment>
@@ -1158,7 +1174,7 @@ export default class MeetRoomPub extends Component {
 
                         {
                           user.name && classRooms.room_name && this.state.join ?
-                            <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
+                            <div style={{background:`url('newasset/loading.gif') center center no-repeat`, marginTop: '14px'}}>
                               <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
                                 display="initial"
                                 frameBorder="0"
@@ -1171,7 +1187,7 @@ export default class MeetRoomPub extends Component {
                                 bottom='0'
                                 left='0'
                                 width='100%'
-                                height='100%'
+                                height='94%'
                               />
                             </div>
                             :
