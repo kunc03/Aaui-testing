@@ -930,7 +930,7 @@ fetchRekamanBBB(folder){
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
                                     <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {item.name} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {item.date}
+                                  {moment(item.date).local().format('DD-MM-YYYY HH:mm')}
                                 </td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                                   {item.creator ? item.creator : '-'}
