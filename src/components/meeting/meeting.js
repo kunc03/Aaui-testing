@@ -20,6 +20,7 @@ import DatePicker from "react-datepicker";
 import DataTable from 'react-data-table-component';
 import SocketContext from '../../socket';
 import { isMobile } from 'react-device-detect';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone'
@@ -38,6 +39,8 @@ const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3
 class MeetingTable extends Component {
   constructor(props) {
     super(props);
+
+    this.roomId = null;
 
     // this._deleteUser = this._deleteUser.bind(this);
 
@@ -69,6 +72,8 @@ class MeetingTable extends Component {
 
       imgPreview: '',
 
+      isModalBooking: false,
+
       classId: '',
       speaker: '',
       roomName: '',
@@ -97,7 +102,7 @@ class MeetingTable extends Component {
       valueGroup: [],
       //Toggle Switch
       akses: false,
-      private: false,
+      private: true,
       scheduled: false,
       requireConfirmation: false,
       startDate: new Date(),
@@ -136,6 +141,22 @@ class MeetingTable extends Component {
   }
   handleChangeEmail(emailInvite) {
     this.setState({ emailInvite })
+  }
+
+  closeModalBooking = () => {
+    this.setState({
+      isModalBooking: false,
+      // roomName: '',
+      bookingToday: {
+        meeting_id: null,
+        booking_id: null
+      },
+      dataBooking: {
+        room_name: '',
+        booking: []
+      },
+      infoParticipant: [],
+    })
   }
 
 
@@ -270,14 +291,39 @@ class MeetingTable extends Component {
     }
   }
   closeClassModal = e => {
-    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: false, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: true, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
-    this.setState({ modalJadwal: false });
+    this.setState({ modalJadwal: false, infoParticipant: [] });
   }
 
   closeModalConfirmation = e => {
-    this.setState({ isModalConfirmation: false, dataBooking: { room_name: '', booking: [] }, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: false, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
+    this.setState({
+      isModalConfirmation: false,
+      dataBooking: {
+        room_name: '',
+        booking: []
+      },
+      isModalBooking: true,
+      speaker: '',
+      // classId: '',
+      // roomName: '',
+      imgPreview: '',
+      cover: '',
+      valueGroup: [],
+      valueModerator: [],
+      valuePeserta: [],
+      valueFolder: [],
+      infoClass: [],
+      private: true,
+      requireConfirmation: false,
+      akses: false, 
+      infoParticipant: [], 
+      scheduled: false,
+      startDate: new Date(),
+      endDate: new Date()
+    });
+    this.fetchBooking(this.state.classId, this.state.roomName);
   }
 
   fetchMeetingInfo(id) {
@@ -305,8 +351,6 @@ class MeetingTable extends Component {
       window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + meetingId))
     }
     API.post(`${API_SERVER}v1/liveclass/meeting-booking-info`, {meeting_id: meetingId, booking_id: bookingId}).then(res => {
-      console.log(res.data.result, 'prop informationId');
-      console.log(res.data.result[1], 'prop informationId')
       if (res.status === 200 && res.data.error === false) {
         this.setState({
           infoClass: res.data.result[0],
@@ -332,11 +376,14 @@ class MeetingTable extends Component {
   closeModalDelete = e => {
     this.setState({ modalDelete: false, deleteMeetingName: '', deleteMeetingId: '' })
   }
-  onClickInfo(class_id, room_name) {
-    this.setState({ isModalConfirmation: true });
+
+  onClickInfo(classId, roomName) {
+    // this.setState({ isModalConfirmation: true });
     // this.fetchMeetingInfo(class_id);
-    this.fetchMeetingInfoBooking(class_id, 0);
-    this.fetchBooking(class_id, room_name)
+    // this.fetchMeetingInfoBooking(class_id, 0);
+    
+    this.setState({ isModalBooking: true, roomName, classId });
+    this.fetchBooking(classId, roomName)
 
     // console.log(this.props.projectId, 'pROJECTY');
     API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
@@ -428,9 +475,10 @@ class MeetingTable extends Component {
       confirmation: confirmation,
     }
 
-    API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.infoClass.class_id}/${Storage.get('user').data.user_id}`, form).then(async res => {
+    API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.infoClass.id}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        this.fetchMeetingInfo(this.state.infoClass.class_id)
+        // this.fetchMeetingInfo(this.state.infoClass.class_id)
+        this.fetchMeetingInfoBooking(this.state.infoClass.class_id, this.state.infoClass.id)
         let form = {
           confirmation: confirmation,
           user: Storage.get('user').data.user,
@@ -578,7 +626,6 @@ class MeetingTable extends Component {
                 await API.put(`${API_SERVER}v1/liveclass/cover/${res.data.result.class_id}`, formData);
               }
 
-              /**
               if (res.data.result.is_private == 1) {
                 this.setState({ sendingEmail: true })
                 let form = {
@@ -610,7 +657,7 @@ class MeetingTable extends Component {
                 this.fetchMeeting();
                 this.closeClassModal();
               }
-              */
+
               this.fetchMeeting();
               this.closeClassModal();
             }
@@ -828,7 +875,7 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200 && res.data.result.length > 0) {
-        res.data.result.map(item => {
+        res.data.result.reverse().map(item => {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
           const jamIni = moment()
@@ -836,11 +883,12 @@ class MeetingTable extends Component {
           const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
-          item.hariini = range
+          // item.hariini = range
           if (range) {
-            this.setState({ bookingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
-            console.log('run range')
-            this.fetchMeetingInfoBooking(item.meeting_id, item.id);
+            // this.setState({ bokingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
+            // console.log('run range')
+            // this.fetchMeetingInfoBooking(item.meeting_id, item.id);
+            this.roomId = item.id
           }
         })
         console.log('result', res.data.result, this.state.bookingToday)
@@ -876,7 +924,6 @@ class MeetingTable extends Component {
         
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
-        
       }
 
       console.log(form)
@@ -887,7 +934,7 @@ class MeetingTable extends Component {
             toast.success('Menyimpan booking jadwal meeting')
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-              akses: 0, private: 0, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
               modalJadwal: false
             })
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
@@ -994,17 +1041,64 @@ class MeetingTable extends Component {
     }
   }
 
+  onClickInformation = (meeting_id, id) => {
+    this.setState({ isModalConfirmation: true, isModalBooking: false });
+    this.fetchMeetingInfoBooking(meeting_id, id);
+  }
+
+  openBooking = (classId, roomName) => {
+    this.closeModalBooking()
+    this.onClickJadwal(classId, roomName);
+  }
+
+  startMeetingNow = (classId, roomName) => {
+    let form = {
+      meeting_id: classId,
+      tanggal: Moment().local().format('YYYY-MM-DD'),
+      jam_mulai: Moment().local().format('HH:mm'),
+      jam_selesai: Moment().add(1, 'hours').format('HH:mm'),
+      user_id: Storage.get('user').data.user_id,
+      keterangan: `Meeting by ${Storage.get('user').data.user}`,
+
+      is_private: 1,
+      is_required_confirmation: 0,
+      peserta: [],
+      
+      is_akses: 1,
+      moderator: [Storage.get('user').data.user_id],
+    }
+
+    API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
+      if (res.status === 200) {
+        if (!res.data.error) {
+          toast.success('Menyimpan booking jadwal meeting')
+          this.setState({
+            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
+            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+            modalJadwal: false
+          })
+          
+          this.fetchBooking(classId, roomName)
+          
+          window.open(`/meet/${res.data.result.id}`, '_blank').focus();
+        } else {
+          toast.error("Error, gagal booking jadwal meeting")
+        }
+      }
+    })
+  }
+
   render() {
 
     // ** GLOBAL SETTINGS ** //
-    let cdMeeting =  this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
+    let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
     console.log(cdMeeting, 'cdMeeting')
 
     // All MEETING ROOMS { SEMUA RUANGAN MEETING }
     let Rmeetings = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETINGS')[0].status;
 
     // DISABLE { SALAH SATU RUANG MEETING }
-    let  Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
+    let Rmeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_MEETING')[0].status;
 
     // let  R_attendance = this.state.gb.length && this.state.gb.filter(item => item.code === 'R_ATTENDANCE')[0].status;
 
@@ -1030,7 +1124,7 @@ class MeetingTable extends Component {
         grow: 2,
       },
       {
-        name: 'Moderator',
+        name: 'Author',
         selector: 'name',
         sortable: true,
         style: {
@@ -1051,7 +1145,7 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Time',
+        name: 'Schedule',
         // selector: 'status',
         center: true,
         cell: row => <div>{row.is_scheduled == 1 ? row.waktu_start + ' - ' + row.waktu_end : '-'} </div>,
@@ -1111,7 +1205,7 @@ class MeetingTable extends Component {
               data-mode={row.mode}
             >
               Edit
-                        </button>}
+            </button>}
 
             {
               cdMeeting &&
@@ -1126,21 +1220,21 @@ class MeetingTable extends Component {
         width: '56px',
       },
       Rmeeting ?
-      {
-        name: 'Action',
-        cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-          onClick={ this.onClickInfo.bind(this, row.class_id, row.room_name)  }> { row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      }
-      :
-      {
-        name: 'Action',
-      }
+        {
+          name: 'Action',
+          cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
+            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+          ignoreRowClick: true,
+          allowOverflow: true,
+          button: true,
+          style: {
+            color: 'rgba(0,0,0,.54)',
+          },
+        }
+        :
+        {
+          name: 'Action',
+        }
     ];
     // console.log(bodyTabble, 'body table meeting');
     const access_project_admin = this.props.access_project_admin;
@@ -1154,8 +1248,12 @@ class MeetingTable extends Component {
 
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
-    let infoDateStart = new Date(this.state.infoClass.schedule_start);
-    let infoDateEnd = new Date(this.state.infoClass.schedule_end);
+
+    let infoDateStart = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`);
+    let infoDateEnd = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`);
+
+    console.log('infoDate', Moment().isBetween(infoDateStart ? infoDateStart : Moment(), infoDateEnd ? infoDateEnd : Moment()))
+
     let { filterMeeting } = this.state;
     if (filterMeeting != "") {
       bodyTabble = bodyTabble.filter(x =>
@@ -1212,14 +1310,11 @@ class MeetingTable extends Component {
             </div>
             :
             <Fragment>
-              {
-                Rmeetings ?
-                  <DataTable
-                    style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
-                  />
-                  :
-                  <span>sorry your access is not allowed to access the meeting room</span>
-              }
+              
+              <DataTable
+                style={{ marginTop: 20 }} columns={columns} data={bodyTabble} highlightOnHover // defaultSortField="title" pagination
+              />
+              
             </Fragment>
         }
 
@@ -1292,166 +1387,218 @@ class MeetingTable extends Component {
           </table> */}
         </div>
 
-        <Modal show={this.state.modalJadwal} onHide={this.closemodalJadwal} dialogClassName="modal-lg">
+        <Modal show={this.state.modalJadwal} onHide={this.closemodalJadwal} dialogClassName="modal-xlg">
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Meeting Room Schedule : {this.state.dataBooking.room_name}
+              Meeting Room Schedule : {this.state.roomName}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <table className="table table-hover">
-              <thead>
-                <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                  <td> Date </td>
-                  <td> Starting Hours </td>
-                  <td> End Hours </td>
-                  <td>By</td>
-                  <td>Keterangan</td>
-                  <td></td>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  this.state.dataBooking.booking.length ?
-                    this.state.dataBooking.booking.map((item) => {
-                      const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
-                      return (
-                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                          <td>{item.jam_mulai}</td>
-                          <td>{item.jam_selesai}</td>
-                          <td>{item.name}</td>
-                          <td>{item.keterangan ? item.keterangan : '-'}</td>
-                          <td>
-                            {item.user_id === Storage.get('user').data.user_id &&
-                              <span class="badge badge-pill badge-danger" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>}
-                          </td>
-                        </tr>
-                      )
-                    })
-                    :
-                    (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                      <td colspan='5'>There is no booking</td>
-                    </tr>)
-                }
-              </tbody>
-            </table>
-
-            <h4 style={{ padding: 10, marginTop: 20, marginBottom: 10 }}>Booking</h4>
-            <div className="form-group row">
-              <div className="col-sm-4">
-                <label className="bold col-sm-12"> Date </label>
-                <DatePicker dateFormat="yyyy-MM-dd" selected={this.state.tanggal} onChange={e => this.setState({ tanggal: e })} />
-              </div>
-              <div className="col-sm-4">
-                <label className="bold col-sm-12"> Starting Hours </label>
-                <DatePicker selected={this.state.jamMulai} onChange={date => this.setState({ jamMulai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
-              </div>
-              <div className="col-sm-4">
-                <label className="bold col-sm-12"> End Hours </label>
-                <DatePicker selected={this.state.jamSelesai} onChange={date => this.setState({ jamSelesai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
-              </div>
-            </div>
-            <div className="form-group row">
+            <div className="row">
               <div className="col-sm-12">
-                <label className="bold col-sm-12">Keterangan (optional)</label>
-                <textarea rows="4" className="form-control" value={this.state.keterangan} onChange={e => this.setState({ keterangan: e.target.value })} />
-              </div>
-            </div>
+                <table className="table table-hover">
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+                      <td>Date </td>
+                      <td>Starting Hours </td>
+                      <td>End Hours </td>
+                      <td>By</td>
+                      <td>Moderator</td>
+                      <td>Participants</td>
+                      <td>Description</td>
+                      <td>Share</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.state.dataBooking.booking.length ?
+                        this.state.dataBooking.booking.map((item) => {
+                          const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
 
-            <Form.Group controlId="formJudul">
-              <Form.Label className="f-w-bold">
-                Access Restrictions
-              </Form.Label>
-              <div style={{ width: '100%' }}>
-                <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
+                          const split = item.tanggal.split('-')
+                          const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                          const jamIni = moment()
+                          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                          const range = jamIni.isBetween(sJadwal, eJadwal)
+
+                          return (
+                            <Fragment>
+                              <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                                <td>{item.jam_mulai}</td>
+                                <td>{item.jam_selesai}</td>
+                                <td>{item.name}</td>
+                                <td>{item.moderator_name}</td>
+                                <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                                <td>{item.keterangan ? item.keterangan : '-'}</td>
+                                <td>
+                                  <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                    <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                  </CopyToClipboard>
+                                </td>
+                                <td>
+                                  <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                  {
+                                    range ?
+                                      <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                        <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                      </a>
+                                    : null
+                                  }
+                                </td>
+                              </tr>
+                              <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                                <td colSpan="9">
+                                  <div className="title-head f-w-900 f-16">
+                                    Confirmation Attendace {item.participants.length} Participants
+                                  </div>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                    <div className='legend-kehadiran hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                    <div className='legend-kehadiran tidak-hadir'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                    <div className='legend-kehadiran tentative'></div>
+                                    <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                  </div>
+                                  <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                  {
+                                    item.participants.map(r => (
+                                      <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                    ))
+                                  }
+                                  </div>
+                                </td>
+                              </tr>
+                            </Fragment>
+                          )
+                        })
+                        :
+                        (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                          <td colspan='9'>There is no booking</td>
+                        </tr>)
+                    }
+                  </tbody>
+                </table>
               </div>
-              <Form.Text className="text-muted">
-                {this.state.akses ? 'Meetings are arranged by 1 moderator' : 'The meeting room is free '}
-              </Form.Text>
-            </Form.Group>
-            {
-              this.state.akses ?
+
+              <div className="col-sm-12">
+                <h4>Booking</h4>
+                <div className="form-group row">
+                  <div className="col-sm-2">
+                    <label className="bold col-sm-12"> Date </label>
+                    <DatePicker dateFormat="yyyy-MM-dd" selected={this.state.tanggal} onChange={e => this.setState({ tanggal: e })} />
+                  </div>
+                  <div className="col-sm-2">
+                    <label className="bold col-sm-12"> Starting Hours </label>
+                    <DatePicker selected={this.state.jamMulai} onChange={date => this.setState({ jamMulai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
+                  </div>
+                  <div className="col-sm-2">
+                    <label className="bold col-sm-12"> End Hours </label>
+                    <DatePicker selected={this.state.jamSelesai} onChange={date => this.setState({ jamSelesai: date })} showTimeSelect showTimeSelectOnly timeIntervals={30} timeCaption="Time" dateFormat="h:mm aa" />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <div className="col-sm-6">
+                    <label className="bold col-sm-12">Keterangan (optional)</label>
+                    <textarea rows="4" className="form-control" value={this.state.keterangan} onChange={e => this.setState({ keterangan: e.target.value })} />
+                  </div>
+                </div>
+
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
-                    Moderator
-                  </Form.Label>
-                  <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
-                  <Form.Text className="text-muted">
-                    Pengisi kelas, moderator, atau speaker.
-                  </Form.Text>
-                </Form.Group>
-              : null
-            }
-
-            <Form.Group controlId="formJudul">
-              <Form.Label className="f-w-bold">
-                Private Meeting
-              </Form.Label>
-              <div style={{ width: '100%' }}>
-                <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.private} />
-              </div>
-              <Form.Text className="text-muted">
-                {this.state.private ? 'Only people registered as participants can join the meeting.' : 'The meeting room is open. All users can join.'}
-              </Form.Text>
-            </Form.Group>
-
-            {
-              this.state.private ?
-                <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
-                    Wajib Konfirmasi Kehadiran
+                    Access Restrictions
                   </Form.Label>
                   <div style={{ width: '100%' }}>
-                    <ToggleSwitch checked={false} onChange={this.toggleSwitchRequiredConfirmation.bind(this)} checked={this.state.requireConfirmation} />
+                    <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
                   </div>
                   <Form.Text className="text-muted">
-                    {this.state.requireConfirmation ? 'Hanya peserta yang konfirmasi hadir yang dapat bergabung ke meeting.' : 'Semua peserta meeting dapat gabung ke meeting.'}
+                    {this.state.akses ? 'Meetings are arranged by 1 moderator' : 'The meeting room is free '}
                   </Form.Text>
                 </Form.Group>
-              : null
-            }
-              
-            {
-              this.state.private ?
+                {
+                  this.state.akses ?
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        Moderator
+                      </Form.Label>
+                      <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
+                      <Form.Text className="text-muted">
+                        Pengisi kelas, moderator, atau speaker.
+                      </Form.Text>
+                    </Form.Group>
+                  : null
+                }
+
+                {
+                /** 
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
-                    Peserta Dari Group
+                    Private Meeting
                   </Form.Label>
-                  <MultiSelect id="group" options={this.state.optionsGroup} value={this.state.valueGroup} onChange={valueGroup => this.groupSelect(valueGroup)} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
+                  <div style={{ width: '100%' }}>
+                    <ToggleSwitch checked={false} onChange={this.toggleSwitch.bind(this)} checked={this.state.private} />
+                  </div>
                   <Form.Text className="text-muted">
-                    Pilih peserta dari group untuk private meeting.
+                    {this.state.private ? 'Only people registered as participants can join the meeting.' : 'The meeting room is open. All users can join.'}
                   </Form.Text>
                 </Form.Group>
-              : null
-            }
-              
-            {
-              this.state.private ?
-                <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
-                    Peserta
-                  </Form.Label>
-                  <div className="row mt-1" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                    {this.state.infoParticipant && this.state.infoParticipant.map(item =>
-                      <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>
-                        {item.name}
-                        <button type="button" className="" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(31 31 31)' }} onClick={this.deleteParticipant.bind(this, item.participant_id, item.class_id)}>
-                          X
-                        </button>
+                */
+                }
+
+                {
+                  this.state.private ?
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        Wajib Konfirmasi Kehadiran
+                      </Form.Label>
+                      <div style={{ width: '100%' }}>
+                        <ToggleSwitch checked={false} onChange={this.toggleSwitchRequiredConfirmation.bind(this)} checked={this.state.requireConfirmation} />
                       </div>
-                    )}
-                  </div>
-                  <Form.Label className="f-w-bold">
-                    Add Participants
-                  </Form.Label>
-                  <MultiSelect id="peserta" options={this.state.optionsPeserta} value={this.state.valuePeserta} onChange={valuePeserta => this.setState({ valuePeserta })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
-                  <Form.Text className="text-muted">
-                    Pilih peserta untuk private meeting.
-                  </Form.Text>
-                </Form.Group>
-              : null
-            }
+                      <Form.Text className="text-muted">
+                        {this.state.requireConfirmation ? 'Hanya peserta yang konfirmasi hadir yang dapat bergabung ke meeting.' : 'Semua peserta meeting dapat gabung ke meeting.'}
+                      </Form.Text>
+                    </Form.Group>
+                  : null
+                }
+                  
+                {
+                  this.state.private ?
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        Peserta Dari Group
+                      </Form.Label>
+                      <MultiSelect id="group" options={this.state.optionsGroup} value={this.state.valueGroup} onChange={valueGroup => this.groupSelect(valueGroup)} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
+                      <Form.Text className="text-muted">
+                        Pilih peserta dari group untuk private meeting.
+                      </Form.Text>
+                    </Form.Group>
+                  : null
+                }
+                  
+                {
+                  this.state.private ?
+                    
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        Add Participants
+                      </Form.Label>
+                      <MultiSelect id="peserta" options={this.state.optionsPeserta} value={this.state.valuePeserta} onChange={valuePeserta => this.setState({ valuePeserta })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
+                      <Form.Text className="text-muted">
+                        Pilih peserta untuk private meeting.
+                      </Form.Text>
+                    </Form.Group>
+                  : null
+                }
+
+                <button className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
+                  <i className="fa fa-save"></i> Booking
+                </button>
+              </div>
+
+            </div>
 
             {/** 
             <Form.Group controlId="formJudul">
@@ -1489,9 +1636,6 @@ class MeetingTable extends Component {
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closemodalJadwal}>
               Cancel
             </button>
-            <button className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
-              <i className="fa fa-save"></i> Booking
-            </button>
           </Modal.Footer>
         </Modal>
 
@@ -1503,22 +1647,6 @@ class MeetingTable extends Component {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group controlId="formJudul">
-                <img alt="media" src={this.state.cover == null || this.state.cover == '' ?
-                  "/assets/images/component/placeholder-image.png" :
-                  this.state.imgPreview == null || this.state.imgPreview == '' ?
-                    this.state.cover : this.state.imgPreview}
-                  className="img-fluid" style={{ width: "200px", height: "160px" }} />
-
-                <Form.Label className="f-w-bold ml-4">
-                  <h4 className="btn-default">Masukkan Gambar</h4>
-                  <input accept="image/*" className="btn-default" name="cover" type="file" onChange={this.handleChange} />
-                  <Form.Text className="text-muted">
-                    Ukuran gambar 200x200 piksel.
-                  </Form.Text>
-                </Form.Label>
-              </Form.Group>
-
               <div className="row">
                 <div className="form-field-top-label">
                   <label for="time">Judul Meeting<required>*</required></label>
@@ -1576,185 +1704,234 @@ class MeetingTable extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1 ?
-              <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
-                  <div className="card-carousel col-sm-8">
-                    <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                      Konfirmasi Kehadiran
-                  </div>
-                    <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
-                  </div>
-                  <div className="card-carousel col-sm-4">
-                    <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
-                  </Link>
-                    <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
-                  </Link>
-                  </div>
-                </div>
-              </div>
-              : this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1 ?
+            {
+              this.state.needConfirmation >= 1 && this.state.infoClass.is_required_confirmation === 1 ?
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                  <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
-                      </div>
-                      <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                        Konfirmasi Kehadiran
+                    </div>
+                      <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                    </div>
+                    <div className="card-carousel col-sm-4">
+                      <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
+                    </Link>
+                      <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
+                    </Link>
                     </div>
                   </div>
                 </div>
-                : null}
-            
-            <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-              <div className="card">
-                <div className="responsive-image-content radius-top-l-r-5" style={{ backgroundImage: `url(${this.state.infoClass.cover ? this.state.infoClass.cover : '/assets/images/component/meeting-default.jpg'})` }}></div>
-
-                <div className="card-carousel">
-                  <div className="title-head f-w-900 f-16 mb-2">
-                    {this.state.infoClass.room_name}
-                  </div>
-
-                  <div class="row">
-                    <div className="col-sm-6">
-                      {this.state.infoClass.is_akses ?
-                        <h3 className="f-14">
-                          Moderator : {this.state.infoClass.name}
-                        </h3>
-                        : null
-                      }
-                      <h3 className="f-14">
-                        Jenis Meeting : {this.state.infoClass.is_private ? 'Private' : 'Public'}
-                      </h3> {this.state.infoClass.is_private ?
-                        <h3 className="f-14">
-                          Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
-                        </h3> : null}
-                    </div>
-                    {
-                      /**
-                      this.state.infoClass.is_scheduled ?
-                        <div className="col-sm-6">
-                          <h3 className="f-14">
-                            Start : {Moment.tz(infoDateStart, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                          </h3>
-                          <h3 className="f-14">
-                            End : {Moment.tz(infoDateEnd, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                          </h3>
+                :
+                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
+                  <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                      <div className="card-carousel col-sm-8">
+                        <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                          Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
                         </div>
-                        : null
-                      */
-                    }
+                        <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                      </div>
+                    </div>
                   </div>
-
-                  {this.state.infoClass.is_private && ((levelUser == 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
-                    <div>
-                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
-                      </div>
-                      <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                        <div className='legend-kehadiran hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
-                        <div className='legend-kehadiran tidak-hadir'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
-                        <div className='legend-kehadiran tentative'></div>
-                        <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
-                      </div>
-                      <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                        {this.state.infoParticipant.map(item =>
-                          <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
-                        )}
-                      </div>
-                    </div>
-                    : null}
-
-                  {
-                    this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
-                    <div>
-                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Kehadiran Aktual
-                      </div>
-                      <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
-                        {this.state.infoParticipant.map(item => item.actual === 'Hadir' &&
-                          <div className='peserta aktual-hadir'>{item.name}</div>
-                        )}
-                      </div>
-                    </div>
-                    : null
-                  }
-                  
-                  <div class="title-head f-w-900 f-16 mt-4" >Schedule & Booking</div>
-                  <table className="table table-hover">
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                        <td> Date </td>
-                        <td> Starting Hours </td>
-                        <td> End Hours </td>
-                        <td>By</td>
-                        <td>Keterangan</td>
-                        <td></td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {
-                        this.state.dataBooking.booking.length ?
-                          this.state.dataBooking.booking.map((item) => {
-                            const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
-
-                            const split = item.tanggal.split('-')
-                            const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
-                            const jamIni = moment()
-                            const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                            const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
-                            const range = jamIni.isBetween(sJadwal, eJadwal)
-
-                            return (
-                              <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                                <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                                <td>{item.jam_mulai}</td>
-                                <td>{item.jam_selesai}</td>
-                                <td>{item.name}</td>
-                                <td>{item.keterangan ? item.keterangan : '-'}</td>
-                                <td>
-                                  {
-                                    range ?
-                                      <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
-                                        <span className="badge badge-pill badge-success ml-2">Masuk</span>
-                                      </a>
-                                    : null
-                                  }
-                                </td>
-                              </tr>
-                            )
-                          })
-                          :
-                          (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td colspan='5'>There is no booking</td>
-                          </tr>)
-                      }
-                    </tbody>
-                  </table>
-
-                </div>
+                :
+                null
+            }
+            
+            <div class="row">
+              <div className="col-sm-6">
+                <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
+                {
+                  this.state.infoClass.is_akses ?
+                    <h3 className="f-14">
+                      Moderator : {this.state.infoClass.moderator_name}
+                    </h3>
+                  : null
+                }
+                {
+                  this.state.infoClass.is_private ?
+                  <h3 className="f-14">
+                    Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                  </h3>
+                  : null
+                }
+              </div>
+              <div className="col-sm-6">
+                <h3 className="f-14">
+                  Start : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                </h3>
+                <h3 className="f-14">
+                  End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                </h3>
               </div>
             </div>
+
+            {
+              this.state.infoClass.is_private && ((levelUser === 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
+              <div>
+                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                  Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                </div>
+                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                  <div className='legend-kehadiran hadir'></div>
+                  <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                  <div className='legend-kehadiran tidak-hadir'></div>
+                  <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                  <div className='legend-kehadiran tentative'></div>
+                  <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                </div>
+                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                  {this.state.infoParticipant.map(item =>
+                    <div className={item.confirmation === 'Hadir' ? 'peserta hadir' : item.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{item.name}</div>
+                  )}
+                </div>
+              </div>
+              : null
+            }
+
+            {
+              this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
+              <div>
+                <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                  Kehadiran Aktual
+                </div>
+                <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                  {this.state.infoParticipant.map(item => item.actual === 'Hadir' &&
+                    <div className='peserta aktual-hadir'>{item.name}</div>
+                  )}
+                </div>
+              </div>
+              : null
+            }
+               
           </Modal.Body>
           {
-            /**
-            <Modal.Footer>
-              {
-                (Rmeeting && this.state.infoClass.is_live && (this.state.infoClass.is_scheduled == 0 || new Date() >= new Date(Moment.tz(infoDateStart, 'Asia/Jakarta')) && new Date()
-                <= new Date(Moment.tz(infoDateEnd, 'Asia/Jakarta'))))
-                && (this.state.infoClass.is_required_confirmation == 0 || (this.state.infoClass.is_required_confirmation == 1 && this.state.attendanceConfirmation === 'Hadir')) ?
-                <a target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meeting-room/${this.state.infoClass.class_id}`}>
-                  <button className="btn btn-icademy-primary" onClick={e => this.closeModalConfirmation()}>
-                    <i className="fa fa-video"></i> Masuk
-                    </button>
+            (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
+              <Modal.Footer>
+                <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+                  onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                  <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor">&nbsp; Copy</i></button>
+                </CopyToClipboard>
+                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                  <i className="fa fa-video"></i> Join
                 </a>
-                : null  
-              }
-            </Modal.Footer>
-            */
+              </Modal.Footer>
+              : null
           }
+        </Modal>
+
+        <Modal show={this.state.isModalBooking} onHide={() => this.closeModalBooking()} dialogClassName="modal-xlg">
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              {this.state.roomName}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="title-head f-w-900 f-16 mb-2">
+              Schedule & Booking Meeting
+            </div>
+            <table className="table table-hover table-striped">
+              <thead>
+                <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
+                  <td>Date</td>
+                  <td>Starting Hours</td>
+                  <td>End Hours</td>
+                  <td>By</td>
+                  <td>Moderator</td>
+                  <td className="text-center">Participants</td>
+                  <td>Description</td>
+                  <td>Share</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.dataBooking.booking.length ?
+                    this.state.dataBooking.booking.map((item) => {
+                      const now = String(('0' + new Date().getDate()).slice(-2) + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + (new Date().getFullYear()))
+
+                      const split = item.tanggal.split('-')
+                      const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
+                      const jamIni = moment()
+                      const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
+                      const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                      const range = jamIni.isBetween(sJadwal, eJadwal)
+
+                      return (
+                        <Fragment>
+                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
+                            <td>{item.jam_mulai}</td>
+                            <td>{item.jam_selesai}</td>
+                            <td>{item.name}</td>
+                            <td>{item.moderator_name}</td>
+                            <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
+                            <td>{item.keterangan ? item.keterangan : '-'}</td>
+                            <td>
+                              <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                                <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                              </CopyToClipboard>
+                            </td>
+                            <td>
+                              <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                              {
+                                range ?
+                                  <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                    <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                  </a>
+                                : null
+                              }
+                            </td>
+                          </tr>
+                          <tr className="collapse" id={`col${item.id}`} ariaExpanded="true">
+                            <td colSpan="9">
+                              <div className="title-head f-w-900 f-16">
+                                Confirmation Attendace {item.participants.length} Participants
+                              </div>
+                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                                <div className='legend-kehadiran hadir'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                <div className='legend-kehadiran tidak-hadir'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                <div className='legend-kehadiran tentative'></div>
+                                <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                              </div>
+                              <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
+                              {
+                                item.participants.map(r => (
+                                  <div className={r.confirmation === 'Hadir' ? 'peserta hadir' : r.confirmation === 'Tidak Hadir' ? 'peserta tidak-hadir' : 'peserta tentative'}>{r.name}</div>
+                                ))
+                              }
+                              </div>
+                            </td>
+                          </tr>
+                        </Fragment>
+                      )
+                    })
+                    :
+                    (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                      <td colspan='9'>There is no booking</td>
+                    </tr>)
+                }
+              </tbody>
+            </table>
+          </Modal.Body>
+          <Modal.Footer>
+            {
+              this.state.dataBooking.booking.length === 0 ?
+                <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
+                  Start meeting now
+                </button>
+                :
+                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
+                  <i className="fa fa-video"></i> Join
+                </a>
+            }
+            <button className="btn btn-v2 btn-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
+              <i className="fa fa-book"></i> Book new meeting
+            </button>
+          </Modal.Footer>
         </Modal>
 
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>

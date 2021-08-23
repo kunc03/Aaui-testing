@@ -30,7 +30,8 @@ class Login extends Component {
     showOpenApps: true
   };
 
-  tabLogin(a, b) {
+  tabLogin(e, a, b) {
+    e.preventDefault()
     this.setState({ tabIndex: b + 1 });
     if (b === 1) {
       this.setState({ isVoucher: true, voucher: '', email: '', password: '', toggle_alert: false });
@@ -135,11 +136,20 @@ class Login extends Component {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
           else {
+            let dd = new URLSearchParams(window.location.search)
             if (res.data.result.is_new_password === 1) {
-              window.location.href = window.location.origin;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = window.location.origin;
+              }
             }
             else {
-              window.location.href = `${window.location.origin}/pengaturan`;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = `${window.location.origin}/pengaturan`;
+              }
             }
           }
 
@@ -204,11 +214,20 @@ class Login extends Component {
             window.location.href = window.location.origin + this.props.redirectUrl
           }
           else {
+            let dd = new URLSearchParams(window.location.search)
             if (res.data.result.is_new_password === 1) {
-              window.location.href = window.location.origin;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = window.location.origin;
+              }
             }
             else {
-              window.location.href = `${window.location.origin}/pengaturan`;
+              if (dd.get('dst')) {
+                window.location.href = dd.get('dst')
+              } else {
+                window.location.href = `${window.location.origin}/pengaturan`;
+              }
             }
           }
 
@@ -371,7 +390,7 @@ class Login extends Component {
                       <div className={this.state.showPass ? 'hidden' : 'col-md-6 mb-4'}>
                         <Link
                           key={index}
-                          onClick={this.tabLogin.bind(this, tab, index)}
+                          onClick={e => this.tabLogin(e, tab, index)}
                         >
                           <div
                             className={

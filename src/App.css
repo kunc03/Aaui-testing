@@ -451,3 +451,7 @@ input:checked + .slider:before {
   text-align: center;
   font-size: 17px;
 }
+
+.cursor {
+  cursor: pointer;
+}
