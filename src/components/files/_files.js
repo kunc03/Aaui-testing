@@ -930,7 +930,7 @@ fetchRekamanBBB(folder){
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
                                     <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {item.name} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {item.date}
+                                  {moment(item.date).local().format('DD-MM-YYYY HH:mm')}
                                 </td>
                                 <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
                                   {item.creator ? item.creator : '-'}
@@ -1068,7 +1068,7 @@ fetchRekamanBBB(folder){
                       <Row>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aSekretaris} checked={this.state.aSekretaris} onChange={this.handleCheck.bind(this, 'sekretaris')} />
-                          <label>&nbsp; Sekretaris</label>
+                          <label>&nbsp; Secretary</label>
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aModerator} checked={this.state.aModerator} onChange={this.handleCheck.bind(this, 'moderator')} />
@@ -1076,7 +1076,7 @@ fetchRekamanBBB(folder){
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aPembicara} checked={this.state.aPembicara} onChange={this.handleCheck.bind(this, 'pembicara')} />
-                          <label>&nbsp; Pembicara</label>
+                          <label>&nbsp; Speaker</label>
                         </Col>
                       </Row>
                       <Row>
@@ -1086,7 +1086,7 @@ fetchRekamanBBB(folder){
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aPeserta} checked={this.state.aPeserta} onChange={this.handleCheck.bind(this, 'peserta')} />
-                          <label>&nbsp; Peserta</label>
+                          <label>&nbsp; Participant</label>
                         </Col>
                       </Row>
                       <Row>
@@ -1190,7 +1190,7 @@ fetchRekamanBBB(folder){
                       <Row>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aSekretaris} checked={this.state.aSekretaris} onChange={this.handleCheck.bind(this, 'sekretaris')} />
-                          <label>&nbsp; Sekretaris</label>
+                          <label>&nbsp; Secretary</label>
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aModerator} checked={this.state.aModerator} onChange={this.handleCheck.bind(this, 'moderator')} />
@@ -1198,7 +1198,7 @@ fetchRekamanBBB(folder){
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aPembicara} checked={this.state.aPembicara} onChange={this.handleCheck.bind(this, 'pembicara')} />
-                          <label>&nbsp; Pembicara</label>
+                          <label>&nbsp; Speaker</label>
                         </Col>
                       </Row>
                       <Row>
@@ -1208,7 +1208,7 @@ fetchRekamanBBB(folder){
                         </Col>
                         <Col xs='auto'>
                           <input type="checkbox" value={this.state.aPeserta} checked={this.state.aPeserta} onChange={this.handleCheck.bind(this, 'peserta')} />
-                          <label>&nbsp; Peserta</label>
+                          <label>&nbsp; Participant</label>
                         </Col>
                       </Row>
                       <Row>

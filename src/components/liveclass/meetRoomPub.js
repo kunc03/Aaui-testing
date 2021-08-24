@@ -124,7 +124,8 @@ export default class MeetRoomPub extends Component {
     attendee: {},
     zoomUrl: '',
     isZoom: false,
-    gb: []
+    gb: [],
+    joined: false
 
   }
 
@@ -294,25 +295,46 @@ export default class MeetRoomPub extends Component {
         })
       }
       else {
-        // Jika sudah ada, join
-        let joinUrl = api.administration.join(
-          this.state.user.name,
-          this.state.classRooms.booking_id,
-          this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
-          {
-            userID: this.state.user.user_id,
-            guest: true
+        let checkAttendee = Array.isArray(result.attendees.attendee) ?
+        result.attendees.attendee.filter(x=>
+          x.userID === this.state.user.user_id &&
+          (
+            x.isListeningOnly ||
+            x.hasJoinedVoice ||
+            x.hasVideo
+          )
+        ).length
+        :
+        result.attendees.attendee.userID === this.state.user.user_id &&
+        (
+          result.attendees.attendee.isListeningOnly ||
+          result.attendees.attendee.hasJoinedVoice ||
+          result.attendees.attendee.hasVideo
+        );
+        if (checkAttendee){
+          this.setState({joined: true});
+        }
+        else{
+          // Jika sudah ada, join
+          let joinUrl = api.administration.join(
+            this.state.user.name,
+            this.state.classRooms.booking_id,
+            this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
+            {
+              userID: this.state.user.user_id,
+              guest: true
+            }
+          )
+  
+          let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
+          let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+          this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
+          let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
+  
+          this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+          if (isMobile) {
+            window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
           }
-        )
-
-        let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
-        let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-        this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
-        let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
-
-        this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-        if (isMobile) {
-          window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
         }
       }
     })
@@ -1113,7 +1135,7 @@ export default class MeetRoomPub extends Component {
                                           </Tooltip>
 
                                           {
-                                            user.name && classRooms.room_name && this.state.join ?
+                                            user.name && classRooms.room_name && this.state.join && !this.state.joined ?
                     
                                             <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                                               <Iframe url={this.state.isZoom ? this.state.zoomUrl : this.state.joinUrl}
@@ -1128,6 +1150,11 @@ export default class MeetRoomPub extends Component {
                                               
                                               :
                                               null
+                                          }
+                                          {
+                                            this.state.joined ?
+                                            <h4 style={{marginTop:'20px'}}>Your account has joined this meeting. You can't multiple access the meeting room.<br/>If you want to access the webinar from this page, simply exit from other device or tab and refresh this page.</h4>
+                                            : null
                                           }
 
                                         </div>

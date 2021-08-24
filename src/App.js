@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy } from "react";
 import './actions/i18n';
 
 import { Switch, Route, Redirect } from "react-router-dom";
@@ -66,7 +66,7 @@ export default class App extends React.Component {
     }
 
     return (
-      <Suspense fallback="loading">{workSpace}</Suspense>
+      <div>{workSpace}</div>
     );
   }
 }
