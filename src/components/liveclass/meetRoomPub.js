@@ -1105,7 +1105,7 @@ export default class MeetRoomPub extends Component {
                                           }
                                           {
                                             this.state.joined ?
-                                            <h4 style={{marginTop:'20px'}}>Your account has joined this meeting. You can't multiple access the meeting room.<br/>If you want to access the webinar from this page, simply exit from other device or tab and refresh this page.</h4>
+                                            <h4 style={{marginTop:'20px'}}>You are currently a participant of this meeting on another device or browser tab.<br/>If you want to access this meeting/webinar from this page, exit from the other device and refresh this page afterwards.</h4>
                                             : null
                                           }
 
