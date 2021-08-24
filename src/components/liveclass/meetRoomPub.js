@@ -431,40 +431,44 @@ export default class MeetRoomPub extends Component {
 
   sendFileNew() {
 
-    let form = new FormData();
-    form.append('class_id', this.state.classId);
-    form.append('pengirim', String(this.state.user.user_id));
-    form.append('file', this.state.attachment);
-    //console.log('form data',FormData);
-    API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
-      console.log(res, 'response');
+    if (this.state.user.user_id) {
+      let form = new FormData();
+      form.append('class_id', this.state.classId);
+      form.append('pengirim', String(this.state.user.user_id));
+      form.append('file', this.state.attachment);
+      //console.log('form data',FormData);
+      API.post(`${API_SERVER}v1/liveclass/file`, form).then(res => {
+        console.log(res, 'response');
 
+        if (res.status === 200) {
+          if (!res.data.error) {
+            this.onBotoomScroll();
+            let splitTags;
 
-      if (res.status === 200) {
-        if (!res.data.error) {
-          this.onBotoomScroll();
-          let splitTags;
+            let datas = res.data.result;
+            console.log(datas, 'datass')
+            splitTags = datas.attachment.split("/")[4];
+            datas.filenameattac = splitTags;
 
-          let datas = res.data.result;
-          console.log(datas, 'datass')
-          splitTags = datas.attachment.split("/")[4];
-          datas.filenameattac = splitTags;
+            //this.setState({ fileChat: [...this.state.fileChat, res.data.result], attachment : datas.attachment,  nameFile : null });
+            socket.emit('send', {
+              pengirim: this.state.user.user_id,
+              room: this.state.classId,
+              attachment: datas.attachment,
+              filenameattac: datas.filenameattac,
+              created_at: new Date()
+            })
 
-          //this.setState({ fileChat: [...this.state.fileChat, res.data.result], attachment : datas.attachment,  nameFile : null });
-          socket.emit('send', {
-            pengirim: this.state.user.user_id,
-            room: this.state.classId,
-            attachment: datas.attachment,
-            filenameattac: datas.filenameattac,
-            created_at: new Date()
-          })
-
-          this.setState({ fileKey: Math.random().toString(36) })
-        } else {
-          alert('File yang anda input salah')
+            this.setState({ fileKey: Math.random().toString(36) })
+          } else {
+            alert('File yang anda input salah')
+          }
         }
-      }
-    })
+      })
+    } else {
+      toast.info(`Can't send files because you're a guest.`)
+    }
+    
   }
 
   componentDidUpdate() {
@@ -968,19 +972,23 @@ export default class MeetRoomPub extends Component {
 
   onClickRemoveChat = e => {
     e.preventDefault();
-    let form = { attachment: e.target.getAttribute('data-file') };
-    API.post(`${API_SERVER}v1/liveclass/file/remove`, form).then(res => {
-      if (res.status === 200) {
-        this.fetchData();
-        socket.emit('send', {
-          pengirim: this.state.user.user_id,
-          room: this.state.classId,
-          attachment: form.attachment,
-          filenameattac: form.attachment,
-          created_at: new Date()
-        })
-      }
-    })
+    if (this.state.user.user_id) {
+      let form = { attachment: e.target.getAttribute('data-file') };
+      API.post(`${API_SERVER}v1/liveclass/file/remove`, form).then(res => {
+        if (res.status === 200) {
+          this.fetchData();
+          socket.emit('send', {
+            pengirim: this.state.user.user_id,
+            room: this.state.classId,
+            attachment: form.attachment,
+            filenameattac: form.attachment,
+            created_at: new Date()
+          })
+        }
+      })
+    } else {
+      toast.info(`Can't delete files because you're a guest.`)
+    }
   }
 
   render() {
@@ -1640,7 +1648,7 @@ export default class MeetRoomPub extends Component {
                                           "Loading..."
                                         :
                                         <span style={{fontSize: '12px'}}>
-                                          {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} {classRooms.jam_selesai}
+                                          {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
                                         </span>
                                       }    
                                     </p>
@@ -1764,7 +1772,7 @@ export default class MeetRoomPub extends Component {
                                 "Loading..."
                               :
                               <span style={{fontSize: '12px'}}>
-                                {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} {classRooms.jam_selesai}
+                                {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
                               </span>
                             }    
                           </p>
