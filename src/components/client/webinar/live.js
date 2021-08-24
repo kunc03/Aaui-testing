@@ -1056,7 +1056,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                         }
                         {
                           this.state.joined ?
-                          <h4 style={{marginTop:'20px'}}>This voucher has joined this webinar. You can't multiple access the webinar.<br/>If you want to access the webinar from this page, simply exit from other device or tab and refresh this page.</h4>
+                          <h4 style={{marginTop:'20px'}}>You are currently a participant of this webinar on another device or browser tab.<br/>If you want to access webinar from this page, exit from the other device and refresh this page afterwards.</h4>
                           : null
                         }
                         {
