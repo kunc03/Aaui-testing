@@ -146,6 +146,8 @@ class MeetingTable extends Component {
 
   closeModalBooking = () => {
     this.setState({
+      roomName: '',
+      classId: '',
       isModalBooking: false,
       // roomName: '',
       bookingToday: {
@@ -893,8 +895,9 @@ class MeetingTable extends Component {
             this.roomId = item.id
           }
         })
-        this.setState({ dataBooking: { room_name: room, booking: res.data.result }, isLoadBooking: false })
+        this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
       }
+      this.setState({ isLoadBooking: false })
     })
   }
 
@@ -1513,31 +1516,6 @@ class MeetingTable extends Component {
                   </div>
                 </div>
 
-                <Form.Group controlId="formJudul">
-                  <Form.Label className="f-w-bold">
-                    Access Restrictions
-                  </Form.Label>
-                  <div style={{ width: '100%' }}>
-                    <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
-                  </div>
-                  <Form.Text className="text-muted">
-                    {this.state.akses ? 'Meetings are arranged by 1 moderator' : 'The meeting room is free '}
-                  </Form.Text>
-                </Form.Group>
-                {
-                  this.state.akses ?
-                    <Form.Group controlId="formJudul">
-                      <Form.Label className="f-w-bold">
-                        Moderator
-                      </Form.Label>
-                      <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
-                      <Form.Text className="text-muted">
-                        Pengisi kelas, moderator, atau speaker.
-                      </Form.Text>
-                    </Form.Group>
-                  : null
-                }
-
                 {
                 /** 
                 <Form.Group controlId="formJudul">
@@ -1599,9 +1577,31 @@ class MeetingTable extends Component {
                   : null
                 }
 
-                <button className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
-                  <i className="fa fa-save"></i> Booking
-                </button>
+                <Form.Group controlId="formJudul">
+                  <Form.Label className="f-w-bold">
+                    Access Restrictions
+                  </Form.Label>
+                  <div style={{ width: '100%' }}>
+                    <ToggleSwitch onChange={this.toggleSwitchAkses.bind(this)} checked={this.state.akses} />
+                  </div>
+                  <Form.Text className="text-muted">
+                    {this.state.akses ? 'Meetings are arranged by 1 moderator' : 'The meeting room is free '}
+                  </Form.Text>
+                </Form.Group>
+                {
+                  this.state.akses ?
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        Moderator
+                      </Form.Label>
+                      <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
+                      <Form.Text className="text-muted">
+                        Pengisi kelas, moderator, atau speaker.
+                      </Form.Text>
+                    </Form.Group>
+                  : null
+                }
+
               </div>
 
             </div>
@@ -1639,6 +1639,9 @@ class MeetingTable extends Component {
 
           </Modal.Body>
           <Modal.Footer>
+            <button className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
+              <i className="fa fa-save"></i> Booking
+            </button>
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closemodalJadwal}>
               Cancel
             </button>
@@ -1746,7 +1749,11 @@ class MeetingTable extends Component {
             
             <div class="row">
               <div className="col-sm-6">
-                <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
+                {
+                  this.state.infoClass.hasOwnProperty('room_name') ?
+                    <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
+                  : null
+                }
                 {
                   this.state.infoClass.is_akses ?
                     <h3 className="f-14">
@@ -1762,14 +1769,18 @@ class MeetingTable extends Component {
                   : null
                 }
               </div>
-              <div className="col-sm-6">
-                <h3 className="f-14">
-                  Start : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                </h3>
-                <h3 className="f-14">
-                  End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
-                </h3>
-              </div>
+              {
+                this.state.infoClass.hasOwnProperty('tanggal') ?
+                  <div className="col-sm-6">
+                    <h3 className="f-14">
+                      Start : { Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                    </h3>
+                    <h3 className="f-14">
+                      End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                    </h3>
+                  </div>
+                : null
+              }
             </div>
 
             {
@@ -1868,6 +1879,8 @@ class MeetingTable extends Component {
                         const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
                         const range = jamIni.isBetween(sJadwal, eJadwal)
 
+                        let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
+
                         return (
                           <Fragment>
                             <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -1887,7 +1900,7 @@ class MeetingTable extends Component {
                               <td>
                                 <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                 {
-                                  range ?
+                                  checkParty && range ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
                                       <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
                                     </a>
