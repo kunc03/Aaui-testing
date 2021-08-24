@@ -454,7 +454,7 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                let checkAttendee = Array.isArray(result.attendees.attendee) ?
+                let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
                 result.attendees.attendee.filter(x=>
                   x.userID === this.state.user.user_id &&
                   (
@@ -592,7 +592,7 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                let checkAttendee = Array.isArray(result.attendees.attendee) ?
+                let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
                 result.attendees.attendee.filter(x=>
                   x.userID === this.state.user.user_id &&
                   (
