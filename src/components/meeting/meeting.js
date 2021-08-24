@@ -1128,48 +1128,33 @@ class MeetingTable extends Component {
         grow: 2,
       },
       {
-        name: 'Author',
-        selector: 'name',
+        name: 'Upcoming Meetings',
+        selector: 'booking_count',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
       {
-        name: 'Status',
-        selector: 'status',
+        name: 'Current / Upcoming Meeting',
+        selector: 'booking_upcoming',
         sortable: true,
         center: true,
-        cell: row =>
-          <div style={{ color: row.status === 'Open' ? '#FA6400' : row.status === 'Locked' ? '#F00' : row.status === 'Active' || row.status === 'Active & Locked' ? '#1b9a1b' : '#0091FF' }}>
-            {row.status}
-          </div>,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
       {
         name: 'Schedule',
-        // selector: 'status',
-        center: true,
-        cell: row => <div>{row.is_scheduled == 1 ? row.waktu_start + ' - ' + row.waktu_end : '-'} </div>,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
-        name: 'Date',
-        // selector: `${'is_scheduled' == 1 ? 'Date' : '-'}`,
-        cell: row => <div>{row.is_scheduled == 1 ? Moment(row.tanggal).tz('Asia/Jakarta').format('DD/MM/YYYY') : '-'}</div>,
+        selector: 'booking_schedule',
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
       },
       {
-        name: 'Participants',
-        // selector: 'total_participant',
-        cell: row => <div>{row.is_private == 1 ? row.total_participant : '-'}</div>,
+        name: 'Status',
+        selector: `booking_status`,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
