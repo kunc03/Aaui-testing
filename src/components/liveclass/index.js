@@ -368,10 +368,10 @@ export default class LiveClass extends Component {
                               </div>
                               <div className="card-carousel col-sm-4">
                                 <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}>
-                                  Tidak Hadir
+                                  Not Present
                               </Link>
                                 <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}>
-                                  Hadir
+                                  Present
                               </Link>
                               </div>
                             </div>
