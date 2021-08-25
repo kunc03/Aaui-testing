@@ -44,6 +44,10 @@ socket.on("connect", () => {
 
 export default class MeetingRoom extends Component {
   state = {
+    dataParticipants:{
+      audio : 0,
+      camera : 0,
+    },
     fullscreen: false,
     classId: this.props.match.params.roomid,
     user: {},
@@ -386,8 +390,16 @@ export default class MeetingRoom extends Component {
         }
     }
     window.addEventListener("message", window.receiveMessageFromIndex, false);
+
+    this.timer = setInterval(
+        () => this.fetchDataParticipants(),
+        5000,
+    );
   }
 
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
   onClickInfo(class_id) {
     this.setState({ isModalConfirmation: true })
     this.fetchMeetingInfo(class_id)
@@ -414,6 +426,37 @@ export default class MeetingRoom extends Component {
         toast.success(`Success ${isLive == 0 ? 'unlock' : 'lock'} meeting`)
       }
     })
+  }
+
+  fetchDataParticipants(){
+    if (this.state.classRooms.class_id){
+      let api = bbb.api(BBB_URL, BBB_KEY)
+      let http = bbb.http
+  
+      let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.class_id)
+      http(meetingInfo).then((result) => {
+        if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
+          // Jika belum ada
+        }
+        else {
+          // Jika sudah ada
+          this.setState({
+            dataParticipants:{
+              audio : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
+                          1
+                        : 0
+                      : 0,
+              camera : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasVideo).length : result.attendees.attendee.hasVideo ?
+                          1
+                        : 0
+                      : 0,
+            }
+          })
+        }
+      })
+    }
   }
   fetchData() {
     // this.onBotoomScroll();
@@ -1005,8 +1048,21 @@ export default class MeetingRoom extends Component {
                           }
                         </h3> */} {user.name && classRooms.room_name ?
                           <div className="card p-20">
-                            <div>
+                            <div style={{position:'relative'}}>
                               <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+
+                              <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left:0, bottom:0}}>
+                                <Tooltip title="Listening" arrow placement="top">
+                                  <span>
+                                    <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                                  </span>
+                                </Tooltip>
+                                <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                                  <span>
+                                    <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                                  </span>
+                                </Tooltip>
+                              </span>
 
                               <div className="float-right dropleft">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
