@@ -202,8 +202,24 @@ class Event extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {
-              this.state.needConfirmation >= 1 && this.state.infoClass.is_required_confirmation === 1 ?
+            {this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1 ?
+              <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                  <div className="card-carousel col-sm-8">
+                    <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                      Attendance Confirmation
+                  </div>
+                    <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
+                  </div>
+                  <div className="card-carousel col-sm-4">
+                    <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Not Present
+                  </Link>
+                    <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Present
+                  </Link>
+                  </div>
+                </div>
+              </div>
+              : this.state.needConfirmation == 0 && this.state.infoClass.is_private == 1 ?
                 <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">

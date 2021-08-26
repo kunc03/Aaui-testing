@@ -983,10 +983,10 @@ export default class LiveClassAdmin extends Component {
                                 </div>
                                 <div className="card-carousel col-sm-4">
                                   <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}>
-                                    Not present
+                                    Not Present
                               </Link>
                                   <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}>
-                                    Be present
+                                    Present
                               </Link>
                                 </div>
                               </div>
