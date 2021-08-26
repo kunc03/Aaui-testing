@@ -29,6 +29,9 @@ import { Editor } from '@tinymce/tinymce-react';
 import TableFiles from '../files/_files';
 import FileViewer from 'react-file-viewer';
 
+import Select from 'react-select';
+
+
 // import { ThemeProvider } from 'styled-components';
 // import { MeetingProvider, lightTheme } from 'amazon-chime-sdk-component-library-react';
 // import ChimeMeeting from '../meeting/chime'
@@ -43,6 +46,10 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    dataParticipants:{
+      audio : 0,
+      camera : 0,
+    },
     fileKey: Math.random().toString(36),
     session: Storage.get('user').data,
     welcome: true,
@@ -129,6 +136,37 @@ export default class MeetRoomPub extends Component {
 
   }
 
+  fetchDataParticipants(){
+    if (this.state.classRooms.id){
+      let api = bbb.api(BBB_URL, BBB_KEY)
+      let http = bbb.http
+  
+      let meetingInfo = api.monitoring.getMeetingInfo(this.state.classRooms.id)
+      http(meetingInfo).then((result) => {
+        if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
+          // Jika belum ada
+        }
+        else {
+          // Jika sudah ada
+          this.setState({
+            dataParticipants:{
+              audio : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
+                          1
+                        : 0
+                      : 0,
+              camera : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasVideo).length : result.attendees.attendee.hasVideo ?
+                          1
+                        : 0
+                      : 0,
+            }
+          })
+        }
+      })
+    }
+  }
+
   joinChime = async (e) => {
     const title     = this.state.classRooms.room_name+'-'+moment(new Date).format('YYYY-MM-DD-HH');
     const name      = this.state.user.name;
@@ -169,8 +207,8 @@ export default class MeetRoomPub extends Component {
     if (isMobile) {
       window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
     }
-    else{
-      this.setState({isLoading: true})
+    else {
+      this.setState({ isLoading: true })
       this.onBotoomScroll();
       socket.on("broadcast", data => {
         console.log(this.state.fileChat, 'sockett onnnnn')
@@ -180,10 +218,19 @@ export default class MeetRoomPub extends Component {
         }
       });
       this.fetchData();
+
+      this.timer = setInterval(
+        () => this.fetchDataParticipants(),
+        5000,
+      );
     }
     // window.onbeforeunload = function() {
     //   return "Are you sure you want to leave?";
     // };
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   onSubmitLock(classId, isLive) {
@@ -220,34 +267,47 @@ export default class MeetRoomPub extends Component {
             fileChat: res.data.result
           })
 
-          API.get(`${API_SERVER}v1/liveclass/mom/${this.state.classId}`).then(res => {
-            if (res.status === 200) {
-              this.setState({
-                listMOM: res.data.result ? res.data.result : []
-              })
-              API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
-                if (res.status === 200) {
-                  let publishSubsSelect = []
-                  res.data.result.map((item, i) => {
-                    if (item.events.length > 0) {
-                      publishSubsSelect.push(item)
-                    }
-                  })
-                  this.setState({
-                    listSubtitle: publishSubsSelect
-                  })
-
-                }
-
-              })
-            }
-          })
+         this.fetchMOMAndTranscript(this.state.classId)
         }
       })
     })
-      .catch(function (error) {
-        console.log(error);
+    .catch(function (error) {
+      console.log(error);
+    });
+
+    API.get(`${API_SERVER}v1/user/company/${localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id}`).then(response => {
+      response.data.result.map(item => {
+        this.state.optionsInvite.push({ value: item.user_id, label: item.name });
       });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  fetchMOMAndTranscript = (classId) => {
+    API.get(`${API_SERVER}v1/liveclass/mom/${classId}`).then(res => {
+      if (res.status === 200) {
+        this.setState({
+          listMOM: res.data.result ? res.data.result : []
+        })
+        API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
+          if (res.status === 200) {
+            let publishSubsSelect = []
+            res.data.result.map((item, i) => {
+              if (item.events.length > 0) {
+                publishSubsSelect.push(item)
+              }
+            })
+            this.setState({
+              listSubtitle: publishSubsSelect
+            })
+
+          }
+
+        })
+      }
+    })
   }
 
   joinMeeting() {
@@ -319,7 +379,7 @@ export default class MeetRoomPub extends Component {
           let joinUrl = api.administration.join(
             this.state.user.name,
             this.state.classRooms.booking_id,
-            this.state.classRooms.moderator == Storage.get("user").data.user_id ? 'moderator' || this.state.classRooms.akses === 0 : 'peserta',
+            this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0  ? 'moderator' : 'peserta',
             {
               userID: this.state.user.user_id,
               guest: true
@@ -349,6 +409,7 @@ export default class MeetRoomPub extends Component {
 
   onClickSubmitInvite = e => {
     e.preventDefault();
+    let { classRooms } = this.state
     if (this.state.emailInvite == '' && this.state.userInvite == '') {
       toast.warning('Silahkan pilih user atau email yang diundang.')
     }
@@ -364,12 +425,23 @@ export default class MeetRoomPub extends Component {
         schedule_end: new Date(this.state.classRooms.tgl_selesai).toISOString().slice(0, 16).replace('T', ' '),
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
-        messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classId
+        messageNonStaff: APPS_SERVER + 'meet/' + this.state.classId
       }
 
       API.post(`${API_SERVER}v1/liveclasspublic/share`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
+            // add to parti
+            if (form.userInvite.length) {
+              for (let index = 0; index < form.userInvite.length; index++) {
+                let f = {
+                  meeting_id: classRooms.booking_id,
+                  user_id: form.userInvite[index]
+                }
+                API.post(`${API_SERVER}v2/meetpub/participant`, f) 
+              }
+            }
+            
             this.setState({
               isInvite: false,
               emailInvite: [],
@@ -459,10 +531,10 @@ export default class MeetRoomPub extends Component {
               created_at: new Date()
             })
 
-            this.setState({ fileKey: Math.random().toString(36) })
           } else {
             alert('File yang anda input salah')
           }
+          this.setState({ fileKey: Math.random().toString(36), nameFile: null })
         }
       })
     } else {
@@ -478,9 +550,9 @@ export default class MeetRoomPub extends Component {
   joinRoom() {
     let { session } = this.state
     if (this.state.user.name && this.state.user.email) {
-      if (!session) {
-        this.addParticipant(this.state.user)
-      }
+      // if (!session) {
+      this.addParticipant(this.state.user)
+      // }
       this.joinMeeting()
       this.setState({ join: true, modalStart: false, welcome: false });
     }
@@ -490,13 +562,8 @@ export default class MeetRoomPub extends Component {
   }
 
   addParticipant = (user) => {
-    let { name, email } = user
     let { classRooms } = this.state
-    let form = {
-      meeting_id: classRooms.booking_id,
-      name,
-      email
-    }
+    let form = { ...user, meeting_id: classRooms.booking_id }
     API.post(`${API_SERVER}v2/meetpub/participant`, form)
   }
 
@@ -1075,6 +1142,19 @@ export default class MeetRoomPub extends Component {
                                         <div>
                                           <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
 
+                                          <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                                            <Tooltip title="Listening" arrow placement="top">
+                                              <span>
+                                                <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                                              </span>
+                                            </Tooltip>
+                                            <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                                              <span>
+                                                <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                                              </span>
+                                            </Tooltip>
+                                          </span>
+
                                           <div className="float-right dropleft">
                                             <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                               <i className="fa fa-ellipsis-v" style={{ fontSize: 20, marginRight: 0, color: 'rgb(148 148 148)' }} />
@@ -1104,7 +1184,7 @@ export default class MeetRoomPub extends Component {
                                           </div>
 
                                           <Tooltip title="MOM" arrow placement="top">
-                                            <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important'}} onClick={ !create_mom ? () => this.setState({ modalMOM: true }) : notify } className="float-right m-b-10">
+                                            <span style={{ marginRight: 14, cursor: 'pointer', padding: '0px !important', height: '40px !important', width: '40px !important', borderRadius: '50px !important' }} onClick={!create_mom ? () => { this.setState({ modalMOM: true }); this.fetchMOMAndTranscript(this.state.classId) } : notify } className="float-right m-b-10">
                                               <img
                                                 src={`newasset/room/room-mom.svg`}
                                                 alt=""
@@ -1182,6 +1262,19 @@ export default class MeetRoomPub extends Component {
                     <ReactFullScreenElement fullScreen={this.state.fullscreen} allowScrollbar={false}>
                       <div>
                         <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
+
+                        <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left:0, bottom:0}}>
+                          <Tooltip title="Listening" arrow placement="top">
+                            <span>
+                              <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                            </span>
+                          </Tooltip>
+                          <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                            <span>
+                              <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                            </span>
+                          </Tooltip>
+                        </span>
 
                         <div className="float-right dropleft">
                           <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1334,6 +1427,20 @@ export default class MeetRoomPub extends Component {
                 </Modal.Header>
                 <Modal.Body>
                   <div className="form-vertical">
+                    <Form.Group controlId="formJudul">
+                      <Form.Label className="f-w-bold">
+                        From User
+                      </Form.Label>
+                      <Select
+                        options={this.state.optionsInvite}
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                      />
+                      <Form.Text className="text-muted">
+                        Select user to invite.
+                      </Form.Text>
+                    </Form.Group>
                     <div className="form-group">
                       <label style={{ fontWeight: "bold" }}>Email</label>
                       <TagsInput
@@ -1437,105 +1544,102 @@ export default class MeetRoomPub extends Component {
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
-                  <div className="col-sm-12">{/* CHATING SEND FILE */}
-                    <div id="scrollin" className="card" style={{ padding: 10 }}>
-                      <div className={this.state.editMOM ? 'hidden' : ''}>
-                        <button to={"#"} onClick={(a) => { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
-                        </button>
-                      </div>
-                      {!this.state.editMOM ?
-                        <div className="card">
-                          <div className="col-sm-12">
-                            {this.state.listMOM.map((item, i) => (
-                              <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
-                                <h3 className="f-18 f-w-bold f-w-800">
-                                  {item.title}
-                                  <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
-                                    <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
-                                      Export PDF
-                                    </Link>
-                                    <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
-                                      <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
-                                    </Link>
-                                    <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
-                                      <i data-id={item.id} className="fa fa-trash"></i>
-                                    </Link>
-                                  </span>
-                                </h3>
-                                <p>{moment.tz(item.time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        :
-                        <div>
-                          <Link to='#' title="Back" onClick={this.backMOM}>
-                            <h4 className="f-20 f-w-800 p-10">
-                              <i className="fa fa-arrow-left"></i> Back
-                            </h4>
-                          </Link>
-                          <h4 className="p-10">{classRooms.room_name}</h4>
-                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                            <Form.Label className="f-w-bold">
-                              MOM Title
-                          </Form.Label>
-                            <div style={{ width: '100%' }}>
-                              <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="Insert MOM Title" onChange={this.onChangeInputMOM} />
-                            </div>
-                          </Form.Group>
-                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                            <Form.Label className="f-w-bold">
-                              Time
-                          </Form.Label>
-                            <div style={{ width: '100%' }}>
-                              <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
-                            </div>
-                          </Form.Group>
-                          {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                          <Form.Label className="f-w-bold">
-                            Text Dari Subtitle
-                          </Form.Label>
-                          <div style={{ width: '100%' }}>
-                            <select style={{ textTransform: 'capitalize', width: '40%', display: 'inline-block' }} name="subtitle" className="form-control" onChange={this.onChangeInputMOM} required>
-                              <option value="">Pilih</option>
-                              {dataMOM.map((item, index) => (
-                              <option value={index} selected={ item._id===this.state.selectSubtitle ? "selected" : "" }>
-                                {moment.tz(item.start_time, moment.tz.guess(true)).format("DD MMMM YYYY, HH:mm") + " - " + moment.tz(item.end_time, moment.tz.guess(true)).format("HH:mm")}
-                              </option>
-                              ))}
-                            </select>
-                            <button to={ "#"} onClick={this.addSubsToMOM} className="btn btn-icademy-primary ml-2">
-                              Add to MOM
-                            </button>
-                          </div>
-                        </Form.Group> */}
-
-
-                          <Form.Group controlId="formJudul" style={{ padding: 10 }}>
-                            <Form.Label className="f-w-bold">
-                              Speech recognition
-                          </Form.Label>
-                            <Dictation newTranscript={this.handleTranscript} />
-                          </Form.Group>
-
-                          <div className="chart-container" style={{ position: "relative", margin: 20 }}>
-                            <div className="form-group">
-                              <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{
-                                height: 400, menubar: true, plugins: [
-                                  "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount"], toolbar: "undo redo | formatselect | bold italic backcolor | \
-                                      alignleft aligncenter alignright alignjustify | \
-                                      bullist numlist outdent indent | removeformat | help" }} />
-                            </div>
-                          </div>
-                          <div>
-                            <button to={"#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
-                              Save
-                          </button>
-                          </div>
-                        </div>
-                      }
+                  <div id="scrollin" className="card" style={{ padding: 10 }}>
+                    <div className={this.state.editMOM ? 'hidden' : ''}>
+                      <button to={"#"} onClick={(a) => { this.setState({ editMOM: true }) }} className="btn btn-icademy-primary ml-2 float-right"> Add New
+                      </button>
                     </div>
+                    {!this.state.editMOM ?
+                      <div className="card">
+                        <div className="col-sm-12">
+                          {this.state.listMOM.map((item, i) => (
+                            <div className="komentar-item p-15" style={{ marginBottom: '15px', borderBottom: "#dedede solid 1px" }}>
+                              <h3 className="f-18 f-w-bold f-w-800">
+                                {item.title}
+                                <span className="f-12" style={{ float: 'right', fontWeight: 'normal' }}>
+                                  <Link to='#' data-id={item.id} className="buttonku ml-2" title="Export PDF" onClick={this.exportMOM}>
+                                    Export PDF
+                                  </Link>
+                                  <Link to='#' data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="buttonku ml-2" title="Edit" onClick={this.onClickEditMOM}>
+                                    <i data-id={item.id} data-title={item.title} data-content={item.content} data-time={item.time} className="fa fa-edit"></i>
+                                  </Link>
+                                  <Link to="#" data-id={item.id} className="buttonku ml-2" title="Hapus" onClick={this.deleteMOM}>
+                                    <i data-id={item.id} className="fa fa-trash"></i>
+                                  </Link>
+                                </span>
+                              </h3>
+                              <p>{moment.tz(item.time, moment.tz.guess(true)).format("YYYY-MM-DD HH:mm:ss")}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      :
+                      <div>
+                        <Link to='#' title="Back" onClick={this.backMOM}>
+                          <h4 className="f-20 f-w-800 p-10">
+                            <i className="fa fa-arrow-left"></i> Back
+                          </h4>
+                        </Link>
+                        <h4 className="p-10">{classRooms.room_name}</h4>
+                        <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                          <Form.Label className="f-w-bold">
+                            MOM Title
+                        </Form.Label>
+                          <div style={{ width: '100%' }}>
+                            <input required type="text" name="title" value={this.state.title} className="form-control" placeholder="Insert MOM Title" onChange={this.onChangeInputMOM} />
+                          </div>
+                        </Form.Group>
+                        <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                          <Form.Label className="f-w-bold">
+                            Time
+                        </Form.Label>
+                          <div style={{ width: '100%' }}>
+                            <DatePicker selected={this.state.startDate} onChange={this.handleChangeDateFrom} showTimeSelect dateFormat="yyyy-MM-dd HH:mm" />
+                          </div>
+                        </Form.Group>
+                        {/* <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                        <Form.Label className="f-w-bold">
+                          Text Dari Subtitle
+                        </Form.Label>
+                        <div style={{ width: '100%' }}>
+                          <select style={{ textTransform: 'capitalize', width: '40%', display: 'inline-block' }} name="subtitle" className="form-control" onChange={this.onChangeInputMOM} required>
+                            <option value="">Pilih</option>
+                            {dataMOM.map((item, index) => (
+                            <option value={index} selected={ item._id===this.state.selectSubtitle ? "selected" : "" }>
+                              {moment.tz(item.start_time, moment.tz.guess(true)).format("DD MMMM YYYY, HH:mm") + " - " + moment.tz(item.end_time, moment.tz.guess(true)).format("HH:mm")}
+                            </option>
+                            ))}
+                          </select>
+                          <button to={ "#"} onClick={this.addSubsToMOM} className="btn btn-icademy-primary ml-2">
+                            Add to MOM
+                          </button>
+                        </div>
+                      </Form.Group> */}
+
+
+                        <Form.Group controlId="formJudul" style={{ padding: 10 }}>
+                          <Form.Label className="f-w-bold">
+                            Speech recognition
+                        </Form.Label>
+                          <Dictation newTranscript={this.handleTranscript} />
+                        </Form.Group>
+
+                        <div className="chart-container" style={{ position: "relative", margin: 20 }}>
+                          <div className="form-group">
+                            <Editor apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5" initialValue={this.state.body} value={this.state.body} onEditorChange={this.handleEditorChange.bind(this)} init={{
+                              height: 400, menubar: true, plugins: [
+                                "advlist autolink lists link image charmap print preview anchor", "searchreplace visualblocks code fullscreen", "insertdatetime media table paste code help wordcount"], toolbar: "undo redo | formatselect | bold italic backcolor | \
+                                    alignleft aligncenter alignright alignjustify | \
+                                    bullist numlist outdent indent | removeformat | help" }} />
+                          </div>
+                        </div>
+                        <div>
+                          <button to={"#"} onClick={this.addMOM} className="btn btn-icademy-primary ml-2 float-right col-2 f-14" style={{ marginLeft: '10px', padding: "7px 8px !important" }}>
+                            Save
+                        </button>
+                        </div>
+                      </div>
+                    }
                   </div>
                 </Modal.Body>
               </Modal>

@@ -41,6 +41,7 @@ class MeetingTable extends Component {
     super(props);
 
     this.roomId = null;
+    this.rooms = {};
 
     // this._deleteUser = this._deleteUser.bind(this);
 
@@ -145,6 +146,8 @@ class MeetingTable extends Component {
   }
 
   closeModalBooking = () => {
+    this.roomId = null;
+    this.rooms = {};
     this.setState({
       roomName: '',
       classId: '',
@@ -297,7 +300,7 @@ class MeetingTable extends Component {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: true, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
-    this.setState({ modalJadwal: false, infoParticipant: [] });
+    this.setState({ modalJadwal: false, classId: '', roomName: '', infoParticipant: [] });
   }
 
   closeModalConfirmation = e => {
@@ -871,7 +874,7 @@ class MeetingTable extends Component {
   }
 
   onClickJadwal(id, room_name) {
-    this.setState({ modalJadwal: true, bookingMeetingId: id })
+    this.setState({ modalJadwal: true, bookingMeetingId: id, classId: id, roomName: room_name })
     this.fetchBooking(id, room_name)
   }
 
@@ -888,11 +891,12 @@ class MeetingTable extends Component {
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
-          if (range && item.running) {
+          if (range || item.running) {
             // this.setState({ bokingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
             // console.log('run range')
             // this.fetchMeetingInfoBooking(item.meeting_id, item.id);
             this.roomId = item.id
+            this.rooms = item
           }
         })
         this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
@@ -1437,9 +1441,14 @@ class MeetingTable extends Component {
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                     {
                                       range ?
-                                        <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                        <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
                                         </a>
+                                      : null
+                                    }
+                                    {
+                                      item.user_id === Storage.get('user').data.user_id ?
+                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
                                       : null
                                     }
                                   </td>
@@ -1928,7 +1937,7 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              this.roomId ?
+              this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
                 <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
                   <i className="fa fa-video"></i> Join
                 </a>
