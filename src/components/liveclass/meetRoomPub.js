@@ -9,6 +9,7 @@ import {
 import 'react-sm-select/dist/styles.css';
 import TagsInput from 'react-tagsinput'
 import Tooltip from '@material-ui/core/Tooltip';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import 'react-tagsinput/react-tagsinput.css'
 import { toast } from "react-toastify";
@@ -46,6 +47,7 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    copied: false,
     dataParticipants:{
       audio : 0,
       camera : 0,
@@ -1455,6 +1457,12 @@ export default class MeetRoomPub extends Component {
                       </Form.Text>
                     </div>
                   </div>
+                  
+                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${Moment(classRooms.tanggal).local().format('DD-MM-YYYY')}\nHour : ${classRooms.jam_mulai} - ${classRooms.jam_selesai}\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
+                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                    <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i> Copy Invitation</button>
+                  </CopyToClipboard>
+
                   <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
                     <i className="fa fa-envelope"></i> {this.state.sendingEmail ? 'Sending Invitation...' : 'Send Invitation'}
                   </button>
