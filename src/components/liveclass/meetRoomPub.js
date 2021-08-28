@@ -57,7 +57,12 @@ export default class MeetRoomPub extends Component {
     welcome: true,
     fullscreen: false,
     classId: this.props.match.params.roomid,
-    user: {},
+    user: {
+      user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
+      name: Storage.get('user').data ? Storage.get('user').data.user : '',
+      email: Storage.get('user').data ? Storage.get('user').data.email : '',
+      avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
+    },
     classRooms: {},
     fileChat: [],
     attachment: '',
@@ -250,12 +255,12 @@ export default class MeetRoomPub extends Component {
       this.setState({
         isLoading: false,
         classRooms: response.data.result,
-        user: {
-          user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
-          name: Storage.get('user').data ? Storage.get('user').data.user : '',
-          email: Storage.get('user').data ? Storage.get('user').data.email : '',
-          avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
-        }
+        // user: {
+        //   user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
+        //   name: Storage.get('user').data ? Storage.get('user').data.user : '',
+        //   email: Storage.get('user').data ? Storage.get('user').data.email : '',
+        //   avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
+        // }
       })
       API.get(`${API_SERVER}v2/meetpub/file/${this.state.classId}`).then(res => {
         let splitTags;
@@ -1265,7 +1270,7 @@ export default class MeetRoomPub extends Component {
                       <div>
                         <span className="f-w-bold f-18 fc-blue">{classRooms.room_name}</span>
 
-                        <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left:0, bottom:0}}>
+                        <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left:0, top:17}}>
                           <Tooltip title="Listening" arrow placement="top">
                             <span>
                               <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
