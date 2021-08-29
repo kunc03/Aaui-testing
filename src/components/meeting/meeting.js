@@ -194,8 +194,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: Moment.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: Moment.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: `${Moment.tz(this.state.classRooms.schedule_start).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${Moment.tz(this.state.classRooms.schedule_end).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -337,20 +337,7 @@ class MeetingTable extends Component {
     if (isMobile) {
       window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + id))
     }
-    API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
-      console.log(res.data.result, 'prop informationId');
-      if (res.status === 200) {
-        this.setState({
-          infoClass: res.data.result[0],
-          infoParticipant: res.data.result[1],
-          countHadir: res.data.result[1].filter((item) => item.confirmation === 'Hadir').length,
-          countTidakHadir: res.data.result[1].filter((item) => item.confirmation === 'Tidak Hadir').length,
-          countTentative: res.data.result[1].filter((item) => item.confirmation === '').length,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id && item.confirmation === '').length,
-          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
-        })
-      }
-    })
+    this.fetchMeetingInfoBooking(null, id);
   }
 
   fetchMeetingInfoBooking(meetingId, bookingId) {
@@ -893,8 +880,8 @@ class MeetingTable extends Component {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
           const jamIni = moment()
-          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+          const sJadwal = Moment(`${item.tgl_mulai}`).local()
+          const eJadwal = Moment(`${item.tgl_selesai}`).local()
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
@@ -944,7 +931,7 @@ class MeetingTable extends Component {
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
-            toast.success('Menyimpan booking jadwal meeting')
+            toast.success('Saved')
             
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
@@ -956,14 +943,14 @@ class MeetingTable extends Component {
               room_name: this.state.roomName,
               is_private: isPrivate,
               is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai}`,
-              schedule_end: `${tanggal} ${jamSelesai}`,
-              userInvite: [],
+              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
+              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
               messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
             }
 
-            API.post(`${API_SERVER}v1/liveclasspublic/share`, form1).then(res => {
+            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
               if (res.status === 200) {
                 if (!res.data.error) {
                   this.setState({ emailInvite: [], sendingEmail: false });
@@ -1211,8 +1198,8 @@ class MeetingTable extends Component {
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
             <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickJadwal.bind(this, row.class_id, row.room_name)}>Schedule & Booking</button>
-            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Invite</button>
-            {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Lock' : 'Unlock'}</button>}
+            {/* <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Invite</button> */}
+            {/* {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Lock' : 'Unlock'}</button>} */}
             {access_project_admin && <button
               style={{ cursor: 'pointer' }}
               class="dropdown-item"
@@ -1253,7 +1240,7 @@ class MeetingTable extends Component {
         {
           name: 'Action',
           cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
@@ -1454,8 +1441,8 @@ class MeetingTable extends Component {
                             const split = item.tanggal.split('-')
                             const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
                             const jamIni = moment()
-                            const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                            const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                            const sJadwal = Moment(`${item.tgl_mulai}`).local()
+                            const eJadwal = Moment(`${item.tgl_selesai}`).local()
                             const range = jamIni.isBetween(sJadwal, eJadwal)
 
                             return (
@@ -1471,7 +1458,7 @@ class MeetingTable extends Component {
                                   <td>
                                     <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                      <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
                                     </CopyToClipboard>
                                   </td>
                                   <td>
@@ -1479,7 +1466,7 @@ class MeetingTable extends Component {
                                     {
                                       range ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                          <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
                                       : null
                                     }
@@ -1853,10 +1840,10 @@ class MeetingTable extends Component {
                 this.state.infoClass.hasOwnProperty('tanggal') ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
-                      Start : { Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                      Start : { moment(this.state.infoClass.tgl_mulai).local().format("DD-MM-YYYY HH:mm")}
                     </h3>
                     <h3 className="f-14">
-                      End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                      End : { moment(this.state.infoClass.tgl_selesai).local().format("DD-MM-YYYY HH:mm")}
                     </h3>
                   </div>
                 : null
@@ -1905,13 +1892,17 @@ class MeetingTable extends Component {
           {
             (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
               <Modal.Footer>
-                <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
-                  onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                  <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor">&nbsp; Copy</i></button>
-                </CopyToClipboard>
                 {
                   this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ? 
-                    <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                  <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                    <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i>&nbsp; Copy Invitation</button>
+                  </CopyToClipboard>
+                    : null
+                }
+                {
+                  this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ? 
+                    <a className="btn btn-v2 btn-warning" style={{background:'#EF843C', borderColor:'#EF843C'}} rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
                       <i className="fa fa-video"></i> Join
                     </a>
                     : null
@@ -1959,8 +1950,8 @@ class MeetingTable extends Component {
                         const split = item.tanggal.split('-')
                         const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
                         const jamIni = moment()
-                        const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                        const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                        const sJadwal = Moment(`${item.tgl_mulai}`).local()
+                        const eJadwal = Moment(`${item.tgl_selesai}`).local()
                         const range = jamIni.isBetween(sJadwal, eJadwal)
 
                         let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
@@ -1968,9 +1959,9 @@ class MeetingTable extends Component {
                         return (
                           <Fragment>
                             <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                              <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                              <td>{item.jam_mulai}</td>
-                              <td>{item.jam_selesai}</td>
+                              <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Hari ini' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
+                              <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
+                              <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                               <td>{item.name}</td>
                               <td>{item.moderator_name}</td>
                               <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
@@ -1986,7 +1977,7 @@ class MeetingTable extends Component {
                                 {
                                   checkParty && range ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                      <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                      <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
                                   : null
                                 }
@@ -2028,7 +2019,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {
               this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
+                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-warning" style={{background:'#EF843C', borderColor:'#EF843C'}}>
                   <i className="fa fa-video"></i> Join
                 </a>
                 :

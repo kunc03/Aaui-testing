@@ -156,10 +156,14 @@ class ProjekNew extends Component {
         let defValPA = res.data.result.project_admin ? res.data.result.project_admin.split(',').map(Number) : [];
         let defValU = res.data.result.user ? res.data.result.user.split(',').map(Number) : [];
         defValPA.map(item=>{
-          this.state.defaultProjectAdmin.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+          if (this.state.optionsProjectAdmin.filter((x)=> x.value === item).length){
+            this.state.defaultProjectAdmin.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+          }
         })
         defValU.map(item=>{
-          this.state.defaultUsers.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+          if (this.state.optionsProjectAdmin.filter((x)=> x.value === item).length){
+            this.state.defaultUsers.push({value: item, label: this.state.optionsProjectAdmin.filter((x)=> x.value === item)[0].label})
+          }
         })
         this.setState({
           modalEdit: true
