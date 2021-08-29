@@ -178,7 +178,7 @@ class Event extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1 ?
+            {this.state.needConfirmation >= 1 && this.state.infoClass.is_required_confirmation === 1 ?
               <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                   <div className="card-carousel col-sm-8">

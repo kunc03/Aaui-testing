@@ -436,8 +436,8 @@ export default class MeetRoomPub extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: new Date(this.state.classRooms.tgl_mulai).toISOString().slice(0, 16).replace('T', ' '),
-        schedule_end: new Date(this.state.classRooms.tgl_selesai).toISOString().slice(0, 16).replace('T', ' '),
+        schedule_start: `${moment.tz(this.state.classRooms.tgl_mulai, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${moment.tz(this.state.classRooms.tgl_selesai, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classId,
         messageNonStaff: APPS_SERVER + 'meet/' + this.state.classId
@@ -584,7 +584,7 @@ export default class MeetRoomPub extends Component {
 
   notYetTime() {
     let { classRooms } = this.state
-    toast.info(`Schedule at ${Moment(classRooms.tanggal).format('LL')} ${classRooms.jam_mulai} ${classRooms.jam_selesai}`)
+    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${Moment(classRooms.tgl_mulai).format('HH:mm')} - ${Moment(classRooms.tgl_selesai).local().format('HH:mm')}`)
   }
 
   addToCalendar = () => {
@@ -592,7 +592,7 @@ export default class MeetRoomPub extends Component {
     let form = {
       type: 3,
       activity_id: classRooms.booking_id,
-      description: `Meeting ${classRooms.room_name} at ${Moment(classRooms.tanggal).format('DD-MM-YYYY')} ${classRooms.jam_mulai} - ${classRooms.jam_selesai}`,
+      description: `${classRooms.room_name} - ${classRooms.keterangan}`,
       destination: `${APPS_SERVER}meet/${classRooms.booking_id}`,
       start: classRooms.tgl_mulai,
       end: classRooms.tgl_selesai
@@ -1084,9 +1084,9 @@ export default class MeetRoomPub extends Component {
     let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
     const notify = () => toast.warning('Access denied')
 
-    const jamNow = Moment()
-    const infoStart = Moment(`${classRooms.tgl_mulai}`)
-    const infoEnd = Moment(`${classRooms.tgl_selesai}`)
+    const jamNow = Moment().local()
+    const infoStart = Moment(`${classRooms.tgl_mulai}`).local()
+    const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
 
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
@@ -1183,10 +1183,10 @@ export default class MeetRoomPub extends Component {
                                                 <i className="fa fa-user-plus" style={{ marginRight: 10 }}></i> Invite People
                                               </button>
                                               {
-                                                (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
-                                                <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.id, classRooms.is_live)}>
-                                                  <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{ marginRight: 10 }}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
-                                                </button>
+                                                // (user.user_id == classRooms.moderator || classRooms.is_akses === 0) &&
+                                                // <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, classRooms.id, classRooms.is_live)}>
+                                                //   <i className={classRooms.is_live === 1 ? 'fa fa-lock' : 'fa fa-lock-open'} style={{ marginRight: 10 }}></i> {classRooms.is_live === 1 ? 'Lock Meeting' : 'Unlock Meeting'}
+                                                // </button>
                                               }
                                               {user.user_id == classRooms.moderator &&
                                                 <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={() => this.setState({ modalEnd: true })}>
@@ -1774,7 +1774,7 @@ export default class MeetRoomPub extends Component {
                                           "Loading..."
                                         :
                                         <span style={{fontSize: '12px'}}>
-                                          {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
+                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
                                         </span>
                                       }    
                                     </p>
@@ -1893,7 +1893,7 @@ export default class MeetRoomPub extends Component {
                                 "Loading..."
                               :
                               <span style={{fontSize: '12px'}}>
-                                {Moment(classRooms.tanggal).format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
+                              {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
                               </span>
                             }    
                           </p>

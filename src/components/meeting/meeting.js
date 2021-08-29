@@ -194,8 +194,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: Moment.tz(this.state.classRooms.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-        schedule_end: Moment.tz(this.state.classRooms.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+        schedule_start: `${Moment.tz(this.state.classRooms.schedule_start).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${Moment.tz(this.state.classRooms.schedule_end).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -880,8 +880,8 @@ class MeetingTable extends Component {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
           const jamIni = moment()
-          const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-          const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+          const sJadwal = Moment(`${item.tgl_mulai}`).local()
+          const eJadwal = Moment(`${item.tgl_selesai}`).local()
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
@@ -931,7 +931,7 @@ class MeetingTable extends Component {
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
-            toast.success('Menyimpan booking jadwal meeting')
+            toast.success('Saved')
             
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
@@ -943,8 +943,8 @@ class MeetingTable extends Component {
               room_name: this.state.roomName,
               is_private: isPrivate,
               is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai}`,
-              schedule_end: `${tanggal} ${jamSelesai}`,
+              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
               userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
               messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
@@ -1198,8 +1198,8 @@ class MeetingTable extends Component {
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
             <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickJadwal.bind(this, row.class_id, row.room_name)}>Schedule & Booking</button>
-            <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Invite</button>
-            {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Lock' : 'Unlock'}</button>}
+            {/* <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onClickInvite.bind(this, row.class_id)}>Invite</button> */}
+            {/* {access_project_admin && <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.onSubmitLock.bind(this, row.class_id, row.is_live)}>{row.is_live ? 'Lock' : 'Unlock'}</button>} */}
             {access_project_admin && <button
               style={{ cursor: 'pointer' }}
               class="dropdown-item"
@@ -1441,8 +1441,8 @@ class MeetingTable extends Component {
                             const split = item.tanggal.split('-')
                             const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
                             const jamIni = moment()
-                            const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                            const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                            const sJadwal = Moment(`${item.tgl_mulai}`).local()
+                            const eJadwal = Moment(`${item.tgl_selesai}`).local()
                             const range = jamIni.isBetween(sJadwal, eJadwal)
 
                             return (
@@ -1840,10 +1840,10 @@ class MeetingTable extends Component {
                 this.state.infoClass.hasOwnProperty('tanggal') ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
-                      Start : { Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                      Start : { moment(this.state.infoClass.tgl_mulai).local().format("DD-MM-YYYY HH:mm")}
                     </h3>
                     <h3 className="f-14">
-                      End : {Moment.tz(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm")}
+                      End : { moment(this.state.infoClass.tgl_selesai).local().format("DD-MM-YYYY HH:mm")}
                     </h3>
                   </div>
                 : null
@@ -1950,8 +1950,8 @@ class MeetingTable extends Component {
                         const split = item.tanggal.split('-')
                         const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
                         const jamIni = moment()
-                        const sJadwal = moment(`${reTanggal} ${item.jam_mulai}`)
-                        const eJadwal = moment(`${reTanggal} ${item.jam_selesai}`)
+                        const sJadwal = Moment(`${item.tgl_mulai}`).local()
+                        const eJadwal = Moment(`${item.tgl_selesai}`).local()
                         const range = jamIni.isBetween(sJadwal, eJadwal)
 
                         let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
@@ -1959,9 +1959,9 @@ class MeetingTable extends Component {
                         return (
                           <Fragment>
                             <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                              <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                              <td>{item.jam_mulai}</td>
-                              <td>{item.jam_selesai}</td>
+                              <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Hari ini' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
+                              <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
+                              <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                               <td>{item.name}</td>
                               <td>{item.moderator_name}</td>
                               <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
