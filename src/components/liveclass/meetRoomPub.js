@@ -426,7 +426,7 @@ export default class MeetRoomPub extends Component {
     e.preventDefault();
     let { classRooms } = this.state
     if (this.state.emailInvite == '' && this.state.userInvite == '') {
-      toast.warning('Silahkan pilih user atau email yang diundang.')
+      toast.warning('Please select the invited user or email.')
     }
     else {
       this.setState({ sendingEmail: true })
@@ -464,7 +464,7 @@ export default class MeetRoomPub extends Component {
               emailResponse: res.data.result,
               sendingEmail: false
             });
-            toast.success("Mengirim email ke peserta.")
+            toast.success("Send email to participants.")
           } else {
             toast.error("Email failed to send, please check the email address.")
             this.setState({ sendingEmail: false })
@@ -1359,9 +1359,9 @@ export default class MeetRoomPub extends Component {
                           <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                         </div>
                         <div className="card-carousel col-sm-4">
-                          <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
+                          <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Not Present
                         </Link>
-                          <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
+                          <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Present
                         </Link>
                         </div>
                       </div>

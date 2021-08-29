@@ -213,7 +213,7 @@ class MeetingTable extends Component {
             });
             toast.success("Sending invitation to participant's Email.")
           } else {
-            toast.error("Email tidak terkirim, periksa kembali email yang dimasukkan.")
+            toast.error("Email was not sent, please check the email entered again.")
             this.setState({ sendingEmail: false })
           }
         }
@@ -540,7 +540,7 @@ class MeetingTable extends Component {
     e.preventDefault();
     
     if (this.state.roomName === '' || !this.state.valueFolder.length) {
-      toast.warning('Judul meeting dan folder project wajib diisi')
+      toast.warning('The title of the meeting and the project folder is mandatory.')
     }
     else {
       if ((this.state.checkZoom.length === 1 && this.state.engine === 'zoom') || (this.state.engine === 'bbb')) {
@@ -772,12 +772,12 @@ class MeetingTable extends Component {
               */
               this.fetchMeeting();
               this.closeClassModal();
-              toast.success('Berhasil membuat meeting baru');
+              toast.success('Successfully created a new meeting.');
             }
           })
         }
       } else {
-        toast.warning(`Silahkan sinkronisasi akun zoom Anda di menu pengaturan.`)
+        toast.warning(`Please sync your zoom account in the settings menu.`)
       }
     }
 
@@ -787,7 +787,7 @@ class MeetingTable extends Component {
     API.put(`${API_SERVER}v1/liveclass/live/${classId}`, { is_live: isLive == 0 ? '1' : '0' }).then(res => {
       if (res.status === 200) {
         this.fetchMeeting();
-        toast.success(`Berhasil ${isLive == 0 ? 'membuka kunci' : 'mengunci'} meeting`)
+        toast.success(`Successfully ${isLive == 0 ? 'unlock' : 'lock'} meeting`)
       }
     })
   }
@@ -810,7 +810,7 @@ class MeetingTable extends Component {
           }
         })
         // END BBB END
-        toast.success('Berhasil menghapus meeting')
+        toast.success('Successfully deleted meeting.')
       }
     })
   }
@@ -901,7 +901,7 @@ class MeetingTable extends Component {
 
   booking() {
     if (this.state.bookingMeetingId === '' || this.state.tanggal === '' || this.state.jamMulai === '' || this.state.jamSelesai === '') {
-      toast.warning('Tanggal, jam mulai, dan jam selesai wajib diisi')
+      toast.warning('Date, start time, and end time are mandatory.')
     }
     else {
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
@@ -931,7 +931,7 @@ class MeetingTable extends Component {
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
-            toast.success('Saved')
+            toast.success('Saved.')
             
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
@@ -954,7 +954,7 @@ class MeetingTable extends Component {
               if (res.status === 200) {
                 if (!res.data.error) {
                   this.setState({ emailInvite: [], sendingEmail: false });
-                  toast.success("Mengirim email ke peserta.")
+                  toast.success("Send email to participants.")
                 } else {
                   toast.error("Email failed to send, please check the email address.")
                   this.setState({ sendingEmail: false })
@@ -971,7 +971,7 @@ class MeetingTable extends Component {
             this.fetchMeeting()
                   
           } else {
-            toast.error("Error, gagal booking jadwal meeting")
+            toast.error("Error, failed to book a meeting schedule.")
           }
         }
       })
@@ -983,10 +983,10 @@ class MeetingTable extends Component {
     API.delete(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
       if (res.status === 200) {
         if (!res.data.error) {
-          toast.success('MemCancelkan booking jadwal meeting')
+          toast.success('Canceling a meeting schedule booking.')
           this.onClickJadwal(this.state.bookingMeetingId, this.state.dataBooking.room_name)
         } else {
-          toast.error("Error, gagal memCancelkan booking jadwal meeting")
+          toast.error("Error, failed to cancel the meeting schedule booking.")
         }
       }
     })
@@ -998,7 +998,7 @@ class MeetingTable extends Component {
         if (!res.data.error) {
           this.setState({ limitCompany: res.data.result });
         } else {
-          toast.error("Error, gagal check limit company")
+          toast.error("Error, failed check limit company")
         }
       }
     })
@@ -1063,7 +1063,7 @@ class MeetingTable extends Component {
   handleEngine(e) {
     if (e.target.value === 'zoom') {
       if (this.state.checkZoom.length !== 1) {
-        toast.warning(`Silahkan konek dan sinkronisasi akun zoom Anda pada menu Pengaturan.`)
+        toast.warning(`Please connect and sync your zoom account on the Settings menu.`)
       }
       else {
         this.setState({ engine: e.target.value })
@@ -1103,7 +1103,7 @@ class MeetingTable extends Component {
     API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
       if (res.status === 200) {
         if (!res.data.error) {
-          toast.success('Menyimpan booking jadwal meeting')
+          toast.success('Save the meeting schedule booking.')
           this.setState({
             tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
             akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
@@ -1114,7 +1114,7 @@ class MeetingTable extends Component {
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
-          toast.error("Error, gagal booking jadwal meeting")
+          toast.error("Error, failed booking schedule meeting")
         }
       }
     })
@@ -1164,25 +1164,8 @@ class MeetingTable extends Component {
         },
       },
       {
-        name: 'Current / Upcoming Meeting',
-        selector: 'booking_upcoming',
-        sortable: true,
-        center: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
-        name: 'Schedule',
-        selector: 'booking_schedule',
-        center: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
-      },
-      {
         name: 'Status',
-        selector: `booking_status`,
+        selector: `status`,
         center: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -1786,9 +1769,9 @@ class MeetingTable extends Component {
                   <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <div className="card-carousel col-sm-8">
                       <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Konfirmasi Kehadiran
+                        Attendance Confirmation
                     </div>
-                      <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
+                      <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
                     </div>
                     <div className="card-carousel col-sm-4">
                       <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
@@ -1804,9 +1787,9 @@ class MeetingTable extends Component {
                     <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                       <div className="card-carousel col-sm-8">
                         <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                          Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                          You Have Confirmed : {this.state.attendanceConfirmation}
                         </div>
-                        <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                        <h3 className="f-14">Confirmation of your attendance has been sent to the moderator.</h3>
                       </div>
                     </div>
                   </div>
