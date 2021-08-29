@@ -223,6 +223,14 @@ export default class MeetRoomPub extends Component {
           this.fetchData();
           this.setState({ fileChat: [...this.state.fileChat, data] })
         }
+        if (data.socketAction == 'shareGantt' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id) {
+          this.setState({ newShareGantt: true, shareGantt: data.projectId })
+        }
+        if (data.socketAction == 'fileShow' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id) {
+          this.setState({ newFileShow: true, modalFileShow: true }, () => {
+            this.setState({selectedFileShow: data.selectedFileShow})
+          })
+        }
       });
       this.fetchData();
 
