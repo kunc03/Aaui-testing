@@ -41,6 +41,7 @@ class MeetingTable extends Component {
     super(props);
 
     this.roomId = null;
+    this.rooms = {};
 
     // this._deleteUser = this._deleteUser.bind(this);
 
@@ -145,6 +146,8 @@ class MeetingTable extends Component {
   }
 
   closeModalBooking = () => {
+    this.roomId = null;
+    this.rooms = {};
     this.setState({
       roomName: '',
       classId: '',
@@ -297,7 +300,8 @@ class MeetingTable extends Component {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: true, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
-    this.setState({ modalJadwal: false, infoParticipant: [] });
+    this.fetchOtherData()
+    this.setState({ modalJadwal: false, classId: '', roomName: '', infoParticipant: [] });
   }
 
   closeModalConfirmation = e => {
@@ -527,14 +531,20 @@ class MeetingTable extends Component {
   }
 
   groupSelect(valueGroup) {
-    this.setState({ valueGroup, valuePeserta: [] })
-    for (let i = 0; i < valueGroup.length; i++) {
-      API.get(`${API_SERVER}v1/user/group/${valueGroup[i]}`).then(res => {
-        if (res.status === 200) {
-          const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number) : [];
-          this.setState({ valuePeserta: this.state.valuePeserta.concat(participant) })
-        }
-      })
+    console.log(valueGroup)
+    if (valueGroup.length) {
+      this.setState({ valueGroup: [...this.state.valueGroup, valueGroup[0].value], valuePeserta: [] })
+      for (let i = 0; i < valueGroup.length; i++) {
+        API.get(`${API_SERVER}v1/user/group/${valueGroup[i].value}`).then(res => {
+          if (res.status === 200) {
+            const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number) : [];
+            this.setState({ valuePeserta: this.state.valuePeserta.concat(participant) })
+          }
+        })
+      }
+    }
+    else {
+      this.setState({ valueGroup: [], valuePeserta: [] })
     }
 
   }
@@ -871,7 +881,7 @@ class MeetingTable extends Component {
   }
 
   onClickJadwal(id, room_name) {
-    this.setState({ modalJadwal: true, bookingMeetingId: id })
+    this.setState({ modalJadwal: true, bookingMeetingId: id, classId: id, roomName: room_name })
     this.fetchBooking(id, room_name)
   }
 
@@ -888,11 +898,12 @@ class MeetingTable extends Component {
           const range = jamIni.isBetween(sJadwal, eJadwal)
 
           // item.hariini = range
-          if (range && item.running) {
+          if (range || item.running) {
             // this.setState({ bokingToday: { meeting_id: item.meeting_id, booking_id: item.id } })
             // console.log('run range')
             // this.fetchMeetingInfoBooking(item.meeting_id, item.id);
             this.roomId = item.id
+            this.rooms = item
           }
         })
         this.setState({ dataBooking: { room_name: room, booking: res.data.result } })
@@ -930,18 +941,48 @@ class MeetingTable extends Component {
         moderator: this.state.akses ? this.state.valueModerator : [],
       }
 
-      console.log(form)
-
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
         if (res.status === 200) {
           if (!res.data.error) {
             toast.success('Menyimpan booking jadwal meeting')
+            
+            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+
+            // share
+            this.setState({ sendingEmail: true })
+            let form1 = {
+              user: Storage.get('user').data.user,
+              email: this.state.emailInvite,
+              room_name: this.state.roomName,
+              is_private: isPrivate,
+              is_scheduled: 1,
+              schedule_start: `${tanggal} ${jamMulai}`,
+              schedule_end: `${tanggal} ${jamSelesai}`,
+              userInvite: [],
+              message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
+              messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
+            }
+
+            API.post(`${API_SERVER}v1/liveclasspublic/share`, form1).then(res => {
+              if (res.status === 200) {
+                if (!res.data.error) {
+                  this.setState({ emailInvite: [], sendingEmail: false });
+                  toast.success("Mengirim email ke peserta.")
+                } else {
+                  toast.error("Email failed to send, please check the email address.")
+                  this.setState({ sendingEmail: false })
+                }
+              }
+            })
+
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
               akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
               modalJadwal: false
             })
-            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+
+            this.fetchMeeting()
+                  
           } else {
             toast.error("Error, gagal booking jadwal meeting")
           }
@@ -1437,9 +1478,14 @@ class MeetingTable extends Component {
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                     {
                                       range ?
-                                        <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
+                                        <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
                                         </a>
+                                      : null
+                                    }
+                                    {
+                                      item.user_id === Storage.get('user').data.user_id ?
+                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
                                       : null
                                     }
                                   </td>
@@ -1536,13 +1582,23 @@ class MeetingTable extends Component {
                 {
                   this.state.private ?
                     <Form.Group controlId="formJudul">
-                      <Form.Label className="f-w-bold">
-                        Peserta Dari Group
-                      </Form.Label>
-                      <MultiSelect id="group" options={this.state.optionsGroup} value={this.state.valueGroup} onChange={valueGroup => this.groupSelect(valueGroup)} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
-                      <Form.Text className="text-muted">
-                        Pilih peserta dari group untuk private meeting.
-                      </Form.Text>
+                      <div className="col-sm-6">
+                        <Form.Label className="f-w-bold">
+                          Participant From Group
+                        </Form.Label>
+                        <Select
+                          value={[...this.state.optionsGroup].filter(x => this.state.valueGroup.includes(x.value))}
+                          options={this.state.optionsGroup}
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valuePeserta => {
+                            this.groupSelect(valuePeserta)
+                          }}
+                        />
+                        <Form.Text className="text-muted">
+                          Select participants from the group for a private meeting.
+                        </Form.Text>
+                      </div>
                     </Form.Group>
                   : null
                 }
@@ -1551,16 +1607,46 @@ class MeetingTable extends Component {
                   this.state.private ?
                     
                     <Form.Group controlId="formJudul">
-                      <Form.Label className="f-w-bold">
-                        Add Participants
-                      </Form.Label>
-                      <MultiSelect id="peserta" options={this.state.optionsPeserta} value={this.state.valuePeserta} onChange={valuePeserta => this.setState({ valuePeserta })} mode="tags" removableTags={true} hasSelectAll={true} selectAllLabel="Choose all" enableSearch={true} resetable={true} valuePlaceholder="Select Participants " />
-                      <Form.Text className="text-muted">
-                        Pilih peserta untuk private meeting.
-                      </Form.Text>
+                      <div className="col-sm-6">
+                        <Form.Label className="f-w-bold">
+                          Add Participants
+                        </Form.Label>
+                        <Select
+                          value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
+                          options={this.state.optionsPeserta}
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valuePeserta => {
+                            let arr = [];
+                            valuePeserta.map((item) => arr.push(item.value));
+                            this.setState({
+                              valuePeserta: arr
+                            })
+                          }}
+                        />
+                        <Form.Text className="text-muted">
+                          Select participant for private meeting.
+                        </Form.Text>
+                      </div>
                     </Form.Group>
                   : null
                 }
+
+                <div className="form-group">
+                  <div className="col-sm-6">
+                    <label style={{ fontWeight: "bold" }}>Email</label>
+                    <TagsInput
+                      value={this.state.emailInvite}
+                      onChange={this.handleChangeEmail.bind(this)}
+                      addOnPaste={true}
+                      addOnBlur={true}
+                      inputProps={{ placeholder: `Participant's Email` }}
+                    />
+                    <Form.Text>
+                      Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
+                    </Form.Text>
+                  </div>
+                </div>
 
                 <Form.Group controlId="formJudul">
                   <Form.Label className="f-w-bold">
@@ -1576,13 +1662,22 @@ class MeetingTable extends Component {
                 {
                   this.state.akses ?
                     <Form.Group controlId="formJudul">
-                      <Form.Label className="f-w-bold">
-                        Moderator
-                      </Form.Label>
-                      <MultiSelect id="moderator" options={this.state.optionsModerator} value={this.state.valueModerator} onChange={valueModerator => this.setState({ valueModerator })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Pilih Moderator" />
-                      <Form.Text className="text-muted">
-                        Pengisi kelas, moderator, atau speaker.
-                      </Form.Text>
+                      <div className="col-sm-6">
+                        <Form.Label className="f-w-bold">
+                            Moderator
+                          </Form.Label>
+                        <Select
+                            value={[...this.state.optionsModerator].filter(x => this.state.valueModerator.includes(x.value))}
+                            options={this.state.optionsModerator}
+                            closeMenuOnSelect={false}
+                            onChange={selected => {
+                              this.setState({ valueModerator: [selected.value] })
+                            }}
+                          />
+                        <Form.Text className="text-muted">
+                          Pengisi kelas, moderator, atau speaker.
+                        </Form.Text>
+                      </div>
                     </Form.Group>
                   : null
                 }
@@ -1769,7 +1864,7 @@ class MeetingTable extends Component {
             </div>
 
             {
-              this.state.infoClass.is_private && ((levelUser === 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
+              this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                   Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
@@ -1792,7 +1887,7 @@ class MeetingTable extends Component {
             }
 
             {
-              this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
+              this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                   Kehadiran Aktual
@@ -1814,9 +1909,13 @@ class MeetingTable extends Component {
                   onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
                   <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor">&nbsp; Copy</i></button>
                 </CopyToClipboard>
-                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
-                  <i className="fa fa-video"></i> Join
-                </a>
+                {
+                  this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ? 
+                    <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                      <i className="fa fa-video"></i> Join
+                    </a>
+                    : null
+                }
               </Modal.Footer>
               : null
           }
@@ -1928,7 +2027,7 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              this.roomId ?
+              this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
                 <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
                   <i className="fa fa-video"></i> Join
                 </a>

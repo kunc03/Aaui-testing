@@ -52,41 +52,17 @@ class Event extends Component {
       confirmation: confirmation,
     }
 
-    API.put(`${API_SERVER}v1/liveclass/confirmation/${this.state.infoClass.class_id}/${Storage.get('user').data.user_id}`, form).then(async res => {
+    API.put(`${API_SERVER}v1/liveclass/confirmation/${this.props.event.activity_id}/${Storage.get('user').data.user_id}`, form).then(async res => {
       if (res.status === 200) {
-        this.fetchMeetingInfo(this.state.infoClass.class_id)
-        let start = new Date(this.state.infoClass.schedule_start);
-        let end = new Date(this.state.infoClass.schedule_end);
-        let form = {
-          confirmation: confirmation,
-          user: Storage.get('user').data.user,
-          email: [],
-          room_name: this.state.infoClass.room_name,
-          is_private: this.state.infoClass.is_private,
-          is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: `${moment.tz(this.state.infoClass.schedule_start, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
-          schedule_end: `${moment.tz(this.state.infoClass.schedule_end, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
-          userInvite: [Storage.get('user').data.user_id],
-          //url
-          message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
-          messageNonStaff: APPS_SERVER + 'meeting/' + this.state.infoClass.class_id
-        }
-        this.setState({ alertSuccess: true })
-        API.post(`${API_SERVER}v1/liveclass/share`, form).then(res => {
-          if (res.status === 200) {
-            if (!res.data.error) {
-              console.log('sukses konfirmasi')
-            } else {
-              alert('Email error');
-            }
-          }
-        })
+        this.fetchMeetingInfo(this.props.event.activity_id)
+        this.fetchMeetPub(this.props.event.activity_id)
+
         let formNotif = {
           user_id: this.state.infoClass.moderator,
           type: 3,
           activity_id: this.state.infoClass.class_id,
           desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'Present' : 'Not Present') + ' on the meeting : ' + this.state.infoClass.room_name,
-          dest: `${APPS_SERVER}meeting/information/${this.state.infoClass.class_id}`,
+          dest: `${APPS_SERVER}meeting/information/${this.props.event.activity_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
@@ -202,24 +178,23 @@ class Event extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {
-              this.state.needConfirmation >= 1 && this.state.infoClass.is_required_confirmation === 1 ?
-                <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
-                    <div className="card-carousel col-sm-8">
-                      <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                        Konfirmasi Kehadiran
-                    </div>
-                      <h3 className="f-14">Anda diundang dalam meeting ini dan belum mengkonfirmasi kehadiran. Silahkan konfirmasi kehadiran.</h3>
-                    </div>
-                    <div className="card-carousel col-sm-4">
-                      <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Tidak Hadir
-                    </Link>
-                      <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Hadir
-                    </Link>
-                    </div>
+            {this.state.needConfirmation >= 1 && this.state.infoClass.is_private == 1 ?
+              <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="card" style={{ background: '#dac88c', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                  <div className="card-carousel col-sm-8">
+                    <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
+                      Attendance Confirmation
+                  </div>
+                    <h3 className="f-14">You were invited to this meeting and have not confirmed attendance. Please confirm attendance.</h3>
+                  </div>
+                  <div className="card-carousel col-sm-4">
+                    <Link onClick={this.confirmAttendance.bind(this, 'Tidak Hadir')} to="#" className="float-right btn btn-sm btn-icademy-red" style={{ padding: '5px 10px' }}> Not Present
+                  </Link>
+                    <Link onClick={this.confirmAttendance.bind(this, 'Hadir')} to="#" className="float-right btn btn-sm btn-icademy-green" style={{ padding: '5px 10px' }}> Present
+                  </Link>
                   </div>
                 </div>
+              </div>
                 :
                 this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
                   <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -265,7 +240,7 @@ class Event extends Component {
             </div>
 
             {
-              this.state.infoClass.is_private && ((levelUser === 'client' && (access.manage_group_meeting || access_project_admin)) || levelUser !== 'client') ?
+              this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                   Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
@@ -288,7 +263,7 @@ class Event extends Component {
             }
 
             {
-              this.state.infoClass.is_private && ((levelUser === 'client' && access.manage_group_meeting) || levelUser !== 'client') ?
+              this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
                   Kehadiran Aktual
