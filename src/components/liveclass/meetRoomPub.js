@@ -592,7 +592,8 @@ export default class MeetRoomPub extends Component {
     API.post(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`, form).then(res => {
       if (res.status === 200) {
         let { result, message } = res.data
-        toast.success(message ? message : 'Meeting added to My Calendar.')
+        toast.success(message ? message : 'Meeting added to calendar.')
+        this.fetchData();
 
         if (!message) {
           // insert to parti
@@ -1789,16 +1790,11 @@ export default class MeetRoomPub extends Component {
                                       : null
                                     }
                                       
-                                    <button onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                                    <button style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
                                       Join The Meeting
                                     </button>
                                     
-                                    {
-                                      checkMeParti === 1 && session ?
-                                        null
-                                      :
-                                        <button onClick={() => this.addToCalendar()} className="btn btn-info btn-block mt-2">Add to Calendar</button>
-                                    }
+                                    <button disabled={checkMeParti} onClick={() => this.addToCalendar()} className="btn btn-info btn-block mt-2" style={{backgroundColor: '#407bff', borderColor:'#344a7b'}}>{checkMeParti ? 'Already added to calendar' : 'Add to Calendar'}</button>
                                       
                                     {
                                       toggle_alert &&

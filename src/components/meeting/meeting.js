@@ -337,20 +337,7 @@ class MeetingTable extends Component {
     if (isMobile) {
       window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'redirect/meeting/information/' + id))
     }
-    API.get(`${API_SERVER}v1/liveclass/meeting-info/${id}`).then(res => {
-      console.log(res.data.result, 'prop informationId');
-      if (res.status === 200) {
-        this.setState({
-          infoClass: res.data.result[0],
-          infoParticipant: res.data.result[1],
-          countHadir: res.data.result[1].filter((item) => item.confirmation === 'Hadir').length,
-          countTidakHadir: res.data.result[1].filter((item) => item.confirmation === 'Tidak Hadir').length,
-          countTentative: res.data.result[1].filter((item) => item.confirmation === '').length,
-          needConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id && item.confirmation === '').length,
-          attendanceConfirmation: res.data.result[1].filter((item) => item.user_id === Storage.get('user').data.user_id).length >= 1 ? res.data.result[1].filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null
-        })
-      }
-    })
+    this.fetchMeetingInfoBooking(null, id);
   }
 
   fetchMeetingInfoBooking(meetingId, bookingId) {
@@ -958,12 +945,12 @@ class MeetingTable extends Component {
               is_scheduled: 1,
               schedule_start: `${tanggal} ${jamMulai}`,
               schedule_end: `${tanggal} ${jamSelesai}`,
-              userInvite: [],
+              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
               messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
             }
 
-            API.post(`${API_SERVER}v1/liveclasspublic/share`, form1).then(res => {
+            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
               if (res.status === 200) {
                 if (!res.data.error) {
                   this.setState({ emailInvite: [], sendingEmail: false });
@@ -1253,7 +1240,7 @@ class MeetingTable extends Component {
         {
           name: 'Action',
           cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Enter' : 'Information'}</button>,
+            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Information'}</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
@@ -1471,7 +1458,7 @@ class MeetingTable extends Component {
                                   <td>
                                     <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${item.tanggal}\nHour : ${item.jam_mulai} - ${item.jam_selesai}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                      <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
                                     </CopyToClipboard>
                                   </td>
                                   <td>
@@ -1479,7 +1466,7 @@ class MeetingTable extends Component {
                                     {
                                       range ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                          <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
                                       : null
                                     }
@@ -1905,13 +1892,17 @@ class MeetingTable extends Component {
           {
             (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
               <Modal.Footer>
-                <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
-                  onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
-                  <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor">&nbsp; Copy</i></button>
-                </CopyToClipboard>
                 {
                   this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ? 
-                    <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                  <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${Moment(this.state.infoClass.tanggal).local().format('DD-MM-YYYY')}\nHour : ${this.state.infoClass.jam_mulai} - ${this.state.infoClass.jam_selesai}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+                    onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                    <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i>&nbsp; Copy Invitation</button>
+                  </CopyToClipboard>
+                    : null
+                }
+                {
+                  this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ? 
+                    <a className="btn btn-v2 btn-warning" style={{background:'#EF843C', borderColor:'#EF843C'}} rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
                       <i className="fa fa-video"></i> Join
                     </a>
                     : null
@@ -1986,7 +1977,7 @@ class MeetingTable extends Component {
                                 {
                                   checkParty && range ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                      <span className="badge badge-pill badge-success ml-2 cursor">Enter</span>
+                                      <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
                                   : null
                                 }
@@ -2028,7 +2019,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {
               this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-primary">
+                <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-warning" style={{background:'#EF843C', borderColor:'#EF843C'}}>
                   <i className="fa fa-video"></i> Join
                 </a>
                 :
