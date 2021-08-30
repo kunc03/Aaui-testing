@@ -1153,18 +1153,10 @@ class MeetingTable extends Component {
     // ];
     const columns = [
       {
-        name: 'Meeting Name',
+        name: 'Meeting Room Name',
         selector: 'room_name',
         sortable: true,
         grow: 2,
-      },
-      {
-        name: 'Status',
-        selector: `status`,
-        center: true,
-        style: {
-          color: 'rgba(0,0,0,.54)',
-        },
       },
       {
         cell: row => <span class="btn-group dropleft">
@@ -1217,8 +1209,8 @@ class MeetingTable extends Component {
       Rmeeting ?
         {
           name: 'Action',
-          cell: row => <button className={`btn btn-icademy-primary btn-icademy-${row.status == 'Open' || row.status == 'Active' ? 'warning' : 'grey'}`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}> {row.status == 'Open' || row.status == 'Active' && Rmeeting ? 'Join' : 'Open'}</button>,
+          cell: row => <button className={`btn btn-icademy-primary btn-icademy-grey`}
+            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Open</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
@@ -1402,7 +1394,7 @@ class MeetingTable extends Component {
                       <td>Participants</td>
                       <td>Description</td>
                       <td>Share</td>
-                      <td></td>
+                      <td>Action</td>
                     </tr>
                   </thead>
                   <tbody>
@@ -1426,11 +1418,11 @@ class MeetingTable extends Component {
                             return (
                               <Fragment>
                                 <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                                  <td>{now === item.tanggal ? 'Hari ini' : item.tanggal}</td>
-                                  <td>{item.jam_mulai}</td>
-                                  <td>{item.jam_selesai}</td>
+                                  <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Hari ini' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
+                                  <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
+                                  <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                                   <td>{item.name}</td>
-                                  <td>{item.moderator_name}</td>
+                                  <td>{item.moderator_name ? item.moderator_name : '-'}</td>
                                   <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
                                   <td>{item.keterangan ? item.keterangan : '-'}</td>
                                   <td>
@@ -1780,12 +1772,12 @@ class MeetingTable extends Component {
                   </div>
                 </div>
                 :
-                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
+                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 1 ?
                   <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                       <div className="card-carousel col-sm-8">
                         <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                          You Have Confirmed : {this.state.attendanceConfirmation}
+                          You Have Confirmed : {this.state.attendanceConfirmation === 'Hadir' ? 'Present' : 'Not Present'}
                         </div>
                         <h3 className="f-14">Confirmation of your attendance has been sent to the moderator.</h3>
                       </div>
@@ -1919,7 +1911,7 @@ class MeetingTable extends Component {
                   <td className="text-center">Participants</td>
                   <td>Description</td>
                   <td>Share</td>
-                  <td></td>
+                  <td>Action</td>
                 </tr>
               </thead>
               <tbody>
@@ -1949,7 +1941,7 @@ class MeetingTable extends Component {
                               <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
                               <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                               <td>{item.name}</td>
-                              <td>{item.moderator_name}</td>
+                              <td>{item.moderator_name ? item.moderator_name : '-'}</td>
                               <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse" style={{color:'#0778ce'}}>{item.participants.length}</td>
                               <td>{item.keterangan ? item.keterangan : '-'}</td>
                               <td>

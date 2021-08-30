@@ -196,14 +196,14 @@ class Event extends Component {
                 </div>
               </div>
                 :
-                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
+                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 1 ?
                   <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                       <div className="card-carousel col-sm-8">
                         <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                          Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                          You Have Confirmed : {this.state.attendanceConfirmation === 'Hadir' ? 'Present' : 'Not Present'}
                         </div>
-                        <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                        <h3 className="f-14">Confirmation of your attendance has been sent to the moderator.</h3>
                       </div>
                     </div>
                   </div>

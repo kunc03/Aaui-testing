@@ -453,7 +453,8 @@ export default class MeetRoomPub extends Component {
                   meeting_id: classRooms.booking_id,
                   user_id: form.userInvite[index]
                 }
-                API.post(`${API_SERVER}v2/meetpub/participant`, f) 
+                this.addToCalendar(form.userInvite[index]);
+                // API.post(`${API_SERVER}v2/meetpub/participant`, f) 
               }
             }
             
@@ -587,7 +588,7 @@ export default class MeetRoomPub extends Component {
     toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${Moment(classRooms.tgl_mulai).format('HH:mm')} - ${Moment(classRooms.tgl_selesai).local().format('HH:mm')}`)
   }
 
-  addToCalendar = () => {
+  addToCalendar = (user) => {
     let { classRooms } = this.state
     let form = {
       type: 3,
@@ -597,17 +598,19 @@ export default class MeetRoomPub extends Component {
       start: moment(classRooms.tgl_mulai).format('YYYY-MM-DD HH:mm:ss'),
       end: moment(classRooms.tgl_selesai).format('YYYY-MM-DD HH:mm:ss'),
     }
-    API.post(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`, form).then(res => {
+    API.post(`${API_SERVER}v1/agenda/${user ? user : Storage.get('user').data.user_id}`, form).then(res => {
       if (res.status === 200) {
         let { result, message } = res.data
-        toast.success(message ? message : 'Meeting added to calendar.')
+        if (!user){
+          toast.success(message ? message : 'Meeting added to calendar.')
+        }
         this.fetchData();
 
         if (!message) {
           // insert to parti
           let form = {
             meeting_id: classRooms.booking_id,
-            user_id: Storage.get('user').data.user_id
+            user_id: user ? user : Storage.get('user').data.user_id
           }
           API.post(`${API_SERVER}v2/meetpub/participant`, form)
         }
