@@ -196,14 +196,14 @@ class Event extends Component {
                 </div>
               </div>
                 :
-                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 0 ?
+                this.state.needConfirmation === 0 && this.state.infoClass.is_required_confirmation === 1 ?
                   <div className="col-sm-12" style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div className="card" style={{ background: 'rgb(134 195 92)', flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                       <div className="card-carousel col-sm-8">
                         <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                          Anda Telah Mengkonfirmasi : {this.state.attendanceConfirmation}
+                          You Have Confirmed : {this.state.attendanceConfirmation === 'Hadir' ? 'Present' : 'Not Present'}
                         </div>
-                        <h3 className="f-14">Konfirmasi kehadiran anda telah dikirim ke moderator.</h3>
+                        <h3 className="f-14">Confirmation of your attendance has been sent to the moderator.</h3>
                       </div>
                     </div>
                   </div>
@@ -211,9 +211,16 @@ class Event extends Component {
                 null
             }
             
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="title-head f-w-900 f-16" style={{marginBottom:20}}>
+                  {this.state.infoClass.room_name}
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div className="col-sm-6">
-                <h3 className="f-14">Meeting : {this.state.infoClass.room_name}</h3>
+                <h3 className="f-14">{this.state.infoClass.keterangan}</h3>
                 {
                   this.state.infoClass.is_akses ?
                     <h3 className="f-14">
@@ -224,7 +231,7 @@ class Event extends Component {
                 {
                   this.state.infoClass.is_private ?
                   <h3 className="f-14">
-                    Konfirmasi Kehadiran : {this.state.infoClass.is_required_confirmation ? 'Wajib' : 'Tidak Wajib'}
+                    {this.state.infoClass.is_required_confirmation ? 'Mandatory attendance confirmation' : 'Non mandatory attendance confirmation'}
                   </h3>
                   : null
                 }
@@ -243,15 +250,15 @@ class Event extends Component {
               this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                  Konfirmasi Kehadiran {this.state.infoParticipant.length} Peserta
+                  Attendance Confirmation of {this.state.infoParticipant.length} Participants
                 </div>
                 <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                   <div className='legend-kehadiran hadir'></div>
-                  <h3 className="f-14 mb-0 mr-2"> Hadir ({this.state.countHadir})</h3>
+                  <h3 className="f-14 mb-0 mr-2"> Present ({this.state.countHadir})</h3>
                   <div className='legend-kehadiran tidak-hadir'></div>
-                  <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({this.state.countTidakHadir})</h3>
+                  <h3 className="f-14 mb-0 mr-2"> Not Present ({this.state.countTidakHadir})</h3>
                   <div className='legend-kehadiran tentative'></div>
-                  <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({this.state.countTentative})</h3>
+                  <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({this.state.countTentative})</h3>
                 </div>
                 <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                   {this.state.infoParticipant.map(item =>
@@ -266,8 +273,11 @@ class Event extends Component {
               this.state.infoClass.is_private ?
               <div>
                 <div className="title-head f-w-900 f-16" style={{ marginTop: 20 }}>
-                  Kehadiran Aktual
+                Actual Attendance In Meeting Room
                 </div>
+                {
+                  this.state.infoParticipant.filter(item=> item.actual === 'Hadir').length ? null : <h3 className="f-14" style={{marginTop:20}}>There's no participant attended</h3>
+                }
                 <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                   {this.state.infoParticipant.map(item => item.actual === 'Hadir' &&
                     <div className='peserta aktual-hadir'>{item.name}</div>
