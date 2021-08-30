@@ -594,8 +594,8 @@ export default class MeetRoomPub extends Component {
       activity_id: classRooms.booking_id,
       description: `${classRooms.room_name} - ${classRooms.keterangan}`,
       destination: `${APPS_SERVER}meet/${classRooms.booking_id}`,
-      start: classRooms.tgl_mulai,
-      end: classRooms.tgl_selesai
+      start: moment(classRooms.tgl_mulai).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment(classRooms.tgl_selesai).format('YYYY-MM-DD HH:mm:ss'),
     }
     API.post(`${API_SERVER}v1/agenda/${Storage.get('user').data.user_id}`, form).then(res => {
       if (res.status === 200) {
@@ -1472,7 +1472,7 @@ export default class MeetRoomPub extends Component {
                     </div>
                   </div>
                   
-                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${Moment(classRooms.tanggal).local().format('DD-MM-YYYY')}\nHour : ${classRooms.jam_mulai} - ${classRooms.jam_selesai}\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
+                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
                     <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i> Copy Invitation</button>
                   </CopyToClipboard>
