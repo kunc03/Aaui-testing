@@ -12653,3 +12653,49 @@ table.info-exam > tr > td{
   bottom: 0px;
   left: 0;
 }
+
+.paper-orientation{
+  float:left;
+  clear:both;
+  text-align:center;
+}
+
+.paper-landscape{
+  width:100px;
+  height:70px;
+  border:1px solid #a2a2a2;
+  position:relative;
+  float:left;
+  line-height: 70px;
+  margin-top:15px;
+  background:#FFF;
+}
+.paper-portrait{
+  height:100px;
+  width:70px;
+  border:1px solid #a2a2a2;
+  position:relative;
+  float:left;
+  line-height: 100px;
+  background:#FFF;
+  margin-left:15px;
+}
+
+.paper-select{
+  padding:20px;
+  float:left;
+  margin-right:14px;
+  border-radius:8px;
+  border:1px solid #c7c7c7;
+  height:140px;
+  width:140px;
+  cursor:pointer;
+}
+
+.paper-select.selected{
+  background:#f1f1f1;
+}
+
+.certificate-view input[type=text]{
+  background:none;
+}

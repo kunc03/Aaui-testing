@@ -999,7 +999,7 @@ export default class WebinarLive extends Component {
                     <p>{this.state.pembicara.toString() !== '' ? 'Speaker : ' : ''}{this.state.pembicara.toString()}</p>
                   </h3>
                   {
-                    (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
+                    (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined && this.state.isJoin ?
                       <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
                         <Tooltip title="Listening" arrow placement="top">
                           <span>
@@ -1039,17 +1039,17 @@ export default class WebinarLive extends Component {
                     : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
-                      <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Send Pre Test
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
+                      <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Post Test
                       </button>
                       :
                       null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
-                      <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Send Post Test
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+                      <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Pre Test
                       </button>
                       :
                       null
@@ -1138,7 +1138,7 @@ export default class WebinarLive extends Component {
                         {
                           this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
-                              <h4>Answer the post-test</h4>
+                              <h4>Answer the Pre-test</h4>
                               <div className="alert alert-danger mt-2">
                                 <b>Please answer the questions below (in {this.state.waktuPretest} minutes). If you have finished answering the questions, please click "Send Pre-Test Answers".<br />
                                   Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
@@ -1166,7 +1166,7 @@ export default class WebinarLive extends Component {
                               {
                                 this.state.pretest.map((item, index) => (
                                   <div className="mb-3">
-                                    <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
+                                    <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
                                     {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
                                     {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
                                     {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1188,9 +1188,13 @@ export default class WebinarLive extends Component {
                         }
                         
                         {
-                          this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                          this.state.startPosttest && this.state.pretestTerjawab === true && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{marginTop:20}}>
                             <h4>Answer the post-test</h4>
+                              <div className="alert alert-danger mt-2">
+                                <b>Please answer the questions below (in {this.state.waktuPosttest} minutes). If you have finished answering the questions, please click "Send Post-Test Answers".<br />
+                                  Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
+                              </div>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
                                 initialTime={this.state.waktuPosttest * 60000}
@@ -1204,7 +1208,7 @@ export default class WebinarLive extends Component {
                               >
                                 {() => (
                                   <React.Fragment>
-                                    Batas Waktu <Timer.Hours />:
+                                    Time limit <Timer.Hours />:
                                     <Timer.Minutes />:
                                     <Timer.Seconds />
                                   </React.Fragment>
@@ -1214,7 +1218,7 @@ export default class WebinarLive extends Component {
                             {
                               this.state.posttest.map((item, index) => (
                                 <div className="mb-3">
-                                  <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.tanya}}></div>
+                                  <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
                                   {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPosttest} /> <label for='a'> {item.a[1]}</label></div>}
                                   {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPosttest} /> <label for='b'> {item.b[1]}</label></div>}
                                   {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPosttest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1519,11 +1523,11 @@ export default class WebinarLive extends Component {
               this.state.pertanyaan.map((item) => (
                 <div className="mb-3">
                   <p className="f-w-900 fc-blue" style={{ lineHeight: '18px' }}>{item.tanya}</p>
-                  {item.a && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawab} /> <label for='a'> {item.a[1]}</label></span>}
-                  {item.b && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawab} /> <label for='b'> {item.b[1]}</label></span>}
-                  {item.c && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawab} /> <label for='c'> {item.c[1]}</label></span>}
-                  {item.d && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawab} /> <label for='d'> {item.d[1]}</label></span>}
-                  {item.e && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawab} /> <label for='e'> {item.e[1]}</label></span>}
+                  {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawab} /> <label for='a'> {item.a[1]}</label></div>}
+                  {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawab} /> <label for='b'> {item.b[1]}</label></div>}
+                  {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawab} /> <label for='c'> {item.c[1]}</label></div>}
+                  {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawab} /> <label for='d'> {item.d[1]}</label></div>}
+                  {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawab} /> <label for='e'> {item.e[1]}</label></div>}
                 </div>
               ))
             }
