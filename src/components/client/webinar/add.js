@@ -660,7 +660,7 @@ class WebinarAddClass extends Component {
                           <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar} />
                         </div>
                         <div className="col-sm-2">
-                          <input type="file" name="gambar" onChange={e => this.setState({ gambar: e.target.files[0] })} className="ml-5 btn btn-sm btn-default" />
+                          <input type="file" name="gambar" onChange={e => { if (e.target.files.length) { this.setState({ gambar: e.target.files[0] }); } }} className="ml-5 btn btn-sm btn-default" />
                         </div>
                       </div>
                     </div>
@@ -672,64 +672,64 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group">
                       <label className="bold">Description<required>*</required></label>
-                                                                        <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
-                                                                        {
-                                                                            this.state.isi !== 'Loading...' ?
-                                                                            <Editor
-                                                                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                                                                                initialValue={this.state.isi}
-                                                                                value={this.state.isi}
-                                                                                init={{
-                                                                                height: 400,
-                                                                                width: "100%",
-                                                                                menubar: false,
-                                                                                convert_urls: false,
-                                                                                image_class_list: [
-                                                                                    {title: 'None', value: ''},
-                                                                                    {title: 'Responsive', value: 'img-responsive'},
-                                                                                    {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                                                                                ],
-                                                                                file_browser_callback_types: 'image media',
-                                                                                file_picker_callback: function (callback, value, meta) {
-                                                                                    if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                                                                                    var input = document.getElementById(`myFile`);
-                                                                                    input.click();
-                                                                                    input.onchange = function () {
-            
-                                                                                        var dataForm = new FormData();
-                                                                                        dataForm.append('file', this.files[0]);
-            
-                                                                                        window.$.ajax({
-                                                                                        url: `${API_SERVER}v2/media/upload`,
-                                                                                        type: 'POST',
-                                                                                        data: dataForm,
-                                                                                        processData: false,
-                                                                                        contentType: false,
-                                                                                        success: (data)=>{
-                                                                                            callback(data.result.url);
-                                                                                            this.value = '';
-                                                                                        }
-                                                                                        })
-            
-                                                                                    };
-                                                                                    }
-                                                                                },
-                                                                                plugins: [
-                                                                                    "advlist autolink lists link image charmap print preview anchor",
-                                                                                    "searchreplace visualblocks code fullscreen",
-                                                                                    "insertdatetime media table paste code help wordcount"
-                                                                                ],
-                                                                                media_live_embeds : true,
-                                                                                toolbar:
-                                                                                    // eslint-disable-next-line no-multi-str
-                                                                                    "undo redo | fontsizeselect bold italic backcolor forecolor | \
-                                                                                alignleft aligncenter alignright alignjustify | image | media | \
-                                                                                    bullist numlist outdent indent | removeformat | help"
-                                                                                }}
-                                                                                onEditorChange={e => this.handleDynamicInput(e)}
-                                                                            />
-                                                                            :null
-                                                                        }
+                      <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                      {
+                          this.state.isi !== 'Loading...' ?
+                          <Editor
+                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                              initialValue={this.state.isi}
+                              value={this.state.isi}
+                              init={{
+                              height: 400,
+                              width: "100%",
+                              menubar: false,
+                              convert_urls: false,
+                              image_class_list: [
+                                  {title: 'None', value: ''},
+                                  {title: 'Responsive', value: 'img-responsive'},
+                                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                              ],
+                              file_browser_callback_types: 'image media',
+                              file_picker_callback: function (callback, value, meta) {
+                                  if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                  var input = document.getElementById(`myFile`);
+                                  input.click();
+                                  input.onchange = function () {
+
+                                      var dataForm = new FormData();
+                                      dataForm.append('file', this.files[0]);
+
+                                      window.$.ajax({
+                                      url: `${API_SERVER}v2/media/upload`,
+                                      type: 'POST',
+                                      data: dataForm,
+                                      processData: false,
+                                      contentType: false,
+                                      success: (data)=>{
+                                          callback(data.result.url);
+                                          this.value = '';
+                                      }
+                                      })
+
+                                  };
+                                  }
+                              },
+                              plugins: [
+                                  "advlist autolink lists link image charmap print preview anchor",
+                                  "searchreplace visualblocks code fullscreen",
+                                  "insertdatetime media table paste code help wordcount"
+                              ],
+                              media_live_embeds : true,
+                              toolbar:
+                                  // eslint-disable-next-line no-multi-str
+                                  "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                              alignleft aligncenter alignright alignjustify | image | media | \
+                                  bullist numlist outdent indent | removeformat | help"
+                              }}
+                              onEditorChange={e => this.handleDynamicInput(e)}
+                          />
+                          :null
+                      }
                     </div>
 
                     <div className="form-group row">

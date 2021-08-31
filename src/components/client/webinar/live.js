@@ -59,9 +59,11 @@ export default class WebinarLive extends Component {
     modalEnd: false,
     modalKuesioner: false,
     modalKuesionerPeserta: false,
+    modalSendPretest: false,
     modalSendPosttest: false,
     waitingKuesioner: false,
     startKuesioner: false,
+    startPretest: false,
     startPosttest: false,
     isWebinarStartDate: false,
     access_project_admin: false,
@@ -137,6 +139,9 @@ export default class WebinarLive extends Component {
   }
   closeModalKuesioner = e => {
     this.setState({ modalKuesioner: false });
+  }
+  closeModalSendPretest = e => {
+    this.setState({ modalSendPretest: false });
   }
   closeModalSendPosttest = e => {
     this.setState({ modalSendPosttest: false });
@@ -429,7 +434,8 @@ export default class WebinarLive extends Component {
 
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
-              startPosttest: res.data.result.posttest_sent === 1 ? true : false
+              startPosttest: res.data.result.posttest_sent === 1 ? true : false,
+              startPretest: res.data.result.pretest_sent === 1 ? true : false
             })
           this.setState({ pembicara: [] })
           res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
@@ -779,6 +785,10 @@ export default class WebinarLive extends Component {
         this.setState({ startKuesioner: true, modalKuesionerPeserta: true })
         this.fetchKuesioner()
       }
+      if (data.socketAction == 'sendPretest' && data.webinar_id === this.state.webinarId) {
+        this.setState({ startPretest: true });
+        this.fetchPreTest();
+      }
       if (data.socketAction == 'sendPosttest' && data.webinar_id === this.state.webinarId) {
         this.setState({ startPosttest: true });
         this.fetchPostTest();
@@ -910,8 +920,21 @@ export default class WebinarLive extends Component {
     })
   }
 
+  sendPretest() {
+    API.put(`${API_SERVER}v2/webinar/send-pretest/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendPretest',
+          webinar_id: this.state.webinarId
+        })
+        toast.success('Pre test sent');
+        this.closeModalSendPretest();
+      }
+    })
+  }
+
   render() {
-    //console.log('state: ', this.state)
+    console.log('state: ', this.state)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -964,7 +987,7 @@ export default class WebinarLive extends Component {
           <Card>
             <Card.Body>
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-4">
                   <h3 className="f-w-900 f-18 fc-blue">
                     {/* <Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
@@ -975,36 +998,50 @@ export default class WebinarLive extends Component {
                     {this.state.webinar.judul}
                     <p>{this.state.pembicara.toString() !== '' ? 'Speaker : ' : ''}{this.state.pembicara.toString()}</p>
                   </h3>
-                        {
-                          (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
-                            <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
-                              <Tooltip title="Listening" arrow placement="top">
-                                <span>
-                                  <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
-                                </span>
-                              </Tooltip>
-                              <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
-                                <span>
-                                  <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
-                                </span>
-                              </Tooltip>
-                            </span>
-                          : null
-                        }
+                  {
+                    (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
+                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                        <Tooltip title="Listening" arrow placement="top">
+                          <span>
+                            <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                          </span>
+                        </Tooltip>
+                        <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                          <span>
+                            <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                          </span>
+                        </Tooltip>
+                      </span>
+                    : null
+                  }
                 </div>
-                <div className="col-sm-6 text-right">
+                <div className="col-sm-8 text-right">
                   {
                     this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.status == 2 ?
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>End Webinar
                       </button>
-                      :
-                      null
+                    : null
+                  }
+                  {
+                    !this.state.isJoin && this.state.status === 2 ?
+                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={()=> this.setState({isJoin: true})}>
+                        <i className="fa fa-video"></i>
+                        Join the webinar
+                      </button>
+                    : null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
+                      </button>
+                    : null
+                  }
+                  {
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+                      <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Pre Test
                       </button>
                       :
                       null
@@ -1036,77 +1073,17 @@ export default class WebinarLive extends Component {
                   {
                     this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1 ?
                       <button onClick={() => this.setState({ modalResultPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Hasil Post Test
+                        <i className="fa fa-clipboard-list"></i>Post Test Result
                       </button>
                       :
                       null
                   }
-                  {
-                    !this.state.isJoin && this.state.status === 2 ?
-                      <button
-                        className="btn btn-icademy-primary btn-icademy-warning mr-2"
-                        onClick={()=> this.setState({isJoin: true})}
-                      >
-                        <i className="fa fa-video"></i>
-                        Join the webinar
-                      </button>
-                    : null
-                  }
-                  <p className="m-b-0">
-                    { /* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                  </p>
+                  
                 </div>
               </div>
               {
                 this.state.isLoadingPage ?
                 <div>Loading...</div>
-                :
-                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
-                  <div>
-                  <h4>Before entering the Webinar, please answer the questions below (in {this.state.waktuPretest} minutes).<br />
-If you have finished answering the questions, please click ""Send Pre-Test Answers"".<br />
-Please complete the answers for not over than allotted time, orherwise the result in the pre-test will  be automatically closed and directed in to the Webinar room<br /></h4>
-                    <div className="fc-blue" style={{ position: 'absolute', right: 20, top: 10, fontSize: '18px', fontWeight: 'bold' }}>
-                      <Timer
-                        initialTime={this.state.waktuPretest * 60000}
-                        direction="backward"
-                        checkpoints={[
-                          {
-                            time: 0,
-                            callback: this.waktuPretestHabis.bind(this),
-                          }
-                        ]}
-                      >
-                        {() => (
-                          <React.Fragment>
-                            Time limit <Timer.Hours />:
-                            <Timer.Minutes />:
-                            <Timer.Seconds />
-                          </React.Fragment>
-                        )}
-                      </Timer>
-                    </div>
-                    {
-                      this.state.pretest.map((item, index) => (
-                        <div className="mb-3">
-                          <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.tanya}</p>
-                          {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
-                          {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
-                          {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
-                          {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPretest} /> <label for='d'> {item.d[1]}</label></div>}
-                          {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPretest} /> <label for='e'> {item.e[1]}</label></div>}
-                        </div>
-                      ))
-                    }
-                    <button
-                      disabled={this.state.isLoading}
-                      className="btn btn-icademy-primary"
-                      onClick={this.kirimJawabanPretest.bind(this)}
-                    >
-                      <i className="fa fa-paper-plane"></i>
-                    {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
-                  </button>
-                  </div>
                   :
                   <div style={{ marginTop: '10px' }}>
                     <div className="row">
@@ -1157,6 +1134,59 @@ Please complete the answers for not over than allotted time, orherwise the resul
                           :null
                         }
                         </center>
+
+                        {
+                          this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                            <div className="mt-4">
+                              <h4>Answer the post-test</h4>
+                              <div className="alert alert-danger mt-2">
+                                <b>Please answer the questions below (in {this.state.waktuPretest} minutes). If you have finished answering the questions, please click "Send Pre-Test Answers".<br />
+                                  Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
+                              </div>
+                              <div className="fc-blue mb-4" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                                <Timer
+                                  initialTime={this.state.waktuPretest * 60000}
+                                  direction="backward"
+                                  checkpoints={[
+                                    {
+                                      time: 0,
+                                      callback: this.waktuPretestHabis.bind(this),
+                                    }
+                                  ]}
+                                >
+                                  {() => (
+                                    <React.Fragment>
+                                      Time limit <Timer.Hours />:
+                                      <Timer.Minutes />:
+                                      <Timer.Seconds />
+                                    </React.Fragment>
+                                  )}
+                                </Timer>
+                              </div>
+                              {
+                                this.state.pretest.map((item, index) => (
+                                  <div className="mb-3">
+                                    <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
+                                    {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
+                                    {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
+                                    {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
+                                    {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPretest} /> <label for='d'> {item.d[1]}</label></div>}
+                                    {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPretest} /> <label for='e'> {item.e[1]}</label></div>}
+                                  </div>
+                                ))
+                              }
+                              <button
+                                disabled={this.state.isLoading}
+                                className="btn btn-icademy-primary"
+                                onClick={this.kirimJawabanPretest.bind(this)}
+                              >
+                                <i className="fa fa-paper-plane"></i>
+                                {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
+                              </button>
+                            </div>
+                          : null
+                        }
+                        
                         {
                           this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{marginTop:20}}>
@@ -1184,7 +1214,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                             {
                               this.state.posttest.map((item, index) => (
                                 <div className="mb-3">
-                                  <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.tanya}</p>
+                                  <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.tanya}}></div>
                                   {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPosttest} /> <label for='a'> {item.a[1]}</label></div>}
                                   {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPosttest} /> <label for='b'> {item.b[1]}</label></div>}
                                   {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPosttest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1346,6 +1376,30 @@ Please complete the answers for not over than allotted time, orherwise the resul
               <i className="fa fa-trash"></i>
                         End Webinar
                       </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.modalSendPretest}
+          onHide={this.closeModalSendPretest}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Send Pre Test
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>There are <b>{this.state.pretest.length}</b> question with <b>{this.state.waktuPretest} minutes</b> time limit.</div>
+            <div>Are you sure want to send pre test to attendences ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btn-icademy-primary"
+              onClick={this.sendPretest.bind(this)}
+            >
+              <i className="fa fa-paper-plane"></i>
+                Send Post Test
+              </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -1529,7 +1583,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
               {
                     this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
                       <div className="mb-3 mt-3">
-                        <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
+                        <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
                         {
                           item.options.map(items => (
                             <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
@@ -1565,7 +1619,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
             {
               this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
                 <div className="mb-3 mt-3">
-                  <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.pertanyaan}</p>
+                  <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
                   {
                     item.options.map(items => (
                       <div style={{ margin: '0px 10px' }}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{ backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent' }}> {items.answer}</label></div>
