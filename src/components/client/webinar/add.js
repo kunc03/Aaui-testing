@@ -219,7 +219,6 @@ class WebinarAddClass extends Component {
       const jam_selesai = res.data.result.jam_selesai ? new Date('2020-09-19 ' + res.data.result.jam_selesai) : ''
       this.setState({
         id: this.state.webinarId,
-        gambar: res.data.result.gambar,
         judul: res.data.result.judul,
         isi: res.data.result.isi ? res.data.result.isi : '',
         tanggal: tanggal,
@@ -236,6 +235,11 @@ class WebinarAddClass extends Component {
         sekretarisId: res.data.result.sekretaris,
         pembicara: []
       })
+      if (!this.state.gambar){
+        this.setState({
+          gambar: res.data.result.gambar,
+        })
+      }
       res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)
     })
