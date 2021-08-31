@@ -276,20 +276,18 @@ export default class WebinarRiwayat extends Component {
     doc.text(`: ${this.state.judul}`, 50, 30);
     doc.text("Speaker", 20, 35);
     doc.text(`: ${this.state.pembicara.toString()}`, 50, 35);
-    doc.text("Description", 20, 40);
-    doc.text(`: ${this.state.isi}`, 50, 40);
-    doc.text("Time", 20, 45);
-    doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 45);
-    doc.text("Total Invitation", 20, 50);
-    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 50);
-    doc.text("Present", 20, 55);
-    doc.text(`: ${this.state.jumlahHadir}`, 50, 55);
-    doc.text("Not Present", 20, 60);
-    doc.text(`: ${this.state.jumlahTidakHadir}`, 50, 60);
+    doc.text("Time", 20, 40);
+    doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 40);
+    doc.text("Total Invitation", 20, 45);
+    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 45);
+    doc.text("Present", 20, 50);
+    doc.text(`: ${this.state.jumlahHadir}`, 50, 50);
+    doc.text("Not Present", 20, 55);
+    doc.text(`: ${this.state.jumlahTidakHadir}`, 50, 55);
 
     doc.setFontSize(12);
-    doc.text("Attendences", 20, 70);
-    doc.autoTable({ html: '#table-peserta', startY: 75, styles: {fontSize: 8}})
+    doc.text("Attendences", 20, 60);
+    doc.autoTable({ html: '#table-peserta', startY: 65, styles: {fontSize: 8}})
     doc.text("Questions", 20, doc.lastAutoTable.finalY + 10);
     doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
     doc.text("Questioner", 20, doc.lastAutoTable.finalY + 10);
@@ -580,7 +578,7 @@ export default class WebinarRiwayat extends Component {
                     <h5 style={{fontSize:17}}>{this.state.judul}</h5>
                     <h6>Speaker : {this.state.pembicara.toString()}</h6>
                     <p>
-                      {this.state.isi}
+                      <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
                     </p>
                     <h6>{moment(this.state.tanggal, 'HH:mm').local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd, 'HH:mm').local().format('DD MMMM YYYY HH:mm')}</h6>
                   </div>
