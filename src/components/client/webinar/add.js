@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import API, { API_SERVER, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
-
+import { Editor } from '@tinymce/tinymce-react';
 import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../files/_files';
 import TableMeetings from '../../meeting/meeting';
@@ -38,7 +38,7 @@ class WebinarAddClass extends Component {
     id: '',
     gambar: '',
     judul: '',
-    isi: '',
+    isi: 'Loading...',
     tanggal: '',
     tanggalEnd: '',
     jamMulai: '',
@@ -202,6 +202,9 @@ class WebinarAddClass extends Component {
         }
       }
     })
+  }
+  handleDynamicInput = (e) => {
+      this.setState({ isi: e });
   }
   componentDidMount() {
     this.fetchData();
@@ -669,7 +672,64 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group">
                       <label className="bold">Description<required>*</required></label>
-                      <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
+                                                                        <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                                                                        {
+                                                                            this.state.isi !== 'Loading...' ?
+                                                                            <Editor
+                                                                                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                                                                initialValue={this.state.isi}
+                                                                                value={this.state.isi}
+                                                                                init={{
+                                                                                height: 400,
+                                                                                width: "100%",
+                                                                                menubar: false,
+                                                                                convert_urls: false,
+                                                                                image_class_list: [
+                                                                                    {title: 'None', value: ''},
+                                                                                    {title: 'Responsive', value: 'img-responsive'},
+                                                                                    {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                                                                ],
+                                                                                file_browser_callback_types: 'image media',
+                                                                                file_picker_callback: function (callback, value, meta) {
+                                                                                    if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                                                                    var input = document.getElementById(`myFile`);
+                                                                                    input.click();
+                                                                                    input.onchange = function () {
+            
+                                                                                        var dataForm = new FormData();
+                                                                                        dataForm.append('file', this.files[0]);
+            
+                                                                                        window.$.ajax({
+                                                                                        url: `${API_SERVER}v2/media/upload`,
+                                                                                        type: 'POST',
+                                                                                        data: dataForm,
+                                                                                        processData: false,
+                                                                                        contentType: false,
+                                                                                        success: (data)=>{
+                                                                                            callback(data.result.url);
+                                                                                            this.value = '';
+                                                                                        }
+                                                                                        })
+            
+                                                                                    };
+                                                                                    }
+                                                                                },
+                                                                                plugins: [
+                                                                                    "advlist autolink lists link image charmap print preview anchor",
+                                                                                    "searchreplace visualblocks code fullscreen",
+                                                                                    "insertdatetime media table paste code help wordcount"
+                                                                                ],
+                                                                                media_live_embeds : true,
+                                                                                toolbar:
+                                                                                    // eslint-disable-next-line no-multi-str
+                                                                                    "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                                                                                alignleft aligncenter alignright alignjustify | image | media | \
+                                                                                    bullist numlist outdent indent | removeformat | help"
+                                                                                }}
+                                                                                onEditorChange={e => this.handleDynamicInput(e)}
+                                                                            />
+                                                                            :null
+                                                                        }
                     </div>
 
                     <div className="form-group row">

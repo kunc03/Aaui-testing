@@ -10,6 +10,7 @@ import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import { isMobile } from 'react-device-detect';
+import Tooltip from '@material-ui/core/Tooltip';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -20,6 +21,13 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
   state = {
+    isJoin : false,
+    showDescription : false,
+    isLoadingPage : true,
+    dataParticipants:{
+      audio : 0,
+      camera : 0,
+    },
     waktuPretest: 0,
     waktuPosttest: 0,
     pretest: [],
@@ -90,6 +98,36 @@ export default class WebinarLive extends Component {
       { id: 2, dari: 'Arrazaqul', pertanyaan: 'Kalau semisal hasil dari 100 dibagi 10 berapa hayooo?', datetime: '02 Sep 2020 12:12' },
       { id: 3, dari: 'Ahmad Syujan', pertanyaan: 'Gan, Saya yang mau tanya lebih serius. Kalau semisal hasil dari 100 dibagi 10 berapa hayooo?', datetime: '02 Sep 2020 12:12' },
     ]
+  }
+  fetchDataParticipants(){
+    if (this.state.webinarId){
+      let api = bbb.api(BBB_URL, BBB_KEY)
+      let http = bbb.http
+  
+      let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinarId)
+      http(meetingInfo).then((result) => {
+        if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
+          // Jika belum ada
+        }
+        else {
+          // Jika sudah ada
+          this.setState({
+            dataParticipants:{
+              audio : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
+                          1
+                        : 0
+                      : 0,
+              camera : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasVideo).length : result.attendees.attendee.hasVideo ?
+                          1
+                        : 0
+                      : 0,
+            }
+          })
+        }
+      })
+    }
   }
   closeModalEnd = e => {
     this.setState({ modalEnd: false });
@@ -444,7 +482,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                   }
@@ -486,7 +524,7 @@ export default class WebinarLive extends Component {
                   let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                   let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
   
-                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
   
                   this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                 }
@@ -494,6 +532,7 @@ export default class WebinarLive extends Component {
             })
             // BBB JOIN END
           }
+          this.setState({ isLoadingPage : false })
         })
       }
     })
@@ -582,7 +621,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                   }
@@ -624,7 +663,7 @@ export default class WebinarLive extends Component {
                   let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                   let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
   
-                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
   
                   this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                 }
@@ -632,6 +671,7 @@ export default class WebinarLive extends Component {
             })
             // BBB JOIN END
           }
+          this.setState({ isLoadingPage : false })
         })
       }
     })
@@ -783,6 +823,10 @@ export default class WebinarLive extends Component {
     //     }
     // }
     // window.addEventListener("message", window.receiveMessageFromIndex, false);
+      this.timer = setInterval(
+        () => this.fetchDataParticipants(),
+        5000,
+      );
   }
   checkProjectAccess() {
     if (this.props.voucher) {
@@ -929,8 +973,24 @@ export default class WebinarLive extends Component {
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link> */}
                     {this.state.webinar.judul}
-                    <p>Speaker : {this.state.pembicara.toString()}</p>
+                    <p>{this.state.pembicara.toString() !== '' ? 'Speaker : ' : ''}{this.state.pembicara.toString()}</p>
                   </h3>
+                        {
+                          (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
+                            <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                              <Tooltip title="Listening" arrow placement="top">
+                                <span>
+                                  <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                                </span>
+                              </Tooltip>
+                              <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                                <span>
+                                  <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                                </span>
+                              </Tooltip>
+                            </span>
+                          : null
+                        }
                 </div>
                 <div className="col-sm-6 text-right">
                   {
@@ -981,12 +1041,26 @@ export default class WebinarLive extends Component {
                       :
                       null
                   }
+                  {
+                    !this.state.isJoin && this.state.status === 2 ?
+                      <button
+                        className="btn btn-icademy-primary btn-icademy-warning mr-2"
+                        onClick={()=> this.setState({isJoin: true})}
+                      >
+                        <i className="fa fa-video"></i>
+                        Join the webinar
+                      </button>
+                    : null
+                  }
                   <p className="m-b-0">
                     { /* <span className="f-w-600 f-16">Lihat Semua</span> */}
                   </p>
                 </div>
               </div>
               {
+                this.state.isLoadingPage ?
+                <div>Loading...</div>
+                :
                 this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                   <div>
                   <h4>Before entering the Webinar, please answer the questions below (in {this.state.waktuPretest} minutes).<br />
@@ -1039,6 +1113,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                       <div className="col-sm-12">
                         {
                           (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
+                          this.state.isJoin ?
                           <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                             <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
@@ -1048,11 +1123,12 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
                               position="relative" />
                           </div>
+                          : null
                             :
                             this.state.status == 3 ?
                               <h3>The webinar has ended</h3>
                               :
-                              <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h3>
+                              <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')} ({moment.tz.guess()} Timezone)</h3>
                         }
                         {
                           this.state.joined ?
@@ -1061,11 +1137,26 @@ Please complete the answers for not over than allotted time, orherwise the resul
                         }
                         {
                           this.state.status !== 3 &&
-                          <div className="dekripsi" style={{ marginTop: '20px' }}>
-                            <h4>Description</h4>
-                            <div dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                          <div className="dekripsi" style={{ marginTop: '20px', color:'#000', lineHeight: '24px', position:'relative' }}>
+                          <h4>Description</h4>
+                          <div className={(this.state.isJoin && !this.state.showDescription) ? 'webinar-description' : 'webibar-description-full'} dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                          {
+                            (this.state.isJoin && !this.state.showDescription) ?
+                            <div className='webinar-description-overlay' />
+                            : null
+                          }
                           </div>
                         }
+                        <center>
+                        {
+                          this.state.isJoin && this.state.status !== 3 ?
+                          this.state.showDescription ?
+                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: false});this.forceUpdate();}}>Hide description</span>
+                          :
+                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: true});this.forceUpdate();}}>See full description</span>
+                          :null
+                        }
+                        </center>
                         {
                           this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{marginTop:20}}>
@@ -1123,7 +1214,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Card>
         </div>
         {
-          (this.state.projectId !== 0 && this.state.status === 2) &&
+          (this.state.projectId !== 0 && (this.state.status === 2 || this.state.status === 1)) &&
           <div className="col-sm-6">
             <Card>
               <Card.Body>
