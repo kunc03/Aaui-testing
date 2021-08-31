@@ -15,6 +15,10 @@ export default class WebinarCreate extends Component {
     projectId: parseInt(this.props.match.params.projectId),
 
     optionNames: [],
+    orientation: 'landscape',
+    imagePreview: 'assets/images/no-image.png',
+    image:'',
+    isSaving: false,
 
     isStep1: true,
     judul: "",
@@ -27,6 +31,7 @@ export default class WebinarCreate extends Component {
     mode: 'web',
 
     isStep2: false,
+    isStep3: false,
     accessPembicara: false,
     accessModerator: false,
     accessSekretaris: false,
@@ -71,12 +76,15 @@ export default class WebinarCreate extends Component {
     }
     else {
       if (this.props.match.params.training === 'by-training'){
-        this.simpanWebinar(e)
+        this.setState({ isStep1: false, isStep2: false, isStep3: true })
       }
       else{
-        this.setState({ isStep1: false, isStep2: true })
+        this.setState({ isStep1: false, isStep2: true, isStep3: false })
       }
     }
+  }
+  nextStep2 = e => {
+    this.setState({ isStep1: false, isStep2: false, isStep3: true })
   }
 
   handleModal = () => {
@@ -206,6 +214,7 @@ export default class WebinarCreate extends Component {
 
   simpanWebinar = e => {
     e.preventDefault();
+    this.setState({isSaving: true});
     let form = {
       companyId: this.state.companyId,
       judul: this.state.judul,
@@ -216,17 +225,40 @@ export default class WebinarCreate extends Component {
       projectId: this.state.valuesFolder,
       dokumenId: this.state.folderId,
       course_id: String(this.state.valueCourse),
+      certificate_orientation: this.state.orientation,
+      certificate_background: this.state.image,
 
       engine: this.state.engine,
       mode: this.state.mode
     }
 
     API.post(`${API_SERVER}v2/webinar/create`, form).then(res => {
-      if (res.data.error)
-        toast.warning("Error fetch API")
-      else
-        toast.success("Webinar created")
-      this.props.history.goBack();
+      if (res.data.error){
+        toast.warning("Error fetch API");
+        this.setState({isSaving: false});
+      }
+      else{
+        if (this.state.image){
+          let formData = new FormData();
+          formData.append("image", this.state.image)
+          API.put(`${API_SERVER}v2/webinar/image/${res.data.result.id}`, formData).then(res2 => {
+              if (res2.data.error){
+                  toast.warning(`${this.state.level} created but fail to upload certificate background`);
+                  this.setState({isSaving: false});
+              }
+              else{
+                toast.success("Webinar created");
+                this.setState({isSaving: false});
+                this.props.history.goBack();
+              }
+          })
+        }
+        else{
+          toast.success("Webinar created");
+          this.setState({isSaving: false});
+          this.props.history.goBack();
+        }
+      }
     })
   }
 
@@ -235,6 +267,22 @@ export default class WebinarCreate extends Component {
   }
 
 
+  handleChange = e => {
+    let {name, value} = e.target;
+    if (name==='image'){
+      if (e.target.files.length){
+          if (e.target.files[0].size <= 5000000) {
+            this.setState({
+              image: e.target.files[0],
+              imagePreview: URL.createObjectURL(e.target.files[0])
+            });
+          } else {
+            e.target.value = null;
+            toast.warning('Image size cannot larger than 5MB')
+          }
+      }
+    }
+}
   fetchCheckAccess(role, company_id, level, param) {
     API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
       if (res.status === 200) {
@@ -273,12 +321,18 @@ export default class WebinarCreate extends Component {
                   </div>
                   <div className="col-sm-6 text-right">
                     <p className="m-b-0">
-                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&bull;</span>
+                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&rang;</span>
                       {
                       this.props.match.params.training === 'by-training' ?
                       null
                       :
-                      <span className={`f-16 mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&bull;</span>
+                      <span className={`f-16 mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&rang;</span>
+                      }
+                      {
+                      this.props.match.params.training === 'by-training' ?
+                      <span className={`f-16 mr-3`}>2. Certification &nbsp;&nbsp;&rang;</span>
+                      :
+                      <span className={`f-16 mr-3`}>3. Certification &nbsp;&nbsp;&rang;</span>
                       }
                       <span className="f-16"> Done </span>
                     </p>
@@ -451,7 +505,7 @@ export default class WebinarCreate extends Component {
                     </div>
                     <div className="col-sm-12">
                       <button onClick={e => this.nextStep(e)} className="btn btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-file"></i> &nbsp; {this.props.match.params.training === 'by-training' ? 'Save' : 'Organize Folder and File'}
+                        Continue
                       </button>
                     </div>
                   </div>
@@ -482,8 +536,9 @@ export default class WebinarCreate extends Component {
                   </div>
                   <div className="col-sm-6 text-right">
                     <p className="m-b-0">
-                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&bull;</span>
-                      <span className={`f-16 biru-bold mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&bull;</span>
+                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&rang;</span>
+                      <span className={`f-16 biru-bold mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&rang;</span>
+                      <span className={`f-16 mr-3`}>3. Certification &nbsp;&nbsp;&rang;</span>
                       <span className="f-16"> Done </span>
                     </p>
                   </div>
@@ -497,8 +552,8 @@ export default class WebinarCreate extends Component {
                       </div>
                     </div>
                     <div className="col-sm-12">
-                      <button onClick={this.simpanWebinar} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                        <i className="fa fa-save"></i> &nbsp; Save
+                      <button onClick={e => this.nextStep2(e)} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                        Continue
                       </button>
                     </div>
                   </div>
@@ -568,6 +623,93 @@ export default class WebinarCreate extends Component {
                 </button>
               </Modal.Body>
             </Modal>
+          </div>
+        }
+        {/** STEP 3 */}
+        {
+          this.state.isStep3 &&
+          <div className="col-sm-12">
+            <Card>
+              <Card.Body>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3 className="f-w-900 f-18 fc-blue">
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
+                        border: '1px solid #e9e9e9',
+                        borderRadius: '50px',
+                      }}>
+                        <i className="fa fa-chevron-left" style={{ margin: '0px' }}></i>
+                      </a>
+                      Certification
+                    </h3>
+                  </div>
+                  <div className="col-sm-6 text-right">
+                    <p className="m-b-0">
+                      <span className="f-16 biru-bold mr-3">1. Set a Role&nbsp;&nbsp;&rang;</span>
+                      {
+                      this.props.match.params.training === 'by-training' ?
+                      null
+                      :
+                      <span className={`f-16 biru-bold mr-3`}>2. Organize Folders & Files &nbsp;&nbsp;&rang;</span>
+                      }
+                      {
+                      this.props.match.params.training === 'by-training' ?
+                      <span className={`f-16 biru-bold mr-3`}>2. Certification &nbsp;&nbsp;&rang;</span>
+                      :
+                      <span className={`f-16 biru-bold mr-3`}>3. Certification &nbsp;&nbsp;&rang;</span>
+                      }
+                      <span className="f-16"> Done </span>
+                    </p>
+                  </div>
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                  <div className="row">
+
+                    <div className="col-sm-12">
+                      <div id="scrollin" style={{ height: '492px', marginBottom: '0px', overflowY: 'scroll' }}>
+                        <div className="form-field-top-label">
+                          <label for="training_company_id">Paper Orientation</label>
+                          <div className="paper-orientation">
+                            <div className={`paper-select ${this.state.orientation === 'landscape' && 'selected'}`} onClick={()=> this.setState({orientation: 'landscape'})}>
+                              <div className="paper-landscape">
+                                Landscape
+                              </div>
+                            </div>
+                            <div className={`paper-select ${this.state.orientation === 'portrait' && 'selected'}`} onClick={()=> this.setState({orientation: 'portrait'})}>
+                              <div className="paper-portrait">
+                                Portrait
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="image">Certificate Background</label>
+                                                            <center>
+                                                                <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
+                                                                    <a href={this.state.imagePreview} target="_blank">
+                                                                        <img src={this.state.imagePreview} style={{objectFit:'cover', width: '54.8px', height: '54.8px'}} />
+                                                                    </a>
+                                                                </label>
+                                                                <label for='image' style={{cursor:'pointer', overflow:'hidden', display: 'block'}}>
+                                                                    <div className="button-bordered-grey">
+                                                                        {this.state.image ? this.state.image.name : 'Choose file'}
+                                                                    </div>
+                                                                </label>
+                                                            </center>
+                                                            <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange}/>
+                                                        </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-12">
+                      <button disabled={this.state.isSaving} onClick={this.simpanWebinar} className="btn mt-2 btn-icademy-primary float-right" style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                        <i className="fa fa-save"></i> &nbsp; {this.state.isSaving ? 'Saving...' : 'Save'}
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </Card.Body>
+            </Card>
           </div>
         }
       </div>
