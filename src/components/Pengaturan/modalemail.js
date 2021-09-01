@@ -91,7 +91,7 @@ class ModalEmail extends Component {
                     name="emailLama"
                     onChange={this.handleChangeInput}
                     onKeyUp={this.handleKeyUpEmail}
-                    placeholder="Enter your Old Email"
+                    placeholder="Enter your old Email"
                   />
                 </div>
                 <div className="text-center">
@@ -109,7 +109,7 @@ class ModalEmail extends Component {
                     onKeyUp={this.handleKeyUpEmailBaru}
                     value={this.state.emailBaru}
                     className="form-control"
-                    placeholder="Masukan Email Baru Anda"
+                    placeholder="Enter you new email"
                   />
                   {this.state.msgEmailBaru && <span className={`label label-${(this.state.isEmailBaru) ? 'success' : 'danger'}`}>{this.state.msgEmailBaru}</span>}
                 </div>

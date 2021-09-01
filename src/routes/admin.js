@@ -37,7 +37,9 @@ const UserEdit = lazy(()=> import("../components/Users/User/Edit"));
 const UserCompany = lazy(()=> import("../components/Users/User/company"));
 const UserCompanyAdd = lazy(()=> import("../components/Users/User/companyadd"));
 const UserCompanyEdit = lazy(()=> import("../components/Users/User/companyedit"));
-const FilePicker = lazy(()=> import("../components/admin/filemanager/file"));
+const FilePicker = lazy(() => import("../components/admin/filemanager/file"));
+
+const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
 
 const Cabang = lazy(()=> import("../components/Users/UserCabang/index"));
 const Grup = lazy(()=> import("../components/Users/UserGroup/index"));
@@ -160,6 +162,8 @@ export default class AdminSwitch extends React.Component {
               <Redirect to={`/meeting-room/${props.match.params.roomid}`} />
             )}
           />
+          <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+
           <Route path="/meeting/information/:roomid" exact component={Meeting} />
           <Route path="/meeting-room/:roomid" component={MeetingRoom} />
           <Route path="/webinars" exact component={Webinar} />

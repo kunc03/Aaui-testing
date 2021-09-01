@@ -98,7 +98,6 @@ class UserAdd extends Component {
       email: this.state.email,
       phone: this.state.phone,
       address: this.state.address,
-      password: this.state.password,
       level: this.state.level,
       status: 'active',
       unlimited: unlimited,
@@ -304,18 +303,6 @@ class UserAdd extends Component {
                                   ))
                                 }
                               </select>
-                            </div>
-                            <div className="form-group">
-                              <label className="label-input">Password</label>
-                              <Form.Text className="text-danger">Required</Form.Text>
-                              <input
-                                type="password"
-                                name="password"
-                                required
-                                className="form-control"
-                                placeholder="Password"
-                                onChange={this.onChangeInput}
-                              />
                             </div>
 
                             <div className="form-group">

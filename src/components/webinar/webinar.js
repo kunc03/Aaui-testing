@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import {
   Modal
 } from 'react-bootstrap';
+import { withTranslation } from "react-i18next";
 
 const LINK_ZOOM = 'https://zoom.us/j/4912503275?pwd=Ujd5QW1seVhIcmU4ZGV3bmRxUUV3UT09'
 
@@ -127,6 +128,7 @@ class WebinarTable extends Component {
   }
 
   render() {
+    const {t} = this.props
     // ** GLOBAL SETTINGS ** //
 
     let cdWEBINAR = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_WEBINAR')[0].status;
@@ -175,8 +177,8 @@ class WebinarTable extends Component {
               >
                 <i className="fa fa-plus"></i>
 
-                    Create New
-                    </button>
+                {t('create_new')}
+              </button>
             </Link>
             : null
           }
@@ -285,15 +287,15 @@ class WebinarTable extends Component {
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
                                         ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
-                                        <Link to={`/webinar/riwayat/${item.id}`}><button className="btn btn-icademy-primary btn-icademy-grey">History</button></Link>
+                                        <Link to={`/webinar/riwayat/${item.id}`}><button className="btn btn-icademy-primary btn-icademy-grey">{t('history')}</button></Link>
                                     }
                                     {
                                         ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
-                                        <a href={(item.engine === 'zoom') ? this.state.checkZoom[0].link : `/webinar/live/${item.id}`} target='_blank'><button className="btn btn-icademy-primary btn-icademy-warning">Join</button></a>
+                                    <a href={(item.engine === 'zoom') ? (this.state.checkZoom.length ? this.state.checkZoom[0].link : '') : `/webinar/live/${item.id}`} target='_blank'><button className="btn btn-icademy-primary btn-icademy-warning">{t('join')}</button></a>
                                     }
                                     {
                                         (item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 && item.status == 1) &&
-                                        <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">Start</Link>
+                                    <Link onClick={this.updateStatus.bind(this, item.id, 2)} className="btn btn-v2 btn-warning">{t('start')}</Link>
                                     }
                                 </td>
                             </tr>
@@ -339,4 +341,6 @@ class WebinarTable extends Component {
   }
 }
 
-export default WebinarTable;
+const WebinarTableWithTranslation = withTranslation('common')(WebinarTable)
+
+export default WebinarTableWithTranslation;

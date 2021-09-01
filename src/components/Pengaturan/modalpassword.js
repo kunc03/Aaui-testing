@@ -99,7 +99,7 @@ class ModalPassword extends Component {
               <form onSubmit={this.onSubmitForm}>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Password Lama
+                    Old Password
                   </label>
                   <input
                     type="password"
@@ -108,15 +108,12 @@ class ModalPassword extends Component {
                     onChange={this.handleChangeInput}
                     onKeyUp={this.onKeyUpPasswordLama}
                     name="passwordLama"
-                    placeholder="Masukan Password Lama Anda"
+                    placeholder="Enter your old password"
                   />
-                </div>
-                <div className="text-center">
-                  <hr className="m-t-40" style={{ textAlign: "center" }} />
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Password Baru
+                    New Password
                   </label>
                   <input
                     type="password"
@@ -125,12 +122,12 @@ class ModalPassword extends Component {
                     className="form-control"
                     disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     onChange={this.handleChangeInput}
-                    placeholder="Masukan Password Baru Anda"
+                    placeholder="Enter your new password"
                   />
                 </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
-                    Ulangi Password Baru
+                    Re-enter New Password
                   </label>
                   <input
                     type="password"
@@ -139,7 +136,7 @@ class ModalPassword extends Component {
                     className="form-control"
                     disabled={(this.state.isDisabled) ? 'disabled' : ''}
                     onChange={this.handleChangeInput}
-                    placeholder="Ulangi Password Baru Anda"
+                    placeholder="Confirm your new password"
                   />
                 </div>
                 {this.state.msgValidate &&

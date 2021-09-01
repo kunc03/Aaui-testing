@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { withTranslation } from "react-i18next";
+
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -33,6 +35,8 @@ class EventNew extends Component {
   // }
 
   render() {
+    const { t } = this.props
+
     let companyType = Storage.get('user').data.company_type;
 
     const listEvents = this.props.lists;
@@ -104,7 +108,7 @@ class EventNew extends Component {
                       </div>
                       <div className="d-flex justify-content-center">
                           <div className={`title-head f-w-900 f-16 color-event-${item.title.toLowerCase()}`} style={{lineHeight:'42px'}}>
-                            {item.title}
+                            {t(item.title.toLowerCase())}
                           </div>
                       </div>
                         <small className={`float-right color-event-${item.title.toLowerCase()}`} style={{fontSize:'16px', paddingRight:14}}>{item.total}</small>
@@ -120,4 +124,6 @@ class EventNew extends Component {
   }
 }
 
-export default EventNew;
+const EventWithTranslation = withTranslation('common')(EventNew)
+
+export default EventWithTranslation;

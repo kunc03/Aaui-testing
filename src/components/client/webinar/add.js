@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import API, { API_SERVER, APPS_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
-
+import { Editor } from '@tinymce/tinymce-react';
 import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../files/_files';
 import TableMeetings from '../../meeting/meeting';
@@ -16,6 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SocketContext from '../../../socket';
 import moment from 'moment-timezone'
+import { withTranslation } from 'react-i18next';
 
 class WebinarAddClass extends Component {
 
@@ -37,7 +38,7 @@ class WebinarAddClass extends Component {
     id: '',
     gambar: '',
     judul: '',
-    isi: '',
+    isi: 'Loading...',
     tanggal: '',
     tanggalEnd: '',
     jamMulai: '',
@@ -202,6 +203,9 @@ class WebinarAddClass extends Component {
       }
     })
   }
+  handleDynamicInput = (e) => {
+      this.setState({ isi: e });
+  }
   componentDidMount() {
     this.fetchData();
   }
@@ -215,9 +219,16 @@ class WebinarAddClass extends Component {
       const jam_selesai = res.data.result.jam_selesai ? new Date('2020-09-19 ' + res.data.result.jam_selesai) : ''
       this.setState({
         id: this.state.webinarId,
-        gambar: res.data.result.gambar,
         judul: res.data.result.judul,
-        isi: res.data.result.isi ? res.data.result.isi : '',
+        isi:
+          res.data.result.isi ? res.data.result.isi
+          :
+          `Welcome to "${res.data.result.judul}" webinar.<br/>
+          If this webinar is accessible, a "Join the webinar" button will appear at the top right.<br/>
+          You can download the attached file via the "Documents" section at the bottom left.<br/>
+          You can ask questions during the webinar via the "Questions" section at the bottom right.<br/>
+          <br/>
+          This webinar uses ICADEMY.`,
         tanggal: tanggal,
         tanggalEnd: tanggalEnd,
         jamMulai: jam_mulai,
@@ -232,6 +243,11 @@ class WebinarAddClass extends Component {
         sekretarisId: res.data.result.sekretaris,
         pembicara: []
       })
+      if (!this.state.gambar){
+        this.setState({
+          gambar: res.data.result.gambar,
+        })
+      }
       res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
       this.checkProjectAccess(this.state.projectId)
     })
@@ -493,6 +509,7 @@ class WebinarAddClass extends Component {
   }
 
   render() {
+    const { t } = this.props
 
     // const role = this.state.role
     let levelUser = Storage.get('user').data.level;
@@ -502,9 +519,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -535,9 +552,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -574,9 +591,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
-            <th> Name </th>
+            <th>{ t('name') }</th>
             <th>Email</th>
-            <th> Phone </th>
+            <th>{ t('phone') }</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -655,7 +672,7 @@ class WebinarAddClass extends Component {
                           <img className="img-fluid" src={this.state.gambar == '' || this.state.gambar == null ? `/newasset/imginput.png` : typeof this.state.gambar === 'object' && this.state.gambar !== null ? URL.createObjectURL(this.state.gambar) : this.state.gambar} />
                         </div>
                         <div className="col-sm-2">
-                          <input type="file" name="gambar" onChange={e => this.setState({ gambar: e.target.files[0] })} className="ml-5 btn btn-sm btn-default" />
+                          <input type="file" name="gambar" onChange={e => { if (e.target.files.length) { this.setState({ gambar: e.target.files[0] }); } }} className="ml-5 btn btn-sm btn-default" />
                         </div>
                       </div>
                     </div>
@@ -667,7 +684,64 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group">
                       <label className="bold">Description<required>*</required></label>
-                      <textarea rows="6" className="form-control" value={this.state.isi} onChange={e => this.setState({ isi: e.target.value })} />
+                      <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                      {
+                          this.state.isi !== 'Loading...' ?
+                          <Editor
+                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                              initialValue={this.state.isi}
+                              value={this.state.isi}
+                              init={{
+                              height: 400,
+                              width: "100%",
+                              menubar: false,
+                              convert_urls: false,
+                              image_class_list: [
+                                  {title: 'None', value: ''},
+                                  {title: 'Responsive', value: 'img-responsive'},
+                                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                              ],
+                              file_browser_callback_types: 'image media',
+                              file_picker_callback: function (callback, value, meta) {
+                                  if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                  var input = document.getElementById(`myFile`);
+                                  input.click();
+                                  input.onchange = function () {
+
+                                      var dataForm = new FormData();
+                                      dataForm.append('file', this.files[0]);
+
+                                      window.$.ajax({
+                                      url: `${API_SERVER}v2/media/upload`,
+                                      type: 'POST',
+                                      data: dataForm,
+                                      processData: false,
+                                      contentType: false,
+                                      success: (data)=>{
+                                          callback(data.result.url);
+                                          this.value = '';
+                                      }
+                                      })
+
+                                  };
+                                  }
+                              },
+                              plugins: [
+                                  "advlist autolink lists link image charmap print preview anchor",
+                                  "searchreplace visualblocks code fullscreen",
+                                  "insertdatetime media table paste code help wordcount"
+                              ],
+                              media_live_embeds : true,
+                              toolbar:
+                                  // eslint-disable-next-line no-multi-str
+                                  "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                              alignleft aligncenter alignright alignjustify | image | media | \
+                                  bullist numlist outdent indent | removeformat | help"
+                              }}
+                              onEditorChange={e => this.handleDynamicInput(e)}
+                          />
+                          :null
+                      }
                     </div>
 
                     <div className="form-group row">
@@ -1079,4 +1153,6 @@ const WebinarAdd = props => (
   </SocketContext.Consumer>
 )
 
-export default WebinarAdd;
+const WebinarWithTranslation = withTranslation('common')(WebinarAdd)
+
+export default WebinarWithTranslation;

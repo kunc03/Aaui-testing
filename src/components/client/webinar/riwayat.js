@@ -10,15 +10,18 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable'
 
+import { pad } from '../../../actions/helper'
+
 import { Doughnut } from 'react-chartjs-2';
 
 export default class WebinarRiwayat extends Component {
 
   state = {
     hasilTest: [],
+    certificate_orientation: 'landscape',
+    certificate_background: '',
     nama: '',
     ttd: '',
-    signature: '',
     checkAll: false,
     tanggal:'',
     tanggalEnd: '',
@@ -62,7 +65,13 @@ export default class WebinarRiwayat extends Component {
     cert_subtitle: 'THIS CERTIFICATE IS PROUDLY PRESENTED TO',
     cert_description: 'FOR SUCCESSFULLY COMPLETING ALL CONTENTS ON WEBINAR',
     cert_topic: '',
-    cert_sign_name: '',
+    sign: [
+      {
+      cert_sign_name: '',
+      cert_sign_title: '',
+      signature: ''
+      }
+    ],
 
     //role webinar
     pembicara: []
@@ -120,6 +129,8 @@ export default class WebinarRiwayat extends Component {
       this.setState({
         id: this.state.webinarId,
         company_id: res.data.result.company_id,
+        certificate_orientation: res.data.result.certificate_orientation,
+        certificate_background: res.data.result.certificate_background,
         gambar: res.data.result.gambar,
         judul: res.data.result.judul,
         cert_topic: res.data.result.judul,
@@ -195,7 +206,21 @@ export default class WebinarRiwayat extends Component {
         });
       } else {
         e.target.value = null;
-        toast.warning('File maksimum 5MB')
+        toast.warning('File max 5MB')
+      }
+    }
+  };
+  handleChangeArr = (e) => {
+    console.log('ALVINSSS', e.target)
+    if (e.target.files[0]) {
+      if (e.target.files[0].size <= 5000000) {
+        let sign = this.state.sign;
+        sign[e.target.getAttribute('data-index')][e.target.id] = e.target.files[0];
+        sign[e.target.getAttribute('data-index')][`${e.target.id}_img`] = URL.createObjectURL(e.target.files[0]);
+        this.setState({sign: sign});
+      } else {
+        e.target.value = null;
+        toast.warning('File max 5MB')
       }
     }
   };
@@ -204,6 +229,11 @@ export default class WebinarRiwayat extends Component {
       let a = this.state;
       this.setState(a);
     });
+  };
+  handleChangeTextArr = (e) => {
+    let sign = this.state.sign;
+    sign[e.target.getAttribute('data-index')][e.target.name] = e.target.value;
+    this.setState({sign: sign});
   };
 
   onChangeForm = e => {
@@ -227,7 +257,10 @@ export default class WebinarRiwayat extends Component {
   }
 
   sertifikat = () => {
-    if (this.state.cert_sign_name === '' || (this.state.signature === '' || this.state.signature === null)) {
+    let check = this.state.sign.filter((x)=>
+      x.cert_sign_name === '' || (x.signature === '' || x.signature === null) || x.cert_sign_title === ''
+    ).length;
+    if (check > 0) {
       toast.warning('Please fill signature name and signature image')
     }
     else {
@@ -250,9 +283,13 @@ export default class WebinarRiwayat extends Component {
       formData.append('cert_description', this.state.cert_description);
       formData.append('cert_topic', this.state.cert_topic);
       formData.append('cert_logo', this.state.cert_logo);
-      formData.append('signature', this.state.signature);
-      formData.append('cert_sign_name', this.state.cert_sign_name);
+      formData.append('sign', JSON.stringify(this.state.sign));
+      formData.append('certificate_background', this.state.certificate_background);
+      formData.append('certificate_orientation', this.state.certificate_orientation);
       formData.append('peserta', JSON.stringify(sertifikat));
+      this.state.sign.map((x)=>{
+        formData.append('signature', x.signature);
+      })
 
       API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
         toast.success('Mengirim sertifikat kepada peserta');
@@ -274,20 +311,18 @@ export default class WebinarRiwayat extends Component {
     doc.text(`: ${this.state.judul}`, 50, 30);
     doc.text("Speaker", 20, 35);
     doc.text(`: ${this.state.pembicara.toString()}`, 50, 35);
-    doc.text("Description", 20, 40);
-    doc.text(`: ${this.state.isi}`, 50, 40);
-    doc.text("Time", 20, 45);
-    doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 45);
-    doc.text("Total Invitation", 20, 50);
-    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 50);
-    doc.text("Present", 20, 55);
-    doc.text(`: ${this.state.jumlahHadir}`, 50, 55);
-    doc.text("Not Present", 20, 60);
-    doc.text(`: ${this.state.jumlahTidakHadir}`, 50, 60);
+    doc.text("Time", 20, 40);
+    doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 40);
+    doc.text("Total Invitation", 20, 45);
+    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 45);
+    doc.text("Present", 20, 50);
+    doc.text(`: ${this.state.jumlahHadir}`, 50, 50);
+    doc.text("Not Present", 20, 55);
+    doc.text(`: ${this.state.jumlahTidakHadir}`, 50, 55);
 
     doc.setFontSize(12);
-    doc.text("Attendences", 20, 70);
-    doc.autoTable({ html: '#table-peserta', startY: 75, styles: {fontSize: 8}})
+    doc.text("Attendences", 20, 60);
+    doc.autoTable({ html: '#table-peserta', startY: 65, styles: {fontSize: 8}})
     doc.text("Questions", 20, doc.lastAutoTable.finalY + 10);
     doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
     doc.text("Questioner", 20, doc.lastAutoTable.finalY + 10);
@@ -369,6 +404,23 @@ export default class WebinarRiwayat extends Component {
                   let diffHour = Math.floor((diff % 86400000) / 3600000);
                   let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
                   let durasi = item.jam_mulai ? diffHour + ' hr ' + diffMin + ' min' : '-';
+                  
+                  let audio = '';
+                  if (item.audio !== 'Off') {
+                    let splitAudio = item.audio.split(':');
+                    audio = splitAudio.length > 2 ? `${pad(splitAudio[0])}:${pad(splitAudio[1])}:${pad(splitAudio[2])}` : `${pad(splitAudio[0])}:${pad(splitAudio[1])}`; 
+                  } else {
+                    audio = item.audio;
+                  }
+
+                  let camera = '';
+                  if (item.camera !== 'Off') {
+                    let splitCamera = item.camera.split(':');
+                    camera = splitCamera.length > 2 ? `${pad(splitCamera[0])}:${pad(splitCamera[1])}:${pad(splitCamera[2])}` : `${pad(splitCamera[0])}:${pad(splitCamera[1])}`; 
+                  } else {
+                    camera = item.camera;
+                  }
+
                   return (<tr key={i}>
                     <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                     <td>{item.name}</td>
@@ -378,8 +430,8 @@ export default class WebinarRiwayat extends Component {
                     <td>{moment(jamMulai, 'HH:mm').local().format('HH:mm')}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
-                    <td>{item.audio}</td>
-                    <td>{item.camera}</td>
+                    <td>{audio}</td>
+                    <td>{camera}</td>
                   </tr>)
                 })
               }
@@ -561,7 +613,7 @@ export default class WebinarRiwayat extends Component {
                     <h5 style={{fontSize:17}}>{this.state.judul}</h5>
                     <h6>Speaker : {this.state.pembicara.toString()}</h6>
                     <p>
-                      {this.state.isi}
+                      <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
                     </p>
                     <h6>{moment(this.state.tanggal, 'HH:mm').local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd, 'HH:mm').local().format('DD MMMM YYYY HH:mm')}</h6>
                   </div>
@@ -668,8 +720,13 @@ export default class WebinarRiwayat extends Component {
             <Modal.Body>
               <Form>
                 <Form.Group>
-                  <div style={{ width: '750px', padding: '10px', textAlign: 'center', border: '3px solid #787878', fontSize: '25px' }}>
-                    <div style={{ width: '724px', padding: '10px', textAlign: 'center', border: '1px solid #787878' }}><br />
+                  <div className="certificate-view" style={{ height : this.state.certificate_orientation === 'landscape' ? 'auto' : '750px', width: this.state.certificate_orientation === 'landscape' ? '750px' : '600px', padding: '10px', textAlign: 'center', border: '3px solid #787878', fontSize: '25px', position:'relative',  margin: 'auto'}}>
+                  {
+                  this.state.certificate_background ? 
+                  <img src={this.state.certificate_background} style={{width:'100%', height:'100%', position:'absolute', top:'0px', left:'0px', zIndex:'0'}} />
+                  : null
+                  }
+                    <div style={{ height : this.state.certificate_orientation === 'landscape' ? 'auto' : '730px', width: this.state.certificate_orientation === 'landscape' ? '724px' : '574px', padding: '10px', textAlign: 'center', border: this.state.certificate_background ? '' : '1px solid #787878', position:'relative', paddingTop : this.state.certificate_orientation === 'landscape' ? '10px' : '100px' }}><br />
 
                       <label for='cert_logo' style={{ display: 'block' }}>
                         <img style={{ height: '50px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
@@ -688,14 +745,27 @@ export default class WebinarRiwayat extends Component {
                         <input type='text' onChange={this.handleChangeText} name='cert_description' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} value={this.state.cert_description} />
                       </span> <br /><br />
                       <span style={{ fontSize: '18px' }}><b><input type='text' onChange={this.handleChangeText} name='cert_topic' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} value={this.state.cert_topic} /></b></span> <br /><br />
-                      <span style={{ fontSize: '10px' }}>{this.state.tanggal}</span><br />
-                      <label for='signature' style={{ display: 'block', cursor: 'pointer' }}>
-                        <img style={{ height: '80px' }} src={this.state.signature == '' || this.state.signature == null ? `/newasset/imginput.png` : typeof this.state.signature === 'object' && this.state.signature !== null ? URL.createObjectURL(this.state.signature) : this.state.signature} />
-                      </label>
-                      <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
-                      <span style={{ fontSize: '12px' }}>
-                        <input type='text' onChange={this.handleChangeText} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Signature Name' value={this.state.cert_sign_name} />
-                      </span>
+                      <span style={{ fontSize: '10px' }}>{moment(this.state.tanggal).local().format('dddd, MMMM Do YYYY')}</span><br />
+                      <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                        {
+                          this.state.sign.map((item, index)=>
+                          <span>
+                          <label style={{ display: 'block', cursor: 'pointer' }}>
+                            <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
+                            <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChangeArr} data-index={index} className="ml-5 btn btn-sm btn-default" />
+                          </label>
+                          <span style={{ fontSize: '12px' }}>
+                            <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Name' value={this.state.sign[index].cert_sign_name} />
+                          </span>
+                          <span style={{ fontSize: '12px' }}>
+                            <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_title' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Title' value={this.state.sign[index].cert_sign_title} />
+                          </span>
+                          </span>
+                          )
+                        }
+                      </div>
+                      <br/><br/>
+                      <span style={{ fontSize: '16px', cursor:'pointer' }} onClick={() => {this.state.sign.push({ cert_sign_name: '', cert_sign_title: '', signature: '' }); this.forceUpdate();}}>+ Add Signature</span>
                     </div>
                   </div>
                 </Form.Group>

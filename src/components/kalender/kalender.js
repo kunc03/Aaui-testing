@@ -1,4 +1,5 @@
 import React, { Component, useState } from "react";
+import { withTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Storage from '../../repository/storage';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
@@ -84,6 +85,7 @@ class KalenderNew extends Component {
     this.fetchUserCalendar();
   }
   render() {
+    const { t } = this.props
     const { event } = this.state;
     const lists = this.props.lists;
     // const ColoredDateCellWrapper = ({ children }) =>
@@ -106,7 +108,7 @@ class KalenderNew extends Component {
                 <div className="row">
                   <div style={{ padding: '10px 20px' }}>
                     <h3 className="f-w-900 f-18 fc-blue">
-                      Calendar
+                      {t('calendar')}
                   </h3>
                   </div>
                 </div>
@@ -146,7 +148,7 @@ class KalenderNew extends Component {
               <span className="p-r-5" style={{ color: '#0091FF' }}>
                 <i className="fa fa-square"></i>
               </span>
-              Group Meeting
+              Meeting
 
               <span className="p-r-5" style={{ color: '#e2890d', marginLeft: 10 }}>
                 <i className="fa fa-square"></i>
@@ -167,5 +169,6 @@ class KalenderNew extends Component {
   }
 }
 
+const KalenderWithTranslation = withTranslation('common')(KalenderNew)
 
-export default KalenderNew;
+export default KalenderWithTranslation;

@@ -10,6 +10,7 @@ import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import { isMobile } from 'react-device-detect';
+import Tooltip from '@material-ui/core/Tooltip';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -20,6 +21,13 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
   state = {
+    isJoin : false,
+    showDescription : false,
+    isLoadingPage : true,
+    dataParticipants:{
+      audio : 0,
+      camera : 0,
+    },
     waktuPretest: 0,
     waktuPosttest: 0,
     pretest: [],
@@ -44,15 +52,18 @@ export default class WebinarLive extends Component {
     tanggal:'',
     tanggalEnd:'',
     user: [],
+    joined: false,
     projectId: '',
     dokumenId: '',
     modalConfirmClose: false,
     modalEnd: false,
     modalKuesioner: false,
     modalKuesionerPeserta: false,
+    modalSendPretest: false,
     modalSendPosttest: false,
     waitingKuesioner: false,
     startKuesioner: false,
+    startPretest: false,
     startPosttest: false,
     isWebinarStartDate: false,
     access_project_admin: false,
@@ -90,6 +101,36 @@ export default class WebinarLive extends Component {
       { id: 3, dari: 'Ahmad Syujan', pertanyaan: 'Gan, Saya yang mau tanya lebih serius. Kalau semisal hasil dari 100 dibagi 10 berapa hayooo?', datetime: '02 Sep 2020 12:12' },
     ]
   }
+  fetchDataParticipants(){
+    if (this.state.webinarId){
+      let api = bbb.api(BBB_URL, BBB_KEY)
+      let http = bbb.http
+  
+      let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinarId)
+      http(meetingInfo).then((result) => {
+        if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
+          // Jika belum ada
+        }
+        else {
+          // Jika sudah ada
+          this.setState({
+            dataParticipants:{
+              audio : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
+                          1
+                        : 0
+                      : 0,
+              camera : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                        result.attendees.attendee.filter(x=> x.hasVideo).length : result.attendees.attendee.hasVideo ?
+                          1
+                        : 0
+                      : 0,
+            }
+          })
+        }
+      })
+    }
+  }
   closeModalEnd = e => {
     this.setState({ modalEnd: false });
   }
@@ -98,6 +139,9 @@ export default class WebinarLive extends Component {
   }
   closeModalKuesioner = e => {
     this.setState({ modalKuesioner: false });
+  }
+  closeModalSendPretest = e => {
+    this.setState({ modalSendPretest: false });
   }
   closeModalSendPosttest = e => {
     this.setState({ modalSendPosttest: false });
@@ -390,7 +434,8 @@ export default class WebinarLive extends Component {
 
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
-              startPosttest: res.data.result.posttest_sent === 1 ? true : false
+              startPosttest: res.data.result.posttest_sent === 1 ? true : false,
+              startPretest: res.data.result.pretest_sent === 1 ? true : false
             })
           this.setState({ pembicara: [] })
           res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
@@ -443,7 +488,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                   }
@@ -453,25 +498,47 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                // Jika sudah ada, join
-                let joinUrl = api.administration.join(
-                  this.state.user.name,
-                  this.state.webinar.id,
-                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
-                  { userID: this.state.user.user_id }
-                )
-
-                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
-                let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
-
-                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-
-                this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x=>
+                  x.userID === this.state.user.user_id &&
+                  (
+                    x.isListeningOnly ||
+                    x.hasJoinedVoice ||
+                    x.hasVideo
+                  )
+                ).length
+                :
+                result.attendees.attendee.userID === this.state.user.user_id &&
+                (
+                  result.attendees.attendee.isListeningOnly ||
+                  result.attendees.attendee.hasJoinedVoice ||
+                  result.attendees.attendee.hasVideo
+                );
+                if (checkAttendee){
+                  this.setState({joined: true});
+                }
+                else{
+                  // Jika sudah ada, join
+                  let joinUrl = api.administration.join(
+                    this.state.user.name,
+                    this.state.webinar.id,
+                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    { userID: this.state.user.user_id }
+                  )
+  
+                  let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                  let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                  let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
+  
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
+  
+                  this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
+                }
               }
             })
             // BBB JOIN END
           }
+          this.setState({ isLoadingPage : false })
         })
       }
     })
@@ -560,7 +627,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                   }
@@ -570,25 +637,47 @@ export default class WebinarLive extends Component {
                 })
               }
               else {
-                // Jika sudah ada, join
-                let joinUrl = api.administration.join(
-                  this.state.user.name,
-                  this.state.webinar.id,
-                  this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
-                  { userID: this.state.user.user_id }
-                )
-
-                let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
-                let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
-                let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
-
-                this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-
-                this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x=>
+                  x.userID === this.state.user.user_id &&
+                  (
+                    x.isListeningOnly ||
+                    x.hasJoinedVoice ||
+                    x.hasVideo
+                  )
+                ).length
+                :
+                result.attendees.attendee.userID === this.state.user.user_id &&
+                (
+                  result.attendees.attendee.isListeningOnly ||
+                  result.attendees.attendee.hasJoinedVoice ||
+                  result.attendees.attendee.hasVideo
+                );
+                if (checkAttendee){
+                  this.setState({joined: true});
+                }
+                else{
+                  // Jika sudah ada, join
+                  let joinUrl = api.administration.join(
+                    this.state.user.name,
+                    this.state.webinar.id,
+                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    { userID: this.state.user.user_id }
+                  )
+  
+                  let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
+                  let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
+                  let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
+  
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
+  
+                  this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
+                }
               }
             })
             // BBB JOIN END
           }
+          this.setState({ isLoadingPage : false })
         })
       }
     })
@@ -696,6 +785,10 @@ export default class WebinarLive extends Component {
         this.setState({ startKuesioner: true, modalKuesionerPeserta: true })
         this.fetchKuesioner()
       }
+      if (data.socketAction == 'sendPretest' && data.webinar_id === this.state.webinarId) {
+        this.setState({ startPretest: true });
+        this.fetchPreTest();
+      }
       if (data.socketAction == 'sendPosttest' && data.webinar_id === this.state.webinarId) {
         this.setState({ startPosttest: true });
         this.fetchPostTest();
@@ -740,6 +833,10 @@ export default class WebinarLive extends Component {
     //     }
     // }
     // window.addEventListener("message", window.receiveMessageFromIndex, false);
+      this.timer = setInterval(
+        () => this.fetchDataParticipants(),
+        5000,
+      );
   }
   checkProjectAccess() {
     if (this.props.voucher) {
@@ -823,8 +920,21 @@ export default class WebinarLive extends Component {
     })
   }
 
+  sendPretest() {
+    API.put(`${API_SERVER}v2/webinar/send-pretest/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendPretest',
+          webinar_id: this.state.webinarId
+        })
+        toast.success('Pre test sent');
+        this.closeModalSendPretest();
+      }
+    })
+  }
+
   render() {
-    //console.log('state: ', this.state)
+    console.log('state: ', this.state)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -877,7 +987,7 @@ export default class WebinarLive extends Component {
           <Card>
             <Card.Body>
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-4">
                   <h3 className="f-w-900 f-18 fc-blue">
                     {/* <Link to={`/detail-project/${this.props.match.params.projectId}`} className="btn btn-sm mr-4" style={{
                   		border: '1px solid #e9e9e9',
@@ -886,30 +996,60 @@ export default class WebinarLive extends Component {
                   		<i className="fa fa-chevron-left" style={{margin: '0px'}}></i>
                 		</Link> */}
                     {this.state.webinar.judul}
-                    <p>Speaker : {this.state.pembicara.toString()}</p>
+                    <p>{this.state.pembicara.toString() !== '' ? 'Speaker : ' : ''}{this.state.pembicara.toString()}</p>
                   </h3>
+                  {
+                    (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined && this.state.isJoin ?
+                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                        <Tooltip title="Listening" arrow placement="top">
+                          <span>
+                            <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
+                          </span>
+                        </Tooltip>
+                        <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                          <span>
+                            <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
+                          </span>
+                        </Tooltip>
+                      </span>
+                    : null
+                  }
                 </div>
-                <div className="col-sm-6 text-right">
+                <div className="col-sm-8 text-right">
                   {
                     this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.status == 2 ?
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>End Webinar
                       </button>
-                      :
-                      null
+                    : null
+                  }
+                  {
+                    !this.state.isJoin && this.state.status === 2 ?
+                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={()=> this.setState({isJoin: true})}>
+                        <i className="fa fa-video"></i>
+                        Join the webinar
+                      </button>
+                    : null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
-                      :
-                      null
+                    : null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Post Test
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+                      <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Pre Test
                       </button>
                       :
                       null
@@ -933,69 +1073,24 @@ export default class WebinarLive extends Component {
                   {
                     this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1 ?
                       <button onClick={() => this.setState({ modalResultPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Hasil Post Test
+                        <i className="fa fa-clipboard-list"></i>Post Test Result
                       </button>
                       :
                       null
                   }
-                  <p className="m-b-0">
-                    { /* <span className="f-w-600 f-16">Lihat Semua</span> */}
-                  </p>
+                  
                 </div>
               </div>
               {
-                this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
-                  <div>
-                  <h4>Before entering the Webinar, please answer the questions below (in {this.state.waktuPretest} minutes).<br />
-If you have finished answering the questions, please click ""Send Pre-Test Answers"".<br />
-Please complete the answers for not over than allotted time, orherwise the result in the pre-test will  be automatically closed and directed in to the Webinar room<br /></h4>
-                    <div className="fc-blue" style={{ position: 'absolute', right: 20, top: 10, fontSize: '18px', fontWeight: 'bold' }}>
-                      <Timer
-                        initialTime={this.state.waktuPretest * 60000}
-                        direction="backward"
-                        checkpoints={[
-                          {
-                            time: 0,
-                            callback: this.waktuPretestHabis.bind(this),
-                          }
-                        ]}
-                      >
-                        {() => (
-                          <React.Fragment>
-                            Time limit <Timer.Hours />:
-                            <Timer.Minutes />:
-                            <Timer.Seconds />
-                          </React.Fragment>
-                        )}
-                      </Timer>
-                    </div>
-                    {
-                      this.state.pretest.map((item, index) => (
-                        <div className="mb-3">
-                          <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.tanya}</p>
-                          {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
-                          {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
-                          {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
-                          {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPretest} /> <label for='d'> {item.d[1]}</label></div>}
-                          {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPretest} /> <label for='e'> {item.e[1]}</label></div>}
-                        </div>
-                      ))
-                    }
-                    <button
-                      disabled={this.state.isLoading}
-                      className="btn btn-icademy-primary"
-                      onClick={this.kirimJawabanPretest.bind(this)}
-                    >
-                      <i className="fa fa-paper-plane"></i>
-                    {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
-                  </button>
-                  </div>
+                this.state.isLoadingPage ?
+                <div>Loading...</div>
                   :
                   <div style={{ marginTop: '10px' }}>
                     <div className="row">
                       <div className="col-sm-12">
                         {
-                          this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2) ?
+                          (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
+                          this.state.isJoin ?
                           <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
                             <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
                               width="100%"
@@ -1005,23 +1100,101 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
                               position="relative" />
                           </div>
+                          : null
                             :
                             this.state.status == 3 ?
                               <h3>The webinar has ended</h3>
                               :
-                              <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h3>
+                              <h3>Webinars start on {moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} until {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')} ({moment.tz.guess()} Timezone)</h3>
+                        }
+                        {
+                          this.state.joined ?
+                          <h4 style={{marginTop:'20px'}}>You are currently a participant of this webinar on another device or browser tab.<br/>If you want to access webinar from this page, exit from the other device and refresh this page afterwards.</h4>
+                          : null
                         }
                         {
                           this.state.status !== 3 &&
-                          <div className="dekripsi" style={{ marginTop: '20px' }}>
-                            <h4>Description</h4>
-                            <div dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                          <div className="dekripsi" style={{ marginTop: '20px', color:'#000', lineHeight: '24px', position:'relative' }}>
+                          <h4>Description</h4>
+                          <div className={(this.state.isJoin && !this.state.showDescription) ? 'webinar-description' : 'webibar-description-full'} dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                          {
+                            (this.state.isJoin && !this.state.showDescription) ?
+                            <div className='webinar-description-overlay' />
+                            : null
+                          }
                           </div>
                         }
+                        <center>
                         {
-                          this.state.startPosttest && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                          this.state.isJoin && this.state.status !== 3 ?
+                          this.state.showDescription ?
+                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: false});this.forceUpdate();}}>Hide description</span>
+                          :
+                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: true});this.forceUpdate();}}>See full description</span>
+                          :null
+                        }
+                        </center>
+
+                        {
+                          this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                            <div className="mt-4">
+                              <h4>Answer the Pre-test</h4>
+                              <div className="alert alert-danger mt-2">
+                                <b>Please answer the questions below (in {this.state.waktuPretest} minutes). If you have finished answering the questions, please click "Send Pre-Test Answers".<br />
+                                  Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
+                              </div>
+                              <div className="fc-blue mb-4" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                                <Timer
+                                  initialTime={this.state.waktuPretest * 60000}
+                                  direction="backward"
+                                  checkpoints={[
+                                    {
+                                      time: 0,
+                                      callback: this.waktuPretestHabis.bind(this),
+                                    }
+                                  ]}
+                                >
+                                  {() => (
+                                    <React.Fragment>
+                                      Time limit <Timer.Hours />:
+                                      <Timer.Minutes />:
+                                      <Timer.Seconds />
+                                    </React.Fragment>
+                                  )}
+                                </Timer>
+                              </div>
+                              {
+                                this.state.pretest.map((item, index) => (
+                                  <div className="mb-3">
+                                    <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
+                                    {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
+                                    {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
+                                    {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
+                                    {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawabPretest} /> <label for='d'> {item.d[1]}</label></div>}
+                                    {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawabPretest} /> <label for='e'> {item.e[1]}</label></div>}
+                                  </div>
+                                ))
+                              }
+                              <button
+                                disabled={this.state.isLoading}
+                                className="btn btn-icademy-primary"
+                                onClick={this.kirimJawabanPretest.bind(this)}
+                              >
+                                <i className="fa fa-paper-plane"></i>
+                                {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
+                              </button>
+                            </div>
+                          : null
+                        }
+                        
+                        {
+                          this.state.startPosttest && this.state.pretestTerjawab === true && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{marginTop:20}}>
                             <h4>Answer the post-test</h4>
+                              <div className="alert alert-danger mt-2">
+                                <b>Please answer the questions below (in {this.state.waktuPosttest} minutes). If you have finished answering the questions, please click "Send Post-Test Answers".<br />
+                                  Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
+                              </div>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
                                 initialTime={this.state.waktuPosttest * 60000}
@@ -1035,7 +1208,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                               >
                                 {() => (
                                   <React.Fragment>
-                                    Batas Waktu <Timer.Hours />:
+                                    Time limit <Timer.Hours />:
                                     <Timer.Minutes />:
                                     <Timer.Seconds />
                                   </React.Fragment>
@@ -1045,7 +1218,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
                             {
                               this.state.posttest.map((item, index) => (
                                 <div className="mb-3">
-                                  <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.tanya}</p>
+                                  <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
                                   {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPosttest} /> <label for='a'> {item.a[1]}</label></div>}
                                   {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPosttest} /> <label for='b'> {item.b[1]}</label></div>}
                                   {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPosttest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1075,7 +1248,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Card>
         </div>
         {
-          (this.state.projectId !== 0 && this.state.status === 2) &&
+          (this.state.projectId !== 0 && (this.state.status === 2 || this.state.status === 1)) &&
           <div className="col-sm-6">
             <Card>
               <Card.Body>
@@ -1210,6 +1383,30 @@ Please complete the answers for not over than allotted time, orherwise the resul
           </Modal.Footer>
         </Modal>
         <Modal
+          show={this.state.modalSendPretest}
+          onHide={this.closeModalSendPretest}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Send Pre Test
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>There are <b>{this.state.pretest.length}</b> question with <b>{this.state.waktuPretest} minutes</b> time limit.</div>
+            <div>Are you sure want to send pre test to attendences ?</div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btn-icademy-primary"
+              onClick={this.sendPretest.bind(this)}
+            >
+              <i className="fa fa-paper-plane"></i>
+                Send Pre Test
+              </button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
           show={this.state.modalSendPosttest}
           onHide={this.closeModalSendPosttest}
           centered
@@ -1326,11 +1523,11 @@ Please complete the answers for not over than allotted time, orherwise the resul
               this.state.pertanyaan.map((item) => (
                 <div className="mb-3">
                   <p className="f-w-900 fc-blue" style={{ lineHeight: '18px' }}>{item.tanya}</p>
-                  {item.a && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawab} /> <label for='a'> {item.a[1]}</label></span>}
-                  {item.b && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawab} /> <label for='b'> {item.b[1]}</label></span>}
-                  {item.c && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawab} /> <label for='c'> {item.c[1]}</label></span>}
-                  {item.d && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawab} /> <label for='d'> {item.d[1]}</label></span>}
-                  {item.e && <span style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawab} /> <label for='e'> {item.e[1]}</label></span>}
+                  {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawab} /> <label for='a'> {item.a[1]}</label></div>}
+                  {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawab} /> <label for='b'> {item.b[1]}</label></div>}
+                  {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawab} /> <label for='c'> {item.c[1]}</label></div>}
+                  {item.d && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.d[0]} onChange={this.handleJawab} /> <label for='d'> {item.d[1]}</label></div>}
+                  {item.e && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.e[0]} onChange={this.handleJawab} /> <label for='e'> {item.e[1]}</label></div>}
                 </div>
               ))
             }
@@ -1390,7 +1587,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
               {
                     this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
                       <div className="mb-3 mt-3">
-                        <p className="f-w-900" style={{lineHeight:'18px'}}>{index+1+'. '+item.pertanyaan}</p>
+                        <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
                         {
                           item.options.map(items => (
                             <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
@@ -1426,7 +1623,7 @@ Please complete the answers for not over than allotted time, orherwise the resul
             {
               this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
                 <div className="mb-3 mt-3">
-                  <p className="f-w-900" style={{ lineHeight: '18px' }}>{index + 1 + '. ' + item.pertanyaan}</p>
+                  <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
                   {
                     item.options.map(items => (
                       <div style={{ margin: '0px 10px' }}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{ backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent' }}> {items.answer}</label></div>
