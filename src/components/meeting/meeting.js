@@ -1499,7 +1499,7 @@ class MeetingTable extends Component {
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-6">
-                    <label className="bold col-sm-12">Keterangan (optional)</label>
+                    <label className="bold col-sm-12">Description (optional)</label>
                     <textarea rows="4" className="form-control" value={this.state.keterangan} onChange={e => this.setState({ keterangan: e.target.value })} />
                   </div>
                 </div>
