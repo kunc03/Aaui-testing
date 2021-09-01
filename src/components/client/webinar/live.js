@@ -1398,7 +1398,7 @@ export default class WebinarLive extends Component {
               onClick={this.sendPretest.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Send Post Test
+                Send Pre Test
               </button>
           </Modal.Footer>
         </Modal>
