@@ -220,7 +220,15 @@ class WebinarAddClass extends Component {
       this.setState({
         id: this.state.webinarId,
         judul: res.data.result.judul,
-        isi: res.data.result.isi ? res.data.result.isi : '',
+        isi:
+          res.data.result.isi ? res.data.result.isi
+          :
+          `Welcome to "${res.data.result.judul}" webinar.<br/>
+          If this webinar is accessible, a "Join the webinar" button will appear at the top right.<br/>
+          You can download the attached file via the "Documents" section at the bottom left.<br/>
+          You can ask questions during the webinar via the "Questions" section at the bottom right.<br/>
+          <br/>
+          This webinar uses ICADEMY.`,
         tanggal: tanggal,
         tanggalEnd: tanggalEnd,
         jamMulai: jam_mulai,
