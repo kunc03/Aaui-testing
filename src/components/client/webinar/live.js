@@ -1032,11 +1032,19 @@ export default class WebinarLive extends Component {
                     : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pertanyaan.length > 0 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
                     : null
+                  }
+                  {
+                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && this.state.pertanyaan.length > 0 ?
+                      <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Feedback Form
+                      </button>
+                      :
+                      null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
@@ -1050,14 +1058,6 @@ export default class WebinarLive extends Component {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Pre Test
-                      </button>
-                      :
-                      null
-                  }
-                  {
-                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner ?
-                      <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Feedback Form
                       </button>
                       :
                       null
