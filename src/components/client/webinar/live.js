@@ -1034,7 +1034,7 @@ export default class WebinarLive extends Component {
                     : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pertanyaan.length > 0 ?
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
