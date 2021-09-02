@@ -46,7 +46,9 @@ const GuruKPI = lazy(()=> import('../components/guruKPI/index'));
 const DetailMurid = lazy(()=> import('../components/detail_murid/index'));
 const DetailKelas = lazy(()=> import('../components/detail_kelas/index'));
 const DetailRapor = lazy(()=> import('../components/detail_rapor/index'));
-const LaporanForGuru = lazy(()=> import('../components/laporan/laporanguru'));
+const LaporanForGuru = lazy(() => import('../components/laporan/laporanguru'));
+const WebinarLivePublic = lazy(()=> import("../components/client/webinar/livePublic"));
+
 // ======= const COMPONENT MURID ======== //
 const MuridLaporanRapor = lazy(()=> import('../components/muridLaporanRapor/index'));
 // ======= const COMPONENT PARENT ======== //
@@ -120,6 +122,7 @@ export default class ClientSwitch extends React.Component {
           <Route path="/meeting/information/:roomid" exact component={Meeting} />
           <Route path="/meeting-room/:roomid" component={MeetingRoom} />
           <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+          <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
 
           <Route path="/webinars" exact component={Webinar} />
           <Route path="/bantuan" component={ClassBantuan} />
