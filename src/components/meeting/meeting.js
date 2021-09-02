@@ -2057,18 +2057,18 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus meeting <b>{this.state.deleteMeetingName}</b> ?</div>
+            <div>Are you sure want to delete meeting <b>{this.state.deleteMeetingName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
               Cancel
             </button>
             <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.onSubmitDelete.bind(this, this.state.deleteMeetingId)}>
-              <i className="fa fa-trash"></i> Hapus
+              <i className="fa fa-trash"></i> Delete
             </button>
           </Modal.Footer>
         </Modal>
