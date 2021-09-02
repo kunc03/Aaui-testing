@@ -156,7 +156,6 @@ class MeetingTable extends Component {
     this.roomId = null;
     this.rooms = {};
     this.setState({
-      roomName: '',
       classId: '',
       isModalBooking: false,
       // roomName: '',
