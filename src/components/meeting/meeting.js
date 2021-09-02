@@ -561,7 +561,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // is_private: isPrivate,
             // is_akses: isAkses,
             // is_required_confirmation: isRequiredConfirmation,
@@ -688,7 +688,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
             
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // speaker: this.state.speaker,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             // is_private: isPrivate,
@@ -1195,6 +1195,12 @@ class MeetingTable extends Component {
         grow: 2,
       },
       {
+        cell: row => row.status === 'Active' ? <font color='#16b10b'>Active</font> : row.status,
+        name: 'Status',
+        selector: 'status',
+        sortable: true
+      },
+      {
         cell: row => <span class="btn-group dropleft">
           <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i
@@ -1329,7 +1335,7 @@ class MeetingTable extends Component {
                 active={this.state.isFetch}
                 spinner={<BeatLoader size='30' color='#008ae6' />}
               ></LoadingOverlay>
-              <p style={{marginTop: '3.5rem'}}>Fetching data...</p>
+              <p style={{marginTop: '3.5rem'}}>Loading...</p>
             </div>
             :
             <Fragment>
@@ -1778,7 +1784,7 @@ class MeetingTable extends Component {
               Cancel
             </button>
             <button className={`btn btn-icademy-primary ${this.state.sendingEmail && 'btn-icademy-grey'}`} onClick={this.onSubmitForm} disabled={this.state.sendingEmail}>
-              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
+              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Saving...' : 'Save'}
             </button>
           </Modal.Footer>
         </Modal>
