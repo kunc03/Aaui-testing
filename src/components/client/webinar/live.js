@@ -90,6 +90,8 @@ export default class WebinarLive extends Component {
     pembicaraId: [],
     ownerId: [],
 
+    session: Storage.get('user').data,
+
     lampirans: [
       { id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com' },
       { id: 2, nama: 'file-presentasi.pdf', url: 'https://google.com' },
@@ -223,7 +225,7 @@ export default class WebinarLive extends Component {
           toast.success('Post-test submission sent')
           this.setState({isLoading: false})
         }
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -595,7 +597,7 @@ export default class WebinarLive extends Component {
 
           if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)) {
             this.updateStatus(this.state.webinar.id, 2)
-            if (this.state.webinar.status == 1) {
+            if (this.state.webinar.status == 1 && !this.state.session) {
               this.fetchWebinarPublic()
             }
             // BBB JOIN START
@@ -766,7 +768,7 @@ export default class WebinarLive extends Component {
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -798,7 +800,7 @@ export default class WebinarLive extends Component {
         this.forceUpdate()
       }
       if (data.socketAction == 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -807,7 +809,7 @@ export default class WebinarLive extends Component {
         this.fetchPostTest()
       }
     });
-    if (this.props.webinarId && this.props.voucher) {
+    if (this.props.webinarId && this.props.voucher && !this.state.session) {
       this.fetchWebinarPublic()
     }
     else {
@@ -982,7 +984,7 @@ export default class WebinarLive extends Component {
     );
 
     return (
-      <div className="row">
+      <div className="row" style={{margin: '8px 0px'}}>
         <div className="col-sm-12">
           <Card>
             <Card.Body>
