@@ -30,6 +30,7 @@ export default class WebinarLive extends Component {
     },
     waktuPretest: 0,
     waktuPosttest: 0,
+    isFeedback: false,
     pretest: [],
     posttest: [],
     resultPretest: [],
@@ -430,6 +431,7 @@ export default class WebinarLive extends Component {
               tanggalEnd: res.data.result.end_time,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+              isFeedback: res.data.result.isFeedback,
 
               engine: res.data.result.engine,
               mode: res.data.result.mode,
@@ -570,6 +572,7 @@ export default class WebinarLive extends Component {
               tanggalEnd: moment.tz(res.data.result.end_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+              isFeedback: res.data.result.isFeedback,
 
               engine: res.data.result.engine,
               mode: res.data.result.mode,
@@ -1034,7 +1037,7 @@ export default class WebinarLive extends Component {
                     : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pertanyaan.length > 0 ?
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.isFeedback ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>

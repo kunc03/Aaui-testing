@@ -156,7 +156,6 @@ class MeetingTable extends Component {
     this.roomId = null;
     this.rooms = {};
     this.setState({
-      roomName: '',
       classId: '',
       isModalBooking: false,
       // roomName: '',
@@ -1452,6 +1451,7 @@ class MeetingTable extends Component {
                             const eJadwal = Moment(`${item.tgl_selesai}`).local()
                             const range = jamIni.isBetween(sJadwal, eJadwal)
 
+                            let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
                             return (
                               <Fragment>
                                 <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -1471,7 +1471,7 @@ class MeetingTable extends Component {
                                   <td>
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                     {
-                                      range ?
+                                      checkParty && range ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
@@ -2042,9 +2042,11 @@ class MeetingTable extends Component {
                   <i className="fa fa-video"></i> Join
                 </a>
                 :
+                !this.roomId && !this.state.isLoadBooking ? 
                 <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
                   <i className="fa fa-video"></i> Start meeting now
                 </button>
+                : null
             }
             <button className="btn btn-v2 btn-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
               <i className="fa fa-book"></i> Book new meeting
