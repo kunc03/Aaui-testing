@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../repository/api';
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY, API_SOCKET } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import TagsInput from 'react-tagsinput'
@@ -28,9 +28,15 @@ import LoadingOverlay from "react-loading-overlay";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { Fragment } from "react";
 import { compose } from "redux";
-
-
+import io from 'socket.io-client';
 import { withTranslation } from "react-i18next";
+
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect");
+});
+
+
 
 const bbb = require('bigbluebutton-js')
 
@@ -661,6 +667,11 @@ class MeetingTable extends Component {
 
               this.fetchMeeting();
               this.closeClassModal();
+              socket.emit('send', {
+                socketAction: 'updateDataMeeting',
+                company_id: this.state.companyId,
+                user_id: Storage.get('user').data.user_id
+              })
             }
           })
 
@@ -774,6 +785,11 @@ class MeetingTable extends Component {
               this.fetchMeeting();
               this.closeClassModal();
               toast.success('Successfully created a new meeting.');
+              socket.emit('send', {
+                socketAction: 'updateDataMeeting',
+                company_id: this.state.companyId,
+                user_id: Storage.get('user').data.user_id
+              })
             }
           })
         }
@@ -963,6 +979,13 @@ class MeetingTable extends Component {
                 }
               }
             })
+            
+            socket.emit('send', {
+              socketAction: 'updateDataBooking',
+              meeting_id: this.state.bookingMeetingId,
+              user_id: Storage.get('user').data.user_id,
+              room_name: this.state.roomName
+            })
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
@@ -1019,6 +1042,14 @@ class MeetingTable extends Component {
     
     this.fetchSyncZoom(Storage.get('user').data.user_id)
 
+    socket.on("broadcast", data => {
+      if (data.socketAction == 'updateDataMeeting' && data.company_id === this.state.companyId && data.user_id !== Storage.get('user').data.user_id) {
+        this.fetchMeeting()
+      }
+      if (data.socketAction == 'updateDataBooking' && data.meeting_id === this.state.classId && data.user_id !== Storage.get('user').data.user_id) {
+        this.fetchBooking(data.meeting_id, data.room_name)
+      }
+    });
   }
 
   fetchCheckAccess(role, company_id, level, param) {
@@ -1113,6 +1144,12 @@ class MeetingTable extends Component {
             modalJadwal: false
           })
           
+          socket.emit('send', {
+            socketAction: 'updateDataBooking',
+            meeting_id: classId,
+            user_id: Storage.get('user').data.user_id,
+            room_name: roomName
+          })
           this.fetchBooking(classId, roomName)
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
@@ -1428,7 +1465,7 @@ class MeetingTable extends Component {
                                   <td>
                                     <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('DD-MM-YYYY')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                      <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
+                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                     </CopyToClipboard>
                                   </td>
                                   <td>
@@ -1949,7 +1986,7 @@ class MeetingTable extends Component {
                                   item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
                                   <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                    <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
+                                    <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                   </CopyToClipboard>
                                   :'-'
                                 }
