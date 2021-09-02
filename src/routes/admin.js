@@ -76,7 +76,8 @@ const Webinar = lazy(()=> import("../components/webinar"));
 const Kursus = lazy(()=> import("../components/Kursus"));
 const WebinarClient = lazy(()=> import('../components/client/webinar/index'));
 
-const LearningAdmin = lazy(()=> import('../components/learning/index'));
+const LearningAdmin = lazy(() => import('../components/learning/index'));
+const WebinarLivePublic = lazy(()=> import("../components/client/webinar/livePublic"));
 
 const Ptc = lazy(()=> import('../components/ptc/index'));
 
@@ -163,6 +164,7 @@ export default class AdminSwitch extends React.Component {
             )}
           />
           <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+          <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
 
           <Route path="/meeting/information/:roomid" exact component={Meeting} />
           <Route path="/meeting-room/:roomid" component={MeetingRoom} />

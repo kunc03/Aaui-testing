@@ -21,7 +21,10 @@ const News = lazy(()=> import('../components/news/index'));
 const NewsForm = lazy(()=> import('../components/news/form'));
 const NewsView = lazy(()=> import('../components/news/view'));
 const DetailProject = lazy(()=> import('../components/detail_project/index'));
-const GanttReport = lazy(()=> import('../components/Gantt/report'));
+const GanttReport = lazy(() => import('../components/Gantt/report'));
+
+const WebinarLivePublic = lazy(()=> import("../components/client/webinar/livePublic"));
+
 
 const Project = lazy(() => import("../components/project/index"));
 
@@ -131,6 +134,7 @@ export default class SuperAdminSwitch extends React.Component {
           )}
         />
         <Route path="/meet/:roomid" exact component={MeetRoomPub} />
+        <Route path="/webinar-guest/:webinarId/:voucher" exact component={WebinarLivePublic} />
 
         <Route path="/meeting/information/:roomid" exact component={Meeting} />
         <Route path="/mobile-meeting/:url+" exact component={MobileMeeting} />
