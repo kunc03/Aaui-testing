@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY } from '../../repository/api';
+import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY, API_SOCKET } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 import TagsInput from 'react-tagsinput'
@@ -28,9 +28,15 @@ import LoadingOverlay from "react-loading-overlay";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { Fragment } from "react";
 import { compose } from "redux";
-
-
+import io from 'socket.io-client';
 import { withTranslation } from "react-i18next";
+
+const socket = io(`${API_SOCKET}`);
+socket.on("connect", () => {
+  //console.log("connect");
+});
+
+
 
 const bbb = require('bigbluebutton-js')
 
@@ -150,7 +156,6 @@ class MeetingTable extends Component {
     this.roomId = null;
     this.rooms = {};
     this.setState({
-      roomName: '',
       classId: '',
       isModalBooking: false,
       // roomName: '',
@@ -556,7 +561,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // is_private: isPrivate,
             // is_akses: isAkses,
             // is_required_confirmation: isRequiredConfirmation,
@@ -661,6 +666,11 @@ class MeetingTable extends Component {
 
               this.fetchMeeting();
               this.closeClassModal();
+              socket.emit('send', {
+                socketAction: 'updateDataMeeting',
+                company_id: this.state.companyId,
+                user_id: Storage.get('user').data.user_id
+              })
             }
           })
 
@@ -678,7 +688,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
             
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // speaker: this.state.speaker,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             // is_private: isPrivate,
@@ -774,6 +784,11 @@ class MeetingTable extends Component {
               this.fetchMeeting();
               this.closeClassModal();
               toast.success('Successfully created a new meeting.');
+              socket.emit('send', {
+                socketAction: 'updateDataMeeting',
+                company_id: this.state.companyId,
+                user_id: Storage.get('user').data.user_id
+              })
             }
           })
         }
@@ -876,7 +891,7 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     this.setState({ isLoadBooking: true })
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
-      if (res.status === 200 && res.data.result.length > 0) {
+      if (res.status === 200) {
         res.data.result.reverse().map(item => {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
@@ -963,6 +978,13 @@ class MeetingTable extends Component {
                 }
               }
             })
+            
+            socket.emit('send', {
+              socketAction: 'updateDataBooking',
+              meeting_id: this.state.bookingMeetingId,
+              user_id: Storage.get('user').data.user_id,
+              room_name: this.state.roomName
+            })
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
@@ -1019,6 +1041,14 @@ class MeetingTable extends Component {
     
     this.fetchSyncZoom(Storage.get('user').data.user_id)
 
+    socket.on("broadcast", data => {
+      if (data.socketAction == 'updateDataMeeting' && data.company_id === this.state.companyId && data.user_id !== Storage.get('user').data.user_id) {
+        this.fetchMeeting()
+      }
+      if (data.socketAction == 'updateDataBooking' && data.meeting_id === this.state.classId && data.user_id !== Storage.get('user').data.user_id) {
+        this.fetchBooking(data.meeting_id, data.room_name)
+      }
+    });
   }
 
   fetchCheckAccess(role, company_id, level, param) {
@@ -1113,6 +1143,12 @@ class MeetingTable extends Component {
             modalJadwal: false
           })
           
+          socket.emit('send', {
+            socketAction: 'updateDataBooking',
+            meeting_id: classId,
+            user_id: Storage.get('user').data.user_id,
+            room_name: roomName
+          })
           this.fetchBooking(classId, roomName)
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
@@ -1157,6 +1193,12 @@ class MeetingTable extends Component {
         selector: 'room_name',
         sortable: true,
         grow: 2,
+      },
+      {
+        cell: row => row.status === 'Active' ? <font color='#16b10b'>Active</font> : row.status,
+        name: 'Status',
+        selector: 'status',
+        sortable: true
       },
       {
         cell: row => <span class="btn-group dropleft">
@@ -1293,7 +1335,7 @@ class MeetingTable extends Component {
                 active={this.state.isFetch}
                 spinner={<BeatLoader size='30' color='#008ae6' />}
               ></LoadingOverlay>
-              <p style={{marginTop: '3.5rem'}}>Fetching data...</p>
+              <p style={{marginTop: '3.5rem'}}>Loading...</p>
             </div>
             :
             <Fragment>
@@ -1415,6 +1457,7 @@ class MeetingTable extends Component {
                             const eJadwal = Moment(`${item.tgl_selesai}`).local()
                             const range = jamIni.isBetween(sJadwal, eJadwal)
 
+                            let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
                             return (
                               <Fragment>
                                 <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -1428,13 +1471,13 @@ class MeetingTable extends Component {
                                   <td>
                                     <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('DD-MM-YYYY')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                      <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
+                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                     </CopyToClipboard>
                                   </td>
                                   <td>
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                     {
-                                      range ?
+                                      checkParty && range ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
@@ -1741,7 +1784,7 @@ class MeetingTable extends Component {
               Cancel
             </button>
             <button className={`btn btn-icademy-primary ${this.state.sendingEmail && 'btn-icademy-grey'}`} onClick={this.onSubmitForm} disabled={this.state.sendingEmail}>
-              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
+              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Saving...' : 'Save'}
             </button>
           </Modal.Footer>
         </Modal>
@@ -1949,7 +1992,7 @@ class MeetingTable extends Component {
                                   item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
                                   <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                    <i className="fa fa-copy cursor">&nbsp; Copy Invitation</i>
+                                    <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                   </CopyToClipboard>
                                   :'-'
                                 }
@@ -2005,9 +2048,11 @@ class MeetingTable extends Component {
                   <i className="fa fa-video"></i> Join
                 </a>
                 :
+                !this.roomId && !this.state.isLoadBooking ? 
                 <button className="btn btn-v2 btn-primary" onClick={() => this.startMeetingNow(this.state.classId, this.state.roomName)}>
                   <i className="fa fa-video"></i> Start meeting now
                 </button>
+                : null
             }
             <button className="btn btn-v2 btn-primary" onClick={() => this.openBooking(this.state.classId, this.state.roomName)}>
               <i className="fa fa-book"></i> Book new meeting
@@ -2018,18 +2063,18 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus meeting <b>{this.state.deleteMeetingName}</b> ?</div>
+            <div>Are you sure want to delete meeting <b>{this.state.deleteMeetingName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
               Cancel
             </button>
             <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.onSubmitDelete.bind(this, this.state.deleteMeetingId)}>
-              <i className="fa fa-trash"></i> Hapus
+              <i className="fa fa-trash"></i> Delete
             </button>
           </Modal.Footer>
         </Modal>

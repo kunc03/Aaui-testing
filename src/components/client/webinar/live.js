@@ -30,6 +30,7 @@ export default class WebinarLive extends Component {
     },
     waktuPretest: 0,
     waktuPosttest: 0,
+    isFeedback: false,
     pretest: [],
     posttest: [],
     resultPretest: [],
@@ -89,6 +90,8 @@ export default class WebinarLive extends Component {
     moderatorId: [],
     pembicaraId: [],
     ownerId: [],
+
+    session: Storage.get('user').data,
 
     lampirans: [
       { id: 1, nama: 'mom-meeting.pdf', url: 'https://google.com' },
@@ -223,7 +226,7 @@ export default class WebinarLive extends Component {
           toast.success('Post-test submission sent')
           this.setState({isLoading: false})
         }
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -428,6 +431,7 @@ export default class WebinarLive extends Component {
               tanggalEnd: res.data.result.end_time,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+              isFeedback: res.data.result.isFeedback,
 
               engine: res.data.result.engine,
               mode: res.data.result.mode,
@@ -568,6 +572,7 @@ export default class WebinarLive extends Component {
               tanggalEnd: moment.tz(res.data.result.end_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
+              isFeedback: res.data.result.isFeedback,
 
               engine: res.data.result.engine,
               mode: res.data.result.mode,
@@ -595,7 +600,7 @@ export default class WebinarLive extends Component {
 
           if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)) {
             this.updateStatus(this.state.webinar.id, 2)
-            if (this.state.webinar.status == 1) {
+            if (this.state.webinar.status == 1 && !this.state.session) {
               this.fetchWebinarPublic()
             }
             // BBB JOIN START
@@ -766,7 +771,7 @@ export default class WebinarLive extends Component {
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -798,7 +803,7 @@ export default class WebinarLive extends Component {
         this.forceUpdate()
       }
       if (data.socketAction == 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher) {
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
           this.fetchWebinarPublic()
         }
         else {
@@ -807,7 +812,7 @@ export default class WebinarLive extends Component {
         this.fetchPostTest()
       }
     });
-    if (this.props.webinarId && this.props.voucher) {
+    if (this.props.webinarId && this.props.voucher && !this.state.session) {
       this.fetchWebinarPublic()
     }
     else {
@@ -982,7 +987,7 @@ export default class WebinarLive extends Component {
     );
 
     return (
-      <div className="row">
+      <div className="row" style={{margin: '8px 0px'}}>
         <div className="col-sm-12">
           <Card>
             <Card.Body>
@@ -1032,11 +1037,19 @@ export default class WebinarLive extends Component {
                     : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.isFeedback ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
                     : null
+                  }
+                  {
+                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && this.state.pertanyaan.length > 0 ?
+                      <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-clipboard-list"></i>Feedback Form
+                      </button>
+                      :
+                      null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
@@ -1050,14 +1063,6 @@ export default class WebinarLive extends Component {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Pre Test
-                      </button>
-                      :
-                      null
-                  }
-                  {
-                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner ?
-                      <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-clipboard-list"></i>Feedback Form
                       </button>
                       :
                       null

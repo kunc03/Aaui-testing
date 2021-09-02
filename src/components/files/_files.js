@@ -1336,19 +1336,25 @@ fetchRekamanBBB(folder){
                 <Row>
                   <Col>
                     <div className="form-group">
-                      <label>Attachment</label>
-                      {this.state.attachmentId.length ? <label for="attachmentId" className="label-upload-icademy"> : {this.state.attachmentId.length} File</label> :null}
-                      <input
-                        accept="all"
-                        id="attachmentId"
-                        name="attachmentId"
-                        onChange={this.onChangeInput}
-                        type="file"
-                        multiple
-                        placeholder="media chapter"
-                        className="form-control file-upload-icademy"
-                      />
-                      <Form.Text>
+                      <label style={{float:'left',clear:'both'}}>Attachment</label>
+                      <label for='attachmentId' style={{cursor:'pointer', overflow:'hidden', float:'left',clear:'both'}}>
+                        <div className="button-bordered-grey">
+                          {this.state.attachmentId.length ? `${this.state.attachmentId.length} ${this.state.attachmentId.length === 1  ? 'file' : 'files'} selected` : 'Choose'}
+                        </div>
+                        <input
+                          accept="all"
+                          id="attachmentId"
+                          name="attachmentId"
+                          onChange={this.onChangeInput}
+                          type="file"
+                          multiple
+                          placeholder="media chapter"
+                          className="form-control file-upload-icademy"
+                          onClick={e=> e.target.value = null}
+                          style={{display:'none'}}
+                        />
+                      </label>
+                      <Form.Text style={{float:'left',clear:'both'}}>
                         Support multiple files (make sure all the files does not exceed 500MB)
                               {/* dan ukuran file tidak melebihi 20MB. */}
                       </Form.Text>
