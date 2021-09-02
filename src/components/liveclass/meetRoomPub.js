@@ -350,7 +350,7 @@ export default class MeetRoomPub extends Component {
               this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
               {
                 userID: this.state.user.user_id,
-                guest: true
+                guest: Storage.get("user").data.user_id ? false : true
               }
             )
 
@@ -397,7 +397,7 @@ export default class MeetRoomPub extends Component {
             this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0  ? 'moderator' : 'peserta',
             {
               userID: this.state.user.user_id,
-              guest: true
+              guest: Storage.get("user").data.user_id ? false : true
             }
           )
   
