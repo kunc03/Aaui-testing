@@ -891,7 +891,7 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     this.setState({ isLoadBooking: true })
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
-      if (res.status === 200 && res.data.result.length > 0) {
+      if (res.status === 200) {
         res.data.result.reverse().map(item => {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
