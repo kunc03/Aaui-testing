@@ -561,7 +561,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // is_private: isPrivate,
             // is_akses: isAkses,
             // is_required_confirmation: isRequiredConfirmation,
@@ -688,7 +688,7 @@ class MeetingTable extends Component {
             room_name: this.state.roomName,
             folder_id: this.state.valueFolder.length ? this.state.valueFolder[0] : 0,
             
-            // webinar_id: this.state.webinar_id,
+            webinar_id: this.state.webinar_id,
             // speaker: this.state.speaker,
             // moderator: this.state.akses ? this.state.valueModerator : [],
             // is_private: isPrivate,
@@ -891,7 +891,7 @@ class MeetingTable extends Component {
   fetchBooking(id, room) {
     this.setState({ isLoadBooking: true })
     API.get(`${API_SERVER}v2/meeting/booking/${id}`).then(res => {
-      if (res.status === 200 && res.data.result.length > 0) {
+      if (res.status === 200) {
         res.data.result.reverse().map(item => {
           const split = item.tanggal.split('-')
           const reTanggal = `${split[2]}-${split[1]}-${split[0]}`
@@ -1195,6 +1195,12 @@ class MeetingTable extends Component {
         grow: 2,
       },
       {
+        cell: row => row.status === 'Active' ? <font color='#16b10b'>Active</font> : row.status,
+        name: 'Status',
+        selector: 'status',
+        sortable: true
+      },
+      {
         cell: row => <span class="btn-group dropleft">
           <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i
@@ -1329,7 +1335,7 @@ class MeetingTable extends Component {
                 active={this.state.isFetch}
                 spinner={<BeatLoader size='30' color='#008ae6' />}
               ></LoadingOverlay>
-              <p style={{marginTop: '3.5rem'}}>Fetching data...</p>
+              <p style={{marginTop: '3.5rem'}}>Loading...</p>
             </div>
             :
             <Fragment>
@@ -1778,7 +1784,7 @@ class MeetingTable extends Component {
               Cancel
             </button>
             <button className={`btn btn-icademy-primary ${this.state.sendingEmail && 'btn-icademy-grey'}`} onClick={this.onSubmitForm} disabled={this.state.sendingEmail}>
-              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Mengirim Undangan...' : 'Simpan'}
+              <i className="fa fa-save"></i> {this.state.sendingEmail ? 'Saving...' : 'Save'}
             </button>
           </Modal.Footer>
         </Modal>
@@ -2057,18 +2063,18 @@ class MeetingTable extends Component {
         <Modal show={this.state.modalDelete} onHide={this.closeModalDelete} centered>
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>Anda yakin akan menghapus meeting <b>{this.state.deleteMeetingName}</b> ?</div>
+            <div>Are you sure want to delete meeting <b>{this.state.deleteMeetingName}</b> ?</div>
           </Modal.Body>
           <Modal.Footer>
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDelete.bind(this)}>
               Cancel
             </button>
             <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.onSubmitDelete.bind(this, this.state.deleteMeetingId)}>
-              <i className="fa fa-trash"></i> Hapus
+              <i className="fa fa-trash"></i> Delete
             </button>
           </Modal.Footer>
         </Modal>
