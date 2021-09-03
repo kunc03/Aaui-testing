@@ -1043,6 +1043,14 @@ export default class WebinarLive extends Component {
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-plus"></i>Create Essay
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
+                      <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Post Test
                       </button>
                       :
