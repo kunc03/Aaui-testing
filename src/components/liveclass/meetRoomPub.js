@@ -306,21 +306,21 @@ export default class MeetRoomPub extends Component {
         this.setState({
           listMOM: res.data.result ? res.data.result : []
         })
-        API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
-          if (res.status === 200) {
-            let publishSubsSelect = []
-            res.data.result.map((item, i) => {
-              if (item.events.length > 0) {
-                publishSubsSelect.push(item)
-              }
-            })
-            this.setState({
-              listSubtitle: publishSubsSelect
-            })
+        // API.get(`${API_SERVER}v1/transcripts/${this.state.classRooms.room_name}`).then(res => {
+        //   if (res.status === 200) {
+        //     let publishSubsSelect = []
+        //     res.data.result.map((item, i) => {
+        //       if (item.events.length > 0) {
+        //         publishSubsSelect.push(item)
+        //       }
+        //     })
+        //     this.setState({
+        //       listSubtitle: publishSubsSelect
+        //     })
 
-          }
+        //   }
 
-        })
+        // })
       }
     })
   }
@@ -350,7 +350,7 @@ export default class MeetRoomPub extends Component {
               this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 'moderator' : 'peserta',
               {
                 userID: this.state.user.user_id,
-                guest: true
+                guest: Storage.get("user").data.user_id ? false : true
               }
             )
 
@@ -397,7 +397,7 @@ export default class MeetRoomPub extends Component {
             this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0  ? 'moderator' : 'peserta',
             {
               userID: this.state.user.user_id,
-              guest: true
+              guest: Storage.get("user").data.user_id ? false : true
             }
           )
   
@@ -832,6 +832,9 @@ export default class MeetRoomPub extends Component {
       emailInvite: [],
       emailResponse: ""
     });
+  }
+  handleTranscript = (value) => {
+    window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
   }
   handleCloseMeeting = e => {
     window.close();
