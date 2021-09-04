@@ -1,7 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import API, { API_SERVER } from '../../../repository/api';
 import { toast } from "react-toastify";
 import { Editor } from '@tinymce/tinymce-react';
+
+const Msg = ({ msg, closeToast, toastProps }) => (
+  <div>
+    <Fragment>Question <div dangerouslySetInnerHTML={{ __html: msg }}></div> The answer to that question has not been set.</Fragment>
+  </div>
+)
 
 export default class WebinarPosttestAdd extends Component {
 
@@ -66,9 +72,9 @@ export default class WebinarPosttestAdd extends Component {
     let dataIndex = e.target.getAttribute('data-id');
     let dataID = e.target.getAttribute('data-index');
     API.delete(`${API_SERVER}v2/webinar-test/pertanyaan/${dataIndex}`).then(res => {
-      if (res.data.error) toast.warning("Gagal menghapus data");
+      if (res.data.error) toast.warning("Failed to delete");
 
-      toast.success("Pertanyaan Post test terhapus")
+      toast.success("Post test question deleted")
       let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
       this.setState({
         pertanyaan: kurangi
@@ -89,7 +95,7 @@ export default class WebinarPosttestAdd extends Component {
       };
   
       if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
       }
       else {
         API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -119,7 +125,7 @@ export default class WebinarPosttestAdd extends Component {
       };
   
       if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
       }
       else {
         API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -271,7 +277,7 @@ export default class WebinarPosttestAdd extends Component {
                 {
                   this.state.pertanyaan.map((item, i) => (
                     <div className="form-group">
-                      <label>Pertanyaan {i + 1}</label>
+                      <label>Question {i + 1}</label>
                       <span className="float-right">
                         <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                       </span>
