@@ -27,6 +27,10 @@ class WebinarAddClass extends Component {
     role: [],
     access_project_admin: false,
 
+    modalEssay: false,
+    essay: '',
+    essay_sent: '',
+
     pembicara: [
       // {nama: 'John Mayers', email: 'ardiansyah3ber@gmail.com', telepon: '082334093822', status: false, checked: false},
       // {nama: 'Marco Elive', email: 'marco.elive@gmail.com', telepon: '087757386772', status: false, checked: false},
@@ -125,6 +129,7 @@ class WebinarAddClass extends Component {
       modalKuesioner: false,
       modalPretest: false,
       modalPosttest: false,
+      modalEssay: false,
     });
   }
 
@@ -241,7 +246,9 @@ class WebinarAddClass extends Component {
         status: res.data.result.status,
         userId: Storage.get('user').data.user_id,
         sekretarisId: res.data.result.sekretaris,
-        pembicara: []
+        pembicara: [],
+        essay: res.data.result.essay,
+        essay_sent: res.data.result.essay_sent
       })
       if (!this.state.gambar){
         this.setState({
@@ -508,6 +515,26 @@ class WebinarAddClass extends Component {
     });
   }
 
+  handleDynamicInputEssay = (e) => {
+      this.setState({ essay: e });
+  }
+
+  saveEssay = (e) => {
+    console.log('save essay')
+    let form = {
+      sent: this.state.essay_sent,
+      essay: this.state.essay
+    }
+    API.put(`${API_SERVER}v2/webinar/send-essay/${this.state.webinarId}`, form).then(res => {
+      const { error } = res.data
+      if (error) {
+        toast.warning(`Failed update essay.`)
+      } else {
+        toast.success(`Esay updated.`)
+      }
+    })
+  }
+
   render() {
     const { t } = this.props
 
@@ -631,7 +658,7 @@ class WebinarAddClass extends Component {
           <Card>
             <Card.Body>
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-4">
                   <h3 className="f-w-900 f-18 fc-blue">
                     <Link onClick={this.backButton.bind(this)} className="btn btn-sm mr-4" style={{
                       border: '1px solid #e9e9e9',
@@ -642,7 +669,7 @@ class WebinarAddClass extends Component {
                     Detail {this.props.match.params.training === 'by-training' ? 'Live Class' : 'Webinar'}
                   </h3>
                 </div>
-                <div className="col-sm-6 text-right">
+                <div className="col-sm-8 text-right">
                   <div className="form-group">
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
@@ -655,6 +682,10 @@ class WebinarAddClass extends Component {
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalPretest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Pre Test</button>
+                    }
+                    {
+                      this.state.id && (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalEssay: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Essay</button>
                     }
                   </div>
                   <p className="m-b-0">
@@ -1124,6 +1155,75 @@ class WebinarAddClass extends Component {
                 <WebinarPretestAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalEssay}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Essay
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Editor
+                apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                initialValue={this.state.essay}
+                value={this.state.essay}
+                init={{
+                height: 400,
+                width: "100%",
+                menubar: false,
+                convert_urls: false,
+                image_class_list: [
+                    {title: 'None', value: ''},
+                    {title: 'Responsive', value: 'img-responsive'},
+                    {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                ],
+                file_browser_callback_types: 'image media',
+                file_picker_callback: function (callback, value, meta) {
+                    if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                    var input = document.getElementById(`myFile`);
+                    input.click();
+                    input.onchange = function () {
+
+                        var dataForm = new FormData();
+                        dataForm.append('file', this.files[0]);
+
+                        window.$.ajax({
+                        url: `${API_SERVER}v2/media/upload`,
+                        type: 'POST',
+                        data: dataForm,
+                        processData: false,
+                        contentType: false,
+                        success: (data)=>{
+                            callback(data.result.url);
+                            this.value = '';
+                        }
+                        })
+
+                    };
+                    }
+                },
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table paste code help wordcount"
+                ],
+                media_live_embeds : true,
+                toolbar:
+                    // eslint-disable-next-line no-multi-str
+                    "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                alignleft aligncenter alignright alignjustify | image | media | \
+                    bullist numlist outdent indent | removeformat | help"
+                }}
+                onEditorChange={e => this.handleDynamicInputEssay(e)}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <button onClick={e => this.saveEssay(e)} className="btn btn-v2 btn-primary"><i className="fa fa-save"></i> Save</button>
+            </Modal.Footer>
           </Modal>
           <Modal
             show={this.state.modalPosttest}
