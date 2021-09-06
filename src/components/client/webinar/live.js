@@ -237,7 +237,7 @@ export default class WebinarLive extends Component {
             socketAction: 'senfeEssay',
             webinar_id: this.state.webinarId
           })
-          if (this.props.webinarId && this.props.voucher && !this.state.session) {
+          if (this.props.webinarId && this.props.voucher) {
             this.fetchWebinarPublic()
           }
           else {
@@ -269,7 +269,7 @@ export default class WebinarLive extends Component {
           toast.success('Post-test submission sent')
           this.setState({isLoading: false})
         }
-        if (this.props.webinarId && this.props.voucher && !this.state.session) {
+        if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
         else {
@@ -653,7 +653,7 @@ export default class WebinarLive extends Component {
 
           if (this.state.status == 2 || (isWebinarStartDate && this.state.status != 3)) {
             this.updateStatus(this.state.webinar.id, 2)
-            if (this.state.webinar.status == 1 && !this.state.session) {
+            if (this.state.webinar.status == 1) {
               this.fetchWebinarPublic()
             }
             // BBB JOIN START
@@ -849,7 +849,7 @@ export default class WebinarLive extends Component {
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher && !this.state.session) {
+        if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
         else {
@@ -878,7 +878,7 @@ export default class WebinarLive extends Component {
       }
       if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
         this.setState({ startEssay: true });
-        if (this.props.webinarId && this.props.voucher && !this.state.session) {
+        if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
         else {
@@ -890,7 +890,7 @@ export default class WebinarLive extends Component {
         this.forceUpdate()
       }
       if (data.socketAction == 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
-        if (this.props.webinarId && this.props.voucher && !this.state.session) {
+        if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
         }
         else {
@@ -899,7 +899,7 @@ export default class WebinarLive extends Component {
         this.fetchPostTest()
       }
     });
-    if (this.props.webinarId && this.props.voucher && !this.state.session) {
+    if (this.props.webinarId && this.props.voucher) {
       this.fetchWebinarPublic()
     }
     else {
