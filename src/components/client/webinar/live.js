@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import API, { APPS_SERVER, API_SERVER, USER_ME, BBB_KEY, BBB_URL, API_SOCKET, ZOOM_URL } from '../../../repository/api';
 import { toast } from "react-toastify";
 import Iframe from 'react-iframe';
+import { Editor } from '@tinymce/tinymce-react';
+
 import Storage from '../../../repository/storage';
 import TableFiles from '../../files/_files';
 import moment from 'moment-timezone';
@@ -11,6 +13,7 @@ import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
 import { isMobile } from 'react-device-detect';
 import Tooltip from '@material-ui/core/Tooltip';
+import { Fragment } from 'react';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -35,12 +38,16 @@ export default class WebinarLive extends Component {
     posttest: [],
     resultPretest: [],
     resultPosttest: [],
+    resultEssay: [],
     modalResultPretest: false,
     modalResultPosttest: false,
     pretestTerjawab: false,
     posttestTerjawab: false,
+    essayTerjawab: false,
+    essayResult: [],
     jawabanPretest: [],
     jawabanPosttest: [],
+    jawabanEssayKu: '',
     enablePretest: false,
     enablePosttest: false,
     webinarId: this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId,
@@ -62,10 +69,12 @@ export default class WebinarLive extends Component {
     modalKuesionerPeserta: false,
     modalSendPretest: false,
     modalSendPosttest: false,
+    modalSendEssay: false,
     waitingKuesioner: false,
     startKuesioner: false,
     startPretest: false,
     startPosttest: false,
+    startEssay: false,
     isWebinarStartDate: false,
     access_project_admin: false,
     pertanyaanQNA: '',
@@ -205,6 +214,40 @@ export default class WebinarLive extends Component {
     }
     else {
       this.state.jawabanPosttest.push({ questions_id: name, options_id: value })
+    }
+  }
+  kirimJawabanEssay() {
+    // if (this.state.jawabanPosttest.length === this.state.posttest.length){
+    if (this.state.jawabanEssayKu) {
+      let form = {
+        id: this.state.webinarId,
+        user_id: this.state.user.user_id,
+        answer: this.state.jawabanEssayKu
+      }
+      this.setState({isLoading: true})
+      API.post(`${API_SERVER}v2/webinar-test/essay`, form).then(res => {
+        if (res.data.error){
+          toast.error('Failed to submit answer')
+          this.setState({isLoading: false})
+        }
+        else{
+          toast.success('Essay submission sent')
+          this.setState({ isLoading: false })
+          socket.emit('send', {
+            socketAction: 'senfeEssay',
+            webinar_id: this.state.webinarId
+          })
+          if (this.props.webinarId && this.props.voucher && !this.state.session) {
+            this.fetchWebinarPublic()
+          }
+          else {
+            this.fetchWebinar()
+          }
+        }
+      })
+    }
+    else {
+      toast.warning('Post-test is mandatory')
     }
   }
   kirimJawabanPosttest() {
@@ -439,7 +482,8 @@ export default class WebinarLive extends Component {
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startPosttest: res.data.result.posttest_sent === 1 ? true : false,
-              startPretest: res.data.result.pretest_sent === 1 ? true : false
+              startPretest: res.data.result.pretest_sent === 1 ? true : false,
+              startEssay: res.data.result.essay_sent === 1 ? true : false
             })
           this.setState({ pembicara: [] })
           res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
@@ -448,6 +492,10 @@ export default class WebinarLive extends Component {
           this.checkProjectAccess()
           this.fetchResultPretest()
           this.fetchResultPosttest()
+
+          this.fetchEssay()
+          this.fetchResultEssay()
+
           // let tgl = new Date(res.data.result.tanggal)
           // let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
           // let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
@@ -579,7 +627,8 @@ export default class WebinarLive extends Component {
 
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
-              startPosttest: res.data.result.posttest_sent === 1 ? true : false
+              startPosttest: res.data.result.posttest_sent === 1 ? true : false,
+              startEssay: res.data.result.essay_sent === 1 ? true : false
             })
           this.setState({ pembicara: [] })
           res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
@@ -588,6 +637,10 @@ export default class WebinarLive extends Component {
           this.checkProjectAccess()
           this.fetchResultPretest()
           this.fetchResultPosttest()
+
+          this.fetchEssay()
+          this.fetchResultEssay()
+
           // let tgl = new Date(res.data.result.tanggal)
           // let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
           // let tglJamMenit = new Date(tglJam.setMinutes(this.state.jamMulai.slice(3, 5)))
@@ -712,6 +765,20 @@ export default class WebinarLive extends Component {
   openModalPretest() {
     this.setState({ modalResultPretest: true })
   }
+  fetchResultEssay(){
+    this.setState({loadingTest: true})
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/essay/${this.state.user.user_id}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({resultEssay: res.data.result},()=>{
+            this.setState({loadingTest: false})
+          })
+        }
+      }
+    })
+  }
   fetchResultPosttest(){
     this.setState({loadingTest: true})
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
@@ -744,6 +811,17 @@ export default class WebinarLive extends Component {
           toast.error('Error fetch data')
         } else {
           this.setState({ posttestTerjawab: res.data.terjawab, enablePosttest: res.data.enable, posttest: res.data.result, waktuPosttest: res.data.waktu })
+        }
+      }
+    })
+  }
+  fetchEssay() {
+    API.get(`${API_SERVER}v2/webinar-test-peserta/${this.state.webinarId}/essay/${this.state.user.user_id}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({ essayTerjawab: res.data.terjawab, essayResult: res.data.result, jawabanEssayKu: res.data.result.length ? res.data.result[0].answer : '' })
         }
       }
     })
@@ -797,6 +875,15 @@ export default class WebinarLive extends Component {
       if (data.socketAction == 'sendPosttest' && data.webinar_id === this.state.webinarId) {
         this.setState({ startPosttest: true });
         this.fetchPostTest();
+      }
+      if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
+        this.setState({ startEssay: true });
+        if (this.props.webinarId && this.props.voucher && !this.state.session) {
+          this.fetchWebinarPublic()
+        }
+        else {
+          this.fetchWebinar()
+        }
       }
       if (data.socketAction == 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
         this.fetchKuesionerSender()
@@ -938,6 +1025,30 @@ export default class WebinarLive extends Component {
     })
   }
 
+  handleDynamicInput = (e) => {
+      this.setState({ webinar: {...this.state.webinar, essay: e } });
+  }
+
+  handleDynamicInputEssay = (e) => {
+      this.setState({ jawabanEssayKu: e });
+  }
+
+  sendEssay() {
+    let form = {
+      essay: this.state.webinar.essay
+    }
+    API.put(`${API_SERVER}v2/webinar/send-essay/${this.state.webinarId}`, form).then(res => {
+      if (res.status === 200) {
+        socket.emit('send', {
+          socketAction: 'sendEssay',
+          webinar_id: this.state.webinarId
+        })
+        toast.success('Essay sent');
+        this.setState({ modalSendEssay: false })
+      }
+    })
+  }
+
   render() {
     console.log('state: ', this.state)
     const { /* webinar, */ user } = this.state;
@@ -1047,6 +1158,14 @@ export default class WebinarLive extends Component {
                     (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && this.state.pertanyaan.length > 0 ?
                       <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                      <button onClick={() => this.setState({ modalSendEssay: true })} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Send Essay
                       </button>
                       :
                       null
@@ -1188,6 +1307,117 @@ export default class WebinarLive extends Component {
                                 <i className="fa fa-paper-plane"></i>
                                 {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
                               </button>
+                            </div>
+                          : null
+                        }
+
+                        {
+                          this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                            <div className="mt-4">
+                              <h4>Answer the Essay</h4>
+                              <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>           
+                              
+                              {
+                                this.state.essayTerjawab === false ?
+                                  <Fragment>
+                                    <Editor
+                                      apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                                      initialValue={this.state.jawabanEssayKu}
+                                      value={this.state.jawabanEssayKu}
+                                      init={{
+                                      height: 400,
+                                      width: "100%",
+                                      menubar: false,
+                                      convert_urls: false,
+                                      image_class_list: [
+                                          {title: 'None', value: ''},
+                                          {title: 'Responsive', value: 'img-responsive'},
+                                          {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                      ],
+                                      file_browser_callback_types: 'image media',
+                                      file_picker_callback: function (callback, value, meta) {
+                                          if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                          var input = document.getElementById(`myFile`);
+                                          input.click();
+                                          input.onchange = function () {
+
+                                              var dataForm = new FormData();
+                                              dataForm.append('file', this.files[0]);
+
+                                              window.$.ajax({
+                                              url: `${API_SERVER}v2/media/upload`,
+                                              type: 'POST',
+                                              data: dataForm,
+                                              processData: false,
+                                              contentType: false,
+                                              success: (data)=>{
+                                                  callback(data.result.url);
+                                                  this.value = '';
+                                              }
+                                              })
+
+                                          };
+                                          }
+                                      },
+                                      plugins: [
+                                          "advlist autolink lists link image charmap print preview anchor",
+                                          "searchreplace visualblocks code fullscreen",
+                                          "insertdatetime media table paste code help wordcount"
+                                      ],
+                                      media_live_embeds : true,
+                                      toolbar:
+                                          // eslint-disable-next-line no-multi-str
+                                          "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                                      alignleft aligncenter alignright alignjustify | image | media | \
+                                          bullist numlist outdent indent | removeformat | help"
+                                      }}
+                                      onEditorChange={e => this.handleDynamicInputEssay(e)}
+                                    />
+                                                      
+                                    <button
+                                      disabled={this.state.isLoading}
+                                      className="btn btn-icademy-primary mt-3"
+                                      onClick={this.kirimJawabanEssay.bind(this)}
+                                    >
+                                      <i className="fa fa-paper-plane"></i>
+                                      {this.state.isLoading ? 'Submitting...' : 'Send Essay Answers'}
+                                    </button>
+                                  </Fragment>
+                                  :
+                                  <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.jawabanEssayKu }}></div>           
+                              }
+                            </div>
+                          : null
+                        }
+
+                        {
+                          this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length) ?
+                            <div className="mt-4">
+                              <h4>Result Answer the Essay</h4>
+                              <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>           
+                              
+                              <table className="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>No</th>
+                                    <th>Name</th>
+                                    <th>Answer</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {
+                                  this.state.resultEssay.map((item,i) => (
+                                    <tr>
+                                      <td>{i+1}</td>
+                                      <td>{item.name}</td>
+                                      <td>
+                                        <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.answer }}></div>           
+                                      </td>
+                                    </tr>
+                                  ))
+                                  }
+                                </tbody>
+                              </table>
                             </div>
                           : null
                         }
@@ -1387,6 +1617,85 @@ export default class WebinarLive extends Component {
                       </button>
           </Modal.Footer>
         </Modal>
+        
+        <Modal
+          show={this.state.modalSendEssay}
+          onHide={() => this.setState({ modalSendEssay: false })}
+          dialogClassName="modal-lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Send Essay
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+            <Editor
+              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+              initialValue={this.state.webinar.essay}
+              value={this.state.webinar.essay}
+              init={{
+              height: 400,
+              width: "100%",
+              menubar: false,
+              convert_urls: false,
+              image_class_list: [
+                  {title: 'None', value: ''},
+                  {title: 'Responsive', value: 'img-responsive'},
+                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+              ],
+              file_browser_callback_types: 'image media',
+              file_picker_callback: function (callback, value, meta) {
+                  if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                  var input = document.getElementById(`myFile`);
+                  input.click();
+                  input.onchange = function () {
+
+                      var dataForm = new FormData();
+                      dataForm.append('file', this.files[0]);
+
+                      window.$.ajax({
+                      url: `${API_SERVER}v2/media/upload`,
+                      type: 'POST',
+                      data: dataForm,
+                      processData: false,
+                      contentType: false,
+                      success: (data)=>{
+                          callback(data.result.url);
+                          this.value = '';
+                      }
+                      })
+
+                  };
+                  }
+              },
+              plugins: [
+                  "advlist autolink lists link image charmap print preview anchor",
+                  "searchreplace visualblocks code fullscreen",
+                  "insertdatetime media table paste code help wordcount"
+              ],
+              media_live_embeds : true,
+              toolbar:
+                  // eslint-disable-next-line no-multi-str
+                  "undo redo | fontsizeselect bold italic backcolor forecolor | \
+              alignleft aligncenter alignright alignjustify | image | media | \
+                  bullist numlist outdent indent | removeformat | help"
+              }}
+              onEditorChange={e => this.handleDynamicInput(e)}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="btn btn-icademy-primary"
+              onClick={this.sendEssay.bind(this)}
+            >
+              <i className="fa fa-paper-plane"></i>
+                Send to participant
+              </button>
+          </Modal.Footer>
+        </Modal>
+
         <Modal
           show={this.state.modalSendPretest}
           onHide={this.closeModalSendPretest}
