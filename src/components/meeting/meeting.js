@@ -884,7 +884,7 @@ class MeetingTable extends Component {
   }
 
   onClickJadwal(id, room_name) {
-    this.setState({ modalJadwal: true, bookingMeetingId: id, classId: id, roomName: room_name })
+    this.setState({ modalJadwal: true, bookingMeetingId: id, classId: id, roomName: room_name, valuePeserta: [Storage.get("user").data.user_id] })
     this.fetchBooking(id, room_name)
   }
 
