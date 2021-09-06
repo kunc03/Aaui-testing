@@ -47,6 +47,7 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    showToolTipInvitation: false,
     copied: false,
     dataParticipants:{
       audio : 0,
@@ -414,6 +415,20 @@ export default class MeetRoomPub extends Component {
       }
     })
     // BBB JOIN END
+    
+    // check tampilkan invite participants
+    if (Storage.get("user").data.user_id){
+      this.setState({
+        isInvite: this.state.classRooms.user_id === Storage.get("user").data.user_id && this.state.classRooms.participants.length < 2 && this.state.classRooms.participants[0].user_id === Storage.get("user").data.user_id ? true : false
+      },()=>{
+        setTimeout(
+          ()=>{
+            this.setState({
+              showToolTipInvitation: true
+            })
+          }, 1000)
+      })
+    }
   }
 
   onClickInvite = e => {
@@ -460,6 +475,7 @@ export default class MeetRoomPub extends Component {
             
             this.setState({
               isInvite: false,
+              showToolTipInvitation: false,
               emailInvite: [],
               valueInvite: [],
               emailResponse: res.data.result,
@@ -829,9 +845,11 @@ export default class MeetRoomPub extends Component {
   handleCloseInvite = e => {
     this.setState({
       isInvite: false,
+      showToolTipInvitation: false,
       emailInvite: [],
       emailResponse: ""
     });
+    this.forceUpdate();
   }
   handleTranscript = (value) => {
     window.tinymce.activeEditor.execCommand("mceInsertContent", false, value);
@@ -1441,37 +1459,41 @@ export default class MeetRoomPub extends Component {
                 </Modal.Body>
               </Modal>
 
-              <Modal show={this.state.isInvite} onHide={this.handleCloseInvite}>
+              <Modal show={this.state.isInvite} onHide={this.handleCloseInvite} centered size="lg">
                 <Modal.Header closeButton>
                   <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                     Invite Participants
                   </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <div className="form-vertical">
+                  <div className="form-vertical" style={{minHeight:240}}>
                     <Form.Group controlId="formJudul">
                       <Form.Label className="f-w-bold">
                         From User
                       </Form.Label>
-                      <Select
-                        options={this.state.optionsInvite}
-                        isMulti
-                        closeMenuOnSelect={false}
-                        onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
-                      />
+                      <Tooltip title="You can select the users that you want to invite" arrow placement="top" open={this.state.showToolTipInvitation}>
+                        <Select
+                          options={this.state.optionsInvite}
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={valueInvite => { let arr = []; valueInvite.map((item) => arr.push(item.value)); this.setState({ valueInvite: arr })}}
+                        />
+                      </Tooltip>
                       <Form.Text className="text-muted">
                         Select user to invite.
                       </Form.Text>
                     </Form.Group>
                     <div className="form-group">
                       <label style={{ fontWeight: "bold" }}>Email</label>
-                      <TagsInput
-                        value={this.state.emailInvite}
-                        onChange={this.handleChange.bind(this)}
-                        addOnPaste={true}
-                        addOnBlur={true}
-                        inputProps={{ placeholder: `Participant's Email` }}
-                      />
+                      <Tooltip title="You can fill this field with email address that you want to invite" arrow placement="top" open={this.state.showToolTipInvitation}>
+                        <TagsInput
+                          value={this.state.emailInvite}
+                          onChange={this.handleChange.bind(this)}
+                          addOnPaste={true}
+                          addOnBlur={true}
+                          inputProps={{ placeholder: `Participant's Email` }}
+                        />
+                      </Tooltip>
                       <Form.Text>
                         Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
                       </Form.Text>
@@ -1480,7 +1502,9 @@ export default class MeetRoomPub extends Component {
                   
                   <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
+                    <Tooltip title="Click here to copy the invitation text and sharing URL" arrow placement="bottom" open={this.state.showToolTipInvitation}>
                     <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i> Copy Invitation</button>
+                    </Tooltip>
                   </CopyToClipboard>
 
                   <button className="btn btn-icademy-primary float-right" style={{marginLeft: 10}} onClick={this.onClickSubmitInvite}>
