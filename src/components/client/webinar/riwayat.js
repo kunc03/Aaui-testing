@@ -656,7 +656,7 @@ export default class WebinarRiwayat extends Component {
                     <p>
                       <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
                     </p>
-                    <h6>{moment(this.state.tanggal, 'HH:mm').local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd, 'HH:mm').local().format('DD MMMM YYYY HH:mm')}</h6>
+                    <h6>{moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h6>
                   </div>
 
                   <div className="col-sm-4">
