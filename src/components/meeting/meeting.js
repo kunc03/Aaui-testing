@@ -1119,9 +1119,9 @@ class MeetingTable extends Component {
   startMeetingNow = (classId, roomName) => {
     let form = {
       meeting_id: classId,
-      tanggal: Moment().local().format('YYYY-MM-DD'),
-      jam_mulai: Moment().local().format('HH:mm'),
-      jam_selesai: Moment().add(1, 'hours').format('HH:mm'),
+      tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
+      jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
+      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(1, 'hours').format('HH:mm'),
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
@@ -1461,7 +1461,7 @@ class MeetingTable extends Component {
                             return (
                               <Fragment>
                                 <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                                  <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Hari ini' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
+                                  <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Today' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
                                   <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
                                   <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                                   <td>{item.name}</td>
@@ -1980,7 +1980,7 @@ class MeetingTable extends Component {
                         return (
                           <Fragment>
                             <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                              <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Hari ini' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
+                              <td>{now === moment(item.tgl_mulai).local().format('DD-MM-YYYY') ? 'Today' : moment(item.tgl_mulai).local().format('DD-MM-YYYY')}</td>
                               <td>{moment(item.tgl_mulai).local().format('HH:mm')}</td>
                               <td>{moment(item.tgl_selesai).local().format('HH:mm')}</td>
                               <td>{item.name}</td>
