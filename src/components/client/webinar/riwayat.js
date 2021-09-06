@@ -18,6 +18,7 @@ export default class WebinarRiwayat extends Component {
 
   state = {
     hasilTest: [],
+    hasilEssay: [],
     certificate_orientation: 'landscape',
     certificate_background: '',
     nama: '',
@@ -152,11 +153,24 @@ export default class WebinarRiwayat extends Component {
       this.checkProjectAccess()
     })
   }
+
+  fetchEssay() {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/essay/${Storage.get('user').data.user_id}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({hasilEssay: res.data.result})
+        }
+      }
+    })
+  }
   componentDidMount() {
     this.fetchData()
     this.fetchQNA()
     this.fetchJawabanKuesioner()
     this.fetchJawabanTest()
+    this.fetchEssay()
   }
   checkProjectAccess() {
     API.get(`${API_SERVER}v1/project-access/${this.state.projectId}/${Storage.get('user').data.user_id}`).then(res => {
@@ -529,6 +543,33 @@ export default class WebinarRiwayat extends Component {
       </div>
     );
 
+    const HasilEssay = ({ items }) => (
+      <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'scroll', paddingRight: 10 }}>
+        <table id="table-essay" className="table table-striped">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Name</th>
+              <th>Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              items.map((item, i) => (
+                <tr>
+                  <td>{i + 1}</td>
+                  <td>{item.name}</td>
+                  <td>
+                    <div dangerouslySetInnerHTML={{ __html: item.answer }}></div>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    )
+
     const dataSelesai = {
       labels: [
         'Present',
@@ -700,6 +741,18 @@ export default class WebinarRiwayat extends Component {
                     sheet="Test"
                     buttonText="Export Test Result to Excel" />
                   <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
+                </div>
+              </div>
+
+              <div className="row mt-5">
+                <div className="col-sm-12">
+                  <ReactHTMLTableToExcel
+                    className="btn btn-icademy-warning btn-12"
+                    table="table-essay"
+                    filename={'Test Result ' + this.state.judul}
+                    sheet="Test"
+                    buttonText="Export Essay Result to Excel" />
+                  <HasilEssay items={this.state.hasilEssay} />
                 </div>
               </div>
 
