@@ -224,7 +224,7 @@ export default class WebinarKuesionerAdd extends Component {
                 {
                   this.state.pertanyaan.map((item, i) => (
                     <div className="form-group">
-                      <label>Pertanyaan {i + 1}</label>
+                      <label>Question {i + 1}</label>
                       <span className="float-right">
                         <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                       </span>
