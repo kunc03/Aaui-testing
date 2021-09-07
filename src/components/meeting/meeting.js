@@ -995,7 +995,12 @@ class MeetingTable extends Component {
             this.fetchMeeting()
                   
           } else {
-            toast.error("Error, failed to book a meeting schedule.");
+            if (res.data.type === 'warning'){
+              toast.warning(res.data.result);
+            }
+            else{
+              toast.error("Error, failed to book a meeting schedule.");
+            }
             this.setState({isSaving: false});
           }
         }
@@ -1153,7 +1158,12 @@ class MeetingTable extends Component {
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
-          toast.error("Error, failed booking schedule meeting")
+          if (res.data.type === 'warning'){
+            toast.warning(`${res.data.result+' "Start meeting now" need 1 hour schedule'}`);
+          }
+          else{
+            toast.error("Error, failed to book a meeting schedule.");
+          }
         }
       }
     })
