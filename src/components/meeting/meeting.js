@@ -389,7 +389,7 @@ class MeetingTable extends Component {
     API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
   }
 
-  fetchMeeting() {
+  fetchMeeting(noLoading) {
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
     let apiMeeting = '';
@@ -404,13 +404,18 @@ class MeetingTable extends Component {
     }
 
     console.log(apiMeeting, 'apiMeeting')
-
-    this.setState({ isFetch: true })
+    if (!noLoading){
+      this.setState({ isFetch: true })
+    }
     API.get(apiMeeting).then(async res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
         this.totalPage = res.data.result.length;
-        this.setState({ meeting: res.data.result, isFetch: false })
+        if (JSON.stringify(this.state.meeting) == JSON.stringify(res.data.result)){
+        }
+        else{
+          this.setState({ meeting: res.data.result, isFetch: false })
+        }
       }
     })
   }
@@ -995,7 +1000,12 @@ class MeetingTable extends Component {
             this.fetchMeeting()
                   
           } else {
-            toast.error("Error, failed to book a meeting schedule.");
+            if (res.data.type === 'warning'){
+              toast.warning(res.data.result);
+            }
+            else{
+              toast.error("Error, failed to book a meeting schedule.");
+            }
             this.setState({isSaving: false});
           }
         }
@@ -1049,6 +1059,10 @@ class MeetingTable extends Component {
         this.fetchBooking(data.meeting_id, data.room_name)
       }
     });
+    this.timer = setInterval(
+      () => this.fetchMeeting(true),
+      5000,
+    );
   }
 
   fetchCheckAccess(role, company_id, level, param) {
@@ -1153,7 +1167,12 @@ class MeetingTable extends Component {
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
-          toast.error("Error, failed booking schedule meeting")
+          if (res.data.type === 'warning'){
+            toast.warning(`${res.data.result+' "Start meeting now" need 1 hour schedule'}`);
+          }
+          else{
+            toast.error("Error, failed to book a meeting schedule.");
+          }
         }
       }
     })
@@ -1251,8 +1270,8 @@ class MeetingTable extends Component {
       Rmeeting ?
         {
           name: 'Action',
-          cell: row => <button className={`btn btn-icademy-primary btn-icademy-grey`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Open</button>,
+          cell: row => row.on_schedule ? <a rel="noopener noreferrer" target='_blank' href={`/meet/${row.on_schedule_id}`}><button className={`btn btn-icademy-primary btn-icademy-warning`} >Join</button></a>
+                      : <button className={`btn btn-icademy-primary btn-icademy-grey`} onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Schedule</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
@@ -1759,7 +1778,7 @@ class MeetingTable extends Component {
                 </div>
               </div>
 
-              <div className="row">
+              {/* <div className="row">
                 <div className="form-field-top-label">
                   <label for="time">Engine<required>*</required></label>
                   <MultiSelect id="engine"
@@ -1775,7 +1794,7 @@ class MeetingTable extends Component {
                     Choose meeting engine.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
             </Form>
           </Modal.Body>
@@ -2004,6 +2023,11 @@ class MeetingTable extends Component {
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
                                       <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
+                                  : null
+                                }
+                                {
+                                  item.user_id === Storage.get('user').data.user_id ?
+                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
                                   : null
                                 }
                               </td>
