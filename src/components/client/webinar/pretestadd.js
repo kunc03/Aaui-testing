@@ -1,7 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import API, { API_SERVER } from '../../../repository/api';
 import { toast } from "react-toastify";
 import { Editor } from '@tinymce/tinymce-react';
+
+const Msg = ({ msg, closeToast, toastProps }) => (
+  <div>
+    <Fragment>Question <div dangerouslySetInnerHTML={{ __html: msg }}></div> The answer to that question has not been set.</Fragment>
+  </div>
+)
 
 export default class WebinarPretestAdd extends Component {
 
@@ -89,7 +95,7 @@ export default class WebinarPretestAdd extends Component {
       };
   
       if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(`Pertanyaan ${form.webinar_test.filter(item => !item.jawab)[0].tanya} belum diatur jawabannya`)
+        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
       }
       else {
         API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
@@ -119,7 +125,7 @@ export default class WebinarPretestAdd extends Component {
       };
   
       if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(`Question ${form.webinar_test.filter(item => !item.jawab)[0].tanya} has not been set the answer`)
+        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
       }
       else {
         API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
