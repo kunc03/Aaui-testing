@@ -411,7 +411,11 @@ class MeetingTable extends Component {
       if (res.status === 200) {
         // console.log('data meeting', res);
         this.totalPage = res.data.result.length;
-        this.setState({ meeting: res.data.result, isFetch: false })
+        if (JSON.stringify(this.state.meeting) == JSON.stringify(res.data.result)){
+        }
+        else{
+          this.setState({ meeting: res.data.result, isFetch: false })
+        }
       }
     })
   }
@@ -2019,6 +2023,11 @@ class MeetingTable extends Component {
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
                                       <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
+                                  : null
+                                }
+                                {
+                                  item.user_id === Storage.get('user').data.user_id ?
+                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
                                   : null
                                 }
                               </td>
