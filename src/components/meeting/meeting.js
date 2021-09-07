@@ -1261,8 +1261,8 @@ class MeetingTable extends Component {
       Rmeeting ?
         {
           name: 'Action',
-          cell: row => <button className={`btn btn-icademy-primary btn-icademy-grey`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Open</button>,
+          cell: row => row.on_schedule ? <a rel="noopener noreferrer" target='_blank' href={`/meet/${row.on_schedule_id}`}><button className={`btn btn-icademy-primary btn-icademy-warning`} >Join</button></a>
+                      : <button className={`btn btn-icademy-primary btn-icademy-grey`} onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Schedule</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
