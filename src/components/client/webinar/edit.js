@@ -371,7 +371,7 @@ export default class WebinarEdit extends Component {
                         <small className="form-text text-muted">Do not use special character for Webinar Title</small>
                       </div>
 
-                      <Form.Group className="row" controlId="formJudul">
+                      {/* <Form.Group className="row" controlId="formJudul">
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">Engine</Form.Label>
                           <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
@@ -382,7 +382,7 @@ export default class WebinarEdit extends Component {
                             Pilih engine yang akan dipakai untuk meeting.
                           </Form.Text>
                         </div>
-                      </Form.Group>
+                      </Form.Group> */}
 
                       {
                         this.props.match.params.training !== 'by-training' ?
