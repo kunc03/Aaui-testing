@@ -52,6 +52,7 @@ class MeetingTable extends Component {
     // this._deleteUser = this._deleteUser.bind(this);
 
     this.state = {
+      idBooking: '',
       isSaving: false,
       isLoadBooking: false,
       isFetch: false,
@@ -306,7 +307,7 @@ class MeetingTable extends Component {
     this.setState({ isClassModal: false, speaker: '', roomName: '', imgPreview: '', cover: '', classId: '', valueGroup: [], valueModerator: [], valuePeserta: [], valueFolder: [], infoClass: [], private: true, requireConfirmation: false, akses: false, infoParticipant: [], scheduled: false, startDate: new Date(), endDate: new Date() });
   }
   closemodalJadwal = (id) => {
-    this.fetchOtherData()
+    this.fetchMeeting(true)
     this.setState({ modalJadwal: false, classId: '', roomName: '', infoParticipant: [] });
   }
 
@@ -389,7 +390,7 @@ class MeetingTable extends Component {
     API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
   }
 
-  fetchMeeting() {
+  fetchMeeting(noLoading) {
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
     let apiMeeting = '';
@@ -404,13 +405,18 @@ class MeetingTable extends Component {
     }
 
     console.log(apiMeeting, 'apiMeeting')
-
-    this.setState({ isFetch: true })
+    if (!noLoading){
+      this.setState({ isFetch: true })
+    }
     API.get(apiMeeting).then(async res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
         this.totalPage = res.data.result.length;
-        this.setState({ meeting: res.data.result, isFetch: false })
+        if (JSON.stringify(this.state.meeting) == JSON.stringify(res.data.result)){
+        }
+        else{
+          this.setState({ meeting: res.data.result, isFetch: false })
+        }
       }
     })
   }
@@ -987,15 +993,19 @@ class MeetingTable extends Component {
             })
 
             this.setState({
-              tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
-              modalJadwal: false
+              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: []
             })
 
-            this.fetchMeeting()
+            this.fetchMeeting(true)
                   
           } else {
-            toast.error("Error, failed to book a meeting schedule.");
+            if (res.data.type === 'warning'){
+              toast.warning(res.data.result);
+            }
+            else{
+              toast.error("Error, failed to book a meeting schedule.");
+            }
             this.setState({isSaving: false});
           }
         }
@@ -1015,6 +1025,118 @@ class MeetingTable extends Component {
         }
       }
     })
+  }
+  editBooking(id) {
+    this.onClickJadwal(this.state.classId, this.state.roomName);
+    let dataBooking = this.state.dataBooking.booking.filter((x)=> x.id === id)[0];
+    this.setState({
+      modalJadwal: true,
+      idBooking: id,
+      tanggal: new Date(Moment(dataBooking.tanggal).local().format('DD-MM-YYYY')),
+      jamMulai: new Date(Moment(`${dataBooking.tanggal} ${dataBooking.jam_mulai}`).local().format('DD-MM-YYYY HH:mm')),
+      jamSelesai: new Date(Moment(`${dataBooking.tanggal} ${dataBooking.jam_selesai}`).local().format('DD-MM-YYYY HH:mm')),
+      keterangan: dataBooking.keterangan,
+      is_private: dataBooking.is_private ? true : false,
+      requireConfirmation: dataBooking.is_required_confirmation ? true : false,
+      akses: dataBooking.is_akses ? true : false,
+      valueModerator: dataBooking.moderator ? [dataBooking.moderator] : []
+    });
+    dataBooking.participants.map(item=>{
+      this.state.valuePeserta.push(item.user_id);
+    })
+  }
+
+  saveEditBooking(){
+    if (this.state.bookingMeetingId === '' || this.state.tanggal === '' || this.state.jamMulai === '' || this.state.jamSelesai === '') {
+      toast.warning('Date, start time, and end time are mandatory.')
+    }
+    else {
+      this.setState({isSaving: true});
+      const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
+      const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
+      const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
+
+      let isPrivate               = this.state.private == true ? 1 : 0;
+      let isAkses                 = this.state.akses == true ? 1 : 0;
+      let isRequiredConfirmation  = this.state.requireConfirmation == true ? 1 : 0;
+
+      let form = {
+        meeting_id: this.state.bookingMeetingId,
+        tanggal: tanggal,
+        jam_mulai: jamMulai,
+        jam_selesai: jamSelesai,
+        user_id: Storage.get('user').data.user_id,
+        keterangan: this.state.keterangan,
+
+        is_private: isPrivate,
+        is_required_confirmation: isRequiredConfirmation,
+        peserta: this.state.valuePeserta,
+        
+        is_akses: isAkses,
+        moderator: this.state.akses ? this.state.valueModerator : [],
+      }
+
+      API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
+        if (res.status === 200) {
+          if (!res.data.error) {
+            toast.success('Saved.')
+            
+            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+
+            // share
+            this.setState({ sendingEmail: true })
+            let form1 = {
+              user: Storage.get('user').data.user,
+              email: this.state.emailInvite,
+              room_name: this.state.roomName,
+              is_private: isPrivate,
+              is_scheduled: 1,
+              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
+              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+              message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
+              messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
+            }
+
+            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
+              if (res.status === 200) {
+                if (!res.data.error) {
+                  this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
+                  toast.success("Email sent to participant")
+                } else {
+                  toast.error("Email failed to send, please check the email address.")
+                  this.setState({ sendingEmail: false, isSaving: false })
+                }
+              }
+            })
+            
+            socket.emit('send', {
+              socketAction: 'updateDataBooking',
+              meeting_id: this.state.bookingMeetingId,
+              user_id: Storage.get('user').data.user_id,
+              room_name: this.state.roomName
+            })
+
+            this.setState({
+              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: ''
+            })
+
+            this.fetchMeeting(true)
+                  
+          } else {
+            if (res.data.type === 'warning'){
+              toast.warning(res.data.result);
+            }
+            else{
+              toast.error("Error, failed to book a meeting schedule.");
+            }
+            this.setState({isSaving: false});
+          }
+        }
+      })
+
+    }
   }
 
   checkLimitCompany() {
@@ -1049,6 +1171,10 @@ class MeetingTable extends Component {
         this.fetchBooking(data.meeting_id, data.room_name)
       }
     });
+    this.timer = setInterval(
+      () => this.fetchMeeting(true),
+      5000,
+    );
   }
 
   fetchCheckAccess(role, company_id, level, param) {
@@ -1153,7 +1279,12 @@ class MeetingTable extends Component {
           
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
-          toast.error("Error, failed booking schedule meeting")
+          if (res.data.type === 'warning'){
+            toast.warning(`${res.data.result+' "Start meeting now" need 1 hour schedule'}`);
+          }
+          else{
+            toast.error("Error, failed to book a meeting schedule.");
+          }
         }
       }
     })
@@ -1251,8 +1382,8 @@ class MeetingTable extends Component {
       Rmeeting ?
         {
           name: 'Action',
-          cell: row => <button className={`btn btn-icademy-primary btn-icademy-grey`}
-            onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Open</button>,
+          cell: row => row.on_schedule ? <a rel="noopener noreferrer" target='_blank' href={`/meet/${row.on_schedule_id}`}><button className={`btn btn-icademy-primary btn-icademy-warning`} >Join</button></a>
+                      : <button className={`btn btn-icademy-primary btn-icademy-grey`} onClick={this.onClickInfo.bind(this, row.class_id, row.room_name)}>Schedule</button>,
           ignoreRowClick: true,
           allowOverflow: true,
           button: true,
@@ -1481,6 +1612,11 @@ class MeetingTable extends Component {
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
+                                      : null
+                                    }
+                                    {
+                                      item.user_id === Storage.get('user').data.user_id ?
+                                        <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
                                       : null
                                     }
                                     {
@@ -1722,9 +1858,16 @@ class MeetingTable extends Component {
 
           </Modal.Body>
           <Modal.Footer>
-            <button disabled={this.state.isSaving} className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
-              <i className="fa fa-save"></i> {this.state.isSaving ? 'Sending Invitation...' : 'Book'}
-            </button>
+            {
+              this.state.idBooking ?
+              <button disabled={this.state.isSaving} className="btn btn-icademy-primary" onClick={this.saveEditBooking.bind(this)}>
+                <i className="fa fa-save"></i> {this.state.isSaving ? 'Sending Invitation...' : 'Save'}
+              </button>
+              :
+              <button disabled={this.state.isSaving} className="btn btn-icademy-primary" onClick={this.booking.bind(this)}>
+                <i className="fa fa-save"></i> {this.state.isSaving ? 'Sending Invitation...' : 'Book'}
+              </button>
+            }
             <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closemodalJadwal}>
               Cancel
             </button>
@@ -1759,7 +1902,7 @@ class MeetingTable extends Component {
                 </div>
               </div>
 
-              <div className="row">
+              {/* <div className="row">
                 <div className="form-field-top-label">
                   <label for="time">Engine<required>*</required></label>
                   <MultiSelect id="engine"
@@ -1775,7 +1918,7 @@ class MeetingTable extends Component {
                     Choose meeting engine.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
             </Form>
           </Modal.Body>
@@ -2004,6 +2147,16 @@ class MeetingTable extends Component {
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
                                       <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
+                                  : null
+                                }
+                                {
+                                  item.user_id === Storage.get('user').data.user_id ?
+                                    <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                  : null
+                                }
+                                {
+                                  item.user_id === Storage.get('user').data.user_id ?
+                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
                                   : null
                                 }
                               </td>
