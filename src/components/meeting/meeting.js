@@ -389,7 +389,7 @@ class MeetingTable extends Component {
     API.post(`${API_SERVER}v1/liveclass/id/${this.props.projectId}`);
   }
 
-  fetchMeeting() {
+  fetchMeeting(noLoading) {
     let levelUser = Storage.get('user').data.level;
     let userId = Storage.get('user').data.user_id;
     let apiMeeting = '';
@@ -404,8 +404,9 @@ class MeetingTable extends Component {
     }
 
     console.log(apiMeeting, 'apiMeeting')
-
-    this.setState({ isFetch: true })
+    if (!noLoading){
+      this.setState({ isFetch: true })
+    }
     API.get(apiMeeting).then(async res => {
       if (res.status === 200) {
         // console.log('data meeting', res);
@@ -1054,6 +1055,10 @@ class MeetingTable extends Component {
         this.fetchBooking(data.meeting_id, data.room_name)
       }
     });
+    this.timer = setInterval(
+      () => this.fetchMeeting(true),
+      5000,
+    );
   }
 
   fetchCheckAccess(role, company_id, level, param) {
