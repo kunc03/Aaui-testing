@@ -413,6 +413,7 @@ class MeetingTable extends Component {
         // console.log('data meeting', res);
         this.totalPage = res.data.result.length;
         if (JSON.stringify(this.state.meeting) == JSON.stringify(res.data.result)){
+          this.setState({ isFetch: false })
         }
         else{
           this.setState({ meeting: res.data.result, isFetch: false })
