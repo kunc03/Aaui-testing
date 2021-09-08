@@ -308,7 +308,7 @@ class MeetingTable extends Component {
   }
   closemodalJadwal = (id) => {
     this.fetchMeeting(true)
-    this.setState({ modalJadwal: false, classId: '', roomName: '', infoParticipant: [] });
+    this.setState({ modalJadwal: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: ''});
   }
 
   closeModalConfirmation = e => {
@@ -413,6 +413,7 @@ class MeetingTable extends Component {
         // console.log('data meeting', res);
         this.totalPage = res.data.result.length;
         if (JSON.stringify(this.state.meeting) == JSON.stringify(res.data.result)){
+          this.setState({ isFetch: false })
         }
         else{
           this.setState({ meeting: res.data.result, isFetch: false })
@@ -968,7 +969,7 @@ class MeetingTable extends Component {
               is_scheduled: 1,
               schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
               schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
-              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+              userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
               messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
             }
@@ -1019,7 +1020,7 @@ class MeetingTable extends Component {
       if (res.status === 200) {
         if (!res.data.error) {
           toast.success('Canceling a meeting schedule booking.')
-          this.onClickJadwal(this.state.bookingMeetingId, this.state.dataBooking.room_name)
+          this.fetchBooking(this.state.classId, this.state.roomName)
         } else {
           toast.error("Error, failed to cancel the meeting schedule booking.")
         }
@@ -1027,9 +1028,9 @@ class MeetingTable extends Component {
     })
   }
   editBooking(id) {
-    this.onClickJadwal(this.state.classId, this.state.roomName);
     let dataBooking = this.state.dataBooking.booking.filter((x)=> x.id === id)[0];
     this.setState({
+      bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
       idBooking: id,
       tanggal: new Date(Moment(dataBooking.tanggal).local().format('DD-MM-YYYY')),
@@ -1061,7 +1062,7 @@ class MeetingTable extends Component {
       let isRequiredConfirmation  = this.state.requireConfirmation == true ? 1 : 0;
 
       let form = {
-        meeting_id: this.state.bookingMeetingId,
+        meeting_id: this.state.classId,
         tanggal: tanggal,
         jam_mulai: jamMulai,
         jam_selesai: jamSelesai,
