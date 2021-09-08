@@ -308,7 +308,7 @@ class MeetingTable extends Component {
   }
   closemodalJadwal = (id) => {
     this.fetchMeeting(true)
-    this.setState({ modalJadwal: false, classId: '', roomName: '', infoParticipant: [] });
+    this.setState({ modalJadwal: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: ''});
   }
 
   closeModalConfirmation = e => {
@@ -1028,9 +1028,9 @@ class MeetingTable extends Component {
     })
   }
   editBooking(id) {
-    this.onClickJadwal(this.state.classId, this.state.roomName);
     let dataBooking = this.state.dataBooking.booking.filter((x)=> x.id === id)[0];
     this.setState({
+      bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
       idBooking: id,
       tanggal: new Date(Moment(dataBooking.tanggal).local().format('DD-MM-YYYY')),
@@ -1062,7 +1062,7 @@ class MeetingTable extends Component {
       let isRequiredConfirmation  = this.state.requireConfirmation == true ? 1 : 0;
 
       let form = {
-        meeting_id: this.state.bookingMeetingId,
+        meeting_id: this.state.classId,
         tanggal: tanggal,
         jam_mulai: jamMulai,
         jam_selesai: jamSelesai,
