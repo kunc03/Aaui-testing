@@ -994,7 +994,7 @@ class MeetingTable extends Component {
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: []
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
             })
 
             this.fetchMeeting(true)
@@ -1119,7 +1119,7 @@ class MeetingTable extends Component {
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: ''
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
             })
 
             this.fetchMeeting(true)
