@@ -551,8 +551,7 @@ class MeetingTable extends Component {
 
   onSubmitForm = e => {
     e.preventDefault();
-    
-    if (this.state.roomName === '' || !this.state.valueFolder.length) {
+    if (this.state.roomName === '' || this.state.valueFolder[0] == 0 || !this.state.valueFolder.length) {
       toast.warning('The title of the meeting and the project folder is mandatory.')
     }
     else {
@@ -995,7 +994,7 @@ class MeetingTable extends Component {
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: []
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
             })
 
             this.fetchMeeting(true)
@@ -1120,7 +1119,7 @@ class MeetingTable extends Component {
 
             this.setState({
               tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: ''
+              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
             })
 
             this.fetchMeeting(true)
@@ -1248,7 +1247,7 @@ class MeetingTable extends Component {
       meeting_id: classId,
       tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
       jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
-      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(1, 'hours').format('HH:mm'),
+      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours').format('HH:mm'),
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
@@ -1281,7 +1280,7 @@ class MeetingTable extends Component {
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
           if (res.data.type === 'warning'){
-            toast.warning(`${res.data.result+' "Start meeting now" need 1 hour schedule'}`);
+            toast.warning(`${res.data.result+' "Start meeting now" need 2 hours schedule'}`);
           }
           else{
             toast.error("Error, failed to book a meeting schedule.");

@@ -1828,7 +1828,7 @@ export default class MeetRoomPub extends Component {
                                       : null
                                     }
                                       
-                                    <button style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
+                                    <button style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
                                       Join The Meeting
                                     </button>
                                     
@@ -1953,7 +1953,7 @@ export default class MeetRoomPub extends Component {
                             : null
                           }
                             
-                          <button onClick={jamNow.isBetween(infoStart, infoEnd) ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                          <button onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
                             Join The Meeting
                           </button>
                           
