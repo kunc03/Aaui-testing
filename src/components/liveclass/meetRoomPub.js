@@ -1152,14 +1152,18 @@ export default class MeetRoomPub extends Component {
       return null
     };
 
-    console.log('classRooms', classRooms)
     let checkMeParti = 0;
     if (classRooms && classRooms.hasOwnProperty('participants')) {
       checkMeParti = classRooms.participants.filter(item => item.user_id === Storage.get('user').data.user_id).length;
     }
 
-    console.log('listMOM', this.state.listMOM)
-
+    let jamMl = new Date(Moment(`${this.state.classRooms.tgl_mulai}`).local());
+    let jamMulai = Moment(`${this.state.classRooms.tgl_mulai}`).local() ? ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2) : '-';
+    let jamSl = new Date(Moment(`${this.state.classRooms.tgl_selesai}`).local());
+    let diff = Math.abs(jamSl - jamMl);
+    let diffHour = Math.floor((diff % 86400000) / 3600000);
+    let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
+    let durasi = this.state.classRooms.jam_mulai ? (diffHour !== 0 ? diffHour + ' hours ' : '') + (diffMin !== 0 ? diffMin + ' minutes' : '') : '-';
     return (
       <Fragment>
       {
@@ -1500,7 +1504,7 @@ export default class MeetRoomPub extends Component {
                     </div>
                   </div>
                   
-                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
+                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('dddd, MMMM Do YYYY')} ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
                     <Tooltip title="Click here to copy the invitation text and sharing URL" arrow placement="bottom" open={this.state.showToolTipInvitation}>
                     <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i> Copy Invitation</button>
