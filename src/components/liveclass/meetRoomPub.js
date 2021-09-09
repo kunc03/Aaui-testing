@@ -219,15 +219,14 @@ export default class MeetRoomPub extends Component {
       this.setState({ isLoading: true })
       this.onBotoomScroll();
       socket.on("broadcast", data => {
-        console.log(this.state.fileChat, 'sockett onnnnn')
         if (data.room == this.state.classId) {
           this.fetchData();
           this.setState({ fileChat: [...this.state.fileChat, data] })
         }
-        if (data.socketAction == 'shareGantt' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id) {
+        if (data.socketAction == 'shareGantt' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id && Storage.get('user').data) {
           this.setState({ newShareGantt: true, shareGantt: data.projectId })
         }
-        if (data.socketAction == 'fileShow' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id) {
+        if (data.socketAction == 'fileShow' && data.meetingId === this.state.classRooms.id && data.userId !== this.state.user.user_id && Storage.get('user').data) {
           this.setState({ newFileShow: true, modalFileShow: true }, () => {
             this.setState({selectedFileShow: data.selectedFileShow})
           })
