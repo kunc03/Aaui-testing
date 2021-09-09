@@ -906,6 +906,14 @@ export default class WebinarLive extends Component {
       this.fetchWebinar()
     }
     this.fetchQNA()
+    
+    //semua link open new tab
+    var links = document.getElementsByTagName('a');
+    var len = links.length;
+
+    for (var i = 0; i < len; i++) {
+      links[i].target = "_blank";
+    }
     // INI SCRIPT JIKA BBB HOOKS MATI
 
     // let conference_id = this.props.webinarId ? this.props.webinarId : this.props.match.params.webinarId;

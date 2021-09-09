@@ -242,6 +242,14 @@ export default class MeetRoomPub extends Component {
     // window.onbeforeunload = function() {
     //   return "Are you sure you want to leave?";
     // };
+
+    //semua link open new tab
+    var links = document.getElementsByTagName('a');
+    var len = links.length;
+
+    for (var i = 0; i < len; i++) {
+      links[i].target = "_blank";
+    }
   }
 
   componentWillUnmount() {
