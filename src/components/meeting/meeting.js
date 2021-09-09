@@ -1454,6 +1454,13 @@ class MeetingTable extends Component {
       )
     }
 
+    let jamMl = new Date(Moment(`${this.state.infoClass.tgl_mulai}`).local());
+    let jamMulai = Moment(`${this.state.infoClass.tgl_mulai}`).local() ? ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2) : '-';
+    let jamSl = new Date(Moment(`${this.state.infoClass.tgl_selesai}`).local());
+    let diff = Math.abs(jamSl - jamMl);
+    let diffHour = Math.floor((diff % 86400000) / 3600000);
+    let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
+    let durasi = this.state.infoClass.jam_mulai ? (diffHour !== 0 ? diffHour + ' hours ' : '') + (diffMin !== 0 ? diffMin + ' minutes' : '') : '-';
     return (
       <div className="card p-20">
 
@@ -1620,6 +1627,14 @@ class MeetingTable extends Component {
                             const range = jamIni.isBetween(sJadwal, eJadwal)
 
                             let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
+
+                            let jamMl = new Date(Moment(`${item.tgl_mulai}`).local());
+                            let jamMulai = Moment(`${item.tgl_mulai}`).local() ? ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2) : '-';
+                            let jamSl = new Date(Moment(`${item.tgl_selesai}`).local());
+                            let diff = Math.abs(jamSl - jamMl);
+                            let diffHour = Math.floor((diff % 86400000) / 3600000);
+                            let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
+                            let durasi = item.jam_mulai ? (diffHour !== 0 ? diffHour + ' hours ' : '') + (diffMin !== 0 ? diffMin + ' minutes' : '') : '-';
                             return (
                               <Fragment>
                                 <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -1631,10 +1646,14 @@ class MeetingTable extends Component {
                                   <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
                                   <td>{item.keterangan ? item.keterangan : '-'}</td>
                                   <td>
-                                    <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('DD-MM-YYYY')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                                      onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                      <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                                    </CopyToClipboard>
+                                    {
+                                      item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                        <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                          onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
+                                          <i className="fa fa-copy cursor">&nbsp; Copy</i>
+                                        </CopyToClipboard>
+                                        : '-'
+                                    }
                                   </td>
                                   <td>
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
@@ -2101,7 +2120,7 @@ class MeetingTable extends Component {
           <Modal.Footer>
             {
               this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                <CopyToClipboard text={`Meeting : ${this.state.infoClass.room_name}\nSchedule : ${moment(this.state.infoClass.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(this.state.infoClass.tgl_mulai).local().format('HH:mm')} - ${moment(this.state.infoClass.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+                <CopyToClipboard text={`Meeting Room : ${this.state.infoClass.room_name}\nSchedule : ${moment(this.state.infoClass.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(this.state.infoClass.tgl_mulai).local().format('HH:mm')} - ${moment(this.state.infoClass.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
                   onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                   <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i>&nbsp; Copy Invitation</button>
                 </CopyToClipboard>
@@ -2161,6 +2180,14 @@ class MeetingTable extends Component {
 
                         let checkParty = item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length
 
+
+                        let jamMl = new Date(Moment(`${item.tgl_mulai}`).local());
+                        let jamMulai = Moment(`${item.tgl_mulai}`).local() ? ('0' + jamMl.getHours()).slice(-2) + ':' + ('0' + jamMl.getMinutes()).slice(-2) : '-';
+                        let jamSl = new Date(Moment(`${item.tgl_selesai}`).local());
+                        let diff = Math.abs(jamSl - jamMl);
+                        let diffHour = Math.floor((diff % 86400000) / 3600000);
+                        let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
+                        let durasi = item.jam_mulai ? (diffHour !== 0 ? diffHour + ' hours ' : '') + (diffMin !== 0 ? diffMin + ' minutes' : '') : '-';
                         return (
                           <Fragment>
                             <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
@@ -2174,7 +2201,7 @@ class MeetingTable extends Component {
                               <td>
                                 {
                                   item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                                    <CopyToClipboard text={`Meeting : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('DD-MM-YYYY')}\nHour : ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')} (${moment.tz.guess(true)})\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                    <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                                       <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                     </CopyToClipboard>
