@@ -25,6 +25,7 @@ const titleTabs = [
 export default class User extends Component {
   constructor(props) {
     super(props);
+    this.myRef = React.createRef()
     this.goBack = this.goBack.bind(this);
 
     this.state = {
@@ -90,33 +91,34 @@ export default class User extends Component {
     if (item === 'Files') return this.setState({ contentAll: false, contentMeeting: false, contentWebinar: false, contentGanttChart: false, contentFiles: true });
   }
 
-  fetchUsers(){
+  fetchUsers() {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         this.setState({ myCompanyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id });
 
         API.get(`${API_SERVER}v1/user/company/${this.state.myCompanyId}`).then(response => {
           response.data.result.map(item => {
-            this.state.users.push({value: item.user_id, label: item.name});
+            this.state.users.push({ value: item.user_id, label: item.name });
           });
         })
-        .catch(function(error) {
-          console.log(error);
-        });
+          .catch(function (error) {
+            console.log(error);
+          });
       }
     });
   }
   changeUser = (val) => {
-    this.setState({valUsers: val})
+    this.setState({ valUsers: val })
   }
-  componentDidMount(){
+  componentDidMount() {
+    this.myRef.current.scrollTo(0, 0);
     this.checkProjectAccess()
     this.getProject()
     this.fetchUsers()
   }
 
   changeVisibility = e => {
-    this.setState({visibility: e.target.value})
+    this.setState({ visibility: e.target.value })
   }
 
   render() {
@@ -127,7 +129,7 @@ export default class User extends Component {
         <div className="pcoded-wrapper">
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
-              <div className="main-body">
+              <div className="main-body" ref={this.myRef}>
                 <div className="page-wrapper">
                   <div className="floating-back">
                     <a href={APPS_SERVER}>
@@ -165,13 +167,13 @@ export default class User extends Component {
                       {/* <GanttChart access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} /> */}
                       <div className="gantt-container">
                         <div className="m-t-10 m-b-10">
-                          <select value={this.state.visibility} onChange={this.changeVisibility} style={{float:'right', marginBottom: 10, width:200, height:40, marginLeft: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
-                              {levelUser !== 'client' && <option value='all'>All</option>}
-                              <option value='public'>Public</option>
-                              <option value='private'>Private</option>
+                          <select value={this.state.visibility} onChange={this.changeVisibility} style={{ float: 'right', marginBottom: 10, width: 200, height: 40, marginLeft: 10, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6' }}>
+                            {levelUser !== 'client' && <option value='all'>All</option>}
+                            <option value='public'>Public</option>
+                            <option value='private'>Private</option>
                           </select>
                           {levelUser !== 'client' &&
-                          <div style={{width:300, float:'right', backgroundColor:'#FFF'}}>
+                            <div style={{ width: 300, float: 'right', backgroundColor: '#FFF' }}>
                               <MultiSelect
                                 id={`users`}
                                 options={this.state.users}
@@ -183,10 +185,10 @@ export default class User extends Component {
                                 valuePlaceholder="Filter Users"
                                 hasSelectAll
                               />
-                          </div>
+                            </div>
                           }
                         </div>
-                      <Gantt access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility}/>
+                        <Gantt access_project_admin={this.state.access_project_admin} projectId={this.state.projectId} userId={this.state.valUsers.length === 0 ? false : this.state.valUsers} visibility={this.state.visibility} />
                       </div>
                     </div>
                     <div className={this.state.contentFiles ? "col-xl-12" : "hidden"}>
