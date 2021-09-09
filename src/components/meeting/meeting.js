@@ -584,7 +584,7 @@ class MeetingTable extends Component {
   onSubmitForm = e => {
     e.preventDefault();
     // console.log(this.state.valueFolder, 'AGUS')
-    if (this.state.roomName === '' || this.state.valueFolder[0] === 0 || !this.state.valueFolder.length) {
+    if (this.state.roomName === '' || this.state.valueFolder[0] == 0 || !this.state.valueFolder.length) {
       toast.warning('The title of the meeting and the project folder is mandatory.')
     }
     else {
@@ -1313,7 +1313,7 @@ class MeetingTable extends Component {
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
           if (res.data.type === 'warning') {
-            toast.warning(`${res.data.result + ' "Start meeting now" need 1 hour schedule'}`);
+            toast.warning(`${res.data.result + ' "Start meeting now" need 2 hour schedule'}`);
           }
           else {
             toast.error("Error, failed to book a meeting schedule.");
