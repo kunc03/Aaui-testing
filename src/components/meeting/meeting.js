@@ -314,7 +314,6 @@ class MeetingTable extends Component {
 
   closeModalConfirmation = e => {
 
-    //console.log('AGUS', this.state.isOpenBooking)
     if (this.state.isOpenBooking) {
       this.setState({
         isModalConfirmation: false,
@@ -1313,7 +1312,7 @@ class MeetingTable extends Component {
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
         } else {
           if (res.data.type === 'warning') {
-            toast.warning(`${res.data.result + ' "Start meeting now" need 2 hour schedule'}`);
+            toast.warning(`${res.data.result + ' "Start meeting now" need 2 hours schedule'}`);
           }
           else {
             toast.error("Error, failed to book a meeting schedule.");
