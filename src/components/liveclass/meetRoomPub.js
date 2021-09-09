@@ -1504,7 +1504,7 @@ export default class MeetRoomPub extends Component {
                     </div>
                   </div>
                   
-                  <CopyToClipboard text={`Meeting : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('dddd, MMMM Do YYYY')} ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
+                  <CopyToClipboard text={`Meeting Room : ${classRooms.room_name}\nSchedule : ${moment(classRooms.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(classRooms.tgl_mulai).local().format('HH:mm')} - ${moment(classRooms.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${classRooms.keterangan}\nURL : ${APPS_SERVER}meet/${classRooms.id}`}
                     onCopy={() => { this.setState({ copied: true }); toast.info('Copied.') }}>
                     <Tooltip title="Click here to copy the invitation text and sharing URL" arrow placement="bottom" open={this.state.showToolTipInvitation}>
                     <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i> Copy Invitation</button>
