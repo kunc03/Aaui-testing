@@ -1274,11 +1274,14 @@ class MeetingTable extends Component {
   }
 
   startMeetingNow = (classId, roomName) => {
+    var startDate = Moment.tz(new Date(), moment.tz.guess(true));
+    var checkEndDate = Moment.tz(new Date(), moment.tz.guess(true)).add(2, 'hours')
+    var finalEndDate = checkEndDate.format('DD-MM-YYYY') === startDate.format('DD-MM-YYYY') ? checkEndDate.format('HH:mm') : '23:59';
     let form = {
       meeting_id: classId,
-      tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
-      jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
-      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours').format('HH:mm'),
+      tanggal: Moment.tz(new Date(), moment.tz.guess(true)).format('YYYY-MM-DD'),
+      jam_mulai: startDate.format('HH:mm'),
+      jam_selesai: finalEndDate,
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
