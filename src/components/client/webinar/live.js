@@ -448,7 +448,7 @@ export default class WebinarLive extends Component {
       }
     })
   }
-  fetchWebinar() {
+  fetchWebinar(skipCheck) {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(async res => {
       if (res.status === 200) {
         this.setState({
@@ -567,7 +567,9 @@ export default class WebinarLive extends Component {
                   result.attendees.attendee.hasVideo
                 );
                 if (checkAttendee){
-                  this.setState({joined: true});
+                  if (!skipCheck){
+                    this.setState({joined: true});
+                  }
                 }
                 else{
                   // Jika sudah ada, join
@@ -595,7 +597,7 @@ export default class WebinarLive extends Component {
       }
     })
   }
-  fetchWebinarPublic() {
+  fetchWebinarPublic(skipCheck) {
     API.get(`${API_SERVER}v2/webinar/tamu/${this.props.voucher}`).then(async res => {
       if (res.status === 200) {
         this.setState({
@@ -712,7 +714,9 @@ export default class WebinarLive extends Component {
                   result.attendees.attendee.hasVideo
                 );
                 if (checkAttendee){
-                  this.setState({joined: true});
+                  if (!skipCheck){
+                    this.setState({joined: true});
+                  }
                 }
                 else{
                   // Jika sudah ada, join
@@ -850,10 +854,10 @@ export default class WebinarLive extends Component {
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher) {
-          this.fetchWebinarPublic()
+          this.fetchWebinarPublic(true)
         }
         else {
-          this.fetchWebinar()
+          this.fetchWebinar(true)
         }
       }
       if (data.description && data.webinar_id == this.state.webinarId) {
@@ -1124,7 +1128,7 @@ export default class WebinarLive extends Component {
                   </h3>
                   {
                     (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined && this.state.isJoin ?
-                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, bottom: -10}}>
                         <Tooltip title="Listening" arrow placement="top">
                           <span>
                             <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
