@@ -1128,7 +1128,7 @@ export default class WebinarLive extends Component {
                   </h3>
                   {
                     (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined && this.state.isJoin ?
-                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, top: 40}}>
+                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, bottom: -10}}>
                         <Tooltip title="Listening" arrow placement="top">
                           <span>
                             <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
