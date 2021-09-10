@@ -1683,11 +1683,11 @@ class MeetingTable extends Component {
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       <div className='legend-kehadiran hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Present ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
                                       <div className='legend-kehadiran tidak-hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Not Present ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
                                       <div className='legend-kehadiran tentative'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({item.participants.filter(k => k.confirmation === '').length})</h3>
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {
