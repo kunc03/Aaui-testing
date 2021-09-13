@@ -1274,11 +1274,14 @@ class MeetingTable extends Component {
   }
 
   startMeetingNow = (classId, roomName) => {
+    var startDate = Moment.tz(new Date(), moment.tz.guess(true));
+    var checkEndDate = Moment.tz(new Date(), moment.tz.guess(true)).add(2, 'hours')
+    var finalEndDate = checkEndDate.format('DD-MM-YYYY') === startDate.format('DD-MM-YYYY') ? checkEndDate.format('HH:mm') : '23:59';
     let form = {
       meeting_id: classId,
-      tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
-      jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
-      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours').format('HH:mm'),
+      tanggal: Moment.tz(new Date(), moment.tz.guess(true)).format('YYYY-MM-DD'),
+      jam_mulai: startDate.format('HH:mm'),
+      jam_selesai: finalEndDate,
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
@@ -1683,11 +1686,11 @@ class MeetingTable extends Component {
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       <div className='legend-kehadiran hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Present ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
                                       <div className='legend-kehadiran tidak-hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Not Present ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
                                       <div className='legend-kehadiran tentative'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({item.participants.filter(k => k.confirmation === '').length})</h3>
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {

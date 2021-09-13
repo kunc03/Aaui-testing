@@ -1119,6 +1119,9 @@ export default class MeetRoomPub extends Component {
     const infoStart = Moment(`${classRooms.tgl_mulai}`).local()
     const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
 
+    const diKurangi5Menit = infoStart.subtract(5, 'minutes')
+    const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.diff(diKurangi5Menit) >= 0 ? true : false;
+
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
       const filterMe = classRooms.participants.filter(i => i.user_id === Storage.get('user').data.user_id)
@@ -1839,7 +1842,7 @@ export default class MeetRoomPub extends Component {
                                       : null
                                     }
                                       
-                                    <button style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
+                                    <button style={onlyModerator5Menit ||jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
                                       Join The Meeting
                                     </button>
                                     
@@ -1964,7 +1967,7 @@ export default class MeetRoomPub extends Component {
                             : null
                           }
                             
-                          <button onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                          <button onClick={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
                             Join The Meeting
                           </button>
                           
