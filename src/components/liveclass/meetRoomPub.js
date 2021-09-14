@@ -1120,7 +1120,7 @@ export default class MeetRoomPub extends Component {
     const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
 
     const diKurangi5Menit = infoStart.subtract(5, 'minutes')
-    const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.diff(diKurangi5Menit) >= 0 ? true : false;
+    const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.isBetween(diKurangi5Menit, infoStart) ? true : false;
 
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
@@ -1818,7 +1818,7 @@ export default class MeetRoomPub extends Component {
                                           "Loading..."
                                         :
                                         <span style={{fontSize: '12px'}}>
-                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
+                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
                                         </span>
                                       }    
                                     </p>
@@ -1937,7 +1937,7 @@ export default class MeetRoomPub extends Component {
                                 "Loading..."
                               :
                               <span style={{fontSize: '12px'}}>
-                              {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
+                                {Moment(classRooms.tgl_mulai).local().format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
                               </span>
                             }    
                           </p>
