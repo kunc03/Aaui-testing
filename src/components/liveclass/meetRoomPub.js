@@ -608,7 +608,9 @@ export default class MeetRoomPub extends Component {
 
   notYetTime() {
     let { classRooms } = this.state
-    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${classRooms.jam_mulai} - ${classRooms.jam_selesai}`)
+    const jamStartDB = Moment(`${classRooms.tgl_mulai}`).local().tz(Moment.tz.guess(true))
+    const jamEndDB = Moment(`${classRooms.tgl_selesai}`).local().tz(Moment.tz.guess(true))
+    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${jamStartDB.format('HH:mm')} - ${jamEndDB.format('HH:mm')}`)
   }
 
   addToCalendar = (user) => {
@@ -1115,12 +1117,42 @@ export default class MeetRoomPub extends Component {
     let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
     const notify = () => toast.warning('Access denied')
 
+    const jamStartDB = Moment(`${classRooms.tgl_mulai}`).local().tz(Moment.tz.guess(true))
+    const jamEndDB = Moment(`${classRooms.tgl_selesai}`).local().tz(Moment.tz.guess(true))
+    
     const jamNow = Moment().local()
-    const infoStart = Moment(`${classRooms.tgl_mulai}`).local()
-    const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
+    const infoStart = jamStartDB.clone().tz(Moment.tz.guess(true))
+    const infoEnd = jamEndDB.clone().tz(Moment.tz.guess(true))
 
-    const diKurangi5Menit = infoStart.subtract(5, 'minutes')
+    const diKurangi5Menit = infoStart.clone().subtract(5, "minutes")
     const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.isBetween(diKurangi5Menit, infoStart) ? true : false;
+
+    console.log('5Menit ===========================================')
+    console.log('5Menit', classRooms.moderator)
+    console.log('5Menit', classRooms.tgl_mulai)
+    console.log('5Menit', classRooms.tgl_selesai)
+    console.log('5Menit ===========================================')
+    
+    console.log('5Menit', jamStartDB.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', jamEndDB.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit ===========================================')
+    
+    console.log('5Menit', jamNow.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', diKurangi5Menit.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', infoStart.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', infoEnd.format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit ===========================================')
+    
+    console.log('5Menit', jamNow.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', diKurangi5Menit.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', infoStart.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit', infoEnd.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
+    console.log('5Menit ===========================================')
+    
+    console.log('5Menit', jamNow.isBetween(diKurangi5Menit, infoStart))
+    console.log('5Menit', jamNow.isBetween(infoStart.clone(), infoEnd.clone()))
+    console.log('5Menit', classRooms.moderator === Storage.get('user').data.user_id)
+    console.log('5Menit ===========================================')
 
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
@@ -1818,7 +1850,7 @@ export default class MeetRoomPub extends Component {
                                           "Loading..."
                                         :
                                         <span style={{fontSize: '12px'}}>
-                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
+                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {infoStart.format('HH:mm')} - {infoEnd.format('HH:mm')}
                                         </span>
                                       }    
                                     </p>
@@ -1937,7 +1969,7 @@ export default class MeetRoomPub extends Component {
                                 "Loading..."
                               :
                               <span style={{fontSize: '12px'}}>
-                                {Moment(classRooms.tgl_mulai).local().format('LL')} {classRooms.jam_mulai} - {classRooms.jam_selesai}
+                                {Moment(classRooms.tgl_mulai).local().format('LL')} {infoStart.format('HH:mm')} - {infoEnd.format('HH:mm')}
                               </span>
                             }    
                           </p>
