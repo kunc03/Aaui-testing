@@ -1059,13 +1059,15 @@ class MeetingTable extends Component {
   }
   editBooking(id) {
     let dataBooking = this.state.dataBooking.booking.filter((x) => x.id === id)[0];
+
+    const split_date = dataBooking.tgl_mulai.split('T')[0];
     this.setState({
       bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
       idBooking: id,
-      tanggal: new Date(Moment(dataBooking.tanggal).local().format('DD-MM-YYYY')),
-      jamMulai: new Date(Moment(`${dataBooking.tanggal} ${dataBooking.jam_mulai}`).local().format('DD-MM-YYYY HH:mm')),
-      jamSelesai: new Date(Moment(`${dataBooking.tanggal} ${dataBooking.jam_selesai}`).local().format('DD-MM-YYYY HH:mm')),
+      tanggal: new Date(Moment(split_date).local()),
+      jamMulai: new Date(Moment(`${split_date} ${dataBooking.jam_mulai}`)),
+      jamSelesai: new Date(Moment(`${split_date} ${dataBooking.jam_selesai}`)),
       keterangan: dataBooking.keterangan,
       is_private: dataBooking.is_private ? true : false,
       requireConfirmation: dataBooking.is_required_confirmation ? true : false,
@@ -1659,22 +1661,22 @@ class MeetingTable extends Component {
                                     }
                                   </td>
                                   <td>
-                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em" }}>Information</span>
                                     {
                                       checkParty && range ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                          <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em" }}>Join</span>
                                         </a>
                                         : null
                                     }
                                     {
                                       item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                        <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em" }}>Edit</span>
                                         : null
                                     }
                                     {
                                       item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em" }}>Cancel</span>
                                         : null
                                     }
                                   </td>
@@ -2212,22 +2214,22 @@ class MeetingTable extends Component {
                                 }
                               </td>
                               <td>
-                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em" }} >Information</span>
                                 {
                                   checkParty && range ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                      <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                      <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em" }}>Join</span>
                                     </a>
                                     : null
                                 }
                                 {
                                   item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                    <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em" }}>Edit</span>
                                     : null
                                 }
                                 {
                                   item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em" }}>Cancel</span>
                                     : null
                                 }
                               </td>
