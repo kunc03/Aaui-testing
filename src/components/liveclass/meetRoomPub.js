@@ -608,7 +608,7 @@ export default class MeetRoomPub extends Component {
 
   notYetTime() {
     let { classRooms } = this.state
-    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${Moment(classRooms.tgl_mulai).format('HH:mm')} - ${Moment(classRooms.tgl_selesai).local().format('HH:mm')}`)
+    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${classRooms.jam_mulai} - ${classRooms.jam_selesai}`)
   }
 
   addToCalendar = (user) => {
