@@ -1127,33 +1127,6 @@ export default class MeetRoomPub extends Component {
     const diKurangi5Menit = infoStart.clone().subtract(5, "minutes")
     const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.isBetween(diKurangi5Menit, infoStart) ? true : false;
 
-    console.log('5Menit ===========================================')
-    console.log('5Menit', classRooms.moderator)
-    console.log('5Menit', classRooms.tgl_mulai)
-    console.log('5Menit', classRooms.tgl_selesai)
-    console.log('5Menit ===========================================')
-    
-    console.log('5Menit', jamStartDB.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', jamEndDB.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit ===========================================')
-    
-    console.log('5Menit', jamNow.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', diKurangi5Menit.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', infoStart.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', infoEnd.format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit ===========================================')
-    
-    console.log('5Menit', jamNow.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', diKurangi5Menit.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', infoStart.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit', infoEnd.clone().tz(Moment.tz.guess(true)).format('DD-MM-YYYY HH:mm'))
-    console.log('5Menit ===========================================')
-    
-    console.log('5Menit', jamNow.isBetween(diKurangi5Menit, infoStart))
-    console.log('5Menit', jamNow.isBetween(infoStart.clone(), infoEnd.clone()))
-    console.log('5Menit', classRooms.moderator === Storage.get('user').data.user_id)
-    console.log('5Menit ===========================================')
-
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
       const filterMe = classRooms.participants.filter(i => i.user_id === Storage.get('user').data.user_id)
