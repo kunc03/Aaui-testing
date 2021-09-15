@@ -958,9 +958,13 @@ class MeetingTable extends Component {
     }
     else {
       this.setState({ isSaving: true });
-      const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
-      const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
-      const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
+      // const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
+      // const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
+      // const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
+
+      const tanggal = Moment(this.state.tanggal).tz('Asia/Jakarta').format('YYYY-MM-DD')
+      const jamMulai = Moment(this.state.jamMulai).tz('Asia/Jakarta').format('HH:mm')
+      const jamSelesai = Moment(this.state.jamSelesai).tz('Asia/Jakarta').format('HH:mm')
 
       let isPrivate = this.state.private == true ? 1 : 0;
       let isAkses = this.state.akses == true ? 1 : 0;
