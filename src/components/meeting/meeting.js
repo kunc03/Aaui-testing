@@ -959,8 +959,8 @@ class MeetingTable extends Component {
     else {
       this.setState({ isSaving: true });
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
-      const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
-      const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
+      const jamMulai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
+      const jamSelesai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
 
       let isPrivate = this.state.private == true ? 1 : 0;
       let isAkses = this.state.akses == true ? 1 : 0;
@@ -1683,11 +1683,11 @@ class MeetingTable extends Component {
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       <div className='legend-kehadiran hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Hadir ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Present ({item.participants.filter(k => k.confirmation === 'Hadir').length})</h3>
                                       <div className='legend-kehadiran tidak-hadir'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Tidak Hadir ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Not Present ({item.participants.filter(k => k.confirmation === 'Tidak Hadir').length})</h3>
                                       <div className='legend-kehadiran tentative'></div>
-                                      <h3 className="f-14 mb-0 mr-2"> Belum Konfirmasi ({item.participants.filter(k => k.confirmation === '').length})</h3>
+                                      <h3 className="f-14 mb-0 mr-2"> Unconfirmed ({item.participants.filter(k => k.confirmation === '').length})</h3>
                                     </div>
                                     <div className="row mt-3" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', padding: '0px 15px' }}>
                                       {
