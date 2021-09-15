@@ -1658,7 +1658,8 @@ class MeetingTable extends Component {
                                   <td>
                                     <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                     {
-                                      checkParty && range ?
+                                      //checkParty && range 
+                                      item.isJoin || (checkParty && range) ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
                                           <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                         </a>
@@ -2127,7 +2128,8 @@ class MeetingTable extends Component {
                 : null
             }
             {
-              this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length && Moment().isBetween(infoDateStart, infoDateEnd) ?
+              // this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length && Moment().isBetween(infoDateStart, infoDateEnd) 
+              this.state.infoClass.isJoin || (this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length && Moment().isBetween(infoDateStart, infoDateEnd)) ?
                 <a className="btn btn-v2 btn-warning" style={{ background: '#EF843C', borderColor: '#EF843C' }} rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
                   <i className="fa fa-video"></i> Join
                 </a>
@@ -2211,7 +2213,8 @@ class MeetingTable extends Component {
                               <td>
                                 <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
                                 {
-                                  checkParty && range ?
+                                  // checkParty && range
+                                  item.isJoin || (checkParty && range) ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
                                       <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
                                     </a>
@@ -2264,7 +2267,7 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+              (this.rooms.isJoin && this.roomId) || (this.roomId && this.rooms.hasOwnProperty('participants') && this.rooms.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length) ?
                 <a href={`/meet/${this.roomId}`} target="_blank" rel="noopener noreferrer" className="btn btn-v2 btn-warning" style={{ background: '#EF843C', borderColor: '#EF843C' }}>
                   <i className="fa fa-video"></i> Join
                 </a>
