@@ -11,7 +11,7 @@ import TableFiles from '../../files/_files';
 import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isIOS } from 'react-device-detect';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Fragment } from 'react';
 const bbb = require('bigbluebutton-js')
@@ -24,6 +24,7 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
   state = {
+    showOpenApps: true,
     isJoin : false,
     showDescription : false,
     isLoadingPage : true,
@@ -842,14 +843,14 @@ export default class WebinarLive extends Component {
     })
   }
   componentDidMount() {
-    if (isMobile) {
-      if (this.props.webinarId && this.props.voucher){
-        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar-guest/' + this.props.webinarId + '/' + this.props.voucher))
-      }
-      else{
-        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
-      }
-    }
+    // if (isMobile) {
+    //   if (this.props.webinarId && this.props.voucher){
+    //     window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar-guest/' + this.props.webinarId + '/' + this.props.voucher))
+    //   }
+    //   else{
+    //     window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
+    //   }
+    // }
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
@@ -1062,7 +1063,9 @@ export default class WebinarLive extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    let plainURL = `${APPS_SERVER}webinar/live/${this.state.webinarId}`;
+    let lengthURL = plainURL.length;
+    let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -1962,6 +1965,20 @@ export default class WebinarLive extends Component {
             }
           </Modal.Body>
         </Modal>
+                                          {
+                                            isMobile && this.state.showOpenApps ?
+                                            <div className="floating-message">
+                                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                                              </a>
+                                              <a href={isIOS ? iosURL : plainURL}>
+                                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                                              </a>
+                                            </div>
+                                            : null
+                                          }
       </div>
     );
   }
