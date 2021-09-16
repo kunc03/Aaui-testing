@@ -47,6 +47,7 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    jamNow : Moment().local(),
     showOpenApps: true,
     showToolTipInvitation: false,
     copied: false,
@@ -236,7 +237,10 @@ export default class MeetRoomPub extends Component {
       this.fetchData();
 
       this.timer = setInterval(
-        () => this.fetchDataParticipants(),
+        () => {
+          this.fetchDataParticipants();
+          this.setState({jamNow: Moment().local()})
+        },
         5000,
       );
     // }
@@ -1119,7 +1123,7 @@ export default class MeetRoomPub extends Component {
     let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
     const notify = () => toast.warning('Access denied')
 
-    const jamNow = Moment().local()
+    const jamNow = this.state.jamNow
     const infoStart = Moment(`${classRooms.tgl_mulai}`).local()
     const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
 
