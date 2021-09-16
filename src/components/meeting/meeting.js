@@ -958,13 +958,9 @@ class MeetingTable extends Component {
     }
     else {
       this.setState({ isSaving: true });
-      // const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
-      // const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
-      // const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
-
-      const tanggal = Moment(this.state.tanggal).tz('Asia/Jakarta').format('YYYY-MM-DD')
-      const jamMulai = Moment(this.state.jamMulai).tz('Asia/Jakarta').format('HH:mm')
-      const jamSelesai = Moment(this.state.jamSelesai).tz('Asia/Jakarta').format('HH:mm')
+      const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
+      const jamMulai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
+      const jamSelesai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
 
       let isPrivate = this.state.private == true ? 1 : 0;
       let isAkses = this.state.akses == true ? 1 : 0;
@@ -984,6 +980,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
@@ -1069,9 +1068,9 @@ class MeetingTable extends Component {
       bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
       idBooking: id,
-      tanggal: new Date(Moment(split_date).local()),
-      jamMulai: new Date(Moment(`${split_date} ${dataBooking.jam_mulai}`)),
-      jamSelesai: new Date(Moment(`${split_date} ${dataBooking.jam_selesai}`)),
+      tanggal: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD')),
+      jamMulai: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD HH:mm')),
+      jamSelesai: new Date(Moment(dataBooking.tgl_selesai).local().format('YYYY-MM-DD HH:mm')),
       keterangan: dataBooking.keterangan,
       is_private: dataBooking.is_private ? true : false,
       requireConfirmation: dataBooking.is_required_confirmation ? true : false,
@@ -1111,6 +1110,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
@@ -1297,6 +1299,9 @@ class MeetingTable extends Component {
 
       is_akses: 1,
       moderator: [Storage.get('user').data.user_id],
+
+      date_start: startDate.format('YYYY-MM-DD HH:mm'),
+      date_end: checkEndDate.format('YYYY-MM-DD HH:mm'),
     }
 
     API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
