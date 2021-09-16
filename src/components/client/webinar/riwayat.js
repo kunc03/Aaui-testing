@@ -17,6 +17,7 @@ import { Doughnut } from 'react-chartjs-2';
 export default class WebinarRiwayat extends Component {
 
   state = {
+    isLoading: false,
     hasilTest: [],
     hasilEssay: [],
     certificate_orientation: 'landscape',
@@ -123,6 +124,7 @@ export default class WebinarRiwayat extends Component {
   }
 
   fetchData() {
+    this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/webinar/history/${this.state.webinarId}`).then(res => {
       if (res.data.error) toast.warning("Gagal fetch API");
       let peserta = res.data.result.peserta
@@ -146,7 +148,8 @@ export default class WebinarRiwayat extends Component {
         jumlahPeserta: peserta.length,
         projectId: res.data.result.project_id,
         jumlahHadir: pesertaDanTamu.filter((item) => item.status == 2).length,
-        jumlahTidakHadir: pesertaDanTamu.filter((item) => item.status != 2).length
+        jumlahTidakHadir: pesertaDanTamu.filter((item) => item.status != 2).length,
+        isLoading: false
       })
       this.setState({ pembicara: [] })
       res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
@@ -648,114 +651,120 @@ export default class WebinarRiwayat extends Component {
                   </p>
                 </div>
               </div>
-              <div style={{ marginTop: '10px' }}>
-                <div className="row">
-                  <div className="col-sm-8">
-                    <h5 style={{fontSize:17}}>{this.state.judul}</h5>
-                    <h6>Speaker : {this.state.pembicara.toString()}</h6>
-                    <p>
-                      <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
-                    </p>
-                    <h6>{moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h6>
-                  </div>
-
-                  <div className="col-sm-4">
-                    <button
-                      className="btn btn-icademy-primary btn-12"
-                      onClick={this.downloadPDF.bind(this)}
-                      style={{ marginRight: 14 }}
-                    >
-                      <i className="fa fa-file-pdf"></i>
-                        Download PDF Report
-                      </button>
-                    <button
-                      className="btn btn-icademy-primary btn-12"
-                      onClick={e => this.setState({ isModalDownloadFileWebinar: true })}
-                      style={{ marginRight: 14 }}
-                    >
-                      <i className="fa fa-folder"></i>
-                        Files
-                      </button>
-                    {/* <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
+              {
+                this.state.isLoading ?
+                <div>Loading...</div>
+                :
+                <>
+                <div style={{ marginTop: '10px' }}>
+                  <div className="row">
+                    <div className="col-sm-8">
+                      <h5 style={{fontSize:17}}>{this.state.judul}</h5>
+                      <h6>Speaker : {this.state.pembicara.toString()}</h6>
+                      <p>
+                        <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
+                      </p>
+                      <h6>{moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h6>
+                    </div>
+  
+                    <div className="col-sm-4">
                       <button
-                        className="btn btn-icademy-primary"
+                        className="btn btn-icademy-primary btn-12"
+                        onClick={this.downloadPDF.bind(this)}
+                        style={{ marginRight: 14 }}
                       >
-                        <i className="fa fa-file"></i>
-                        Feedback Form
-                      </button></Link> */}
+                        <i className="fa fa-file-pdf"></i>
+                          Download PDF Report
+                        </button>
+                      <button
+                        className="btn btn-icademy-primary btn-12"
+                        onClick={e => this.setState({ isModalDownloadFileWebinar: true })}
+                        style={{ marginRight: 14 }}
+                      >
+                        <i className="fa fa-folder"></i>
+                          Files
+                        </button>
+                      {/* <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
+                        <button
+                          className="btn btn-icademy-primary"
+                        >
+                          <i className="fa fa-file"></i>
+                          Feedback Form
+                        </button></Link> */}
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="row mt-2">
-                <div className="col-sm-4">
-                  <Doughnut data={dataSelesai} />
+  
+                <div className="row mt-2">
+                  <div className="col-sm-4">
+                    <Doughnut data={dataSelesai} />
+                  </div>
+                  <div className="col-sm-4">
+                    <Doughnut data={dataVia} />
+                  </div>
                 </div>
-                <div className="col-sm-4">
-                  <Doughnut data={dataVia} />
+  
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-peserta"
+                      filename={'Attendance ' + this.state.judul}
+                      sheet="Attendance"
+                      buttonText="Export Attendance to Excel" />
+                    <Peserta items={this.state.peserta} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="row mt-5">
-                <div className="col-sm-12">
-                  <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning btn-12"
-                    table="table-peserta"
-                    filename={'Attendance ' + this.state.judul}
-                    sheet="Attendance"
-                    buttonText="Export Attendance to Excel" />
-                  <Peserta items={this.state.peserta} />
+  
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-pertanyaan"
+                      filename={'Questions ' + this.state.judul}
+                      sheet="Questions"
+                      buttonText="Export Questions to Excel" />
+                    <Pertanyaan items={this.state.qna} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="row mt-5">
-                <div className="col-sm-12">
-                  <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning btn-12"
-                    table="table-pertanyaan"
-                    filename={'Questions ' + this.state.judul}
-                    sheet="Questions"
-                    buttonText="Export Questions to Excel" />
-                  <Pertanyaan items={this.state.qna} />
+  
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-kuesioner"
+                      filename={'Feedback Form Result ' + this.state.judul}
+                      sheet="Feedback Form"
+                      buttonText="Export Feedback Form to Excel" />
+                    <JawabanKuesioner items={this.state.jawabanKuesioner} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="row mt-5">
-                <div className="col-sm-12">
-                  <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning btn-12"
-                    table="table-kuesioner"
-                    filename={'Feedback Form Result ' + this.state.judul}
-                    sheet="Feedback Form"
-                    buttonText="Export Feedback Form to Excel" />
-                  <JawabanKuesioner items={this.state.jawabanKuesioner} />
+  
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-test"
+                      filename={'Test Result ' + this.state.judul}
+                      sheet="Test"
+                      buttonText="Export Test Result to Excel" />
+                    <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="row mt-5">
-                <div className="col-sm-12">
-                  <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning btn-12"
-                    table="table-test"
-                    filename={'Test Result ' + this.state.judul}
-                    sheet="Test"
-                    buttonText="Export Test Result to Excel" />
-                  <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
+  
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-essay"
+                      filename={'Test Result ' + this.state.judul}
+                      sheet="Test"
+                      buttonText="Export Essay Result to Excel" />
+                    <HasilEssay items={this.state.hasilEssay} />
+                  </div>
                 </div>
-              </div>
-
-              <div className="row mt-5">
-                <div className="col-sm-12">
-                  <ReactHTMLTableToExcel
-                    className="btn btn-icademy-warning btn-12"
-                    table="table-essay"
-                    filename={'Test Result ' + this.state.judul}
-                    sheet="Test"
-                    buttonText="Export Essay Result to Excel" />
-                  <HasilEssay items={this.state.hasilEssay} />
-                </div>
-              </div>
-
+                </>
+              }
             </Card.Body>
           </Card>
 
