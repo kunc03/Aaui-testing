@@ -980,6 +980,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
@@ -1107,6 +1110,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
@@ -1293,6 +1299,9 @@ class MeetingTable extends Component {
 
       is_akses: 1,
       moderator: [Storage.get('user').data.user_id],
+
+      date_start: startDate.format('YYYY-MM-DD HH:mm'),
+      date_end: checkEndDate.format('YYYY-MM-DD HH:mm'),
     }
 
     API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
