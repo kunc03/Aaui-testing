@@ -827,7 +827,11 @@ export default class WebinarRiwayat extends Component {
                         }
                       </div>
                       <br/><br/>
-                      <span style={{ fontSize: '16px', cursor:'pointer' }} onClick={() => {this.state.sign.push({ cert_sign_name: '', cert_sign_title: '', signature: '' }); this.forceUpdate();}}>+ Add Signature</span>
+                      {
+                        this.state.sign.length < 3 ?
+                        <span style={{ fontSize: '16px', cursor:'pointer' }} onClick={() => {this.state.sign.push({ cert_sign_name: '', cert_sign_title: '', signature: '' }); this.forceUpdate();}}>+ Add Signature</span>
+                        : null
+                      }
                     </div>
                   </div>
                 </Form.Group>
