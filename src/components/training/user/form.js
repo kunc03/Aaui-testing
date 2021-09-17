@@ -494,7 +494,7 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="identity">Identity Card Number<required>*</required></label>
-                                                            <input type="text" name="identity" id="identity" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="identity" id="identity" placeholder={!this.state.disabledForm && "1234567890"} maxlength="16" value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="tin">Tax Identification Number</label>
