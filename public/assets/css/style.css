@@ -12699,3 +12699,172 @@ table.info-exam > tr > td{
 .certificate-view input[type=text]{
   background:none;
 }
+
+.radius-l{
+  border-radius: 14px;
+}
+
+.option-box{
+  box-sizing: border-box;
+  width: 230.37px;
+  border: 1.5px solid #D2D2D2;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  padding:11px 11px;
+  text-align: center;
+  color: #6D7278;
+  font-size: 14px;
+  font-weight: bold;
+  margin:5px;
+  cursor:pointer;
+}
+.option-box.option-small{
+  width: 150px;
+  padding:8px;
+  font-size:9.8px;
+}
+.option-box.option-full{
+  width: 332px;
+  padding:8px;
+  font-size:9.8px;
+  margin-left:0px;
+  border: 1.4px solid #0091FF;
+  border-radius: 7px;
+  background-color: #F1FBFF;
+  color: #0158A6;
+}
+
+.option-box.option-full:hover{
+  border: 2px solid #0091FF;
+  background-color: #0091FF !important;
+  color: #FFFFFF;
+}
+
+.option-box.selected{
+  border: 2px solid #0091FF;
+  background-color: #F1FBFF;
+  color: #0158A6;
+}
+
+.icademy-field{
+  box-sizing: border-box;
+  height: 50px;
+  width: 474px;
+  border: 1.5px solid #D2D2D2;
+  border-radius: 10px;
+  background-color: #FAFBFC;
+}
+.icademy-label {
+  height: 19px;
+  color: #424242;
+  font-family: Lato;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 19px;
+}
+
+.icademy-label.icademy-label-small{
+  font-size: 11.2px;
+}
+
+.label-small {
+  font-size: 12px;
+}
+
+.icademy-rounded > .tox-tinymce{
+  border-radius: 10px;
+}
+
+.poll-modal{
+  background:#FFF;
+  border-radius:7px;
+  width:386px;
+  position:absolute;
+  top:150px;
+  right:90px;
+  box-shadow: 0 1px 17px -6px rgba(200,200,200,0.5);
+}
+
+.poll-modal > .poll-header{
+  height: 56px;
+  width: 100%;
+  border-radius: 7px 7px 0 0;
+  background-color: #F4FAFF;
+  color: #007AD7;
+  font-size: 12.6px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 17px;
+  padding:20px 27px;
+  font-family: 'Segoe UI';
+}
+
+.poll-modal > .poll-body{
+  padding:20px 27px;
+}
+
+.icademy-button-full{
+  width: 100%;
+  border-radius: 7px;
+  background-color: #0091FF;
+  border: none;
+  padding:12px;
+  color: #FFFFFF;
+  font-size: 9.8px;
+  font-weight: bold;
+  cursor:pointer;
+}
+.icademy-button-full.disabled{
+  width: 100%;
+  border-radius: 7px;
+  background-color: #E9E9E9;
+  border: none;
+  padding:12px;
+  color: #797979;
+  font-size: 9.8px;
+  font-weight: bold;
+  cursor:pointer;
+}
+.option-box > label{
+  font-size: 9px;
+  color: #6D7278;
+  font-weight: bold;
+  line-height: 10px;
+  width:100%;
+}
+.option-box > .progress-container{
+  width:100%;
+  height:11px;
+  float:left;
+}
+.option-box > .progress-container > .progress-poll{
+  width:80%;
+  height:11px;
+  background-color: none !important;
+  float:left;
+}
+.option-box > .progress-container > .progress-poll > .bar{
+  height:100%;
+  background-color: #32C5FF;
+  float:left;
+}
+.option-box > .progress-container > .percent{
+  height:100%;
+  text-align: right;
+  line-height: 11px;
+  color: #6D7278;
+  float:right;
+  font-size: 9px;
+}
+
+.poll-freetext{
+  border: 1.05px solid #D2D2D2;
+  border-radius: 7px;
+  background-color: #FAFBFC;
+  width:332px;
+  height:80px;
+  padding:7px 10px;
+  font-size: 11px;
+  line-height: 13px;
+}
