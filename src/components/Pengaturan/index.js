@@ -15,9 +15,8 @@ import Moderator from '../Global_setting/moderator';
 import Speaker from '../Global_setting/speaker';
 import Participant from '../Global_setting/participant';
 
-const ZOOM_API_KEY        = "TRFWZeTPTQGtFcnhA_06fA"
+const ZOOM_API_KEY        = "80HhtqLDQESuuhnSYOETmQ"
 const ZOOM_REDIRECT_URL   = APPS_SERVER + "zoom/callback"
-
 
 class Pengaturan extends Component {
   constructor(props) {
