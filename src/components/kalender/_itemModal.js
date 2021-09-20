@@ -24,6 +24,8 @@ class Event extends Component {
     show: false,
     setShow: false,
     webinarShow: false,
+
+    linkZoom: '',
   }
 
   handleShow(a) {
@@ -290,7 +292,7 @@ class Event extends Component {
           {
             (this.state.infoClass.is_private === 1 && Moment().isBetween(infoDateStart, infoDateEnd)) || Moment().isBetween(infoDateStart, infoDateEnd) ?
               <Modal.Footer>
-                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${this.state.infoClass.id}`}>
+                <a className="btn btn-v2 btn-primary" rel="noopener noreferrer" target='_blank' href={`/meet/${this.state.infoClass.id}`}>
                   <i className="fa fa-video"></i> Join
                 </a>
               </Modal.Footer>
