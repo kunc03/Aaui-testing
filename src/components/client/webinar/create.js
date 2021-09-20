@@ -367,7 +367,7 @@ export default class WebinarCreate extends Component {
                           null
                       }
 
-                      {/* <Form.Group className="row" controlId="formJudul">
+                      <Form.Group className="row" controlId="formJudul">
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">Engine</Form.Label>
                           <select value={this.state.engine} onChange={e => this.handleEngine(e)} name="engine" className="form-control">
@@ -378,7 +378,7 @@ export default class WebinarCreate extends Component {
                             Choose meeting engine
                           </Form.Text>
                         </div>
-                      </Form.Group> */}
+                      </Form.Group>
 
                       <h4>Roles</h4>
                       <div className="form-group row">
