@@ -362,7 +362,7 @@ export default class MeetRoomPub extends Component {
               }
             )
 
-            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
+            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.meeting_id}`);
             let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
             this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
@@ -586,14 +586,27 @@ export default class MeetRoomPub extends Component {
     this.onBotoomScroll();
   }
 
-  joinRoom() {
-    let { session } = this.state
+  joinRoom = async () => {
+    let { session, classRooms } = this.state
     if (this.state.user.name && this.state.user.email) {
       // if (!session) {
       this.addParticipant(this.state.user)
       // }
-      this.joinMeeting()
-      this.setState({ join: true, modalStart: false, welcome: false });
+
+      if (classRooms.engine === 'zoom') {
+        let getLink = await API.get(`${API_SERVER}v3/zoom/user/${this.state.classRooms.moderator}`);
+        let { error, result } = getLink.data;
+
+        if (result.length) {
+          window.open(result[0].link, '_blank').focus();
+        } else {
+          toast.warning(`Moderator haven't synced zoom yet.`)
+        }
+      } else {
+        this.joinMeeting()
+        this.setState({ join: true, modalStart: false, welcome: false });
+      }
+
     }
     else {
       this.setState({ toggle_alert: true, alertMessage: 'Please insert your name and email.' });
