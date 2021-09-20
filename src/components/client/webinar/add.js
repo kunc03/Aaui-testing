@@ -68,6 +68,9 @@ class WebinarAddClass extends Component {
     optionsImportTC: [],
     loadingImportTC: false,
 
+    // poll
+    modalPolling: false,
+
     // form tamu
     nama: '',
     email: '',
@@ -674,6 +677,10 @@ class WebinarAddClass extends Component {
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="btn btn-icademy-primary float-right"><i className="fa fa-plus"></i> Feedback Form</button>
+                    }
+                    {
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPolling: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Poll</button>
                     }
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
