@@ -1977,7 +1977,7 @@ class MeetingTable extends Component {
                 </div>
               </div>
 
-              <div className="row">
+              {/* <div className="row">
                 <div className="form-field-top-label">
                   <label for="time">Engine<required>*</required></label>
                   <MultiSelect id="engine"
@@ -1993,7 +1993,7 @@ class MeetingTable extends Component {
                     Choose meeting engine.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
             </Form>
           </Modal.Body>
