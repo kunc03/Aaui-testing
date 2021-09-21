@@ -980,10 +980,10 @@ export default class WebinarLive extends Component {
       if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
         this.setState({ startEssay: true });
         if (this.props.webinarId && this.props.voucher) {
-          this.fetchWebinarPublic()
+          this.fetchWebinarPublic(true)
         }
         else {
-          this.fetchWebinar()
+          this.fetchWebinar(true)
         }
       }
       if (data.socketAction == 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
@@ -992,10 +992,10 @@ export default class WebinarLive extends Component {
       }
       if (data.socketAction == 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher) {
-          this.fetchWebinarPublic()
+          this.fetchWebinarPublic(true)
         }
         else {
-          this.fetchWebinar()
+          this.fetchWebinar(true)
         }
         this.fetchPostTest()
       }
