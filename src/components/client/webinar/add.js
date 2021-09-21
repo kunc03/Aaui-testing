@@ -685,10 +685,6 @@ class WebinarAddClass extends Component {
                     }
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
-                      <button onClick={() => this.setState({ modalPolling: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Poll</button>
-                    }
-                    {
-                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalPosttest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Post Test</button>
                     }
                     {
