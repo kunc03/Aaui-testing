@@ -47,6 +47,7 @@ export default class WebinarRiwayat extends Component {
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
     qna: [],
+    poll: [],
     jawabanKuesioner: {
       pertanyaan: [
         "",
@@ -85,6 +86,17 @@ export default class WebinarRiwayat extends Component {
         toast.warning("Error fetch API")
       else
         this.setState({ qna: res.data.result })
+    })
+  }
+  fetchPoll() {
+    API.get(`${API_SERVER}v2/webinar-test-polling/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({ poll: res.data.result })
+        }
+      }
     })
   }
   fetchCompanyInfo() {
@@ -171,6 +183,7 @@ export default class WebinarRiwayat extends Component {
   componentDidMount() {
     this.fetchData()
     this.fetchQNA()
+    this.fetchPoll()
     this.fetchJawabanKuesioner()
     this.fetchJawabanTest()
     this.fetchEssay()
@@ -342,6 +355,8 @@ export default class WebinarRiwayat extends Component {
     doc.autoTable({ html: '#table-peserta', startY: 65, styles: {fontSize: 8}})
     doc.text("Questions", 20, doc.lastAutoTable.finalY + 10);
     doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.text("Poll", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-poll', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
     doc.text("Questioner", 20, doc.lastAutoTable.finalY + 10);
     doc.autoTable({ html: '#table-kuesioner', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
     doc.text("Pre Test & Post Test", 20, doc.lastAutoTable.finalY + 10);
@@ -479,6 +494,36 @@ export default class WebinarRiwayat extends Component {
                   <td>{item.phone}</td>
                   <td>{item.jenis_peserta == 'tamu' ? 'Guest' : 'Participants'}</td>
                   <td>{item.description}</td>
+                </tr>)
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+    );
+    const Poll = ({ items }) => (
+      <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
+        <table id="table-poll" className="table table-striped">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Question</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              items.map((item, i) => {
+                return (<tr key={i}>
+                  <td>{i+1}</td>
+                  <td><div style={{float:'left'}} dangerouslySetInnerHTML={{ __html: item.tanya }} /></td>
+                  <td>
+                    {
+                      item.answer.map((x, i)=>
+                      <><div>{x.value} ( {x.percent}% )</div>{item.answer[i+1] ? <br/> : ''}</>
+                      )
+                    }
+                  </td>
                 </tr>)
               })
             }
@@ -728,6 +773,18 @@ export default class WebinarRiwayat extends Component {
                   </div>
                 </div>
   
+                <div className="row mt-5">
+                  <div className="col-sm-12">
+                    <ReactHTMLTableToExcel
+                      className="btn btn-icademy-warning btn-12"
+                      table="table-poll"
+                      filename={'Poll ' + this.state.judul}
+                      sheet="Questions"
+                      buttonText="Export Poll to Excel" />
+                    <Poll items={this.state.poll} />
+                  </div>
+                </div>
+
                 <div className="row mt-5">
                   <div className="col-sm-12">
                     <ReactHTMLTableToExcel

@@ -28,64 +28,64 @@ export default class WebinarLive extends Component {
     submitPoll: false,
     pollResult:
     {
-      id: 1,
-      tanya: 'Do you agree ?',
-      answer: [
-        {
-          value : 'Yes',
-          percent : 60
-        },
-        {
-          value : 'No',
-          percent : 40
-        }
-      ]
+      // id: 1,
+      // tanya: 'Do you agree ?',
+      // answer: [
+      //   {
+      //     value : 'Yes',
+      //     percent : 60
+      //   },
+      //   {
+      //     value : 'No',
+      //     percent : 40
+      //   }
+      // ]
     },
     idPoll: '',
     pollFreetext: '',
     polling:[
-      {
-        id: 1,
-        tanya: 'Do you agree ?',
-        jenis: 2,
-        a: 'Yes',
-        b: 'No',
-        answer: [
-          {
-            value : 'Yes',
-            percent : 60
-          },
-          {
-            value : 'No',
-            percent : 40
-          }
-        ],
-        status: 'Finish'
-      },
-      {
-        id: 2,
-        tanya: 'Select your gender ?',
-        jenis: 1,
-        a: 'Male',
-        b: 'Female',
-        answer: [
-          {
-            value : 'Male',
-            percent : 30
-          },
-          {
-            value : 'Female',
-            percent : 70
-          }
-        ],
-        status: 'On going'
-      },
-      {
-        id:3,
-        tanya: 'How about your opinion ?',
-        jenis: 3,
-        status: 'Draft'
-      }
+      // {
+      //   id: 1,
+      //   tanya: 'Do you agree ?',
+      //   jenis: 2,
+      //   a: 'Yes',
+      //   b: 'No',
+      //   answer: [
+      //     {
+      //       value : 'Yes',
+      //       percent : 60
+      //     },
+      //     {
+      //       value : 'No',
+      //       percent : 40
+      //     }
+      //   ],
+      //   status: 'Finish'
+      // },
+      // {
+      //   id: 2,
+      //   tanya: 'Select your gender ?',
+      //   jenis: 1,
+      //   a: 'Male',
+      //   b: 'Female',
+      //   answer: [
+      //     {
+      //       value : 'Male',
+      //       percent : 30
+      //     },
+      //     {
+      //       value : 'Female',
+      //       percent : 70
+      //     }
+      //   ],
+      //   status: 'On going'
+      // },
+      // {
+      //   id:3,
+      //   tanya: 'How about your opinion ?',
+      //   jenis: 3,
+      //   status: 'Draft'
+      // }
     ],
     newPoll: false,
     createPoll:{
@@ -101,13 +101,13 @@ export default class WebinarLive extends Component {
     modalAnswerPoll: false,
     modalResultPoll: false,
     answerPoll:{
-      poll_id: '',
-      tanya: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ?',
-      jenis: 1,
-      a: 'A',
-      b: 'B',
-      c: 'C',
-      d: 'D'
+      // poll_id: '',
+      // tanya: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ?',
+      // jenis: 1,
+      // a: 'A',
+      // b: 'B',
+      // c: 'C',
+      // d: 'D'
     },
     showOpenApps: true,
     isJoin : false,
@@ -1007,7 +1007,7 @@ export default class WebinarLive extends Component {
         this.state.answerPoll.poll_id = data.poll_id;
         this.forceUpdate();
       }
-      if (data.socketAction == 'newPollSubmit' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id) {
+      if (data.socketAction == 'newPollSubmit' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1) {
         this.fetchPolling();
       }
     });
