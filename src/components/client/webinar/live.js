@@ -1153,12 +1153,12 @@ export default class WebinarLive extends Component {
         webinar_test: [this.state.createPoll]
       };
   
-      API.post(`${API_SERVER}v2/webinar-test-polling`, form).then(res => {
+      API.post(`${API_SERVER}v2/webinar-test-polling-single`, form).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.insertIds[0]}`, {status: 'On going'}).then(res2 => {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.result.insertId}`, {status: 'On going'}).then(res2 => {
               if (res2.status === 200) {
                 if (res2.data.error) {
                   toast.error('Error post data')
@@ -1168,7 +1168,7 @@ export default class WebinarLive extends Component {
                   socket.emit('send', {
                     socketAction: 'startPoll',
                     userId: this.state.user.user_id,
-                    poll_id: res.data.insertIds[0],
+                    poll_id: res.data.result.insertId,
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
