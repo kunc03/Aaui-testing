@@ -1132,7 +1132,14 @@ export default class WebinarLive extends Component {
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
-                  this.setState({newPoll: false, idPoll: '', createPoll:{}})
+                  this.setState({newPoll: false, idPoll: '', createPoll:{
+                    tanya: '',
+                    jenis: null,
+                    a: '',
+                    b: '',
+                    c: '',
+                    d: '',
+                    e: '',}})
                 }
               }
             })
@@ -1165,7 +1172,14 @@ export default class WebinarLive extends Component {
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
-                  this.setState({newPoll: false, createPoll:{}})
+                  this.setState({newPoll: false, createPoll:{
+                    tanya: '',
+                    jenis: null,
+                    a: '',
+                    b: '',
+                    c: '',
+                    d: '',
+                    e: '',}})
                 }
               }
             })
