@@ -367,7 +367,7 @@ export default class MeetRoomPub extends Component {
               }
             )
 
-            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.booking_id}`);
+            let zoomUrl = await API.get(`${API_SERVER}v2/liveclass/zoom/${this.state.classRooms.meeting_id}`);
             let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
             this.setState({isZoom:  zoomUrl.data.result.length ? true : false})
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
@@ -591,14 +591,27 @@ export default class MeetRoomPub extends Component {
     this.onBotoomScroll();
   }
 
-  joinRoom() {
-    let { session } = this.state
+  joinRoom = async () => {
+    let { session, classRooms } = this.state
     if (this.state.user.name && this.state.user.email) {
       // if (!session) {
       this.addParticipant(this.state.user)
       // }
-      this.joinMeeting()
-      this.setState({ join: true, modalStart: false, welcome: false });
+
+      if (classRooms.engine === 'zoom') {
+        let getLink = await API.get(`${API_SERVER}v3/zoom/user/${this.state.classRooms.moderator}`);
+        let { error, result } = getLink.data;
+
+        if (result.length) {
+          window.open(result[0].link, '_blank').focus();
+        } else {
+          toast.warning(`Moderator haven't synced zoom yet.`)
+        }
+      } else {
+        this.joinMeeting()
+        this.setState({ join: true, modalStart: false, welcome: false });
+      }
+
     }
     else {
       this.setState({ toggle_alert: true, alertMessage: 'Please insert your name and email.' });
@@ -613,7 +626,9 @@ export default class MeetRoomPub extends Component {
 
   notYetTime() {
     let { classRooms } = this.state
-    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${Moment(classRooms.tgl_mulai).format('HH:mm')} - ${Moment(classRooms.tgl_selesai).local().format('HH:mm')}`)
+    const jamStartDB = Moment(`${classRooms.tgl_mulai}`).local().tz(Moment.tz.guess(true))
+    const jamEndDB = Moment(`${classRooms.tgl_selesai}`).local().tz(Moment.tz.guess(true))
+    toast.info(`Schedule at ${Moment(classRooms.tgl_mulai).local().format('LL')} ${jamStartDB.format('HH:mm')} - ${jamEndDB.format('HH:mm')}`)
   }
 
   addToCalendar = (user) => {
@@ -1123,9 +1138,15 @@ export default class MeetRoomPub extends Component {
     let create_mom = this.state.gb.length && this.state.gb.filter(item => item.code === 'C_MOM')[0].status;
     const notify = () => toast.warning('Access denied')
 
-    const jamNow = this.state.jamNow
-    const infoStart = Moment(`${classRooms.tgl_mulai}`).local()
-    const infoEnd = Moment(`${classRooms.tgl_selesai}`).local()
+    const jamStartDB = Moment(`${classRooms.tgl_mulai}`).local().tz(Moment.tz.guess(true))
+    const jamEndDB = Moment(`${classRooms.tgl_selesai}`).local().tz(Moment.tz.guess(true))
+    
+    const jamNow = Moment().local()
+    const infoStart = jamStartDB.clone().tz(Moment.tz.guess(true))
+    const infoEnd = jamEndDB.clone().tz(Moment.tz.guess(true))
+
+    const diKurangi5Menit = infoStart.clone().subtract(5, "minutes")
+    const onlyModerator5Menit = classRooms.moderator === Storage.get('user').data.user_id && jamNow.isBetween(diKurangi5Menit, infoStart) ? true : false;
 
     const me = [];
     if (classRooms.hasOwnProperty('participants')) {
@@ -1851,7 +1872,7 @@ export default class MeetRoomPub extends Component {
                                           "Loading..."
                                         :
                                         <span style={{fontSize: '12px'}}>
-                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
+                                          {Moment(classRooms.tgl_mulai).local().format('LL')} {infoStart.format('HH:mm')} - {infoEnd.format('HH:mm')}
                                         </span>
                                       }    
                                     </p>
@@ -1875,7 +1896,7 @@ export default class MeetRoomPub extends Component {
                                       : null
                                     }
                                       
-                                    <button style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
+                                    <button style={onlyModerator5Menit ||jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60, backgroundColor:'#ef843c' } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }} onClick={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 shadow-2 b-r-3 f-16">
                                       Join The Meeting
                                     </button>
                                     
@@ -1984,7 +2005,7 @@ export default class MeetRoomPub extends Component {
                                 "Loading..."
                               :
                               <span style={{fontSize: '12px'}}>
-                              {Moment(classRooms.tgl_mulai).local().format('LL')} {Moment(classRooms.tgl_mulai).format('HH:mm')} - {Moment(classRooms.tgl_selesai).local().format('HH:mm')}
+                                {Moment(classRooms.tgl_mulai).local().format('LL')} {infoStart.format('HH:mm')} - {infoEnd.format('HH:mm')}
                               </span>
                             }    
                           </p>
@@ -2014,7 +2035,7 @@ export default class MeetRoomPub extends Component {
                             : null
                           }
                             
-                          <button onClick={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
+                          <button onClick={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? this.joinRoom.bind(this) : this.notYetTime.bind(this)} type="submit" className="btn btn-ideku col-12 mt-3 shadow-2 b-r-3 f-16" style={onlyModerator5Menit || jamNow.isBetween(infoStart, infoEnd) || classRooms.is_running ? { height: 60 } : { height: 60, backgroundColor: '#e9e9e9', color: '#848181' }}>
                             Join The Meeting
                           </button>
                           

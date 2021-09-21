@@ -980,6 +980,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
@@ -1059,6 +1062,8 @@ class MeetingTable extends Component {
   }
   editBooking(id) {
     let dataBooking = this.state.dataBooking.booking.filter((x) => x.id === id)[0];
+
+    const split_date = dataBooking.tgl_mulai.split('T')[0];
     this.setState({
       bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
@@ -1105,6 +1110,9 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
       }
 
       API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
@@ -1274,11 +1282,14 @@ class MeetingTable extends Component {
   }
 
   startMeetingNow = (classId, roomName) => {
+    var startDate = Moment.tz(new Date(), 'Asia/Jakarta');
+    var checkEndDate = Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours')
+    var finalEndDate = checkEndDate.format('DD-MM-YYYY') === startDate.format('DD-MM-YYYY') ? checkEndDate.format('HH:mm') : '23:59';
     let form = {
       meeting_id: classId,
       tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
-      jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
-      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours').format('HH:mm'),
+      jam_mulai: startDate.format('HH:mm'),
+      jam_selesai: finalEndDate,
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
@@ -1288,6 +1299,9 @@ class MeetingTable extends Component {
 
       is_akses: 1,
       moderator: [Storage.get('user').data.user_id],
+
+      date_start: startDate.format('YYYY-MM-DD HH:mm'),
+      date_end: checkEndDate.format('YYYY-MM-DD HH:mm'),
     }
 
     API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
@@ -1656,23 +1670,23 @@ class MeetingTable extends Component {
                                     }
                                   </td>
                                   <td>
-                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Information</span>
                                     {
                                       //checkParty && range 
                                       item.isJoin || (checkParty && range) ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                          <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
                                         </a>
                                         : null
                                     }
                                     {
                                       item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                        <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                         : null
                                     }
                                     {
                                       item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                        <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                         : null
                                     }
                                   </td>
@@ -2211,23 +2225,23 @@ class MeetingTable extends Component {
                                 }
                               </td>
                               <td>
-                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em", cursor: 'pointer' }} >Information</span>
                                 {
                                   // checkParty && range
                                   item.isJoin || (checkParty && range) ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                      <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                      <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
                                     </a>
                                     : null
                                 }
                                 {
                                   item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                    <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                     : null
                                 }
                                 {
                                   item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                    <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                     : null
                                 }
                               </td>

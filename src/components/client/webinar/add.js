@@ -10,6 +10,7 @@ import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../files/_files';
 import TableMeetings from '../../meeting/meeting';
 import WebinarKuesionerAdd from './kuesioneradd';
+import WebinarPollAdd from './polladd';
 import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
 import WebinarPollingAdd from './pollingadd';
@@ -68,6 +69,9 @@ class WebinarAddClass extends Component {
     importIdTC: [],
     optionsImportTC: [],
     loadingImportTC: false,
+
+    // poll
+    modalPolling: false,
 
     // form tamu
     nama: '',
@@ -133,6 +137,7 @@ class WebinarAddClass extends Component {
       modalPretest: false,
       modalPosttest: false,
       modalEssay: false,
+      modalPolling: false,
     });
   }
 
@@ -680,6 +685,10 @@ class WebinarAddClass extends Component {
                     }
                     {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPolling: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Poll</button>
+                    }
+                    {
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalPosttest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Post Test</button>
                     }
                     {
@@ -687,7 +696,7 @@ class WebinarAddClass extends Component {
                       <button onClick={() => this.setState({ modalPretest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                     {
-                      this.state.id && (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalEssay: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Essay</button>
                     }
                     {
@@ -1129,6 +1138,24 @@ class WebinarAddClass extends Component {
               >
                 Close
               </button> */}
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalPolling}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Poll
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="form-group">
+                <WebinarPollAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
             </Modal.Body>
           </Modal>
           <Modal
