@@ -2320,7 +2320,7 @@ export default class WebinarLive extends Component {
                         }
                       }
                     }}>
-                      <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: item.tanya.length >50 ? `${item.tanya.substring(0, 50)}...` : item.tanya }} />
+                      <div style={{float:'left', wordBreak:'break-word'}} dangerouslySetInnerHTML={{ __html: item.tanya.length >30 ? `${item.tanya.substring(0, 30)}...` : item.tanya }} />
                       <span style={{float:'right', fontSize:'11px', fontWeight:'normal'}}>{item.status}</span>
                       {
                         (item.status === 'On going' || item.show) ?
@@ -2508,8 +2508,8 @@ export default class WebinarLive extends Component {
                 <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeAnswerPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
-                <label style={{color:'rgba(0,0,0,0.85)', float:'left'}}>
-                  <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.answerPoll.tanya }} />
+                <label style={{color:'rgba(0,0,0,0.85)', float:'left', wordBreak:'break-word'}}>
+                  <div dangerouslySetInnerHTML={{ __html: this.state.answerPoll.tanya }} />
                 </label>
                       <label className="icademy-label icademy-label-small" style={{float:'left', clear:'both'}}>{this.state.answerPoll.jenis === 3 ? 'Fill your answer' : 'Choose your answer'}</label>
                       <div className="row" style={{marginLeft:'0px', float:'left', clear:'both'}}>
@@ -2568,8 +2568,8 @@ export default class WebinarLive extends Component {
                 <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeResultPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
-                <label style={{color:'rgba(0,0,0,0.85)'}}>
-                  <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                <label style={{color:'rgba(0,0,0,0.85)', wordBreak:'break-word'}}>
+                  <div style={{float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
                 </label>
                 <div className="option-box" style={{border:'none', padding:'0px', width:'100%', margin:'0px', marginBottom:'10px'}}>
                         {
