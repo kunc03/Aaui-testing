@@ -1,18 +1,11 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import API, { API_SERVER } from '../../../repository/api';
 import { toast } from "react-toastify";
 import { Editor } from '@tinymce/tinymce-react';
 
-const Msg = ({ msg, closeToast, toastProps }) => (
-  <div>
-    <Fragment>Question <div dangerouslySetInnerHTML={{ __html: msg }}></div> The answer to that question has not been set.</Fragment>
-  </div>
-)
-
-export default class WebinarPosttestAdd extends Component {
+export default class WebinarKuesionerAdd extends Component {
 
   state = {
-    waktu: 0,
     update: false,
     webinarId: this.props.webinarId ? this.props.webinarId : '',
     pertanyaan: [
@@ -44,13 +37,6 @@ export default class WebinarPosttestAdd extends Component {
     })
   }
 
-  handleJawaban = (e, i) => {
-    const { value } = e.target;
-    let newObj = [...this.state.pertanyaan];
-
-    newObj[i]['jawab'] = value;
-    this.setState({ pertanyaan: newObj });
-  }
   handleDynamicInput = (e, i) => {
     let newObj = [...this.state.pertanyaan];
     if (e.hasOwnProperty('target')) {
@@ -61,94 +47,73 @@ export default class WebinarPosttestAdd extends Component {
       newObj[i].tanya = e;
       this.setState({ pertanyaan: newObj });
     }
-    // const { value, name } = e.target;
-    // let newObj = [...this.state.pertanyaan];
-
-    // newObj[i][name] = value;
-    // this.setState({ pertanyaan: newObj });
   }
 
   onClickHapusPertanyaan = (e) => {
     let dataIndex = e.target.getAttribute('data-id');
     let dataID = e.target.getAttribute('data-index');
-    API.delete(`${API_SERVER}v2/webinar-test/pertanyaan/${dataIndex}`).then(res => {
-      if (res.data.error) toast.warning("Failed to delete");
-
-      toast.success("Post test question deleted")
+    console.log(dataIndex)
+    if (dataIndex) {
+      API.delete(`${API_SERVER}v2/kuesioner/pertanyaan/${dataIndex}`).then(res => {
+        if (res.data.error) toast.warning("Gagal menghapus data");
+  
+        toast.success("Data kuesioner terhapus")
+        let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
+        this.setState({
+          pertanyaan: kurangi
+        })
+      })
+    } else {
       let kurangi = this.state.pertanyaan.filter((item, i) => i !== parseInt(dataID));
       this.setState({
         pertanyaan: kurangi
       })
-    })
+    }
   }
 
   saveKuesioner() {
-    if (this.state.waktu === 0){
-      toast.warning('You have to fill working duration');
-    }
-    else{
-      let form = {
-        id: this.state.webinarId,
-        webinar_test: this.state.pertanyaan,
-        jenis: 1,
-        waktu: this.state.waktu
-      };
-  
-      if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
+    let form = {
+      id: this.state.webinarId,
+      kuesioner: this.state.pertanyaan,
+    };
+
+    API.post(`${API_SERVER}v2/kuesioner`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error post data')
+        } else {
+          toast.success(`Menyimpan kuesioner`)
+          this.props.closeModal()
+        }
       }
-      else {
-        API.post(`${API_SERVER}v2/webinar-test`, form).then(res => {
-          if (res.status === 200) {
-            if (res.data.error) {
-              toast.error('Error post data')
-            } else {
-              toast.success(`Saved`)
-              this.props.closeModal()
-            }
-          }
-        })
-      }
-    }
+    })
   }
 
   updateKuesioner() {
-    if (this.state.waktu === 0){
-      toast.warning('You have to fill working duration');
-    }
-    else{
-      let form = {
-        id: this.state.webinarId,
-        webinar_test: this.state.pertanyaan,
-        jenis: 1,
-        waktu: this.state.waktu
-      };
-  
-      if (form.webinar_test.filter(item => !item.jawab).length > 0) {
-        toast.warning(<Msg msg={form.webinar_test.filter(item => !item.jawab)[0].tanya} />)
+    let form = {
+      id: this.state.webinarId,
+      kuesioner: this.state.pertanyaan,
+    };
+
+    API.put(`${API_SERVER}v2/kuesioner`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error post data')
+        } else {
+          toast.success(`Menyimpan kuesioner`)
+          this.props.closeModal()
+        }
       }
-      else {
-        API.put(`${API_SERVER}v2/webinar-test`, form).then(res => {
-          if (res.status === 200) {
-            if (res.data.error) {
-              toast.error('Error post data')
-            } else {
-              toast.success(`Saved`)
-              this.props.closeModal()
-            }
-          }
-        })
-      }
-    }
+    })
   }
 
   fetchData() {
-    API.get(`${API_SERVER}v2/webinar-test/${this.state.webinarId}/1`).then(res => {
+    API.get(`${API_SERVER}v2/kuesioner/${this.state.webinarId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({ pertanyaan: res.data.result, waktu: res.data.waktu })
+          this.setState({ pertanyaan: res.data.result })
           if (this.state.pertanyaan.length <= 0) {
             this.setState({ update: false })
           }
@@ -169,91 +134,27 @@ export default class WebinarPosttestAdd extends Component {
     this.setState({ loading: true });
     let form = new FormData();
     form.append('webinarId', this.state.webinarId);
-    form.append('jenis', 1);
     form.append('excel', this.state.formFile);
 
-    API.post(`${API_SERVER}v2/webinar-test/import`, form).then(res => {
+    API.post(`${API_SERVER}v2/kuesioner/import`, form).then(res => {
       if (res.data.error) toast.warning("Error import data");
 
-      toast.success("Success import post test")
+      toast.success("Berhasil import kuesioner")
       this.setState({ loading: false })
       this.fetchData();
     })
   }
 
   render() {
-
-    //console.log('state: ', this.state);
-
-    // const DaftarPertanyaan = ({items}) => (
-    //   <div>
-    //     {
-    //       items.map((item,i) => (
-    //         <div className="form-group">
-    //           <label>Pertanyaan {i+1}</label>
-    //           <span className="float-right">
-    //             <i data-index={i} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{cursor: 'pointer'}}></i>
-    //           </span>
-    //           <textarea onChange={e => this.handleDynamicInput(e, i)} name="tanya" className="form-control" rows="3" value={item.tanya} />
-
-    //           <div className="jawaban mt-3 ml-4">
-    //             <label>Tambahkan Jawaban</label>
-    //             <tr>
-    //               <td>
-    //                 A
-    //               </td>
-    //               <td>
-    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.a} className="form-control" style={{width: '460px'}} />
-    //               </td>
-    //             </tr>
-    //             <tr>
-    //               <td>
-    //                 B
-    //               </td>
-    //               <td>
-    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{width: '460px'}} />
-    //               </td>
-    //             </tr>
-    //             <tr>
-    //               <td>
-    //                 C
-    //               </td>
-    //               <td>
-    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{width: '460px'}} />
-    //               </td>
-    //             </tr>
-    //             <tr>
-    //               <td>
-    //                 D
-    //               </td>
-    //               <td>
-    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{width: '460px'}} />
-    //               </td>
-    //             </tr>
-    //             <tr>
-    //               <td>
-    //                 E
-    //               </td>
-    //               <td>
-    //                 <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{width: '460px'}} />
-    //               </td>
-    //             </tr>
-    //           </div>
-    //         </div>
-    //       ))
-    //     }
-    //   </div>
-    // );
-
     return (
       <div className="row">
         <div className="col-sm-12">
           <div style={{ marginTop: '10px' }}>
-            <form onSubmit={this.submitImport} role="form" className="form-vertical">
+            <form onSubmit={this.submitImport} className="form-vertical">
               <div className="form-group row">
                 <div className="col-sm-3">
                   <label>Template Excel</label>
-                  <a href={`${API_SERVER}attachment/template-test.xlsx`} target="_blank" className="btn btn-primary">Download</a>
+                  <a href={`${API_SERVER}attachment/template.xlsx`} target="_blank" className="btn btn-primary">Download</a>
                 </div>
                 <div className="col-sm-6">
                   <label>Import Excel</label>
@@ -269,15 +170,11 @@ export default class WebinarPosttestAdd extends Component {
 
             <div className="row mt-4">
               <div className="col-sm-12">
-                <div className="form-group">
-                  <label className="bold"> Working Duration (Minutes)</label>
-                  <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
-                </div>
 
                 {
                   this.state.pertanyaan.map((item, i) => (
-                    <div className="form-group">
-                      <label>Question {i + 1}</label>
+                    <div className="form-group" key={i+'in'}>
+                      <h6 className="f-w-900 f-16 fc-blue">Ask a Question {i + 1}</h6>
                       <span className="float-right">
                         <i data-index={i} data-id={item.id} onClick={this.onClickHapusPertanyaan} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                       </span>
@@ -334,11 +231,25 @@ export default class WebinarPosttestAdd extends Component {
                         onEditorChange={e => this.handleDynamicInput(e, i)}
                       />
 
+                      <h6 className="f-w-900 f-16 fc-blue mt-4">Response Type</h6>
+                      <label>Choose your response type</label>
+
+                      <div className="row">
+                        <div className="col-sm-6">
+                          <button className="btn btn-block">True / False</button>
+                          <button className="btn btn-block">Yes / No / Abstention</button>
+                        </div>
+                        <div className="col-sm-6">
+                          <button className="btn btn-block">A / B / C / D</button>
+                          <button className="btn btn-block">User Response</button>
+                        </div>
+                      </div>
+
                       <div className="jawaban mt-3 ml-4">
-                        <label>Add Post test Answers</label>
+                        <label>Add Answers to the Feedback Form</label>
                         <tr>
                           <td>
-                            <input name={i} checked={item.jawab === 'a' ? true : false} type="radio" value="a" onChange={e => this.handleJawaban(e, i)} /> A
+                            A
                               </td>
                           <td>
                             <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="a" value={item.a} className="form-control" style={{ width: '460px' }} />
@@ -346,7 +257,7 @@ export default class WebinarPosttestAdd extends Component {
                         </tr>
                         <tr>
                           <td>
-                            <input name={i} checked={item.jawab === 'b' ? true : false} type="radio" value="b" onChange={e => this.handleJawaban(e, i)} /> B
+                            B
                               </td>
                           <td>
                             <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="b" value={item.b} className="form-control" style={{ width: '460px' }} />
@@ -354,7 +265,7 @@ export default class WebinarPosttestAdd extends Component {
                         </tr>
                         <tr>
                           <td>
-                            <input name={i} checked={item.jawab === 'c' ? true : false} type="radio" value="c" onChange={e => this.handleJawaban(e, i)} /> C
+                            C
                               </td>
                           <td>
                             <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="c" value={item.c} className="form-control" style={{ width: '460px' }} />
@@ -362,7 +273,7 @@ export default class WebinarPosttestAdd extends Component {
                         </tr>
                         <tr>
                           <td>
-                            <input name={i} checked={item.jawab === 'd' ? true : false} type="radio" value="d" onChange={e => this.handleJawaban(e, i)} /> D
+                            D
                               </td>
                           <td>
                             <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="d" value={item.d} className="form-control" style={{ width: '460px' }} />
@@ -370,7 +281,7 @@ export default class WebinarPosttestAdd extends Component {
                         </tr>
                         <tr>
                           <td>
-                            <input name={i} checked={item.jawab === 'e' ? true : false} type="radio" value="e" onChange={e => this.handleJawaban(e, i)} /> E
+                            E
                               </td>
                           <td>
                             <input type="text" onChange={e => this.handleDynamicInput(e, i)} name="e" value={item.e} className="form-control" style={{ width: '460px' }} />
