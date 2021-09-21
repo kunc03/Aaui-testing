@@ -12802,6 +12802,7 @@ table.info-exam > tr > td{
 
 .poll-modal > .poll-body{
   padding:20px 27px;
+  width:100%;
   float:left;
 }
 
