@@ -101,6 +101,7 @@ export default class WebinarLive extends Component {
     modalAnswerPoll: false,
     modalResultPoll: false,
     answerPoll:{
+      poll_id: '',
       tanya: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ?',
       jenis: 1,
       a: 'A',
@@ -1150,9 +1151,9 @@ export default class WebinarLive extends Component {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.insertId}`, {status: 'On going'}).then(res => {
-              if (res.status === 200) {
-                if (res.data.error) {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.insertIds[0]}`, {status: 'On going'}).then(res2 => {
+              if (res2.status === 200) {
+                if (res2.data.error) {
                   toast.error('Error post data')
                 } else {
                   toast.success(`Sending poll to participants`)
@@ -1160,6 +1161,7 @@ export default class WebinarLive extends Component {
                   socket.emit('send', {
                     socketAction: 'startPoll',
                     userId: this.state.user.user_id,
+                    poll_id: res.data.insertIds[0],
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
@@ -1508,20 +1510,20 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
-                      <button onClick={() => this.setState({ modalAnswerPoll: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Answer Poll
-                      </button>
-                      :
-                      null
+                    // (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
+                    //   <button onClick={() => this.setState({ modalAnswerPoll: true })} className="float-right btn btn-icademy-primary mr-2">
+                    //     <i className="fa fa-paper-plane"></i>Answer Poll
+                    //   </button>
+                    //   :
+                    //   null
                   }
                   {
-                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
-                      <button onClick={() => this.setState({ modalResultPoll: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Poll Result
-                      </button>
-                      :
-                      null
+                    // (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
+                    //   <button onClick={() => this.setState({ modalResultPoll: true })} className="float-right btn btn-icademy-primary mr-2">
+                    //     <i className="fa fa-paper-plane"></i>Poll Result
+                    //   </button>
+                    //   :
+                    //   null
                   }
                   
                 </div>
@@ -2566,7 +2568,9 @@ export default class WebinarLive extends Component {
                 <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeResultPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
-                <label style={{color:'rgba(0,0,0,0.85)'}}>{this.state.pollResult.tanya}</label>
+                <label style={{color:'rgba(0,0,0,0.85)'}}>
+                  <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                </label>
                 <div className="option-box" style={{border:'none', padding:'0px', width:'100%', margin:'0px', marginBottom:'10px'}}>
                         {
                           this.state.pollResult.answer.map((x)=>
