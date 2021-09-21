@@ -1136,7 +1136,7 @@ class WebinarAddClass extends Component {
               </button> */}
             </Modal.Body>
           </Modal>
-          <Modal
+          {/* <Modal
             show={this.state.modalPolling}
             onHide={this.handleModal}
             dialogClassName="modal-lg"
@@ -1153,7 +1153,7 @@ class WebinarAddClass extends Component {
                 <WebinarPollAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
-          </Modal>
+          </Modal> */}
           <Modal
             show={this.state.modalKuesioner}
             onHide={this.handleModal}
