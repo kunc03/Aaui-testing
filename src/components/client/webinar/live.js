@@ -11,9 +11,10 @@ import TableFiles from '../../files/_files';
 import moment from 'moment-timezone';
 import Timer from 'react-compound-timer';
 import io from 'socket.io-client';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isIOS } from 'react-device-detect';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Fragment } from 'react';
+import { None } from 'amazon-chime-sdk-js';
 const bbb = require('bigbluebutton-js')
 
 const socket = io(`${API_SOCKET}`);
@@ -24,6 +25,91 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
   state = {
+    submitPoll: false,
+    pollResult:
+    {
+      // id: 1,
+      // tanya: 'Do you agree ?',
+      // answer: [
+      //   {
+      //     value : 'Yes',
+      //     percent : 60
+      //   },
+      //   {
+      //     value : 'No',
+      //     percent : 40
+      //   }
+      // ]
+    },
+    idPoll: '',
+    pollFreetext: '',
+    polling:[
+      // {
+      //   id: 1,
+      //   tanya: 'Do you agree ?',
+      //   jenis: 2,
+      //   a: 'Yes',
+      //   b: 'No',
+      //   answer: [
+      //     {
+      //       value : 'Yes',
+      //       percent : 60
+      //     },
+      //     {
+      //       value : 'No',
+      //       percent : 40
+      //     }
+      //   ],
+      //   status: 'Finish'
+      // },
+      // {
+      //   id: 2,
+      //   tanya: 'Select your gender ?',
+      //   jenis: 1,
+      //   a: 'Male',
+      //   b: 'Female',
+      //   answer: [
+      //     {
+      //       value : 'Male',
+      //       percent : 30
+      //     },
+      //     {
+      //       value : 'Female',
+      //       percent : 70
+      //     }
+      //   ],
+      //   status: 'On going'
+      // },
+      // {
+      //   id:3,
+      //   tanya: 'How about your opinion ?',
+      //   jenis: 3,
+      //   status: 'Draft'
+      // }
+    ],
+    newPoll: false,
+    createPoll:{
+      tanya: '',
+      jenis: null,
+      a: '',
+      b: '',
+      c: '',
+      d: '',
+      e: '',
+    },
+    modalSendPoll: false,
+    modalAnswerPoll: false,
+    modalResultPoll: false,
+    answerPoll:{
+      // poll_id: '',
+      // tanya: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ?',
+      // jenis: 1,
+      // a: 'A',
+      // b: 'B',
+      // c: 'C',
+      // d: 'D'
+    },
+    showOpenApps: true,
     isJoin : false,
     showDescription : false,
     isLoadingPage : true,
@@ -234,7 +320,7 @@ export default class WebinarLive extends Component {
           toast.success('Essay submission sent')
           this.setState({ isLoading: false })
           socket.emit('send', {
-            socketAction: 'senfeEssay',
+            socketAction: 'sendEssay',
             webinar_id: this.state.webinarId
           })
           if (this.props.webinarId && this.props.voucher) {
@@ -841,15 +927,26 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  fetchPolling(){
+    API.get(`${API_SERVER}v2/webinar-test-polling/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({ polling: res.data.result })
+        }
+      }
+    })
+  }
   componentDidMount() {
-    if (isMobile) {
-      if (this.props.webinarId && this.props.voucher){
-        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar-guest/' + this.props.webinarId + '/' + this.props.voucher))
-      }
-      else{
-        window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
-      }
-    }
+    // if (isMobile) {
+    //   if (this.props.webinarId && this.props.voucher){
+    //     window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar-guest/' + this.props.webinarId + '/' + this.props.voucher))
+    //   }
+    //   else{
+    //     window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'webinar/live/' + this.state.webinarId))
+    //   }
+    // }
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
       if (data.webinar_id == this.state.webinarId) {
@@ -901,6 +998,17 @@ export default class WebinarLive extends Component {
           this.fetchWebinar()
         }
         this.fetchPostTest()
+      }
+      if (data.socketAction == 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id) {
+        this.setState({ pollResult: data.data, modalResultPoll: true });
+      }
+      if (data.socketAction == 'startPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id) {
+        this.setState({ answerPoll: data.data, modalAnswerPoll: true });
+        this.state.answerPoll.poll_id = data.poll_id;
+        this.forceUpdate();
+      }
+      if (data.socketAction == 'newPollSubmit' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1) {
+        this.fetchPolling();
       }
     });
     if (this.props.webinarId && this.props.voucher) {
@@ -997,7 +1105,168 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  startPoll(){
+    if (this.state.idPoll){
+      let form = {
+        webinar_id: this.state.webinarId,
+        id: this.state.idPoll,
+        webinar_test: [this.state.createPoll]
+      };
+  
+      API.put(`${API_SERVER}v2/webinar-test-polling/${form.id}`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Error post data')
+          } else {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${form.id}`, {status: 'On going'}).then(res => {
+              if (res.status === 200) {
+                if (res.data.error) {
+                  toast.error('Error post data')
+                } else {
+                  toast.success(`Sending poll to participants`)
+                  this.fetchPolling();
+                  socket.emit('send', {
+                    socketAction: 'startPoll',
+                    userId: this.state.user.user_id,
+                    poll_id: this.state.idPoll,
+                    webinar_id: this.state.webinarId,
+                    data: this.state.createPoll
+                  })
+                  this.setState({newPoll: false, idPoll: '', createPoll:{}})
+                }
+              }
+            })
+          }
+        }
+      })
+    }
+    else{
+      let form = {
+        id: this.state.webinarId,
+        webinar_test: [this.state.createPoll]
+      };
+  
+      API.post(`${API_SERVER}v2/webinar-test-polling`, form).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Error post data')
+          } else {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.insertIds[0]}`, {status: 'On going'}).then(res2 => {
+              if (res2.status === 200) {
+                if (res2.data.error) {
+                  toast.error('Error post data')
+                } else {
+                  toast.success(`Sending poll to participants`)
+                  this.fetchPolling();
+                  socket.emit('send', {
+                    socketAction: 'startPoll',
+                    userId: this.state.user.user_id,
+                    poll_id: res.data.insertIds[0],
+                    webinar_id: this.state.webinarId,
+                    data: this.state.createPoll
+                  })
+                  this.setState({newPoll: false, createPoll:{}})
+                }
+              }
+            })
+          }
+        }
+      })
+    }
+  }
+  publishPoll(data){
+    if (data.status === 'Finish'){
+      toast.success(`Sending poll result to participants`)
+      socket.emit('send', {
+        socketAction: 'publishPoll',
+        userId: this.state.user.user_id,
+        webinar_id: this.state.webinarId,
+        data: data
+      })
+    }
+    else{
+      API.put(`${API_SERVER}v2/webinar-test-polling-status/${data.id}`, {status: 'Finish'}).then(res => {
+        if (res.status === 200) {
+          if (res.data.error) {
+            toast.error('Error post data')
+          } else {
+            toast.success(`Sending poll result to participants`)
+            this.fetchPolling();
+            socket.emit('send', {
+              socketAction: 'publishPoll',
+              userId: this.state.user.user_id,
+              webinar_id: this.state.webinarId,
+              data: data
+            })
+          }
+        }
+      })
+    }
+  }
 
+  submitPoll(value){
+    let form = {
+      user_id : this.state.user.user_id,
+      pengguna : this.state.user.type ? 0 : 1,
+      poll_id : this.state.answerPoll.poll_id,
+      answer : value
+    };
+    this.setState({submitPoll: true});
+    API.post(`${API_SERVER}v2/webinar-test-polling-submit`, form).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error post data')
+        } else {
+          socket.emit('send', {
+            socketAction: 'newPollSubmit',
+            userId: this.state.user.user_id,
+            webinar_id: this.state.webinarId
+          })
+          this.setState({submitPoll: false, modalAnswerPoll: false});
+          toast.success('Poll submited');
+        }
+      }
+    })
+  }
+
+  selectType(type){
+    this.state.createPoll.jenis=type;
+    if (type === 0){
+        this.state.createPoll.a='True';
+        this.state.createPoll.b='False';
+        this.state.createPoll.c='';
+        this.state.createPoll.d='';
+        this.state.createPoll.e='';
+    }
+    else if (type === 1){
+        this.state.createPoll.a='A';
+        this.state.createPoll.b='B';
+        this.state.createPoll.c='C';
+        this.state.createPoll.d='D';
+        this.state.createPoll.e='';
+    }
+    else if (type === 2){
+        this.state.createPoll.a='Yes';
+        this.state.createPoll.b='No';
+        this.state.createPoll.c='Abstention';
+        this.state.createPoll.d='';
+        this.state.createPoll.e='';
+    }
+    this.forceUpdate();
+  }
+
+  closeSendPoll(){
+    this.setState({modalSendPoll: false, newPoll: false, createPoll: {}})
+  }
+  closeAnswerPoll(){
+    this.setState({modalAnswerPoll: false})
+  }
+  closeResultPoll(){
+    this.setState({modalResultPoll: false})
+  }
+  backPoll(){
+    this.setState({newPoll: false, createPoll: {}, idPoll:''})
+  }
   sendKuesioner() {
     API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
       if (res.status === 200) {
@@ -1040,6 +1309,22 @@ export default class WebinarLive extends Component {
   handleDynamicInput = (e) => {
       this.setState({ webinar: {...this.state.webinar, essay: e } });
   }
+  handleDynamicInputPoll = (e) => {
+    let newObj = this.state.createPoll;
+    if (e.hasOwnProperty('target')) {
+      const { value, name } = e.target;
+      newObj[name] = value;
+      this.setState({ createPoll: newObj });
+    } else {
+      newObj.tanya = e;
+      this.setState({ createPoll: newObj });
+    }
+    // const { value, name } = e.target;
+    // let newObj = [...this.state.pertanyaan];
+
+    // newObj[i][name] = value;
+    // this.setState({ pertanyaan: newObj });
+  }
 
   handleDynamicInputEssay = (e) => {
       this.setState({ jawabanEssayKu: e });
@@ -1062,7 +1347,9 @@ export default class WebinarLive extends Component {
   }
 
   render() {
-    console.log('state: ', this.state)
+    let plainURL = `${APPS_SERVER}webinar/live/${this.state.webinarId}`;
+    let lengthURL = plainURL.length;
+    let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -1213,6 +1500,30 @@ export default class WebinarLive extends Component {
                       </button>
                       :
                       null
+                  }
+                  {
+                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                      <button onClick={() => {this.fetchPolling();this.setState({ modalSendPoll: true })}} className="float-right btn btn-icademy-primary mr-2">
+                        <i className="fa fa-paper-plane"></i>Polling
+                      </button>
+                      :
+                      null
+                  }
+                  {
+                    // (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
+                    //   <button onClick={() => this.setState({ modalAnswerPoll: true })} className="float-right btn btn-icademy-primary mr-2">
+                    //     <i className="fa fa-paper-plane"></i>Answer Poll
+                    //   </button>
+                    //   :
+                    //   null
+                  }
+                  {
+                    // (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) ?
+                    //   <button onClick={() => this.setState({ modalResultPoll: true })} className="float-right btn btn-icademy-primary mr-2">
+                    //     <i className="fa fa-paper-plane"></i>Poll Result
+                    //   </button>
+                    //   :
+                    //   null
                   }
                   
                 </div>
@@ -1962,6 +2273,339 @@ export default class WebinarLive extends Component {
             }
           </Modal.Body>
         </Modal>
+        {
+          this.state.modalSendPoll ?
+            <div className="poll-modal">
+              <div className="poll-header">
+                {
+                  this.state.newPoll ?
+                  <i className="fa fa-chevron-left" style={{float:'left', cursor:'pointer', lineHeight:'18px', fontSize:'16px', marginRight:'10px'}} onClick={this.backPoll.bind(this)}></i>
+                  : null
+                }
+                Polling
+                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeSendPoll.bind(this)}></i>
+              </div>
+              <div className="poll-body">
+                {
+                  this.state.newPoll ? null :
+                  <label>{this.state.polling.length ? 'Click the poll to broadcast the question.' : 'You have no poll, click Add Poll to create a new one.'}</label>
+                }
+                <div className="row">
+                  {
+                    this.state.newPoll ? null :
+                    this.state.polling.map((item)=>
+                    <span className={`option-box ${item.status === 'Finish' ? 'selected' : ''}`} style={{width:'100%', textAlign:'left'}}
+                    onClick={()=> {
+                      if (item.status !== 'Draft'){
+                        item.show = item.show ? !item.show : true; this.forceUpdate()
+                      }
+                      else{
+                        if (this.state.polling.filter(x=> x.status === 'On going').length){
+                          toast.warning('You should finish the on going poll before start another poll')
+                        }
+                        else{
+                          this.setState({
+                            idPoll: item.id,
+                            newPoll: true,
+                            createPoll:{
+                              tanya: item.tanya,
+                              jenis: item.jenis,
+                              a: item.a ? item.a : '',
+                              b: item.b ? item.b : '',
+                              c: item.c ? item.c : '',
+                              d: item.d ? item.d : '',
+                              e: item.e ? item.e : '',
+                            }
+                          })
+                        }
+                      }
+                    }}>
+                      <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: item.tanya.length >50 ? `${item.tanya.substring(0, 50)}...` : item.tanya }} />
+                      <span style={{float:'right', fontSize:'11px', fontWeight:'normal'}}>{item.status}</span>
+                      {
+                        (item.status === 'On going' || item.show) ?
+                        <>
+                        {
+                          item.answer.map((x)=>
+                          <>
+                          <label>{x.value}</label>
+                          <div className="progress-container">
+                            <div className="progress-poll">
+                              <div className="bar" style={{width: `${x.percent}%`}}/>
+                            </div>
+                            <div className="percent">
+                              {x.percent}%
+                            </div>
+                          </div>
+                          </>
+                          )
+                        }
+                        <span className={`option-box option-full`} style={{float:'left', marginTop:'10px'}} onClick={this.publishPoll.bind(this, item)}>
+                            Publish Poll
+                        </span>
+                        </>
+                        : null
+                      }
+                    </span>
+                    )
+                  }
+                </div>
+                {
+                  this.state.newPoll ?
+                  <div className="form-group icademy-rounded">
+                    <label className="icademy-label icademy-label-small">Ask a Question</label>
+                    <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
+                    <Editor
+                      apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                      initialValue={this.state.createPoll.tanya}
+                      value={this.state.createPoll.tanya}
+                      style={{borderRadius:10}}
+                      init={{
+                        height: 200,
+                        menubar: false,
+                        convert_urls: false,
+                        image_class_list: [
+                          { title: 'None', value: '' },
+                          { title: 'Responsive', value: 'img-responsive' },
+                          { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                        ],
+                        file_browser_callback_types: 'image media',
+                        file_picker_callback: function (callback, value, meta) {
+                          if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                            var input = document.getElementById(`myFile`);
+                            input.click();
+                            input.onchange = function () {
+
+                              var dataForm = new FormData();
+                              dataForm.append('file', this.files[0]);
+
+                              window.$.ajax({
+                                url: `${API_SERVER}v2/media/upload`,
+                                type: 'POST',
+                                data: dataForm,
+                                processData: false,
+                                contentType: false,
+                                success: (data) => {
+                                  callback(data.result.url);
+                                  this.value = '';
+                                }
+                              })
+
+                            };
+                          }
+                        },
+                        plugins: [
+                          "advlist autolink lists link image charmap print preview anchor",
+                          "searchreplace visualblocks code fullscreen",
+                          "insertdatetime media table paste code help wordcount"
+                        ],
+                        toolbar:
+                          // eslint-disable-next-line no-multi-str
+                          "undo redo | bold italic backcolor | \
+                          alignleft aligncenter alignright alignjustify | image media | \
+                          bullist numlist outdent indent | removeformat | help"
+                      }}
+                      onEditorChange={e => this.handleDynamicInputPoll(e)}
+                    />
+
+                    <div className="jawaban mt-3">
+                      <label className="icademy-label icademy-label-small">Response Type</label>
+                      <div className="row" style={{marginLeft:'0px'}}>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.selectType.bind(this, 0)}>
+                              True / False
+                          </span>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis===1 && 'selected'}`} onClick={this.selectType.bind(this, 1)}>
+                              A / B / C / D
+                          </span>
+                      </div>
+                      <div className="row" style={{marginLeft:'0px'}}>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis===2 && 'selected'}`} onClick={this.selectType.bind(this, 2)} style={{clear:'both'}}>
+                              Yes / No / Abstention
+                          </span>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis===3 && 'selected'}`} onClick={this.selectType.bind(this, 3)}>
+                              User Response
+                          </span>
+                      </div>
+                    </div>
+                    <div className="jawaban mt-3">
+                      <label className="icademy-label icademy-label-small">
+                          {
+                              this.state.createPoll.jenis === 0 ? 'True / False' :
+                              this.state.createPoll.jenis === 1 ? 'A / B / C / D' :
+                              this.state.createPoll.jenis === 2 ? 'Yes / No / Abstention' :
+                              this.state.createPoll.jenis === 3 ? 'User Response' :
+                              ''
+                          }
+                      </label>
+                      {
+                          this.state.createPoll.jenis === null ? '' :
+                          this.state.createPoll.jenis === 3 ?
+                          <div>
+                              <div style={{width:'100%'}}>
+                                  <label>Users will be presented with a text box to fill in their response.</label>
+                              </div>
+                              <div style={{width:'100%'}}>
+                                  <img src="newasset/freetext.png"/>
+                              </div>
+                          </div>
+                          :
+                          <>
+                          <tr>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="a" value={this.state.createPoll.a} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="b" value={this.state.createPoll.b} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="c" value={this.state.createPoll.c} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="d" value={this.state.createPoll.d} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="e" value={this.state.createPoll.e} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
+                            </td>
+                          </tr>
+                          </>
+                      }
+                    </div>
+                  </div>
+                  :
+                  <div className="col-sm-12" style={{textAlign:'center', marginTop:10}}>
+                      <span className="icademy-label label-small" style={{ cursor:'pointer' }} onClick={()=> {
+                        if (this.state.polling.filter(x=> x.status === 'On going').length){
+                          toast.warning('You should finish the on going poll before start another poll')
+                        }
+                        else{
+                          this.setState({newPoll: true})}
+                        }
+                        }><i className="fa fa-plus"></i> Add Poll</span>
+                  </div>
+                }
+                {
+                  this.state.newPoll ?
+                  <button className={`icademy-button-full ${(!this.state.createPoll.tanya || this.state.createPoll.jenis === null) && 'disabled'}`} disabled={!this.state.createPoll.tanya || this.state.createPoll.jenis === null} onClick={this.startPoll.bind(this)}>Start Poll</button>
+                  : null
+                }
+              </div>
+            </div>
+          : null
+        }
+        {
+          this.state.modalAnswerPoll ?
+            <div className="poll-modal">
+              <div className="poll-header">
+                Answer Poll
+                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeAnswerPoll.bind(this)}></i>
+              </div>
+              <div className="poll-body">
+                <label style={{color:'rgba(0,0,0,0.85)', float:'left'}}>
+                  <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.answerPoll.tanya }} />
+                </label>
+                      <label className="icademy-label icademy-label-small" style={{float:'left', clear:'both'}}>{this.state.answerPoll.jenis === 3 ? 'Fill your answer' : 'Choose your answer'}</label>
+                      <div className="row" style={{marginLeft:'0px', float:'left', clear:'both'}}>
+                        {
+                          this.state.answerPoll.jenis === 3 ?
+                            <textarea className="poll-freetext" placeholder="Fill your answer..." value={this.state.pollFreetext} onChange={(e)=> this.setState({pollFreetext: e.target.value})}></textarea>
+                          :
+                          <>
+                          {
+                            this.state.answerPoll.a &&
+                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.a)}>
+                                {this.state.answerPoll.a}
+                            </span>
+                          }
+                          {
+                            this.state.answerPoll.b &&
+                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.b)}>
+                                {this.state.answerPoll.b}
+                            </span>
+                          }
+                          {
+                            this.state.answerPoll.c &&
+                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.c)}>
+                                {this.state.answerPoll.c}
+                            </span>
+                          }
+                          {
+                            this.state.answerPoll.d &&
+                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.d)}>
+                                {this.state.answerPoll.d}
+                            </span>
+                          }
+                          {
+                            this.state.answerPoll.e &&
+                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.e)}>
+                                {this.state.answerPoll.e}
+                            </span>
+                          }
+                          </>
+                        }
+                      </div>
+                {
+                  this.state.answerPoll.jenis === 3 ?
+                  <button style={{marginTop:10}} className={`icademy-button-full ${(!this.state.pollFreetext.length || this.state.submitPoll) && 'disabled'}`} disabled={!this.state.pollFreetext.length || this.state.submitPoll} onClick={this.submitPoll.bind(this, this.state.pollFreetext)}>{this.state.submitPoll ? 'Submitting...' : 'Submit'}</button>
+                  : null
+                }
+              </div>
+            </div>
+          : null
+        }
+        {
+          this.state.modalResultPoll ?
+            <div className="poll-modal" style={{width:'240px'}}>
+              <div className="poll-header">
+                Poll Result
+                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeResultPoll.bind(this)}></i>
+              </div>
+              <div className="poll-body">
+                <label style={{color:'rgba(0,0,0,0.85)'}}>
+                  <div style={{maxWidth:'200px', float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                </label>
+                <div className="option-box" style={{border:'none', padding:'0px', width:'100%', margin:'0px', marginBottom:'10px'}}>
+                        {
+                          this.state.pollResult.answer.map((x)=>
+                          <>
+                          <label style={{textAlign:'left'}}>{x.value}</label>
+                          <div className="progress-container">
+                            <div className="progress-poll">
+                              <div className="bar" style={{width: `${x.percent}%`}}/>
+                            </div>
+                            <div className="percent">
+                              {x.percent}%
+                            </div>
+                          </div>
+                          </>
+                          )
+                        }
+                </div>
+              </div>
+            </div>
+          : null
+        }
+                                          {
+                                            isMobile && this.state.showOpenApps ?
+                                            <div className="floating-message">
+                                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                                              </a>
+                                              <a href={isIOS ? iosURL : plainURL}>
+                                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                                              </a>
+                                            </div>
+                                            : null
+                                          }
       </div>
     );
   }

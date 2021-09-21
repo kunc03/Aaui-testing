@@ -126,7 +126,7 @@ export default class WebinarKuesionerAdd extends Component {
     API.post(`${API_SERVER}v2/kuesioner/import`, form).then(res => {
       if (res.data.error) toast.warning("Error import data");
 
-      toast.success("Berhasil import kuesioner")
+      toast.success("Success import feedback form")
       this.setState({ loading: false })
       this.fetchData();
     })

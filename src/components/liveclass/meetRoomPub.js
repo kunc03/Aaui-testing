@@ -47,6 +47,8 @@ socket.on("connect", () => {
 
 export default class MeetRoomPub extends Component {
   state = {
+    jamNow : Moment().local(),
+    showOpenApps: true,
     showToolTipInvitation: false,
     copied: false,
     dataParticipants:{
@@ -212,10 +214,10 @@ export default class MeetRoomPub extends Component {
 
   componentDidMount() {
     this.fetchProject()
-    if (isMobile) {
-      window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
-    }
-    else {
+    // if (isMobile) {
+    //   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
+    // }
+    // else {
       this.setState({ isLoading: true })
       this.onBotoomScroll();
       socket.on("broadcast", data => {
@@ -235,10 +237,13 @@ export default class MeetRoomPub extends Component {
       this.fetchData();
 
       this.timer = setInterval(
-        () => this.fetchDataParticipants(),
+        () => {
+          this.fetchDataParticipants();
+          this.setState({jamNow: Moment().local()})
+        },
         5000,
       );
-    }
+    // }
     // window.onbeforeunload = function() {
     //   return "Are you sure you want to leave?";
     // };
@@ -368,9 +373,9 @@ export default class MeetRoomPub extends Component {
             let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
 
             this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-            if (isMobile) {
-              window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
-            }
+            // if (isMobile) {
+            //   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
+            // }
           }
           else {
             console.log('GAGAL', result)
@@ -415,9 +420,9 @@ export default class MeetRoomPub extends Component {
           let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.classRooms.moderator == Storage.get("user").data.user_id || this.state.classRooms.is_akses === 0 ? 1 : 0}`
   
           this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl })
-          if (isMobile) {
-            window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
-          }
+          // if (isMobile) {
+          //   window.location.replace(APPS_SERVER + 'mobile-meeting/' + encodeURIComponent(APPS_SERVER + 'meeting/' + this.state.classId))
+          // }
         }
       }
     })
@@ -1121,6 +1126,9 @@ export default class MeetRoomPub extends Component {
   }
 
   render() {
+    let plainURL = `${APPS_SERVER}meet/${this.state.classId}`;
+    let lengthURL = plainURL.length;
+    let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
 
     const { classRooms, user, toggle_alert, session, isLoading } = this.state;
 
@@ -1316,6 +1324,20 @@ export default class MeetRoomPub extends Component {
                                             <h4 style={{marginTop:'20px'}}>You are currently a participant of this meeting on another device or browser tab.<br/>If you want to access this meeting/webinar from this page, exit from the other device and refresh this page afterwards.</h4>
                                             : null
                                           }
+                                          {
+                                            isMobile && this.state.showOpenApps ?
+                                            <div className="floating-message">
+                                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                                              </a>
+                                              <a href={isIOS ? iosURL : plainURL}>
+                                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                                              </a>
+                                            </div>
+                                            : null
+                                          }
 
                                         </div>
                                       </div>
@@ -1392,6 +1414,20 @@ export default class MeetRoomPub extends Component {
                             </div>
                             :
                             null
+                        }
+                        {
+                          isMobile && this.state.showOpenApps ?
+                          <div className="floating-message">
+                            <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                            <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                            <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                              <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                            </a>
+                            <a href={isIOS ? iosURL : plainURL}>
+                              <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                            </a>
+                          </div>
+                          : null
                         }
 
                       </div>
@@ -1873,6 +1909,20 @@ export default class MeetRoomPub extends Component {
                                       </Alert>
                                     }
 
+                          {
+                            isMobile && this.state.showOpenApps ?
+                            <div className="floating-message">
+                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                              </a>
+                              <a href={isIOS ? iosURL : plainURL}>
+                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                              </a>
+                            </div>
+                            : null
+                          }
                                   </div>
                                 </div>
                               </div>
@@ -2005,6 +2055,20 @@ export default class MeetRoomPub extends Component {
                           {
                             !session ?
                               <p className="mt-3">Already have ICADEMY account? <a href={`/?dst=${window.location.href}`}>Login Here</a></p>
+                            : null
+                          }
+                          {
+                            isMobile && this.state.showOpenApps ?
+                            <div className="floating-message">
+                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
+                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
+                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+                              </a>
+                              <a href={isIOS ? iosURL : plainURL}>
+                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+                              </a>
+                            </div>
                             : null
                           }
                         </div>

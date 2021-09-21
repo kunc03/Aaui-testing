@@ -13,6 +13,7 @@ import WebinarKuesionerAdd from './kuesioneradd';
 import WebinarPollAdd from './polladd';
 import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
+import WebinarPollingAdd from './pollingadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SocketContext from '../../../socket';
@@ -87,6 +88,7 @@ class WebinarAddClass extends Component {
     modalKuesioner: false,
     modalPretest: false,
     modalPosttest: false,
+    modalPolling: false,
 
     //role
     sekretarisId: [],
@@ -131,6 +133,7 @@ class WebinarAddClass extends Component {
       isModalPembicara: false,
       isModalPeserta: false,
       modalKuesioner: false,
+      modalPolling: false,
       modalPretest: false,
       modalPosttest: false,
       modalEssay: false,
@@ -696,6 +699,10 @@ class WebinarAddClass extends Component {
                       (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalEssay: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Essay</button>
                     }
+                    {
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPolling: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Polling</button>
+                    }
                   </div>
                   <p className="m-b-0">
                     {/* <span className="f-w-600 f-16">Lihat Semua</span> */}
@@ -1164,6 +1171,22 @@ class WebinarAddClass extends Component {
             <Modal.Body>
               <div className="form-group">
                 <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalPolling}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Polling
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="form-group">
+                <WebinarPollingAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
           </Modal>
