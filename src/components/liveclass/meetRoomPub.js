@@ -255,6 +255,18 @@ export default class MeetRoomPub extends Component {
     for (var i = 0; i < len; i++) {
       links[i].target = "_blank";
     }
+
+    // Update kehadiran aktual
+    if (Storage.get('user').data.user_id){
+      let form = {
+        confirmation: 'Hadir',
+      }
+      API.put(`${API_SERVER}v1/liveclass/actualattendance/${this.state.classId}/${Storage.get('user').data.user_id}`, form).then(async res => {
+        if (res.status === 200) {
+          console.log('Kehadiran Aktual : Hadir')
+        }
+      })
+    }
   }
 
   componentWillUnmount() {
