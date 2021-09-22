@@ -2330,6 +2330,7 @@ export default class WebinarLive extends Component {
                                 this.setState({
                                   idPoll: item.id,
                                   newPoll: true,
+                                  hideInputPollDefault: 'visible',
                                   createPoll: {
                                     tanya: item.tanya,
                                     jenis: item.jenis,
