@@ -43,7 +43,7 @@ export default class WebinarLive extends Component {
     },
     idPoll: '',
     pollFreetext: '',
-    polling:[
+    polling: [
       // {
       //   id: 1,
       //   tanya: 'Do you agree ?',
@@ -88,7 +88,7 @@ export default class WebinarLive extends Component {
       // }
     ],
     newPoll: false,
-    createPoll:{
+    createPoll: {
       tanya: '',
       jenis: null,
       a: '',
@@ -97,10 +97,11 @@ export default class WebinarLive extends Component {
       d: '',
       e: '',
     },
+    hideInputPollDefault: 'hidden',
     modalSendPoll: false,
     modalAnswerPoll: false,
     modalResultPoll: false,
-    answerPoll:{
+    answerPoll: {
       // poll_id: '',
       // tanya: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ?',
       // jenis: 1,
@@ -110,12 +111,12 @@ export default class WebinarLive extends Component {
       // d: 'D'
     },
     showOpenApps: true,
-    isJoin : false,
-    showDescription : false,
-    isLoadingPage : true,
-    dataParticipants:{
-      audio : 0,
-      camera : 0,
+    isJoin: false,
+    showDescription: false,
+    isLoadingPage: true,
+    dataParticipants: {
+      audio: 0,
+      camera: 0,
     },
     waktuPretest: 0,
     waktuPosttest: 0,
@@ -143,8 +144,8 @@ export default class WebinarLive extends Component {
     modalDoorprize: false,
     pembucara: '',
     joinUrl: '',
-    tanggal:'',
-    tanggalEnd:'',
+    tanggal: '',
+    tanggalEnd: '',
     user: [],
     joined: false,
     projectId: '',
@@ -199,11 +200,11 @@ export default class WebinarLive extends Component {
       { id: 3, dari: 'Ahmad Syujan', pertanyaan: 'Gan, Saya yang mau tanya lebih serius. Kalau semisal hasil dari 100 dibagi 10 berapa hayooo?', datetime: '02 Sep 2020 12:12' },
     ]
   }
-  fetchDataParticipants(){
-    if (this.state.webinarId){
+  fetchDataParticipants() {
+    if (this.state.webinarId) {
       let api = bbb.api(BBB_URL, BBB_KEY)
       let http = bbb.http
-  
+
       let meetingInfo = api.monitoring.getMeetingInfo(this.state.webinarId)
       http(meetingInfo).then((result) => {
         if (result.returncode == 'FAILED' && result.messageKey == 'notFound') {
@@ -212,17 +213,17 @@ export default class WebinarLive extends Component {
         else {
           // Jika sudah ada
           this.setState({
-            dataParticipants:{
-              audio : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
-                        result.attendees.attendee.filter(x=> x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
-                          1
-                        : 0
-                      : 0,
-              camera : result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
-                        result.attendees.attendee.filter(x=> x.hasVideo).length : result.attendees.attendee.hasVideo ?
-                          1
-                        : 0
-                      : 0,
+            dataParticipants: {
+              audio: result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x => x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
+                  1
+                  : 0
+                : 0,
+              camera: result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
+                result.attendees.attendee.filter(x => x.hasVideo).length : result.attendees.attendee.hasVideo ?
+                  1
+                  : 0
+                : 0,
             }
           })
         }
@@ -310,13 +311,13 @@ export default class WebinarLive extends Component {
         user_id: this.state.user.user_id,
         answer: this.state.jawabanEssayKu
       }
-      this.setState({isLoading: true})
+      this.setState({ isLoading: true })
       API.post(`${API_SERVER}v2/webinar-test/essay`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           toast.error('Failed to submit answer')
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false })
         }
-        else{
+        else {
           toast.success('Essay submission sent')
           this.setState({ isLoading: false })
           socket.emit('send', {
@@ -345,15 +346,15 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPosttest
       }
-      this.setState({isLoading: true})
+      this.setState({ isLoading: true })
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           toast.error('Failed to submit answer')
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false })
         }
-        else{
+        else {
           toast.success('Post-test submission sent')
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false })
         }
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic()
@@ -379,15 +380,15 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         webinar_test: this.state.jawabanPretest
       }
-      this.setState({isLoading: true})
+      this.setState({ isLoading: true })
       API.post(`${API_SERVER}v2/webinar-test/input`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           toast.error('Failed to Submit Pre-Test answers webinar')
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false })
         }
-        else{
+        else {
           toast.success('Submit Pre-Test answers webinar')
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false })
         }
         this.fetchPreTest()
         this.fetchResultPretest();
@@ -445,21 +446,21 @@ export default class WebinarLive extends Component {
         pengguna: this.state.user.type ? 0 : 1,
         kuesioner: this.state.jawaban
       }
-      this.setState({isLoading: true});
+      this.setState({ isLoading: true });
       API.post(`${API_SERVER}v2/kuesioner/input`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           toast.error('Already sent answers to the Feedback Form on this webinar')
-          this.setState({isLoading: false});
+          this.setState({ isLoading: false });
         }
-        else{
+        else {
           socket.emit('send', {
             socketAction: 'jawabKuesioner',
             webinar_id: this.state.webinarId,
             name: this.state.user.name
           })
-        toast.success('Feedback Form submission sent')
-        this.closeModalKuesionerPeserta()
-        this.setState({ startKuesioner: false, isLoading: false })
+          toast.success('Feedback Form submission sent')
+          this.closeModalKuesionerPeserta()
+          this.setState({ startKuesioner: false, isLoading: false })
         }
       })
     }
@@ -626,7 +627,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage: false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                   }
@@ -637,27 +638,27 @@ export default class WebinarLive extends Component {
               }
               else {
                 let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
-                result.attendees.attendee.filter(x=>
-                  x.userID === this.state.user.user_id &&
+                  result.attendees.attendee.filter(x =>
+                    x.userID === this.state.user.user_id &&
+                    (
+                      x.isListeningOnly ||
+                      x.hasJoinedVoice ||
+                      x.hasVideo
+                    )
+                  ).length
+                  :
+                  result.attendees.attendee.userID === this.state.user.user_id &&
                   (
-                    x.isListeningOnly ||
-                    x.hasJoinedVoice ||
-                    x.hasVideo
-                  )
-                ).length
-                :
-                result.attendees.attendee.userID === this.state.user.user_id &&
-                (
-                  result.attendees.attendee.isListeningOnly ||
-                  result.attendees.attendee.hasJoinedVoice ||
-                  result.attendees.attendee.hasVideo
-                );
-                if (checkAttendee){
-                  if (!skipCheck){
-                    this.setState({joined: true});
+                    result.attendees.attendee.isListeningOnly ||
+                    result.attendees.attendee.hasJoinedVoice ||
+                    result.attendees.attendee.hasVideo
+                  );
+                if (checkAttendee) {
+                  if (!skipCheck) {
+                    this.setState({ joined: true });
                   }
                 }
-                else{
+                else {
                   // Jika sudah ada, join
                   let joinUrl = api.administration.join(
                     this.state.user.name,
@@ -665,20 +666,20 @@ export default class WebinarLive extends Component {
                     this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
-  
+
                   let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
                   let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                   let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=${this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 1 : 0}`
-  
-                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
-  
+
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage: false })
+
                   this.postLog(this.state.webinar.id, this.state.user.user_id, 'peserta', 'join')
                 }
               }
             })
             // BBB JOIN END
           }
-          this.setState({ isLoadingPage : false })
+          this.setState({ isLoadingPage: false })
         })
       }
     })
@@ -773,7 +774,7 @@ export default class WebinarLive extends Component {
                     let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                     let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
 
-                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
+                    this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage: false })
 
                     this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                   }
@@ -784,27 +785,27 @@ export default class WebinarLive extends Component {
               }
               else {
                 let checkAttendee = !result.attendees.attendee ? 0 : Array.isArray(result.attendees.attendee) ?
-                result.attendees.attendee.filter(x=>
-                  x.userID === this.state.user.user_id &&
+                  result.attendees.attendee.filter(x =>
+                    x.userID === this.state.user.user_id &&
+                    (
+                      x.isListeningOnly ||
+                      x.hasJoinedVoice ||
+                      x.hasVideo
+                    )
+                  ).length
+                  :
+                  result.attendees.attendee.userID === this.state.user.user_id &&
                   (
-                    x.isListeningOnly ||
-                    x.hasJoinedVoice ||
-                    x.hasVideo
-                  )
-                ).length
-                :
-                result.attendees.attendee.userID === this.state.user.user_id &&
-                (
-                  result.attendees.attendee.isListeningOnly ||
-                  result.attendees.attendee.hasJoinedVoice ||
-                  result.attendees.attendee.hasVideo
-                );
-                if (checkAttendee){
-                  if (!skipCheck){
-                    this.setState({joined: true});
+                    result.attendees.attendee.isListeningOnly ||
+                    result.attendees.attendee.hasJoinedVoice ||
+                    result.attendees.attendee.hasVideo
+                  );
+                if (checkAttendee) {
+                  if (!skipCheck) {
+                    this.setState({ joined: true });
                   }
                 }
-                else{
+                else {
                   // Jika sudah ada, join
                   let joinUrl = api.administration.join(
                     this.state.user.name,
@@ -812,20 +813,20 @@ export default class WebinarLive extends Component {
                     this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
-  
+
                   let zoomUrl = await API.get(`${API_SERVER}v2/webinar/zoom/${this.state.webinar.id}`);
                   let zoomRoom = zoomUrl.data.result.length ? zoomUrl.data.result[0].zoom_id : 0;
                   let zoomJoinUrl = `${ZOOM_URL}/?room=${zoomRoom}&name=${this.state.user.name}&email=${''}&role=0}`
-  
-                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage : false })
-  
+
+                  this.setState({ joinUrl: joinUrl, zoomUrl: zoomJoinUrl, isLoadingPage: false })
+
                   this.postLog(this.state.webinar.id, this.state.user.user_id, 'tamu', 'join')
                 }
               }
             })
             // BBB JOIN END
           }
-          this.setState({ isLoadingPage : false })
+          this.setState({ isLoadingPage: false })
         })
       }
     })
@@ -838,15 +839,15 @@ export default class WebinarLive extends Component {
       name: this.state.jawabKuesioner[random]
     })
   }
-  fetchResultPretest(){
-    this.setState({loadingTest: true})
+  fetchResultPretest() {
+    this.setState({ loadingTest: true })
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/0/${this.state.user.user_id}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPretest: res.data.result}, ()=>{
-            this.setState({loadingTest: false})
+          this.setState({ resultPretest: res.data.result }, () => {
+            this.setState({ loadingTest: false })
           })
         }
       }
@@ -855,29 +856,29 @@ export default class WebinarLive extends Component {
   openModalPretest() {
     this.setState({ modalResultPretest: true })
   }
-  fetchResultEssay(){
-    this.setState({loadingTest: true})
+  fetchResultEssay() {
+    this.setState({ loadingTest: true })
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/essay/${this.state.user.user_id}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultEssay: res.data.result},()=>{
-            this.setState({loadingTest: false})
+          this.setState({ resultEssay: res.data.result }, () => {
+            this.setState({ loadingTest: false })
           })
         }
       }
     })
   }
-  fetchResultPosttest(){
-    this.setState({loadingTest: true})
+  fetchResultPosttest() {
+    this.setState({ loadingTest: true })
     API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}/1/${this.state.user.user_id}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({resultPosttest: res.data.result},()=>{
-            this.setState({loadingTest: false})
+          this.setState({ resultPosttest: res.data.result }, () => {
+            this.setState({ loadingTest: false })
           })
         }
       }
@@ -927,7 +928,7 @@ export default class WebinarLive extends Component {
       }
     })
   }
-  fetchPolling(){
+  fetchPolling() {
     API.get(`${API_SERVER}v2/webinar-test-polling/${this.state.webinarId}`).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
@@ -1018,7 +1019,7 @@ export default class WebinarLive extends Component {
       this.fetchWebinar()
     }
     this.fetchQNA()
-    
+
     //semua link open new tab
     var links = document.getElementsByTagName('a');
     var len = links.length;
@@ -1045,10 +1046,10 @@ export default class WebinarLive extends Component {
     //     }
     // }
     // window.addEventListener("message", window.receiveMessageFromIndex, false);
-      this.timer = setInterval(
-        () => this.fetchDataParticipants(),
-        5000,
-      );
+    this.timer = setInterval(
+      () => this.fetchDataParticipants(),
+      5000,
+    );
   }
   checkProjectAccess() {
     if (this.props.voucher) {
@@ -1105,20 +1106,20 @@ export default class WebinarLive extends Component {
       }
     })
   }
-  startPoll(){
-    if (this.state.idPoll){
+  startPoll() {
+    if (this.state.idPoll) {
       let form = {
         webinar_id: this.state.webinarId,
         id: this.state.idPoll,
         webinar_test: [this.state.createPoll]
       };
-  
+
       API.put(`${API_SERVER}v2/webinar-test-polling/${form.id}`, form).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            API.put(`${API_SERVER}v2/webinar-test-polling-status/${form.id}`, {status: 'On going'}).then(res => {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${form.id}`, { status: 'On going' }).then(res => {
               if (res.status === 200) {
                 if (res.data.error) {
                   toast.error('Error post data')
@@ -1132,14 +1133,17 @@ export default class WebinarLive extends Component {
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
-                  this.setState({newPoll: false, idPoll: '', createPoll:{
-                    tanya: '',
-                    jenis: null,
-                    a: '',
-                    b: '',
-                    c: '',
-                    d: '',
-                    e: '',}})
+                  this.setState({
+                    newPoll: false, idPoll: '', createPoll: {
+                      tanya: '',
+                      jenis: null,
+                      a: '',
+                      b: '',
+                      c: '',
+                      d: '',
+                      e: '',
+                    }
+                  })
                 }
               }
             })
@@ -1147,18 +1151,18 @@ export default class WebinarLive extends Component {
         }
       })
     }
-    else{
+    else {
       let form = {
         id: this.state.webinarId,
         webinar_test: [this.state.createPoll]
       };
-  
+
       API.post(`${API_SERVER}v2/webinar-test-polling-single`, form).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Error post data')
           } else {
-            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.result.insertId}`, {status: 'On going'}).then(res2 => {
+            API.put(`${API_SERVER}v2/webinar-test-polling-status/${res.data.result.insertId}`, { status: 'On going' }).then(res2 => {
               if (res2.status === 200) {
                 if (res2.data.error) {
                   toast.error('Error post data')
@@ -1172,14 +1176,17 @@ export default class WebinarLive extends Component {
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll
                   })
-                  this.setState({newPoll: false, createPoll:{
-                    tanya: '',
-                    jenis: null,
-                    a: '',
-                    b: '',
-                    c: '',
-                    d: '',
-                    e: '',}})
+                  this.setState({
+                    newPoll: false, createPoll: {
+                      tanya: '',
+                      jenis: null,
+                      a: '',
+                      b: '',
+                      c: '',
+                      d: '',
+                      e: '',
+                    }
+                  })
                 }
               }
             })
@@ -1188,8 +1195,8 @@ export default class WebinarLive extends Component {
       })
     }
   }
-  publishPoll(data){
-    if (data.status === 'Finish'){
+  publishPoll(data) {
+    if (data.status === 'Finish') {
       toast.success(`Sending poll result to participants`)
       socket.emit('send', {
         socketAction: 'publishPoll',
@@ -1198,8 +1205,8 @@ export default class WebinarLive extends Component {
         data: data
       })
     }
-    else{
-      API.put(`${API_SERVER}v2/webinar-test-polling-status/${data.id}`, {status: 'Finish'}).then(res => {
+    else {
+      API.put(`${API_SERVER}v2/webinar-test-polling-status/${data.id}`, { status: 'Finish' }).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Error post data')
@@ -1218,14 +1225,14 @@ export default class WebinarLive extends Component {
     }
   }
 
-  submitPoll(value){
+  submitPoll(value) {
     let form = {
-      user_id : this.state.user.user_id,
-      pengguna : this.state.user.type ? 0 : 1,
-      poll_id : this.state.answerPoll.poll_id,
-      answer : value
+      user_id: this.state.user.user_id,
+      pengguna: this.state.user.type ? 0 : 1,
+      poll_id: this.state.answerPoll.poll_id,
+      answer: value
     };
-    this.setState({submitPoll: true});
+    this.setState({ submitPoll: true });
     API.post(`${API_SERVER}v2/webinar-test-polling-submit`, form).then(res => {
       if (res.status === 200) {
         if (res.data.error) {
@@ -1236,50 +1243,52 @@ export default class WebinarLive extends Component {
             userId: this.state.user.user_id,
             webinar_id: this.state.webinarId
           })
-          this.setState({submitPoll: false, modalAnswerPoll: false});
+          this.setState({ submitPoll: false, modalAnswerPoll: false });
           toast.success('Poll submited');
         }
       }
     })
   }
 
-  selectType(type){
-    this.state.createPoll.jenis=type;
-    if (type === 0){
-        this.state.createPoll.a='True';
-        this.state.createPoll.b='False';
-        this.state.createPoll.c='';
-        this.state.createPoll.d='';
-        this.state.createPoll.e='';
+  selectType(type) {
+    this.state.createPoll.jenis = type;
+    if (type === 0) {
+      this.state.createPoll.a = 'True';
+      this.state.createPoll.b = 'False';
+      this.state.createPoll.c = '';
+      this.state.createPoll.d = '';
+      this.state.createPoll.e = '';
     }
-    else if (type === 1){
-        this.state.createPoll.a='A';
-        this.state.createPoll.b='B';
-        this.state.createPoll.c='C';
-        this.state.createPoll.d='D';
-        this.state.createPoll.e='';
+    else if (type === 1) {
+      this.state.createPoll.a = 'A';
+      this.state.createPoll.b = 'B';
+      this.state.createPoll.c = 'C';
+      this.state.createPoll.d = 'D';
+      this.state.createPoll.e = '';
     }
-    else if (type === 2){
-        this.state.createPoll.a='Yes';
-        this.state.createPoll.b='No';
-        this.state.createPoll.c='Abstention';
-        this.state.createPoll.d='';
-        this.state.createPoll.e='';
+    else if (type === 2) {
+      this.state.createPoll.a = 'Yes';
+      this.state.createPoll.b = 'No';
+      this.state.createPoll.c = 'Abstention';
+      this.state.createPoll.d = '';
+      this.state.createPoll.e = '';
     }
+
+    this.state.hideInputPollDefault = 'visible';
     this.forceUpdate();
   }
 
-  closeSendPoll(){
-    this.setState({modalSendPoll: false, newPoll: false, createPoll: {}})
+  closeSendPoll() {
+    this.setState({ modalSendPoll: false, newPoll: false, createPoll: {} })
   }
-  closeAnswerPoll(){
-    this.setState({modalAnswerPoll: false})
+  closeAnswerPoll() {
+    this.setState({ modalAnswerPoll: false })
   }
-  closeResultPoll(){
-    this.setState({modalResultPoll: false})
+  closeResultPoll() {
+    this.setState({ modalResultPoll: false })
   }
-  backPoll(){
-    this.setState({newPoll: false, createPoll: {}, idPoll:''})
+  backPoll() {
+    this.setState({ newPoll: false, createPoll: {}, idPoll: '' })
   }
   sendKuesioner() {
     API.put(`${API_SERVER}v2/webinar/send-kuesioner/${this.state.webinarId}`).then(res => {
@@ -1321,7 +1330,7 @@ export default class WebinarLive extends Component {
   }
 
   handleDynamicInput = (e) => {
-      this.setState({ webinar: {...this.state.webinar, essay: e } });
+    this.setState({ webinar: { ...this.state.webinar, essay: e } });
   }
   handleDynamicInputPoll = (e) => {
     let newObj = this.state.createPoll;
@@ -1341,7 +1350,7 @@ export default class WebinarLive extends Component {
   }
 
   handleDynamicInputEssay = (e) => {
-      this.setState({ jawabanEssayKu: e });
+    this.setState({ jawabanEssayKu: e });
   }
 
   sendEssay() {
@@ -1363,7 +1372,7 @@ export default class WebinarLive extends Component {
   render() {
     let plainURL = `${APPS_SERVER}webinar/live/${this.state.webinarId}`;
     let lengthURL = plainURL.length;
-    let iosURL = 'icademy'+plainURL.slice(5, lengthURL)
+    let iosURL = 'icademy' + plainURL.slice(5, lengthURL)
     const { /* webinar, */ user } = this.state;
     // let levelUser = Storage.get('user').data.level;
     // let access_project_admin = levelUser == 'admin' || levelUser == 'superadmin' ? true : false;
@@ -1411,7 +1420,7 @@ export default class WebinarLive extends Component {
     );
 
     return (
-      <div className="row" style={{margin: '8px 0px'}}>
+      <div className="row" style={{ margin: '8px 0px' }}>
         <div className="col-sm-12">
           <Card>
             <Card.Body>
@@ -1429,19 +1438,19 @@ export default class WebinarLive extends Component {
                   </h3>
                   {
                     (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined && this.state.isJoin ?
-                      <span className="f-w-bold f-12 fc-black" style={{position:'absolute', left: 21, bottom: -10}}>
+                      <span className="f-w-bold f-12 fc-black" style={{ position: 'absolute', left: 21, bottom: -10 }}>
                         <Tooltip title="Listening" arrow placement="top">
                           <span>
                             <i className="fa fa-headphones" /> {this.state.dataParticipants.audio}
                           </span>
                         </Tooltip>
-                        <Tooltip title="Camera On" arrow placement="top" style={{marginLeft:8}}>
+                        <Tooltip title="Camera On" arrow placement="top" style={{ marginLeft: 8 }}>
                           <span>
                             <i className="fa fa-camera" /> {this.state.dataParticipants.camera}
                           </span>
                         </Tooltip>
                       </span>
-                    : null
+                      : null
                   }
                 </div>
                 <div className="col-sm-8 text-right">
@@ -1450,22 +1459,22 @@ export default class WebinarLive extends Component {
                       <button onClick={() => this.setState({ modalEnd: true })} className="float-right btn btn-icademy-primary btn-icademy-red">
                         <i className="fa fa-stop-circle"></i>End Webinar
                       </button>
-                    : null
+                      : null
                   }
                   {
                     !this.state.isJoin && this.state.status === 2 ?
-                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={()=> this.setState({isJoin: true})}>
+                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={() => this.setState({ isJoin: true })}>
                         <i className="fa fa-video"></i>
                         Join the webinar
                       </button>
-                    : null
+                      : null
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.isFeedback ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
-                    : null
+                      : null
                   }
                   {
                     (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && this.state.pertanyaan.length > 0 ?
@@ -1517,7 +1526,7 @@ export default class WebinarLive extends Component {
                   }
                   {
                     this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
-                      <button onClick={() => {this.fetchPolling();this.setState({ modalSendPoll: true })}} className="float-right btn btn-icademy-primary mr-2">
+                      <button onClick={() => { this.fetchPolling(); this.setState({ modalSendPoll: true }) }} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Polling
                       </button>
                       :
@@ -1539,29 +1548,29 @@ export default class WebinarLive extends Component {
                     //   :
                     //   null
                   }
-                  
+
                 </div>
               </div>
               {
                 this.state.isLoadingPage ?
-                <div>Loading...</div>
+                  <div>Loading...</div>
                   :
                   <div style={{ marginTop: '10px' }}>
                     <div className="row">
                       <div className="col-sm-12">
                         {
                           (this.state.status == 2 || (this.state.isWebinarStartDate && this.state.status == 2)) && !this.state.joined ?
-                          this.state.isJoin ?
-                          <div style={{background:`url('newasset/loading.gif') center center no-repeat`}}>
-                            <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
-                              width="100%"
-                              height="600px"
-                              display="initial"
-                              frameBorder="0"
-                              allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
-                              position="relative" />
-                          </div>
-                          : null
+                            this.state.isJoin ?
+                              <div style={{ background: `url('newasset/loading.gif') center center no-repeat` }}>
+                                <Iframe url={this.state.engine === 'zoom' ? this.state.zoomUrl : this.state.joinUrl}
+                                  width="100%"
+                                  height="600px"
+                                  display="initial"
+                                  frameBorder="0"
+                                  allow="fullscreen *;geolocation *; microphone *; camera *; display-capture"
+                                  position="relative" />
+                              </div>
+                              : null
                             :
                             this.state.status == 3 ?
                               <h3>The webinar has ended</h3>
@@ -1570,30 +1579,30 @@ export default class WebinarLive extends Component {
                         }
                         {
                           this.state.joined ?
-                          <h4 style={{marginTop:'20px'}}>You are currently a participant of this webinar on another device or browser tab.<br/>If you want to access webinar from this page, exit from the other device and refresh this page afterwards.</h4>
-                          : null
+                            <h4 style={{ marginTop: '20px' }}>You are currently a participant of this webinar on another device or browser tab.<br />If you want to access webinar from this page, exit from the other device and refresh this page afterwards.</h4>
+                            : null
                         }
                         {
                           this.state.status !== 3 &&
-                          <div className="dekripsi" style={{ marginTop: '20px', color:'#000', lineHeight: '24px', position:'relative' }}>
-                          <h4>Description</h4>
-                          <div className={(this.state.isJoin && !this.state.showDescription) ? 'webinar-description' : 'webibar-description-full'} dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
-                          {
-                            (this.state.isJoin && !this.state.showDescription) ?
-                            <div className='webinar-description-overlay' />
-                            : null
-                          }
+                          <div className="dekripsi" style={{ marginTop: '20px', color: '#000', lineHeight: '24px', position: 'relative' }}>
+                            <h4>Description</h4>
+                            <div className={(this.state.isJoin && !this.state.showDescription) ? 'webinar-description' : 'webibar-description-full'} dangerouslySetInnerHTML={{ __html: this.state.webinar.isi }} />
+                            {
+                              (this.state.isJoin && !this.state.showDescription) ?
+                                <div className='webinar-description-overlay' />
+                                : null
+                            }
                           </div>
                         }
                         <center>
-                        {
-                          this.state.isJoin && this.state.status !== 3 ?
-                          this.state.showDescription ?
-                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: false});this.forceUpdate();}}>Hide description</span>
-                          :
-                          <span className="webinar-description-button" onClick={()=> {this.setState({showDescription: true});this.forceUpdate();}}>See full description</span>
-                          :null
-                        }
+                          {
+                            this.state.isJoin && this.state.status !== 3 ?
+                              this.state.showDescription ?
+                                <span className="webinar-description-button" onClick={() => { this.setState({ showDescription: false }); this.forceUpdate(); }}>Hide description</span>
+                                :
+                                <span className="webinar-description-button" onClick={() => { this.setState({ showDescription: true }); this.forceUpdate(); }}>See full description</span>
+                              : null
+                          }
                         </center>
 
                         {
@@ -1627,7 +1636,7 @@ export default class WebinarLive extends Component {
                               {
                                 this.state.pretest.map((item, index) => (
                                   <div className="mb-3">
-                                    <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
+                                    <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
                                     {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPretest} /> <label for='a'> {item.a[1]}</label></div>}
                                     {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPretest} /> <label for='b'> {item.b[1]}</label></div>}
                                     {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPretest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1645,15 +1654,15 @@ export default class WebinarLive extends Component {
                                 {this.state.isLoading ? 'Submitting...' : 'Send Pre-Test Answers'}
                               </button>
                             </div>
-                          : null
+                            : null
                         }
 
                         {
                           this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
                               <h4>Answer the Essay</h4>
-                              <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>           
-                              
+                              <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
+
                               {
                                 this.state.essayTerjawab === false ?
                                   <Fragment>
@@ -1662,47 +1671,47 @@ export default class WebinarLive extends Component {
                                       initialValue={this.state.jawabanEssayKu}
                                       value={this.state.jawabanEssayKu}
                                       init={{
-                                      height: 400,
-                                      width: "100%",
-                                      menubar: false,
-                                      convert_urls: false,
-                                      image_class_list: [
-                                          {title: 'None', value: ''},
-                                          {title: 'Responsive', value: 'img-responsive'},
-                                          {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                                      ],
-                                      file_browser_callback_types: 'image media',
-                                      file_picker_callback: function (callback, value, meta) {
+                                        height: 400,
+                                        width: "100%",
+                                        menubar: false,
+                                        convert_urls: false,
+                                        image_class_list: [
+                                          { title: 'None', value: '' },
+                                          { title: 'Responsive', value: 'img-responsive' },
+                                          { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                                        ],
+                                        file_browser_callback_types: 'image media',
+                                        file_picker_callback: function (callback, value, meta) {
                                           if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                                          var input = document.getElementById(`myFile`);
-                                          input.click();
-                                          input.onchange = function () {
+                                            var input = document.getElementById(`myFile`);
+                                            input.click();
+                                            input.onchange = function () {
 
                                               var dataForm = new FormData();
                                               dataForm.append('file', this.files[0]);
 
                                               window.$.ajax({
-                                              url: `${API_SERVER}v2/media/upload`,
-                                              type: 'POST',
-                                              data: dataForm,
-                                              processData: false,
-                                              contentType: false,
-                                              success: (data)=>{
+                                                url: `${API_SERVER}v2/media/upload`,
+                                                type: 'POST',
+                                                data: dataForm,
+                                                processData: false,
+                                                contentType: false,
+                                                success: (data) => {
                                                   callback(data.result.url);
                                                   this.value = '';
-                                              }
+                                                }
                                               })
 
-                                          };
+                                            };
                                           }
-                                      },
-                                      plugins: [
+                                        },
+                                        plugins: [
                                           "advlist autolink lists link image charmap print preview anchor",
                                           "searchreplace visualblocks code fullscreen",
                                           "insertdatetime media table paste code help wordcount"
-                                      ],
-                                      media_live_embeds : true,
-                                      toolbar:
+                                        ],
+                                        media_live_embeds: true,
+                                        toolbar:
                                           // eslint-disable-next-line no-multi-str
                                           "undo redo | fontsizeselect bold italic backcolor forecolor | \
                                       alignleft aligncenter alignright alignjustify | image | media | \
@@ -1710,7 +1719,7 @@ export default class WebinarLive extends Component {
                                       }}
                                       onEditorChange={e => this.handleDynamicInputEssay(e)}
                                     />
-                                                      
+
                                     <button
                                       disabled={this.state.isLoading}
                                       className="btn btn-icademy-primary mt-3"
@@ -1721,18 +1730,18 @@ export default class WebinarLive extends Component {
                                     </button>
                                   </Fragment>
                                   :
-                                  <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.jawabanEssayKu }}></div>           
+                                  <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.jawabanEssayKu }}></div>
                               }
                             </div>
-                          : null
+                            : null
                         }
 
                         {
                           this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length) ?
                             <div className="mt-4">
                               <h4>Result Answer the Essay</h4>
-                              <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>           
-                              
+                              <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
+
                               <table className="table table-striped">
                                 <thead>
                                   <tr>
@@ -1743,30 +1752,30 @@ export default class WebinarLive extends Component {
                                 </thead>
                                 <tbody>
                                   {
-                                  this.state.resultEssay.map((item,i) => (
-                                    <tr>
-                                      <td>{i+1}</td>
-                                      <td>{item.name}</td>
-                                      <td>
-                                        <div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.answer }}></div>           
-                                      </td>
-                                    </tr>
-                                  ))
+                                    this.state.resultEssay.map((item, i) => (
+                                      <tr>
+                                        <td>{i + 1}</td>
+                                        <td>{item.name}</td>
+                                        <td>
+                                          <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: item.answer }}></div>
+                                        </td>
+                                      </tr>
+                                    ))
                                   }
                                 </tbody>
                               </table>
                             </div>
-                          : null
+                            : null
                         }
-                        
+
                         {
                           this.state.startPosttest && this.state.pretestTerjawab === true && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
-                          <div style={{marginTop:20}}>
+                          <div style={{ marginTop: 20 }}>
                             <h4>Answer the post-test</h4>
-                              <div className="alert alert-danger mt-2">
-                                <b>Please answer the questions below (in {this.state.waktuPosttest} minutes). If you have finished answering the questions, please click "Send Post-Test Answers".<br />
-                                  Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
-                              </div>
+                            <div className="alert alert-danger mt-2">
+                              <b>Please answer the questions below (in {this.state.waktuPosttest} minutes). If you have finished answering the questions, please click "Send Post-Test Answers".<br />
+                                Please complete the answers for not over than allotted time, orherwise the result in the pre-test will be automatically closed.</b>
+                            </div>
                             <div className="fc-blue" style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>
                               <Timer
                                 initialTime={this.state.waktuPosttest * 60000}
@@ -1790,7 +1799,7 @@ export default class WebinarLive extends Component {
                             {
                               this.state.posttest.map((item, index) => (
                                 <div className="mb-3">
-                                  <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{color:'#000'}} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
+                                  <span className='f-w-900 fc-blue'>Question {index + 1}</span><div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: item.tanya }}></div>
                                   {item.a && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.a[0]} onChange={this.handleJawabPosttest} /> <label for='a'> {item.a[1]}</label></div>}
                                   {item.b && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.b[0]} onChange={this.handleJawabPosttest} /> <label for='b'> {item.b[1]}</label></div>}
                                   {item.c && <div style={{ margin: '0px 10px' }}><input name={item.question_id} type="radio" value={item.c[0]} onChange={this.handleJawabPosttest} /> <label for='c'> {item.c[1]}</label></div>}
@@ -1852,7 +1861,7 @@ export default class WebinarLive extends Component {
                     <div className="col-sm-6">
                       <h3 className="f-w-900 f-18 fc-blue">
                         Question
-                    </h3>
+                      </h3>
                     </div>
                   </div>
                   <div className="wrap" style={{ marginTop: '10px', maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
@@ -1875,8 +1884,8 @@ export default class WebinarLive extends Component {
                       <div className="row">
                         <div className="col-sm-6">
                           <h3 className="f-w-900 f-18 fc-blue">
-                          Your Question
-                    </h3>
+                            Your Question
+                          </h3>
                         </div>
                       </div>
                       <div className="wrap" style={{ marginTop: '10px', maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
@@ -1897,7 +1906,7 @@ export default class WebinarLive extends Component {
                         <div className="col-sm-6">
                           <h3 className="f-w-900 f-18 fc-blue">
                             Send Your Question
-                    </h3>
+                          </h3>
                         </div>
                         <div className="col-sm-6 text-right">
                           <p className="m-b-0">
@@ -1944,17 +1953,17 @@ export default class WebinarLive extends Component {
               onClick={this.closeModalEnd.bind(this)}
             >
               Cancel
-                      </button>
+            </button>
             <button
               className="btn btn-icademy-primary btn-icademy-red"
               onClick={this.endMeeting.bind(this)}
             >
               <i className="fa fa-trash"></i>
-                        End Webinar
-                      </button>
+              End Webinar
+            </button>
           </Modal.Footer>
         </Modal>
-        
+
         <Modal
           show={this.state.modalSendEssay}
           onHide={() => this.setState({ modalSendEssay: false })}
@@ -1967,53 +1976,53 @@ export default class WebinarLive extends Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+            <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
             <Editor
               apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
               initialValue={this.state.webinar.essay}
               value={this.state.webinar.essay}
               init={{
-              height: 400,
-              width: "100%",
-              menubar: false,
-              convert_urls: false,
-              image_class_list: [
-                  {title: 'None', value: ''},
-                  {title: 'Responsive', value: 'img-responsive'},
-                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-              ],
-              file_browser_callback_types: 'image media',
-              file_picker_callback: function (callback, value, meta) {
+                height: 400,
+                width: "100%",
+                menubar: false,
+                convert_urls: false,
+                image_class_list: [
+                  { title: 'None', value: '' },
+                  { title: 'Responsive', value: 'img-responsive' },
+                  { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                ],
+                file_browser_callback_types: 'image media',
+                file_picker_callback: function (callback, value, meta) {
                   if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                  var input = document.getElementById(`myFile`);
-                  input.click();
-                  input.onchange = function () {
+                    var input = document.getElementById(`myFile`);
+                    input.click();
+                    input.onchange = function () {
 
                       var dataForm = new FormData();
                       dataForm.append('file', this.files[0]);
 
                       window.$.ajax({
-                      url: `${API_SERVER}v2/media/upload`,
-                      type: 'POST',
-                      data: dataForm,
-                      processData: false,
-                      contentType: false,
-                      success: (data)=>{
+                        url: `${API_SERVER}v2/media/upload`,
+                        type: 'POST',
+                        data: dataForm,
+                        processData: false,
+                        contentType: false,
+                        success: (data) => {
                           callback(data.result.url);
                           this.value = '';
-                      }
+                        }
                       })
 
-                  };
+                    };
                   }
-              },
-              plugins: [
+                },
+                plugins: [
                   "advlist autolink lists link image charmap print preview anchor",
                   "searchreplace visualblocks code fullscreen",
                   "insertdatetime media table paste code help wordcount"
-              ],
-              media_live_embeds : true,
-              toolbar:
+                ],
+                media_live_embeds: true,
+                toolbar:
                   // eslint-disable-next-line no-multi-str
                   "undo redo | fontsizeselect bold italic backcolor forecolor | \
               alignleft aligncenter alignright alignjustify | image | media | \
@@ -2028,8 +2037,8 @@ export default class WebinarLive extends Component {
               onClick={this.sendEssay.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Send to participant
-              </button>
+              Send to participant
+            </button>
           </Modal.Footer>
         </Modal>
 
@@ -2053,8 +2062,8 @@ export default class WebinarLive extends Component {
               onClick={this.sendPretest.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Send Pre Test
-              </button>
+              Send Pre Test
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -2077,8 +2086,8 @@ export default class WebinarLive extends Component {
               onClick={this.sendPosttest.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                Send Post Test
-              </button>
+              Send Post Test
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -2088,7 +2097,7 @@ export default class WebinarLive extends Component {
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-            Feedback Form
+              Feedback Form
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -2149,13 +2158,13 @@ export default class WebinarLive extends Component {
               onClick={this.closeModalKuesionerPeserta.bind(this)}
             >
               Close
-              </button>
+            </button>
             <button
               className="btn btn-icademy-grey"
               onClick={this.closeModalConfirmClose.bind(this)}
             >
               Cancel
-              </button>
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -2190,8 +2199,8 @@ export default class WebinarLive extends Component {
               onClick={this.kirimJawabanKuesioner.bind(this)}
             >
               <i className="fa fa-paper-plane"></i>
-                {this.state.isLoading ? 'Submitting...' : 'Submit Feedback Form'}
-              </button>
+              {this.state.isLoading ? 'Submitting...' : 'Submit Feedback Form'}
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -2229,25 +2238,25 @@ export default class WebinarLive extends Component {
           <Modal.Body>
             {
               this.state.loadingTest || this.state.resultPretest.nilai === 'NaN' ?
-              <div>Loading...</div>
-              :
-              <div>
-              <div>Score : {this.state.resultPretest.nilai}</div>
-              <div>Correct Answer : {this.state.resultPretest.benar}</div>
-              <div>Wrong Answer : {this.state.resultPretest.salah}</div>
-              {
+                <div>Loading...</div>
+                :
+                <div>
+                  <div>Score : {this.state.resultPretest.nilai}</div>
+                  <div>Correct Answer : {this.state.resultPretest.benar}</div>
+                  <div>Wrong Answer : {this.state.resultPretest.salah}</div>
+                  {
                     this.state.resultPretest.list && this.state.resultPretest.list.map((item, index) => (
                       <div className="mb-3 mt-3">
-                        <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
+                        <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{ __html: item.pertanyaan }}></div>
                         {
                           item.options.map(items => (
-                            <div style={{margin:'0px 10px'}}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent'}}> {items.answer}</label></div>
+                            <div style={{ margin: '0px 10px' }}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{ backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent' }}> {items.answer}</label></div>
                           ))
-                           }
+                        }
                       </div>
                     ))
-                    }
-              </div>
+                  }
+                </div>
             }
           </Modal.Body>
         </Modal>
@@ -2265,25 +2274,25 @@ export default class WebinarLive extends Component {
           <Modal.Body>
             {
               this.state.loadingTest || this.state.resultPosttest.nilai === 'NaN' ?
-              <div>Loading...</div>
-              :
-              <div>
-            <div>Score : {this.state.resultPosttest.nilai}</div>
-            <div>Correct Answer : {this.state.resultPosttest.benar}</div>
-            <div>Wrong Answer : {this.state.resultPosttest.salah}</div>
-            {
-              this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
-                <div className="mb-3 mt-3">
-                  <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{__html: item.pertanyaan}}></div>
+                <div>Loading...</div>
+                :
+                <div>
+                  <div>Score : {this.state.resultPosttest.nilai}</div>
+                  <div>Correct Answer : {this.state.resultPosttest.benar}</div>
+                  <div>Wrong Answer : {this.state.resultPosttest.salah}</div>
                   {
-                    item.options.map(items => (
-                      <div style={{ margin: '0px 10px' }}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{ backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent' }}> {items.answer}</label></div>
+                    this.state.resultPosttest.list && this.state.resultPosttest.list.map((item, index) => (
+                      <div className="mb-3 mt-3">
+                        <span>Question {index + 1}</span><div dangerouslySetInnerHTML={{ __html: item.pertanyaan }}></div>
+                        {
+                          item.options.map(items => (
+                            <div style={{ margin: '0px 10px' }}><input checked={item.jawaban === items.options ? true : false} disabled type="radio" /> <label for={items.options} style={{ backgroundColor: item.jawaban_benar === items.options ? '#c6ffc6' : 'transparent' }}> {items.answer}</label></div>
+                          ))
+                        }
+                      </div>
                     ))
                   }
-              </div>
-              ))
-            }
-            </div>
+                </div>
             }
           </Modal.Body>
         </Modal>
@@ -2293,333 +2302,334 @@ export default class WebinarLive extends Component {
               <div className="poll-header">
                 {
                   this.state.newPoll ?
-                  <i className="fa fa-chevron-left" style={{float:'left', cursor:'pointer', lineHeight:'18px', fontSize:'16px', marginRight:'10px'}} onClick={this.backPoll.bind(this)}></i>
-                  : null
+                    <i className="fa fa-chevron-left" style={{ float: 'left', cursor: 'pointer', lineHeight: '18px', fontSize: '16px', marginRight: '10px' }} onClick={this.backPoll.bind(this)}></i>
+                    : null
                 }
                 Polling
-                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeSendPoll.bind(this)}></i>
+                <i className="fa fa-times" style={{ float: 'right', cursor: 'pointer' }} onClick={this.closeSendPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
                 {
                   this.state.newPoll ? null :
-                  <label>{this.state.polling.length ? 'Click the poll to broadcast the question.' : 'You have no poll, click Add Poll to create a new one.'}</label>
+                    <label>{this.state.polling.length ? 'Click the poll to broadcast the question.' : 'You have no poll, click Add Poll to create a new one.'}</label>
                 }
                 <div className="row">
                   {
                     this.state.newPoll ? null :
-                    this.state.polling.map((item)=>
-                    <span className={`option-box ${item.status === 'Finish' ? 'selected' : ''}`} style={{width:'100%', textAlign:'left'}}
-                    onClick={()=> {
-                      if (item.status !== 'Draft'){
-                        item.show = item.show ? !item.show : true; this.forceUpdate()
-                      }
-                      else{
-                        if (this.state.polling.filter(x=> x.status === 'On going').length){
-                          toast.warning('You should finish the on going poll before start another poll')
-                        }
-                        else{
-                          this.setState({
-                            idPoll: item.id,
-                            newPoll: true,
-                            createPoll:{
-                              tanya: item.tanya,
-                              jenis: item.jenis,
-                              a: item.a ? item.a : '',
-                              b: item.b ? item.b : '',
-                              c: item.c ? item.c : '',
-                              d: item.d ? item.d : '',
-                              e: item.e ? item.e : '',
+                      this.state.polling.map((item) =>
+                        <span className={`option-box ${item.status === 'Finish' ? 'selected' : ''}`} style={{ width: '100%', textAlign: 'left' }}
+                          onClick={() => {
+                            if (item.status !== 'Draft') {
+                              item.show = item.show ? !item.show : true; this.forceUpdate()
                             }
-                          })
-                        }
-                      }
-                    }}>
-                      <div style={{float:'left', wordBreak:'break-word'}} dangerouslySetInnerHTML={{ __html: item.tanya.length >30 ? `${item.tanya.substring(0, 30)}...` : item.tanya }} />
-                      <span style={{float:'right', fontSize:'11px', fontWeight:'normal'}}>{item.status}</span>
-                      {
-                        (item.status === 'On going' || item.show) ?
-                        <>
-                        {
-                          item.answer.map((x)=>
-                          <>
-                          <label>{x.value}</label>
-                          <div className="progress-container">
-                            <div className="progress-poll">
-                              <div className="bar" style={{width: `${x.percent}%`}}/>
-                            </div>
-                            <div className="percent">
-                              {x.percent}%
-                            </div>
-                          </div>
-                          </>
-                          )
-                        }
-                        <span className={`option-box option-full`} style={{float:'left', marginTop:'10px'}} onClick={this.publishPoll.bind(this, item)}>
-                            Publish Poll
+                            else {
+                              if (this.state.polling.filter(x => x.status === 'On going').length) {
+                                toast.warning('You should finish the on going poll before start another poll')
+                              }
+                              else {
+                                this.setState({
+                                  idPoll: item.id,
+                                  newPoll: true,
+                                  createPoll: {
+                                    tanya: item.tanya,
+                                    jenis: item.jenis,
+                                    a: item.a ? item.a : '',
+                                    b: item.b ? item.b : '',
+                                    c: item.c ? item.c : '',
+                                    d: item.d ? item.d : '',
+                                    e: item.e ? item.e : '',
+                                  }
+                                })
+                              }
+                            }
+                          }}>
+                          <div style={{ float: 'left', wordBreak: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.tanya.length > 30 ? `${item.tanya.substring(0, 30)}...` : item.tanya }} />
+                          <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{item.status}</span>
+                          {
+                            (item.status === 'On going' || item.show) ?
+                              <>
+                                {
+                                  item.answer.map((x) =>
+                                    <>
+                                      <label>{x.value}</label>
+                                      <div className="progress-container">
+                                        <div className="progress-poll">
+                                          <div className="bar" style={{ width: `${x.percent}%` }} />
+                                        </div>
+                                        <div className="percent">
+                                          {x.percent}%
+                                        </div>
+                                      </div>
+                                    </>
+                                  )
+                                }
+                                <span className={`option-box option-full`} style={{ float: 'left', marginTop: '10px' }} onClick={this.publishPoll.bind(this, item)}>
+                                  Publish Poll
+                                </span>
+                              </>
+                              : null
+                          }
                         </span>
-                        </>
-                        : null
-                      }
-                    </span>
-                    )
+                      )
                   }
                 </div>
                 {
                   this.state.newPoll ?
-                  <div className="form-group icademy-rounded">
-                    <label className="icademy-label icademy-label-small">Ask a Question</label>
-                    <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
-                    <Editor
-                      apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                      initialValue={this.state.createPoll.tanya}
-                      value={this.state.createPoll.tanya}
-                      style={{borderRadius:10}}
-                      init={{
-                        height: 200,
-                        menubar: false,
-                        convert_urls: false,
-                        image_class_list: [
-                          { title: 'None', value: '' },
-                          { title: 'Responsive', value: 'img-responsive' },
-                          { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
-                        ],
-                        file_browser_callback_types: 'image media',
-                        file_picker_callback: function (callback, value, meta) {
-                          if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                            var input = document.getElementById(`myFile`);
-                            input.click();
-                            input.onchange = function () {
+                    <div className="form-group icademy-rounded">
+                      <label className="icademy-label icademy-label-small">Ask a Question</label>
+                      <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
+                      <Editor
+                        apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                        initialValue={this.state.createPoll.tanya}
+                        value={this.state.createPoll.tanya}
+                        style={{ borderRadius: 10 }}
+                        init={{
+                          height: 200,
+                          menubar: false,
+                          convert_urls: false,
+                          image_class_list: [
+                            { title: 'None', value: '' },
+                            { title: 'Responsive', value: 'img-responsive' },
+                            { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                          ],
+                          file_browser_callback_types: 'image media',
+                          file_picker_callback: function (callback, value, meta) {
+                            if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                              var input = document.getElementById(`myFile`);
+                              input.click();
+                              input.onchange = function () {
 
-                              var dataForm = new FormData();
-                              dataForm.append('file', this.files[0]);
+                                var dataForm = new FormData();
+                                dataForm.append('file', this.files[0]);
 
-                              window.$.ajax({
-                                url: `${API_SERVER}v2/media/upload`,
-                                type: 'POST',
-                                data: dataForm,
-                                processData: false,
-                                contentType: false,
-                                success: (data) => {
-                                  callback(data.result.url);
-                                  this.value = '';
-                                }
-                              })
+                                window.$.ajax({
+                                  url: `${API_SERVER}v2/media/upload`,
+                                  type: 'POST',
+                                  data: dataForm,
+                                  processData: false,
+                                  contentType: false,
+                                  success: (data) => {
+                                    callback(data.result.url);
+                                    this.value = '';
+                                  }
+                                })
 
-                            };
-                          }
-                        },
-                        plugins: [
-                          "advlist autolink lists link image charmap print preview anchor",
-                          "searchreplace visualblocks code fullscreen",
-                          "insertdatetime media table paste code help wordcount"
-                        ],
-                        toolbar:
-                          // eslint-disable-next-line no-multi-str
-                          "undo redo | bold italic backcolor | \
+                              };
+                            }
+                          },
+                          plugins: [
+                            "advlist autolink lists link image charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table paste code help wordcount"
+                          ],
+                          toolbar:
+                            // eslint-disable-next-line no-multi-str
+                            "undo redo | bold italic backcolor | \
                           alignleft aligncenter alignright alignjustify | image media | \
                           bullist numlist outdent indent | removeformat | help"
-                      }}
-                      onEditorChange={e => this.handleDynamicInputPoll(e)}
-                    />
+                        }}
+                        onEditorChange={e => this.handleDynamicInputPoll(e)}
+                      />
 
-                    <div className="jawaban mt-3">
-                      <label className="icademy-label icademy-label-small">Response Type</label>
-                      <div className="row" style={{marginLeft:'0px'}}>
-                          <span className={`option-box option-small ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.selectType.bind(this, 0)}>
-                              True / False
+                      <div className="jawaban mt-3">
+                        <label className="icademy-label icademy-label-small">Response Type</label>
+                        <div className="row" style={{ marginLeft: '0px' }}>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.selectType.bind(this, 0)}>
+                            True / False
                           </span>
-                          <span className={`option-box option-small ${this.state.createPoll.jenis===1 && 'selected'}`} onClick={this.selectType.bind(this, 1)}>
-                              A / B / C / D
+                          <span className={`option-box option-small ${this.state.createPoll.jenis === 1 && 'selected'}`} onClick={this.selectType.bind(this, 1)}>
+                            A / B / C / D
                           </span>
+                        </div>
+                        <div className="row" style={{ marginLeft: '0px' }}>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis === 2 && 'selected'}`} onClick={this.selectType.bind(this, 2)} style={{ clear: 'both' }}>
+                            Yes / No / Abstention
+                          </span>
+                          <span className={`option-box option-small ${this.state.createPoll.jenis === 3 && 'selected'}`} onClick={this.selectType.bind(this, 3)}>
+                            User Response
+                          </span>
+                        </div>
                       </div>
-                      <div className="row" style={{marginLeft:'0px'}}>
-                          <span className={`option-box option-small ${this.state.createPoll.jenis===2 && 'selected'}`} onClick={this.selectType.bind(this, 2)} style={{clear:'both'}}>
-                              Yes / No / Abstention
-                          </span>
-                          <span className={`option-box option-small ${this.state.createPoll.jenis===3 && 'selected'}`} onClick={this.selectType.bind(this, 3)}>
-                              User Response
-                          </span>
-                      </div>
-                    </div>
-                    <div className="jawaban mt-3">
-                      <label className="icademy-label icademy-label-small">
+                      <div className="jawaban mt-3">
+                        <label className="icademy-label icademy-label-small">
                           {
-                              this.state.createPoll.jenis === 0 ? 'True / False' :
+                            this.state.createPoll.jenis === 0 ? 'True / False' :
                               this.state.createPoll.jenis === 1 ? 'A / B / C / D' :
-                              this.state.createPoll.jenis === 2 ? 'Yes / No / Abstention' :
-                              this.state.createPoll.jenis === 3 ? 'User Response' :
-                              ''
+                                this.state.createPoll.jenis === 2 ? 'Yes / No / Abstention' :
+                                  this.state.createPoll.jenis === 3 ? 'User Response' :
+                                    ''
                           }
-                      </label>
-                      {
+                        </label>
+                        {
                           this.state.createPoll.jenis === null ? '' :
-                          this.state.createPoll.jenis === 3 ?
-                          <div>
-                              <div style={{width:'100%'}}>
+                            this.state.createPoll.jenis === 3 ?
+                              <div>
+                                <div style={{ width: '100%' }}>
                                   <label>Users will be presented with a text box to fill in their response.</label>
+                                </div>
+                                <div style={{ width: '100%' }}>
+                                  <img src="newasset/freetext.png" />
+                                </div>
                               </div>
-                              <div style={{width:'100%'}}>
-                                  <img src="newasset/freetext.png"/>
-                              </div>
-                          </div>
-                          :
-                          <>
-                          <tr>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="a" value={this.state.createPoll.a} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="b" value={this.state.createPoll.b} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="c" value={this.state.createPoll.c} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="d" value={this.state.createPoll.d} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="e" value={this.state.createPoll.e} className="form-control icademy-field" style={{ width: '320px', fontSize:'9.8px', height:'auto', padding:'11px 14px' }} />
-                            </td>
-                          </tr>
-                          </>
-                      }
+                              :
+                              <>
+                                <tr>
+                                  <td>
+                                    <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="a" value={this.state.createPoll.a} className="form-control icademy-field" style={{ width: '320px', fontSize: '9.8px', height: 'auto', padding: '11px 14px', visibility: this.state.hideInputPollDefault }} />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="b" value={this.state.createPoll.b} className="form-control icademy-field" style={{ width: '320px', fontSize: '9.8px', height: 'auto', padding: '11px 14px', visibility: this.state.hideInputPollDefault }} />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="c" value={this.state.createPoll.c} className="form-control icademy-field" style={{ width: '320px', fontSize: '9.8px', height: 'auto', padding: '11px 14px', visibility: this.state.hideInputPollDefault }} />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="d" value={this.state.createPoll.d} className="form-control icademy-field" style={{ width: '320px', fontSize: '9.8px', height: 'auto', padding: '11px 14px', visibility: this.state.hideInputPollDefault }} />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <input type="text" onChange={e => this.handleDynamicInputPoll(e)} name="e" value={this.state.createPoll.e} className="form-control icademy-field" style={{ width: '320px', fontSize: '9.8px', height: 'auto', padding: '11px 14px', visibility: this.state.hideInputPollDefault }} />
+                                  </td>
+                                </tr>
+                              </>
+                        }
+                      </div>
                     </div>
-                  </div>
-                  :
-                  <div className="col-sm-12" style={{textAlign:'center', marginTop:10}}>
-                      <span className="icademy-label label-small" style={{ cursor:'pointer' }} onClick={()=> {
-                        if (this.state.polling.filter(x=> x.status === 'On going').length){
+                    :
+                    <div className="col-sm-12" style={{ textAlign: 'center', marginTop: 10 }}>
+                      <span className="icademy-label label-small" style={{ cursor: 'pointer' }} onClick={() => {
+                        if (this.state.polling.filter(x => x.status === 'On going').length) {
                           toast.warning('You should finish the on going poll before start another poll')
                         }
-                        else{
-                          this.setState({newPoll: true})}
+                        else {
+                          this.setState({ newPoll: true })
                         }
-                        }><i className="fa fa-plus"></i> Add Poll</span>
-                  </div>
+                      }
+                      }><i className="fa fa-plus"></i> Add Poll</span>
+                    </div>
                 }
                 {
                   this.state.newPoll ?
-                  <button className={`icademy-button-full ${(!this.state.createPoll.tanya || this.state.createPoll.jenis === null) && 'disabled'}`} disabled={!this.state.createPoll.tanya || this.state.createPoll.jenis === null} onClick={this.startPoll.bind(this)}>Start Poll</button>
-                  : null
+                    <button className={`icademy-button-full ${(!this.state.createPoll.tanya || this.state.createPoll.jenis === null) && 'disabled'}`} disabled={!this.state.createPoll.tanya || this.state.createPoll.jenis === null} onClick={this.startPoll.bind(this)}>Start Poll</button>
+                    : null
                 }
               </div>
             </div>
-          : null
+            : null
         }
         {
           this.state.modalAnswerPoll ?
             <div className="poll-modal">
               <div className="poll-header">
                 Answer Poll
-                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeAnswerPoll.bind(this)}></i>
+                <i className="fa fa-times" style={{ float: 'right', cursor: 'pointer' }} onClick={this.closeAnswerPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
-                <label style={{color:'rgba(0,0,0,0.85)', float:'left', wordBreak:'break-word'}}>
+                <label style={{ color: 'rgba(0,0,0,0.85)', float: 'left', wordBreak: 'break-word' }}>
                   <div dangerouslySetInnerHTML={{ __html: this.state.answerPoll.tanya }} />
                 </label>
-                      <label className="icademy-label icademy-label-small" style={{float:'left', clear:'both'}}>{this.state.answerPoll.jenis === 3 ? 'Fill your answer' : 'Choose your answer'}</label>
-                      <div className="row" style={{marginLeft:'0px', float:'left', clear:'both'}}>
+                <label className="icademy-label icademy-label-small" style={{ float: 'left', clear: 'both' }}>{this.state.answerPoll.jenis === 3 ? 'Fill your answer' : 'Choose your answer'}</label>
+                <div className="row" style={{ marginLeft: '0px', float: 'left', clear: 'both' }}>
+                  {
+                    this.state.answerPoll.jenis === 3 ?
+                      <textarea className="poll-freetext" placeholder="Fill your answer..." value={this.state.pollFreetext} onChange={(e) => this.setState({ pollFreetext: e.target.value })}></textarea>
+                      :
+                      <>
                         {
-                          this.state.answerPoll.jenis === 3 ?
-                            <textarea className="poll-freetext" placeholder="Fill your answer..." value={this.state.pollFreetext} onChange={(e)=> this.setState({pollFreetext: e.target.value})}></textarea>
-                          :
-                          <>
-                          {
-                            this.state.answerPoll.a &&
-                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.a)}>
-                                {this.state.answerPoll.a}
-                            </span>
-                          }
-                          {
-                            this.state.answerPoll.b &&
-                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.b)}>
-                                {this.state.answerPoll.b}
-                            </span>
-                          }
-                          {
-                            this.state.answerPoll.c &&
-                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.c)}>
-                                {this.state.answerPoll.c}
-                            </span>
-                          }
-                          {
-                            this.state.answerPoll.d &&
-                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.d)}>
-                                {this.state.answerPoll.d}
-                            </span>
-                          }
-                          {
-                            this.state.answerPoll.e &&
-                            <span className={`option-box option-full ${this.state.createPoll.jenis===0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.e)}>
-                                {this.state.answerPoll.e}
-                            </span>
-                          }
-                          </>
+                          this.state.answerPoll.a &&
+                          <span className={`option-box option-full ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.a)}>
+                            {this.state.answerPoll.a}
+                          </span>
                         }
-                      </div>
+                        {
+                          this.state.answerPoll.b &&
+                          <span className={`option-box option-full ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.b)}>
+                            {this.state.answerPoll.b}
+                          </span>
+                        }
+                        {
+                          this.state.answerPoll.c &&
+                          <span className={`option-box option-full ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.c)}>
+                            {this.state.answerPoll.c}
+                          </span>
+                        }
+                        {
+                          this.state.answerPoll.d &&
+                          <span className={`option-box option-full ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.d)}>
+                            {this.state.answerPoll.d}
+                          </span>
+                        }
+                        {
+                          this.state.answerPoll.e &&
+                          <span className={`option-box option-full ${this.state.createPoll.jenis === 0 && 'selected'}`} onClick={this.submitPoll.bind(this, this.state.answerPoll.e)}>
+                            {this.state.answerPoll.e}
+                          </span>
+                        }
+                      </>
+                  }
+                </div>
                 {
                   this.state.answerPoll.jenis === 3 ?
-                  <button style={{marginTop:10}} className={`icademy-button-full ${(!this.state.pollFreetext.length || this.state.submitPoll) && 'disabled'}`} disabled={!this.state.pollFreetext.length || this.state.submitPoll} onClick={this.submitPoll.bind(this, this.state.pollFreetext)}>{this.state.submitPoll ? 'Submitting...' : 'Submit'}</button>
-                  : null
+                    <button style={{ marginTop: 10 }} className={`icademy-button-full ${(!this.state.pollFreetext.length || this.state.submitPoll) && 'disabled'}`} disabled={!this.state.pollFreetext.length || this.state.submitPoll} onClick={this.submitPoll.bind(this, this.state.pollFreetext)}>{this.state.submitPoll ? 'Submitting...' : 'Submit'}</button>
+                    : null
                 }
               </div>
             </div>
-          : null
+            : null
         }
         {
           this.state.modalResultPoll ?
-            <div className="poll-modal" style={{width:'240px'}}>
+            <div className="poll-modal" style={{ width: '240px' }}>
               <div className="poll-header">
                 Poll Result
-                <i className="fa fa-times" style={{float:'right', cursor:'pointer'}} onClick={this.closeResultPoll.bind(this)}></i>
+                <i className="fa fa-times" style={{ float: 'right', cursor: 'pointer' }} onClick={this.closeResultPoll.bind(this)}></i>
               </div>
               <div className="poll-body">
-                <label style={{color:'rgba(0,0,0,0.85)', wordBreak:'break-word'}}>
-                  <div style={{float:'left'}} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                <label style={{ color: 'rgba(0,0,0,0.85)', wordBreak: 'break-word' }}>
+                  <div style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
                 </label>
-                <div className="option-box" style={{border:'none', padding:'0px', width:'100%', margin:'0px', marginBottom:'10px'}}>
-                        {
-                          this.state.pollResult.answer.map((x)=>
-                          <>
-                          <label style={{textAlign:'left'}}>{x.value}</label>
-                          <div className="progress-container">
-                            <div className="progress-poll">
-                              <div className="bar" style={{width: `${x.percent}%`}}/>
-                            </div>
-                            <div className="percent">
-                              {x.percent}%
-                            </div>
+                <div className="option-box" style={{ border: 'none', padding: '0px', width: '100%', margin: '0px', marginBottom: '10px' }}>
+                  {
+                    this.state.pollResult.answer.map((x) =>
+                      <>
+                        <label style={{ textAlign: 'left' }}>{x.value}</label>
+                        <div className="progress-container">
+                          <div className="progress-poll">
+                            <div className="bar" style={{ width: `${x.percent}%` }} />
                           </div>
-                          </>
-                          )
-                        }
+                          <div className="percent">
+                            {x.percent}%
+                          </div>
+                        </div>
+                      </>
+                    )
+                  }
                 </div>
               </div>
             </div>
-          : null
+            : null
         }
-                                          {
-                                            isMobile && this.state.showOpenApps ?
-                                            <div className="floating-message">
-                                              <button className="floating-close" onClick={()=> this.setState({showOpenApps: false})}><i className="fa fa-times"></i></button>
-                                              <p style={{marginTop:8}}>Want to use mobile apps ?</p>
-                                              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
-                                                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
-                                              </a>
-                                              <a href={isIOS ? iosURL : plainURL}>
-                                                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
-                                              </a>
-                                            </div>
-                                            : null
-                                          }
+        {
+          isMobile && this.state.showOpenApps ?
+            <div className="floating-message">
+              <button className="floating-close" onClick={() => this.setState({ showOpenApps: false })}><i className="fa fa-times"></i></button>
+              <p style={{ marginTop: 8 }}>Want to use mobile apps ?</p>
+              <a href={isIOS ? 'https://apps.apple.com/id/app/icademy/id1546069748#?platform=iphone' : 'https://play.google.com/store/apps/details?id=id.app.icademy'}>
+                <button className="button-flat-light"><i className="fa fa-download"></i> Install</button>
+              </a>
+              <a href={isIOS ? iosURL : plainURL}>
+                <button className="button-flat-fill"><i className="fa fa-mobile-alt"></i> Open Apps</button>
+              </a>
+            </div>
+            : null
+        }
       </div>
     );
   }
