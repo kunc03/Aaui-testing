@@ -192,8 +192,7 @@ export default class WebinarEdit extends Component {
           judul: res.data.result.judul,
           status: res.data.result.status,
           orientation: res.data.result.certificate_orientation,
-          imagePreview: res.data.result.certificate_background,
-
+          imagePreview: res.data.result.certificate_background === '' ? 'assets/images/no-image.png' : res.data.result.certificate_background,
           engine: res.data.result.engine,
           mode: res.data.result.mode
         })
@@ -529,7 +528,7 @@ export default class WebinarEdit extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false, isStep3: false }) }} className="btn btn-sm mr-4" style={{
                         border: '1px solid #e9e9e9',
                         borderRadius: '50px',
                       }}>
@@ -638,7 +637,7 @@ export default class WebinarEdit extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: false, isStep2: true, isStep3: false }) }} className="btn btn-sm mr-4" style={{
                         border: '1px solid #e9e9e9',
                         borderRadius: '50px',
                       }}>
