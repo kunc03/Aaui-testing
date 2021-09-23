@@ -26,6 +26,7 @@ export default class WebinarLive extends Component {
 
   state = {
     submitPoll: false,
+    peserta_count: [],
     pollResult:
     {
       // id: 1,
@@ -212,7 +213,24 @@ export default class WebinarLive extends Component {
         }
         else {
           // Jika sudah ada
+          let tmps = [];
+
+          try {
+            let objects = Object.assign({}, result);
+            if (objects.attendees.attendee.length > 0) {
+              objects.attendees.attendee.forEach((str) => {
+                let idx = tmps.findIndex((arg) => { return arg == str.userID; });
+                if (idx == -1 && str.role === "VIEWER") {
+                  tmps.push(str.userID);
+                }
+              })
+            }
+          } catch (e) {
+            // not set
+          }
+
           this.setState({
+            peserta_count: tmps,
             dataParticipants: {
               audio: result.attendees.attendee ? Array.isArray(result.attendees.attendee) ?
                 result.attendees.attendee.filter(x => x.hasJoinedVoice || x.isListeningOnly).length : result.attendees.attendee.hasJoinedVoice || result.attendees.attendee.isListeningOnly ?
@@ -2345,7 +2363,7 @@ export default class WebinarLive extends Component {
                             }
                           }}>
                           <div style={{ float: 'left', wordBreak: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.tanya.length > 30 ? `${item.tanya.substring(0, 30)}...` : item.tanya }} />
-                          <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{item.status}</span>
+                          <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{`(${item.answer.length} / ${this.state.peserta_count.length}) `}<b>{item.status}</b></span>
                           {
                             (item.status === 'On going' || item.show) ?
                               <>
