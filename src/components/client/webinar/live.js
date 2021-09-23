@@ -1370,7 +1370,7 @@ export default class WebinarLive extends Component {
   }
 
   render() {
-    let plainURL = `${APPS_SERVER}webinar/live/${this.state.webinarId}`;
+    let plainURL = this.props.voucher ? `${APPS_SERVER}webinar-guest/${this.state.webinarId}/${this.props.voucher}` : `${APPS_SERVER}webinar/live/${this.state.webinarId}`;
     let lengthURL = plainURL.length;
     let iosURL = 'icademy' + plainURL.slice(5, lengthURL)
     const { /* webinar, */ user } = this.state;
