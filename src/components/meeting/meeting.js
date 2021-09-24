@@ -1680,12 +1680,12 @@ class MeetingTable extends Component {
                                         : null
                                     }
                                     {
-                                      item.user_id === Storage.get('user').data.user_id ?
+                                      (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
                                         <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                         : null
                                     }
                                     {
-                                      item.user_id === Storage.get('user').data.user_id ?
+                                      (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
                                         <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                         : null
                                     }
@@ -2235,12 +2235,12 @@ class MeetingTable extends Component {
                                     : null
                                 }
                                 {
-                                  item.user_id === Storage.get('user').data.user_id ?
+                                  (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
                                     <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                     : null
                                 }
                                 {
-                                  item.user_id === Storage.get('user').data.user_id ?
+                                  (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
                                     <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                     : null
                                 }
