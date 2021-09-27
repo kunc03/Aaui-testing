@@ -1661,7 +1661,8 @@ class MeetingTable extends Component {
                                   <td>{item.keterangan ? item.keterangan : '-'}</td>
                                   <td>
                                     {
-                                      item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                      //item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                      item.isShare == true ?
                                         <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                           onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                                           <i className="fa fa-copy cursor">&nbsp; Copy</i>
@@ -2134,7 +2135,8 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+              // this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+              this.state.infoClass.isShare == true ?
                 <CopyToClipboard text={`Meeting Room : ${this.state.infoClass.room_name}\nSchedule : ${moment(this.state.infoClass.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(this.state.infoClass.tgl_mulai).local().format('HH:mm')} - ${moment(this.state.infoClass.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
                   onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                   <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i>&nbsp; Copy Invitation</button>
@@ -2216,7 +2218,8 @@ class MeetingTable extends Component {
                               <td>{item.keterangan ? item.keterangan : '-'}</td>
                               <td>
                                 {
-                                  item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                  // item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                  item.isShare == true ?
                                     <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                                       <i className="fa fa-copy cursor">&nbsp; Copy</i>
