@@ -1146,6 +1146,15 @@ export default class WebinarLive extends Component {
           webinar_id: this.state.webinarId
         })
       }
+      else{
+        this.closeModalEnd()
+        toast.success('You have ended the webinar for all participants')
+        this.updateStatus(this.state.webinar.id, 3)
+        socket.emit('send', {
+          socketAction: 'fetchPostTest',
+          webinar_id: this.state.webinarId
+        })
+      }
     })
   }
   startPoll() {
@@ -2185,7 +2194,6 @@ export default class WebinarLive extends Component {
         <Modal
           show={this.state.modalConfirmClose}
           onHide={this.closeModalConfirmClose}
-          dialogClassName="modal-lg"
           centered
         >
           <Modal.Header closeButton>
