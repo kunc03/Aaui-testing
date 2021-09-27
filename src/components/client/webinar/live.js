@@ -2362,8 +2362,10 @@ export default class WebinarLive extends Component {
                               }
                             }
                           }}>
-                          <div style={{ float: 'left', wordBreak: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.tanya.length > 30 ? `${item.tanya.substring(0, 30)}...` : item.tanya }} />
+                          <span style={{ float: 'left', fontSize: '11px', fontWeight: 'normal' }}><b>No. {item.no}</b></span>
                           <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{`(${item.answer.length} / ${this.state.peserta_count.length}) `}<b>{item.status}</b></span>
+                          <br />
+                          <div style={{ float: 'left', wordBreak: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.tanya.length > 30 ? `${item.tanya.substring(0, 255)}` : item.tanya }} />
                           {
                             (item.status === 'On going' || item.show) ?
                               <>
