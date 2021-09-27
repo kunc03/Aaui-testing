@@ -1815,7 +1815,7 @@ export default class WebinarLive extends Component {
                         }
 
                         {
-                          this.state.startPosttest && this.state.pretestTerjawab === true && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                          this.state.startPosttest && (!this.state.startPretest || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{ marginTop: 20 }}>
                             <h4>Answer the post-test</h4>
                             <div className="alert alert-danger mt-2">
