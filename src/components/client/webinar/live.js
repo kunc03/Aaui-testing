@@ -1849,7 +1849,7 @@ export default class WebinarLive extends Component {
                                     </button>
                                   </Fragment>
                                   :
-                                  <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.jawabanEssayKu }}></div>
+                                  <div style={{ color: 'grey' }} dangerouslySetInnerHTML={{ __html: this.state.jawabanEssayKu }}></div>
                               }
                             </div>
                             : null
