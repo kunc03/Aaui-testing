@@ -653,8 +653,7 @@ export default class WebinarLive extends Component {
                       this.state.webinar.id,
                       (
                         this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                        this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
                         ? 'moderator' : 'peserta',
                       { userID: this.state.user.user_id }
                     )
@@ -702,8 +701,7 @@ export default class WebinarLive extends Component {
                     //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                     (
                       this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                      this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
                       ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
@@ -810,8 +808,7 @@ export default class WebinarLive extends Component {
                       //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                       (
                         this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                        this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
                         ? 'moderator' : 'peserta',
                       { userID: this.state.user.user_id }
                     )
@@ -859,8 +856,7 @@ export default class WebinarLive extends Component {
                     //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
                     (
                       this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
-                      this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
                       ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
@@ -1544,7 +1540,11 @@ export default class WebinarLive extends Component {
                       : null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.isFeedback ?
+                    (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
+                    ) && this.state.isFeedback ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
@@ -1561,6 +1561,7 @@ export default class WebinarLive extends Component {
                   {
                     //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                     (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) ?
@@ -1573,6 +1574,7 @@ export default class WebinarLive extends Component {
                   {
                     //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
                     (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) && this.state.posttest.length > 0 ?
@@ -1585,6 +1587,7 @@ export default class WebinarLive extends Component {
                   {
                     //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
                     (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) && this.state.pretest.length > 0 ?
@@ -1613,6 +1616,7 @@ export default class WebinarLive extends Component {
                   {
                     //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                     (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) ?
