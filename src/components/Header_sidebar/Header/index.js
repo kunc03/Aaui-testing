@@ -33,7 +33,7 @@ class Header extends Component {
     localStorage.setItem('companyID', id);
     localStorage.setItem('companyName', name);
     localStorage.setItem('logo', logo);
-    window.location.reload();
+    window.location.replace("/");
   };
 
   fetchCompany() {
@@ -49,7 +49,7 @@ class Header extends Component {
         } else {
           this.setState({ company: response.data.result.company });
         }
-        this.setState({ logoMulti: this.state.company.filter((item)=> item.company_id == localStorage.getItem('companyID'))[0].logo })
+        this.setState({ logoMulti: this.state.company.filter((item) => item.company_id == localStorage.getItem('companyID'))[0].logo })
       })
       .catch(function (error) {
         console.log(error);
