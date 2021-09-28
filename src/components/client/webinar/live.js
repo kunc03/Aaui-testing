@@ -117,6 +117,12 @@ export default class WebinarLive extends Component {
     },
     showOpenApps: true,
     isJoin: false,
+    resultPostPreTest_AllUser: {
+      posttest: [],
+      pretest: []
+    },
+    showModalResultPostTest: false,
+    showModalResultPreTest: false,
     showDescription: false,
     isLoadingPage: true,
     dataParticipants: {
@@ -379,6 +385,10 @@ export default class WebinarLive extends Component {
         }
         else {
           toast.success('Post-test submission sent')
+          socket.emit('send', {
+            socketAction: 'kirimJawabanPostTest',
+            webinar_id: this.state.webinarId
+          })
           this.setState({ isLoading: false })
         }
         if (this.props.webinarId && this.props.voucher) {
@@ -413,6 +423,10 @@ export default class WebinarLive extends Component {
         }
         else {
           toast.success('Submit Pre-Test answers webinar')
+          socket.emit('send', {
+            socketAction: 'kirimJawabanPreTest',
+            webinar_id: this.state.webinarId
+          })
           this.setState({ isLoading: false })
         }
         this.fetchPreTest()
@@ -806,7 +820,7 @@ export default class WebinarLive extends Component {
                   record: true
                 })
                 http(meetingCreateUrl).then(async (result) => {
-                  if (result.returncode = 'SUCCESS') {
+                  if (result.returncode === 'SUCCESS') {
                     // Setelah create, join
                     let joinUrl = api.administration.join(
                       this.state.user.name,
@@ -915,6 +929,7 @@ export default class WebinarLive extends Component {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
+          this.getResultPostPreTest("pretest");
           this.setState({ resultPretest: res.data.result }, () => {
             this.setState({ loadingTest: false })
           })
@@ -946,7 +961,9 @@ export default class WebinarLive extends Component {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
+          this.getResultPostPreTest("posttest");
           this.setState({ resultPosttest: res.data.result }, () => {
+
             this.setState({ loadingTest: false })
           })
         }
@@ -1008,6 +1025,50 @@ export default class WebinarLive extends Component {
       }
     })
   }
+  getResultPostPreTest(arg) {
+    API.get(`${API_SERVER}v2/webinar-test/result/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          console.log(res.data.result, "TEST BRO")
+          let keys = Object.keys(res.data.result);
+          for (var i = 0; i < keys.length; i++) {
+
+            console.log(keys[i], res.data.result[keys[i]], "TEST BRO 1")
+            let str = res.data.result[keys[i]];
+
+            if (arg === 'posttest') {
+
+              let idx = this.state.resultPostPreTest_AllUser.posttest.findIndex((chk) => { return chk.name === str.name });
+              if (idx == -1) {
+                this.state.resultPostPreTest_AllUser.posttest.push({
+                  name: str.name,
+                  selisih: str.selisih,
+                  value: str.posttest
+                })
+              }
+            } else {
+              let idx = this.state.resultPostPreTest_AllUser.pretest.findIndex((chk) => { return chk.name === str.name });
+              if (idx == -1) {
+                this.state.resultPostPreTest_AllUser.pretest.push({
+                  name: str.name,
+                  selisih: str.selisih,
+                  value: str.posttest
+                })
+              }
+            }
+          }
+
+          // if (arg === 'pretest') {
+          //   this.SetState({ showModalResultPreTest: true });
+          // } else {
+          //   this.SetState({ showModalResultPostTest: true });
+          // }
+        }
+      }
+    })
+  }
   componentDidMount() {
     // if (isMobile) {
     //   if (this.props.webinarId && this.props.voucher){
@@ -1048,6 +1109,12 @@ export default class WebinarLive extends Component {
         this.fetchPostTest();
       }
       if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
+        try {
+          toast.success(`Please fill in the following essay questions.`)
+          this.actionEssay.scrollIntoView({ behavior: 'smooth' });
+        } catch (e) {
+
+        }
         this.setState({ startEssay: true });
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic(true)
@@ -1068,6 +1135,12 @@ export default class WebinarLive extends Component {
           this.fetchWebinar(true)
         }
         this.fetchPostTest()
+      }
+      if (data.socketAction === 'kirimJawabanPostTest' && data.webinar_id === this.state.webinarId) {
+        this.getResultPostPreTest('posttest')
+      }
+      if (data.socketAction === 'kirimJawabanPreTest' && data.webinar_id === this.state.webinarId) {
+        this.getResultPostPreTest('pretest')
       }
       if (data.socketAction == 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
         this.setState({ pollResult: data.data, modalResultPoll: true });
@@ -1379,6 +1452,12 @@ export default class WebinarLive extends Component {
   closeResultPoll() {
     this.setState({ modalResultPoll: false })
   }
+  closeResultPostTest() {
+    this.setState({ showModalResultPostTest: false });
+  }
+  closeResultPreTest() {
+    this.setState({ showModalResultPreTest: false });
+  }
   backPoll() {
     this.setState({ newPoll: false, createPoll: {}, idPoll: '', setting: false })
   }
@@ -1584,15 +1663,19 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
                     (
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) ?
-                      <button onClick={() => this.setState({ modalSendEssay: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Send Essay
-                      </button>
+                      this.state.startEssay ?
+                        <button onClick={() => this.actionResultEssay.scrollIntoView({ behavior: 'smooth' })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-clipboard-list"></i>Essay Result
+                        </button>
+                        :
+                        <button onClick={() => this.setState({ modalSendEssay: true })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-paper-plane"></i>Send Essay
+                        </button>
                       :
                       null
                   }
@@ -1603,22 +1686,36 @@ export default class WebinarLive extends Component {
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) && this.state.posttest.length > 0 ?
-                      <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Send Post Test
-                      </button>
+                      this.state.resultPostPreTest_AllUser.posttest.length > 0 ||
+                        (this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1) ?
+                        <button onClick={() => this.setState({ showModalResultPostTest: true, showModalResultPreTest: false })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-clipboard-list"></i>Post Test Result
+                        </button>
+                        :
+                        <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-paper-plane"></i>Send Post Test
+                        </button>
                       :
                       null
                   }
                   {
                     //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+
                     (
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) && this.state.pretest.length > 0 ?
-                      <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
-                        <i className="fa fa-paper-plane"></i>Send Pre Test
-                      </button>
+
+                      this.state.resultPostPreTest_AllUser.pretest.length > 0 ||
+                        (this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1) ?
+                        <button onClick={() => this.setState({ showModalResultPreTest: true, showModalResultPostTest: false })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-clipboard-list"></i>Pre-Test Result
+                        </button>
+                        :
+                        <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
+                          <i className="fa fa-paper-plane"></i>Send Pre Test
+                        </button>
                       :
                       null
                   }
@@ -1779,6 +1876,9 @@ export default class WebinarLive extends Component {
                         {
                           this.state.isJoin && this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
+                              <div style={{ float: "left", clear: "both" }}
+                                ref={(el) => { this.actionEssay = el; }}>
+                              </div>
                               <h4>Answer the Essay</h4>
                               <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
 
@@ -1858,6 +1958,9 @@ export default class WebinarLive extends Component {
                         {
                           this.state.isJoin && this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length) ?
                             <div className="mt-4">
+                              <div style={{ float: "left", clear: "both" }}
+                                ref={(el) => { this.actionResultEssay = el; }}>
+                              </div>
                               <h4>Result Answer the Essay</h4>
                               <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
 
@@ -2415,6 +2518,104 @@ export default class WebinarLive extends Component {
             }
           </Modal.Body>
         </Modal>
+        {
+          this.state.showModalResultPostTest ?
+            <div className="poll-modal" style={{ width: '240px' }}>
+              <div className="poll-header">
+                Post Test Result
+                <i className="fa fa-times" style={{ float: 'right', cursor: 'pointer' }} onClick={this.closeResultPostTest.bind(this)}></i>
+              </div>
+              <div className="poll-body">
+                {
+                  //<label style={{ color: 'rgba(0,0,0,0.85)', wordBreak: 'break-word' }}>
+                  //<div style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                  //</label>
+                }
+                <div className="option-box" style={{ border: 'none', padding: '0px', width: '100%', margin: '0px', marginBottom: '10px' }}>
+                  {
+                    <table id="table-test" className="table table-striped" style={{ marginLeft: '-10px' }}>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Deviation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          this.state.resultPostPreTest_AllUser.posttest.map((key) => {
+                            return (
+                              <tr>
+                                <td>{key.name}</td>
+                                <td>{key.value.nilai.toFixed(2)}</td>
+                                <td>{key.selisih.toFixed(2)}</td>
+                              </tr>)
+                          })
+                        }
+                      </tbody>
+                    </table>
+                    //this.state.resultPostPreTest_AllUser.posttest.map((x) =>
+                    // <>
+                    //  <label style={{ textAlign: 'left' }}>Name: {x.name}</label>
+                    // <label style={{ textAlign: 'left' }}>Score: {x.value.nilai.toFixed(2)}</label>
+                    //<label style={{ textAlign: 'left' }}>Deviation: {x.selisih.toFixed(2)}</label>
+                    //</>
+                    //)
+                  }
+                </div>
+              </div>
+            </div>
+            : null
+        }
+        {
+          this.state.showModalResultPreTest ?
+            <div className="poll-modal" style={{ width: '240px' }}>
+              <div className="poll-header">
+                Pre Test Result
+                <i className="fa fa-times" style={{ float: 'right', cursor: 'pointer' }} onClick={this.closeResultPreTest.bind(this)}></i>
+              </div>
+              <div className="poll-body">
+                {
+                  //<label style={{ color: 'rgba(0,0,0,0.85)', wordBreak: 'break-word' }}>
+                  //<div style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: this.state.pollResult.tanya }} />
+                  //</label>
+                }
+                <div className="option-box" style={{ border: 'none', padding: '0px', width: '100%', margin: '0px', marginBottom: '10px' }}>
+                  {
+                    <table id="table-test" className="table table-striped" style={{ marginLeft: '-10px' }}>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Deviation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          this.state.resultPostPreTest_AllUser.pretest.map((key) => {
+                            return (
+                              <tr>
+                                <td>{key.name}</td>
+                                <td>{key.value.nilai.toFixed(2)}</td>
+                                <td>{key.selisih.toFixed(2)}</td>
+                              </tr>)
+                          })
+                        }
+                      </tbody>
+                    </table>
+                    // this.state.resultPostPreTest_AllUser.pretest.map((x) =>
+                    //   <>
+                    //     <label style={{ textAlign: 'left' }}>{x.name}</label>
+                    //     <label style={{ textAlign: 'left' }}>{x.value.nilai.toFixed(2)}</label>
+                    //     <label style={{ textAlign: 'left' }}>{x.selisih.toFixed(2)}</label>
+                    //   </>
+                    // )
+                  }
+                </div>
+              </div>
+            </div>
+            : null
+        }
         {
           this.state.modalSendPoll ?
             <div className="poll-modal">
