@@ -311,8 +311,8 @@ export default class WebinarLive extends Component {
       this.state.jawabanPretest.push({ questions_id: name, options_id: value })
     }
   }
-  setting(){
-    this.setState({setting: !this.state.setting});
+  setting() {
+    this.setState({ setting: !this.state.setting });
   }
   handleJawabPosttest = e => {
     const { value, name } = e.target;
@@ -599,12 +599,12 @@ export default class WebinarLive extends Component {
           this.setState({ pembicara: [] })
           res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
           res.data.result.kuesioner_sent === 1 && this.fetchKuesioner()
-          if (!this.state.usersPoll.length){
-            res.data.result.peserta.map(x=>{
-              this.state.usersPoll.push({id: x.user_id, name: x.name, checked: true})
+          if (!this.state.usersPoll.length) {
+            res.data.result.peserta.map(x => {
+              this.state.usersPoll.push({ id: x.user_id, name: x.name, checked: true })
             })
-            res.data.result.tamu.map(x=>{
-              this.state.usersPoll.push({id: x.voucher, name: x.name, checked: true})
+            res.data.result.tamu.map(x => {
+              this.state.usersPoll.push({ id: x.voucher, name: x.name, checked: true })
             })
           }
           this.fetchQNAByUser()
@@ -651,7 +651,11 @@ export default class WebinarLive extends Component {
                     let joinUrl = api.administration.join(
                       this.state.user.name,
                       this.state.webinar.id,
-                      this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                      (
+                        this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                        this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                        ? 'moderator' : 'peserta',
                       { userID: this.state.user.user_id }
                     )
 
@@ -695,7 +699,12 @@ export default class WebinarLive extends Component {
                   let joinUrl = api.administration.join(
                     this.state.user.name,
                     this.state.webinar.id,
-                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    (
+                      this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                      this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                      ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
 
@@ -798,7 +807,12 @@ export default class WebinarLive extends Component {
                     let joinUrl = api.administration.join(
                       this.state.user.name,
                       this.state.webinar.id,
-                      this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                      //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                      (
+                        this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                        this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                        this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                        ? 'moderator' : 'peserta',
                       { userID: this.state.user.user_id }
                     )
 
@@ -842,7 +856,12 @@ export default class WebinarLive extends Component {
                   let joinUrl = api.administration.join(
                     this.state.user.name,
                     this.state.webinar.id,
-                    this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    //this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ? 'moderator' : 'peserta',
+                    (
+                      this.state.moderatorId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1 ||
+                      this.state.sekretarisId.filter((item) => item.user_id == Storage.get("user").data.user_id).length >= 1)
+                      ? 'moderator' : 'peserta',
                     { userID: this.state.user.user_id }
                   )
 
@@ -1032,10 +1051,10 @@ export default class WebinarLive extends Component {
         }
         this.fetchPostTest()
       }
-      if (data.socketAction == 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x=> x.id === this.state.user.user_id).length) {
+      if (data.socketAction == 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
         this.setState({ pollResult: data.data, modalResultPoll: true });
       }
-      if (data.socketAction == 'startPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x=> x.id === this.state.user.user_id).length) {
+      if (data.socketAction == 'startPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
         this.setState({ answerPoll: data.data, modalAnswerPoll: true });
         this.state.answerPoll.poll_id = data.poll_id;
         this.forceUpdate();
@@ -1146,7 +1165,7 @@ export default class WebinarLive extends Component {
           webinar_id: this.state.webinarId
         })
       }
-      else{
+      else {
         this.closeModalEnd()
         toast.success('You have ended the webinar for all participants')
         this.updateStatus(this.state.webinar.id, 3)
@@ -1183,7 +1202,7 @@ export default class WebinarLive extends Component {
                     poll_id: this.state.idPoll,
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll,
-                    recipient: this.state.usersPoll.filter(x=> x.checked === true)
+                    recipient: this.state.usersPoll.filter(x => x.checked === true)
                   })
                   this.setState({
                     newPoll: false, idPoll: '', createPoll: {
@@ -1227,7 +1246,7 @@ export default class WebinarLive extends Component {
                     poll_id: res.data.result.insertId,
                     webinar_id: this.state.webinarId,
                     data: this.state.createPoll,
-                    recipient: this.state.usersPoll.filter(x=> x.checked === true)
+                    recipient: this.state.usersPoll.filter(x => x.checked === true)
                   })
                   this.setState({
                     newPoll: false, createPoll: {
@@ -1256,7 +1275,7 @@ export default class WebinarLive extends Component {
         userId: this.state.user.user_id,
         webinar_id: this.state.webinarId,
         data: data,
-        recipient: this.state.usersPoll.filter(x=> x.checked === true)
+        recipient: this.state.usersPoll.filter(x => x.checked === true)
       })
     }
     else {
@@ -1272,7 +1291,7 @@ export default class WebinarLive extends Component {
               userId: this.state.user.user_id,
               webinar_id: this.state.webinarId,
               data: data,
-              recipient: this.state.usersPoll.filter(x=> x.checked === true)
+              recipient: this.state.usersPoll.filter(x => x.checked === true)
             })
           }
         }
@@ -1540,7 +1559,12 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
+                    ) ?
                       <button onClick={() => this.setState({ modalSendEssay: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Essay
                       </button>
@@ -1548,7 +1572,12 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
+                    //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.posttest.length > 0 ?
+                    (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
+                    ) && this.state.posttest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Post Test
                       </button>
@@ -1556,7 +1585,12 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+                    //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 && this.state.pretest.length > 0 ?
+                    (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
+                    ) && this.state.pretest.length > 0 ?
                       <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Send Pre Test
                       </button>
@@ -1580,7 +1614,12 @@ export default class WebinarLive extends Component {
                       null
                   }
                   {
-                    this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    //this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ?
+                    (
+                      this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
+                      this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
+                    ) ?
                       <button onClick={() => { this.fetchPolling(); this.setState({ modalSendPoll: true }) }} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Polling
                       </button>
@@ -2368,8 +2407,8 @@ export default class WebinarLive extends Component {
                     <label>{this.state.setting ? 'Tick users who will receive the poll.' : this.state.polling.length ? 'Click the poll to broadcast the question.' : 'You have no poll, click Add Poll to create a new one.'}</label>
                 }
                 {
-                  this.state.newPoll || this.state.setting ? null : 
-                    <i className="fa fa-cog" style={{float:'right', cursor:'pointer'}} onClick={this.setting.bind(this)}></i>
+                  this.state.newPoll || this.state.setting ? null :
+                    <i className="fa fa-cog" style={{ float: 'right', cursor: 'pointer' }} onClick={this.setting.bind(this)}></i>
                 }
                 <div className="row">
                   {
@@ -2436,17 +2475,17 @@ export default class WebinarLive extends Component {
                 </div>
                 {
                   this.state.setting ? <>
-                  <input type="checkbox" id="checkall" checked={this.state.checkAllUsersPoll} onChange={(e) => this.checkAll(e)} />&nbsp;
-                  <label for="checkall" style={{marginBottom: 14}}>Check all</label>
-                  {
-                    this.state.usersPoll.map((item, i)=>
-                    <div>
-                      <input type="checkbox" id={item.id} value={item.id} checked={item.checked} onChange={(e) => this.handleChangeChecked(e, i)} />&nbsp;
-                      <label for={item.id}>{item.name}</label>
-                    </div>  
-                    )
-                  }</>
-                  : null
+                    <input type="checkbox" id="checkall" checked={this.state.checkAllUsersPoll} onChange={(e) => this.checkAll(e)} />&nbsp;
+                    <label for="checkall" style={{ marginBottom: 14 }}>Check all</label>
+                    {
+                      this.state.usersPoll.map((item, i) =>
+                        <div>
+                          <input type="checkbox" id={item.id} value={item.id} checked={item.checked} onChange={(e) => this.handleChangeChecked(e, i)} />&nbsp;
+                          <label for={item.id}>{item.name}</label>
+                        </div>
+                      )
+                    }</>
+                    : null
                 }
                 {
                   this.state.newPoll ?
@@ -2579,17 +2618,17 @@ export default class WebinarLive extends Component {
                     </div>
                     :
                     this.state.setting ? null :
-                    <div className="col-sm-12" style={{ textAlign: 'center', marginTop: 10 }}>
-                      <span className="icademy-label label-small" style={{ cursor: 'pointer' }} onClick={() => {
-                        if (this.state.polling.filter(x => x.status === 'On going').length) {
-                          toast.warning('You should finish the on going poll before start another poll')
+                      <div className="col-sm-12" style={{ textAlign: 'center', marginTop: 10 }}>
+                        <span className="icademy-label label-small" style={{ cursor: 'pointer' }} onClick={() => {
+                          if (this.state.polling.filter(x => x.status === 'On going').length) {
+                            toast.warning('You should finish the on going poll before start another poll')
+                          }
+                          else {
+                            this.setState({ newPoll: true })
+                          }
                         }
-                        else {
-                          this.setState({ newPoll: true })
-                        }
-                      }
-                      }><i className="fa fa-plus"></i> Add Poll</span>
-                    </div>
+                        }><i className="fa fa-plus"></i> Add Poll</span>
+                      </div>
                 }
                 {
                   this.state.newPoll ?
