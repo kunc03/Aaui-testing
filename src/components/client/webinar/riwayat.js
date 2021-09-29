@@ -459,7 +459,7 @@ export default class WebinarRiwayat extends Component {
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
                     <td>{item.status == 2 ? 'Present' : 'Not present'}</td>
-                    <td>{moment(jamMulai, 'HH:mm').local().format('HH:mm')}</td>
+                    <td>{item.jam_mulai ? moment(jamMulai, 'HH:mm').local().format('HH:mm') : '-'}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
                     <td>{audio}</td>
