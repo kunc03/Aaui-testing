@@ -666,7 +666,7 @@ export default class WebinarLive extends Component {
                   record: true
                 })
                 http(meetingCreateUrl).then(async (result) => {
-                  if (result.returncode = 'SUCCESS') {
+                  if (result.returncode === 'SUCCESS') {
                     // Setelah create, join
                     let joinUrl = api.administration.join(
                       this.state.user.name,
@@ -1054,7 +1054,7 @@ export default class WebinarLive extends Component {
                 this.state.resultPostPreTest_AllUser.pretest.push({
                   name: str.name,
                   selisih: str.selisih,
-                  value: str.posttest
+                  value: str.pretest
                 })
               }
             }
@@ -1110,7 +1110,20 @@ export default class WebinarLive extends Component {
       }
       if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
         try {
-          toast.success(`Please fill in the following essay questions.`)
+          if (
+
+            !(
+              (
+                this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1
+              ) &&
+              this.state.status == 2
+            ) &&
+            !this.state.jawabanEssayKu
+          ) {
+            toast.success(`Please fill in the following essay questions.`)
+          }
           this.actionEssay.scrollIntoView({ behavior: 'smooth' });
         } catch (e) {
 
@@ -1668,8 +1681,8 @@ export default class WebinarLive extends Component {
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     ) ?
-                      this.state.startEssay ?
-                        <button onClick={() => this.actionResultEssay.scrollIntoView({ behavior: 'smooth' })} className="float-right btn btn-icademy-primary mr-2">
+                      this.state.startEssay && this.state.resultEssay.length > 0 ?
+                        <button onClick={() => this.actionResultEssay.scrollIntoView({ behavior: 'smooth' })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Essay Result
                         </button>
                         :
@@ -1688,7 +1701,7 @@ export default class WebinarLive extends Component {
                     ) && this.state.posttest.length > 0 ?
                       this.state.resultPostPreTest_AllUser.posttest.length > 0 ||
                         (this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1) ?
-                        <button onClick={() => this.setState({ showModalResultPostTest: true, showModalResultPreTest: false })} className="float-right btn btn-icademy-primary mr-2">
+                        <button onClick={() => this.setState({ showModalResultPostTest: true, showModalResultPreTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Post Test Result
                         </button>
                         :
@@ -1709,7 +1722,7 @@ export default class WebinarLive extends Component {
 
                       this.state.resultPostPreTest_AllUser.pretest.length > 0 ||
                         (this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1) ?
-                        <button onClick={() => this.setState({ showModalResultPreTest: true, showModalResultPostTest: false })} className="float-right btn btn-icademy-primary mr-2">
+                        <button onClick={() => this.setState({ showModalResultPreTest: true, showModalResultPostTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Pre-Test Result
                         </button>
                         :
@@ -2538,7 +2551,6 @@ export default class WebinarLive extends Component {
                         <tr>
                           <th>Name</th>
                           <th>Score</th>
-                          <th>Deviation</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2548,7 +2560,6 @@ export default class WebinarLive extends Component {
                               <tr>
                                 <td>{key.name}</td>
                                 <td>{key.value.nilai.toFixed(2)}</td>
-                                <td>{key.selisih.toFixed(2)}</td>
                               </tr>)
                           })
                         }
@@ -2587,7 +2598,6 @@ export default class WebinarLive extends Component {
                         <tr>
                           <th>Name</th>
                           <th>Score</th>
-                          <th>Deviation</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2597,7 +2607,6 @@ export default class WebinarLive extends Component {
                               <tr>
                                 <td>{key.name}</td>
                                 <td>{key.value.nilai.toFixed(2)}</td>
-                                <td>{key.selisih.toFixed(2)}</td>
                               </tr>)
                           })
                         }
