@@ -78,38 +78,44 @@ class UserEdit extends Component {
       formData.identity === '' ||
       formData.email === '' ||
       formData.level === ''
-    ){
+    ) {
       toast.warning('Please fill required field.')
     }
-    else{
+    else {
       API.put(`${API_SERVER}v1/user/${this.state.user_id}`, formData).then(
         res => {
           if (res.status === 200) {
-            if (this.state.password !== "") {
-              let formData = { password: this.state.password };
-              API.put(
-                `${API_SERVER}v1/user/password/${this.state.user_id}`,
-                formData
-              ).then(res => {
-                console.log("pass: ", res.data);
-              });
-            }
-            API.delete(`${API_SERVER}v1/user/assign/${this.state.user_id}`).then(res => {
-              if (res.status === 200) {
-                for (let i = 0; i < this.state.valueCompany.length; i++) {
-                  let formData = {
-                    user_id: this.state.user_id,
-                    company_id: this.state.valueCompany[i],
-                  };
-                  API.post(`${API_SERVER}v1/user/assign`, formData)
-                }
-              }
-            })
-  
-            if (Storage.get("user").data.level === "superadmin") {
-              this.props.history.push(`/company-detail-super/${formData.company_id}`)
+            if (res.data.error) {
+
+              this.setState({ responseMessage: res.data.result })
             } else {
-              this.props.history.push(`/user-company/${this.state.company_id}`);
+
+              if (this.state.password !== "") {
+                let formData = { password: this.state.password };
+                API.put(
+                  `${API_SERVER}v1/user/password/${this.state.user_id}`,
+                  formData
+                ).then(res => {
+                  console.log("pass: ", res.data);
+                });
+              }
+              API.delete(`${API_SERVER}v1/user/assign/${this.state.user_id}`).then(res => {
+                if (res.status === 200) {
+                  for (let i = 0; i < this.state.valueCompany.length; i++) {
+                    let formData = {
+                      user_id: this.state.user_id,
+                      company_id: this.state.valueCompany[i],
+                    };
+                    API.post(`${API_SERVER}v1/user/assign`, formData)
+                  }
+                }
+              })
+
+              if (Storage.get("user").data.level === "superadmin") {
+                this.props.history.push(`/company-detail-super/${formData.company_id}`)
+              } else {
+                this.props.history.push(`/user-company/${this.state.company_id}`);
+              }
             }
           }
         }
@@ -126,12 +132,12 @@ class UserEdit extends Component {
       API.get(`${API_SERVER}v1/branch/company/${value}`).then(res => {
         if (res.status === 200) {
           this.setState({ listBranch: res.data.result[0], company_id: value, listGrup: res.data.result[1] });
-          let tempGroup=[];
+          let tempGroup = [];
           res.data.result[0].map(item => {
-            tempGroup.push({value: item.branch_id, label: item.branch_name});
+            tempGroup.push({ value: item.branch_id, label: item.branch_name });
           });
-          this.setState({valueGroup: []})
-          this.setState({optionsGroup: tempGroup})
+          this.setState({ valueGroup: [] })
+          this.setState({ optionsGroup: tempGroup })
           this.showMultipleCompany(value)
         }
       });
@@ -192,11 +198,11 @@ class UserEdit extends Component {
         ).then(res => {
           if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0], listGrup: res.data.result[1] });
-            let tempGroup=[];
+            let tempGroup = [];
             res.data.result[0].map(item => {
-              tempGroup.push({value: item.branch_id, label: item.branch_name});
+              tempGroup.push({ value: item.branch_id, label: item.branch_name });
             });
-            this.setState({optionsGroup: tempGroup})
+            this.setState({ optionsGroup: tempGroup })
           }
         });
 
@@ -464,6 +470,14 @@ class UserEdit extends Component {
 
                               </div>
                             }
+                            <div style={{ marginTop: '50px' }}>
+                              {
+                                this.state.responseMessage &&
+                                <div class="alert alert-primary" role="alert">
+                                  <b>ALERT</b> Please check you data before submit. {this.state.responseMessage}
+                                </div>
+                              }
+                            </div>
                             <button
                               type="submit"
                               className="btn btn-primary btn-block m-t-100 f-20 f-w-600"

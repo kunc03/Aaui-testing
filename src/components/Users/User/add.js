@@ -112,10 +112,10 @@ class UserAdd extends Component {
       formData.identity === '' ||
       formData.email === '' ||
       formData.level === ''
-    ){
+    ) {
       toast.warning('Please fill required field.')
     }
-    else{
+    else {
       API.post(`${API_SERVER}v1/user`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
@@ -171,7 +171,7 @@ class UserAdd extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Tambah User Management</h3>
+                      <h3 className="f-24 f-w-800">Add User Management</h3>
                       <div className="card">
                         <div className="card-block">
 
