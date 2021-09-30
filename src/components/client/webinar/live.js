@@ -25,6 +25,7 @@ socket.on("connect", () => {
 export default class WebinarLive extends Component {
 
   state = {
+    isSavingQuestion: false,
     submitPoll: false,
     setting: false,
     checkAllUsersPoll: true,
@@ -505,6 +506,7 @@ export default class WebinarLive extends Component {
       toast.warning('Question at least 10 characters')
     }
     else {
+      this.setState({isSavingQuestion: true});
       let form = {
         webinar_id: this.state.webinarId,
         jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
@@ -512,20 +514,24 @@ export default class WebinarLive extends Component {
         description: this.state.pertanyaanQNA
       }
       API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
-        if (res.data.error)
+        if (res.data.error){
           toast.error('Failed to send quistionnaire')
-        else
+          this.setState({isSavingQuestion: false});
+        }
+        else{
           toast.success('Question sent')
-        this.setState({ pertanyaanQNA: '' })
-        socket.emit('send', {
-          name: res.data.result.name,
-          webinar_id: res.data.result.webinar_id,
-          email: res.data.result.email,
-          description: res.data.result.description,
-          jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
-          timestamp: new Date()
-        })
-        this.fetchQNAByUser()
+          this.setState({isSavingQuestion: false});
+          this.setState({ pertanyaanQNA: '' })
+          socket.emit('send', {
+            name: res.data.result.name,
+            webinar_id: res.data.result.webinar_id,
+            email: res.data.result.email,
+            description: res.data.result.description,
+            jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
+            timestamp: new Date()
+          })
+          this.fetchQNAByUser()
+        }
       })
     }
   }
@@ -2014,11 +2020,12 @@ export default class WebinarLive extends Component {
                           <textarea placeholder="Type your question here..." rows="4" className="form-control" value={this.state.pertanyaanQNA} onChange={e => this.setState({ pertanyaanQNA: e.target.value })} />
                         </div>
                         <button
+                          disabled={this.state.isSavingQuestion}
                           className="btn btn-icademy-primary float-right"
                           onClick={this.sendQNA.bind(this)}
                         >
                           <i className="fa fa-paper-plane"></i>
-                          Send
+                          {this.state.isSavingQuestion ? 'Sending...' : 'Send'}
                         </button>
                       </div>
                     </Card.Body>

@@ -618,7 +618,7 @@ class Header extends Component {
           </ul>
 
 
-          {(level == 'superadmin' || level == 'admin') && (
+          {/* {(level == 'superadmin' || level == 'admin') && ( */}
             <ul className="navbar-nav">
               <li>
                 <div className="dropdown">
@@ -639,7 +639,7 @@ class Header extends Component {
                       </h6>
                     </div>
                     <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
-                      {level == 'admin' && (
+                      {(level == 'admin' || level == 'client') && (
                         <li
                           className="notification"
                           style={{ cursor: 'pointer' }}
@@ -752,7 +752,7 @@ class Header extends Component {
                 </div>
               </li>
             </ul>
-          )}
+          {/* )} */}
         </div>
       </header>
     );
