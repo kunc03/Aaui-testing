@@ -885,6 +885,22 @@ export default class WebinarLive extends Component {
     })
   }
   acakDoorprize() {
+    let penerima = [];
+    for (var i = 0; i < this.state.jawabKuesioner.length; i++) {
+      let names = this.state.jawabKuesioner[i].toLowerCase();
+      if (
+        this.state.moderatorId.filter((item) => item.name.toLowerCase() === names).length >= 1 ||
+        this.state.pembicaraId.filter((item) => item.name.toLowerCase() === names).length >= 1 ||
+        this.state.sekretarisId.filter((item) => item.name.toLowerCase() === names).length >= 1
+      ) {
+        console.log(this.state.jawabKuesioner[i], "TEST DOORPRIZE POP")
+      } else {
+        penerima.push(this.state.jawabKuesioner[i]);
+      }
+    }
+
+    this.state.jawabKuesioner = penerima;
+    //console.log(this.state.jawabKuesioner, this.state.moderatorId, this.state.pembicaraId, "TEST DOORPRIZE")
     const random = Math.floor(Math.random() * this.state.jawabKuesioner.length);
     socket.emit('send', {
       socketAction: 'pemenangDoorprize',
