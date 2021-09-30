@@ -506,7 +506,7 @@ export default class WebinarLive extends Component {
       toast.warning('Question at least 10 characters')
     }
     else {
-      this.setState({isSavingQuestion: true});
+      this.setState({ isSavingQuestion: true });
       let form = {
         webinar_id: this.state.webinarId,
         jenis_peserta: this.state.user.type ? 'tamu' : 'peserta',
@@ -514,13 +514,13 @@ export default class WebinarLive extends Component {
         description: this.state.pertanyaanQNA
       }
       API.post(`${API_SERVER}v2/webinar/qna`, form).then(res => {
-        if (res.data.error){
+        if (res.data.error) {
           toast.error('Failed to send quistionnaire')
-          this.setState({isSavingQuestion: false});
+          this.setState({ isSavingQuestion: false });
         }
-        else{
+        else {
           toast.success('Question sent')
-          this.setState({isSavingQuestion: false});
+          this.setState({ isSavingQuestion: false });
           this.setState({ pertanyaanQNA: '' })
           socket.emit('send', {
             name: res.data.result.name,
@@ -1566,7 +1566,10 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
-                    ) && this.state.isFeedback ?
+                    )
+                      && this.state.peserta.filter((item) => item.user_id == user.user_id).length == 0
+                      && this.state.isFeedback
+                      && this.state.isJoin ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form & Doorprize
                       </button>
@@ -1722,7 +1725,7 @@ export default class WebinarLive extends Component {
                         </center>
 
                         {
-                          this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                          this.state.isJoin && this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
                               <h4>Answer the Pre-test</h4>
                               <div className="alert alert-danger mt-2">
@@ -1774,7 +1777,7 @@ export default class WebinarLive extends Component {
                         }
 
                         {
-                          this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
+                          this.state.isJoin && this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
                               <h4>Answer the Essay</h4>
                               <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
@@ -1853,7 +1856,7 @@ export default class WebinarLive extends Component {
                         }
 
                         {
-                          this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length) ?
+                          this.state.isJoin && this.state.startEssay && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length || this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length) ?
                             <div className="mt-4">
                               <h4>Result Answer the Essay</h4>
                               <div style={{ color: '#000' }} dangerouslySetInnerHTML={{ __html: this.state.webinar.essay }}></div>
@@ -1885,7 +1888,7 @@ export default class WebinarLive extends Component {
                         }
 
                         {
-                          this.state.startPosttest && (!this.state.startPretest || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                          this.state.isJoin && this.state.startPosttest && (!this.state.startPretest || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{ marginTop: 20 }}>
                             <h4>Answer the post-test</h4>
                             <div className="alert alert-danger mt-2">
