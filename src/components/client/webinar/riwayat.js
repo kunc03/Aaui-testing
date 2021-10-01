@@ -493,7 +493,12 @@ export default class WebinarRiwayat extends Component {
                   }
 
                   return (<tr key={i}>
-                    <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                    {
+                      (item.status == 2) ?
+                        <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        :
+                        <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                    }
                     <td>{item.name}</td>
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
