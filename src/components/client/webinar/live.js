@@ -1768,7 +1768,7 @@ export default class WebinarLive extends Component {
                     ) && this.state.posttest.length > 0 ?
                       this.state.resultPostPreTest_AllUser.posttest.length > 0 ||
                         (this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1) ?
-                        <button onClick={() => this.setState({ showModalResultPostTest: true, showModalResultPreTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
+                        <button onClick={() => {this.setState({ showModalResultPostTest: true, showModalResultPreTest: false }); this.getResultPostPreTest('posttest')}} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Post Test Result ({this.state.resultPostPreTest_AllUser.posttest.length})
                         </button>
                         :
@@ -1789,7 +1789,7 @@ export default class WebinarLive extends Component {
 
                       this.state.resultPostPreTest_AllUser.pretest.length > 0 ||
                         (this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1) ?
-                        <button onClick={() => this.setState({ showModalResultPreTest: true, showModalResultPostTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
+                        <button onClick={() => {this.setState({ showModalResultPreTest: true, showModalResultPostTest: false }); this.getResultPostPreTest('pretest')}} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Pre-Test Result ({this.state.resultPostPreTest_AllUser.pretest.length})
                         </button>
                         :
