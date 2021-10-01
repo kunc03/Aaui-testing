@@ -350,7 +350,10 @@ export default class WebinarLive extends Component {
         }
         else {
           toast.success('Essay submission sent')
+
+          this.actionResultEssay = false;
           this.setState({ isLoading: false })
+
           socket.emit('send', {
             socketAction: 'sendEssay',
             webinar_id: this.state.webinarId
@@ -385,6 +388,7 @@ export default class WebinarLive extends Component {
         }
         else {
           toast.success('Post-test submission sent')
+          this.actionPostTest = false;
           socket.emit('send', {
             socketAction: 'kirimJawabanPostTest',
             webinar_id: this.state.webinarId
@@ -423,6 +427,7 @@ export default class WebinarLive extends Component {
         }
         else {
           toast.success('Submit Pre-Test answers webinar')
+          this.actionPreTest = false;
           socket.emit('send', {
             socketAction: 'kirimJawabanPreTest',
             webinar_id: this.state.webinarId
@@ -585,6 +590,8 @@ export default class WebinarLive extends Component {
         this.setState({
           user: res.data.result,
         })
+        this.getResultPostPreTest('posttest')
+        this.getResultPostPreTest('pretest')
         this.fetchPreTest()
         this.fetchPostTest()
         API.get(`${API_SERVER}v2/webinar/one/${this.state.webinarId}`).then(res => {
@@ -634,6 +641,7 @@ export default class WebinarLive extends Component {
 
           this.fetchEssay()
           this.fetchResultEssay()
+
 
           // let tgl = new Date(res.data.result.tanggal)
           // let tglJam = new Date(tgl.setHours(this.state.jamMulai.slice(0, 2)))
@@ -909,7 +917,10 @@ export default class WebinarLive extends Component {
       ) {
         console.log(this.state.jawabKuesioner[i], "TEST DOORPRIZE POP")
       } else {
-        penerima.push(this.state.jawabKuesioner[i]);
+        let idx = penerima.findIndex((str) => { return str === this.state.jawabKuesioner[i] });
+        if (idx < 0) {
+          penerima.push(this.state.jawabKuesioner[i]);
+        }
       }
     }
 
@@ -1031,34 +1042,46 @@ export default class WebinarLive extends Component {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          console.log(res.data.result, "TEST BRO")
+          //console.log(res.data.result, "TEST BRO")
           let keys = Object.keys(res.data.result);
           for (var i = 0; i < keys.length; i++) {
 
-            console.log(keys[i], res.data.result[keys[i]], "TEST BRO 1")
+            //console.log(keys[i], res.data.result[keys[i]], "TEST BRO 1")
             let str = res.data.result[keys[i]];
 
             if (arg === 'posttest') {
 
-              let idx = this.state.resultPostPreTest_AllUser.posttest.findIndex((chk) => { return chk.name === str.name });
-              if (idx == -1) {
-                this.state.resultPostPreTest_AllUser.posttest.push({
-                  name: str.name,
-                  selisih: str.selisih,
-                  value: str.posttest
-                })
-              }
-            } else {
-              let idx = this.state.resultPostPreTest_AllUser.pretest.findIndex((chk) => { return chk.name === str.name });
-              if (idx == -1) {
-                this.state.resultPostPreTest_AllUser.pretest.push({
-                  name: str.name,
-                  selisih: str.selisih,
-                  value: str.pretest
-                })
+              let idx = this.state.resultPostPreTest_AllUser.posttest.findIndex((chk) => { return chk.user_id === str.user_id });
+              if (idx < 0) {
+
+                if (str.posttest && (str.posttest.benar > 0 || str.posttest.salah > 0)) {
+                  this.state.resultPostPreTest_AllUser.posttest.push({
+                    user_id: str.user_id,
+                    name: str.name,
+                    selisih: str.selisih,
+                    value: str.posttest
+                  })
+                }
               }
             }
+            else if (arg === 'pretest') {
+              let idx = this.state.resultPostPreTest_AllUser.pretest.findIndex((chk) => { return chk.user_id === str.user_id });
+              if (idx < 0) {
+                if (str.pretest && (str.pretest.benar > 0 || str.pretest.salah > 0)) {
+
+                  this.state.resultPostPreTest_AllUser.pretest.push({
+                    user_id: str.user_id,
+                    name: str.name,
+                    selisih: str.selisih,
+                    value: str.pretest
+                  })
+                }
+              }
+            }
+
           }
+          // console.log(" FETCH DATA API :  ", res.data);
+          // console.log("FETCH RESULT TEST : ", this.state.resultPostPreTest_AllUser)
 
           // if (arg === 'pretest') {
           //   this.SetState({ showModalResultPreTest: true });
@@ -1091,24 +1114,66 @@ export default class WebinarLive extends Component {
       if (data.description && data.webinar_id == this.state.webinarId) {
         this.setState({ qna: [data, ...this.state.qna] })
       }
-      if (data.socketAction == 'pemenangDoorprize' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'pemenangDoorprize' && data.webinar_id === this.state.webinarId) {
         this.state.pemenangDoorprize.push(data.name)
         this.setState({ modalDoorprize: true })
         this.closeModalKuesioner()
       }
-      if (data.socketAction == 'sendKuesioner' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'sendKuesioner' && data.webinar_id === this.state.webinarId) {
         this.setState({ startKuesioner: true, modalKuesionerPeserta: true })
         this.fetchKuesioner()
       }
-      if (data.socketAction == 'sendPretest' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'sendPretest' && data.webinar_id === this.state.webinarId) {
         this.setState({ startPretest: true });
         this.fetchPreTest();
+
+        try {
+          if (
+            !(
+              (
+                this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1
+              ) &&
+              this.state.status == 2
+            ) &&
+            !this.state.pretestTerjawab
+          ) {
+            toast.success(`Please fill in the following pre-test questions.`)
+            this.actionPreTest.scrollIntoView({ behavior: 'smooth' });
+          } // end if
+        }// end try 
+        catch (e) {
+          console.error(e, "SEND_POST_TEST")
+        }// end catch
       }
-      if (data.socketAction == 'sendPosttest' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'sendPosttest' && data.webinar_id === this.state.webinarId) {
         this.setState({ startPosttest: true });
         this.fetchPostTest();
-      }
-      if (data.socketAction == 'sendEssay' && data.webinar_id === this.state.webinarId) {
+
+        try {
+          if (
+            !(
+              (
+                this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 ||
+                this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1
+              ) &&
+              this.state.status == 2
+            ) &&
+            !this.state.posttestTerjawab
+          ) {
+            toast.success(`Please fill in the following post test questions.`)
+            this.actionPostTest.scrollIntoView({ behavior: 'smooth' });
+          } // end if
+        }// end try 
+        catch (e) {
+          console.error(e, "SEND_POST_TEST")
+        }// end catch
+
+      } // end if
+
+      if (data.socketAction === 'sendEssay' && data.webinar_id === this.state.webinarId) {
         try {
           if (
 
@@ -1123,8 +1188,8 @@ export default class WebinarLive extends Component {
             !this.state.jawabanEssayKu
           ) {
             toast.success(`Please fill in the following essay questions.`)
+            this.actionEssay.scrollIntoView({ behavior: 'smooth' });
           }
-          this.actionEssay.scrollIntoView({ behavior: 'smooth' });
         } catch (e) {
 
         }
@@ -1136,11 +1201,11 @@ export default class WebinarLive extends Component {
           this.fetchWebinar(true)
         }
       }
-      if (data.socketAction == 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
         this.fetchKuesionerSender()
         this.forceUpdate()
       }
-      if (data.socketAction == 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'fetchPostTest' && data.webinar_id === this.state.webinarId) {
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic(true)
         }
@@ -1150,20 +1215,22 @@ export default class WebinarLive extends Component {
         this.fetchPostTest()
       }
       if (data.socketAction === 'kirimJawabanPostTest' && data.webinar_id === this.state.webinarId) {
+        console.log("SOCKET IN : ", data);
         this.getResultPostPreTest('posttest')
       }
       if (data.socketAction === 'kirimJawabanPreTest' && data.webinar_id === this.state.webinarId) {
+        console.log("SOCKET IN :", data);
         this.getResultPostPreTest('pretest')
       }
-      if (data.socketAction == 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
+      if (data.socketAction === 'publishPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
         this.setState({ pollResult: data.data, modalResultPoll: true });
       }
-      if (data.socketAction == 'startPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
+      if (data.socketAction === 'startPoll' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && data.recipient.filter(x => x.id === this.state.user.user_id).length) {
         this.setState({ answerPoll: data.data, modalAnswerPoll: true });
         this.state.answerPoll.poll_id = data.poll_id;
         this.forceUpdate();
       }
-      if (data.socketAction == 'newPollSubmit' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1) {
+      if (data.socketAction === 'newPollSubmit' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1) {
         this.fetchPolling();
       }
     });
@@ -1702,7 +1769,7 @@ export default class WebinarLive extends Component {
                       this.state.resultPostPreTest_AllUser.posttest.length > 0 ||
                         (this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1) ?
                         <button onClick={() => this.setState({ showModalResultPostTest: true, showModalResultPreTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
-                          <i className="fa fa-clipboard-list"></i>Post Test Result
+                          <i className="fa fa-clipboard-list"></i>Post Test Result ({this.state.resultPostPreTest_AllUser.posttest.length})
                         </button>
                         :
                         <button onClick={() => this.setState({ modalSendPosttest: true })} className="float-right btn btn-icademy-primary mr-2">
@@ -1723,7 +1790,7 @@ export default class WebinarLive extends Component {
                       this.state.resultPostPreTest_AllUser.pretest.length > 0 ||
                         (this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1) ?
                         <button onClick={() => this.setState({ showModalResultPreTest: true, showModalResultPostTest: false })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
-                          <i className="fa fa-clipboard-list"></i>Pre-Test Result
+                          <i className="fa fa-clipboard-list"></i>Pre-Test Result ({this.state.resultPostPreTest_AllUser.pretest.length})
                         </button>
                         :
                         <button onClick={() => this.setState({ modalSendPretest: true })} className="float-right btn btn-icademy-primary mr-2">
@@ -1837,6 +1904,9 @@ export default class WebinarLive extends Component {
                         {
                           this.state.isJoin && this.state.startPretest && this.state.enablePretest && this.state.pretestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) ?
                             <div className="mt-4">
+                              <div style={{ float: "left", clear: "both" }}
+                                ref={(el) => { this.actionPreTest = el; }}>
+                              </div>
                               <h4>Answer the Pre-test</h4>
                               <div className="alert alert-danger mt-2">
                                 <b>Please answer the questions below (in {this.state.waktuPretest} minutes). If you have finished answering the questions, please click "Send Pre-Test Answers".<br />
@@ -2006,6 +2076,9 @@ export default class WebinarLive extends Component {
                         {
                           this.state.isJoin && this.state.startPosttest && (!this.state.startPretest || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{ marginTop: 20 }}>
+                            <div style={{ float: "left", clear: "both" }}
+                              ref={(el) => { this.actionPostTest = el; }}>
+                            </div>
                             <h4>Answer the post-test</h4>
                             <div className="alert alert-danger mt-2">
                               <b>Please answer the questions below (in {this.state.waktuPosttest} minutes). If you have finished answering the questions, please click "Send Post-Test Answers".<br />
