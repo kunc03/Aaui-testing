@@ -359,10 +359,10 @@ export default class WebinarLive extends Component {
             webinar_id: this.state.webinarId
           })
           if (this.props.webinarId && this.props.voucher) {
-            this.fetchWebinarPublic()
+            this.fetchWebinarPublic(true)
           }
           else {
-            this.fetchWebinar()
+            this.fetchWebinar(true)
           }
         }
       })
@@ -396,10 +396,10 @@ export default class WebinarLive extends Component {
           this.setState({ isLoading: false })
         }
         if (this.props.webinarId && this.props.voucher) {
-          this.fetchWebinarPublic()
+          this.fetchWebinarPublic(true)
         }
         else {
-          this.fetchWebinar()
+          this.fetchWebinar(true)
         }
         this.fetchPostTest()
         this.fetchResultPosttest();
