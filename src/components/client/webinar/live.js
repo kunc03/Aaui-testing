@@ -772,8 +772,8 @@ export default class WebinarLive extends Component {
               projectId: res.data.result.project_id,
               dokumenId: res.data.result.dokumen_id,
               status: res.data.result.status,
-              tanggal: moment.tz(res.data.result.start_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
-              tanggalEnd: moment.tz(res.data.result.end_time, moment.tz.guess(true)).format("DD-MM-YYYY"),
+              tanggal: res.data.result.start_time,
+              tanggalEnd: res.data.result.end_time,
               peserta: res.data.result.peserta,
               tamu: res.data.result.tamu,
               isFeedback: res.data.result.isFeedback,
@@ -783,6 +783,7 @@ export default class WebinarLive extends Component {
 
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              startPretest: res.data.result.pretest_sent === 1 ? true : false,
               startPosttest: res.data.result.posttest_sent === 1 ? true : false,
               startEssay: res.data.result.essay_sent === 1 ? true : false
             })
@@ -1714,7 +1715,7 @@ export default class WebinarLive extends Component {
                   }
                   {
                     !this.state.isJoin && this.state.status === 2 ?
-                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={() => this.setState({ isJoin: true })}>
+                      <button className="float-right btn btn-icademy-primary btn-icademy-warning mr-2" onClick={() => {this.setState({ isJoin: true })}}>
                         <i className="fa fa-video"></i>
                         Join the webinar
                       </button>
@@ -1747,7 +1748,7 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
-                    ) ?
+                    ) && this.state.isJoin ?
                       this.state.startEssay && this.state.resultEssay.length > 0 ?
                         <button onClick={() => this.actionResultEssay.scrollIntoView({ behavior: 'smooth' })} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
                           <i className="fa fa-clipboard-list"></i>Essay Result
@@ -1765,7 +1766,7 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
-                    ) && this.state.posttest.length > 0 ?
+                    ) && this.state.posttest.length > 0 && this.state.isJoin ?
                       this.state.resultPostPreTest_AllUser.posttest.length > 0 ||
                         (this.state.resultPosttest.nilai != null && this.state.resultPosttest.nilai != 'NaN' && this.state.posttest.length >= 1) ?
                         <button onClick={() => {this.setState({ showModalResultPostTest: true, showModalResultPreTest: false }); this.getResultPostPreTest('posttest')}} className="float-right btn btn-icademy-primary mr-2" style={{ backgroundColor: 'grey' }}>
@@ -1785,7 +1786,7 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
-                    ) && this.state.pretest.length > 0 ?
+                    ) && this.state.pretest.length > 0 && this.state.isJoin ?
 
                       this.state.resultPostPreTest_AllUser.pretest.length > 0 ||
                         (this.state.resultPretest.nilai != null && this.state.resultPretest.nilai != 'NaN' && this.state.pretest.length >= 1) ?
@@ -1821,7 +1822,7 @@ export default class WebinarLive extends Component {
                       this.state.sekretarisId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
-                    ) ?
+                    ) && this.state.isJoin ?
                       <button onClick={() => { this.fetchPolling(); this.setState({ modalSendPoll: true }) }} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-paper-plane"></i>Polling
                       </button>
@@ -2074,7 +2075,7 @@ export default class WebinarLive extends Component {
                         }
 
                         {
-                          this.state.isJoin && this.state.startPosttest && (!this.state.startPretest || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
+                          this.state.isJoin && this.state.startPosttest && ((!this.state.startPretest) || (this.state.startPretest && this.state.pretestTerjawab === true)) && this.state.posttestTerjawab === false && (this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length === 0 && this.state.ownerId.filter((item) => item.user_id == this.state.user.user_id).length === 0) &&
                           <div style={{ marginTop: 20 }}>
                             <div style={{ float: "left", clear: "both" }}
                               ref={(el) => { this.actionPostTest = el; }}>
@@ -2631,7 +2632,7 @@ export default class WebinarLive extends Component {
                           this.state.resultPostPreTest_AllUser.posttest.map((key) => {
                             return (
                               <tr>
-                                <td>{key.name}</td>
+                                <td style={{wordBreak: 'break-all'}}>{key.name}</td>
                                 <td>{key.value.nilai.toFixed(2)}</td>
                               </tr>)
                           })
@@ -2669,7 +2670,7 @@ export default class WebinarLive extends Component {
                     <table id="table-test" className="table table-striped" style={{ marginLeft: '-10px' }}>
                       <thead>
                         <tr>
-                          <th>Name</th>
+                          <th style={{wordBreak: 'break-all'}}>Name</th>
                           <th>Score</th>
                         </tr>
                       </thead>
@@ -2751,7 +2752,7 @@ export default class WebinarLive extends Component {
                             }
                           }}>
                           <span style={{ float: 'left', fontSize: '11px', fontWeight: 'normal' }}><b>No. {item.no}</b></span>
-                          <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{`(${item.answer.length} / ${this.state.peserta_count.length}) `}<b>{item.status}</b></span>
+                          <span style={{ float: 'right', fontSize: '11px', fontWeight: 'normal' }}>{`(${item.total_responden} / ${this.state.peserta_count.length}) `}<b>{item.status}</b></span>
                           <br />
                           <div style={{ float: 'left', wordBreak: 'break-word' }} dangerouslySetInnerHTML={{ __html: item.tanya.length > 30 ? `${item.tanya.substring(0, 255)}` : item.tanya }} />
                           {
