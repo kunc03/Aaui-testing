@@ -355,7 +355,7 @@ export default class WebinarLive extends Component {
           this.setState({ isLoading: false })
 
           socket.emit('send', {
-            socketAction: 'sendEssay',
+            socketAction: 'submitEssay',
             webinar_id: this.state.webinarId
           })
           if (this.props.webinarId && this.props.voucher) {
@@ -390,6 +390,7 @@ export default class WebinarLive extends Component {
           toast.success('Post-test submission sent')
           this.actionPostTest = false;
           socket.emit('send', {
+            userId: this.state.user.user_id,
             socketAction: 'kirimJawabanPostTest',
             webinar_id: this.state.webinarId
           })
@@ -430,6 +431,7 @@ export default class WebinarLive extends Component {
           this.actionPreTest = false;
           socket.emit('send', {
             socketAction: 'kirimJawabanPreTest',
+            userId: this.state.user.user_id,
             webinar_id: this.state.webinarId
           })
           this.setState({ isLoading: false })
@@ -457,6 +459,11 @@ export default class WebinarLive extends Component {
         else
           toast.warning('Waktu habis')
         toast.success('Submit Pre-Test answers webinar')
+        socket.emit('send', {
+          socketAction: 'kirimJawabanPreTest',
+          userId: this.state.user.user_id,
+          webinar_id: this.state.webinarId
+        })
         this.fetchPreTest()
         this.fetchResultPretest();
         this.openModalPretest();
@@ -477,6 +484,11 @@ export default class WebinarLive extends Component {
         else
           toast.warning('Time out')
         toast.success('Post-test submission sent')
+        socket.emit('send', {
+          socketAction: 'kirimJawabanPostTest',
+          userId: this.state.user.user_id,
+          webinar_id: this.state.webinarId
+        })
         this.fetchPostTest();
         this.fetchResultPosttest();
       })
@@ -1104,7 +1116,7 @@ export default class WebinarLive extends Component {
     // }
     this.fetchKuesionerSender()
     socket.on("broadcast", data => {
-      if (data.webinar_id == this.state.webinarId) {
+      if (data.webinar_id == this.state.webinarId && !data.socketAction) {
         if (this.props.webinarId && this.props.voucher) {
           this.fetchWebinarPublic(true)
         }
@@ -1202,6 +1214,9 @@ export default class WebinarLive extends Component {
           this.fetchWebinar(true)
         }
       }
+      if (data.socketAction === 'submitEssay' && data.webinar_id === this.state.webinarId) {
+        this.fetchResultEssay()
+      }
       if (data.socketAction === 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
         this.fetchKuesionerSender()
         this.forceUpdate()
@@ -1215,11 +1230,11 @@ export default class WebinarLive extends Component {
         }
         this.fetchPostTest()
       }
-      if (data.socketAction === 'kirimJawabanPostTest' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'kirimJawabanPostTest' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && (this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1)) {
         console.log("SOCKET IN : ", data);
         this.getResultPostPreTest('posttest')
       }
-      if (data.socketAction === 'kirimJawabanPreTest' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'kirimJawabanPreTest' && data.webinar_id === this.state.webinarId && data.userId !== this.state.user.user_id && (this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1)) {
         console.log("SOCKET IN :", data);
         this.getResultPostPreTest('pretest')
       }
