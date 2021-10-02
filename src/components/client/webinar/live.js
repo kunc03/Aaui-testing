@@ -1217,7 +1217,7 @@ export default class WebinarLive extends Component {
       if (data.socketAction === 'submitEssay' && data.webinar_id === this.state.webinarId) {
         this.fetchResultEssay()
       }
-      if (data.socketAction === 'jawabKuesioner' && data.webinar_id === this.state.webinarId) {
+      if (data.socketAction === 'jawabKuesioner' && data.webinar_id === this.state.webinarId && (this.state.moderatorId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.sekretarisId.filter((item) => item.user_id == this.state.user.user_id).length >= 1 || this.state.pembicaraId.filter((item) => item.user_id == this.state.user.user_id).length >= 1)) {
         this.fetchKuesionerSender()
         this.forceUpdate()
       }
