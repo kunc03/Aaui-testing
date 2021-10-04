@@ -887,7 +887,10 @@ export default class WebinarRiwayat extends Component {
                     <div style={{ height: this.state.certificate_orientation === 'landscape' ? 'auto' : '730px', width: this.state.certificate_orientation === 'landscape' ? '724px' : '574px', padding: '10px', textAlign: 'center', border: this.state.certificate_background ? '' : '1px solid #787878', position: 'relative', paddingTop: this.state.certificate_orientation === 'landscape' ? '10px' : '100px' }}><br />
 
                       <label for='cert_logo' style={{ display: 'block' }}>
-                        <img style={{ height: '50px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
+                        <span style={{position: 'relative'}}>
+                          <img style={{ height: '75px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
+                          <i className="fa fa-edit" style={{fontSize:14, position:'absolute', right:0}}></i>
+                        </span>
                       </label>
                       <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="cert_logo" name="cert_logo" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
                       <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
@@ -909,7 +912,10 @@ export default class WebinarRiwayat extends Component {
                           this.state.sign.map((item, index) =>
                             <span>
                               <label style={{ display: 'block', cursor: 'pointer' }}>
-                                <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
+                                <span style={{position: 'relative'}}>
+                                  <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
+                                  <i className="fa fa-edit" style={{fontSize:14, position:'absolute', right:0}}></i>
+                                </span>
                                 <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChangeArr} data-index={index} className="ml-5 btn btn-sm btn-default" />
                               </label>
                               <span style={{ fontSize: '12px' }}>
