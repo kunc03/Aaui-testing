@@ -17,6 +17,7 @@ import { Doughnut } from 'react-chartjs-2';
 export default class WebinarRiwayat extends Component {
 
   state = {
+    isCheckAll: false,
     isLoading: false,
     hasilTest: [],
     hasilEssay: [],
@@ -129,10 +130,39 @@ export default class WebinarRiwayat extends Component {
   }
 
   handleModal = () => {
+    let item = this.state.peserta
+    if (this.state.filterPeserta === 'Hadir') {
+      item = item.filter(item => item.status === 2)
+    }
+    else if (this.state.filterPeserta === 'Tidak Hadir') {
+      item = item.filter(item => item.status !== 2)
+    }
+    item.map((item, index) => {
+      item.checked = null;
+    })
     this.setState({
+      item,
+      checkAll: false,
       isModalDownloadFileWebinar: false,
-      isModalSertifikat: false
+      isModalSertifikat: false,
+      certificate_orientation: 'landscape',
+      certificate_background: '',
+      nama: '',
+      ttd: '',
+      sertifikat: [],
+      cert_title: 'CERTIFICATE OF COMPLETION',
+      cert_subtitle: 'THIS CERTIFICATE IS PROUDLY PRESENTED TO',
+      cert_description: 'FOR SUCCESSFULLY COMPLETING ALL CONTENTS ON WEBINAR',
+      cert_topic: '',
+      sign: [
+        {
+          cert_sign_name: '',
+          cert_sign_title: '',
+          signature: ''
+        }
+      ],
     });
+
   }
 
   fetchDataWithoutLoading() {
@@ -242,6 +272,7 @@ export default class WebinarRiwayat extends Component {
   handleChangeChecked(e, item) {
     item['checked'] = e.target.checked;
   }
+
   checkAll(e) {
     let item = this.state.peserta
     if (this.state.filterPeserta === 'Hadir') {
@@ -254,6 +285,17 @@ export default class WebinarRiwayat extends Component {
       item.checked = e.target.checked;
     })
     this.setState({ item, checkAll: e.target.checked })
+  }
+
+  clickAction(e, i, items) {
+    let item = this.state.peserta
+    if (this.state.checkAll) {
+      item[i].checked = false;
+    } else {
+      item[i].checked = true;
+    }
+    this.setState({ item })
+
   }
 
   filterPeserta(e) {
@@ -486,10 +528,11 @@ export default class WebinarRiwayat extends Component {
 
                   return (<tr key={i}>
                     {
+
                       (item.status == 2) ?
-                        <td><input type="checkbox" id={i} checked={items[i].checked || null} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        <td><input type="checkbox" id={i} checked={items[i].checked} onClick={(e) => this.clickAction(e, i, items[i])} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                         :
-                        <td><input type="checkbox" id={i} checked={items[i].checked || null} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        <td><input type="checkbox" id={i} checked={null} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                     }
                     <td>{item.name}</td>
                     <td>{item.email}</td>
@@ -892,9 +935,9 @@ export default class WebinarRiwayat extends Component {
                     <div style={{ height: this.state.certificate_orientation === 'landscape' ? 'auto' : '730px', width: this.state.certificate_orientation === 'landscape' ? '724px' : '574px', padding: '10px', textAlign: 'center', border: this.state.certificate_background ? '' : '1px solid #787878', position: 'relative', paddingTop: this.state.certificate_orientation === 'landscape' ? '10px' : '100px' }}><br />
 
                       <label for='cert_logo' style={{ display: 'block' }}>
-                        <span style={{position: 'relative'}}>
+                        <span style={{ position: 'relative' }}>
                           <img style={{ height: '75px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
-                          <i className="fa fa-edit" style={{fontSize:14, position:'absolute', right:0}}></i>
+                          <i className="fa fa-edit" style={{ fontSize: 14, position: 'absolute', right: 0 }}></i>
                         </span>
                       </label>
                       <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="cert_logo" name="cert_logo" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
@@ -917,9 +960,9 @@ export default class WebinarRiwayat extends Component {
                           this.state.sign.map((item, index) =>
                             <span>
                               <label style={{ display: 'block', cursor: 'pointer' }}>
-                                <span style={{position: 'relative'}}>
+                                <span style={{ position: 'relative' }}>
                                   <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
-                                  <i className="fa fa-edit" style={{fontSize:14, position:'absolute', right:0}}></i>
+                                  <i className="fa fa-edit" style={{ fontSize: 14, position: 'absolute', right: 0 }}></i>
                                 </span>
                                 <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChangeArr} data-index={index} className="ml-5 btn btn-sm btn-default" />
                               </label>
