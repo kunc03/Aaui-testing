@@ -442,14 +442,6 @@ export default class WebinarRiwayat extends Component {
       }
       return (
         <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
-          <div className="float-right" style={{ width: 400 }}>
-            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{ fontSize: 12, width: 'auto', float: 'right' }} onChange={(e) => this.filterPeserta(e)}>
-              <option value="Semua" selected> All</option>
-              <option value="Hadir"> Present</option>
-              <option value="Tidak Hadir"> Not Present</option>
-            </select>
-            <Button className="btn btn-icademy-primary btn-12" style={{ float: 'right', marginRight: '20px' }} onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
-          </div>
           <table id="table-peserta" className="table table-striped">
             <thead>
               <tr>
@@ -495,9 +487,9 @@ export default class WebinarRiwayat extends Component {
                   return (<tr key={i}>
                     {
                       (item.status == 2) ?
-                        <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        <td><input type="checkbox" id={i} checked={items[i].checked || null} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                         :
-                        <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        <td><input type="checkbox" id={i} checked={items[i].checked || null} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
                     }
                     <td>{item.name}</td>
                     <td>{item.email}</td>
@@ -801,6 +793,14 @@ export default class WebinarRiwayat extends Component {
                           filename={'Attendance ' + this.state.judul}
                           sheet="Attendance"
                           buttonText="Export Attendance to Excel" />
+                        <div className="wrap float-right" style={{ width: 400 }}>
+                          <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{ fontSize: 12, width: 'auto', float: 'right' }} onChange={(e) => this.filterPeserta(e)}>
+                            <option value="Semua" selected> All</option>
+                            <option value="Hadir"> Present</option>
+                            <option value="Tidak Hadir"> Not Present</option>
+                          </select>
+                          <Button className="btn btn-icademy-primary btn-12" style={{ float: 'right', marginRight: '20px' }} onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
+                        </div>
                         <Peserta items={this.state.peserta} />
                       </div>
                     </div>
