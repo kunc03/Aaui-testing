@@ -217,7 +217,7 @@ class WebinarAddClass extends Component {
     })
   }
   handleDynamicInput = (e) => {
-      this.setState({ isi: e });
+    this.setState({ isi: e });
   }
   componentDidMount() {
     this.fetchData();
@@ -235,13 +235,13 @@ class WebinarAddClass extends Component {
         judul: res.data.result.judul,
         isi:
           res.data.result.isi ? res.data.result.isi
-          :
-          `Welcome to "${res.data.result.judul}" webinar.<br/>
+            :
+            `<p>Welcome to "${res.data.result.judul}" webinar.<br/>
           If this webinar is accessible, a "Join the webinar" button will appear at the top right.<br/>
           You can download the attached file via the "Documents" section at the bottom left.<br/>
           You can ask questions during the webinar via the "Questions" section at the bottom right.<br/>
           <br/>
-          This webinar uses ICADEMY.`,
+          This webinar uses ICADEMY.<p>`,
         tanggal: tanggal,
         tanggalEnd: tanggalEnd,
         jamMulai: jam_mulai,
@@ -258,7 +258,7 @@ class WebinarAddClass extends Component {
         essay: res.data.result.essay,
         essay_sent: res.data.result.essay_sent
       })
-      if (!this.state.gambar){
+      if (!this.state.gambar) {
         this.setState({
           gambar: res.data.result.gambar,
         })
@@ -278,7 +278,7 @@ class WebinarAddClass extends Component {
         });
       });
     })
-    
+
     API.get(`${API_SERVER}v2/webinar/list-by-company-plain/${this.state.companyId}`).then(res => {
       if (res.data.error) {
         // toast.warning("Error fetch API");
@@ -293,12 +293,12 @@ class WebinarAddClass extends Component {
         });
       }
     })
-    
+
     API.get(`${API_SERVER}v2/training/company/${this.state.companyId}`).then(res => {
-      if (res.data.error){
-          toast.error('Error read company list for import feature')
+      if (res.data.error) {
+        toast.error('Error read company list for import feature')
       }
-      else{
+      else {
         this.setState({ optionsImportTC: [] })
         res.data.result.map(item => {
           this.state.optionsImportTC.push({
@@ -361,7 +361,7 @@ class WebinarAddClass extends Component {
           desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (${moment.tz.guess(true)} Time Zone)`,
           dest: `${APPS_SERVER}webinars`,
         };
-        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res=>{
+        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res => {
           back && this.props.history.goBack();
         })
       }
@@ -409,13 +409,13 @@ class WebinarAddClass extends Component {
       webinarId: this.state.webinarId,
       importId: this.state.importId.toString(),
     };
-    if (formData.importId){
-      this.setState({loadingImport: true});
+    if (formData.importId) {
+      this.setState({ loadingImport: true });
       API.post(`${API_SERVER}v2/webinar/import-participant`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Copy participant & guest failed')
-            this.setState({loadingImport: false});
+            this.setState({ loadingImport: false });
           } else {
             toast.success(`Success copy participant & guest`)
             this.setState({ importId: [], loadingImport: false });
@@ -424,18 +424,18 @@ class WebinarAddClass extends Component {
         }
       })
     }
-    else{
+    else {
       toast.warning('Silahkan pilih webinar terlebih dahulu')
     }
   }
 
   importGuest = e => {
     e.preventDefault();
-    if (!this.state.file){
+    if (!this.state.file) {
       toast.warning('Choose the file first')
     }
-    else{
-      this.setState({isUploading: true})
+    else {
+      this.setState({ isUploading: true })
       let form = new FormData();
       form.append('webinar_id', this.state.webinarId);
       form.append('file', this.state.file)
@@ -445,7 +445,7 @@ class WebinarAddClass extends Component {
             toast.error(res.data.result)
             this.setState({ isUploading: false, file: '' });
           }
-          else{
+          else {
             toast.success('Data import success')
             this.setState({ isUploading: false, file: '' });
             this.fetchData();
@@ -454,20 +454,20 @@ class WebinarAddClass extends Component {
       })
     }
   }
-  
+
   importPesertaTC = e => {
     e.preventDefault();
     const formData = {
       webinarId: this.state.webinarId,
       importId: this.state.importIdTC.toString(),
     };
-    if (formData.importId){
-      this.setState({loadingImportTC: true});
+    if (formData.importId) {
+      this.setState({ loadingImportTC: true });
       API.post(`${API_SERVER}v2/webinar/import-participant-tc`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Copy participant failed')
-            this.setState({loadingImportTC: false});
+            this.setState({ loadingImportTC: false });
           } else {
             toast.success(`Success copy participant`)
             this.setState({ importIdTC: [], loadingImportTC: false });
@@ -476,7 +476,7 @@ class WebinarAddClass extends Component {
         }
       })
     }
-    else{
+    else {
       toast.warning('Silahkan pilih training company terlebih dahulu')
     }
   }
@@ -524,7 +524,7 @@ class WebinarAddClass extends Component {
   }
 
   handleDynamicInputEssay = (e) => {
-      this.setState({ essay: e });
+    this.setState({ essay: e });
   }
 
   saveEssay = (e) => {
@@ -554,9 +554,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -587,9 +587,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -626,9 +626,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -727,70 +727,70 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group">
                       <label className="bold">Description<required>*</required></label>
-                      <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                      <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
                       {
-                          this.state.isi !== 'Loading...' ?
+                        this.state.isi !== 'Loading...' ?
                           <Editor
-                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                              initialValue={this.state.isi}
-                              value={this.state.isi}
-                              init={{
+                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                            initialValue={this.state.isi}
+                            value={this.state.isi}
+                            init={{
                               height: 400,
                               width: "100%",
                               menubar: false,
                               convert_urls: false,
                               image_class_list: [
-                                  {title: 'None', value: ''},
-                                  {title: 'Responsive', value: 'img-responsive'},
-                                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                { title: 'None', value: '' },
+                                { title: 'Responsive', value: 'img-responsive' },
+                                { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                               ],
                               file_browser_callback_types: 'image media',
                               file_picker_callback: function (callback, value, meta) {
-                                  if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
                                   var input = document.getElementById(`myFile`);
                                   input.click();
                                   input.onchange = function () {
 
-                                      var dataForm = new FormData();
-                                      dataForm.append('file', this.files[0]);
+                                    var dataForm = new FormData();
+                                    dataForm.append('file', this.files[0]);
 
-                                      window.$.ajax({
+                                    window.$.ajax({
                                       url: `${API_SERVER}v2/media/upload`,
                                       type: 'POST',
                                       data: dataForm,
                                       processData: false,
                                       contentType: false,
-                                      success: (data)=>{
-                                          callback(data.result.url);
-                                          this.value = '';
+                                      success: (data) => {
+                                        callback(data.result.url);
+                                        this.value = '';
                                       }
-                                      })
+                                    })
 
                                   };
-                                  }
+                                }
                               },
                               plugins: [
-                                  "advlist autolink lists link image charmap print preview anchor",
-                                  "searchreplace visualblocks code fullscreen",
-                                  "insertdatetime media table paste code help wordcount"
+                                "advlist autolink lists link image charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table paste code help wordcount"
                               ],
-                              media_live_embeds : true,
+                              media_live_embeds: true,
                               toolbar:
-                                  // eslint-disable-next-line no-multi-str
-                                  "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                                // eslint-disable-next-line no-multi-str
+                                "undo redo | fontsizeselect bold italic backcolor forecolor | \
                               alignleft aligncenter alignright alignjustify | image | media | \
                                   bullist numlist outdent indent | removeformat | help"
-                              }}
-                              onEditorChange={e => this.handleDynamicInput(e)}
+                            }}
+                            onEditorChange={e => this.handleDynamicInput(e)}
                           />
-                          :null
+                          : null
                       }
                     </div>
 
                     <div className="form-group row">
-                      <div style={{paddingLeft:'15px'}}>
+                      <div style={{ paddingLeft: '15px' }}>
                         <label>Start Time<required>*</required></label>
-                        <div style={{clear:'both'}}>
+                        <div style={{ clear: 'both' }}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
                             selected={this.state.tanggal}
@@ -800,9 +800,9 @@ class WebinarAddClass extends Component {
                           />
                         </div>
                       </div>
-                      <div style={{marginLeft:20}}>
+                      <div style={{ marginLeft: 20 }}>
                         <label>End Time<required>*</required></label>
-                        <div style={{clear:'both'}}>
+                        <div style={{ clear: 'both' }}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
                             selected={this.state.tanggalEnd}
@@ -865,31 +865,31 @@ class WebinarAddClass extends Component {
 
                     {
                       this.props.match.params.training === 'by-training' ?
-                      null :
-                      <div className="form-group row">
-                        <div className="col-sm-12">
-                          <label className="bold">Folder & File</label>
+                        null :
+                        <div className="form-group row">
                           <div className="col-sm-12">
-                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                              { this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                            <label className="bold">Folder & File</label>
+                            <div className="col-sm-12">
+                              <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                                {this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                     }
                     {
                       this.props.match.params.training === 'by-training' ?
-                      null :
-                      <div className="form-group row">
-                        <div className="col-sm-12">
-                          <label className="bold">Meeting Room</label>
+                        null :
+                        <div className="form-group row">
                           <div className="col-sm-12">
-                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                              <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                            <label className="bold">Meeting Room</label>
+                            <div className="col-sm-12">
+                              <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                                <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                     }
 
                     {/* <div className="form-group row">
@@ -989,7 +989,7 @@ class WebinarAddClass extends Component {
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
                   <label>Copy from other webinar</label>
-                  <div class="input-group" style={{background: 'none'}}>
+                  <div class="input-group" style={{ background: 'none' }}>
                     <MultiSelect
                       id={`userId`}
                       options={this.state.optionsImport}
@@ -1010,35 +1010,35 @@ class WebinarAddClass extends Component {
               </div>
               {
                 this.props.match.params.training === 'by-training' ?
-                <div style={{ marginTop: "20px" }} className="form-group">
-                  <div className="form-group">
-                    <label>Copy from training company</label>
-                    <div class="input-group" style={{background: 'none'}}>
-                      <MultiSelect
-                        id={`userId`}
-                        options={this.state.optionsImportTC}
-                        value={this.state.importIdTC}
-                        onChange={importIdTC => this.setState({ importIdTC })}
-                        mode="single"
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Select Training Company"
-                      />
-                      <span className="input-group-btn">
-                        <button disabled={this.state.loadingImportTC} className="btn btn-default" onClick={this.importPesertaTC.bind(this)}>
-                          <i className="fa fa-plus"></i> {this.state.loadingImportTC ? '....' : 'Import'}
-                        </button>
-                      </span>
+                  <div style={{ marginTop: "20px" }} className="form-group">
+                    <div className="form-group">
+                      <label>Copy from training company</label>
+                      <div class="input-group" style={{ background: 'none' }}>
+                        <MultiSelect
+                          id={`userId`}
+                          options={this.state.optionsImportTC}
+                          value={this.state.importIdTC}
+                          onChange={importIdTC => this.setState({ importIdTC })}
+                          mode="single"
+                          enableSearch={true}
+                          resetable={true}
+                          valuePlaceholder="Select Training Company"
+                        />
+                        <span className="input-group-btn">
+                          <button disabled={this.state.loadingImportTC} className="btn btn-default" onClick={this.importPesertaTC.bind(this)}>
+                            <i className="fa fa-plus"></i> {this.state.loadingImportTC ? '....' : 'Import'}
+                          </button>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                :null
+                  : null
               }
               <h5> Participants </h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
                   <label> Find Participants</label>
-                  <div class="input-group" style={{background: 'none'}}>
+                  <div class="input-group" style={{ background: 'none' }}>
                     <MultiSelect
                       id={`userId`}
                       options={this.state.optionsName}
@@ -1063,32 +1063,32 @@ class WebinarAddClass extends Component {
 
               <h5> Guest</h5>
               <label>Import guest from excel</label>
-                                                    <div>
-                                                        <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
-                                                          <button className="button-bordered">
-                                                              <i
-                                                                  className="fa fa-download"
-                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
-                                                              />
-                                                              Download Template
-                                                          </button>
-                                                        </a>
-                                                    </div>
-                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{paddingLeft:0}}>
-                                                        <label for='file-import' style={{cursor:'pointer', overflow:'hidden'}}>
-                                                          <div className="button-bordered-grey">
-                                                              {this.state.file ? this.state.file.name : 'Choose'}
-                                                          </div>
-                                                        </label>
-                                                        <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
-                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
-                                                            <i
-                                                                className="fa fa-upload"
-                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
-                                                            />
-                                                            {this.state.isUploading ? 'Uploading...' : 'Import'}
-                                                        </button>
-                                                    </form>
+              <div>
+                <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
+                  <button className="button-bordered">
+                    <i
+                      className="fa fa-download"
+                      style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                    />
+                    Download Template
+                  </button>
+                </a>
+              </div>
+              <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{ paddingLeft: 0 }}>
+                <label for='file-import' style={{ cursor: 'pointer', overflow: 'hidden' }}>
+                  <div className="button-bordered-grey">
+                    {this.state.file ? this.state.file.name : 'Choose'}
+                  </div>
+                </label>
+                <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e => e.target.value = null} />
+                <button type="submit" className="button-gradient-blue" style={{ marginLeft: 20 }}>
+                  <i
+                    className="fa fa-upload"
+                    style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                  />
+                  {this.state.isUploading ? 'Uploading...' : 'Import'}
+                </button>
+              </form>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group row">
                   <div className="col-sm-3">
@@ -1161,7 +1161,7 @@ class WebinarAddClass extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Feedback Form
+                Feedback Form
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -1218,47 +1218,47 @@ class WebinarAddClass extends Component {
                 initialValue={this.state.essay}
                 value={this.state.essay}
                 init={{
-                height: 400,
-                width: "100%",
-                menubar: false,
-                convert_urls: false,
-                image_class_list: [
-                    {title: 'None', value: ''},
-                    {title: 'Responsive', value: 'img-responsive'},
-                    {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                ],
-                file_browser_callback_types: 'image media',
-                file_picker_callback: function (callback, value, meta) {
+                  height: 400,
+                  width: "100%",
+                  menubar: false,
+                  convert_urls: false,
+                  image_class_list: [
+                    { title: 'None', value: '' },
+                    { title: 'Responsive', value: 'img-responsive' },
+                    { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                  ],
+                  file_browser_callback_types: 'image media',
+                  file_picker_callback: function (callback, value, meta) {
                     if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                    var input = document.getElementById(`myFile`);
-                    input.click();
-                    input.onchange = function () {
+                      var input = document.getElementById(`myFile`);
+                      input.click();
+                      input.onchange = function () {
 
                         var dataForm = new FormData();
                         dataForm.append('file', this.files[0]);
 
                         window.$.ajax({
-                        url: `${API_SERVER}v2/media/upload`,
-                        type: 'POST',
-                        data: dataForm,
-                        processData: false,
-                        contentType: false,
-                        success: (data)=>{
+                          url: `${API_SERVER}v2/media/upload`,
+                          type: 'POST',
+                          data: dataForm,
+                          processData: false,
+                          contentType: false,
+                          success: (data) => {
                             callback(data.result.url);
                             this.value = '';
-                        }
+                          }
                         })
 
-                    };
+                      };
                     }
-                },
-                plugins: [
+                  },
+                  plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks code fullscreen",
                     "insertdatetime media table paste code help wordcount"
-                ],
-                media_live_embeds : true,
-                toolbar:
+                  ],
+                  media_live_embeds: true,
+                  toolbar:
                     // eslint-disable-next-line no-multi-str
                     "undo redo | fontsizeselect bold italic backcolor forecolor | \
                 alignleft aligncenter alignright alignjustify | image | media | \
@@ -1295,7 +1295,7 @@ class WebinarAddClass extends Component {
 
 const WebinarAdd = props => (
   <SocketContext.Consumer>
-    { socket => <WebinarAddClass {...props} socket={socket} />}
+    {socket => <WebinarAddClass {...props} socket={socket} />}
   </SocketContext.Consumer>
 )
 
