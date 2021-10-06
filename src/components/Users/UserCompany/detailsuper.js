@@ -925,7 +925,7 @@ export default class CompanyDetail extends Component {
                                           placeholder="Role Nama"
                                         />
 
-                                        <table
+                                        {/* <table
                                           className="table-curved"
                                           style={{ width: "100%" }}>
                                           <tr>
@@ -952,7 +952,7 @@ export default class CompanyDetail extends Component {
                                             <td>Kelola Group Meeting</td>
                                             <td><input checked={(access.manage_group_meeting)} onChange={this.handleChangeAccess} type="checkbox" name="manage_group_meeting" /></td>
                                           </tr>
-                                        </table>
+                                        </table> */}
                                       </div>
                                       <button
                                         style={{ marginTop: "50px" }}

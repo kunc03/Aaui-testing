@@ -8,8 +8,8 @@ import moment from 'moment-timezone';
 
 class Header extends Component {
   state = {
-    user: 'Anonymous',
-    level: 'Member',
+    user: '',
+    level: '',
     avatar: '/assets/images/user/avatar-1.png',
     notificationData: [],
 
