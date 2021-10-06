@@ -18,6 +18,7 @@ class ModalAdd extends Component {
     this.onClickSimpan = this.onClickSimpan.bind(this);
 
     this.state = {
+      filename: null,
       nama: "",
       tipe: "",
       status: "active",
@@ -43,9 +44,9 @@ class ModalAdd extends Component {
     const value = target.value;
     const name = target.name;
 
-      this.setState({
-        [name]: value
-      });
+    this.setState({
+      [name]: value
+    });
   }
   toggleSwitch(checked) {
     this.setState({ unlimited: !this.state.unlimited });
@@ -77,18 +78,18 @@ class ModalAdd extends Component {
         triggerUpdate(res.data.result);
 
         // if pendidikan auto generate role
-        if(this.state.tipe === "pendidikan") {
+        if (this.state.tipe === "pendidikan") {
           let aturan = ["Admin", "Guru", "Murid", "Parents", "Principal", "Management"];
-          for(var i=0; i<aturan.length; i++) {
+          for (var i = 0; i < aturan.length; i++) {
             let formData = {
               company_id: res.data.result.company_id,
-        			grup_name: aturan[i],
-        			activity: 0,
-        			course: 0,
-        			manage_course: 0,
-        			forum: 0,
-        			group_meeting: 0,
-        			manage_group_meeting: 0,
+              grup_name: aturan[i],
+              activity: 0,
+              course: 0,
+              manage_course: 0,
+              forum: 0,
+              group_meeting: 0,
+              manage_group_meeting: 0,
             }
             API.post(`${API_SERVER}v1/grup`, formData)
           }
@@ -96,6 +97,7 @@ class ModalAdd extends Component {
         // end if
 
         this.setState({ nama: '', status: '', logo: '' });
+        this.setState({ filename: null });
         window.$('#modalAdd').modal('hide');
         console.log('resss', res.data.result)
         console.log('reqqq', this.state.validate)
@@ -120,7 +122,7 @@ class ModalAdd extends Component {
   onChangeLogo = e => {
     const target = e.target;
     if (target.files[0].size <= 500000) {
-      this.setState({ logo: target.files[0] });
+      this.setState({ logo: target.files[0], filename: target.files[0].name });
     } else {
       target.value = null;
       this.setState({ notif: "The file does not match the format, please check again." });
@@ -191,6 +193,7 @@ class ModalAdd extends Component {
                     className="form-control"
                     accept="image/*"
                   />
+                  {this.state.filename ? <Form.Text className="text-info">{this.state.filename} <br /></Form.Text> : null}
                   {this.state.notif && <Form.Text className="text-danger">{this.state.notif}</Form.Text>}
                 </div>
                 <div className="form-group">
@@ -219,48 +222,48 @@ class ModalAdd extends Component {
 
                   </div>
                 }
-                
+
                 <div className="form-group">
-                                <label className="label-input" htmlFor>
-                                  Product Limitation
-                                </label>
-                                <table>
-                                  <tr>
-                                    <th>User</th>
-                                    <th>Meeting</th>
-                                    <th>Webinar</th>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <Form.Control
-                                        type="number"
-                                        name="limituser"
-                                        onChange={this.onChangeInput}
-                                        placeholder="Unlimited"
-                                        value={this.state.limituser}
-                                      />
-                                    </td>
-                                    <td>
-                                      <Form.Control
-                                        type="number"
-                                        name="limitmeeting"
-                                        onChange={this.onChangeInput}
-                                        placeholder="Unlimited"
-                                        value={this.state.limitmeeting}
-                                      />
-                                    </td>
-                                    <td>
-                                      <Form.Control
-                                        type="number"
-                                        name="limitwebinar"
-                                        onChange={this.onChangeInput}
-                                        placeholder="Unlimited"
-                                        value={this.state.limitwebinar}
-                                      />
-                                    </td>
-                                  </tr>
-                                </table>
-                              </div>
+                  <label className="label-input" htmlFor>
+                    Product Limitation
+                  </label>
+                  <table>
+                    <tr>
+                      <th>User</th>
+                      <th>Meeting</th>
+                      <th>Webinar</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          name="limituser"
+                          onChange={this.onChangeInput}
+                          placeholder="Unlimited"
+                          value={this.state.limituser}
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          name="limitmeeting"
+                          onChange={this.onChangeInput}
+                          placeholder="Unlimited"
+                          value={this.state.limitmeeting}
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          name="limitwebinar"
+                          onChange={this.onChangeInput}
+                          placeholder="Unlimited"
+                          value={this.state.limitwebinar}
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
                 <div className="form-group">
                   <label className="label-input" htmlFor>
                     Access Training
