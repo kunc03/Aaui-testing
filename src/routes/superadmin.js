@@ -5,76 +5,76 @@ import '@trendmicro/react-buttons/dist/react-buttons.css';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
 
 // Components
-const ThankYou = lazy(()=> import("../components/public/thankyou"));
-const Logout = lazy(()=> import('./logout'));
-const Home = lazy(()=> import('../components/Home_new/index'));
-const Calendar = lazy(()=> import('../components/Home_new/calendar'));
-const Notification = lazy(()=> import('../components/Notification/index'));
-const Pengumuman = lazy(()=> import('../components/Pengumuman/index'));
-const Pengaturan = lazy(()=> import('../components/Pengaturan/index'));
-const ZoomCallback = lazy(()=> import('../components/zoom/call'));
-const ClassBantuan = lazy(()=> import('../components/bantuan/indexv2'));
-const GlobalSettings = lazy(()=> import('../components/Global_setting/index'));
-const Profile = lazy(()=> import('../components/Profile/index'));
-const FullCalender = lazy(()=> import('../components/kalender/fullKalender'));
-const News = lazy(()=> import('../components/news/index'));
-const NewsForm = lazy(()=> import('../components/news/form'));
-const NewsView = lazy(()=> import('../components/news/view'));
-const DetailProject = lazy(()=> import('../components/detail_project/index'));
+const ThankYou = lazy(() => import("../components/public/thankyou"));
+const Logout = lazy(() => import('./logout'));
+const Home = lazy(() => import('../components/Home_new/index'));
+const Calendar = lazy(() => import('../components/Home_new/calendar'));
+const Notification = lazy(() => import('../components/Notification/index'));
+const Pengumuman = lazy(() => import('../components/Pengumuman/index'));
+const Pengaturan = lazy(() => import('../components/Pengaturan/index'));
+const ZoomCallback = lazy(() => import('../components/zoom/call'));
+const ClassBantuan = lazy(() => import('../components/bantuan/indexv2'));
+const GlobalSettings = lazy(() => import('../components/Global_setting/index'));
+const Profile = lazy(() => import('../components/Profile/index'));
+const FullCalender = lazy(() => import('../components/kalender/fullKalender'));
+const News = lazy(() => import('../components/news/index'));
+const NewsForm = lazy(() => import('../components/news/form'));
+const NewsView = lazy(() => import('../components/news/view'));
+const DetailProject = lazy(() => import('../components/detail_project/index'));
 const GanttReport = lazy(() => import('../components/Gantt/report'));
 
-const WebinarLivePublic = lazy(()=> import("../components/client/webinar/livePublic"));
+const WebinarLivePublic = lazy(() => import("../components/client/webinar/livePublic"));
 
 
 const Project = lazy(() => import("../components/project/index"));
 
-const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
+const MeetRoomPub = lazy(() => import("../components/liveclass/meetRoomPub"));
 
-const User = lazy(()=> import( "../components/Users/User/index"));
-const UserAdd = lazy(()=> import( "../components/Users/User/add"));
-const UserEdit = lazy(()=> import( "../components/Users/User/Edit"));
+const User = lazy(() => import("../components/Users/User/index"));
+const UserAdd = lazy(() => import("../components/Users/User/add"));
+const UserEdit = lazy(() => import("../components/Users/User/Edit"));
 
-const UserCompany = lazy(()=> import( "../components/Users/User/company"));
-const FilePicker = lazy(()=> import( "../components/admin/filemanager/file"));
+const UserCompany = lazy(() => import("../components/Users/User/company"));
+const FilePicker = lazy(() => import("../components/admin/filemanager/file"));
 
-const Cabang = lazy(()=> import( "../components/Users/UserCabang/index"));
-const Grup = lazy(()=> import( "../components/Users/UserGroup/index"));
-const Company = lazy(()=> import( "../components/Users/UserCompany/index"));
-const CompanyDetail = lazy(()=> import( "../components/Users/UserCompany/detail"));
-const CompanyDetailSuper = lazy(()=> import( "../components/Users/UserCompany/detailsuper"));
-const MobileMeeting = lazy(()=> import( "../components/liveclass/mobileMeeting"));
-const Meeting = lazy(()=> import( "../components/meeting"));
-const TrainingSettings = lazy(()=> import( "../components/training/settings"));
-const Training = lazy(()=> import( "../components/training/company"));
-const TrainingReport = lazy(()=> import( "../components/training/report"));
-const TrainingQuota = lazy(()=> import( "../components/training/quota"));
-const TrainingQuotaDetail = lazy(()=> import( "../components/training/quota/detail"));
-const TrainingUser = lazy(()=> import( "../components/training/user"));
-const TrainingCourse = lazy(()=> import( "../components/training/course"));
-const TrainingCourseForm = lazy(()=> import( "../components/training/course/form"));
-const TrainingQuiz = lazy(()=> import( "../components/training/quiz"));
-const TrainingExamForm = lazy(()=> import( "../components/training/exam/form"));
-const TrainingExam = lazy(()=> import( "../components/training/exam"));
-const TrainingPlan = lazy(()=> import("../components/training/plan"));
-const TrainingPlanUser = lazy(()=> import("../components/training/plan/userProgression"));
-const TrainingPlanUserDetail = lazy(()=> import("../components/training/plan/userProgressionDetail"));
-const TrainingExamAssignment = lazy(()=> import( "../components/training/exam/assignment"));
-const TrainingMembership = lazy(()=> import( "../components/training/membership"));
-const TrainingMembershipForm = lazy(()=> import( "../components/training/membership/form"));
-const TrainingWebinar = lazy(()=> import( "../components/training/webinar"));
-const TrainingQuestions = lazy(()=> import( "../components/training/questions"));
-const TrainingQuestionsForm = lazy(()=> import( "../components/training/questions/form"));
-const TrainingCompanyForm = lazy(()=> import( "../components/training/company/form"));
-const TrainingCompanyDetail = lazy(()=> import( "../components/training/company/detail"));
-const TrainingUserForm = lazy(()=> import( "../components/training/user/form"));
-const TrainingUserDetail = lazy(()=> import( "../components/training/user/detail"));
-const MeetingRoom = lazy(()=> import( "../components/liveclass/meetingRoom"));
-const Webinar = lazy(()=> import( "../components/webinar"));
-const WebinarClient = lazy(()=> import( '../components/client/webinar/index'));
+const Cabang = lazy(() => import("../components/Users/UserCabang/index"));
+const Grup = lazy(() => import("../components/Users/UserGroup/index"));
+const Company = lazy(() => import("../components/Users/UserCompany/index"));
+const CompanyDetail = lazy(() => import("../components/Users/UserCompany/detail"));
+const CompanyDetailSuper = lazy(() => import("../components/Users/UserCompany/detailsuper"));
+const MobileMeeting = lazy(() => import("../components/liveclass/mobileMeeting"));
+const Meeting = lazy(() => import("../components/meeting"));
+const TrainingSettings = lazy(() => import("../components/training/settings"));
+const Training = lazy(() => import("../components/training/company"));
+const TrainingReport = lazy(() => import("../components/training/report"));
+const TrainingQuota = lazy(() => import("../components/training/quota"));
+const TrainingQuotaDetail = lazy(() => import("../components/training/quota/detail"));
+const TrainingUser = lazy(() => import("../components/training/user"));
+const TrainingCourse = lazy(() => import("../components/training/course"));
+const TrainingCourseForm = lazy(() => import("../components/training/course/form"));
+const TrainingQuiz = lazy(() => import("../components/training/quiz"));
+const TrainingExamForm = lazy(() => import("../components/training/exam/form"));
+const TrainingExam = lazy(() => import("../components/training/exam"));
+const TrainingPlan = lazy(() => import("../components/training/plan"));
+const TrainingPlanUser = lazy(() => import("../components/training/plan/userProgression"));
+const TrainingPlanUserDetail = lazy(() => import("../components/training/plan/userProgressionDetail"));
+const TrainingExamAssignment = lazy(() => import("../components/training/exam/assignment"));
+const TrainingMembership = lazy(() => import("../components/training/membership"));
+const TrainingMembershipForm = lazy(() => import("../components/training/membership/form"));
+const TrainingWebinar = lazy(() => import("../components/training/webinar"));
+const TrainingQuestions = lazy(() => import("../components/training/questions"));
+const TrainingQuestionsForm = lazy(() => import("../components/training/questions/form"));
+const TrainingCompanyForm = lazy(() => import("../components/training/company/form"));
+const TrainingCompanyDetail = lazy(() => import("../components/training/company/detail"));
+const TrainingUserForm = lazy(() => import("../components/training/user/form"));
+const TrainingUserDetail = lazy(() => import("../components/training/user/detail"));
+const MeetingRoom = lazy(() => import("../components/liveclass/meetingRoom"));
+const Webinar = lazy(() => import("../components/webinar"));
+const WebinarClient = lazy(() => import('../components/client/webinar/index'));
 
-const LearningAdmin = lazy(()=> import( '../components/learning/index'));
+const LearningAdmin = lazy(() => import('../components/learning/index'));
 
-const Ptc = lazy(()=> import( '../components/ptc/index'));
+const Ptc = lazy(() => import('../components/ptc/index'));
 export default class SuperAdminSwitch extends React.Component {
   render() {
     return (
@@ -113,7 +113,7 @@ export default class SuperAdminSwitch extends React.Component {
         <Route path="/training/plan-user" exact component={TrainingPlanUser} />
         <Route path="/training/plan-user/:id" exact component={TrainingPlanUserDetail} />
         <Route path="/training/exam/create/:type" exact component={TrainingExamForm} />
-        <Route path="/training/exam/edit/:id" exact component={TrainingExamForm} />
+        <Route path="/training/exam/edit/:id/:type" exact component={TrainingExamForm} />
         <Route path="/training/exam/assignment/:id" exact component={TrainingExamAssignment} />
         <Route path="/training/membership" exact component={TrainingMembership} />
         <Route path="/training/membership/edit/:id" exact component={TrainingMembershipForm} />
