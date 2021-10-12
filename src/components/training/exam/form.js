@@ -125,49 +125,55 @@ class FormExam extends Component {
         this.setState({isSaving: false})
     }
     else{
-        if (this.state.id){
-            let form = {
-                title: this.state.title,
-                licenses_type_id: String(this.state.valueLicensesType),
-                time_limit: this.state.time,
-                minimum_score: this.state.minScore,
-                generate_question: this.state.generate ? 1 : 0,
-                course_id: String(this.state.valueCourse2),
-                composition: this.state.composition,
-                scheduled: this.state.scheduled ? 1 : 0,
-                generate_membership: this.state.generate_membership ? 1 : 0,
-                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
-                multiple_assign: this.state.see_correct_answer ? 1 : 0,
-                start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                question: this.state.question
-            }
-            API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
-                if (res.data.error){
-                    toast.error('Error edit')
-                    this.setState({isSaving: false})
+        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+            toast.warning('You must choose the correct answer');
+            this.setState({isSaving: false});
+        }
+        else{
+            if (this.state.id){
+                let form = {
+                    title: this.state.title,
+                    licenses_type_id: String(this.state.valueLicensesType),
+                    time_limit: this.state.time,
+                    minimum_score: this.state.minScore,
+                    generate_question: this.state.generate ? 1 : 0,
+                    course_id: String(this.state.valueCourse2),
+                    composition: this.state.composition,
+                    scheduled: this.state.scheduled ? 1 : 0,
+                    generate_membership: this.state.generate_membership ? 1 : 0,
+                    see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                    multiple_assign: this.state.see_correct_answer ? 1 : 0,
+                    start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    question: this.state.question
                 }
-                else{
-                    if (this.state.image){
-                        let formData = new FormData();
-                        formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/exam/image/${this.props.match.params.id}`, formData).then(res2 => {
-                            if (res2.data.error){
-                                toast.warning('Edited but fail to upload image')
-                                this.setState({edited: false, isSaving: false})
-                            }
-                            else{
-                                toast.success('Automatic saving')
-                                this.setState({edited: false, isSaving: false})
-                            }
-                        })
+                API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
+                    if (res.data.error){
+                        toast.error('Error edit')
+                        this.setState({isSaving: false})
                     }
                     else{
-                        toast.success('Automatic saving')
-                        this.setState({edited: false, isSaving: false})
+                        if (this.state.image){
+                            let formData = new FormData();
+                            formData.append("image", this.state.image)
+                            API.put(`${API_SERVER}v2/training/exam/image/${this.props.match.params.id}`, formData).then(res2 => {
+                                if (res2.data.error){
+                                    toast.warning('Edited but fail to upload image')
+                                    this.setState({edited: false, isSaving: false})
+                                }
+                                else{
+                                    toast.success('Automatic saving')
+                                    this.setState({edited: false, isSaving: false})
+                                }
+                            })
+                        }
+                        else{
+                            toast.success('Automatic saving')
+                            this.setState({edited: false, isSaving: false})
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 }
@@ -193,128 +199,134 @@ class FormExam extends Component {
         this.setState({isSaving: false})
     }
     else{
-        if (this.state.id){
-            let form = {
-                title: this.state.title,
-                licenses_type_id: String(this.state.valueLicensesType),
-                time_limit: this.state.time,
-                minimum_score: this.state.minScore,
-                generate_question: this.state.generate ? 1 : 0,
-                composition: this.state.composition,
-                course_id: String(this.state.valueCourse2),
-                scheduled: this.state.scheduled ? 1 : 0,
-                generate_membership: this.state.generate_membership ? 1 : 0,
-                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
-                multiple_assign: this.state.multiple_assign ? 1 : 0,
-                start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                question: this.state.question
-            }
-            API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
-                if (res.data.error){
-                    toast.error('Error edit')
-                    this.setState({isSaving: false})
-                }
-                else{
-                    if (this.state.image){
-                        let formData = new FormData();
-                        formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/exam/image/${this.props.match.params.id}`, formData).then(res2 => {
-                            if (res2.data.error){
-                                toast.warning('Edited but fail to upload image')
-                                this.setState({edited: false, isSaving: false})
-                            }
-                            else{
-                                if (newQuestion){
-                                    this.addNewQuestion();
-                                    toast.success('Automatic saving')
-                                    this.setState({edited: false, isSaving: false})
-                                }
-                                else{
-                                    toast.success('Saved')
-                                    this.setState({edited: false, isSaving: false})
-                                }
-                            }
-                        })
-                    }
-                    else{
-                        if (newQuestion){
-                            this.addNewQuestion();
-                            toast.success('Automatic saving')
-                            this.setState({edited: false, isSaving: false})
-                        }
-                        else{
-                            toast.success('Saved')
-                            this.setState({edited: false, isSaving: false})
-                        }
-                    }
-                }
-            })
+        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+            toast.warning('You must choose the correct answer');
+            this.setState({isSaving: false});
         }
         else{
-            let form = {
-                company_id: this.state.companyId,
-                title: this.state.title,
-                licenses_type_id: String(this.state.valueLicensesType),
-                time_limit: this.state.time,
-                minimum_score: this.state.minScore,
-                generate_question: this.state.generate ? 1 : 0,
-                composition: this.state.composition,
-                course_id: String(this.state.valueCourse2),
-                scheduled: this.state.scheduled ? 1 : 0,
-                generate_membership: this.state.generate_membership ? 1 : 0,
-                see_correct_answer: this.state.see_correct_answer ? 1 : 0,
-                multiple_assign: this.state.multiple_assign ? 1 : 0,
-                start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
-                exam: this.state.exam,
-                created_by: Storage.get('user').data.user_id
-            }
-            API.post(`${API_SERVER}v2/training/exam`, form).then(res => {
-                if (res.data.error){
-                    toast.error('Error create')
+            if (this.state.id){
+                let form = {
+                    title: this.state.title,
+                    licenses_type_id: String(this.state.valueLicensesType),
+                    time_limit: this.state.time,
+                    minimum_score: this.state.minScore,
+                    generate_question: this.state.generate ? 1 : 0,
+                    composition: this.state.composition,
+                    course_id: String(this.state.valueCourse2),
+                    scheduled: this.state.scheduled ? 1 : 0,
+                    generate_membership: this.state.generate_membership ? 1 : 0,
+                    see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                    multiple_assign: this.state.multiple_assign ? 1 : 0,
+                    start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    question: this.state.question
                 }
-                else{
-                    if (this.state.image){
-                        let formData = new FormData();
-                        formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/exam/image/${res.data.result.insertId}`, formData).then(res2 => {
-                            if (res2.data.error){
-                                this.setState({id: res.data.result.insertId})
-                                toast.warning(`${this.state.exam ? 'Exam' : 'Quiz'} created but fail to upload image`)
-                                this.setState({edited: false, isSaving: false})
-                                this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
-                            }
-                            else{
-                                this.setState({id: res.data.result.insertId})
-                                if (newQuestion){
-                                    this.addNewQuestion();
-                                    toast.success('Automatic saving')
+                API.put(`${API_SERVER}v2/training/exam/${this.state.id}`, form).then(res => {
+                    if (res.data.error){
+                        toast.error('Error edit')
+                        this.setState({isSaving: false})
+                    }
+                    else{
+                        if (this.state.image){
+                            let formData = new FormData();
+                            formData.append("image", this.state.image)
+                            API.put(`${API_SERVER}v2/training/exam/image/${this.props.match.params.id}`, formData).then(res2 => {
+                                if (res2.data.error){
+                                    toast.warning('Edited but fail to upload image')
                                     this.setState({edited: false, isSaving: false})
                                 }
                                 else{
-                                    toast.success('Saved')
-                                    this.setState({edited: false, isSaving: false})
+                                    if (newQuestion){
+                                        this.addNewQuestion();
+                                        toast.success('Automatic saving')
+                                        this.setState({edited: false, isSaving: false})
+                                    }
+                                    else{
+                                        toast.success('Saved')
+                                        this.setState({edited: false, isSaving: false})
+                                    }
                                 }
-                                this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
-                            }
-                        })
-                    }
-                    else{
-                        this.setState({id: res.data.result.insertId})
-                        if (newQuestion){
-                            this.addNewQuestion();
-                            toast.success('Automatic saving')
-                            this.setState({isSaving: false})
+                            })
                         }
                         else{
-                            toast.success('Saved')
-                            this.setState({isSaving: false})
+                            if (newQuestion){
+                                this.addNewQuestion();
+                                toast.success('Automatic saving')
+                                this.setState({edited: false, isSaving: false})
+                            }
+                            else{
+                                toast.success('Saved')
+                                this.setState({edited: false, isSaving: false})
+                            }
                         }
-                        this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
                     }
+                })
+            }
+            else{
+                let form = {
+                    company_id: this.state.companyId,
+                    title: this.state.title,
+                    licenses_type_id: String(this.state.valueLicensesType),
+                    time_limit: this.state.time,
+                    minimum_score: this.state.minScore,
+                    generate_question: this.state.generate ? 1 : 0,
+                    composition: this.state.composition,
+                    course_id: String(this.state.valueCourse2),
+                    scheduled: this.state.scheduled ? 1 : 0,
+                    generate_membership: this.state.generate_membership ? 1 : 0,
+                    see_correct_answer: this.state.see_correct_answer ? 1 : 0,
+                    multiple_assign: this.state.multiple_assign ? 1 : 0,
+                    start_time: moment.tz(this.state.start_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    end_time: moment.tz(this.state.end_date, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
+                    exam: this.state.exam,
+                    created_by: Storage.get('user').data.user_id
                 }
-            })
+                API.post(`${API_SERVER}v2/training/exam`, form).then(res => {
+                    if (res.data.error){
+                        toast.error('Error create')
+                    }
+                    else{
+                        if (this.state.image){
+                            let formData = new FormData();
+                            formData.append("image", this.state.image)
+                            API.put(`${API_SERVER}v2/training/exam/image/${res.data.result.insertId}`, formData).then(res2 => {
+                                if (res2.data.error){
+                                    this.setState({id: res.data.result.insertId})
+                                    toast.warning(`${this.state.exam ? 'Exam' : 'Quiz'} created but fail to upload image`)
+                                    this.setState({edited: false, isSaving: false})
+                                    this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
+                                }
+                                else{
+                                    this.setState({id: res.data.result.insertId})
+                                    if (newQuestion){
+                                        this.addNewQuestion();
+                                        toast.success('Automatic saving')
+                                        this.setState({edited: false, isSaving: false})
+                                    }
+                                    else{
+                                        toast.success('Saved')
+                                        this.setState({edited: false, isSaving: false})
+                                    }
+                                    this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
+                                }
+                            })
+                        }
+                        else{
+                            this.setState({id: res.data.result.insertId})
+                            if (newQuestion){
+                                this.addNewQuestion();
+                                toast.success('Automatic saving')
+                                this.setState({isSaving: false})
+                            }
+                            else{
+                                toast.success('Saved')
+                                this.setState({isSaving: false})
+                            }
+                            this.props.history.push(`/training/exam/edit/${res.data.result.insertId}`)
+                        }
+                    }
+                })
+            }
         }
     }
 }
@@ -389,7 +401,7 @@ handleChangeOpt = e => {
       this.state.question.splice(i, 1, item)
 }
 handleChangeAnswer = (value) => {
-      this.setState({answer: value})
+      this.setState({answer: value, edited: true})
       let i = this.state.question.indexOf(this.state.question.filter(item=> item.id === this.state.selectedQuestion)[0]);
       let item = {
           id : this.state.selectedQuestion,
@@ -429,7 +441,8 @@ handleChangeAnswer = (value) => {
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
                 valueCourse2: [Number(res.data.result.course_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
-                question: res.data.result.question
+                question: res.data.result.question,
+                exam: res.data.result.exam
             })
             if (res.data.result.composition.length){
                 let composition = res.data.result.composition;
@@ -923,7 +936,15 @@ handleChangeAnswer = (value) => {
                                                                 question.map((item, index)=>
                                                                     <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                                                                         {(provided) => (
-                                                                    <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={this.selectQuestion.bind(this, item.id)}>
+                                                                    <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={()=> {
+                                                                        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+                                                                            toast.warning('You must choose the correct answer');
+                                                                            this.setState({isSaving: false});
+                                                                        }
+                                                                        else{
+                                                                            this.selectQuestion(item.id)
+                                                                        }
+                                                                    }}>
                                                                         <i className="fa fa-bars icon-draggable"></i>
                                                                         <div style={{display:'inline-block'}} dangerouslySetInnerHTML={{__html: (index+1 + '. ' + (item.question.length > 25 ? item.question.substring(0, 25) + '...' : item.question))}}></div>
                                                                         {
@@ -936,8 +957,16 @@ handleChangeAnswer = (value) => {
                                                                 )
                                                             }
                                                             {provided.placeholder}
-                                                            <div className="training-new-session" onClick={ e => this.save(e, true)}>
-                                                                <i className="fa fa-plus"></i> Add session
+                                                            <div className="training-new-session" onClick={e => {
+                                                                        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+                                                                            toast.warning('You must choose the correct answer');
+                                                                            this.setState({isSaving: false});
+                                                                        }
+                                                                        else{
+                                                                            this.save(e, true)
+                                                                        }
+                                                            }}>
+                                                                <i className="fa fa-plus"></i> Add question
                                                             </div>
                                                         </div>
                                                                 )}

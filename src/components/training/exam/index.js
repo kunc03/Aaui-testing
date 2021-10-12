@@ -132,7 +132,7 @@ class Exam extends Component {
         cell: row => <img height="26px" alt={row.name} src={row.image ? row.image : 'assets/images/no-image.png'} />
       },
       {
-        cell: row => <Link to={'/training/exam/edit/' + row.id + '/' + (this.props.quiz ? 'quiz' : 'exam')}>{row.title}</Link>,
+        cell: row => <Link to={'/training/exam/edit/' + row.id}>{row.title}</Link>,
         name: 'Title',
         sortable: true,
         grow: 2,
