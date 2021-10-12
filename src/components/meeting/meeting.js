@@ -2048,6 +2048,11 @@ class MeetingTable extends Component {
                   :
                   null
             }
+            {
+              !this.state.infoClass.length ?
+              `No meeting found with this meeting ID or has been deleted.`
+              :null
+            }
             <div className="row">
               <div className="col-sm-6">
                 <div className="title-head f-w-900 f-16" style={{ marginBottom: 20 }}>
