@@ -33,8 +33,18 @@ class Allocation extends Component {
   }
 
   handleChange = e => {
-      let {name, value} = e.target;
+    let {name, value} = e.target;
+    if (name === 'amount'){
+      if (value < 0){
+        this.setState({[name]: 0})
+      }
+      else{
+        this.setState({[name]: value})
+      }
+    }
+    else{
       this.setState({[name]: value})
+    }
   }
 
   
@@ -304,7 +314,7 @@ class Allocation extends Component {
             <Modal.Body>
                 <div className="form-field-top-label">
                     <label for="amount">Amount of {this.state.mode === 'addition' ? 'Addition' : 'Reduction'}<required>*</required></label>
-                    <input type="number" name="amount" size="50" id="amount" placeholder="0" value={this.state.amount} onChange={this.handleChange}/>
+                    <input type="number" name="amount" size="50" id="amount" min="0" placeholder="0" value={this.state.amount} onChange={this.handleChange}/>
                 </div>
                 <div className="form-field-top-label" style={{width:'100%'}}>
                     <label for="note">Note</label>
