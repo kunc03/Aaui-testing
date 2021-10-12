@@ -138,6 +138,9 @@ class WebinarAddClass extends Component {
       modalPosttest: false,
       modalEssay: false,
       modalPolling: false,
+      importId: [],
+      importIdTC: [],
+      pesertaId: []
     });
   }
 
