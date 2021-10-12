@@ -832,7 +832,7 @@ fetchRekamanBBB(folder){
                                       </button>
                                 {
                                   access_project_admin ?
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={()=> this.setState({modalRename : true, renameFileId: item.id, renameFileName: item.name, renameFileNameNew: item.name})}> Rename </button>
+                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.name, 'file')}> Rename </button>
                                     :
                                     null
                                 }
