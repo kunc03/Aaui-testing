@@ -569,7 +569,7 @@ class Header extends Component {
 
           <ul className="navbar-nav ml-auto">
 
-            <span className="fc-muted">{moment(this.state.dateNow).local().format('DD MMMM YYYY')} ({moment.tz.guess(true)})</span>
+            <span className="fc-muted">{moment().local().format('DD MMMM YYYY')} (GMT{moment(this.state.dateNow).local().format('Z')} {moment.tz.guess(true)})</span>
             {/* <li>
               <div className="dropdown">
                 <a className href="javascript:" data-toggle="dropdown">
