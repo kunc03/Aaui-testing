@@ -524,8 +524,8 @@ class MeetingTable extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: Moment.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-          schedule_end: Moment.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+          schedule_start: `${Moment.tz(this.state.infoClass.schedule_start).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+          schedule_end: `${Moment.tz(this.state.infoClass.schedule_end).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -677,8 +677,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_start: `${Moment.tz(res.data.result.schedule_start).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${Moment.tz(res.data.result.schedule_end).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -981,8 +981,8 @@ class MeetingTable extends Component {
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
 
-        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
-        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_start: Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm'),
+        date_end: Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm'),
       }
 
       API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
@@ -1000,8 +1000,8 @@ class MeetingTable extends Component {
               room_name: this.state.roomName,
               is_private: isPrivate,
               is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_start: `${form.date_start} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_end: `${form.date_end} (${moment.tz.guess(true)} Time Zone)`,
               userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
               messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
@@ -1111,8 +1111,8 @@ class MeetingTable extends Component {
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
 
-        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
-        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_start: Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm'),
+        date_end: Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')
       }
 
       API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
@@ -1130,8 +1130,8 @@ class MeetingTable extends Component {
               room_name: this.state.roomName,
               is_private: isPrivate,
               is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_start: `${form.date_start} (${moment.tz.guess(true)} Time Zone)`,
+              schedule_end: `${form.date_end} (${moment.tz.guess(true)} Time Zone)`,
               userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
               message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
               messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
