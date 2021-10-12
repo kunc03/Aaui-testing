@@ -1454,8 +1454,8 @@ class MeetingTable extends Component {
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
 
-    let infoDateStart = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`);
-    let infoDateEnd = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`);
+    let infoDateStart = new Date(`${Moment(this.state.infoClass.date_start).format('YYYY-MM-DD HH:mm')}`);
+    let infoDateEnd = new Date(`${Moment(this.state.infoClass.date_end).format('YYYY-MM-DD HH:mm')}`);
 
     console.log('infoDate', Moment().isBetween(infoDateStart ? infoDateStart : Moment(), infoDateEnd ? infoDateEnd : Moment()))
 
@@ -2049,7 +2049,7 @@ class MeetingTable extends Component {
                   null
             }
             {
-              !this.state.infoClass.length ?
+              this.state.infoClass === [] || this.state.infoClass.length === 0 || this.state.infoClass.class_id === null ?
               `No meeting found with this meeting ID or has been deleted.`
               :null
             }
@@ -2063,7 +2063,7 @@ class MeetingTable extends Component {
             <div class="row">
               <div className="col-sm-6">
                 {
-                  this.state.infoClass.hasOwnProperty('room_name') ?
+                  this.state.infoClass.hasOwnProperty('room_name') && this.state.infoClass.room_name !== null ?
                     <h3 className="f-14">{this.state.infoClass.keterangan}</h3>
                     : null
                 }
@@ -2083,7 +2083,7 @@ class MeetingTable extends Component {
                 }
               </div>
               {
-                this.state.infoClass.hasOwnProperty('tanggal') ?
+                this.state.infoClass.hasOwnProperty('tanggal') && this.state.infoClass.tanggal !== null ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
                       Start : {moment(this.state.infoClass.tgl_mulai).local().format("DD-MM-YYYY HH:mm")}
