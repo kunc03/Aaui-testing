@@ -271,7 +271,7 @@ export default class WebinarPretestAdd extends Component {
               <div className="col-sm-12">
                 <div className="form-group">
                   <label className="bold"> Working Duration (Minutes)</label>
-                  <input type="number" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value })} value={this.state.waktu} />
+                  <input type="number" min="0" className="form-control" name="waktu" onChange={e => this.setState({ waktu: e.target.value < 0 ? 0 : e.target.value })} value={this.state.waktu} />
                 </div>
 
                 {
