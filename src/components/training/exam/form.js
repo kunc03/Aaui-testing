@@ -125,7 +125,7 @@ class FormExam extends Component {
         this.setState({isSaving: false})
     }
     else{
-        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+        if (this.state.question_text !== '' && (!this.state.answer || this.state.answer === null)){
             toast.warning('You must choose the correct answer');
             this.setState({isSaving: false});
         }
@@ -199,7 +199,7 @@ class FormExam extends Component {
         this.setState({isSaving: false})
     }
     else{
-        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+        if (this.state.question_text !== '' && (!this.state.answer || this.state.answer === null)){
             toast.warning('You must choose the correct answer');
             this.setState({isSaving: false});
         }
@@ -937,7 +937,7 @@ handleChangeAnswer = (value) => {
                                                                     <Draggable key={item.id} draggableId={String(item.id)} index={index}>
                                                                         {(provided) => (
                                                                     <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="training-session-list" onClick={()=> {
-                                                                        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+                                                                        if (this.state.question_text !== '' && (!this.state.answer || this.state.answer === null)){
                                                                             toast.warning('You must choose the correct answer');
                                                                             this.setState({isSaving: false});
                                                                         }
@@ -958,7 +958,8 @@ handleChangeAnswer = (value) => {
                                                             }
                                                             {provided.placeholder}
                                                             <div className="training-new-session" onClick={e => {
-                                                                        if ((!this.state.question_text || this.state.question_text !== null) && (!this.state.answer || this.state.answer === null)){
+                                                                console.log('ALVINSS',(this.state.question_text !== '' && (!this.state.answer || this.state.answer === null)))
+                                                                        if (this.state.question_text !== '' && (!this.state.answer || this.state.answer === null)){
                                                                             toast.warning('You must choose the correct answer');
                                                                             this.setState({isSaving: false});
                                                                         }
