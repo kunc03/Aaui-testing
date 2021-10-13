@@ -170,8 +170,8 @@ class Exam extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey) {
-                case 1: this.props.quiz ? this.props.goTo(`/training/exam/assignment/` + row.id + '/quiz') : this.props.history.push(`/training/exam/assignment/` + row.id + '/exam'); break;
-                case 2: this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id + '/quiz') : this.props.history.push(`/training/exam/edit/` + row.id + '/exam'); break;
+                case 1: this.props.quiz ? this.props.goTo(`/training/exam/assignment/` + row.id) : this.props.history.push(`/training/exam/assignment/` + row.id); break;
+                case 2: this.props.quiz ? this.props.goTo(`/training/exam/edit/` + row.id) : this.props.history.push(`/training/exam/edit/` + row.id); break;
                 case 3: this.onClickHapus(row.id); break;
                 case 4: this.onClickActivate(row.id); break;
                 default: this.props.goTo('/training/course'); break;
