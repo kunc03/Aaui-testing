@@ -33,7 +33,12 @@ class Header extends Component {
     localStorage.setItem('companyID', id);
     localStorage.setItem('companyName', name);
     localStorage.setItem('logo', logo);
-    window.location.replace("/");
+    let href = window.location.href;
+    if (href.search("detail-project") > -1) {
+      window.location.replace("/");
+    } else {
+      window.location.reload();
+    }
   };
 
   fetchCompany() {
@@ -619,122 +624,122 @@ class Header extends Component {
 
 
           {/* {(level == 'superadmin' || level == 'admin') && ( */}
-            <ul className="navbar-nav">
-              <li>
-                <div className="dropdown">
-                  <a href="javascript:;" data-toggle="dropdown">
-                    <img
-                      src={`newasset/company.svg`}
-                      alt=""
-                      width={25}
-                    ></img>
-                  </a>
-                  <div className="dropdown-menu dropdown-menu-right notification">
-                    <div className="noti-head">
-                      <h6 className="d-inline-block m-b-0">
-                        <b>{this.state.company.length > 0
-                          ? 'Select Company'
-                          : 'Not multiple company'}
-                        </b>
-                      </h6>
-                    </div>
-                    <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
-                      {(level == 'admin' || level == 'client') && (
-                        <li
-                          className="notification"
-                          style={{ cursor: 'pointer' }}
-                          onClick={this.pilihCompany}
+          <ul className="navbar-nav">
+            <li>
+              <div className="dropdown">
+                <a href="javascript:;" data-toggle="dropdown">
+                  <img
+                    src={`newasset/company.svg`}
+                    alt=""
+                    width={25}
+                  ></img>
+                </a>
+                <div className="dropdown-menu dropdown-menu-right notification">
+                  <div className="noti-head">
+                    <h6 className="d-inline-block m-b-0">
+                      <b>{this.state.company.length > 0
+                        ? 'Select Company'
+                        : 'Not multiple company'}
+                      </b>
+                    </h6>
+                  </div>
+                  <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
+                    {(level == 'admin' || level == 'client') && (
+                      <li
+                        className="notification"
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.pilihCompany}
+                        data-id={this.state.company_id}
+                        data-logo={this.state.logo}
+                      >
+                        <div
+                          className="media"
                           data-id={this.state.company_id}
                           data-logo={this.state.logo}
                         >
+                          <img
+                            data-id={this.state.company_id}
+                            data-logo={this.state.logo}
+                            className="img-radius"
+                            src={this.state.logo}
+                            alt=""
+                          />
                           <div
-                            className="media"
+                            className="media-body"
                             data-id={this.state.company_id}
                             data-logo={this.state.logo}
                           >
-                            <img
-                              data-id={this.state.company_id}
-                              data-logo={this.state.logo}
-                              className="img-radius"
-                              src={this.state.logo}
-                              alt=""
-                            />
-                            <div
-                              className="media-body"
+                            <p
                               data-id={this.state.company_id}
                               data-logo={this.state.logo}
                             >
-                              <p
+                              <b
                                 data-id={this.state.company_id}
                                 data-logo={this.state.logo}
                               >
-                                <b
+                                {this.state.myCompanyName}
+                              </b>
+                            </p>
+                            {localStorage.getItem('companyID') ==
+                              this.state.company_id && (
+                                <p
                                   data-id={this.state.company_id}
                                   data-logo={this.state.logo}
+                                  style={{ color: 'green' }}
                                 >
-                                  {this.state.myCompanyName}
-                                </b>
-                              </p>
-                              {localStorage.getItem('companyID') ==
-                                this.state.company_id && (
-                                  <p
-                                    data-id={this.state.company_id}
-                                    data-logo={this.state.logo}
-                                    style={{ color: 'green' }}
-                                  >
-                                    active
-                                  </p>
-                                )}
-                            </div>
+                                  active
+                                </p>
+                              )}
                           </div>
-                        </li>
-                      )}
-                      {company.map((item, i) => (
-                        <li
-                          className="notification"
-                          style={{ cursor: 'pointer' }}
-                          onClick={this.pilihCompany}
+                        </div>
+                      </li>
+                    )}
+                    {company.map((item, i) => (
+                      <li
+                        className="notification"
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.pilihCompany}
+                        data-id={item.company_id}
+                        data-logo={item.logo}
+                        data-name={item.company_name}
+                      >
+                        <div
+                          className="media"
                           data-id={item.company_id}
                           data-logo={item.logo}
                           data-name={item.company_name}
                         >
+                          <img
+                            data-id={item.company_id}
+                            data-logo={item.logo}
+                            data-name={item.company_name}
+                            className="img-radius"
+                            src={item.logo}
+                            alt=""
+                          />
                           <div
-                            className="media"
+                            className="media-body"
                             data-id={item.company_id}
                             data-logo={item.logo}
                             data-name={item.company_name}
                           >
-                            <img
-                              data-id={item.company_id}
-                              data-logo={item.logo}
-                              data-name={item.company_name}
-                              className="img-radius"
-                              src={item.logo}
-                              alt=""
-                            />
-                            <div
-                              className="media-body"
+                            <p
                               data-id={item.company_id}
                               data-logo={item.logo}
                               data-name={item.company_name}
                             >
-                              <p
+                              <b
                                 data-id={item.company_id}
                                 data-logo={item.logo}
                                 data-name={item.company_name}
                               >
-                                <b
-                                  data-id={item.company_id}
-                                  data-logo={item.logo}
-                                  data-name={item.company_name}
-                                >
-                                  {item.company_name}
-                                </b>
+                                {item.company_name}
+                              </b>
 
-                                <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
-                              </p>
+                              <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
+                            </p>
 
-                              {/* {parseInt(localStorage.getItem('companyID')) ==
+                            {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p
                                   data-id={item.company_id}
@@ -743,15 +748,15 @@ class Header extends Component {
                                   {item.status}
                                 </p>
                               )} */}
-                            </div>
                           </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </li>
+          </ul>
           {/* )} */}
         </div>
       </header>
