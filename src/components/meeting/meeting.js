@@ -56,6 +56,7 @@ class MeetingTable extends Component {
       idBooking: '',
       isSaving: false,
       isLoadBooking: false,
+      hide_add_participant: false,
       isFetch: false,
       users: [],
       dataUser: [],
@@ -476,10 +477,35 @@ class MeetingTable extends Component {
 
         if (this.state.optionsModerator.length == 0 || this.state.optionsPeserta.length == 0) {
           API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
+            let tmp_duplicate = [];
+
             response.data.result.map(item => {
-              this.state.optionsModerator.push({ value: item.user_id, label: item.name });
-              this.state.optionsPeserta.push({ value: item.user_id, label: item.name });
+              // console.log(item, "TEST PESERTA")
+              // this.state.optionsModerator.push({ value: item.user_id, label: item.name });
+              // this.state.optionsPeserta.push({ value: item.user_id, label: item.name });
+
+              let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
+              let dupLabel = item.name;
+              if (idx > -1) {
+
+                if (item.company_name) {
+                  dupLabel += `(${item.company_name} | ${item.email})`;
+                  tmp_duplicate[idx].label += ` (${response.data.result[idx].company_name} | ${response.data.result[idx].email})`;
+                } else {
+                  dupLabel += `(${item.email})`;
+                  tmp_duplicate[idx].label += ` (${response.data.result[idx].email})`;
+                }
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel })
+                // this.state.optionsModerator.push({ value: item.user_id, label: dupLabel });
+                // this.state.optionsPeserta.push({ value: item.user_id, label: dupLabel });
+              } else {
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel })
+                // this.state.optionsModerator.push({ value: item.user_id, label: dupLabel });
+                // this.state.optionsPeserta.push({ value: item.user_id, label: dupLabel });
+              }
             });
+            this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
+            console.log(tmp_duplicate, "TEST")
           })
             .catch(function (error) {
               console.log(error);
@@ -495,10 +521,15 @@ class MeetingTable extends Component {
               console.log(error);
             });
         }
+        // console.log(this.state.optionsPeserta, "TEST 1");
+        // console.log(this.state.valuePeserta, "TEST 2");
+
         API.get(`${API_SERVER}v1/branch/company/${this.state.companyId}`).then(res => {
           if (res.status === 200) {
             // console.log(res, 'sdaaaaaaaaaaaaaaaa')
             this.setState({ listBranch: res.data.result[0] })
+
+            this.state.optionsGroup.push({ value: null, label: 'None of the above' })
             res.data.result[0].map(item => {
               this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
@@ -571,6 +602,7 @@ class MeetingTable extends Component {
             const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number) : [];
             this.setState({ valuePeserta: this.state.valuePeserta.concat(participant) })
           }
+
         })
       }
     }
@@ -1779,6 +1811,7 @@ class MeetingTable extends Component {
                             closeMenuOnSelect={false}
                             onChange={valuePeserta => {
                               this.groupSelect(valuePeserta)
+                              this.setState({ hide_add_participant: true });
                             }}
                           />
                           <Form.Text className="text-muted">
@@ -1791,8 +1824,7 @@ class MeetingTable extends Component {
                 }
 
                 {
-                  this.state.private ?
-
+                  this.state.private && this.state.hide_add_participant ?
                     <Form.Group controlId="formJudul">
                       <div className="form-group row">
                         <div className="col-sm-6">
@@ -1896,6 +1928,40 @@ class MeetingTable extends Component {
                     </Form.Group>
                     : null
                 }
+
+                <div className="form-group row">
+                  <div className="col-sm-6">
+                    <Form.Label className="f-w-bold">Engine<required>*</required></Form.Label>
+                    <Select id="engine"
+                      options={[
+                        { label: 'ICADEMY', value: 'bbb' },
+                        { label: 'ZOOM', value: 'zoom' }
+                      ]}
+                      value={[{ label: 'ICADEMY', value: 'bbb' }, { label: 'ZOOM', value: 'zoom' }].filter(x => this.state.engine === x.value)}
+                      onChange={engine => { this.setState({ engine: engine ? engine.value : '' }); }}
+                    />
+                    <p className="form-notes">
+                      Choose meeting engine.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="form-group row">
+                  <div className="col-sm-6">
+                    <Form.Label className="f-w-bold">Mode<required>*</required></Form.Label>
+                    <Select id="mode"
+                      options={[
+                        { label: 'WEB', value: 'web' },
+                        { label: 'APP', value: 'app' }
+                      ]}
+                      value={[{ label: 'WEB', value: 'web' }, { label: 'APP', value: 'app' }].filter(x => this.state.mode === x.value)}
+                      onChange={engine => { this.setState({ mode: engine ? engine.value : '' }); console.log(engine, 'engine') }}
+                    />
+                    <p className="form-notes">
+                      Choose meeting mode.
+                    </p>
+                  </div>
+                </div>
 
               </div>
 
@@ -2050,8 +2116,8 @@ class MeetingTable extends Component {
             }
             {
               this.state.infoClass === [] || this.state.infoClass.length === 0 || this.state.infoClass.class_id === null ?
-              `No meeting found with this meeting ID or has been deleted.`
-              :null
+                `No meeting found with this meeting ID or has been deleted.`
+                : null
             }
             <div className="row">
               <div className="col-sm-6">
