@@ -526,10 +526,9 @@ class MeetingTable extends Component {
 
         API.get(`${API_SERVER}v1/branch/company/${this.state.companyId}`).then(res => {
           if (res.status === 200) {
-            // console.log(res, 'sdaaaaaaaaaaaaaaaa')
             this.setState({ listBranch: res.data.result[0] })
 
-            this.state.optionsGroup.push({ value: null, label: 'None of the above' })
+            this.state.optionsGroup.push({ value: null, label: 'None of the below' })
             res.data.result[0].map(item => {
               this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
@@ -1480,8 +1479,8 @@ class MeetingTable extends Component {
       bodyTabble = bodyTabble.filter(item => item.status !== 'Locked')
     }
 
-    console.log(bodyTabble, 'bodyTabble')
-    console.log(this.state.infoClass, 'bodyTabble')
+    // console.log(bodyTabble, 'bodyTabble')
+    // console.log(this.state.infoClass, 'bodyTabble')
 
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
@@ -1640,18 +1639,18 @@ class MeetingTable extends Component {
           <Modal.Body>
             <div className="row">
               <div className="col-sm-12">
-                <table className="table table-hover">
+                <table className="table table-hover table-list_booking">
                   <thead>
                     <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                      <td>Date </td>
-                      <td>Starting Hours </td>
-                      <td>End Hours </td>
-                      <td>By</td>
-                      <td>Moderator</td>
-                      <td>Participants</td>
-                      <td>Description</td>
-                      <td>Share</td>
-                      <td>Action</td>
+                      <td><b>Date </b></td>
+                      <td><b>Starting Hours </b></td>
+                      <td><b>End Hours </b></td>
+                      <td><b>By</b></td>
+                      <td><b>Moderator</b></td>
+                      <td><b>Participants</b></td>
+                      <td><b>Description</b></td>
+                      <td><b>Share</b></td>
+                      <td><b>Action</b></td>
                     </tr>
                   </thead>
                   <tbody>
@@ -2235,18 +2234,18 @@ class MeetingTable extends Component {
             <div className="title-head f-w-900 f-16 mb-2">
               Schedule & Booking Meeting
             </div>
-            <table className="table table-hover table-striped">
+            <table className="table table-hover table-striped table-list_booking">
               <thead>
                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                  <td>Date</td>
-                  <td>Starting Hours</td>
-                  <td>End Hours</td>
-                  <td>By</td>
-                  <td>Moderator</td>
-                  <td className="text-center">Participants</td>
-                  <td>Description</td>
-                  <td>Share</td>
-                  <td>Action</td>
+                  <td><b>Date</b></td>
+                  <td><b>Starting Hours</b></td>
+                  <td><b>End Hours</b></td>
+                  <td><b>By</b></td>
+                  <td><b>Moderator</b></td>
+                  <td className="text-center"><b>Participants</b></td>
+                  <td><b>Description</b></td>
+                  <td><b>Share</b></td>
+                  <td><b>Action</b></td>
                 </tr>
               </thead>
               <tbody>

@@ -12870,3 +12870,7 @@ table.info-exam > tr > td{
   font-size: 11px;
   line-height: 13px;
 }
+
+.table-list_booking td {
+  font-size: 14px !important;
+}
