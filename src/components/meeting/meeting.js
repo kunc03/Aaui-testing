@@ -310,7 +310,7 @@ class MeetingTable extends Component {
   }
   closemodalJadwal = (id) => {
     this.fetchMeeting(true)
-    this.setState({ modalJadwal: false, isOpenBooking: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: '' });
+    this.setState({ modalJadwal: false, hide_add_participant: false, isOpenBooking: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: '' });
   }
 
   closeModalConfirmation = e => {
@@ -1095,10 +1095,10 @@ class MeetingTable extends Component {
   editBooking(id) {
     let dataBooking = this.state.dataBooking.booking.filter((x) => x.id === id)[0];
 
-    const split_date = dataBooking.tgl_mulai.split('T')[0];
     this.setState({
       bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
+      hide_add_participant: true,
       idBooking: id,
       tanggal: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD')),
       jamMulai: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD HH:mm')),
@@ -1119,7 +1119,7 @@ class MeetingTable extends Component {
       toast.warning('Date, start time, and end time are mandatory.')
     }
     else {
-      this.setState({ isSaving: true });
+      this.setState({ isSaving: true, hide_add_participant: false });
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
       const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
       const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
