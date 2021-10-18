@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Children, Component } from "react";
 import { Link } from "react-router-dom";
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY, API_SOCKET } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
@@ -53,6 +53,7 @@ class MeetingTable extends Component {
 
     this.state = {
       isOpenBooking: false,
+      arrNamePeserta: [],
       idBooking: '',
       isSaving: false,
       isLoadBooking: false,
@@ -1383,6 +1384,31 @@ class MeetingTable extends Component {
         </div>
       </div>
     );
+
+    const ValueContainer = ({ children, getValue, ...props }) => {
+      let values = getValue();
+      let valueLabel = [];
+
+      //if (values.length > 0) valueLabel.push(props.selectProps.getOptionLabel(values[0]));
+      //if (values.length > 1) valueLabel += ` (${values.length})`;
+
+      // Keep standard placeholder and input from react-select
+      let childrenToRender = React.Children
+        .toArray(children)
+        .filter((child) => ['Input', 'DummyInput', 'Placeholder']
+          .indexOf(child.type.name) >= 0);
+
+
+      console.log(children, "TEST 12")
+
+      return (
+        <components.ValueContainer {...props}>
+          {!props.selectProps.inputValue && valueLabel}
+          {children.selectOption}
+        </components.ValueContainer>
+      );
+    };
+
     const formatOptionLabel = ({ value, label, company, email, colorCompany }) => (
       <div className="form-group row" style={{ borderBottom: '1px #eee' }}>
         <div className="col-sm-4">
@@ -1897,7 +1923,7 @@ class MeetingTable extends Component {
                             + Add more participants from user list
                           </Form.Text>
                           <Select
-                            getOptionLabel={option => option.label}
+                            // components={{ ValueContainer }}
                             formatOptionLabel={formatOptionLabel}
                             value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
                             options={this.state.optionsPeserta}
@@ -1905,9 +1931,14 @@ class MeetingTable extends Component {
                             closeMenuOnSelect={false}
                             onChange={valuePeserta => {
                               let arr = [];
-                              valuePeserta.map((item) => arr.push(item.value));
+                              let arr_name = [];
+                              valuePeserta.map((item) => {
+                                arr.push(item.value);
+                                arr_name.push({ label: item.label })
+                              });
                               this.setState({
-                                valuePeserta: arr
+                                valuePeserta: arr,
+                                arrNamePeserta: arr_name
                               })
                             }}
                           />
