@@ -528,7 +528,7 @@ class MeetingTable extends Component {
           if (res.status === 200) {
             this.setState({ listBranch: res.data.result[0] })
 
-            this.state.optionsGroup.push({ value: null, label: 'None of the below' })
+            this.state.optionsGroup.push({ value: null, label: 'Select manually' })
             res.data.result[0].map(item => {
               this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
@@ -1801,8 +1801,16 @@ class MeetingTable extends Component {
                       <div className="form-group row">
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">
-                            Participant From Group
+                            Add Participants
                           </Form.Label>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <div className="col-sm-6">
+                          <Form.Text className="text-muted">
+                            + Add from groups
+                          </Form.Text>
                           <Select
                             value={[...this.state.optionsGroup].filter(x => this.state.valueGroup.includes(x.value))}
                             options={this.state.optionsGroup}
@@ -1810,12 +1818,9 @@ class MeetingTable extends Component {
                             closeMenuOnSelect={false}
                             onChange={valuePeserta => {
                               this.groupSelect(valuePeserta)
-                              this.setState({ hide_add_participant: true });
+                              this.setState({ hide_add_participant: 'visible' });
                             }}
                           />
-                          <Form.Text className="text-muted">
-                            Select participants from the group for a private meeting.
-                          </Form.Text>
                         </div>
                       </div>
                     </Form.Group>
@@ -1823,13 +1828,15 @@ class MeetingTable extends Component {
                 }
 
                 {
-                  this.state.private && this.state.hide_add_participant ?
+                  this.state.hide_add_participant ?
+
                     <Form.Group controlId="formJudul">
+
                       <div className="form-group row">
                         <div className="col-sm-6">
-                          <Form.Label className="f-w-bold">
-                            Add Participants
-                          </Form.Label>
+                          <Form.Text className="text-muted">
+                            + Add more participants from user list
+                          </Form.Text>
                           <Select
                             value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
                             options={this.state.optionsPeserta}
@@ -1843,31 +1850,27 @@ class MeetingTable extends Component {
                               })
                             }}
                           />
-                          <Form.Text className="text-muted">
-                            Select participant for private meeting.
-                          </Form.Text>
                         </div>
                       </div>
+
+                      <div className="form-group row">
+                        <div className="col-sm-6">
+                          <Form.Text className="text-muted">
+                            + Email
+                          </Form.Text>
+                          <TagsInput
+                            value={this.state.emailInvite}
+                            onChange={this.handleChangeEmail.bind(this)}
+                            addOnPaste={true}
+                            addOnBlur={true}
+                            inputProps={{ placeholder: `Insert Email` }}
+                          />
+                        </div>
+                      </div>
+
                     </Form.Group>
                     : null
                 }
-
-                <div className="form-group row">
-                  <div className="col-sm-6">
-                    <label style={{ fontWeight: "bold" }}>Email</label>
-                    <TagsInput
-                      value={this.state.emailInvite}
-                      onChange={this.handleChangeEmail.bind(this)}
-                      addOnPaste={true}
-                      addOnBlur={true}
-                      inputProps={{ placeholder: `Participant's Email` }}
-                    />
-                    <Form.Text>
-                      Guest other than icademy users.<br />
-                      Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
-                    </Form.Text>
-                  </div>
-                </div>
 
                 {
                   this.state.private ?
