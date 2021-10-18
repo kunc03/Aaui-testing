@@ -573,10 +573,11 @@ class MeetingTable extends Component {
         })
         let formNotif = {
           user_id: this.state.infoClass.moderator,
+          company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'present' : 'not attend') + ' meeting at ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meet/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
