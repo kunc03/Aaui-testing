@@ -359,6 +359,7 @@ class WebinarAddClass extends Component {
       if (oldJamMul != jamMul) {
         let sendNotif = {
           type: 7,
+          company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
           user_id: this.state.peserta.map(item => item.user_id),
           activity_id: this.state.webinarId,
           desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
@@ -393,6 +394,7 @@ class WebinarAddClass extends Component {
             this.fetchData();
             let sendNotif = {
               type: 7,
+              company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
               user_id: formData.userId,
               activity_id: this.state.webinarId,
               desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
