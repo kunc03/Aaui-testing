@@ -736,7 +736,7 @@ class Header extends Component {
                                 {item.company_name}
                               </b>
 
-                              <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
+                              <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Active' : null}</span>
                             </p>
 
                             {/* {parseInt(localStorage.getItem('companyID')) ==
