@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 // import moment from "react-moment";
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
@@ -480,28 +480,17 @@ class MeetingTable extends Component {
             let tmp_duplicate = [];
 
             response.data.result.map(item => {
-              // console.log(item, "TEST PESERTA")
-              // this.state.optionsModerator.push({ value: item.user_id, label: item.name });
-              // this.state.optionsPeserta.push({ value: item.user_id, label: item.name });
+
 
               let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
               let dupLabel = item.name;
               if (idx > -1) {
 
-                if (item.company_name) {
-                  dupLabel += `(${item.company_name} | ${item.email})`;
-                  tmp_duplicate[idx].label += ` (${response.data.result[idx].company_name} | ${response.data.result[idx].email})`;
-                } else {
-                  dupLabel += `(${item.email})`;
-                  tmp_duplicate[idx].label += ` (${response.data.result[idx].email})`;
-                }
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel })
-                // this.state.optionsModerator.push({ value: item.user_id, label: dupLabel });
-                // this.state.optionsPeserta.push({ value: item.user_id, label: dupLabel });
+                tmp_duplicate[idx].colorCompany = 'blue'
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: item.company_name, email: item.email, colorCompany: 'red' })
+
               } else {
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel })
-                // this.state.optionsModerator.push({ value: item.user_id, label: dupLabel });
-                // this.state.optionsPeserta.push({ value: item.user_id, label: dupLabel });
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: item.company_name, email: item.email, colorCompany: 'red' })
               }
             });
             this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
@@ -1369,6 +1358,75 @@ class MeetingTable extends Component {
 
   render() {
 
+    // const optionPeserta = props => {
+    //   const { innerProps, innerRef } = props;
+    //   console.log(innerProps, innerRef, "TEST")
+    //   // this.state.optionPeserta.map((str)=>{
+    //   return (
+    //     <article ref={innerRef} {...innerProps} className="custom-option">
+    //       <h4>{props.data.label}</h4>
+    //       <div className="sub">{props.data.label} </div>
+    //     </article>
+    //   )
+    // };
+    const options = [
+      { value: "Abe", label: "Abe", customAbbreviation: "A" },
+      { value: "John", label: "John", customAbbreviation: "J" },
+      { value: "Dustin", label: "Dustin", customAbbreviation: "D" }
+    ];
+
+    const formatOptionLabel2 = ({ value, label, customAbbreviation }) => (
+      <div style={{ display: "flex" }}>
+        <div>{label}</div>
+        <div style={{ marginLeft: "10px", color: "#ccc" }}>
+          {customAbbreviation}
+        </div>
+      </div>
+    );
+    const formatOptionLabel = ({ value, label, company, email, colorCompany }) => (
+      <div className="form-group row" style={{ borderBottom: '1px #eee' }}>
+        <div className="col-sm-4">
+          <Form.Label className="f-w-bold">
+            {label}
+          </Form.Label>
+          <Form.Text className="text-muted" style={{ fontStyle: 'italic' }}>
+            {email}
+          </Form.Text>
+        </div>
+
+        <div className="col-sm-2">
+          {
+            colorCompany === 'red' ?
+              <span className="badge badge-success" style={{ fontSize: "10px", width: '80px' }}>{company}</span>
+              :
+              <span className="badge badge-primary" style={{ fontSize: "10px", width: '80px' }}>{company}</span>
+          }
+        </div>
+      </div>
+    );
+
+    const CustomControl = () => (
+
+      <Select
+        //options={options}
+        //components={{ Option: optionPeserta }}
+        formatOptionLabel={formatOptionLabel}
+        //value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
+        options={options}
+        isMulti
+        closeMenuOnSelect={false}
+        closeMenuOnScroll={false}
+        onChange={valuePeserta => {
+          let arr = [];
+          valuePeserta.map((item) => arr.push(item.value));
+          this.setState({
+            valuePeserta: arr
+          })
+        }}
+      />
+    );
+
+
     // ** GLOBAL SETTINGS ** //
     let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
     console.log(cdMeeting, 'cdMeeting')
@@ -1829,7 +1887,7 @@ class MeetingTable extends Component {
                 }
 
                 {
-                  this.state.hide_add_participant ?
+                  true ?
 
                     <Form.Group controlId="formJudul">
 
@@ -1839,6 +1897,8 @@ class MeetingTable extends Component {
                             + Add more participants from user list
                           </Form.Text>
                           <Select
+                            getOptionLabel={option => option.label}
+                            formatOptionLabel={formatOptionLabel}
                             value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
                             options={this.state.optionsPeserta}
                             isMulti
