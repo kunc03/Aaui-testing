@@ -363,7 +363,7 @@ class WebinarAddClass extends Component {
           user_id: this.state.peserta.map(item => item.user_id),
           activity_id: this.state.webinarId,
           desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-          dest: `${APPS_SERVER}webinars`,
+          dest: `${APPS_SERVER}webinar/live/${this.state.webinarId}`,
         };
         API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res => {
           back && this.props.history.goBack();
@@ -397,8 +397,8 @@ class WebinarAddClass extends Component {
               company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
               user_id: formData.userId,
               activity_id: this.state.webinarId,
-              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-              dest: `${APPS_SERVER}webinars`,
+              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone`,
+              dest: `${APPS_SERVER}webinar/live/${this.state.webinarId}`,
             };
             API.post(`${API_SERVER}v1/notification/broadcast`, sendNotif);
           }
