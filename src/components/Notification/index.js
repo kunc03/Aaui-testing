@@ -121,7 +121,13 @@ class NotificationClass extends Component {
   }
 
   fetchNotif() {
-    API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
+    var endPoint = ``;
+    if (localStorage.getItem('companyID')) {
+      endPoint = `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}?companyId=${localStorage.getItem('companyID')}`;
+    } else {
+      endPoint = `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`;
+    }
+    API.get(endPoint).then((res) => {
       const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
       const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2);
       // console.log('state: ', Notif);
