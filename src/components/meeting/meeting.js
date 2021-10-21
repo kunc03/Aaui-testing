@@ -1012,6 +1012,18 @@ class MeetingTable extends Component {
           if (!res.data.error) {
             toast.success('Saved.')
 
+            // send notif
+            let notif = {
+              user_id: this.state.valuePeserta,
+              company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
+              activity_id: res.data.result.id,
+              type: 3,
+              desc: `You are invited meeting "${this.state.roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
+              dest: `${APPS_SERVER}meet/${res.data.result.id}`,
+              types: 1
+            }
+            API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
+
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
             // share
@@ -1330,18 +1342,32 @@ class MeetingTable extends Component {
       if (res.status === 200) {
         if (!res.data.error) {
           toast.success('Save the meeting schedule booking.')
-          this.setState({
-            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
-            modalJadwal: false
-          })
 
+          // send notif
+          let notif = {
+            user_id: Storage.get('user').data.user_id,
+            company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
+            activity_id: res.data.result.id,
+            type: 3,
+            desc: `You are started meeting "${roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
+            dest: `${APPS_SERVER}meet/${res.data.result.id}`,
+            types: 1
+          }
+          API.post(`${API_SERVER}v1/notification/broadcast`, notif).then((res) => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
+          
           socket.emit('send', {
             socketAction: 'updateDataBooking',
             meeting_id: classId,
             user_id: Storage.get('user').data.user_id,
             room_name: roomName
           })
+
+          this.setState({
+            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
+            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+            modalJadwal: false
+          })
+
           this.fetchBooking(classId, roomName)
 
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
