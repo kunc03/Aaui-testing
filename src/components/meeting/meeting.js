@@ -485,13 +485,17 @@ class MeetingTable extends Component {
 
               let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
               let dupLabel = item.name;
+              let company_names = item.company_name
+              if (company_names.length > 10) {
+                company_names = item.company_name.substr(0, 10) + ' ...';
+              }
               if (idx > -1) {
 
                 tmp_duplicate[idx].colorCompany = 'blue'
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: item.company_name, email: item.email, colorCompany: 'red' })
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: 'red' })
 
               } else {
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: item.company_name, email: item.email, colorCompany: 'red' })
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: 'red' })
               }
             });
             this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
@@ -1939,7 +1943,7 @@ class MeetingTable extends Component {
                 }
 
                 {
-                  true ?
+                  this.state.hide_add_participant ?
 
                     <Form.Group controlId="formJudul">
 
