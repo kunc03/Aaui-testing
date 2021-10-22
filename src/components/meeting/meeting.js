@@ -480,6 +480,12 @@ class MeetingTable extends Component {
           API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
             let tmp_duplicate = [];
 
+            let originCompany = null;
+            try {
+              originCompany = localStorage.getItem('user').data.company_name
+            } catch (e) {
+            }
+
             response.data.result.map(item => {
 
 
@@ -489,13 +495,18 @@ class MeetingTable extends Component {
               if (company_names.length > 10) {
                 company_names = item.company_name.substr(0, 10) + ' ...';
               }
+
+              let colors = 'red';
+              if (item.company_name !== originCompany) {
+                colors = 'blue';
+              }
               if (idx > -1) {
 
                 tmp_duplicate[idx].colorCompany = 'blue'
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: 'red' })
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
 
               } else {
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: 'red' })
+                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
               }
             });
             this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
