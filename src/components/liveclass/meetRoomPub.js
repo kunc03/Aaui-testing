@@ -285,31 +285,37 @@ export default class MeetRoomPub extends Component {
   fetchData() {
     this.onBotoomScroll();
     API.get(`${API_SERVER}v2/meetpub/id/${this.state.classId}`).then(response => {
-      this.setState({
-        isLoading: false,
-        classRooms: response.data.result,
-        // user: {
-        //   user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
-        //   name: Storage.get('user').data ? Storage.get('user').data.user : '',
-        //   email: Storage.get('user').data ? Storage.get('user').data.email : '',
-        //   avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
-        // }
-      })
-      API.get(`${API_SERVER}v2/meetpub/file/${this.state.classId}`).then(res => {
-        let splitTags;
-        let datas = res.data.result;
-        for (let a in datas) {
-          splitTags = datas[a].attachment.split("/")[5];
-          datas[a].filenameattac = splitTags;
-        }
-        if (res.status === 200) {
-          this.setState({
-            fileChat: res.data.result
-          })
-
-         this.fetchMOMAndTranscript(this.state.classId)
-        }
-      })
+      let { error, result } = response.data
+      if (error) {
+        toast.info(result)
+        window.location.href = '/meeting'
+      } else {
+        this.setState({
+          isLoading: false,
+          classRooms: response.data.result,
+          // user: {
+          //   user_id: Storage.get('user').data ? Storage.get('user').data.user_id : '',
+          //   name: Storage.get('user').data ? Storage.get('user').data.user : '',
+          //   email: Storage.get('user').data ? Storage.get('user').data.email : '',
+          //   avatar: Storage.get('user').data ? Storage.get('user').data.avatar : ''
+          // }
+        })
+        API.get(`${API_SERVER}v2/meetpub/file/${this.state.classId}`).then(res => {
+          let splitTags;
+          let datas = res.data.result;
+          for (let a in datas) {
+            splitTags = datas[a].attachment.split("/")[5];
+            datas[a].filenameattac = splitTags;
+          }
+          if (res.status === 200) {
+            this.setState({
+              fileChat: res.data.result
+            })
+  
+           this.fetchMOMAndTranscript(this.state.classId)
+          }
+        })
+      }
     })
     .catch(function (error) {
       console.log(error);
