@@ -90,9 +90,13 @@ export default class API {
         axios.get(endpoint, config).then(res => {
           if (res.status === 200) {
 
-            localdata.data.level = res.data.result.data_multi_company;
+            if (res.data.result.data_multi_company) {
+              localdata.data.level = res.data.result.data_multi_company;
+            } else {
+              localdata.data.level = res.data.result.level;
+            }
             Storage.set('user', localdata)
-
+            //console.log(localdata, "TEST")
           }
         })
       }
