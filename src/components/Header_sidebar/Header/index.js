@@ -55,6 +55,18 @@ class Header extends Component {
           this.setState({ company: response.data.result.company });
         }
         this.setState({ logoMulti: this.state.company.filter((item) => item.company_id == localStorage.getItem('companyID'))[0].logo })
+
+        let comp = Storage.get('user').data
+        let idx = this.state.company.findIndex((str) => { return str.company_id == comp.company_id })
+        if (idx == -1) {
+          this.state.company.push(comp)
+        } else {
+          if (typeof parseInt(localStorage.getItem('companyID')) !== 'number') {
+            this.state.company.pop(idx)
+          }
+        }
+        console.log(idx, this.state.company, "TEST")
+        console.log(this.state.company, 9090);
       })
       .catch(function (error) {
         console.log(error);
@@ -436,6 +448,8 @@ class Header extends Component {
     } else {
       menuContent = menuClients;
     }
+
+    console.log(company, "TEST");
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{ marginBottom: -1, background: '#FFF' }}>
         <div className="m-header">
@@ -644,57 +658,59 @@ class Header extends Component {
                     </h6>
                   </div>
                   <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
-                    {(level == 'admin' || level == 'client') && (
-                      <li
-                        className="notification"
-                        style={{ cursor: 'pointer' }}
-                        onClick={this.pilihCompany}
-                        data-id={this.state.company_id}
-                        data-logo={this.state.logo}
-                      >
-                        <div
-                          className="media"
-                          data-id={this.state.company_id}
-                          data-logo={this.state.logo}
-                        >
-                          <img
-                            data-id={this.state.company_id}
-                            data-logo={this.state.logo}
-                            className="img-radius"
-                            src={this.state.logo}
-                            alt=""
-                          />
-                          <div
-                            className="media-body"
-                            data-id={this.state.company_id}
-                            data-logo={this.state.logo}
-                          >
-                            <p
-                              data-id={this.state.company_id}
-                              data-logo={this.state.logo}
-                            >
-                              <b
-                                data-id={this.state.company_id}
-                                data-logo={this.state.logo}
-                              >
-                                {this.state.myCompanyName}
-                              </b>
-                            </p>
-                            {localStorage.getItem('companyID') ==
-                              this.state.company_id && (
-                                <p
-                                  data-id={this.state.company_id}
-                                  data-logo={this.state.logo}
-                                  style={{ color: 'green' }}
-                                >
-                                  active
-                                </p>
-                              )}
-                          </div>
-                        </div>
-                      </li>
-                    )}
+                    { //(level == 'admin' || level == 'client') && (
+                      // <li
+                      //   className="notification"
+                      //   style={{ cursor: 'pointer' }}
+                      //   onClick={this.pilihCompany}
+                      //   data-id={this.state.company_id}
+                      //   data-logo={this.state.logo}
+                      // >
+                      //   <div
+                      //     className="media"
+                      //     data-id={this.state.company_id}
+                      //     data-logo={this.state.logo}
+                      //   >
+                      //     <img
+                      //       data-id={this.state.company_id}
+                      //       data-logo={this.state.logo}
+                      //       className="img-radius"
+                      //       src={this.state.logo}
+                      //       alt=""
+                      //     />
+                      //     <div
+                      //       className="media-body"
+                      //       data-id={this.state.company_id}
+                      //       data-logo={this.state.logo}
+                      //     >
+                      //       <p
+                      //         data-id={this.state.company_id}
+                      //         data-logo={this.state.logo}
+                      //       >
+                      //         <b
+                      //           data-id={this.state.company_id}
+                      //           data-logo={this.state.logo}
+                      //         >
+                      //           {this.state.myCompanyName}
+                      //         </b>
+                      //       </p>
+                      //       {localStorage.getItem('companyID') ==
+                      //         this.state.company_id && (
+                      //           <p
+                      //             data-id={this.state.company_id}
+                      //             data-logo={this.state.logo}
+                      //             style={{ color: 'green' }}
+                      //           >
+                      //             active
+                      //           </p>
+                      //         )}
+                      //     </div>
+                      //   </div>
+                      // </li>
+                      //)
+                    }
                     {company.map((item, i) => (
+
                       <li
                         className="notification"
                         style={{ cursor: 'pointer' }}
