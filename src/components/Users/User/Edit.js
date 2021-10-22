@@ -20,6 +20,7 @@ class UserEdit extends Component {
     grup_id: "",
     optionComapny: [],
     valueCompany: [],
+    level_multicompany: 'client',
 
     identity: "",
     name: "",
@@ -55,6 +56,7 @@ class UserEdit extends Component {
   onSubmitEditUser = e => {
     e.preventDefault();
     let unlimited = this.state.unlimited == false ? '1' : '0'
+
     let formData = {
       company_id: this.state.company_id,
       // branch_id: this.state.branch_id,
@@ -105,6 +107,7 @@ class UserEdit extends Component {
                     let formData = {
                       user_id: this.state.user_id,
                       company_id: this.state.valueCompany[i],
+                      level_multicompany: this.state.level_multicompany
                     };
                     API.post(`${API_SERVER}v1/user/assign`, formData)
                   }
@@ -178,6 +181,7 @@ class UserEdit extends Component {
           level: res.data.result.level,
           unlimited: unlimited,
           validity: new Date(res.data.result.validity),
+          level_multicompany: res.data.result.level_multicompany
         });
         valueGroup = res.data.result.group_id ? res.data.result.group_id.split(',').map(Number) : [];
 
@@ -271,6 +275,31 @@ class UserEdit extends Component {
                               </select>
                             </div>
                             <div className="form-group">
+                              <label className="label-input">Level</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
+                              <select
+                                style={{ textTransform: 'capitalize' }}
+                                name="level"
+                                className="form-control"
+                                onChange={this.onChangeInput}
+                                required
+                              >
+                                <option value="">-- Select --</option>
+                                {levelUser.map(item => (
+                                  <option
+                                    value={item.level}
+                                    selected={
+                                      item.level === this.state.user.level
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    {item.level === 'client' ? 'User' : item.level}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="form-group">
                               <label className="label-input">Multiple Company</label>
                               <MultiSelect
                                 id="multicompany"
@@ -286,6 +315,36 @@ class UserEdit extends Component {
                                 valuePlaceholder="Select Company"
                               />
                             </div>
+                            {
+                              this.state.valueCompany.length > 0 ?
+
+                                <div className="form-group">
+                                  <label className="label-input">Level Multicompany</label>
+                                  <Form.Text className="text-danger">Required</Form.Text>
+                                  <select
+                                    style={{ textTransform: 'capitalize' }}
+                                    name="level_multicompany"
+                                    className="form-control"
+                                    onChange={evt => this.setState({ level_multicompany: evt.target.value })}
+                                    required
+                                  >
+                                    <option value="">-- Select --</option>
+                                    {levelUser.map(item => (
+                                      <option
+                                        value={item.level}
+                                        selected={
+                                          item.level === this.state.level_multicompany
+                                            ? "selected"
+                                            : ""
+                                        }
+                                      >
+                                        {item.level === 'client' ? 'User' : item.level}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                : null
+                            }
                             <div className="form-group">
                               <label className="label-input">Group</label>
                               <Form.Text className="text-danger">Required</Form.Text>
@@ -407,32 +466,6 @@ class UserEdit extends Component {
                                 placeholder="Address"
                                 onChange={this.onChangeInput}
                               />
-                            </div>
-
-                            <div className="form-group">
-                              <label className="label-input">Level</label>
-                              <Form.Text className="text-danger">Required</Form.Text>
-                              <select
-                                style={{ textTransform: 'capitalize' }}
-                                name="level"
-                                className="form-control"
-                                onChange={this.onChangeInput}
-                                required
-                              >
-                                <option value="">-- Select --</option>
-                                {levelUser.map(item => (
-                                  <option
-                                    value={item.level}
-                                    selected={
-                                      item.level === this.state.user.level
-                                        ? "selected"
-                                        : ""
-                                    }
-                                  >
-                                    {item.level === 'client' ? 'User' : item.level}
-                                  </option>
-                                ))}
-                              </select>
                             </div>
                             {/* <div className="form-group">
                               <label className="label-input">Password</label>
