@@ -84,7 +84,18 @@ export default class API {
       }
 
       config.headers.currentposition = companyId;
-      console.log('TEST PAK EKO')
+
+      if (companyId) {
+        let localdata = Storage.get('user');
+        axios.get(endpoint, config).then(res => {
+          if (res.status === 200) {
+
+            localdata.data.level = res.data.result.data_multi_company;
+            Storage.set('user', localdata)
+
+          }
+        })
+      }
     }
 
     return axios.get(endpoint, config);
