@@ -39,6 +39,7 @@ export const FORUM = `${API_SERVER}v1/forum`;
 export default class API {
   static getConfig = (bearer = true) => {
     let token = Storage.get('token');
+
     if (bearer) {
       return {
         headers: {
@@ -73,6 +74,17 @@ export default class API {
 
     if (headers) {
       config.headers = { ...config.headers, ...headers };
+    }
+
+    if (endpoint.search('/auth/me/') > -1) {
+      let companyId = Storage.get('companyID');
+
+      if (typeof companyId != 'number') {
+        companyId = null
+      }
+
+      config.headers.currentposition = companyId;
+      console.log('TEST PAK EKO')
     }
 
     return axios.get(endpoint, config);
