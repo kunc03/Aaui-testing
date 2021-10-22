@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
@@ -259,7 +260,12 @@ class NotificationClass extends Component {
                                     <span style={{ width: '-webkit-fill-available', position:'relative' }}>
                                       {
                                         item.isread == 0 &&
-                                        <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
+                                        <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>NEW</span>
+                                      }
+                                      {
+                                        item.company_name ?
+                                          <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'green' }}>{item.company_name}</span>
+                                        : null
                                       }
                                       <b className="fc-blue ">
                                         {item.type == 1 ? "Course" :
