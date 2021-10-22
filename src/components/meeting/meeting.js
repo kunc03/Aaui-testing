@@ -482,32 +482,31 @@ class MeetingTable extends Component {
 
             let originCompany = null;
             try {
-              originCompany = localStorage.getItem('user').data.company_name
+              originCompany = Storage.get('user').data.company_id
             } catch (e) {
             }
 
             response.data.result.map(item => {
 
 
-              let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
+              //let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
               let dupLabel = item.name;
               let company_names = item.company_name
               if (company_names.length > 10) {
-                company_names = item.company_name.substr(0, 10) + ' ...';
+                company_names = item.company_name.substr(0, 15) + '...';
               }
 
-              let colors = 'red';
-              if (item.company_name !== originCompany) {
-                colors = 'blue';
+              let colors = 'blue';
+              if (item.company_id != originCompany) {
+                colors = 'red';
               }
-              if (idx > -1) {
 
-                tmp_duplicate[idx].colorCompany = 'blue'
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
+              tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
+              // if (idx > -1) {
 
-              } else {
-                tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
-              }
+              // } else {
+              //   tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
+              // }
             });
             this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
             console.log(tmp_duplicate, "TEST")
@@ -1440,7 +1439,7 @@ class MeetingTable extends Component {
           .indexOf(child.type.name) >= 0);
 
 
-      console.log(children, "TEST 12")
+      console.log(props.selectProps.inputValue, "TEST 12")
 
       return (
         <components.ValueContainer {...props}>
@@ -1450,9 +1449,9 @@ class MeetingTable extends Component {
       );
     };
 
-    const formatOptionLabel = ({ value, label, company, email, colorCompany }) => (
+    const formatOptionLabel3 = ({ value, label, company, email, colorCompany }) => (
       <div className="form-group row" style={{ borderBottom: '1px #eee' }}>
-        <div className="col-sm-4">
+        <div className="col-sm-6">
           <Form.Label className="f-w-bold">
             {label}
           </Form.Label>
@@ -1471,6 +1470,26 @@ class MeetingTable extends Component {
         </div>
       </div>
     );
+    const formatOptionLabel = ({ value, label, company, email, colorCompany }) => (
+      <div className="row" style={{ borderBottom: '1px #eee' }}>
+        <div className="col-sm-9">
+          <Form.Text className="text-muted">
+            <b>{label}</b>
+            <br />
+            <span style={{ fontStyle: 'italic' }}>{email}</span>
+          </Form.Text>
+        </div>
+
+        <div className="col-sm-3" style={{ float: 'right' }}>
+          {
+            colorCompany === 'red' ?
+              <span className="badge badge-success">{company}</span>
+              :
+              <span className="badge badge-primary">{company}</span>
+          }
+        </div>
+      </div>
+    );
 
     const CustomControl = () => (
 
@@ -1483,6 +1502,7 @@ class MeetingTable extends Component {
         isMulti
         closeMenuOnSelect={false}
         closeMenuOnScroll={false}
+        menuShouldScrollIntoView={true}
         onChange={valuePeserta => {
           let arr = [];
           valuePeserta.map((item) => arr.push(item.value));
@@ -1942,6 +1962,7 @@ class MeetingTable extends Component {
                             options={this.state.optionsGroup}
                             isMulti
                             closeMenuOnSelect={false}
+                            hideSelectedOption={true}
                             onChange={valuePeserta => {
                               this.groupSelect(valuePeserta)
                               this.setState({ hide_add_participant: 'visible' });
@@ -1964,12 +1985,15 @@ class MeetingTable extends Component {
                             + Add more participants from user list
                           </Form.Text>
                           <Select
-                            // components={{ ValueContainer }}
+                            //components={{ ValueContainer }}
                             formatOptionLabel={formatOptionLabel}
                             value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
                             options={this.state.optionsPeserta}
                             isMulti
                             closeMenuOnSelect={false}
+                            hideSelectedOption={true}
+                            menuShouldScrollIntoView={true}
+                            selectProps='label'
                             onChange={valuePeserta => {
                               let arr = [];
                               let arr_name = [];
