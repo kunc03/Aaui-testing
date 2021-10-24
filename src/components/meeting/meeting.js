@@ -2023,7 +2023,7 @@ class MeetingTable extends Component {
                     : null
                 }
 
-                <div className="form-group row">
+                {/* <div className="form-group row">
                   <div className="col-sm-6">
                     <Form.Label className="f-w-bold">Engine<required>*</required></Form.Label>
                     <Select id="engine"
@@ -2038,9 +2038,9 @@ class MeetingTable extends Component {
                       Choose meeting engine.
                     </p>
                   </div>
-                </div>
+                </div> */}
 
-                <div className="form-group row">
+                {/* <div className="form-group row">
                   <div className="col-sm-6">
                     <Form.Label className="f-w-bold">Mode<required>*</required></Form.Label>
                     <Select id="mode"
@@ -2055,7 +2055,7 @@ class MeetingTable extends Component {
                       Choose meeting mode.
                     </p>
                   </div>
-                </div>
+                </div> */}
 
               </div>
 
