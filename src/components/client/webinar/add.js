@@ -576,7 +576,7 @@ class WebinarAddClass extends Component {
                 <td>{item.nama}</td>
                 <td>{item.email}</td>
                 <td>{item.telepon}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
@@ -615,7 +615,7 @@ class WebinarAddClass extends Component {
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
@@ -654,7 +654,7 @@ class WebinarAddClass extends Component {
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
