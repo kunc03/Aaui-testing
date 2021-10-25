@@ -1961,7 +1961,7 @@ class MeetingTable extends Component {
                             value={[...this.state.optionsGroup].filter(x => this.state.valueGroup.includes(x.value))}
                             options={this.state.optionsGroup}
                             isMulti
-                            closeMenuOnSelect={false}
+                            closeMenuOnSelect={true}
                             hideSelectedOption={true}
                             onChange={valuePeserta => {
                               this.groupSelect(valuePeserta)
