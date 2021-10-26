@@ -443,6 +443,9 @@ export default class WebinarRiwayat extends Component {
     doc.text("Pre Test & Post Test", 20, doc.lastAutoTable.finalY + 10);
     doc.autoTable({ html: '#table-test', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
 
+    doc.text("Essay", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-essay', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
+
     doc.save(`${this.state.judul}.pdf`);
   }
 
