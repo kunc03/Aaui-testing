@@ -18,6 +18,7 @@ class FormExam extends Component {
         image:'',
         logo:'',
         imagePreview:'assets/images/no-image.png',
+        repeatable: false,
         name: '',
         address: '',
         telephone: '',
@@ -73,6 +74,9 @@ class FormExam extends Component {
   ToggleSwitch(checked) {
     this.setState({ generate: !this.state.generate, edited: true });
   }
+  ToggleSwitchRepeat(checked) {
+        this.setState({ repeatable: !this.state.repeatable });
+    }
   ToggleSwitchScheduled(checked) {
     this.setState({ scheduled: !this.state.scheduled, edited: true });
   }
@@ -210,6 +214,7 @@ class FormExam extends Component {
                     licenses_type_id: String(this.state.valueLicensesType),
                     time_limit: this.state.time,
                     minimum_score: this.state.minScore,
+                    repeatable: this.state.repeatable ? 1 : 0,
                     generate_question: this.state.generate ? 1 : 0,
                     composition: this.state.composition,
                     course_id: String(this.state.valueCourse2),
@@ -837,6 +842,11 @@ handleChangeAnswer = (value) => {
                                                             <ToggleSwitch className="form-toggle-switch" name="seecorrectanswer" onChange={this.ToggleSwitchSeeCorrectAnswer.bind(this)} checked={this.state.see_correct_answer} />
                                                             <p className="form-notes">{this.state.see_correct_answer ? 'Users will be ale to see their answer and the correct answer' : 'Users will only see the result'}</p>
                                                         </div>
+                                                        <div className="form-field-top-label" style={{ maxWidth: 240 }}>
+                                                                <label for="scheduled">Repeatable</label>
+                                                                <ToggleSwitch className="form-toggle-switch" name="repeatable" onChange={this.ToggleSwitchRepeat.bind(this)} checked={this.state.repeatable} />
+                                                                <p className="form-notes">{this.state.repeatable ? 'Repeatable Quiz' : 'Unrepeatable Quiz'}</p>
+                                                            </div>
                                                     </div>
                                                 </div>
                                                     <div className="form-section">
