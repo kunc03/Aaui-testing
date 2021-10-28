@@ -30,6 +30,7 @@ import { Fragment } from "react";
 import { compose } from "redux";
 import io from 'socket.io-client';
 import { withTranslation } from "react-i18next";
+import Tooltip from '@material-ui/core/Tooltip';
 
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -1036,7 +1037,7 @@ class MeetingTable extends Component {
               dest: `${APPS_SERVER}meet/${res.data.result.id}`,
               types: 1
             }
-            API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
+            API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
 
             this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
@@ -1367,8 +1368,8 @@ class MeetingTable extends Component {
             dest: `${APPS_SERVER}meet/${res.data.result.id}`,
             types: 1
           }
-          API.post(`${API_SERVER}v1/notification/broadcast`, notif).then((res) => this.props.socket.emit('send', {companyId: Storage.get('user').data.company_id}));
-          
+          API.post(`${API_SERVER}v1/notification/broadcast`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
+
           socket.emit('send', {
             socketAction: 'updateDataBooking',
             meeting_id: classId,
@@ -1789,13 +1790,13 @@ class MeetingTable extends Component {
                   <thead>
                     <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
                       <td><b>Date </b></td>
-                      <td><b>Starting Hours </b></td>
-                      <td><b>End Hours </b></td>
+                      <td style={{ width: '110px' }}><b>Starting Hours </b></td>
+                      <td style={{ width: '86px' }}><b>End Hours </b></td>
                       <td><b>By</b></td>
                       <td><b>Moderator</b></td>
-                      <td><b>Participants</b></td>
+                      <td style={{ width: '80px' }}><b>Participants</b></td>
                       <td><b>Description</b></td>
-                      <td><b>Share</b></td>
+                      <td style={{textAlign:'center'}}><b>Share</b></td>
                       <td><b>Action</b></td>
                     </tr>
                   </thead>
@@ -1836,35 +1837,37 @@ class MeetingTable extends Component {
                                   <td>{item.moderator_name ? item.moderator_name : '-'}</td>
                                   <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
                                   <td>{item.keterangan ? item.keterangan : '-'}</td>
-                                  <td>
+                                  <td style={{textAlign:'center'}}>
                                     {
                                       //item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
                                       item.isShare == true ?
-                                        <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : GMT${moment().local().format('Z')} ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                                          onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                          <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                                        </CopyToClipboard>
+                                      <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : GMT${moment().local().format('Z')} ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                        onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
+                                        <Tooltip title="Copy Invitation" arrow placement="top">
+                                          <i className="fa fa-copy cursor"></i>
+                                        </Tooltip>
+                                      </CopyToClipboard>
                                         : '-'
                                     }
                                   </td>
                                   <td>
-                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Information</span>
+                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor mr-2 mb-1" style={{ fontSize: "1em", cursor: 'pointer' }}>Information</span>
                                     {
                                       //checkParty && range 
                                       item.isJoin || (checkParty && range) ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
+                                          <span className="badge badge-pill badge-success mr-2 mb-1 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
                                         </a>
                                         : null
                                     }
                                     {
                                       (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
-                                        <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
+                                        <span class="badge badge-pill badge-secondary mr-2 mb-1" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                         : null
                                     }
                                     {
                                       (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
-                                        <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
+                                        <span class="badge badge-pill badge-danger mr-2 mb-1" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                         : null
                                     }
                                   </td>
@@ -2397,12 +2400,12 @@ class MeetingTable extends Component {
             <table className="table table-hover table-striped table-list_booking">
               <thead>
                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                  <td><b>Date</b></td>
-                  <td><b>Starting Hours</b></td>
-                  <td><b>End Hours</b></td>
+                  <td><b>Date </b></td>
+                  <td style={{ width: '110px' }}><b>Starting Hours </b></td>
+                  <td style={{ width: '86px' }}><b>End Hours </b></td>
                   <td><b>By</b></td>
                   <td><b>Moderator</b></td>
-                  <td className="text-center"><b>Participants</b></td>
+                  <td className="text-center" style={{ width: '80px' }}><b>Participants</b></td>
                   <td><b>Description</b></td>
                   <td><b>Share</b></td>
                   <td><b>Action</b></td>
