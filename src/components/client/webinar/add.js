@@ -343,15 +343,19 @@ class WebinarAddClass extends Component {
       end_time: moment.tz(this.state.tanggalEnd, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       status: this.state.status
     };
-    API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
-      if (res.data.error)
-        toast.warning("Error fetch API")
-      else
-        if (this.state.gambar) {
-          let formData = new FormData();
-          formData.append('gambar', this.state.gambar);
-          await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
-        }
+    if (form.start_time > form.end_time) {
+      toast.warning(`Data error occurred at "Start time" and "End time"`);
+    } else {
+
+      API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
+        if (res.data.error)
+          toast.warning("Error fetch API")
+        else
+          if (this.state.gambar) {
+            let formData = new FormData();
+            formData.append('gambar', this.state.gambar);
+            await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
+          }
 
       // send notification
       let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
@@ -371,6 +375,7 @@ class WebinarAddClass extends Component {
       }
       toast.success("Save webinar information")
     })
+    }
   }
 
   backButton() {
