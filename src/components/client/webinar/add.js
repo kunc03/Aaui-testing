@@ -344,7 +344,7 @@ class WebinarAddClass extends Component {
       status: this.state.status
     };
     if (form.start_time > form.end_time) {
-      toast.warning(`Data error occurred at "Start time" and "End time"`);
+      toast.warning(`"End Time cannot be less than "Start Time" `);
     } else {
 
       API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
