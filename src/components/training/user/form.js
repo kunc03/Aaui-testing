@@ -502,7 +502,7 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number</label>
-                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm || this.props.match.params.id}/>
+                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         {
                                                             this.state.license_number ?
