@@ -434,6 +434,7 @@ class FilesTableClass extends Component {
           this.setState({
             recordedMeeting: res.data.result,
           })
+          console.log(res.data.result, "TEST MEET")
         }
       })
     }
@@ -648,6 +649,7 @@ class FilesTableClass extends Component {
       )
     }
 
+
     return (
       <div className="card p-20">
         <span className="mb-4">
@@ -715,7 +717,7 @@ class FilesTableClass extends Component {
               </tr>
             </thead>
             {
-              folder.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
+              folder.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && this.state.dataRecordings.length == 0 && (this.props.projectId == this.state.folderId) ?
                 <tbody>
                   <tr>
                     <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no files</td>
