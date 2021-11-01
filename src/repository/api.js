@@ -102,6 +102,17 @@ export default class API {
       }
     }
 
+    if (endpoint.search('/files-mom/') > -1) {
+      let companyId = Storage.get('companyID');
+
+      if (typeof companyId != 'number') {
+        let localdata = Storage.get('user');
+        companyId = localdata.data.company_id
+      }
+
+      config.headers.currentposition = companyId || null;
+    }
+
     return axios.get(endpoint, config);
   };
 
