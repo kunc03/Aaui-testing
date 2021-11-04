@@ -994,105 +994,118 @@ class MeetingTable extends Component {
       toast.warning('Date, start time, and end time are mandatory.')
     }
     else {
-      this.setState({ isSaving: true });
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
       const jamMulai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
       const jamSelesai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
 
-      let isPrivate = this.state.private == true ? 1 : 0;
-      let isAkses = this.state.akses == true ? 1 : 0;
-      let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
+      let date_start = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm');
+      let date_end = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm');
 
-      let form = {
-        meeting_id: this.state.bookingMeetingId,
-        tanggal: tanggal,
-        jam_mulai: jamMulai,
-        jam_selesai: jamSelesai,
-        user_id: Storage.get('user').data.user_id,
-        keterangan: this.state.keterangan,
+      if (date_start > date_end) {
+        toast.warning(`"End Time cannot be less than "Start Time" `);
+      } else {
 
-        is_private: isPrivate,
-        is_required_confirmation: isRequiredConfirmation,
-        peserta: this.state.valuePeserta,
+        this.setState({ isSaving: true });
 
-        is_akses: isAkses,
-        moderator: this.state.akses ? this.state.valueModerator : [],
+        let isPrivate = this.state.private == true ? 1 : 0;
+        let isAkses = this.state.akses == true ? 1 : 0;
+        let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
 
-        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
-        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
-      }
+        let form = {
+          meeting_id: this.state.bookingMeetingId,
+          tanggal: tanggal,
+          jam_mulai: jamMulai,
+          jam_selesai: jamSelesai,
+          user_id: Storage.get('user').data.user_id,
+          keterangan: this.state.keterangan,
 
-      API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
-        if (res.status === 200) {
-          if (!res.data.error) {
-            toast.success('Saved.')
+          is_private: isPrivate,
+          is_required_confirmation: isRequiredConfirmation,
+          peserta: this.state.valuePeserta,
 
-            // send notif
-            let notif = {
-              user_id: this.state.valuePeserta,
-              company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
-              activity_id: res.data.result.id,
-              type: 3,
-              desc: `You are invited meeting "${this.state.roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
-              dest: `${APPS_SERVER}meet/${res.data.result.id}`,
-              types: 1
-            }
-            API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
+          engine: this.state.engine,
+          mode: this.state.mode,
 
-            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+          is_akses: isAkses,
+          moderator: this.state.akses ? this.state.valueModerator : [],
 
-            // share
-            this.setState({ sendingEmail: true })
-            let form1 = {
-              user: Storage.get('user').data.user,
-              email: this.state.emailInvite,
-              room_name: this.state.roomName,
-              is_private: isPrivate,
-              is_scheduled: 1,
-              schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-              userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
-              message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
-              messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
-            }
-
-            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
-              if (res.status === 200) {
-                if (!res.data.error) {
-                  this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
-                  toast.success("Email sent to participant")
-                } else {
-                  toast.error("Email failed to send, please check the email address.")
-                  this.setState({ sendingEmail: false, isSaving: false })
-                }
-              }
-            })
-
-            socket.emit('send', {
-              socketAction: 'updateDataBooking',
-              meeting_id: this.state.bookingMeetingId,
-              user_id: Storage.get('user').data.user_id,
-              room_name: this.state.roomName
-            })
-
-            this.setState({
-              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
-            })
-
-            this.fetchMeeting(true)
-
-          } else {
-            if (res.data.type === 'warning') {
-              toast.warning(res.data.result);
-            }
-            else {
-              toast.error("Error, failed to book a meeting schedule.");
-            }
-            this.setState({ isSaving: false });
-          }
+          date_start: date_start,
+          date_end: date_end,
         }
-      })
+
+
+        API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
+          if (res.status === 200) {
+            if (!res.data.error) {
+              toast.success('Saved.')
+
+              // send notif
+              let notif = {
+                user_id: this.state.valuePeserta,
+                company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
+                activity_id: res.data.result.id,
+                type: 3,
+                desc: `You are invited meeting "${this.state.roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
+                dest: `${APPS_SERVER}meet/${res.data.result.id}`,
+                types: 1
+              }
+              API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
+
+              this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+
+              // share
+              this.setState({ sendingEmail: true })
+              let form1 = {
+                user: Storage.get('user').data.user,
+                email: this.state.emailInvite,
+                room_name: this.state.roomName,
+                is_private: isPrivate,
+                is_scheduled: 1,
+                schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
+                message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
+                messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
+              }
+
+              API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
+                if (res.status === 200) {
+                  if (!res.data.error) {
+                    this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
+                    toast.success("Email sent to participant")
+                  } else {
+                    toast.error("Email failed to send, please check the email address.")
+                    this.setState({ sendingEmail: false, isSaving: false })
+                  }
+                }
+              })
+
+              socket.emit('send', {
+                socketAction: 'updateDataBooking',
+                meeting_id: this.state.bookingMeetingId,
+                user_id: Storage.get('user').data.user_id,
+                room_name: this.state.roomName
+              })
+
+              this.setState({
+                tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+                akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
+              })
+
+              this.fetchMeeting(true)
+
+            } else {
+              if (res.data.type === 'warning') {
+                toast.warning(res.data.result);
+              }
+              else {
+                toast.error("Error, failed to book a meeting schedule.");
+              }
+              this.setState({ isSaving: false });
+            }
+          }
+        })
+      }
 
     }
   }
@@ -1164,65 +1177,70 @@ class MeetingTable extends Component {
         date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')
       }
 
-      API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
-        if (res.status === 200) {
-          if (!res.data.error) {
-            toast.success('Saved.')
+      if (form.date_start > form.date_end) {
+        toast.warning(`End Time cannot be less than Start Time `);
+      } else {
+        API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
+          if (res.status === 200) {
+            if (!res.data.error) {
+              toast.success('Saved.')
 
-            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+              this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
-            // share
-            this.setState({ sendingEmail: true })
-            let form1 = {
-              user: Storage.get('user').data.user,
-              email: this.state.emailInvite,
-              room_name: this.state.roomName,
-              is_private: isPrivate,
-              is_scheduled: 1,
-              schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
-              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
-              message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
-              messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
-            }
-
-            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
-              if (res.status === 200) {
-                if (!res.data.error) {
-                  this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
-                  toast.success("Email sent to participant")
-                } else {
-                  toast.error("Email failed to send, please check the email address.")
-                  this.setState({ sendingEmail: false, isSaving: false })
-                }
+              // share
+              this.setState({ sendingEmail: true })
+              let form1 = {
+                user: Storage.get('user').data.user,
+                email: this.state.emailInvite,
+                room_name: this.state.roomName,
+                is_private: isPrivate,
+                is_scheduled: 1,
+                schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+                message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
+                messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
               }
-            })
 
-            socket.emit('send', {
-              socketAction: 'updateDataBooking',
-              meeting_id: this.state.bookingMeetingId,
-              user_id: Storage.get('user').data.user_id,
-              room_name: this.state.roomName
-            })
+              API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
+                if (res.status === 200) {
+                  if (!res.data.error) {
+                    this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
+                    toast.success("Email sent to participant")
+                  } else {
+                    toast.error("Email failed to send, please check the email address.")
+                    this.setState({ sendingEmail: false, isSaving: false })
+                  }
+                }
+              })
 
-            this.setState({
-              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
-            })
+              socket.emit('send', {
+                socketAction: 'updateDataBooking',
+                meeting_id: this.state.bookingMeetingId,
+                user_id: Storage.get('user').data.user_id,
+                room_name: this.state.roomName
+              })
 
-            this.fetchMeeting(true)
+              this.setState({
+                tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+                akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
+              })
 
-          } else {
-            if (res.data.type === 'warning') {
-              toast.warning(res.data.result);
+              this.fetchMeeting(true)
+
+            } else {
+              if (res.data.type === 'warning') {
+                toast.warning(res.data.result);
+              }
+              else {
+                toast.error("Error, failed to book a meeting schedule.");
+              }
+              this.setState({ isSaving: false });
             }
-            else {
-              toast.error("Error, failed to book a meeting schedule.");
-            }
-            this.setState({ isSaving: false });
           }
-        }
-      })
+        })
+      }
+
 
     }
   }
