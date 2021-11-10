@@ -170,6 +170,7 @@ export default class WebinarLive extends Component {
     modalSendEssay: false,
     waitingKuesioner: false,
     startKuesioner: false,
+    kuesionerTerjawab: false,
     startPretest: false,
     startPosttest: false,
     startEssay: false,
@@ -631,6 +632,7 @@ export default class WebinarLive extends Component {
 
               waitingKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
               startKuesioner: res.data.result.kuesioner_sent === 1 ? true : false,
+              kuesionerTerjawab: res.data.result.kuesioner_answered === 1 ? true : false,
               startPosttest: res.data.result.posttest_sent === 1 ? true : false,
               startPretest: res.data.result.pretest_sent === 1 ? true : false,
               startEssay: res.data.result.essay_sent === 1 ? true : false
@@ -1742,7 +1744,6 @@ export default class WebinarLive extends Component {
                       this.state.moderatorId.filter((item) => item.user_id == user.user_id).length >= 1 ||
                       this.state.pembicaraId.filter((item) => item.user_id == user.user_id).length >= 1
                     )
-                      && this.state.peserta.filter((item) => item.user_id == user.user_id).length == 0
                       && this.state.isFeedback
                       && this.state.isJoin ?
                       <button onClick={() => this.setState({ modalKuesioner: true })} className="float-right btn btn-icademy-primary mr-2">
@@ -1751,7 +1752,7 @@ export default class WebinarLive extends Component {
                       : null
                   }
                   {
-                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && this.state.pertanyaan.length > 0 ?
+                    (this.state.peserta.filter((item) => item.user_id == user.user_id).length >= 1 || this.state.tamu.filter((item) => item.voucher == user.user_id).length >= 1) && this.state.startKuesioner && !this.state.kuesionerTerjawab && this.state.pertanyaan.length > 0 ?
                       <button onClick={() => this.setState({ modalKuesionerPeserta: true })} className="float-right btn btn-icademy-primary mr-2">
                         <i className="fa fa-clipboard-list"></i>Feedback Form
                       </button>
